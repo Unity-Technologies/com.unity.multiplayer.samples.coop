@@ -9,6 +9,11 @@ public class PositionInterpolation : Interpolation<Vector3>
 
     private void Update()
     {
-        transform.position = GetValueForTime(NetworkingManager.Singleton.NetworkTime);
+        var value = GetValueForTime(NetworkingManager.Singleton.NetworkTime);
+        if (!float.IsNaN(value.x))
+        {
+            transform.position = value;
+        }
+
     }
 }

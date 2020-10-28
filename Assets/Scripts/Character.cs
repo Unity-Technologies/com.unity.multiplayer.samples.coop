@@ -1,4 +1,5 @@
 using MLAPI;
+using MLAPI.Messaging;
 using System;
 using System.IO;
 using System.Linq;
@@ -43,7 +44,12 @@ public class Character : NetworkedBehaviour
 
     private void SyncNetworkEvents(float time, float deltaTime)
     {
-        _interpolation.AddValue(time, transform.position);
+        if (IsServer)
+        {
+            _interpolation.AddValue(time, transform.position);
+            InvokeClientRpcOnEveryoneExcept<float, Vector3>(ReplicatePosition, NetworkingManager.Singleton.ServerClientId, time, transform.position);
+        }
+
     }
 
     public void SetMovementTarget(Vector3 position)
@@ -73,5 +79,12 @@ public class Character : NetworkedBehaviour
         var movement = direction * movementSpeed * deltaTime;
 
         _navMeshAgent.Move(movement);
+    }
+
+    [ClientRPC]
+    private void ReplicatePosition(float time, Vector3 value)
+    {
+        // The time which we receive here is server time. TODO We need to match it with our client time.
+        _interpolation.AddValue(time, value);
     }
 }
