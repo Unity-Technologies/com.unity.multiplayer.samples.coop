@@ -52,6 +52,14 @@
         "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
       }
     },
+    "com.unity.multiplayer.transport.photon-realtime": {
+      "version": "file:com.unity.multiplayer.transport.photon-realtime",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
+      }
+    },
     "com.unity.test-framework": {
       "version": "1.1.16",
       "depth": 0,
