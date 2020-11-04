@@ -38,8 +38,6 @@ public class Character : NetworkedBehaviour
         {
             Destroy(_navMeshAgent);
         }
-
-        SetMovementTarget(new Vector3(5, 0, 5));
     }
 
     private void SyncNetworkEvents(float time, float deltaTime)
