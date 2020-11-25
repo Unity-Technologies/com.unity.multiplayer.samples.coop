@@ -44,6 +44,14 @@
       "dependencies": {},
       "hash": "c4a9ab0da78e366f6f7fdf2d337455cc1d94dbb0"
     },
+    "com.unity.multiplayer.transport.litenet": {
+      "version": "file:com.unity.multiplayer.transport.litenet",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
+      }
+    },
     "com.unity.test-framework": {
       "version": "1.1.16",
       "depth": 0,
