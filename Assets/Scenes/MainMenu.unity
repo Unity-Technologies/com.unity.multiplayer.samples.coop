@@ -426,8 +426,9 @@ GameObject:
   - component: {fileID: 569965807}
   - component: {fileID: 569965806}
   - component: {fileID: 569965808}
+  - component: {fileID: 569965809}
   m_Layer: 0
-  m_Name: GameNetHub
+  m_Name: GameHub
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -477,6 +478,18 @@ MonoBehaviour:
   PrefabHashGenerator: GameNetHub
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+--- !u!114 &569965809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 569965805}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 39332c63269f3f34db37df122adcc57b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &726602803
 GameObject:
   m_ObjectHideFlags: 0
@@ -912,7 +925,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6144e8dd0fc8ec4cb23a1a49059aa08, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetHostGO: {fileID: 1359040525}
+  GameHubGO: {fileID: 569965805}
 --- !u!1 &1359040525
 GameObject:
   m_ObjectHideFlags: 0
@@ -1043,7 +1056,7 @@ MonoBehaviour:
     TimeResyncInterval: 30
     EnableNetworkedVar: 0
     EnsureNetworkedVarLengthSafety: 0
-    EnableSceneManagement: 1
+    EnableSceneManagement: 0
     ForceSamePrefabs: 1
     UsePrefabSync: 0
     RecycleNetworkIds: 1

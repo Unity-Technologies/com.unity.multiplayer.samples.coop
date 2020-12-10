@@ -6,7 +6,7 @@ namespace BossRoom
 {
     public enum ConnectStatus
     {
-        CONNECT,           //client successfully connected. This may also be a successful reconnect. 
+        SUCCESS,           //client successfully connected. This may also be a successful reconnect. 
         ESERVERFULL,       //can't join, server is already at capacity. 
         EMATCHSTARTED,     //can't join, match is already in progress. 
         EUNKNOWN           //can't join, reason unknown. 
@@ -37,8 +37,8 @@ namespace BossRoom
     {
         public GameObject NetworkingManagerGO;
 
-        private GNH_Client m_clientLogic;
-        private GNH_Server m_serverLogic;
+        private BossRoomClient.GNH_Client m_clientLogic;
+        private BossRoomServer.GNH_Server m_serverLogic;
 
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
@@ -53,45 +53,47 @@ namespace BossRoom
 
         public override void NetworkStart()
         {
-            if( NetManager.IsServer )
+            if (NetManager.IsClient)
             {
-                m_serverLogic = new GNH_Server(this);
+                m_clientLogic = new BossRoomClient.GNH_Client(this);
             }
-            else if( NetManager.IsClient )
+            if ( NetManager.IsServer )
             {
-                m_clientLogic = new GNH_Client(this);
-            }
-            else
-            {
-                Debug.LogError("NetworkStart invoked, but NetworkingManager is neither server nor client");
+                m_serverLogic = new BossRoomServer.GNH_Server(this);
+                
+                //special host code. This is what kicks off the flow that happens on a regular client
+                //when it has finished connecting successfully. A dedicated server would remove this. 
+                RecvConnectFinished(ConnectStatus.SUCCESS, BossRoomState.CHARSELECT);
             }
         }
 
+        /// <summary>
+        /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload. 
+        /// </summary>
+        /// <param name="ipaddress">the IP address of the host to connect to.</param>
+        /// <param name="port">The port of the host to connect to. </param>
+        public void StartClient(string ipaddress, int port)
+        {
+            BossRoomClient.GNH_Client.StartClient(this, ipaddress, port);
+        }
 
         //Server->Client RPCs
 
-        public void S2C_ConnectResult( ulong netId, ConnectStatus status )
+        public void S2C_ConnectResult( ulong netId, ConnectStatus status, BossRoomState targetState )
         {
-            InvokeClientRpcOnClient("RecvConnectResult", netId, status);
+            InvokeClientRpcOnClient("RecvConnectResult", 
+                netId, 
+                "MLAPI_INTERNAL",                             // channelID. Must be MLAPI_INTERNAL Because it is called as part of the StartClient flow (before possible reject comes back). 
+                MLAPI.Security.SecuritySendFlags.None, 
+                MLAPI.Security.SecuritySendFlags.None, 
+                status,                                       // this is the actual payload
+                targetState);                                 // ""
         }
-        [MLAPI.Messaging.ClientRPC]
-        private void RecvConnectFinished( ConnectStatus status )
+        [MLAPI.Messaging.ClientRPC()]
+        private void RecvConnectFinished( ConnectStatus status, BossRoomState targetState )
         {
-            m_clientLogic.RecvConnectFinished( status);
+            m_clientLogic.RecvConnectFinished( status, targetState );
         }
 
-
-        //Client->Server 
-        
-        public void C2S_RequestConnect( string guid )
-        {
-            InvokeServerRpc("RecvRequestConnect", guid, NetManager.LocalClientId, MLAPI.Security.SecuritySendFlags.None);
-        }
-        [MLAPI.Messaging.ServerRPC(RequireOwnership = false)]
-        private void RecvRequestConnect( string guid, ulong clientId )
-        {
-
-
-        }
     }
 }

@@ -2,37 +2,39 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MainMenuUI : MonoBehaviour
+namespace BossRoomViz
 {
-    public GameObject NetHostGO;
-
-    private MLAPI.NetworkingManager m_netManager;
-
-    // Start is called before the first frame update
-    void Start()
+    public class MainMenuUI : MonoBehaviour
     {
-        m_netManager = NetHostGO.GetComponent<MLAPI.NetworkingManager>();
-    }
+        public GameObject GameHubGO;
+        private BossRoom.GameNetHub m_netHub;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+        // Start is called before the first frame update
+        void Start()
+        {
+            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetHub>();
+        }
 
-    public void OnHostClicked()
-    {
-        Debug.Log("Host Clicked");
+        // Update is called once per frame
+        void Update()
+        {
 
-        //TODO: bring up transition screen. 
+        }
 
-        m_netManager.StartHost();
-        UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene", UnityEngine.SceneManagement.LoadSceneMode.Single);
-    }
+        public void OnHostClicked()
+        {
+            Debug.Log("Host Clicked");
 
-    public void OnConnectClicked()
-    {
-        Debug.Log("Connect Clicked");
+            //TODO: bring up transition screen. 
 
+            m_netHub.NetManager.StartHost();
+        }
+
+        public void OnConnectClicked()
+        {
+            Debug.Log("Connect Clicked");
+            m_netHub.StartClient("127.0.0.1", 7777);
+        }
     }
 }
+
