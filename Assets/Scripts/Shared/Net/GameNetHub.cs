@@ -49,20 +49,12 @@ namespace BossRoom
         {
             Object.DontDestroyOnLoad(this.gameObject);
 
-            //FIXME_DMW: would like to remove this. I have added it because at the moment I can't stop MLAPI from destroying the 
-            //GameHub object I created (that I intended to live for the entire lifetime of the game), and replacing it with its
-            //own copy (which naturally doesn't have this editor-configured value set). I have tried setting "UsePrefabSync" to false,
-            //but didn't stop this behavior. 
-            if (!NetworkingManagerGO)
-            {
-                NetworkingManagerGO = GameObject.Find("NetworkingManager");
-            }
-
             NetManager = NetworkingManagerGO.GetComponent<MLAPI.NetworkingManager>();
 
             //because we are not a true NetworkedBehavior, we don't get NetworkStart messages. But we still need to run at that point
             //where we know if we're a host or client. So we fake a "NetworkingManager.OnNetworkStarted" event out of the existing OnServerStarted
             //and OnClientConnectedCallback events. 
+            //FIXME_DMW could this be improved?
             NetManager.OnServerStarted += () =>
             {
                 NetworkStart();
