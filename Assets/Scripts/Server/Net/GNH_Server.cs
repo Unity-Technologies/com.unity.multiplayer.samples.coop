@@ -6,6 +6,9 @@ using BossRoom;
 
 namespace BossRoomServer
 {
+    /// <summary>
+    /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs. 
+    /// </summary>
     public class GNH_Server
     {
         private GameNetHub m_hub;
@@ -17,6 +20,25 @@ namespace BossRoomServer
         {
             m_hub = hub;
             m_hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
+        }
+
+        /// <summary>
+        /// Initializes host mode on this client. Call this and then other clients should connect to us!
+        /// </summary>
+        /// <remarks>
+        /// See notes in GNH_Client.StartClient about why this must be static. 
+        /// </remarks>
+        /// <param name="hub">The GameNetHub that is invoking us. </param>
+        /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
+        /// <param name="port">The port to connect to. </param>
+        public static void StartHost(GameNetHub hub, string ipaddress, int port )
+        {
+            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
+            var transport = hub.NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
+            transport.ConnectAddress = ipaddress;
+            transport.ServerListenPort = port;
+
+            hub.NetManager.StartHost();
         }
 
         /// <summary>
@@ -60,19 +82,18 @@ namespace BossRoomServer
                 }
             }
 
-            //TODO: save off the player's Guid.
+            //TODO_DMW: save off the player's Guid.
             Debug.Log("host ApprovalCheck: client payload was: " + payload);
             Debug.Log("host ApprovalCheck: client guid was: " + payload_config["client_guid"]);
 
-            //TODO: handle different cases based on gamestate (e.g. GameState.PLAYING would cause a reject if this isn't a reconnect case). 
-
-            //TODO: add corresponding NetworkHide, just so that we don't endlessly leak clientIds into our observer's list. The
-            //GameNetHub should be observable by everybody all the time. 
-            m_hub.GetComponent<MLAPI.NetworkedObject>().NetworkShow(clientId);
-
-            m_hub.S2C_ConnectResult(clientId, ConnectStatus.SUCCESS, BossRoomState.CHARSELECT );
+            //TODO_DMW: handle different cases based on gamestate (e.g. GameState.PLAYING would cause a reject if this isn't a reconnect case). 
 
             callback(false, 0, true, null, null);
+
+            //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
+            //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably 
+            //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection. 
+            m_hub.S2C_ConnectResult(clientId, ConnectStatus.SUCCESS, BossRoomState.CHARSELECT);
         }
 
     }

@@ -6,6 +6,9 @@ using BossRoom;
 
 namespace BossRoom
 {
+    /// <summary>
+    /// The BossRoomState that runs during Character Select. 
+    /// </summary>
     class CharSelectBRState : IBossRoomState
     {
         protected BossRoomStateManager m_manager;
@@ -23,7 +26,7 @@ namespace BossRoom
 
         public virtual void Update()
         {
-            //FIXME (temp): as we don't have a CharacterSelect scene yet, we just advance directly to the Game state. 
+            //FIXME_DMW (temp): as we don't have a CharacterSelect scene yet, we just advance directly to the Game state. 
             m_manager.ChangeState(BossRoomState.GAME, null);
         }
     }

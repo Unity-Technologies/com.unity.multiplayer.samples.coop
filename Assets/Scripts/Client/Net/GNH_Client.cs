@@ -48,20 +48,20 @@ namespace BossRoomClient
         /// <summary>
         /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload. 
         /// </summary>
-        /// <param name="ipaddress">the IP address of the host to connect to.</param>
+        /// <remarks>
+        /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetHub hasn't
+        /// yet initialized its GNH_Client and GNH_Server objects yet (which it does in NetworkStart, based on the role that the current player is performing). 
+        /// </remarks>
+        /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
         public static void StartClient(GameNetHub hub, string ipaddress, int port)
         {
             string client_guid = GetOrCreateGuid();
             string payload = $"client_guid={client_guid}\n"; //minimal format where key=value pairs are separated by newlines. 
 
-            Debug.Log("client send payload: " + payload); //dmw_debug: remove. 
-
             byte[] payload_bytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
-            //fixme: this code is not portable, and will break depending on the transport used. Unfortunately different transports call these
-            //fields different things, so we might need a big switch-case to handle more than one transport. Or we can update this once
-            //if we have decisively normalized on UTP transport. 
+            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
             var transport = hub.NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
             transport.ConnectAddress = ipaddress;
             transport.ConnectPort = port;

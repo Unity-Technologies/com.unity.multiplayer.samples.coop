@@ -4,17 +4,26 @@ using UnityEngine;
 
 namespace BossRoom
 {
+    /// <summary>
+    /// enum for the top-level game FSM.
+    /// </summary>
     public enum BossRoomState
     {
-        NONE,
-        MAINMENU,
-        CHARSELECT,
-        GAME
+        NONE,        // no state is actively running. Currently this only happens prior to BossRoomStateManager.Start having run.
+        MAINMENU,    // main menu logic is running. 
+        CHARSELECT,  // character select logic is running. 
+        GAME,        // core game logic is running. 
     }
 
     /// <summary>
-    /// The BossRoomStateManager manages the top-level logic for each gamestate
+    /// The BossRoomStateManager manages the top-level logic for each gamestate. 
     /// </summary>
+    /// <remarks>
+    /// This class is intended as the top-level FSM for the game. Because of that, it runs both before and after 
+    /// the time when the client has an active connection to the host. 
+    /// On the Host, server and client logic run concurrently (with server logic preceding client on every update tic). 
+    /// On the Client, only client logic runs. 
+    /// </remarks>
     public class BossRoomStateManager : MonoBehaviour
     {
         public GameNetHub NetHub { get; private set; }

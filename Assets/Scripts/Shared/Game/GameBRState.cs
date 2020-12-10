@@ -8,6 +8,9 @@ using BossRoom;
 namespace BossRoom
 {
 
+    /// <summary>
+    /// The BossRoomState that runs during primary gameplay.
+    /// </summary>
     class GameBRState : IBossRoomState
     {
         protected BossRoomStateManager m_manager;
@@ -22,13 +25,15 @@ namespace BossRoom
         {
             m_manager = manager;
 
-            Debug.Log("Entering GameBRState, advancing to SampleScene");
+            // FIXME_DMW: we probably need to rely on MLAPI's scene management on the client to change scenes, rather than doing it here. 
+            // I haven't yet been able to get SceneManagement to work though--on login, the client just stays at the MainMenu scene, even though
+            // the server is in the SampleScene. 
+            //
+            // problems with doing LoadScene here:
+            //   1.Runs twice on the host. This is harmless, but not ideal. 
+            //   2.This may happen AFTER the server has sent us all dynamic object spawns in ITS scene (because we can't send the event that
+            //     triggers this code until after we have returned ConnectionApproval==true to MLAPI). 
 
-            //this is an example of the slight weirdnesses of having "server" and "client" logic running in parallel on the host. 
-            //This will get invoked twice; once as part of the SGameBRState, once as part of the CGameBRState. It might be tempting
-            //to move it to the CGameBRState exclusively, but that's not right--it really should happen on a dedicated server too. 
-            //The only alternative I can think of is to add an "if(!IsHost)" check around this logic. There will always be some logic
-            //which it is not OK to do twice that will need this kind of special handling, although it's not clear to me yet how much. 
             UnityEngine.SceneManagement.SceneManager.LoadScene("SampleScene");
         }
 

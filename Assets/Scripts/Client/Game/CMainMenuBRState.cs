@@ -23,6 +23,8 @@ namespace BossRoomClient
         public void Initialize(BossRoomStateManager manager, Dictionary<string, object> stateParams)
         {
             m_manager = manager;
+
+            UnityEngine.Application.targetFrameRate = 60;
         }
 
         public void Update()
