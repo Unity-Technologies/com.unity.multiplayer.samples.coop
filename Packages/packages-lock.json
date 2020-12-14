@@ -38,11 +38,19 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.mlapi": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "c4a9ab0da78e366f6f7fdf2d337455cc1d94dbb0"
+      "hash": "8e7e3ca556843794618ab91c6b8334b291ff4e3d"
+    },
+    "com.unity.multiplayer.transport.litenet": {
+      "version": "file:com.unity.multiplayer.transport.litenet",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
+      }
     },
     "com.unity.multiplayer.transport.litenet": {
       "version": "file:com.unity.multiplayer.transport.litenet",
