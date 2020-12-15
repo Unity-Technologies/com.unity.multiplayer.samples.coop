@@ -125,9 +125,8 @@ GameObject:
   - component: {fileID: 4600110157238723777}
   - component: {fileID: 4600110157238723776}
   - component: {fileID: 4600110157238723779}
-  - component: {fileID: 4600110157238723778}
-  - component: {fileID: -3542424572169399493}
   - component: {fileID: 4470766618279719912}
+  - component: {fileID: -3542424572169399493}
   - component: {fileID: 6970334877957368017}
   m_Layer: 0
   m_Name: Player
@@ -209,22 +208,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 4
---- !u!114 &4600110157238723778
-MonoBehaviour:
+--- !u!54 &4470766618279719912
+Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4600110157238723781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edb78c1621dad5149bb47b96120d3fbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetworkPosition:
-    InternalValue: {x: 0, y: 0, z: 0}
-  NetworkRotationY:
-    InternalValue: 0
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!195 &-3542424572169399493
 NavMeshAgent:
   m_ObjectHideFlags: 0
@@ -247,22 +246,6 @@ NavMeshAgent:
   m_BaseOffset: 0
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 4
---- !u!54 &4470766618279719912
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600110157238723781}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!136 &6970334877957368017
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -272,7 +255,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 4600110157238723781}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   m_Radius: 0.5
   m_Height: 2
   m_Direction: 1
