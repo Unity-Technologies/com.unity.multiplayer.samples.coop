@@ -76,7 +76,7 @@ namespace BossRoom
                 case BossRoomState.MAINMENU:
                     {
                         DestroyStates();
-                        m_clientState = new BossRoomClient.CMainMenuBRState();
+                        m_clientState = new BossRoomClient.ClientMainMenuBRState();
                         m_clientState.Initialize(this, stateParams);
                         break;
                     }
@@ -87,12 +87,12 @@ namespace BossRoom
 
                         if( NetHub.NetManager.IsServer )
                         {
-                            m_serverState = new BossRoomServer.SCharSelectBRState();
+                            m_serverState = new BossRoomServer.ServerCharSelectBRState();
                             m_serverState.Initialize(this, stateParams);
                         }
                         if( NetHub.NetManager.IsClient )
                         {
-                            m_clientState = new BossRoomClient.CCharSelectBRState();
+                            m_clientState = new BossRoomClient.ClientCharSelectBRState();
                             m_clientState.Initialize(this, stateParams);
                         }
 
@@ -105,12 +105,12 @@ namespace BossRoom
 
                         if( NetHub.NetManager.IsServer )
                         {
-                            m_serverState = new BossRoomServer.SGameBRState();
+                            m_serverState = new BossRoomServer.ServerGameBRState();
                             m_serverState.Initialize(this, stateParams);
                         }
                         if( NetHub.NetManager.IsClient )
                         {
-                            m_clientState = new BossRoomClient.CGameBRState();
+                            m_clientState = new BossRoomClient.ClientGameBRState();
                             m_clientState.Initialize(this, stateParams);
                         }
 

@@ -9,11 +9,11 @@ namespace BossRoomClient
     /// <summary>
     /// Client logic for the GameNetHub. Contains implementations for all of GameNetHub's S2C RPCs. 
     /// </summary>
-    public class GNH_Client
+    public class ClientGNHLogic
     {
         private GameNetHub m_hub;
 
-        public GNH_Client(GameNetHub hub)
+        public ClientGNHLogic(GameNetHub hub)
         {
             m_hub = hub;
         }
@@ -50,7 +50,7 @@ namespace BossRoomClient
         /// </summary>
         /// <remarks>
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetHub hasn't
-        /// yet initialized its GNH_Client and GNH_Server objects yet (which it does in NetworkStart, based on the role that the current player is performing). 
+        /// yet initialized its client and server GNHLogic objects yet (which it does in NetworkStart, based on the role that the current player is performing). 
         /// </remarks>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
@@ -69,7 +69,7 @@ namespace BossRoomClient
             hub.NetManager.NetworkConfig.ConnectionData = payload_bytes;
 
             //and...we're off! MLAPI will establish a socket connection to the host. 
-            //  If the socket connection fails, we'll hear back by [???] (fixme: where do we get transport-layer failures?)
+            //  If the socket connection fails, we'll hear back by [???] (FIXME: GOMPS-79, need to handle transport layer failures too).
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported. 
             hub.NetManager.StartClient();
         }

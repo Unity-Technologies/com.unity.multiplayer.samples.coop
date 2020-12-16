@@ -5,8 +5,11 @@ using BossRoom;
 
 namespace BossRoomClient
 {
-    class CGameBRState : GameBRState
+    class ClientGameBRState : GameBRState
     {
+        // !! STUB CLASS !!
+        // this will be fleshed out with all client-side logic for the Game BossRoom state. 
+
         public override void Destroy()
         {
             base.Destroy();

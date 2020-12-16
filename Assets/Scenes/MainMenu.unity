@@ -1209,6 +1209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameHubGO: {fileID: 308991157}
+  InputTextGO: {fileID: 714400691}
 --- !u!1 &1359040525
 GameObject:
   m_ObjectHideFlags: 0
@@ -1330,7 +1331,6 @@ MonoBehaviour:
     ReceiveTickrate: 0
     MaxReceiveEventsPerTickRate: 1000
     EventTickrate: 0
-    MaxObjectUpdatesPerTick: -1
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
     ConnectionData: 

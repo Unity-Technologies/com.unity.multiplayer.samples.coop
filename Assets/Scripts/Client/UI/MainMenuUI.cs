@@ -10,6 +10,8 @@ namespace BossRoomViz
     public class MainMenuUI : MonoBehaviour
     {
         public GameObject GameHubGO;
+        public GameObject InputTextGO;
+
         private BossRoom.GameNetHub m_netHub;
 
         // Start is called before the first frame update
@@ -30,7 +32,7 @@ namespace BossRoomViz
         /// <returns>IP address entered by user, in string form. </returns>
         private string GetIPAddress()
         {
-            string iptext = GameObject.Find("IPInputText").GetComponent<UnityEngine.UI.Text>().text;
+            string iptext = InputTextGO.GetComponent<UnityEngine.UI.Text>().text;
             if( iptext == "" )
             {
                 return "127.0.0.1";

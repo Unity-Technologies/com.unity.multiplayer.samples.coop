@@ -9,17 +9,17 @@ namespace BossRoomServer
     /// <summary>
     /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs. 
     /// </summary>
-    public class GNH_Server
+    public class ServerGNHLogic
     {
-        private GameNetHub m_hub;
+        private GameNetHub m_Hub;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage. 
-        private const int MAX_CONNECT_PAYLOAD = 1024;
+        private const int k_MaxConnectPayload = 1024;
 
-        public GNH_Server(GameNetHub hub)
+        public ServerGNHLogic(GameNetHub hub)
         {
-            m_hub = hub;
-            m_hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
+            m_Hub = hub;
+            m_Hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace BossRoomServer
         /// <param name="callback">The delegate we must invoke to signal that the connection was approved or not. </param>
         private void ApprovalCheck( byte[] connectionData, ulong clientId, MLAPI.NetworkingManager.ConnectionApprovedDelegate callback )
         {
-            if( connectionData.Length > MAX_CONNECT_PAYLOAD )
+            if( connectionData.Length > k_MaxConnectPayload )
             {
                 callback(false, 0, false, null, null );
                 return;
@@ -66,7 +66,7 @@ namespace BossRoomServer
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
 
             string[] config_lines = payload.Split('\n');
-            Dictionary<string, string> payload_config = new Dictionary<string, string>();
+            var payload_config = new Dictionary<string, string>();
             foreach( var line in config_lines )
             {
                 //key-value pair. 
@@ -82,18 +82,19 @@ namespace BossRoomServer
                 }
             }
 
-            //TODO_DMW: save off the player's Guid.
+            //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect. 
             Debug.Log("host ApprovalCheck: client payload was: " + payload);
             Debug.Log("host ApprovalCheck: client guid was: " + payload_config["client_guid"]);
 
-            //TODO_DMW: handle different cases based on gamestate (e.g. GameState.PLAYING would cause a reject if this isn't a reconnect case). 
+            
+            //TODO: GOMPS-79 handle different error cases. 
 
             callback(false, 0, true, null, null);
 
             //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
             //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably 
             //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection. 
-            m_hub.S2C_ConnectResult(clientId, ConnectStatus.SUCCESS, BossRoomState.CHARSELECT);
+            m_Hub.S2C_ConnectResult(clientId, ConnectStatus.SUCCESS, BossRoomState.CHARSELECT);
         }
 
     }

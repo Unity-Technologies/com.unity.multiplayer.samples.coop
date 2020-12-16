@@ -10,7 +10,7 @@ namespace BossRoomClient
     /// The BossRoom state logic that runs during MainMenu. Unlike most states, there is only a client variant of this (you are always
     /// a client when sitting at the Main Menu screen). 
     /// </summary>
-    class CMainMenuBRState : IBossRoomState
+    class ClientMainMenuBRState : IBossRoomState
     {
         private BossRoomStateManager m_manager;
 

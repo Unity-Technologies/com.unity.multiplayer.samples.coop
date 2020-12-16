@@ -4,10 +4,12 @@ using System.Collections.Generic;
 using BossRoom;
 
 
-namespace BossRoomClient
+namespace BossRoomServer
 {
-    class CCharSelectBRState : CharSelectBRState
+    class ServerCharSelectBRState : CharSelectBRState
     {
+        // !! STUB CLASS !!
+        // this will be fleshed out with all server-side logic for the character select BossRoom state. 
 
         public override void Destroy()
         {
