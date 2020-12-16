@@ -1,33 +1,36 @@
-using System;
+using BossRoom.Shared;
 using MLAPI;
 using UnityEngine;
 
-[RequireComponent(typeof(NetworkCharacterState))]
-public class ClientCharacter: NetworkedBehaviour
+namespace BossRoom.Client
 {
-    private NetworkCharacterState networkCharacterState;
-
-    [SerializeField]
-    private Transform clientInterpolatedObject;
-
-    public override void NetworkStart()
+    [RequireComponent(typeof(NetworkCharacterState))]
+    public class ClientCharacter: NetworkedBehaviour
     {
-        if (!IsClient)
+        private NetworkCharacterState networkCharacterState;
+
+        [SerializeField]
+        private Transform clientInterpolatedObject;
+
+        public override void NetworkStart()
         {
-            enabled = false;
+            if (!IsClient)
+            {
+                enabled = false;
+            }
         }
-    }
 
-    void Awake()
-    {
-        networkCharacterState = GetComponent<NetworkCharacterState>();
-    }
+        void Awake()
+        {
+            networkCharacterState = GetComponent<NetworkCharacterState>();
+        }
 
-    void Update()
-    {
-        // TODO Needs core sdk support. This and rotation should grab the interpolated value of network position based on the last received snapshots.
-        clientInterpolatedObject.position = networkCharacterState.NetworkPosition.Value;
+        void Update()
+        {
+            // TODO Needs core sdk support. This and rotation should grab the interpolated value of network position based on the last received snapshots.
+            clientInterpolatedObject.position = networkCharacterState.NetworkPosition.Value;
 
-        clientInterpolatedObject.rotation = Quaternion.Euler(0, networkCharacterState.NetworkRotationY.Value, 0);
+            clientInterpolatedObject.rotation = Quaternion.Euler(0, networkCharacterState.NetworkRotationY.Value, 0);
+        }
     }
 }
