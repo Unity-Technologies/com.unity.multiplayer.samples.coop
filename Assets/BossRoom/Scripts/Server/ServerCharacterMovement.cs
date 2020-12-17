@@ -73,7 +73,7 @@ namespace BossRoom.Server
 
         private void Movement()
         {
-            var corners = path.corners; // TODO: maybe use non-alloc version
+            var corners = path.corners;
 
             // If we don't have a movement path stop moving
             if (!corners.Any())

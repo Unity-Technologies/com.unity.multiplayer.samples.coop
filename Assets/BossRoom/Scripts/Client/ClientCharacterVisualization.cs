@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BossRoom.Client
 {
     /// <summary>
-    /// 
+    /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacterVisualization : NetworkedBehaviour
