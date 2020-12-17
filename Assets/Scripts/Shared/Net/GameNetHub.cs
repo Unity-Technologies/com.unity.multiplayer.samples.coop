@@ -75,8 +75,7 @@ namespace BossRoom
                 using (PooledBitReader reader = PooledBitReader.Get(stream))
                 {
                     ConnectStatus status = (ConnectStatus)reader.ReadInt32();
-                    BossRoomState state = (BossRoomState)reader.ReadInt32();
-                    m_ClientLogic.RecvConnectFinished(status, state);
+                    m_ClientLogic.RecvConnectFinished(status );
                 }
             });
         }
@@ -107,7 +106,7 @@ namespace BossRoom
             {
                 //special host code. This is what kicks off the flow that happens on a regular client
                 //when it has finished connecting successfully. A dedicated server would remove this. 
-                m_ClientLogic.RecvConnectFinished(ConnectStatus.SUCCESS, BossRoomState.CHARSELECT);
+                m_ClientLogic.RecvConnectFinished(ConnectStatus.SUCCESS );
             }
         }
 
@@ -133,14 +132,13 @@ namespace BossRoom
 
         //Server->Client RPCs
 
-        public void S2C_ConnectResult( ulong netId, ConnectStatus status, BossRoomState targetState )
+        public void S2C_ConnectResult( ulong netId, ConnectStatus status )
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {
                 using (PooledBitWriter writer = PooledBitWriter.Get(stream))
                 {
                     writer.WriteInt32((int)status);
-                    writer.WriteInt32((int)targetState);
                     MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, stream, "MLAPI_INTERNAL");
                 }
             }
