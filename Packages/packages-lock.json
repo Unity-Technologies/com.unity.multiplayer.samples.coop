@@ -44,6 +44,13 @@
       "dependencies": {},
       "hash": "8e7e3ca556843794618ab91c6b8334b291ff4e3d"
     },
+    "com.unity.multiplayer.multipie": {
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.multipie.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "bb86715f2a0144fdced1386eb40edaa6839ff4cd"
+    },
     "com.unity.multiplayer.transport.litenet": {
       "version": "file:com.unity.multiplayer.transport.litenet",
       "depth": 0,
