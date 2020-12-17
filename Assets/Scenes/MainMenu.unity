@@ -1319,8 +1319,8 @@ MonoBehaviour:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1359040529}
     RegisteredScenes:
-    - SampleScene
     - MainMenu
+    - SampleScene
     AllowRuntimeSceneChanges: 1
     NetworkedPrefabs:
     - Prefab: {fileID: 922472105905938403, guid: e57f88b20c296674cb0c1517a43f99da, type: 3}
