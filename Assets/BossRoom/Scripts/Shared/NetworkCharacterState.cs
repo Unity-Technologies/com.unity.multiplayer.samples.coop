@@ -7,20 +7,27 @@ using UnityEngine;
 
 namespace BossRoom.Shared
 {
-    // RPCStateComponent from the GDD
+    /// <summary>
+    /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
+    /// </summary>
     public class NetworkCharacterState : NetworkedBehaviour
     {
         public NetworkedVarVector3 NetworkPosition;
         public NetworkedVarFloat NetworkRotationY;
 
-        // TODO Should we use Unity events or c# events?
+        /// <summary>
+        /// Gets invoked when inputs are received from the client which own this networked character.
+        /// </summary>
         public event Action<Vector3> OnReceivedClientInput;
 
+        /// <summary>
+        /// RPC to send inputs for this character from a client to a server.
+        /// </summary>
+        /// <param name="movementTarget">The position which this character should move towards.</param>
         [ServerRPC]
-        public void ServerRpcReceiveMovementInput(Vector3 position)
+        public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
-            // Assumption that RPC is snaphshotted and buffered already here
-            OnReceivedClientInput?.Invoke(position);
+            OnReceivedClientInput?.Invoke(movementTarget);
         }
     }
 }

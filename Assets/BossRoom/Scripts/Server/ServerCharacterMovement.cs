@@ -13,9 +13,12 @@ namespace BossRoom.Server
         PathFollowing = 1,
     }
 
+    /// <summary>
+    /// Component responsible for moving a character on the server side based on inputs.
+    /// </summary>
     [RequireComponent(typeof(NavMeshAgent))]
-    [RequireComponent(typeof(NetworkCharacterState))] // TODO decouple this from network character state?
-    public class ServerMovement : NetworkedBehaviour
+    [RequireComponent(typeof(NetworkCharacterState))]
+    public class ServerCharacterMovement : NetworkedBehaviour
     {
         private NavMeshAgent navMeshAgent;
         private NetworkCharacterState networkCharacterState;
@@ -43,9 +46,11 @@ namespace BossRoom.Server
 
         private void SetMovementTarget(Vector3 position)
         {
-            // Receive a target movement position and calculate the navmesh path for moving towards it.
-            navMeshAgent.CalculatePath(position, path);
             movementState = MovementState.PathFollowing;
+
+            // Recalculate navigation path only on target change.
+            navMeshAgent.CalculatePath(position, path);
+
         }
 
         private void Awake()
@@ -60,6 +65,10 @@ namespace BossRoom.Server
             {
                 Movement();
             }
+
+            // Send new position values to the client
+            networkCharacterState.NetworkPosition.Value = transform.position;
+            networkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
         }
 
         private void Movement()
@@ -94,7 +103,7 @@ namespace BossRoom.Server
 
             navMeshAgent.Move(movementVector);
             transform.rotation = Quaternion.LookRotation(movementVector);
-            //navMeshAgent.CalculatePath(corners[corners.Length - 1], path);
+            navMeshAgent.CalculatePath(corners[corners.Length - 1], path);
         }
     }
 }
