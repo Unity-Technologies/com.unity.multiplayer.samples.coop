@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BossRoom;
 
-namespace BossRoomServer
+namespace BossRoom.Server
 {
     /// <summary>
     /// Server specialization of core BossRoom game logic. 

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BossRoomViz
+namespace BossRoom.Viz
 {
     /// <summary>
     /// Provides backing logic for all of the UI that runs in the MainMenu stage. 

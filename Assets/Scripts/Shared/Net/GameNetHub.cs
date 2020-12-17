@@ -39,8 +39,8 @@ namespace BossRoom
     {
         public GameObject NetworkingManagerGO;
 
-        private BossRoomClient.ClientGNHLogic m_ClientLogic;
-        private BossRoomServer.ServerGNHLogic m_ServerLogic;
+        private BossRoom.Client.ClientGNHLogic m_ClientLogic;
+        private BossRoom.Server.ServerGNHLogic m_ServerLogic;
 
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
@@ -94,12 +94,12 @@ namespace BossRoom
         {
             if (NetManager.IsClient)
             {
-                m_ClientLogic = new BossRoomClient.ClientGNHLogic(this);
+                m_ClientLogic = new BossRoom.Client.ClientGNHLogic(this);
                 RegisterClientMessageHandlers();
             }
             if ( NetManager.IsServer )
             {
-                m_ServerLogic = new BossRoomServer.ServerGNHLogic(this);
+                m_ServerLogic = new BossRoom.Server.ServerGNHLogic(this);
                 RegisterServerMessageHandlers();
             }
             if( NetManager.IsHost )
@@ -117,7 +117,7 @@ namespace BossRoom
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
-            BossRoomClient.ClientGNHLogic.StartClient(this, ipaddress, port);
+            BossRoom.Client.ClientGNHLogic.StartClient(this, ipaddress, port);
         }
 
         /// <summary>
@@ -127,7 +127,7 @@ namespace BossRoom
         /// <param name="port">The port we should listen on. </param>
         public void StartHost(string ipaddress, int port )
         {
-            BossRoomServer.ServerGNHLogic.StartHost(this, ipaddress, port);
+            BossRoom.Server.ServerGNHLogic.StartHost(this, ipaddress, port);
         }
 
         //Server->Client RPCs

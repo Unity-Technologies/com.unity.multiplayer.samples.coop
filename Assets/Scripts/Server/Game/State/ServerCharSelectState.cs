@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using BossRoom;
 
-namespace BossRoomServer
+namespace BossRoom.Server
 {
+    /// <summary>
+    /// Server specialization of Character Select game state. 
+    /// </summary>
+    [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
         public override GameState ActiveState { get { return GameState.CHARSELECT; } }

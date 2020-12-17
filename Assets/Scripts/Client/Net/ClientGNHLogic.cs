@@ -4,7 +4,7 @@ using UnityEngine;
 
 using BossRoom;
 
-namespace BossRoomClient
+namespace BossRoom.Client
 {
     /// <summary>
     /// Client logic for the GameNetHub. Contains implementations for all of GameNetHub's S2C RPCs. 

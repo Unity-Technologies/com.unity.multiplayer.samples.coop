@@ -4,7 +4,7 @@ using UnityEngine;
 
 using BossRoom;
 
-namespace BossRoomServer
+namespace BossRoom.Server
 {
     /// <summary>
     /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs. 

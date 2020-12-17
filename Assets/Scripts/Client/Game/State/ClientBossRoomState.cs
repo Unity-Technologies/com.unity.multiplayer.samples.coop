@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using BossRoom;
 
-namespace BossRoomClient
+namespace BossRoom.Client
 {
 
     /// <summary>
