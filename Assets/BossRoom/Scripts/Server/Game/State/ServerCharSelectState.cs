@@ -31,7 +31,7 @@ namespace BossRoom.Server
             if( (Time.time - m_start_s) > 3 )
             {
                 //temp: we don't have any logic or anything in CharSelect, so for now we just skip on to the next scene.
-                MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("SampleScene");
+                MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("DungeonTest");
             }
 
 
