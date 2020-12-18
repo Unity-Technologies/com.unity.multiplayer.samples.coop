@@ -6,12 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
+    path: Assets/BossRoom/Scenes/MainMenu.unity
     guid: 4b62455423c0e284f96f7fd6ac947bf9
   - enabled: 1
-    path: Assets/Scenes/CharSelect.unity
+    path: Assets/BossRoom/Scenes/CharSelect.unity
     guid: 69ca9af1235ffe340a45770dd5771f03
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/BossRoom/Scenes/SampleScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
   m_configObjects: {}

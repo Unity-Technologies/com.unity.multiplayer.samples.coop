@@ -9,21 +9,29 @@ namespace BossRoom.Client
     /// <summary>
     /// Client logic for the GameNetHub. Contains implementations for all of GameNetHub's S2C RPCs. 
     /// </summary>
-    public class ClientGNHLogic
+    [RequireComponent(typeof(GameNetHub))]
+    public class ClientGNHLogic : MonoBehaviour
     {
-        private GameNetHub m_hub;
+        private GameNetHub m_Hub;
 
-        public ClientGNHLogic(GameNetHub hub)
+        public void Start()
         {
-            m_hub = hub;
+            m_Hub = GetComponent<GameNetHub>();
+            m_Hub.NetworkStartEvent += this.NetworkStart;
+            m_Hub.ConnectFinishedEvent += this.OnConnectFinished;
         }
 
-        public void RecvConnectFinished( ConnectStatus status )
+        public void NetworkStart()
+        {
+            if( !m_Hub.NetManager.IsClient ) { this.enabled = false; }
+        }
+
+
+        public void OnConnectFinished( ConnectStatus status )
         {
             //on success, there is nothing to do (the MLAPI scene management system will take us to the next scene). 
             //on failure, we must raise an event so that the UI layer can display something. 
             Debug.Log("RecvConnectFinished Got status: " + status);
-            //m_hub.GetComponent<BossRoomStateManager>().ChangeState(targetState, null);
         }
 
 

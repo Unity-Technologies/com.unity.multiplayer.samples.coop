@@ -14,6 +14,11 @@ namespace BossRoom.Viz
 
         private BossRoom.GameNetHub m_netHub;
 
+        /// <summary>
+        /// This will get more sophisticated as we move to a true relay model.
+        /// </summary>
+        private const int k_connectPort = 9998;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -45,12 +50,12 @@ namespace BossRoom.Viz
         {
             GetIPAddress();
 
-            m_netHub.StartHost(GetIPAddress(), 9998);
+            m_netHub.StartHost(GetIPAddress(), k_connectPort);
         }
 
         public void OnConnectClicked()
         {
-            m_netHub.StartClient(GetIPAddress(), 9998);
+            BossRoom.Client.ClientGNHLogic.StartClient(m_netHub, GetIPAddress(), k_connectPort);
         }
     }
 }

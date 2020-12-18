@@ -9,7 +9,7 @@ namespace BossRoom.Server
     /// <summary>
     /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs. 
     /// </summary>
-    public class ServerGNHLogic
+    public class ServerGNHLogic : MonoBehaviour
     {
         private GameNetHub m_Hub;
 
@@ -20,30 +20,30 @@ namespace BossRoom.Server
         {
             m_Hub = hub;
             m_Hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
-
-            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
-            //may do this differently. 
-            MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("CharSelect");
         }
 
-        /// <summary>
-        /// Initializes host mode on this client. Call this and then other clients should connect to us!
-        /// </summary>
-        /// <remarks>
-        /// See notes in GNH_Client.StartClient about why this must be static. 
-        /// </remarks>
-        /// <param name="hub">The GameNetHub that is invoking us. </param>
-        /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
-        /// <param name="port">The port to connect to. </param>
-        public static void StartHost(GameNetHub hub, string ipaddress, int port )
+        public void Start()
         {
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
-            var transport = hub.NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
-            transport.ConnectAddress = ipaddress;
-            transport.ServerListenPort = port;
-
-            hub.NetManager.StartHost();
+            m_Hub = GetComponent<GameNetHub>();
+            m_Hub.NetworkStartEvent += this.NetworkStart;
         }
+
+        public void NetworkStart()
+        {
+            if (!m_Hub.NetManager.IsServer)
+            { 
+                this.enabled = false;
+            }
+            else
+            {
+                m_Hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
+
+                //The "BossRoom" server always advances to CharSelect immediately on start. Different games
+                //may do this differently. 
+                MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("CharSelect");
+            }
+        }
+
 
         /// <summary>
         /// This logic plugs into the "ConnectionApprovalCallback" exposed by MLAPI.NetworkingManager, and is run every time a client connects to us. 

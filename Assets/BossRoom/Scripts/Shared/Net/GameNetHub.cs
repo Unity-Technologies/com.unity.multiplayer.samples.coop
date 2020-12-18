@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -39,15 +40,24 @@ namespace BossRoom
     {
         public GameObject NetworkingManagerGO;
 
-        private BossRoom.Client.ClientGNHLogic m_ClientLogic;
-        private BossRoom.Server.ServerGNHLogic m_ServerLogic;
+        /// <summary>
+        /// This synthesizes a general NetworkStart event out of other events provided by MLAPI. This can be removed
+        /// when the NetworkingManager starts publishing this event directly. 
+        /// </summary>
+        public event Action NetworkStartEvent;
+
+        /// <summary>
+        /// This event contains the game-level results of the ApprovalCheck carried out by the server, and is fired
+        /// immediately after the socket connection completing. It won't fire in the event of a socket level failure. 
+        /// </summary>
+        public event Action<ConnectStatus> ConnectFinishedEvent;
 
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
         // Start is called before the first frame update
         void Start()
         {
-            Object.DontDestroyOnLoad(this.gameObject);
+            UnityEngine.Object.DontDestroyOnLoad(this.gameObject);
 
             NetManager = NetworkingManagerGO.GetComponent<MLAPI.NetworkingManager>();
 
@@ -75,7 +85,8 @@ namespace BossRoom
                 using (PooledBitReader reader = PooledBitReader.Get(stream))
                 {
                     ConnectStatus status = (ConnectStatus)reader.ReadInt32();
-                    m_ClientLogic.RecvConnectFinished(status );
+
+                    ConnectFinishedEvent?.Invoke(status);
                 }
             });
         }
@@ -94,41 +105,42 @@ namespace BossRoom
         {
             if (NetManager.IsClient)
             {
-                m_ClientLogic = new BossRoom.Client.ClientGNHLogic(this);
                 RegisterClientMessageHandlers();
             }
-            if ( NetManager.IsServer )
+            if (NetManager.IsServer)
             {
-                m_ServerLogic = new BossRoom.Server.ServerGNHLogic(this);
                 RegisterServerMessageHandlers();
             }
-            if( NetManager.IsHost )
+            if (NetManager.IsHost)
             {
                 //special host code. This is what kicks off the flow that happens on a regular client
                 //when it has finished connecting successfully. A dedicated server would remove this. 
-                m_ClientLogic.RecvConnectFinished(ConnectStatus.SUCCESS );
+                ConnectFinishedEvent?.Invoke(ConnectStatus.SUCCESS);
             }
+
+            NetworkStartEvent?.Invoke();
         }
 
         /// <summary>
-        /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload. 
+        /// Initializes host mode on this client. Call this and then other clients should connect to us!
         /// </summary>
-        /// <param name="ipaddress">the IP address of the host to connect to. (IPV4 only)</param>
-        /// <param name="port">The port of the host to connect to. </param>
-        public void StartClient(string ipaddress, int port)
+        /// <remarks>
+        /// See notes in GNH_Client.StartClient about why this must be static. 
+        /// </remarks>
+        /// <param name="hub">The GameNetHub that is invoking us. </param>
+        /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
+        /// <param name="port">The port to connect to. </param>
+        public void StartHost( string ipaddress, int port)
         {
-            BossRoom.Client.ClientGNHLogic.StartClient(this, ipaddress, port);
+            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
+            var transport = NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
+            transport.ConnectAddress = ipaddress;
+            transport.ServerListenPort = port;
+
+            NetManager.StartHost();
         }
 
-        /// <summary>
-        /// Wraps the invocation of NetworkingManager.StartHost. 
-        /// </summary>
-        /// <param name="ipaddress">The IP address of the network interface we should listen to connections on. (IPV4 only)</param>
-        /// <param name="port">The port we should listen on. </param>
-        public void StartHost(string ipaddress, int port )
-        {
-            BossRoom.Server.ServerGNHLogic.StartHost(this, ipaddress, port);
-        }
+
 
         //Server->Client RPCs
 

@@ -474,6 +474,8 @@ GameObject:
   m_Component:
   - component: {fileID: 308991160}
   - component: {fileID: 308991158}
+  - component: {fileID: 308991161}
+  - component: {fileID: 308991159}
   m_Layer: 0
   m_Name: GameHub
   m_TagString: Untagged
@@ -494,6 +496,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   NetworkingManagerGO: {fileID: 1359040525}
+--- !u!114 &308991159
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308991157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54b0859a1da930541adf0b2d1bb8d977, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!4 &308991160
 Transform:
   m_ObjectHideFlags: 0
@@ -508,6 +522,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &308991161
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 308991157}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5bd31edc1b1fd1342b3bf8193a5a03b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &342895129
 GameObject:
   m_ObjectHideFlags: 0
@@ -1311,7 +1337,7 @@ MonoBehaviour:
     - SampleScene
     AllowRuntimeSceneChanges: 1
     NetworkedPrefabs:
-    - Prefab: {fileID: 922472105905938403, guid: e57f88b20c296674cb0c1517a43f99da, type: 3}
+    - Prefab: {fileID: 4600110157238723781, guid: bb87f9bac2595f8499c048016c4b2e1d, type: 3}
       PlayerPrefab: 1
     - Prefab: {fileID: 3565665953789623672, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
       PlayerPrefab: 0
@@ -1349,7 +1375,7 @@ MonoBehaviour:
     00000000:
       type: {class: NullableBoolSerializable, ns: MLAPI.Configuration, asm: Unity.Multiplayer.MLAPI.Runtime}
       data:
-        Value: 6075374942793011955
+        Value: 1897319656204293034
 --- !u!4 &1359040531
 Transform:
   m_ObjectHideFlags: 0
