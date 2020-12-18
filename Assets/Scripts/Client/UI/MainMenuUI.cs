@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BossRoomViz
+namespace BossRoom.Viz
 {
     /// <summary>
     /// Provides backing logic for all of the UI that runs in the MainMenu stage. 
@@ -43,8 +43,6 @@ namespace BossRoomViz
 
         public void OnHostClicked()
         {
-            Debug.Log("Host Clicked");
-
             GetIPAddress();
 
             m_netHub.StartHost(GetIPAddress(), 9998);
@@ -52,7 +50,6 @@ namespace BossRoomViz
 
         public void OnConnectClicked()
         {
-            Debug.Log("Connect Clicked");
             m_netHub.StartClient(GetIPAddress(), 9998);
         }
     }

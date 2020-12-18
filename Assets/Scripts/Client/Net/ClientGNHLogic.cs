@@ -4,7 +4,7 @@ using UnityEngine;
 
 using BossRoom;
 
-namespace BossRoomClient
+namespace BossRoom.Client
 {
     /// <summary>
     /// Client logic for the GameNetHub. Contains implementations for all of GameNetHub's S2C RPCs. 
@@ -18,12 +18,12 @@ namespace BossRoomClient
             m_hub = hub;
         }
 
-        public void RecvConnectFinished( ConnectStatus status, BossRoomState targetState )
+        public void RecvConnectFinished( ConnectStatus status )
         {
             //on success, there is nothing to do (the MLAPI scene management system will take us to the next scene). 
             //on failure, we must raise an event so that the UI layer can display something. 
             Debug.Log("RecvConnectFinished Got status: " + status);
-            m_hub.GetComponent<BossRoomStateManager>().ChangeState(targetState, null);
+            //m_hub.GetComponent<BossRoomStateManager>().ChangeState(targetState, null);
         }
 
 

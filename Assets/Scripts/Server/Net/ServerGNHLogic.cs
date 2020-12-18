@@ -4,7 +4,7 @@ using UnityEngine;
 
 using BossRoom;
 
-namespace BossRoomServer
+namespace BossRoom.Server
 {
     /// <summary>
     /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs. 
@@ -20,6 +20,10 @@ namespace BossRoomServer
         {
             m_Hub = hub;
             m_Hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
+
+            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
+            //may do this differently. 
+            MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("CharSelect");
         }
 
         /// <summary>
@@ -83,7 +87,6 @@ namespace BossRoomServer
             }
 
             //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect. 
-            Debug.Log("host ApprovalCheck: client payload was: " + payload);
             Debug.Log("host ApprovalCheck: client guid was: " + payload_config["client_guid"]);
 
             
@@ -94,7 +97,7 @@ namespace BossRoomServer
             //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
             //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably 
             //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection. 
-            m_Hub.S2C_ConnectResult(clientId, ConnectStatus.SUCCESS, BossRoomState.CHARSELECT);
+            m_Hub.S2C_ConnectResult(clientId, ConnectStatus.SUCCESS );
         }
 
     }

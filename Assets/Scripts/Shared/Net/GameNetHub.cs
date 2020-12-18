@@ -39,8 +39,8 @@ namespace BossRoom
     {
         public GameObject NetworkingManagerGO;
 
-        private BossRoomClient.ClientGNHLogic m_ClientLogic;
-        private BossRoomServer.ServerGNHLogic m_ServerLogic;
+        private BossRoom.Client.ClientGNHLogic m_ClientLogic;
+        private BossRoom.Server.ServerGNHLogic m_ServerLogic;
 
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
@@ -75,8 +75,7 @@ namespace BossRoom
                 using (PooledBitReader reader = PooledBitReader.Get(stream))
                 {
                     ConnectStatus status = (ConnectStatus)reader.ReadInt32();
-                    BossRoomState state = (BossRoomState)reader.ReadInt32();
-                    m_ClientLogic.RecvConnectFinished(status, state);
+                    m_ClientLogic.RecvConnectFinished(status );
                 }
             });
         }
@@ -95,19 +94,19 @@ namespace BossRoom
         {
             if (NetManager.IsClient)
             {
-                m_ClientLogic = new BossRoomClient.ClientGNHLogic(this);
+                m_ClientLogic = new BossRoom.Client.ClientGNHLogic(this);
                 RegisterClientMessageHandlers();
             }
             if ( NetManager.IsServer )
             {
-                m_ServerLogic = new BossRoomServer.ServerGNHLogic(this);
+                m_ServerLogic = new BossRoom.Server.ServerGNHLogic(this);
                 RegisterServerMessageHandlers();
             }
             if( NetManager.IsHost )
             {
                 //special host code. This is what kicks off the flow that happens on a regular client
                 //when it has finished connecting successfully. A dedicated server would remove this. 
-                m_ClientLogic.RecvConnectFinished(ConnectStatus.SUCCESS, BossRoomState.CHARSELECT);
+                m_ClientLogic.RecvConnectFinished(ConnectStatus.SUCCESS );
             }
         }
 
@@ -118,7 +117,7 @@ namespace BossRoom
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
-            BossRoomClient.ClientGNHLogic.StartClient(this, ipaddress, port);
+            BossRoom.Client.ClientGNHLogic.StartClient(this, ipaddress, port);
         }
 
         /// <summary>
@@ -128,19 +127,18 @@ namespace BossRoom
         /// <param name="port">The port we should listen on. </param>
         public void StartHost(string ipaddress, int port )
         {
-            BossRoomServer.ServerGNHLogic.StartHost(this, ipaddress, port);
+            BossRoom.Server.ServerGNHLogic.StartHost(this, ipaddress, port);
         }
 
         //Server->Client RPCs
 
-        public void S2C_ConnectResult( ulong netId, ConnectStatus status, BossRoomState targetState )
+        public void S2C_ConnectResult( ulong netId, ConnectStatus status )
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {
                 using (PooledBitWriter writer = PooledBitWriter.Get(stream))
                 {
                     writer.WriteInt32((int)status);
-                    writer.WriteInt32((int)targetState);
                     MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, stream, "MLAPI_INTERNAL");
                 }
             }
