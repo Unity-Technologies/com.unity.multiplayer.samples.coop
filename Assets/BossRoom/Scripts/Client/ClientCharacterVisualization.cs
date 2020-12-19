@@ -10,14 +10,15 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacterVisualization : NetworkedBehaviour
     {
-        private NetworkCharacterState networkCharacterState;
+        private NetworkCharacterState m_NetworkCharacterState;
 
         /// <summary>
         /// The GameObject which visually represents the character is a child object of the character GameObject. This needs to be the case to support host mode.
         /// In host mode <see cref="MonoBehaviour.transform"/> is the transform which is relevant for gameplay.
         /// <see cref="m_ClientVisuals"/> is the visual representation on the client side which has interpolated position values.
         /// </summary>
-        [SerializeField] private Transform m_ClientVisuals;
+        [SerializeField]
+        private Transform m_ClientVisuals;
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -30,15 +31,15 @@ namespace BossRoom.Client
 
         void Awake()
         {
-            networkCharacterState = GetComponent<NetworkCharacterState>();
+            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
         }
 
         void Update()
         {
-            // TODO Needs core sdk support. This and rotation should grab the interpolated value of network position based on the last received snapshots.
-            m_ClientVisuals.position = networkCharacterState.NetworkPosition.Value;
+            // TODO [GOMPS-75] Needs core sdk support. This and rotation should grab the interpolated value of network position based on the last received snapshots.
+            m_ClientVisuals.position = m_NetworkCharacterState.NetworkPosition.Value;
 
-            m_ClientVisuals.rotation = Quaternion.Euler(0, networkCharacterState.NetworkRotationY.Value, 0);
+            m_ClientVisuals.rotation = Quaternion.Euler(0, m_NetworkCharacterState.NetworkRotationY.Value, 0);
         }
     }
 }
