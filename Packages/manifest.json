@@ -4,7 +4,7 @@
     "com.unity.ide.rider": "2.0.7",
     "com.unity.ide.visualstudio": "2.0.5",
     "com.unity.ide.vscode": "1.2.3",
-    "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#develop",
+    "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git#da652e4a116579e514635d536921796877c61a74",
     "com.unity.multiplayer.multipie": "https://github.com/Unity-Technologies/com.unity.multiplayer.multipie.git",
     "com.unity.test-framework": "1.1.19",
     "com.unity.textmeshpro": "3.0.1",

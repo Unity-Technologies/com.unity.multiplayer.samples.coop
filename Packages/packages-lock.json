@@ -38,7 +38,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.mlapi": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#develop",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git#da652e4a116579e514635d536921796877c61a74",
       "depth": 0,
       "source": "git",
       "dependencies": {},
