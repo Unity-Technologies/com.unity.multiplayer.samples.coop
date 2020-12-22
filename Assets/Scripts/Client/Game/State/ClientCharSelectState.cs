@@ -11,6 +11,8 @@ namespace BossRoom.Client
     [RequireComponent(typeof(CharSelectData))]
     public class ClientCharSelectState : GameStateBehaviour
     {
+        //!!STUB This class will be populated with logic for the client-side character select class. 
+
         public override GameState ActiveState { get { return GameState.CHARSELECT; } }
 
 
@@ -20,10 +22,5 @@ namespace BossRoom.Client
             if (!IsClient) { this.enabled = false; }
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 }

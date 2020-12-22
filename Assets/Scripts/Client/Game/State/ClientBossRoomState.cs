@@ -11,6 +11,8 @@ namespace BossRoom.Client
     /// </summary>
     public class ClientBossRoomState : GameStateBehaviour
     {
+        //!!STUB!! this class will be populated with client-side logic for the main boss-room gameplay experience.
+
         public override GameState ActiveState {  get { return GameState.BOSSROOM; } }
 
 
@@ -18,12 +20,6 @@ namespace BossRoom.Client
         {
             base.NetworkStart();
             if( !IsClient ) { this.enabled = false; }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
         }
     }
 
