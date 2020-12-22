@@ -12,12 +12,12 @@ namespace BossRoom.Viz
         public GameObject GameHubGO;
         public GameObject InputTextGO;
 
-        private BossRoom.GameNetHub m_netHub;
+        private BossRoom.GameNetPortal m_netHub;
 
         // Start is called before the first frame update
         void Start()
         {
-            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetHub>();
+            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetPortal>();
         }
 
         /// <summary>

@@ -11,12 +11,12 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerGNHLogic
     {
-        private GameNetHub m_Hub;
+        private GameNetPortal m_Hub;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage. 
         private const int k_MaxConnectPayload = 1024;
 
-        public ServerGNHLogic(GameNetHub hub)
+        public ServerGNHLogic(GameNetPortal hub)
         {
             m_Hub = hub;
             m_Hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
@@ -35,7 +35,7 @@ namespace BossRoom.Server
         /// <param name="hub">The GameNetHub that is invoking us. </param>
         /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
         /// <param name="port">The port to connect to. </param>
-        public static void StartHost(GameNetHub hub, string ipaddress, int port )
+        public static void StartHost(GameNetPortal hub, string ipaddress, int port )
         {
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
             var transport = hub.NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();

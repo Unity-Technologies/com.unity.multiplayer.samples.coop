@@ -11,9 +11,9 @@ namespace BossRoom.Client
     /// </summary>
     public class ClientGNHLogic
     {
-        private GameNetHub m_hub;
+        private GameNetPortal m_hub;
 
-        public ClientGNHLogic(GameNetHub hub)
+        public ClientGNHLogic(GameNetPortal hub)
         {
             m_hub = hub;
         }
@@ -54,7 +54,7 @@ namespace BossRoom.Client
         /// </remarks>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
-        public static void StartClient(GameNetHub hub, string ipaddress, int port)
+        public static void StartClient(GameNetPortal hub, string ipaddress, int port)
         {
             string client_guid = GetOrCreateGuid();
             string payload = $"client_guid={client_guid}\n"; //minimal format where key=value pairs are separated by newlines. 

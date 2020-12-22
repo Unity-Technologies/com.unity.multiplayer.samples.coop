@@ -35,7 +35,7 @@ namespace BossRoom
     /// in player prefs, so it persists across sessions of the game. 
     /// </remarks>
     /// 
-    public class GameNetHub : MonoBehaviour
+    public class GameNetPortal : MonoBehaviour
     {
         public GameObject NetworkingManagerGO;
 
