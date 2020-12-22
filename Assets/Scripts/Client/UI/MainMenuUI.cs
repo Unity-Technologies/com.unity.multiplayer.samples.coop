@@ -9,8 +9,11 @@ namespace BossRoom.Viz
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
-        public GameObject GameHubGO;
-        public GameObject InputTextGO;
+        [SerializeField]
+        private GameObject GameHubGO;
+
+        [SerializeField]
+        private GameObject InputTextGO;
 
         private BossRoom.GameNetPortal m_netHub;
 
