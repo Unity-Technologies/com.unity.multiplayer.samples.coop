@@ -37,7 +37,10 @@ namespace BossRoom
     /// 
     public class GameNetPortal : MonoBehaviour
     {
-        public GameObject NetworkingManagerGO;
+        [SerializeField]
+        private GameObject m_NetworkingManagerGO;
+        
+        public GameObject NetworkingManagerGO { get { return m_NetworkingManagerGO; } }
 
         private BossRoom.Client.ClientGNHLogic m_ClientLogic;
         private BossRoom.Server.ServerGNHLogic m_ServerLogic;
