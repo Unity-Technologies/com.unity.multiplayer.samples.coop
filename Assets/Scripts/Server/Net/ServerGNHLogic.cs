@@ -37,7 +37,7 @@ namespace BossRoom.Server
         /// <param name="port">The port to connect to. </param>
         public static void StartHost(GameNetPortal hub, string ipaddress, int port )
         {
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
+            //FIXME: [GOMPS-34] move to UTP transport. 
             var transport = hub.NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
             transport.ConnectAddress = ipaddress;
             transport.ServerListenPort = port;

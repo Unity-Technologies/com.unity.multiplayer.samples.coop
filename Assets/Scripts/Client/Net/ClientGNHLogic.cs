@@ -61,7 +61,7 @@ namespace BossRoom.Client
 
             byte[] payload_bytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
+            //FIXME: [GOMPS-34] move to UTP transport. 
             var transport = hub.NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
             transport.ConnectAddress = ipaddress;
             transport.ConnectPort = port;
