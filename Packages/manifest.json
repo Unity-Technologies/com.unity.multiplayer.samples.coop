@@ -7,7 +7,6 @@
     "com.unity.ide.vscode": "1.2.3",
     "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#develop",
     "com.unity.postprocessing": "2.3.0",
-    "com.unity.multiplayer.multipie": "https://github.com/Unity-Technologies/com.unity.multiplayer.multipie.git",
     "com.unity.test-framework": "1.1.19",
     "com.unity.textmeshpro": "3.0.1",
     "com.unity.timeline": "1.4.3",
