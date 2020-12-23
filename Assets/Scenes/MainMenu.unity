@@ -473,7 +473,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 308991160}
-  - component: {fileID: 308991159}
   - component: {fileID: 308991158}
   m_Layer: 0
   m_Name: GameHub
@@ -494,19 +493,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ba4a1d598313d94a81a08ceae147b57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkingManagerGO: {fileID: 1359040525}
---- !u!114 &308991159
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 308991157}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 39332c63269f3f34db37df122adcc57b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_NetworkingManagerGO: {fileID: 1359040525}
 --- !u!4 &308991160
 Transform:
   m_ObjectHideFlags: 0
@@ -1209,6 +1196,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   GameHubGO: {fileID: 308991157}
+  InputTextGO: {fileID: 714400691}
 --- !u!1 &1359040525
 GameObject:
   m_ObjectHideFlags: 0
@@ -1318,19 +1306,23 @@ MonoBehaviour:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 1359040529}
     RegisteredScenes:
-    - SampleScene
     - MainMenu
+    - CharSelect
+    - SampleScene
     AllowRuntimeSceneChanges: 1
     NetworkedPrefabs:
     - Prefab: {fileID: 922472105905938403, guid: e57f88b20c296674cb0c1517a43f99da, type: 3}
       PlayerPrefab: 1
+    - Prefab: {fileID: 3565665953789623672, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 297185343939699586, guid: 8b9c63e7d70c5ff48a03aad51e17103c, type: 3}
+      PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0
     CreatePlayerPrefab: 0
     ReceiveTickrate: 0
     MaxReceiveEventsPerTickRate: 1000
     EventTickrate: 0
-    MaxObjectUpdatesPerTick: -1
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
     ConnectionData: 
@@ -1371,6 +1363,49 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1767010205
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1767010207}
+  - component: {fileID: 1767010206}
+  m_Layer: 0
+  m_Name: MainMenuState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1767010206
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1767010205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab10fd7c6aa7d36438f5ac1c0ebfadbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1767010207
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1767010205}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1985907275
 GameObject:

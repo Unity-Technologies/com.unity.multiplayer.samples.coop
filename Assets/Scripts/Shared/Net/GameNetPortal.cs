@@ -15,7 +15,7 @@ namespace BossRoom
     }
 
     /// <summary>
-    /// The GameNetHub is a general-purpose relay for game network messages between the client and server. It is available
+    /// The GameNetHub is the general purpose entry-point for game network messages between the client and server. It is available
     /// as soon as the initial network connection has completed, and persists across all scenes. Its purpose is to move non-GameObject-specific
     /// methods between server and client. Generally these have to do with connection, and match end conditions. 
     /// </summary>
@@ -35,12 +35,15 @@ namespace BossRoom
     /// in player prefs, so it persists across sessions of the game. 
     /// </remarks>
     /// 
-    public class GameNetHub : MonoBehaviour
+    public class GameNetPortal : MonoBehaviour
     {
-        public GameObject NetworkingManagerGO;
+        [SerializeField]
+        private GameObject m_NetworkingManagerGO;
+        
+        public GameObject NetworkingManagerGO { get { return m_NetworkingManagerGO; } }
 
-        private BossRoomClient.GNH_Client m_clientLogic;
-        private BossRoomServer.GNH_Server m_serverLogic;
+        private BossRoom.Client.ClientGNHLogic m_ClientLogic;
+        private BossRoom.Server.ServerGNHLogic m_ServerLogic;
 
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
@@ -75,8 +78,7 @@ namespace BossRoom
                 using (PooledBitReader reader = PooledBitReader.Get(stream))
                 {
                     ConnectStatus status = (ConnectStatus)reader.ReadInt32();
-                    BossRoomState state = (BossRoomState)reader.ReadInt32();
-                    m_clientLogic.RecvConnectFinished(status, state);
+                    m_ClientLogic.RecvConnectFinished(status );
                 }
             });
         }
@@ -95,19 +97,19 @@ namespace BossRoom
         {
             if (NetManager.IsClient)
             {
-                m_clientLogic = new BossRoomClient.GNH_Client(this);
+                m_ClientLogic = new BossRoom.Client.ClientGNHLogic(this);
                 RegisterClientMessageHandlers();
             }
             if ( NetManager.IsServer )
             {
-                m_serverLogic = new BossRoomServer.GNH_Server(this);
+                m_ServerLogic = new BossRoom.Server.ServerGNHLogic(this);
                 RegisterServerMessageHandlers();
             }
             if( NetManager.IsHost )
             {
                 //special host code. This is what kicks off the flow that happens on a regular client
                 //when it has finished connecting successfully. A dedicated server would remove this. 
-                m_clientLogic.RecvConnectFinished(ConnectStatus.SUCCESS, BossRoomState.CHARSELECT);
+                m_ClientLogic.RecvConnectFinished(ConnectStatus.SUCCESS );
             }
         }
 
@@ -118,7 +120,7 @@ namespace BossRoom
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
-            BossRoomClient.GNH_Client.StartClient(this, ipaddress, port);
+            BossRoom.Client.ClientGNHLogic.StartClient(this, ipaddress, port);
         }
 
         /// <summary>
@@ -128,19 +130,18 @@ namespace BossRoom
         /// <param name="port">The port we should listen on. </param>
         public void StartHost(string ipaddress, int port )
         {
-            BossRoomServer.GNH_Server.StartHost(this, ipaddress, port);
+            BossRoom.Server.ServerGNHLogic.StartHost(this, ipaddress, port);
         }
 
         //Server->Client RPCs
 
-        public void S2C_ConnectResult( ulong netId, ConnectStatus status, BossRoomState targetState )
+        public void S2C_ConnectResult( ulong netId, ConnectStatus status )
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {
                 using (PooledBitWriter writer = PooledBitWriter.Get(stream))
                 {
                     writer.WriteInt32((int)status);
-                    writer.WriteInt32((int)targetState);
                     MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, stream, "MLAPI_INTERNAL");
                 }
             }

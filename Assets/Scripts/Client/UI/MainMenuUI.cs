@@ -2,26 +2,25 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BossRoomViz
+namespace BossRoom.Viz
 {
     /// <summary>
     /// Provides backing logic for all of the UI that runs in the MainMenu stage. 
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
-        public GameObject GameHubGO;
-        private BossRoom.GameNetHub m_netHub;
+        [SerializeField]
+        private GameObject GameHubGO;
+
+        [SerializeField]
+        private GameObject InputTextGO;
+
+        private BossRoom.GameNetPortal m_netHub;
 
         // Start is called before the first frame update
         void Start()
         {
-            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetHub>();
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetPortal>();
         }
 
         /// <summary>
@@ -30,7 +29,7 @@ namespace BossRoomViz
         /// <returns>IP address entered by user, in string form. </returns>
         private string GetIPAddress()
         {
-            string iptext = GameObject.Find("IPInputText").GetComponent<UnityEngine.UI.Text>().text;
+            string iptext = InputTextGO.GetComponent<UnityEngine.UI.Text>().text;
             if( iptext == "" )
             {
                 return "127.0.0.1";
@@ -41,8 +40,6 @@ namespace BossRoomViz
 
         public void OnHostClicked()
         {
-            Debug.Log("Host Clicked");
-
             GetIPAddress();
 
             m_netHub.StartHost(GetIPAddress(), 9998);
@@ -50,7 +47,6 @@ namespace BossRoomViz
 
         public void OnConnectClicked()
         {
-            Debug.Log("Connect Clicked");
             m_netHub.StartClient(GetIPAddress(), 9998);
         }
     }
