@@ -34,7 +34,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
-      "version": "1.0.0",
+      "version": "1.0.5",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -50,14 +50,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.2",
+      "version": "2.0.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.vscode": {
-      "version": "1.2.1",
+      "version": "1.2.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
@@ -78,6 +78,13 @@
         "com.unity.collections": "0.14.0-preview.16"
       },
       "hash": "726b77f90f2bb2879303cf72a22048ac0abf4084"
+    },
+    "com.unity.multiplayer.multipie": {
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.multipie.git",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "bb86715f2a0144fdced1386eb40edaa6839ff4cd"
     },
     "com.unity.multiplayer.transport.litenet": {
       "version": "file:com.unity.multiplayer.transport.litenet",
@@ -110,11 +117,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.16",
+      "version": "1.1.19",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.ext.nunit": "1.0.0",
+        "com.unity.ext.nunit": "1.0.5",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
