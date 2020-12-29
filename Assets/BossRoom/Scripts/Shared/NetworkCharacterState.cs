@@ -14,6 +14,7 @@ namespace BossRoom.Shared
     {
         public NetworkedVarVector3 NetworkPosition;
         public NetworkedVarFloat NetworkRotationY;
+        public NetworkedVarFloat NetworkMovementSpeed;
 
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.

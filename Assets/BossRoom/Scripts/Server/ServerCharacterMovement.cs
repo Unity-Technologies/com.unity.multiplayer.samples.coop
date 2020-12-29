@@ -69,6 +69,7 @@ namespace BossRoom.Server
             // Send new position values to the client
             networkCharacterState.NetworkPosition.Value = transform.position;
             networkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
+            networkCharacterState.NetworkMovementSpeed.Value = movementState == MovementState.Idle ? 0 : movementSpeed;
         }
 
         private void Movement()
