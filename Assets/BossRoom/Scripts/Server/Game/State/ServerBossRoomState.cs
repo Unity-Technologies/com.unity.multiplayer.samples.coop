@@ -20,7 +20,7 @@ namespace BossRoom.Server
         public override void NetworkStart()
         {
             base.NetworkStart();
-            if (!IsServer && !IsHost)
+            if (!IsServer)
             {
                 this.enabled = false;
             }
@@ -29,7 +29,14 @@ namespace BossRoom.Server
                 // listen for the client-connect event. This will only happen after
                 // the ServerGNHLogic's approval-callback is done, meaning that if we get this event,
                 // the client is officially allowed to be here.
-                MLAPI.NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+                NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+
+                // if any other players are already connected to us (i.e. they connected while we were 
+                // in the login screen), give them player characters
+                foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
+                {
+                    SpawnPlayer(connection.ClientId);
+                }
 
                 if (IsHost)
                 {

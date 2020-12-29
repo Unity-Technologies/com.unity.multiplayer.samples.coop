@@ -25,7 +25,7 @@ namespace BossRoom.Client
         /// <inheritdoc />
         public override void NetworkStart()
         {
-            if (!IsClient && !IsHost)
+            if (!IsClient)
             {
                 enabled = false;
             }
