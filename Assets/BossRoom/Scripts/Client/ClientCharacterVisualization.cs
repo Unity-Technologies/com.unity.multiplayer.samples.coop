@@ -51,7 +51,7 @@ namespace BossRoom.Client
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat("Speed", networkCharacterState.NetworkMovementSpeed.Value);
+                m_ClientVisualsAnimator.SetFloat("Speed", m_NetworkCharacterState.NetworkMovementSpeed.Value);
             }
         }
 

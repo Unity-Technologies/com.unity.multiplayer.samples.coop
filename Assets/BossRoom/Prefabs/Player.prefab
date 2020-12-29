@@ -181,12 +181,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edb78c1621dad5149bb47b96120d3fbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkPosition:
-    InternalValue: {x: 0, y: 0, z: 0}
-  NetworkRotationY:
-    InternalValue: 0
-  NetworkMovementSpeed:
-    InternalValue: 0
 --- !u!114 &4600110157238723776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -211,7 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdad0914904cc1e47933ecd7a58514ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 4
+  m_MovementSpeed: 4
 --- !u!54 &4470766618279719912
 Rigidbody:
   m_ObjectHideFlags: 0
