@@ -21,6 +21,7 @@ namespace BossRoom.Shared
         /// The networked rotation of this Character. This reflects the authorative rotation on the server.
         /// </summary>
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
+        public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.

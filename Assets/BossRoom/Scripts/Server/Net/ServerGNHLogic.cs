@@ -16,6 +16,7 @@ namespace BossRoom.Server
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage. 
         private const int k_MaxConnectPayload = 1024;
 
+        // note: MonoBehaviours' constructors are *never* called and this should be removed for clarity
         public ServerGNHLogic(GameNetHub hub)
         {
             m_Hub = hub;
@@ -26,6 +27,9 @@ namespace BossRoom.Server
         {
             m_Hub = GetComponent<GameNetHub>();
             m_Hub.NetworkStartEvent += this.NetworkStart;
+            // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
+            // "No ConnectionApproval callback defined. Connection approval will timeout"
+            m_Hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
         }
 
         public void NetworkStart()
@@ -36,8 +40,6 @@ namespace BossRoom.Server
             }
             else
             {
-                m_Hub.NetManager.ConnectionApprovalCallback += this.ApprovalCheck;
-
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently. 
                 MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("CharSelect");

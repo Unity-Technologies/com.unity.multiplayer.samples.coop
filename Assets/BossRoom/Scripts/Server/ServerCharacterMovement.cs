@@ -49,7 +49,6 @@ namespace BossRoom.Server
 
             // Recalculate navigation path only on target change.
             m_NavMeshAgent.CalculatePath(position, m_DesiredMovementPath);
-
         }
 
         private void Awake()
@@ -68,6 +67,7 @@ namespace BossRoom.Server
             // Send new position values to the client
             m_NetworkCharacterState.NetworkPosition.Value = transform.position;
             m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
+            m_NetworkCharacterState.NetworkMovementSpeed.Value = m_MovementState == MovementState.Idle ? 0 : m_MovementSpeed;
         }
 
         private void Movement()
