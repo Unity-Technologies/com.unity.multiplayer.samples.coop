@@ -16,18 +16,17 @@ namespace BossRoom.Server
     /// <summary>
     /// Component responsible for moving a character on the server side based on inputs.
     /// </summary>
-    [RequireComponent(typeof(NavMeshAgent))]
-    [RequireComponent(typeof(NetworkCharacterState))]
+    [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent))]
     public class ServerCharacterMovement : NetworkedBehaviour
     {
-        private NavMeshAgent navMeshAgent;
-        private NetworkCharacterState networkCharacterState;
+        private NavMeshAgent m_NavMeshAgent;
+        private NetworkCharacterState m_NetworkCharacterState;
 
-        private NavMeshPath path;
-        private MovementState movementState;
+        private NavMeshPath m_DesiredMovementPath;
+        private MovementState m_MovementState;
 
         [SerializeField]
-        private float movementSpeed; // TODO this should be assigned based on character definition
+        private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition 
 
         public override void NetworkStart()
         {
@@ -39,58 +38,58 @@ namespace BossRoom.Server
             }
 
             // On the server enable navMeshAgent and initialize
-            navMeshAgent.enabled = true;
-            networkCharacterState.OnReceivedClientInput += SetMovementTarget;
-            path = new NavMeshPath();
+            m_NavMeshAgent.enabled = true;
+            m_NetworkCharacterState.OnReceivedClientInput += SetMovementTarget;
+            m_DesiredMovementPath = new NavMeshPath();
         }
 
         private void SetMovementTarget(Vector3 position)
         {
-            movementState = MovementState.PathFollowing;
+            m_MovementState = MovementState.PathFollowing;
 
             // Recalculate navigation path only on target change.
-            navMeshAgent.CalculatePath(position, path);
+            m_NavMeshAgent.CalculatePath(position, m_DesiredMovementPath);
 
         }
 
         private void Awake()
         {
-            navMeshAgent = GetComponent<NavMeshAgent>();
-            networkCharacterState = GetComponent<NetworkCharacterState>();
+            m_NavMeshAgent = GetComponent<NavMeshAgent>();
+            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
         }
 
         private void FixedUpdate()
         {
-            if (movementState == MovementState.PathFollowing)
+            if (m_MovementState == MovementState.PathFollowing)
             {
                 Movement();
             }
 
             // Send new position values to the client
-            networkCharacterState.NetworkPosition.Value = transform.position;
-            networkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
+            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
+            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
             networkCharacterState.NetworkMovementSpeed.Value = movementState == MovementState.Idle ? 0 : movementSpeed;
         }
 
         private void Movement()
         {
-            var corners = path.corners;
+            var corners = m_DesiredMovementPath.corners;
 
             // If we don't have a movement path stop moving
-            if (!corners.Any())
+            if (corners.Length == 0)
             {
-                movementState = MovementState.Idle;
+                m_MovementState = MovementState.Idle;
                 return;
             }
 
-            var desiredMovementAmount = movementSpeed * Time.fixedDeltaTime;
+            var desiredMovementAmount = m_MovementSpeed * Time.fixedDeltaTime;
 
             // If there is less distance to move left in the path than our desired amount
             if (Vector3.SqrMagnitude(corners[corners.Length - 1] - transform.position) < (desiredMovementAmount * desiredMovementAmount))
             {
                 // Set to destination and stop moving
                 transform.position = corners[corners.Length - 1];
-                movementState = MovementState.Idle;
+                m_MovementState = MovementState.Idle;
                 return;
             }
 
@@ -102,9 +101,9 @@ namespace BossRoom.Server
 
             var movementVector = direction * desiredMovementAmount;
 
-            navMeshAgent.Move(movementVector);
+            m_NavMeshAgent.Move(movementVector);
             transform.rotation = Quaternion.LookRotation(movementVector);
-            navMeshAgent.CalculatePath(corners[corners.Length - 1], path);
+            m_NavMeshAgent.CalculatePath(corners[corners.Length - 1], m_DesiredMovementPath);
         }
     }
 }
