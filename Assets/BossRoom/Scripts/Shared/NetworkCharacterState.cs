@@ -57,7 +57,7 @@ namespace BossRoom
             using (PooledBitStream stream = PooledBitStream.Get())
             {
                 SerializeAction(ref data, stream);
-                InvokeServerRpcPerformance(RecvDoAction, stream);
+                InvokeServerRpcPerformance(RecvDoActionServer, stream);
             }
         }
 
@@ -70,7 +70,7 @@ namespace BossRoom
             using (PooledBitStream stream = PooledBitStream.Get())
             {
                 SerializeAction(ref data, stream);
-                InvokeClientRpcOnEveryonePerformance(RecvDoAction, stream);
+                InvokeClientRpcOnEveryonePerformance(RecvDoActionClient, stream);
             }
         }
 
@@ -92,7 +92,19 @@ namespace BossRoom
             }
         }
 
-        [ServerRPC, ClientRPC]
+        [ClientRPC]
+        private void RecvDoActionClient(ulong clientId, Stream stream )
+        {
+            RecvDoAction(clientId, stream);
+
+        }
+
+        [ServerRPC]
+        private void RecvDoActionServer(ulong clientId, Stream stream)
+        {
+            RecvDoAction(clientId, stream);
+        }
+
         private void RecvDoAction(ulong clientId, Stream stream )
         {
             ActionRequestData data = new ActionRequestData();

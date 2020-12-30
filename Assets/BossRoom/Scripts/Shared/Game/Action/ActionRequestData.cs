@@ -105,7 +105,7 @@ namespace BossRoom
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill. 
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing. 
         public int[] TargetIds;            //networkIds of targets, or null if untargeted. 
-        int Level;                         //what level the Action plays at (server->client only). 
+        public int Level;                  //what level the Action plays at (server->client only). Levels are 0-based, with 0 being weakest. 
 
     }
 

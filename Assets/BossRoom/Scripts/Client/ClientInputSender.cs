@@ -1,4 +1,3 @@
-using BossRoom.Shared;
 using MLAPI;
 using UnityEngine;
 
@@ -41,6 +40,16 @@ namespace BossRoom.Client
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
                     networkCharacter.InvokeServerRpc(networkCharacter.SendCharacterInputServerRpc, hit.point, "MLAPI_INTERNAL");
                 }
+            }
+        }
+
+        private void Update()
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                var data = new ActionRequestData();
+                data.ActionTypeEnum = Action.TANK_BASEATTACK;
+                networkCharacter.C2S_DoAction(ref data);
             }
         }
     }

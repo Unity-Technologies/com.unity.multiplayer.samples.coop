@@ -1,9 +1,8 @@
-using BossRoom.Shared;
 using MLAPI;
 using UnityEngine;
 using Cinemachine;
 
-namespace BossRoom.Client
+namespace BossRoom.Viz
 {
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
@@ -27,11 +26,23 @@ namespace BossRoom.Client
             if (!IsClient && !IsHost)
             {
                 enabled = false;
+                return;
             }
-            else if (IsLocalPlayer)
+
+            networkCharacterState.DoActionEvent += this.PerformActionFX;
+            
+            if (IsLocalPlayer)
             {
                 AttachCamera();
             }
+        }
+
+        private void PerformActionFX(ActionRequestData data )
+        {
+            //TODO: [GOMPS-13] break this method out into its own class, so we can drive multi-frame graphical effects. 
+            //FIXME: [GOMPS-13] hook this up to information in the ActionDescription. 
+            m_ClientVisualsAnimator.SetInteger("AttackID", 1);
+            m_ClientVisualsAnimator.SetTrigger("BeginAttack");
         }
 
         void Awake()
