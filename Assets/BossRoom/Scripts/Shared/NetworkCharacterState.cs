@@ -43,10 +43,14 @@ namespace BossRoom
         // ACTION SYSTEM
 
         /// <summary>
-        /// This event is raised on the server when an action request arrives, and on the client after the server
-        /// has broadcast an action play.
+        /// This event is raised on the server when an action request arrives
         /// </summary>
-        public event Action<BossRoom.ActionRequestData> DoActionEvent;
+        public event Action<BossRoom.ActionRequestData> DoActionEventServer;
+
+        /// <summary>
+        /// This event is raised on the client when an action is being played back. 
+        /// </summary>
+        public event Action<BossRoom.ActionRequestData> DoActionEventClient;
 
         /// <summary>
         /// Client->Server RPC that sends a request to play an action. 
@@ -95,17 +99,18 @@ namespace BossRoom
         [ClientRPC]
         private void RecvDoActionClient(ulong clientId, Stream stream )
         {
-            RecvDoAction(clientId, stream);
-
+            ActionRequestData data = RecvDoAction(clientId, stream);
+            DoActionEventClient?.Invoke(data);
         }
 
         [ServerRPC]
         private void RecvDoActionServer(ulong clientId, Stream stream)
         {
-            RecvDoAction(clientId, stream);
+            ActionRequestData data = RecvDoAction(clientId, stream);
+            DoActionEventServer?.Invoke(data);
         }
 
-        private void RecvDoAction(ulong clientId, Stream stream )
+        private ActionRequestData RecvDoAction(ulong clientId, Stream stream )
         {
             ActionRequestData data = new ActionRequestData();
 
@@ -125,7 +130,7 @@ namespace BossRoom
                 }
             }
 
-            DoActionEvent?.Invoke(data);
+            return data;
         }
 
 

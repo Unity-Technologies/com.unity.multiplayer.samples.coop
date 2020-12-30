@@ -23,7 +23,8 @@ namespace BossRoom.Server
             if (!IsServer) { this.enabled = false; }
             else
             {
-                this.NetState.DoActionEvent += this.OnActionPlayRequest;
+                this.NetState = GetComponent<NetworkCharacterState>();
+                this.NetState.DoActionEventServer += this.OnActionPlayRequest;
             }
         }
 

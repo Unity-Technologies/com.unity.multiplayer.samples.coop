@@ -40,6 +40,12 @@ namespace BossRoom.Viz
             }
         }
 
+        public void SetModel(int modelIndex)
+        {
+            m_ModelIndex = modelIndex;
+            ModelSwitch();
+        }
+
 
 
         // Update is called once per frame
