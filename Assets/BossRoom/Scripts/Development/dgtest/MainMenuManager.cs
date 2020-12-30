@@ -22,12 +22,6 @@ public class MainMenuManager : MonoBehaviour
         Application.targetFrameRate = 60;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void OnHostButton()
     {
         m_netManager.StartServer();

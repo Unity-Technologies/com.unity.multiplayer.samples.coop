@@ -82,12 +82,6 @@ namespace BossRoom
             if( Persists ) { Object.DontDestroyOnLoad(this.gameObject); }
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
         private void OnDestroy()
         {
             if( !Persists )

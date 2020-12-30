@@ -39,11 +39,6 @@ namespace BossRoom.Server
             }
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-        }
-
         private void OnClientConnected(ulong clientId)
         {
             // FIXME: this is a work-around for an MLAPI timing problem which happens semi-reliably; 

@@ -18,12 +18,6 @@ namespace BossRoom.Client
             //note: this code won't ever run, because there is no network connection at the main menu screen.
             //fortunately we know you are a client, because all players are clients when sitting at the main menu screen. 
         }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 
 }

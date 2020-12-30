@@ -31,9 +31,4 @@ public class ProgramState : MonoBehaviour
         m_netManager = GameObject.Find("NetworkHost").GetComponent<NetworkingManager>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
