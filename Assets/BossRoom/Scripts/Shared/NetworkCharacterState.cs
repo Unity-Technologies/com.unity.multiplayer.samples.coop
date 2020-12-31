@@ -17,9 +17,16 @@ namespace BossRoom
     /// </summary>
     public class NetworkCharacterState : NetworkedBehaviour
     {
-        public NetworkedVarVector3 NetworkPosition;
-        public NetworkedVarFloat NetworkRotationY;
-        public NetworkedVarFloat NetworkMovementSpeed;
+        /// <summary>
+        /// The networked position of this Character. This reflects the authorative position on the server.
+        /// </summary>
+        public NetworkedVarVector3 NetworkPosition { get;} = new NetworkedVarVector3();
+
+        /// <summary>
+        /// The networked rotation of this Character. This reflects the authorative rotation on the server.
+        /// </summary>
+        public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
+        public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
         public NetworkedVarInt HitPoints;
         public NetworkedVarInt Mana;

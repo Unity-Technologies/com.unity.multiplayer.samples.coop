@@ -20,7 +20,7 @@ namespace BossRoom.Server
         public override void NetworkStart()
         {
             base.NetworkStart();
-            if (!IsServer && !IsHost)
+            if (!IsServer)
             {
                 this.enabled = false;
             }
@@ -29,7 +29,14 @@ namespace BossRoom.Server
                 // listen for the client-connect event. This will only happen after
                 // the ServerGNHLogic's approval-callback is done, meaning that if we get this event,
                 // the client is officially allowed to be here.
-                MLAPI.NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+                NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+
+                // if any other players are already connected to us (i.e. they connected while we were 
+                // in the login screen), give them player characters
+                foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
+                {
+                    SpawnPlayer(connection.ClientId);
+                }
 
                 if (IsHost)
                 {
@@ -48,11 +55,6 @@ namespace BossRoom.Server
             // Instead, we wait a bit for MLAPI to get its state organized, because we can't safely create entities in OnClientConnected().
             // (Note: on further explortation, I think this is due to some sort of scene-loading synchronization: the new client is briefly 
             // "in" the lobby screen, but has already told the server it's in the game scene. Or something similar.)
-            //
-            // Note: this workaround doesn't help us when the client connects during the host's scene-load (i.e. when the Host is in char-gen 
-            // screen and gets a new connection) and the ServerBossRoomState doesn't exist yet. That's an unrelated problem, and not an 
-            // MLAPI issue! ... But it generates the same error message ("Cannot find pending soft sync object. Is the projects the same?") 
-            // so wanted to mention it.
             StartCoroutine(CoroSpawnPlayer(clientId));
         }
 

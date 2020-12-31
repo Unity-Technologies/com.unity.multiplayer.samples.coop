@@ -9,7 +9,7 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkedBehaviour
     {
-        private NetworkCharacterState networkCharacter;
+        private NetworkCharacterState m_NetworkCharacter;
 
         public override void NetworkStart()
         {
@@ -23,7 +23,7 @@ namespace BossRoom.Client
 
         void Awake()
         {
-            networkCharacter = GetComponent<NetworkCharacterState>();
+            m_NetworkCharacter = GetComponent<NetworkCharacterState>();
         }
 
         void FixedUpdate()
@@ -38,7 +38,8 @@ namespace BossRoom.Client
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
-                    networkCharacter.InvokeServerRpc(networkCharacter.SendCharacterInputServerRpc, hit.point, "MLAPI_INTERNAL");
+                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, hit.point,
+                        "MLAPI_INTERNAL");
                 }
             }
         }
