@@ -87,18 +87,28 @@ namespace BossRoom
 
         private void SerializeAction( ref ActionRequestData data, PooledBitStream stream )
         {
-            var Logic = ActionDescriptionList.LIST[data.ActionTypeEnum][0].Logic;
+            var Logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
+            var Info = ActionData.LogicInfos[Logic];
 
             using (PooledBitWriter writer = PooledBitWriter.Get(stream))
             {
                 writer.WriteInt16((short)data.ActionTypeEnum);
-                if (Logic == ActionLogic.RANGED)
+                writer.WriteBool(data.ShouldQueue);
+                if( Info.HasPosition )
+                {
+                    writer.WriteVector3(data.Position);
+                }
+                if (Info.HasDirection)
                 {
                     writer.WriteVector3(data.Direction);
                 }
-                if (Logic == ActionLogic.RANGEDTARGETED)
+                if (Info.HasTarget )
                 {
-                    writer.WriteIntArray(data.TargetIds);
+                    writer.WriteULongArray(data.TargetIds);
+                }
+                if( Info.HasAmount )
+                {
+                    writer.WriteSingle(data.Amount);
                 }
             }
         }
@@ -114,6 +124,7 @@ namespace BossRoom
         private void RecvDoActionServer(ulong clientId, Stream stream)
         {
             ActionRequestData data = RecvDoAction(clientId, stream);
+
             DoActionEventServer?.Invoke(data);
         }
 
@@ -124,16 +135,26 @@ namespace BossRoom
             using (PooledBitReader reader = PooledBitReader.Get(stream))
             {
                 data.ActionTypeEnum = (Action)reader.ReadInt16();
+                data.ShouldQueue = reader.ReadBool();
 
-                var Logic = ActionDescriptionList.LIST[data.ActionTypeEnum][0].Logic;
+                var Logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
+                var Info = ActionData.LogicInfos[Logic];
 
-                if( Logic == ActionLogic.RANGED )
+                if (Info.HasPosition)
+                {
+                    data.Position = reader.ReadVector3();
+                }
+                if (Info.HasDirection)
                 {
                     data.Direction = reader.ReadVector3();
                 }
-                if( Logic == ActionLogic.RANGEDTARGETED )
+                if (Info.HasTarget)
                 {
-                    data.TargetIds = reader.ReadIntArray(data.TargetIds);
+                    data.TargetIds = reader.ReadULongArray();
+                }
+                if (Info.HasAmount)
+                {
+                    data.Amount = reader.ReadSingle();
                 }
             }
 

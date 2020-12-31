@@ -28,14 +28,25 @@ namespace BossRoom.Server
             }
         }
 
+        /// <summary>
+        /// Play an action!
+        /// </summary>
+        /// <param name="data">Contains all data necessary to create the action</param>
         public void PlayAction(ref ActionRequestData data )
         {
             this.m_actionPlayer.PlayAction(ref data);
         }
 
+        /// <summary>
+        /// Clear all active Actions. 
+        /// </summary>
+        public void ClearActions()
+        {
+            this.m_actionPlayer.ClearActions();
+        }
+
         private void OnActionPlayRequest( ActionRequestData data )
         {
-            Debug.Log("Server receiving action request for " + data.ActionTypeEnum);
             this.PlayAction(ref data);
         }
 

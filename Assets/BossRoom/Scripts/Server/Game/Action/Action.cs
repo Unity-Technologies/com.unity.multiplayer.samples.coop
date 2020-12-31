@@ -24,7 +24,7 @@ namespace BossRoom.Server
         /// </summary>
         protected int m_level;
 
-        private ActionRequestData m_data;
+        protected ActionRequestData m_data;
 
         /// <summary>
         /// RequestData we were instantiated with. Value should be treated as readonly. 
@@ -38,7 +38,7 @@ namespace BossRoom.Server
         {
             get
             {
-                var list = ActionDescriptionList.LIST[Data.ActionTypeEnum];
+                var list = ActionData.ActionDescriptions[Data.ActionTypeEnum];
                 int level = Mathf.Min(m_level, list.Count - 1); //if we don't go up to the requested level, just cap at the max level. 
                 return list[level];
             }
@@ -67,6 +67,12 @@ namespace BossRoom.Server
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public abstract bool Update();
 
+        /// <summary>
+        /// This will get called when the Action gets canceled. The Action should clean up any ongoing effects at this point. 
+        /// (e.g. an Action that involves moving should cancel the current active move). 
+        /// </summary>
+        public virtual void Cancel() { }
+
 
         /// <summary>
         /// Factory method that creates Actions from their request data. 
@@ -77,11 +83,12 @@ namespace BossRoom.Server
         /// <returns>the newly created action. </returns>
         public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data, int level )
         {
-            var logic = ActionDescriptionList.LIST[data.ActionTypeEnum][0].Logic;
+            var logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
 
             switch(logic)
             {
                 case ActionLogic.MELEE: return new MeleeAction(parent, ref data, level);
+                case ActionLogic.CHASE: return new ChaseAction(parent, ref data, level);
                 default: throw new System.NotImplementedException();
             }
         }

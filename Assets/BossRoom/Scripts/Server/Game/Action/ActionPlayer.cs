@@ -22,6 +22,11 @@ namespace BossRoom.Server
 
         public void PlayAction(ref ActionRequestData data )
         {
+            if( !data.ShouldQueue )
+            {
+                ClearActions();
+            }
+
             int level = 0; //todo, get this from parent's networked vars, maybe. 
             var new_action = Action.MakeAction(m_parent, ref data, level);
 
@@ -31,6 +36,17 @@ namespace BossRoom.Server
             {
                 AdvanceQueue(false);
             }
+        }
+
+        public void ClearActions()
+        {
+            if( m_queue.Count > 0 )
+            {
+                m_queue[0].Cancel();
+            }
+
+            //only the first element of the queue is running, so it is the only one that needs to be canceled. 
+            m_queue.Clear();
         }
 
         /// <summary>
@@ -60,7 +76,8 @@ namespace BossRoom.Server
             if( this.m_queue.Count > 0 )
             {
                 bool keepgoing = this.m_queue[0].Update();
-                bool time_expired = (Time.time - this.m_actionStarted_s) >= this.m_queue[0].Description.Duration_s;
+                bool expirable = (this.m_queue[0].Description.Duration_s > 0f); //non-positive value is a sentinel indicating the duration is indefinite. 
+                bool time_expired = expirable && (Time.time - this.m_actionStarted_s) >= this.m_queue[0].Description.Duration_s;
                 if ( !keepgoing || time_expired )
                 {
                     this.AdvanceQueue(true);

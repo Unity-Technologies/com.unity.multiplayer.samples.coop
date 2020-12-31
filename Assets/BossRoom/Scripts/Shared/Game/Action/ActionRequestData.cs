@@ -11,6 +11,7 @@ namespace BossRoom
     {
         TANK_BASEATTACK,
         ARCHER_BASEATTACK,
+        GENERAL_CHASE,
     }
 
 
@@ -22,6 +23,9 @@ namespace BossRoom
         MELEE,
         RANGED,
         RANGEDTARGETED,
+        CHASE,
+
+        //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
     /// <summary>
@@ -67,28 +71,57 @@ namespace BossRoom
     }
 
     /// <summary>
+    /// metadata about each kind of ActionLogic. This basically just informs us what fields to serialize for each kind of ActionLogic. 
+    /// </summary>
+    public class ActionLogicInfo
+    {
+        public bool HasPosition;
+        public bool HasDirection;
+        public bool HasTarget;
+        public bool HasAmount;
+    }
+
+    /// <summary>
     /// FIXME [GOMPS-99]: this list will be turned into a collection of Scriptable Objects. 
     /// Question: Do we want to show how to do skill levels, as I am doing here?
     /// </summary>
-    public class ActionDescriptionList
+    public class ActionData
     {
-        public static Dictionary<Action, List<ActionDescription>> LIST = new Dictionary<Action, List<ActionDescription>>
+        public static Dictionary<ActionLogic, ActionLogicInfo> LogicInfos = new Dictionary<ActionLogic, ActionLogicInfo>
         {
-            { Action.TANK_BASEATTACK , new List<ActionDescription> 
+            {ActionLogic.MELEE, new ActionLogicInfo{} },
+            {ActionLogic.RANGED, new ActionLogicInfo{HasDirection=true} },
+            {ActionLogic.RANGEDTARGETED, new ActionLogicInfo{HasTarget=true} },
+            {ActionLogic.CHASE, new ActionLogicInfo{HasTarget=true, HasAmount=true} },
+        };
+
+        public static Dictionary<Action, List<ActionDescription>> ActionDescriptions = new Dictionary<Action, List<ActionDescription>>
+        {
+            { Action.TANK_BASEATTACK , new List<ActionDescription>
                 {
                     {new ActionDescription{Logic=ActionLogic.MELEE, Amount=10, ManaCost=2, Duration_s=0.5f, Range=1f, Anim="Todo" } },  //level 1
                     {new ActionDescription{Logic=ActionLogic.MELEE, Amount=15, ManaCost=2, Duration_s=0.5f, Range=1f, Anim="Todo" } },  //level 2
                     {new ActionDescription{Logic=ActionLogic.MELEE, Amount=20, ManaCost=2, Duration_s=0.5f, Range=1f, Anim="Todo" } },  //level 3
-                } 
+                }
             },
 
-            { Action.ARCHER_BASEATTACK, new List<ActionDescription> 
+            { Action.ARCHER_BASEATTACK, new List<ActionDescription>
                 {
                     {new ActionDescription{Logic=ActionLogic.RANGED, Amount=7,  ManaCost=2, Duration_s=0.5f, Range=12f, Anim="Todo" } }, //Level 1
                     {new ActionDescription{Logic=ActionLogic.RANGED, Amount=12, ManaCost=2, Duration_s=0.5f, Range=15f, Anim="Todo" } }, //Level 2
                     {new ActionDescription{Logic=ActionLogic.RANGED, Amount=15, ManaCost=2, Duration_s=0.5f, Range=18f, Anim="Todo" } }, //Level 3
+                }
+            },
+
+            { Action.GENERAL_CHASE, new List<ActionDescription> 
+                {
+                    {new ActionDescription{Logic=ActionLogic.CHASE } }
                 } 
             }
+
+
+
+                
         };
     }
 
@@ -104,10 +137,12 @@ namespace BossRoom
         public Action ActionTypeEnum;      //the action to play. 
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill. 
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing. 
-        public int[] TargetIds;            //networkIds of targets, or null if untargeted. 
+        public ulong[] TargetIds;          //networkIds of targets, or null if untargeted. 
         public int Level;                  //what level the Action plays at (server->client only). Levels are 0-based, with 0 being weakest. 
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
+        public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately. 
 
+        //O__O Hey, are you adding something? Be sure to update ActionLogicInfo and NetworkCharacterState.SerializeAction, RecvDoAction as well. 
     }
 
 }
