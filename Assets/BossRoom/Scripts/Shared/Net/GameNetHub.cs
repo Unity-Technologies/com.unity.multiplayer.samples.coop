@@ -44,7 +44,7 @@ namespace BossRoom
         /// This synthesizes a general NetworkStart event out of other events provided by MLAPI. This can be removed
         /// when the NetworkingManager starts publishing this event directly. 
         /// </summary>
-        public event Action NetworkStartEvent;
+        public event System.Action NetworkStartEvent;
 
         /// <summary>
         /// This event contains the game-level results of the ApprovalCheck carried out by the server, and is fired

@@ -25,12 +25,6 @@ namespace BossRoom.Viz
             m_netHub = GameHubGO.GetComponent<BossRoom.GameNetHub>();
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
-
         /// <summary>
         /// Gets the IP Address the user set in the UI, or returns 127.0.0.1 if IP is not present. 
         /// </summary>

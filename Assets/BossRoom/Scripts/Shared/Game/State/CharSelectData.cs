@@ -14,12 +14,6 @@ namespace BossRoom
         //They can probably just be strings for now. 
         private MLAPI.NetworkedVar.Collections.NetworkedList<string> CharSlots;
 
-        // Start is called before the first frame update
-        void Start()
-        {
-
-        }
-
         public override void NetworkStart()
         {
             base.NetworkStart();
@@ -27,11 +21,6 @@ namespace BossRoom
 
         }
 
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 
 }

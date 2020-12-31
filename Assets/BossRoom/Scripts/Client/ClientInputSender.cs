@@ -1,4 +1,3 @@
-using BossRoom.Shared;
 using MLAPI;
 using UnityEngine;
 
@@ -42,6 +41,16 @@ namespace BossRoom.Client
                     m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, hit.point,
                         "MLAPI_INTERNAL");
                 }
+            }
+        }
+
+        private void Update()
+        {
+            if (Input.GetMouseButtonDown(1))
+            {
+                var data = new ActionRequestData();
+                data.ActionTypeEnum = Action.TANK_BASEATTACK;
+                m_NetworkCharacter.C2S_DoAction(ref data);
             }
         }
     }

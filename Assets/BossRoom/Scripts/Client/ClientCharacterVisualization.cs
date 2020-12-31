@@ -1,9 +1,8 @@
-using BossRoom.Shared;
 using MLAPI;
 using UnityEngine;
 using Cinemachine;
 
-namespace BossRoom.Client
+namespace BossRoom.Viz
 {
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
@@ -11,16 +10,13 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacterVisualization : NetworkedBehaviour
     {
-        private NetworkCharacterState m_NetworkCharacterState;
+        private NetworkCharacterState m_NetState;
         private Animator m_ClientVisualsAnimator;
+        private CinemachineVirtualCamera m_MainCamera;
 
-        /// <summary>
-        /// The GameObject which visually represents the character is a child object of the character GameObject. This needs to be the case to support host mode.
-        /// In host mode <see cref="MonoBehaviour.transform"/> is the transform which is relevant for gameplay.
-        /// <see cref="m_ClientVisuals"/> is the visual representation on the client side which has interpolated position values.
-        /// </summary>
-        [SerializeField]
-        private Transform m_ClientVisuals;
+        public float MinZoomDistance = 3;
+        public float MaxZoomDistance = 30;
+        public float ZoomSpeed = 3;
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -28,40 +24,80 @@ namespace BossRoom.Client
             if (!IsClient)
             {
                 enabled = false;
+                return;
             }
-            else if (IsLocalPlayer)
+
+            m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
+            m_NetState.DoActionEventClient += this.PerformActionFX;
+
+            GetComponent<ModelSwap>();
+            
+            //GetComponents<ModelSwap>
+            
+            if (IsLocalPlayer)
             {
                 AttachCamera();
             }
         }
 
+        private void PerformActionFX(ActionRequestData data )
+        {
+            //TODO: [GOMPS-13] break this method out into its own class, so we can drive multi-frame graphical effects. 
+            //FIXME: [GOMPS-13] hook this up to information in the ActionDescription. 
+            m_ClientVisualsAnimator.SetInteger("AttackID", 1);
+            m_ClientVisualsAnimator.SetTrigger("BeginAttack");
+        }
+
         void Awake()
         {
-            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
-            m_ClientVisualsAnimator = m_ClientVisuals.GetComponent<Animator>();
+            m_ClientVisualsAnimator = GetComponent<Animator>();
         }
 
         void Update()
         {
             // TODO Needs core sdk support. This and rotation should grab the interpolated value of network position based on the last received snapshots.
-            m_ClientVisuals.position = m_NetworkCharacterState.NetworkPosition.Value;
+            transform.position = m_NetState.NetworkPosition.Value;
 
-            m_ClientVisuals.rotation = Quaternion.Euler(0, m_NetworkCharacterState.NetworkRotationY.Value, 0);
+            transform.rotation = Quaternion.Euler(0, m_NetState.NetworkRotationY.Value, 0);
 
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat("Speed", m_NetworkCharacterState.NetworkMovementSpeed.Value);
+                m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.NetworkMovementSpeed.Value);
             }
+
+            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            if (scroll != 0 && m_MainCamera )
+            {
+                ZoomCamera(scroll);
+            }
+
         }
 
         private void AttachCamera()
         {
-            CinemachineVirtualCamera cam = (CinemachineVirtualCamera)FindObjectOfType(typeof(CinemachineVirtualCamera));
-            if (cam)
+            m_MainCamera = (CinemachineVirtualCamera)FindObjectOfType(typeof(CinemachineVirtualCamera));
+            if (m_MainCamera)
             {
-                cam.Follow = m_ClientVisuals.transform;
-                cam.LookAt = m_ClientVisuals.transform;
+                m_MainCamera.Follow = transform;
+                m_MainCamera.LookAt = transform;
+            }
+        }
+
+        private void ZoomCamera(float scroll)
+        {
+            CinemachineComponentBase[] components = m_MainCamera.GetComponentPipeline();
+            foreach (CinemachineComponentBase component in components)
+            {
+                if (component is CinemachineFramingTransposer)
+                {
+                    CinemachineFramingTransposer c = (CinemachineFramingTransposer)component;
+                    c.m_CameraDistance += -scroll * ZoomSpeed;
+                    if (c.m_CameraDistance < MinZoomDistance)
+                        c.m_CameraDistance = MinZoomDistance;
+                    if (c.m_CameraDistance > MaxZoomDistance)
+                        c.m_CameraDistance = MaxZoomDistance;
+                }
             }
         }
     }

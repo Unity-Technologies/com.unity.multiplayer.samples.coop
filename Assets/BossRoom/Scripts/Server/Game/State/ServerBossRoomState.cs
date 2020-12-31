@@ -37,18 +37,7 @@ namespace BossRoom.Server
                 {
                     SpawnPlayer(connection.ClientId);
                 }
-
-                if (IsHost)
-                {
-                    // start local "host" character too!
-                    SpawnPlayer(MLAPI.NetworkingManager.Singleton.LocalClientId);
-                }
             }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
 
         private void OnClientConnected(ulong clientId)

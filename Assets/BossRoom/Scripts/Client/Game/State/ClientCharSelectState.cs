@@ -19,11 +19,5 @@ namespace BossRoom.Client
             base.NetworkStart();
             if (!IsClient) { this.enabled = false; }
         }
-
-        // Update is called once per frame
-        void Update()
-        {
-
-        }
     }
 }

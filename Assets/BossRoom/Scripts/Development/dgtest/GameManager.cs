@@ -20,10 +20,4 @@ public class GameManager : MonoBehaviour
         main_player.transform.position = m_playerSpawn.transform.position;
         main_player.GetComponent<NetworkedObject>().Spawn();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
