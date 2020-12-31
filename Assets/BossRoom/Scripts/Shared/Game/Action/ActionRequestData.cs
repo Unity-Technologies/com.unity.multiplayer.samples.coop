@@ -76,9 +76,9 @@ namespace BossRoom
         {
             { Action.TANK_BASEATTACK , new List<ActionDescription> 
                 {
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=10, ManaCost=2, Duration_s=0.5f, Anim="Todo" } },  //level 1
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=15, ManaCost=2, Duration_s=0.5f, Anim="Todo" } },  //level 2
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=20, ManaCost=2, Duration_s=0.5f, Anim="Todo" } },  //level 3
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=10, ManaCost=2, Duration_s=0.5f, Range=1f, Anim="Todo" } },  //level 1
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=15, ManaCost=2, Duration_s=0.5f, Range=1f, Anim="Todo" } },  //level 2
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=20, ManaCost=2, Duration_s=0.5f, Range=1f, Anim="Todo" } },  //level 3
                 } 
             },
 
@@ -106,6 +106,7 @@ namespace BossRoom
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing. 
         public int[] TargetIds;            //networkIds of targets, or null if untargeted. 
         public int Level;                  //what level the Action plays at (server->client only). Levels are 0-based, with 0 being weakest. 
+        public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
 
     }
 
