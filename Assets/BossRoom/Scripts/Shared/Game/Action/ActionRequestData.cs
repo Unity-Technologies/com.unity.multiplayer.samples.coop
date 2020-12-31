@@ -25,7 +25,7 @@ namespace BossRoom
     }
 
     /// <summary>
-    /// FIXME: ??? This will be turned into a ScriptableObject. 
+    /// FIXME: [GOMPS-99] This will be turned into a ScriptableObject. 
     /// </summary>
     public class ActionDescription
     {
@@ -67,7 +67,7 @@ namespace BossRoom
     }
 
     /// <summary>
-    /// FIXME: this list will be turned into a collection of Scriptable Objects. 
+    /// FIXME [GOMPS-99]: this list will be turned into a collection of Scriptable Objects. 
     /// Question: Do we want to show how to do skill levels, as I am doing here?
     /// </summary>
     public class ActionDescriptionList
