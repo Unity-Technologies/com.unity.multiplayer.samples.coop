@@ -50,7 +50,7 @@ namespace BossRoom.Client
             {
                 var data = new ActionRequestData();
                 data.ActionTypeEnum = Action.TANK_BASEATTACK;
-                networkCharacter.C2S_DoAction(ref data);
+                m_NetworkCharacter.C2S_DoAction(ref data);
             }
         }
     }

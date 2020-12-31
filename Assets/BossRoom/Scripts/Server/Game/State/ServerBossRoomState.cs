@@ -37,12 +37,6 @@ namespace BossRoom.Server
                 {
                     SpawnPlayer(connection.ClientId);
                 }
-
-                if (IsHost)
-                {
-                    // start local "host" character too!
-                    SpawnPlayer(MLAPI.NetworkingManager.Singleton.LocalClientId);
-                }
             }
         }
 

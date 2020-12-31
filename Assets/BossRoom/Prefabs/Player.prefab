@@ -181,6 +181,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edb78c1621dad5149bb47b96120d3fbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HitPoints:
+    InternalValue: 0
+  Mana:
+    InternalValue: 0
 --- !u!114 &4600110157238723776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -277,22 +281,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 4600110157238723791}
     m_Modifications:
-    - target: {fileID: 451019077418353113, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1275426192112755703, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1983451975515712793, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 3269992512903255054, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 3736552308919084700, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
       propertyPath: m_Name
       value: CharacterSet
@@ -341,33 +329,13 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4916965965019151265, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 5404400264780765344, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7415691260465069799, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7688214084643546559, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 7859571076522411967, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
+    - target: {fileID: 7943089997373843793, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7943089997373843793, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
       propertyPath: MaxZoomDistance
       value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 8474587904930755041, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
