@@ -134,7 +134,7 @@ namespace BossRoom
 
             using (PooledBitReader reader = PooledBitReader.Get(stream))
             {
-                data.ActionTypeEnum = (Action)reader.ReadInt16();
+                data.ActionTypeEnum = (ActionType)reader.ReadInt16();
                 data.ShouldQueue = reader.ReadBool();
 
                 var Logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
