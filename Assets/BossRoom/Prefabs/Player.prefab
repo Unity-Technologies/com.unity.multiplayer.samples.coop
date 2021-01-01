@@ -130,7 +130,7 @@ GameObject:
   - component: {fileID: 6970334877957368017}
   - component: {fileID: 4602672899881656135}
   - component: {fileID: 7690172137830037487}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -183,9 +183,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitPoints:
-    InternalValue: 0
+    InternalValue: 1000000
   Mana:
-    InternalValue: 0
+    InternalValue: 10
 --- !u!114 &4600110157238723776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -275,6 +275,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920a440eb254ba348915767fd046027a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  IsNPC: 0
+  DetectRange: 10
 --- !u!114 &7690172137830037487
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -12,7 +12,6 @@ namespace BossRoom.Server
         private ServerCharacter m_parent;
 
         private List<Action> m_queue;
-        private float m_actionStarted_s = 0f; 
 
         public ActionPlayer(ServerCharacter parent )
         {
@@ -79,7 +78,7 @@ namespace BossRoom.Server
 
             if( m_queue.Count > 0 )
             {
-                m_actionStarted_s = Time.time;
+                m_queue[0].TimeStarted = Time.time;
                 bool play = m_queue[0].Start();
                 if( !play )
                 {
@@ -92,12 +91,12 @@ namespace BossRoom.Server
         {
             if( this.m_queue.Count > 0 )
             {
-                bool keepgoing = this.m_queue[0].Update();
-                bool expirable = (this.m_queue[0].Description.Duration_s > 0f); //non-positive value is a sentinel indicating the duration is indefinite. 
-                bool time_expired = expirable && (Time.time - this.m_actionStarted_s) >= this.m_queue[0].Description.Duration_s;
+                bool keepgoing = m_queue[0].Update();
+                bool expirable = m_queue[0].Description.Duration_s > 0f; //non-positive value is a sentinel indicating the duration is indefinite. 
+                bool time_expired = expirable && (Time.time - m_queue[0].TimeStarted) >= m_queue[0].Description.Duration_s;
                 if ( !keepgoing || time_expired )
                 {
-                    this.AdvanceQueue(true);
+                    AdvanceQueue(true);
                 }
             }
         }

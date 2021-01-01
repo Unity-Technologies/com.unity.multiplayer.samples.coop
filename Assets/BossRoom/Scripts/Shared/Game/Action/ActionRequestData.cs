@@ -60,6 +60,11 @@ namespace BossRoom
         public float Duration_s;
 
         /// <summary>
+        /// Time when the Action should do its "main thing" (e.g. when a melee attack should apply damage). 
+        /// </summary>
+        public float ExecTime_s;
+
+        /// <summary>
         /// How long the effect this Action leaves behind will last, in seconds. 
         /// </summary>
         public float EffectDuration_s;
@@ -99,9 +104,9 @@ namespace BossRoom
         {
             { ActionType.TANK_BASEATTACK , new List<ActionDescription>
                 {
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=10, ManaCost=2, Duration_s=0.5f, Range=4f, Anim="Todo" } },  //level 1
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=15, ManaCost=2, Duration_s=0.5f, Range=4f, Anim="Todo" } },  //level 2
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=20, ManaCost=2, Duration_s=0.5f, Range=4f, Anim="Todo" } },  //level 3
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=10, ManaCost=2, ExecTime_s=0.3f, Duration_s=0.5f, Range=4f, Anim="Todo" } },  //level 1
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=15, ManaCost=2, ExecTime_s=0.3f, Duration_s=0.5f, Range=4f, Anim="Todo" } },  //level 2
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=20, ManaCost=2, ExecTime_s=0.3f, Duration_s=0.5f, Range=4f, Anim="Todo" } },  //level 3
                 }
             },
 
