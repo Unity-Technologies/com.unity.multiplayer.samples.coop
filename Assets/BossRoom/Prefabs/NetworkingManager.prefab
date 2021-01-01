@@ -65,14 +65,14 @@ MonoBehaviour:
       PlayerPrefab: 0
     - Prefab: {fileID: 297185343939699586, guid: 8b9c63e7d70c5ff48a03aad51e17103c, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2147136737739531998, guid: febd58976027e484884aa5357092da15, type: 3}
+    - Prefab: {fileID: 4340979889802297118, guid: 5f8daaa54415e5e41b5162cd13121359, type: 3}
       PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0
     CreatePlayerPrefab: 0
     ReceiveTickrate: 0
     MaxReceiveEventsPerTickRate: 1000
-    EventTickrate: 100
+    EventTickrate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
     ConnectionData: 
