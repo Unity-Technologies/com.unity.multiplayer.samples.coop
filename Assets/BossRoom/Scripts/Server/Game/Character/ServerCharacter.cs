@@ -84,6 +84,27 @@ namespace BossRoom.Server
             this.PlayAction(ref data);
         }
 
+        /// <summary>
+        /// Receive an HP change from somewhere. Could be healing or damage. 
+        /// </summary>
+        /// <param name="Inflicter">Person dishing out this damage/healing. Can be null. </param>
+        /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
+        public void RecieveHP( ServerCharacter inflicter, int HP)
+        {
+            //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
+            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight. 
+
+            NetState.HitPoints.Value += HP;
+
+            if( NetState.HitPoints.Value <= 0 )
+            {
+                //TODO: handle death state. 
+                GameObject.Destroy(this.gameObject);
+            }
+
+
+        }
+
         // Update is called once per frame
         void Update()
         {

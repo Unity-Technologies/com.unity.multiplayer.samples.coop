@@ -48,8 +48,8 @@ GameObject:
   - component: {fileID: -7347463593668903068}
   - component: {fileID: -2661490869309078486}
   - component: {fileID: -3025025970778375211}
-  m_Layer: 0
-  m_Name: Enemy2
+  m_Layer: 6
+  m_Name: Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -100,9 +100,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitPoints:
-    InternalValue: 0
+    InternalValue: 50
   Mana:
-    InternalValue: 0
+    InternalValue: 20
 --- !u!195 &4129073990757611390
 NavMeshAgent:
   m_ObjectHideFlags: 0

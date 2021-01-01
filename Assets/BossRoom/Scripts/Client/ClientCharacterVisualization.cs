@@ -78,7 +78,12 @@ namespace BossRoom.Viz
 
         private void SmoothMove()
         {
-            if (m_Parent == null) { return; } //parent was destroyed, and we won't be far behind. 
+            if (m_Parent == null)
+            {
+                //since we aren't in the transform hierarchy, we have to explicitly die when our parent dies. 
+                GameObject.Destroy(this.gameObject);
+                return;
+            } 
 
 
             var pos_diff = m_Parent.transform.position - transform.position;

@@ -17,19 +17,24 @@ namespace BossRoom.Server
     /// </remarks>
     public abstract class Action
     {
-        protected ServerCharacter m_parent;
+        protected ServerCharacter m_Parent;
 
         /// <summary>
         /// The level this action plays back at. e.g. a weak "level 0" melee attack, vs a strong "level 3" melee attack. 
         /// </summary>
-        protected int m_level;
+        protected int m_Level;
 
-        protected ActionRequestData m_data;
+        protected ActionRequestData m_Data;
+
+        /// <summary>
+        /// Time when this Action was started (from Time.time) in seconds. Set by the ActionPlayer. 
+        /// </summary>
+        public float TimeStarted { get; set; }
 
         /// <summary>
         /// RequestData we were instantiated with. Value should be treated as readonly. 
         /// </summary>
-        public ref ActionRequestData Data { get { return ref m_data; } }
+        public ref ActionRequestData Data { get { return ref m_Data; } }
 
         /// <summary>
         /// Data Description for this action. 
@@ -39,7 +44,7 @@ namespace BossRoom.Server
             get
             {
                 var list = ActionData.ActionDescriptions[Data.ActionTypeEnum];
-                int level = Mathf.Min(m_level, list.Count - 1); //if we don't go up to the requested level, just cap at the max level. 
+                int level = Mathf.Min(m_Level, list.Count - 1); //if we don't go up to the requested level, just cap at the max level. 
                 return list[level];
             }
         }
@@ -49,10 +54,10 @@ namespace BossRoom.Server
         /// </summary>
         public Action(ServerCharacter parent, ref ActionRequestData data, int level)
         {
-            m_parent = parent;
-            m_level = level;
-            m_data = data; //do a shallow copy. 
-            m_data.Level = level;
+            m_Parent = parent;
+            m_Level = level;
+            m_Data = data; //do a shallow copy. 
+            m_Data.Level = level;
         }
 
         /// <summary>
