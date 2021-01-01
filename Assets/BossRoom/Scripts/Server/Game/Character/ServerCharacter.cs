@@ -9,13 +9,47 @@ namespace BossRoom.Server
     {
         public NetworkCharacterState NetState { get; private set; }
 
+        [SerializeField]
+        [Tooltip("If enabled, this character has an AIBrain and behaves as an enemy")]
+        public bool IsNPC;
+
+        [SerializeField]
+        [Tooltip("If IsNPC, this is how far the npc can detect others (in meters)")]
+        public float DetectRange = 10;
+
         private ActionPlayer m_actionPlayer;
+        private AIBrain m_aiBrain;
+
+        /// <summary>
+        /// Temp place to store all the active characters (to avoid having to
+        /// perform insanely-expensive GameObject.Find operations during Update)
+        /// </summary>
+        private static List<ServerCharacter> g_activeServerCharacters = new List<ServerCharacter>();
+
+        private void OnEnable()
+        {
+            g_activeServerCharacters.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            g_activeServerCharacters.Remove(this);
+        }
+
+        public static List<ServerCharacter> GetAllActiveServerCharacters()
+        {
+            return g_activeServerCharacters;
+        }
 
         // Start is called before the first frame update
         void Start()
         {
             NetState = GetComponent<NetworkCharacterState>();
             m_actionPlayer = new ActionPlayer(this);
+            if (IsNPC)
+            {
+                m_aiBrain = new AIBrain(this, m_actionPlayer);
+            }
         }
 
         public override void NetworkStart()
@@ -54,6 +88,10 @@ namespace BossRoom.Server
         void Update()
         {
             m_actionPlayer.Update();
+            if (m_aiBrain != null)
+            {
+                m_aiBrain.Update();
+            }
         }
     }
 }

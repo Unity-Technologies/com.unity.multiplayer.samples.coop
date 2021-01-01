@@ -54,20 +54,20 @@ namespace BossRoom.Client
                 {
                     //these two actions will queue one after the other, causing us to run over to our target and take a swing. 
                     var chase_data = new ActionRequestData();
-                    chase_data.ActionTypeEnum = Action.GENERAL_CHASE;
+                    chase_data.ActionTypeEnum = ActionType.GENERAL_CHASE;
                     chase_data.Amount = 3f;
                     chase_data.TargetIds = new ulong[] { GetTargetObject(ref hit) };
                     m_NetworkCharacter.C2S_DoAction(ref chase_data);
 
                     var hit_data = new ActionRequestData();
                     hit_data.ShouldQueue = true; //wait your turn--don't clobber the chase action. 
-                    hit_data.ActionTypeEnum = Action.TANK_BASEATTACK;
+                    hit_data.ActionTypeEnum = ActionType.TANK_BASEATTACK;
                     m_NetworkCharacter.C2S_DoAction(ref hit_data);
                 }
                 else
                 {
                     var data = new ActionRequestData();
-                    data.ActionTypeEnum = Action.TANK_BASEATTACK;
+                    data.ActionTypeEnum = ActionType.TANK_BASEATTACK;
                     m_NetworkCharacter.C2S_DoAction(ref data);
                 }
 

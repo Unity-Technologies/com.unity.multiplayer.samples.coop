@@ -12,7 +12,13 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerBossRoomState : GameStateBehaviour
     {
-        [SerializeField] private NetworkedObject PlayerPrefab;
+        [SerializeField]
+        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
+        private NetworkedObject PlayerPrefab;
+
+        [SerializeField]
+        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
+        private NetworkedObject EnemyPrefab;
 
         public override GameState ActiveState { get { return GameState.BOSSROOM; } }
 
@@ -62,6 +68,23 @@ namespace BossRoom.Server
         {
             var NewPlayer = Instantiate(PlayerPrefab);
             NewPlayer.SpawnAsPlayerObject(clientId);
+        }
+
+        private void SpawnEnemy()
+        {
+            var NewEnemy = Instantiate(EnemyPrefab);
+            NewEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+        }
+
+        /// <summary>
+        /// Temp code to spawn an enemy
+        /// </summary>
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                SpawnEnemy();
+            }
         }
     }
 }
