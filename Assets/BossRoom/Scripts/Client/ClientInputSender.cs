@@ -11,6 +11,13 @@ namespace BossRoom.Client
     {
         private NetworkCharacterState m_NetworkCharacter;
 
+        /// <summary>
+        /// We detect clicks in Update (because you can miss single discrete clicks in FixedUpdate). But we need to 
+        /// raycast in FixedUpdate, because raycasts done in Update won't work reliably. 
+        /// This nullable vector will be set to a screen coordinate when an attack click was made. 
+        /// </summary>
+        private System.Nullable<Vector3> m_AttackClickRequest;
+
         public override void NetworkStart()
         {
             // TODO Don't use NetworkedBehaviour for just NetworkStart [GOMPS-81]
@@ -42,15 +49,12 @@ namespace BossRoom.Client
                         "MLAPI_INTERNAL");
                 }
             }
-        }
 
-        private void Update()
-        {
-            if (Input.GetMouseButtonDown(1))
+            if (m_AttackClickRequest != null)
             {
                 RaycastHit hit;
 
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit) && GetTargetObject(ref hit) != 0)
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(m_AttackClickRequest.Value), out hit) && GetTargetObject(ref hit) != 0)
                 {
                     //these two actions will queue one after the other, causing us to run over to our target and take a swing. 
                     var chase_data = new ActionRequestData();
@@ -71,7 +75,16 @@ namespace BossRoom.Client
                     m_NetworkCharacter.C2S_DoAction(ref data);
                 }
 
-                
+                m_AttackClickRequest = null;
+            }
+        }
+
+        private void Update()
+        {
+            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate. 
+            if (Input.GetMouseButtonDown(1))
+            {
+                m_AttackClickRequest = Input.mousePosition;
             }
         }
 
@@ -80,9 +93,10 @@ namespace BossRoom.Client
         /// </summary>
         private ulong GetTargetObject(ref RaycastHit hit )
         {
-            if( hit.collider == null ) { return 0;  }
+            if( hit.collider == null ) { return 0; }
             var targetObj = hit.collider.GetComponent<NetworkedObject>();
-            if( targetObj == null ) { return 0; }
+            if( targetObj == null ) { return 0;  }
+
             return targetObj.NetworkId;
         }
     }

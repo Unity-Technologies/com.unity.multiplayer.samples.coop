@@ -13,10 +13,14 @@ namespace BossRoom.Viz
         private NetworkCharacterState m_NetState;
         private Animator m_ClientVisualsAnimator;
         private CinemachineVirtualCamera m_MainCamera;
+        private Transform m_Parent;
 
         public float MinZoomDistance = 3;
         public float MaxZoomDistance = 30;
         public float ZoomSpeed = 3;
+
+        private const float MAX_VIZ_SPEED = 4;    //max speed at which we will chase the parent transform. 
+        private const float MAX_ROT_SPEED = 280;  //max angular speed at which we will rotate, in degrees/second. 
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -30,10 +34,10 @@ namespace BossRoom.Viz
             m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += this.PerformActionFX;
 
-            GetComponent<ModelSwap>();
-            
-            //GetComponents<ModelSwap>
-            
+            //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
+            m_Parent = transform.parent;
+            transform.parent = null;
+
             if (IsLocalPlayer)
             {
                 AttachCamera();
@@ -55,10 +59,8 @@ namespace BossRoom.Viz
 
         void Update()
         {
-            // TODO Needs core sdk support. This and rotation should grab the interpolated value of network position based on the last received snapshots.
-            transform.position = m_NetState.NetworkPosition.Value;
+            SmoothMove();
 
-            transform.rotation = Quaternion.Euler(0, m_NetState.NetworkRotationY.Value, 0);
 
             if (m_ClientVisualsAnimator)
             {
@@ -72,6 +74,35 @@ namespace BossRoom.Viz
                 ZoomCamera(scroll);
             }
 
+        }
+
+        private void SmoothMove()
+        {
+            if (m_Parent == null) { return; } //parent was destroyed, and we won't be far behind. 
+
+
+            var pos_diff = m_Parent.transform.position - transform.position;
+            var angle_diff = Quaternion.Angle(m_Parent.transform.rotation, transform.rotation);
+
+            float time_delta = Time.deltaTime;
+
+            float pos_diff_mag = pos_diff.magnitude;
+            if( pos_diff_mag > 0 )
+            {
+                float max_move = time_delta * MAX_VIZ_SPEED;
+                float move_dist = Mathf.Min(max_move, pos_diff_mag);
+                pos_diff *= (move_dist / pos_diff_mag);
+
+                transform.position += pos_diff;
+            }
+
+            if( angle_diff > 0 )
+            {
+                float max_angle_move = time_delta * MAX_ROT_SPEED;
+                float angle_move = Mathf.Min(max_angle_move, angle_diff);
+                float t = angle_move / angle_diff;
+                transform.rotation = Quaternion.Slerp(transform.rotation, m_Parent.transform.rotation, t);
+            }
         }
 
         private void AttachCamera()

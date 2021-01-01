@@ -15,10 +15,11 @@ namespace BossRoom.Server
     /// <summary>
     /// Component responsible for moving a character on the server side based on inputs.
     /// </summary>
-    [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent), typeof(ServerCharacter))]
+    [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent), typeof(ServerCharacter)), RequireComponent(typeof(Rigidbody))]
     public class ServerCharacterMovement : NetworkedBehaviour
     {
         private NavMeshAgent m_NavMeshAgent;
+        private Rigidbody m_Rigidbody;
         private NetworkCharacterState m_NetworkCharacterState;
 
         private NavMeshPath m_DesiredMovementPath;
@@ -75,6 +76,7 @@ namespace BossRoom.Server
             m_NavMeshAgent = GetComponent<NavMeshAgent>();
             m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
             m_CharLogic = GetComponent<ServerCharacter>();
+            m_Rigidbody = GetComponent<Rigidbody>();
         }
 
         private void FixedUpdate()
@@ -122,6 +124,12 @@ namespace BossRoom.Server
 
             m_NavMeshAgent.Move(movementVector);
             transform.rotation = Quaternion.LookRotation(movementVector);
+
+            //fixme--is this right? If I don't do this the Rigidbody is "left behind", and doesn't move with the GameObject. 
+            //also see ClientCharacterMovement before deleting this comment. 
+            m_Rigidbody.position = transform.position;
+            m_Rigidbody.rotation = transform.rotation;
+
             m_NavMeshAgent.CalculatePath(corners[corners.Length - 1], m_DesiredMovementPath);
         }
     }
