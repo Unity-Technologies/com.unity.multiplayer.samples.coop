@@ -7,7 +7,7 @@ namespace BossRoom
     /// <summary>
     /// List of all Actions supported in the game. 
     /// </summary>
-    public enum Action
+    public enum ActionType
     {
         TANK_BASEATTACK,
         ARCHER_BASEATTACK,
@@ -95,9 +95,9 @@ namespace BossRoom
             {ActionLogic.CHASE, new ActionLogicInfo{HasTarget=true, HasAmount=true} },
         };
 
-        public static Dictionary<Action, List<ActionDescription>> ActionDescriptions = new Dictionary<Action, List<ActionDescription>>
+        public static Dictionary<ActionType, List<ActionDescription>> ActionDescriptions = new Dictionary<ActionType, List<ActionDescription>>
         {
-            { Action.TANK_BASEATTACK , new List<ActionDescription>
+            { ActionType.TANK_BASEATTACK , new List<ActionDescription>
                 {
                     {new ActionDescription{Logic=ActionLogic.MELEE, Amount=10, ManaCost=2, Duration_s=0.5f, Range=1f, Anim="Todo" } },  //level 1
                     {new ActionDescription{Logic=ActionLogic.MELEE, Amount=15, ManaCost=2, Duration_s=0.5f, Range=1f, Anim="Todo" } },  //level 2
@@ -105,7 +105,7 @@ namespace BossRoom
                 }
             },
 
-            { Action.ARCHER_BASEATTACK, new List<ActionDescription>
+            { ActionType.ARCHER_BASEATTACK, new List<ActionDescription>
                 {
                     {new ActionDescription{Logic=ActionLogic.RANGED, Amount=7,  ManaCost=2, Duration_s=0.5f, Range=12f, Anim="Todo" } }, //Level 1
                     {new ActionDescription{Logic=ActionLogic.RANGED, Amount=12, ManaCost=2, Duration_s=0.5f, Range=15f, Anim="Todo" } }, //Level 2
@@ -113,7 +113,7 @@ namespace BossRoom
                 }
             },
 
-            { Action.GENERAL_CHASE, new List<ActionDescription> 
+            { ActionType.GENERAL_CHASE, new List<ActionDescription> 
                 {
                     {new ActionDescription{Logic=ActionLogic.CHASE } }
                 } 
@@ -134,7 +134,7 @@ namespace BossRoom
     /// </summary>
     public struct ActionRequestData
     {
-        public Action ActionTypeEnum;      //the action to play. 
+        public ActionType ActionTypeEnum;      //the action to play. 
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill. 
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing. 
         public ulong[] TargetIds;          //networkIds of targets, or null if untargeted. 

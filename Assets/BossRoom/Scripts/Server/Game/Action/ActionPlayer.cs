@@ -50,6 +50,23 @@ namespace BossRoom.Server
         }
 
         /// <summary>
+        /// If an Action is active, fills out 'data' param and returns true. If no Action is active, returns false
+        /// </summary>
+        public bool GetActiveActionInfo(out ActionRequestData data)
+        {
+            if (m_queue.Count > 0)
+            {
+                data = m_queue[ 0 ].Data;
+                return true;
+            }
+            else
+            {
+                data = new ActionRequestData();
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Optionally end the currently playing action, and advance to the next Action that wants to play. 
         /// </summary>
         /// <param name="expireFirstElement">Pass true to remove the first element and advance to the next element. Pass false to "advance" to the 0th element</param>
