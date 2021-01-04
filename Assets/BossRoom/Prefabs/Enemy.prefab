@@ -100,7 +100,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitPoints:
-    InternalValue: 50
+    InternalValue: 80
   Mana:
     InternalValue: 20
 --- !u!195 &4129073990757611390
