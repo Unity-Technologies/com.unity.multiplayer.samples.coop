@@ -1,3 +1,4 @@
+using System;
 using MLAPI;
 using UnityEngine;
 
@@ -27,6 +28,8 @@ namespace BossRoom.Client
             }
         }
 
+        public event Action<Vector3> OnClientClick;
+
 
         void Awake()
         {
@@ -47,6 +50,8 @@ namespace BossRoom.Client
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
                     m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, hit.point,
                         "MLAPI_INTERNAL");
+                    //Send our client only click request
+                    OnClientClick.Invoke(hit.point);
                 }
             }
 
