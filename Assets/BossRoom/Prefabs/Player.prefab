@@ -276,6 +276,46 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608601788, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608601791, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608601811, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608603402, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608603409, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608603420, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608603422, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608603423, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608603632, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4547385851608603635, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: m_ModelIndex
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 7943089997373843793, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
       propertyPath: m_Enabled
       value: 1
