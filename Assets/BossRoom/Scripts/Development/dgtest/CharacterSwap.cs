@@ -16,8 +16,8 @@ namespace BossRoom.Client
       public GameObject hair;
       public GameObject eyes;
       public GameObject torso;
-      public GameObject gear_left_hand;
       public GameObject gear_right_hand;
+      public GameObject gear_left_hand;
       public GameObject hand_right;
       public GameObject hand_left;
       public GameObject shoulder_right;

@@ -698,102 +698,102 @@ MonoBehaviour:
   hotswapKey: 0
   modelIndex: 0
   characterModels:
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gear_left_hand: {fileID: 0}
-    gear_right_hand: {fileID: 0}
-    hand_right: {fileID: 0}
-    hand_left: {fileID: 0}
-    shoulder_right: {fileID: 0}
-    shoulder_left: {fileID: 0}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gear_left_hand: {fileID: 0}
-    gear_right_hand: {fileID: 0}
-    hand_right: {fileID: 0}
-    hand_left: {fileID: 0}
-    shoulder_right: {fileID: 0}
-    shoulder_left: {fileID: 0}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gear_left_hand: {fileID: 0}
-    gear_right_hand: {fileID: 0}
-    hand_right: {fileID: 0}
-    hand_left: {fileID: 0}
-    shoulder_right: {fileID: 0}
-    shoulder_left: {fileID: 0}
+  - ears: {fileID: 9110547478692365723}
+    head: {fileID: 7733041955828172184}
+    mouth: {fileID: 3056500194282619590}
+    hair: {fileID: 7816463888039560887}
+    eyes: {fileID: 6312990622113991710}
+    torso: {fileID: 425922695711241910}
+    gear_right_hand: {fileID: 8534728331211606325}
+    gear_left_hand: {fileID: 7977021810139058205}
+    hand_right: {fileID: 2760465371479465096}
+    hand_left: {fileID: 2371120030489877325}
+    shoulder_right: {fileID: 370705487330802731}
+    shoulder_left: {fileID: 1927926755814050025}
+  - ears: {fileID: 2767387628863870913}
+    head: {fileID: 2037562397139953176}
+    mouth: {fileID: 1247430151152165542}
+    hair: {fileID: 7841305284959672188}
+    eyes: {fileID: 7600218593773897685}
+    torso: {fileID: 3309616343003613770}
+    gear_right_hand: {fileID: 8782272346836785079}
+    gear_left_hand: {fileID: 9099098836572460644}
+    hand_right: {fileID: 668893896012404718}
+    hand_left: {fileID: 951919032070258571}
+    shoulder_right: {fileID: 5136405861930368345}
+    shoulder_left: {fileID: 8044371975584804473}
   - ears: {fileID: 4984529728629224612}
     head: {fileID: 6384206623454602747}
     mouth: {fileID: 3315647717772617126}
     hair: {fileID: 3041631701937239552}
     eyes: {fileID: 7705283312386798936}
     torso: {fileID: 1497750831970152200}
-    gear_left_hand: {fileID: 4547385850525906434}
     gear_right_hand: {fileID: 8332864890779340179}
+    gear_left_hand: {fileID: 4547385850525906434}
     hand_right: {fileID: 9187449357704579178}
     hand_left: {fileID: 2875260262347090163}
     shoulder_right: {fileID: 4547385852123078731}
     shoulder_left: {fileID: 2503478013837759990}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gear_left_hand: {fileID: 0}
-    gear_right_hand: {fileID: 0}
-    hand_right: {fileID: 0}
-    hand_left: {fileID: 0}
-    shoulder_right: {fileID: 0}
-    shoulder_left: {fileID: 0}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gear_left_hand: {fileID: 0}
-    gear_right_hand: {fileID: 0}
-    hand_right: {fileID: 0}
-    hand_left: {fileID: 0}
-    shoulder_right: {fileID: 0}
-    shoulder_left: {fileID: 0}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gear_left_hand: {fileID: 0}
-    gear_right_hand: {fileID: 0}
-    hand_right: {fileID: 0}
-    hand_left: {fileID: 0}
-    shoulder_right: {fileID: 0}
-    shoulder_left: {fileID: 0}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gear_left_hand: {fileID: 0}
-    gear_right_hand: {fileID: 0}
-    hand_right: {fileID: 0}
-    hand_left: {fileID: 0}
-    shoulder_right: {fileID: 0}
-    shoulder_left: {fileID: 0}
+  - ears: {fileID: 7583954262385114442}
+    head: {fileID: 5485558108050409640}
+    mouth: {fileID: 6715786524771158821}
+    hair: {fileID: 2169438647797076309}
+    eyes: {fileID: 7813791235517615257}
+    torso: {fileID: 1032627243168488120}
+    gear_right_hand: {fileID: 5457460188834904994}
+    gear_left_hand: {fileID: 4547385850979936535}
+    hand_right: {fileID: 6956424951883403026}
+    hand_left: {fileID: 3208043950912929606}
+    shoulder_right: {fileID: 3755598695813918582}
+    shoulder_left: {fileID: 4547385851686111995}
+  - ears: {fileID: 5495168480164858012}
+    head: {fileID: 8924157391495337738}
+    mouth: {fileID: 2664582909841472669}
+    hair: {fileID: 4639807557990995351}
+    eyes: {fileID: 4355144762768297397}
+    torso: {fileID: 1887906274417762581}
+    gear_right_hand: {fileID: 7591495331301406192}
+    gear_left_hand: {fileID: 4547385852356386207}
+    hand_right: {fileID: 5205367149617213923}
+    hand_left: {fileID: 2052198786977272620}
+    shoulder_right: {fileID: 4547385852239143095}
+    shoulder_left: {fileID: 4547385851565425507}
+  - ears: {fileID: 3031299923065806911}
+    head: {fileID: 5773592898381511357}
+    mouth: {fileID: 6193635572633873786}
+    hair: {fileID: 1377849580146008685}
+    eyes: {fileID: 4600761015263129413}
+    torso: {fileID: 3125399267724748823}
+    gear_right_hand: {fileID: 3885586153188589954}
+    gear_left_hand: {fileID: 4547385850944476164}
+    hand_right: {fileID: 168353655861662898}
+    hand_left: {fileID: 5432401221594662492}
+    shoulder_right: {fileID: 4547385850560374706}
+    shoulder_left: {fileID: 4547385850763732415}
+  - ears: {fileID: 9050837806502146063}
+    head: {fileID: 1942619982609780376}
+    mouth: {fileID: 1942619982609780376}
+    hair: {fileID: 5555833614698464238}
+    eyes: {fileID: 8805814283378961913}
+    torso: {fileID: 7637464740376934602}
+    gear_right_hand: {fileID: 8476951863452003825}
+    gear_left_hand: {fileID: 4547385852159820219}
+    hand_right: {fileID: 6121441642964187457}
+    hand_left: {fileID: 161201284839019143}
+    shoulder_right: {fileID: 4547385850462798308}
+    shoulder_left: {fileID: 4547385851833940654}
+  - ears: {fileID: 3197879114731797047}
+    head: {fileID: 6699397568312395898}
+    mouth: {fileID: 6699397568312395898}
+    hair: {fileID: 1382085230529991733}
+    eyes: {fileID: 3368315891251839942}
+    torso: {fileID: 7080003993000648899}
+    gear_right_hand: {fileID: 1421799770502368504}
+    gear_left_hand: {fileID: 4547385851144630425}
+    hand_right: {fileID: 3051343748963906177}
+    hand_left: {fileID: 663526999149154047}
+    shoulder_right: {fileID: 4547385850965649145}
+    shoulder_left: {fileID: 4547385850585325791}
 --- !u!1 &3741846901656975085
 GameObject:
   m_ObjectHideFlags: 0
