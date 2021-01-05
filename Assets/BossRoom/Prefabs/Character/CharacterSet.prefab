@@ -338,6 +338,7 @@ GameObject:
   - component: {fileID: 4199396739699390757}
   - component: {fileID: 4532006264828386692}
   - component: {fileID: 7943089997373843793}
+  - component: {fileID: 4654558647929214568}
   m_Layer: 9
   m_Name: CharacterSet
   m_TagString: Untagged
@@ -682,6 +683,117 @@ MonoBehaviour:
   MinZoomDistance: 3
   MaxZoomDistance: 30
   ZoomSpeed: 3
+--- !u!114 &4654558647929214568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a3048059d1dc86848a814084448ace11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  hotswapKey: 0
+  modelIndex: 0
+  characterModels:
+  - ears: {fileID: 0}
+    head: {fileID: 0}
+    mouth: {fileID: 0}
+    hair: {fileID: 0}
+    eyes: {fileID: 0}
+    torso: {fileID: 0}
+    gear_left_hand: {fileID: 0}
+    gear_right_hand: {fileID: 0}
+    hand_right: {fileID: 0}
+    hand_left: {fileID: 0}
+    shoulder_right: {fileID: 0}
+    shoulder_left: {fileID: 0}
+  - ears: {fileID: 0}
+    head: {fileID: 0}
+    mouth: {fileID: 0}
+    hair: {fileID: 0}
+    eyes: {fileID: 0}
+    torso: {fileID: 0}
+    gear_left_hand: {fileID: 0}
+    gear_right_hand: {fileID: 0}
+    hand_right: {fileID: 0}
+    hand_left: {fileID: 0}
+    shoulder_right: {fileID: 0}
+    shoulder_left: {fileID: 0}
+  - ears: {fileID: 0}
+    head: {fileID: 0}
+    mouth: {fileID: 0}
+    hair: {fileID: 0}
+    eyes: {fileID: 0}
+    torso: {fileID: 0}
+    gear_left_hand: {fileID: 0}
+    gear_right_hand: {fileID: 0}
+    hand_right: {fileID: 0}
+    hand_left: {fileID: 0}
+    shoulder_right: {fileID: 0}
+    shoulder_left: {fileID: 0}
+  - ears: {fileID: 4984529728629224612}
+    head: {fileID: 6384206623454602747}
+    mouth: {fileID: 3315647717772617126}
+    hair: {fileID: 3041631701937239552}
+    eyes: {fileID: 7705283312386798936}
+    torso: {fileID: 1497750831970152200}
+    gear_left_hand: {fileID: 4547385850525906434}
+    gear_right_hand: {fileID: 8332864890779340179}
+    hand_right: {fileID: 9187449357704579178}
+    hand_left: {fileID: 2875260262347090163}
+    shoulder_right: {fileID: 4547385852123078731}
+    shoulder_left: {fileID: 2503478013837759990}
+  - ears: {fileID: 0}
+    head: {fileID: 0}
+    mouth: {fileID: 0}
+    hair: {fileID: 0}
+    eyes: {fileID: 0}
+    torso: {fileID: 0}
+    gear_left_hand: {fileID: 0}
+    gear_right_hand: {fileID: 0}
+    hand_right: {fileID: 0}
+    hand_left: {fileID: 0}
+    shoulder_right: {fileID: 0}
+    shoulder_left: {fileID: 0}
+  - ears: {fileID: 0}
+    head: {fileID: 0}
+    mouth: {fileID: 0}
+    hair: {fileID: 0}
+    eyes: {fileID: 0}
+    torso: {fileID: 0}
+    gear_left_hand: {fileID: 0}
+    gear_right_hand: {fileID: 0}
+    hand_right: {fileID: 0}
+    hand_left: {fileID: 0}
+    shoulder_right: {fileID: 0}
+    shoulder_left: {fileID: 0}
+  - ears: {fileID: 0}
+    head: {fileID: 0}
+    mouth: {fileID: 0}
+    hair: {fileID: 0}
+    eyes: {fileID: 0}
+    torso: {fileID: 0}
+    gear_left_hand: {fileID: 0}
+    gear_right_hand: {fileID: 0}
+    hand_right: {fileID: 0}
+    hand_left: {fileID: 0}
+    shoulder_right: {fileID: 0}
+    shoulder_left: {fileID: 0}
+  - ears: {fileID: 0}
+    head: {fileID: 0}
+    mouth: {fileID: 0}
+    hair: {fileID: 0}
+    eyes: {fileID: 0}
+    torso: {fileID: 0}
+    gear_left_hand: {fileID: 0}
+    gear_right_hand: {fileID: 0}
+    hand_right: {fileID: 0}
+    hand_left: {fileID: 0}
+    shoulder_right: {fileID: 0}
+    shoulder_left: {fileID: 0}
 --- !u!1 &3741846901656975085
 GameObject:
   m_ObjectHideFlags: 0
