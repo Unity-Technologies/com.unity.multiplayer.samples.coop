@@ -9,43 +9,27 @@ namespace BossRoom.Client
   public class ClickFeedback : MonoBehaviour
   {
     [SerializeField]
-    GameObject feedbackPrefab;
-    private GameObject feedbackObj;
-    private ClientInputSender m_ClientSender;
-    private float lastClicked;
+    GameObject FeedbackPrefab;
+    GameObject m_FeedbackObj;
+    ClientInputSender m_ClientSender;
+
+    private const float HOVER_HEIGHT = .1f;
 
     // Start is called before the first frame update
     void Start()
     {
       m_ClientSender = GetComponent<ClientInputSender>();
       m_ClientSender.OnClientClick += onClick;
-      lastClicked = Time.time;
+      m_FeedbackObj = Instantiate(FeedbackPrefab);
+      m_FeedbackObj.SetActive(false);
     }
 
     void onClick(Vector3 position)
     {
-
-      if (!feedbackObj)
-      {
-        feedbackObj = Instantiate(feedbackPrefab);
-      }
-      position.y += .1f;
+      position.y += HOVER_HEIGHT;
       
-      feedbackObj.transform.position = position;
-      feedbackObj.SetActive(true);
-
-      lastClicked = Time.time;
-    }
-    
-
-    // Update is called once per frame
-    void Update()
-    {
-      if (feedbackObj && Time.time - lastClicked >= .75)
-      {
-        Destroy(feedbackObj);
-        feedbackObj = null;
-      }
+      m_FeedbackObj.transform.position = position;
+      m_FeedbackObj.SetActive(true);
     }
 
     private void OnDestroy()
