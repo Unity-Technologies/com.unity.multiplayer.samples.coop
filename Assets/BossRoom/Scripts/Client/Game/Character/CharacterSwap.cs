@@ -45,36 +45,29 @@ namespace BossRoom.Client
     }
 
     [SerializeField]
-    KeyCode hotswapKey;
+    int m_ModelIndex;
+    int m_lastModelIndex;
 
-    [SerializeField]
-    public int modelIndex;
+
     public CharacterModelSet[] characterModels;
     void Awake()
     {
-      if (modelIndex >= characterModels.Length)
+      if (m_ModelIndex >= characterModels.Length)
       {
-        modelIndex = 0;
+        m_ModelIndex = 0;
       }
-      swapToModel(modelIndex);
-    }
-
-    void cycleModel()
-    {
-      if (modelIndex == characterModels.Length - 1)
-      {
-        modelIndex = 0;
-      }
-      else
-      {
-        modelIndex += 1;
-      }
-      swapToModel(modelIndex);
+      SwapToModel(m_ModelIndex);
     }
 
 
-    public void swapToModel(int idx)
+    public void SwapToModel(int idx)
     {
+      if (idx >= characterModels.Length)
+      {
+        print("Index out of bounds");
+        return;
+      }
+
       for (int x = 0; x < characterModels.Length; x++)
       {
         characterModels[x].setFullActive(x == idx);
@@ -84,9 +77,10 @@ namespace BossRoom.Client
     // Update is called once per frame
     void Update()
     {
-      if (Input.GetKeyDown(hotswapKey))
+      if (m_lastModelIndex != m_ModelIndex)
       {
-        cycleModel();
+        m_lastModelIndex = m_ModelIndex;
+        SwapToModel(m_ModelIndex);
       }
     }
   }
