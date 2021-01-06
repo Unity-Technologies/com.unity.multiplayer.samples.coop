@@ -26,31 +26,39 @@ namespace BossRoom.Client
 
       public void setFullActive(bool isActive)
       {
-        ears?.SetActive(isActive);
-        head?.SetActive(isActive);
-        mouth?.SetActive(isActive);
-        hair?.SetActive(isActive);
-        eyes?.SetActive(isActive);
-        torso?.SetActive(isActive);
-        gear_left_hand?.SetActive(isActive);
-        hand_right?.SetActive(isActive);
-        hand_left?.SetActive(isActive);
-        shoulder_right?.SetActive(isActive);
-        shoulder_left?.SetActive(isActive);
-        gear_left_hand?.SetActive(isActive);
-        gear_right_hand?.SetActive(isActive);
+        ears.SetActive(isActive);
+        head.SetActive(isActive);
+        mouth.SetActive(isActive);
+        hair.SetActive(isActive);
+        eyes.SetActive(isActive);
+        torso.SetActive(isActive);
+        gear_left_hand.SetActive(isActive);
+        hand_right.SetActive(isActive);
+        hand_left.SetActive(isActive);
+        shoulder_right.SetActive(isActive);
+        shoulder_left.SetActive(isActive);
+        gear_left_hand.SetActive(isActive);
+        gear_right_hand.SetActive(isActive);
       }
     }
     [SerializeField]
     KeyCode hotswapKey;
 
     [SerializeField]
-    public int modelIndex = 0;
+    public int modelIndex;
     public CharacterModelSet[] characterModels;
-
-    public void cycleModel()
+    void Awake()
     {
-      if (modelIndex == characterModels.Length)
+      if (modelIndex >= characterModels.Length)
+      {
+        modelIndex = 0;
+      }
+      swapToModel(modelIndex);
+    }
+
+    void cycleModel()
+    {
+      if (modelIndex == characterModels.Length - 1)
       {
         modelIndex = 0;
       }
@@ -58,7 +66,7 @@ namespace BossRoom.Client
       {
         modelIndex += 1;
       }
-      this.swapToModel(modelIndex);
+      swapToModel(modelIndex);
     }
 
 
