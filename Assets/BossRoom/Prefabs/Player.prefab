@@ -385,6 +385,10 @@ PrefabInstance:
       value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 4654558647929214568, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+      propertyPath: hotswapKey
+      value: 13
+      objectReference: {fileID: 0}
+    - target: {fileID: 4654558647929214568, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
       propertyPath: modelIndex
       value: 0
       objectReference: {fileID: 0}

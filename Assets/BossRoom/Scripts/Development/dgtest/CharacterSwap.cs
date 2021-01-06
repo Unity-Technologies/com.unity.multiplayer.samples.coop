@@ -5,6 +5,8 @@ using UnityEngine;
 
 namespace BossRoom.Client
 {
+
+  //DEBUG SCRIPT: Meant to serve as a placeholder to allow artists to quickly cycle through player models.
   public class CharacterSwap : MonoBehaviour
   {
     [System.SerializableAttribute]
@@ -41,6 +43,7 @@ namespace BossRoom.Client
         gear_right_hand.SetActive(isActive);
       }
     }
+
     [SerializeField]
     KeyCode hotswapKey;
 

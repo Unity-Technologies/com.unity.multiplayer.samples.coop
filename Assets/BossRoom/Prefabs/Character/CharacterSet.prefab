@@ -419,7 +419,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a3048059d1dc86848a814084448ace11, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hotswapKey: 13
+  hotswapKey: 0
   modelIndex: 0
   characterModels:
   - ears: {fileID: 9110547478692365723}
