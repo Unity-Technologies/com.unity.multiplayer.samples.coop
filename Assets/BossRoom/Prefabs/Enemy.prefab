@@ -201,6 +201,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 858400412575613041}
     m_Modifications:
+    - target: {fileID: 2092317927563564270, guid: 08c3914aa4064d349a429bc090494787, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3091d04ea639b8c48bbdd46bf02f2875, type: 2}
+    - target: {fileID: 3348957444581692891, guid: 08c3914aa4064d349a429bc090494787, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3091d04ea639b8c48bbdd46bf02f2875, type: 2}
     - target: {fileID: 3723974146209228639, guid: 08c3914aa4064d349a429bc090494787, type: 3}
       propertyPath: m_Name
       value: Boss2
