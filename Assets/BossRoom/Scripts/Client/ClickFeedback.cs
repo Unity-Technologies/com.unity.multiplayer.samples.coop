@@ -9,7 +9,7 @@ namespace BossRoom.Client
   public class ClickFeedback : MonoBehaviour
   {
     [SerializeField]
-    GameObject FeedbackPrefab;
+    GameObject m_FeedbackPrefab;
     GameObject m_FeedbackObj;
     ClientInputSender m_ClientSender;
 
@@ -20,7 +20,7 @@ namespace BossRoom.Client
     {
       m_ClientSender = GetComponent<ClientInputSender>();
       m_ClientSender.OnClientClick += onClick;
-      m_FeedbackObj = Instantiate(FeedbackPrefab);
+      m_FeedbackObj = Instantiate(m_FeedbackPrefab);
       m_FeedbackObj.SetActive(false);
     }
 

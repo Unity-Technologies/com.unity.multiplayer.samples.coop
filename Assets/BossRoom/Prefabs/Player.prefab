@@ -220,7 +220,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d0d8ed0724e1404d9d0afcd9b8b5ee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  FeedbackPrefab: {fileID: 9137928905311479176, guid: 86bfc5d7bdc268842947478bcdd38c08, type: 3}
+  m_FeedbackPrefab: {fileID: 9137928905311479176, guid: 86bfc5d7bdc268842947478bcdd38c08, type: 3}
 --- !u!1001 &7872000410579295758
 PrefabInstance:
   m_ObjectHideFlags: 0
