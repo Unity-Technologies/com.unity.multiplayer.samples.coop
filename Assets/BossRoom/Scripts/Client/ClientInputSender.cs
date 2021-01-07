@@ -1,3 +1,4 @@
+using System;
 using MLAPI;
 using UnityEngine;
 
@@ -10,6 +11,8 @@ namespace BossRoom.Client
     public class ClientInputSender : NetworkedBehaviour
     {
         private NetworkCharacterState m_NetworkCharacter;
+
+        private LayerMask k_MouseQueryLayerMask; // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
 
         /// <summary>
         /// We detect clicks in Update (because you can miss single discrete clicks in FixedUpdate). But we need to 
@@ -31,6 +34,7 @@ namespace BossRoom.Client
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
+            k_MouseQueryLayerMask = LayerMask.GetMask(new[] {"Ground", "PCs", "NPCs"});
         }
 
         void FixedUpdate()
@@ -41,8 +45,8 @@ namespace BossRoom.Client
             if (Input.GetMouseButton(0))
             {
                 RaycastHit hit;
-                
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100f, k_MouseQueryLayerMask))
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
                     m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, hit.point,
@@ -60,7 +64,7 @@ namespace BossRoom.Client
                     var chase_data = new ActionRequestData();
                     chase_data.ActionTypeEnum = ActionType.GENERAL_CHASE;
                     chase_data.Amount = 3f;
-                    chase_data.TargetIds = new ulong[] { GetTargetObject(ref hit) };
+                    chase_data.TargetIds = new ulong[] {GetTargetObject(ref hit)};
                     m_NetworkCharacter.C2S_DoAction(ref chase_data);
 
                     var hit_data = new ActionRequestData();
@@ -91,11 +95,18 @@ namespace BossRoom.Client
         /// <summary>
         /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object. 
         /// </summary>
-        private ulong GetTargetObject(ref RaycastHit hit )
+        private ulong GetTargetObject(ref RaycastHit hit)
         {
-            if( hit.collider == null ) { return 0; }
+            if (hit.collider == null)
+            {
+                return 0;
+            }
+
             var targetObj = hit.collider.GetComponent<NetworkedObject>();
-            if( targetObj == null ) { return 0;  }
+            if (targetObj == null)
+            {
+                return 0;
+            }
 
             return targetObj.NetworkId;
         }
