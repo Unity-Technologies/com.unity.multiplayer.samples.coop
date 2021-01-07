@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BossRoom.Client
 {
 
-    //DEBUG SCRIPT: Meant to serve as a placeholder to allow artists to quickly cycle through player models.
+    //Debug: logic to allow designers to easily swap models in editor
     public class CharacterSwap : MonoBehaviour
     {
         [System.SerializableAttribute]
