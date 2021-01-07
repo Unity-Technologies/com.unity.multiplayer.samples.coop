@@ -10,7 +10,6 @@ namespace BossRoom.Server
         private NetworkedObject m_Target;
         private ServerCharacterMovement m_Movement;
 
-        private Vector3 m_CurrentTargetPos;
 
         public ChaseAction(ServerCharacter parent, ref ActionRequestData data, int level) : base(parent, ref data, level)
         {
@@ -32,8 +31,7 @@ namespace BossRoom.Server
             m_Target = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
 
             m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
-            m_Movement.SetMovementTarget(m_Target.transform.position);
-            m_CurrentTargetPos = m_Target.transform.position;
+            m_Movement.FollowTransform(m_Target.transform);
 
             return true;
         }
@@ -50,14 +48,6 @@ namespace BossRoom.Server
                 //we made it! we're done. 
                 Cancel();
                 return false;
-            }
-
-            float target_moved = (m_Target.transform.position - m_CurrentTargetPos).magnitude;
-            if( m_Data.Amount < target_moved )
-            {
-                //target has moved past our range tolerance. Must repath. 
-                this.m_Movement.SetMovementTarget(m_Target.transform.position);
-                m_CurrentTargetPos = m_Target.transform.position;
             }
 
             return true;
