@@ -7,13 +7,14 @@ using UnityEngine;
 /// </summary>
 public class SelfDisable : MonoBehaviour
 {
-    public float DisabledDelay;
-    float disableTimestamp;
+    [SerializeField]
+    float m_DisabledDelay;
+    float m_DisableTimestamp;
 
     // Update is called once per frame
     void Update()
     {
-        if (Time.time >= disableTimestamp)
+        if (Time.time >= m_DisableTimestamp)
         {
           gameObject.SetActive(false);
         }
@@ -21,6 +22,6 @@ public class SelfDisable : MonoBehaviour
 
     void OnEnable()
     {
-    disableTimestamp = Time.time + DisabledDelay;
+        m_DisableTimestamp = Time.time + m_DisabledDelay;
     }
 }
