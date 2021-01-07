@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BossRoom.Viz
+namespace BossRoom.Visual
 {
     public class ModelSwap : MonoBehaviour
     {

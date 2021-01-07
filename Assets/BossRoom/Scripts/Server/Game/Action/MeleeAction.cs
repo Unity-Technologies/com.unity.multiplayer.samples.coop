@@ -14,7 +14,7 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            m_Parent.NetState.S2C_BroadcastAction(ref Data);
+            m_Parent.NetState.ServerBroadcastAction(ref Data);
             return true;
         }
 

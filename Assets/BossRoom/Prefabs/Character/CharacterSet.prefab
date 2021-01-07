@@ -679,6 +679,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9520a47fc61d5ab4ca99cdac2d574909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ClientVisualsAnimator: {fileID: 4199396739699390757}
   MinZoomDistance: 3
   MaxZoomDistance: 30
   ZoomSpeed: 3

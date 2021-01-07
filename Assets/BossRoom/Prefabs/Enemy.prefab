@@ -28,6 +28,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9520a47fc61d5ab4ca99cdac2d574909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ClientVisualsAnimator: {fileID: 8221438362690823759}
   MinZoomDistance: 3
   MaxZoomDistance: 30
   ZoomSpeed: 3
@@ -267,5 +268,10 @@ GameObject:
 --- !u!4 &2663956648913632309 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4099936395697225189, guid: 08c3914aa4064d349a429bc090494787, type: 3}
+  m_PrefabInstance: {fileID: 2025951435693425104}
+  m_PrefabAsset: {fileID: 0}
+--- !u!95 &8221438362690823759 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: 7927965616957794207, guid: 08c3914aa4064d349a429bc090494787, type: 3}
   m_PrefabInstance: {fileID: 2025951435693425104}
   m_PrefabAsset: {fileID: 0}
