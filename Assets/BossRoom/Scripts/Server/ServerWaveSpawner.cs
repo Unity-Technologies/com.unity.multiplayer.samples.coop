@@ -28,10 +28,6 @@ namespace BossRoom.Server
         [SerializeField]
         private NetworkedObject m_NetworkedPrefab;
 
-        // world position offset for spawn
-        [SerializeField]
-        private Vector3 m_SpawnOffset;
-
         // cache reference to our own transform
         private Transform m_Transform;
         
@@ -52,23 +48,31 @@ namespace BossRoom.Server
         private LayerMask m_BlockingMask;
 
         [Tooltip("Time between player distance & visibility scans, in seconds.")]
-        public float playerDistanceCheckHeartbeat;
+        [SerializeField]
+        float playerProximityValidationTimestep;
         
         [Header("Wave parameters")]
         [Tooltip("Total number of waves.")]
-        public int numberOfWaves;
+        [SerializeField]
+        int numberOfWaves;
         [Tooltip("Number of spawns per wave.")]
-        public int spawnsPerWave;
+        [SerializeField]
+        int spawnsPerWave;
         [Tooltip("Time between individual spawns, in seconds.")]
-        public float timeBetweenSpawns;
+        [SerializeField]
+        float timeBetweenSpawns;
         [Tooltip("Time between waves, in seconds.")]
-        public float timeBetweenWaves;
+        [SerializeField]
+        float timeBetweenWaves;
         [Tooltip("Once last wave is spawned, the spawner waits this long to restart wave spawns, in seconds.")]
-        public float restartDelay;
+        [SerializeField]
+        float restartDelay;
         [Tooltip("A player must be withing this distance to commence first wave spawn.")]
-        public float proximityDistance;
+        [SerializeField]
+        float proximityDistance;
         [Tooltip("After being broken, the spawner waits this long to restart wave spawns, in seconds.")]
-        public float dormantCooldown;
+        [SerializeField]
+        float dormantCooldown;
 
         void Awake()
         {
@@ -126,7 +130,7 @@ namespace BossRoom.Server
                     // do nothing, a wave spawning routine is currently underway
                 }
                 
-                yield return new WaitForSeconds(playerDistanceCheckHeartbeat);
+                yield return new WaitForSeconds(playerProximityValidationTimestep);
             }
         }
 
@@ -178,7 +182,7 @@ namespace BossRoom.Server
             m_WaveIndex++;
         }
         
-        // NOTE: This is not being fired on the Host (the server-client)
+        // TODO: This is not being fired on the Host (the server-client)
         /// <summary>
         /// Server Rpc to spawn a NetworkedObject prefab clone.
         /// </summary>
