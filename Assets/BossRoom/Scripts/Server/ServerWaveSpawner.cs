@@ -21,7 +21,6 @@ namespace BossRoom.Server
         public NetworkedVarInt health;
         
         // proposal: reference a RuntimeList of players in game (list for now)
-        [SerializeField]
         private List<NetworkedObject> m_Players;
         
         // networked object that will be spawned in waves
