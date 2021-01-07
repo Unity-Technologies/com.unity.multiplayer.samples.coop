@@ -4,7 +4,7 @@ using UnityEngine.AI;
 
 namespace BossRoom.Server
 {
-    [DefaultExecutionOrder(10000)] // The enable/disable trigger have to be called after the triggers from NavMeshObstacle which update the nav mesh.
+    [DefaultExecutionOrder(10000)] // The enable/disable triggers have to be called after the triggers from NavMeshObstacle which update the nav mesh.
     [RequireComponent(typeof(NavMeshObstacle))]
     public sealed class DynamicNavObstacle : MonoBehaviour
     {
@@ -17,7 +17,7 @@ namespace BossRoom.Server
 
         void OnValidate()
         {
-            if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab.
+            if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
                 Assert.NotNull(
                     GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSytemTag)?.GetComponent<NavigationSystem>(),
