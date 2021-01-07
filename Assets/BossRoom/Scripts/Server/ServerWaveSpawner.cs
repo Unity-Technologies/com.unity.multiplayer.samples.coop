@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using BossRoom.Shared;
 using UnityEngine;
+using BossRoom.Shared;
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkedVar;
@@ -11,6 +11,7 @@ namespace BossRoom.Server
     /// <summary>
     /// Component responsible for spawning prefab clones in waves on the server.
     /// </summary>
+    [RequireComponent(typeof(Collider))]
     public class ServerWaveSpawner : NetworkedBehaviour
     {
         // amount of hits it takes to break any spawner
@@ -26,6 +27,10 @@ namespace BossRoom.Server
         // networked object that will be spawned in waves
         [SerializeField]
         private NetworkedObject m_NetworkedPrefab;
+
+        // world position offset for spawn
+        [SerializeField]
+        private Vector3 m_SpawnOffset;
 
         // cache reference to our own transform
         private Transform m_Transform;
@@ -77,10 +82,16 @@ namespace BossRoom.Server
             if (!IsServer)
             {
                 enabled = false;
+                return;
             }
             
-            // hack for now
-            m_Players.Add(GameObject.FindObjectOfType<NetworkCharacterState>().GetComponent<NetworkedObject>());
+            // TODO: replace block below with proper getter for players or RuntimeList
+            NetworkCharacterState[] networkCharacterStates =
+                GameObject.FindObjectsOfType<NetworkCharacterState>();
+            foreach (var networkCharacterState in networkCharacterStates)
+            {
+                m_Players.Add(networkCharacterState.GetComponent<NetworkedObject>());
+            }
 
             health.Value = k_maxHealth;
             m_Hit = new RaycastHit[1];
@@ -151,7 +162,6 @@ namespace BossRoom.Server
             m_WaveSpawning = null;
         }
 
-        // TODO: [ServerOnly] attribute
         /// <summary>
         /// Coroutine that spawns a wave of prefab clones, with some time between spawns.
         /// </summary>
@@ -180,10 +190,8 @@ namespace BossRoom.Server
                 return;
             }
 
-            var spawnPosition = m_Transform.position + 
-                                new Vector3(UnityEngine.Random.Range(-1f, 1f), 
-                                    UnityEngine.Random.Range(-1f, 1f), 
-                                    UnityEngine.Random.Range(-1f, 1f));
+            // spawn clone right in front of spawner
+            var spawnPosition = m_Transform.position + m_Transform.forward;
             var clone =  Instantiate(m_NetworkedPrefab, spawnPosition, Quaternion.identity);
             if (!clone.IsSpawned)
             {
