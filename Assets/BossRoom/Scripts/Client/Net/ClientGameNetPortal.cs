@@ -9,14 +9,14 @@ namespace BossRoom.Client
     /// <summary>
     /// Client logic for the GameNetHub. Contains implementations for all of GameNetHub's S2C RPCs. 
     /// </summary>
-    [RequireComponent(typeof(GameNetHub))]
-    public class ClientGNHLogic : MonoBehaviour
+    [RequireComponent(typeof(GameNetPortal))]
+    public class ClientGameNetPortal : MonoBehaviour
     {
-        private GameNetHub m_Hub;
+        private GameNetPortal m_Hub;
 
         public void Start()
         {
-            m_Hub = GetComponent<GameNetHub>();
+            m_Hub = GetComponent<GameNetPortal>();
             m_Hub.NetworkStartEvent += this.NetworkStart;
             m_Hub.ConnectFinishedEvent += this.OnConnectFinished;
         }
@@ -62,7 +62,7 @@ namespace BossRoom.Client
         /// </remarks>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
-        public static void StartClient(GameNetHub hub, string ipaddress, int port)
+        public static void StartClient(GameNetPortal hub, string ipaddress, int port)
         {
             string client_guid = GetOrCreateGuid();
             string payload = $"client_guid={client_guid}\n"; //minimal format where key=value pairs are separated by newlines. 

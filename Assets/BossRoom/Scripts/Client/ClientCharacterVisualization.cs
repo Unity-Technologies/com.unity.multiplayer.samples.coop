@@ -2,16 +2,18 @@ using MLAPI;
 using UnityEngine;
 using Cinemachine;
 
-namespace BossRoom.Viz
+namespace BossRoom.Visual
 {
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacterVisualization : NetworkedBehaviour
     {
         private NetworkCharacterState m_NetState;
+
+        [SerializeField]
         private Animator m_ClientVisualsAnimator;
+
         private CinemachineVirtualCamera m_MainCamera;
         private Transform m_Parent;
 
@@ -52,15 +54,16 @@ namespace BossRoom.Viz
             m_ClientVisualsAnimator.SetTrigger("BeginAttack");
         }
 
-        void Awake()
-        {
-            m_ClientVisualsAnimator = GetComponent<Animator>();
-        }
-
         void Update()
         {
-            SmoothMove();
+            if (m_Parent == null)
+            {
+                //since we aren't in the transform hierarchy, we have to explicitly die when our parent dies. 
+                GameObject.Destroy(this.gameObject);
+                return;
+            }
 
+            SmoothMove();
 
             if (m_ClientVisualsAnimator)
             {
@@ -78,14 +81,6 @@ namespace BossRoom.Viz
 
         private void SmoothMove()
         {
-            if (m_Parent == null)
-            {
-                //since we aren't in the transform hierarchy, we have to explicitly die when our parent dies. 
-                GameObject.Destroy(this.gameObject);
-                return;
-            } 
-
-
             var pos_diff = m_Parent.transform.position - transform.position;
             var angle_diff = Quaternion.Angle(m_Parent.transform.rotation, transform.rotation);
 
@@ -112,7 +107,10 @@ namespace BossRoom.Viz
 
         private void AttachCamera()
         {
-            m_MainCamera = (CinemachineVirtualCamera)FindObjectOfType(typeof(CinemachineVirtualCamera));
+            var cameraGO = GameObject.FindGameObjectWithTag("CMCamera");
+            if( cameraGO == null ) { return; }
+
+            m_MainCamera = cameraGO.GetComponent<CinemachineVirtualCamera>();
             if (m_MainCamera)
             {
                 m_MainCamera.Follow = transform;

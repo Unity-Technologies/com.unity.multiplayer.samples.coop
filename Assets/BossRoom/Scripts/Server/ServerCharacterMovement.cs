@@ -29,6 +29,14 @@ namespace BossRoom.Server
         [SerializeField]
         private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition 
 
+        private void Awake()
+        {
+            m_NavMeshAgent = GetComponent<NavMeshAgent>();
+            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
+            m_CharLogic = GetComponent<ServerCharacter>();
+            m_Rigidbody = GetComponent<Rigidbody>();
+        }
+
         public override void NetworkStart()
         {
             if (!IsServer)
@@ -67,16 +75,7 @@ namespace BossRoom.Server
         /// </summary>
         public void CancelMove()
         {
-            //Luke, is there anything else I should do to clear move state here?
             m_MovementState = MovementState.Idle;
-        }
-
-        private void Awake()
-        {
-            m_NavMeshAgent = GetComponent<NavMeshAgent>();
-            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
-            m_CharLogic = GetComponent<ServerCharacter>();
-            m_Rigidbody = GetComponent<Rigidbody>();
         }
 
         private void FixedUpdate()

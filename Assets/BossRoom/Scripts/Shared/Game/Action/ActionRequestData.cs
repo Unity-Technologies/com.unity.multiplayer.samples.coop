@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 
 namespace BossRoom
@@ -25,7 +26,7 @@ namespace BossRoom
         RANGEDTARGETED,
         CHASE,
 
-        //O__O adding a new ActionLogic branch? Update Action.MakeAction!
+        //O__O adding a new ActionLogic type? Update Action.MakeAction!
     }
 
     /// <summary>
@@ -123,10 +124,6 @@ namespace BossRoom
                     {new ActionDescription{Logic=ActionLogic.CHASE } }
                 } 
             }
-
-
-
-                
         };
     }
 
@@ -137,7 +134,7 @@ namespace BossRoom
     /// the Action gets played, and also what gets sent server->client to broadcast the action event. Note that the OUTCOMES of the action effect
     /// don't ride along with this object when it is broadcast to clients; that information is sync'd separately, usually by NetworkedVars.
     /// </summary>
-    public struct ActionRequestData
+    public struct ActionRequestData : MLAPI.Serialization.IBitWritable
     {
         public ActionType ActionTypeEnum;      //the action to play. 
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill. 
@@ -147,7 +144,65 @@ namespace BossRoom
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
         public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately. 
 
-        //O__O Hey, are you adding something? Be sure to update ActionLogicInfo and NetworkCharacterState.SerializeAction, RecvDoAction as well. 
+        //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below. 
+
+        public void Read(Stream stream)
+        {
+            using (var reader = MLAPI.Serialization.Pooled.PooledBitReader.Get(stream))
+            {
+                ActionTypeEnum = (ActionType)reader.ReadInt16();
+                ShouldQueue = reader.ReadBool();
+
+                var Logic = ActionData.ActionDescriptions[ActionTypeEnum][0].Logic;
+                var Info = ActionData.LogicInfos[Logic];
+
+                if (Info.HasPosition)
+                {
+                    Position = reader.ReadVector3();
+                }
+                if (Info.HasDirection)
+                {
+                    Direction = reader.ReadVector3();
+                }
+                if (Info.HasTarget)
+                {
+                    TargetIds = reader.ReadULongArray();
+                }
+                if (Info.HasAmount)
+                {
+                    Amount = reader.ReadSingle();
+                }
+            }
+        }
+
+        public void Write(Stream stream)
+        {
+            using (var writer = MLAPI.Serialization.Pooled.PooledBitWriter.Get(stream))
+            {
+                ActionLogic Logic = ActionData.ActionDescriptions[ActionTypeEnum][0].Logic;
+                ActionLogicInfo Info = ActionData.LogicInfos[Logic];
+
+                writer.WriteInt16((short)ActionTypeEnum);
+                writer.WriteBool(ShouldQueue);
+                if (Info.HasPosition)
+                {
+                    writer.WriteVector3(Position);
+                }
+                if (Info.HasDirection)
+                {
+                    writer.WriteVector3(Direction);
+                }
+                if (Info.HasTarget)
+                {
+                    writer.WriteULongArray(TargetIds);
+                }
+                if (Info.HasAmount)
+                {
+                    writer.WriteSingle(Amount);
+                }
+            }
+        }
+
     }
 
 }
