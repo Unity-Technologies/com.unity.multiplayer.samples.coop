@@ -328,7 +328,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3443969269427342405}
   - component: {fileID: 8731146078263039551}
-  - component: {fileID: 1234019091858508219}
   - component: {fileID: 2732413867170824990}
   m_Layer: 9
   m_Name: Boss2
@@ -372,22 +371,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &1234019091858508219
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2630312606306686719}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edb78c1621dad5149bb47b96120d3fbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HitPoints:
-    InternalValue: 0
-  Mana:
-    InternalValue: 0
 --- !u!114 &2732413867170824990
 MonoBehaviour:
   m_ObjectHideFlags: 0
