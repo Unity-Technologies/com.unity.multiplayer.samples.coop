@@ -9,16 +9,16 @@ namespace BossRoom.Server
     /// <summary>
     /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs. 
     /// </summary>
-    public class ServerGNHLogic : MonoBehaviour
+    public class ServerGameNetPortal : MonoBehaviour
     {
-        private GameNetHub m_Hub;
+        private GameNetPortal m_Hub;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage. 
         private const int k_MaxConnectPayload = 1024;
 
         public void Start()
         {
-            m_Hub = GetComponent<GameNetHub>();
+            m_Hub = GetComponent<GameNetPortal>();
             m_Hub.NetworkStartEvent += NetworkStart;
             // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"

@@ -12,7 +12,7 @@ namespace BossRoom.Visual
         public GameObject GameHubGO;
         public GameObject InputTextGO;
 
-        private BossRoom.GameNetHub m_netHub;
+        private BossRoom.GameNetPortal m_netHub;
 
         /// <summary>
         /// This will get more sophisticated as we move to a true relay model.
@@ -22,7 +22,7 @@ namespace BossRoom.Visual
         // Start is called before the first frame update
         void Start()
         {
-            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetHub>();
+            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetPortal>();
         }
 
         /// <summary>
@@ -49,7 +49,7 @@ namespace BossRoom.Visual
 
         public void OnConnectClicked()
         {
-            BossRoom.Client.ClientGNHLogic.StartClient(m_netHub, GetIPAddress(), k_connectPort);
+            BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, GetIPAddress(), k_connectPort);
         }
     }
 }
