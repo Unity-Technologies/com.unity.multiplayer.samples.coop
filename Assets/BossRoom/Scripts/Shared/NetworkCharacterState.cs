@@ -10,7 +10,12 @@ using MLAPI.Serialization.Pooled;
 namespace BossRoom
 {
 
-
+    public enum LifeState
+    {
+        ALIVE,
+        FAINTED,
+        DEAD
+    }
 
     /// <summary>
     /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
@@ -29,8 +34,9 @@ namespace BossRoom
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
         public NetworkedVarInt HitPoints;
-        public NetworkedVarInt Mana;
-
+        public NetworkedVarInt Mana; 
+        public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.ALIVE);
+        
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
