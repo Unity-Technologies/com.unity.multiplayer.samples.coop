@@ -15,10 +15,11 @@ namespace BossRoom.Server
     public class ServerWaveSpawner : NetworkedBehaviour
     {
         // amount of hits it takes to break any spawner
-        const int k_maxHealth = 3;
+        const int k_MaxHealth = 3;
         
         // current health of the spawner
-        public NetworkedVarInt health;
+        [SerializeField]
+        NetworkedVarInt m_Health;
         
         // proposal: reference a RuntimeList of players in game (list for now)
         private List<NetworkedObject> m_Players;
@@ -36,9 +37,6 @@ namespace BossRoom.Server
         // keep reference to our wave spawning coroutine
         private Coroutine m_WaveSpawning;
         
-        // cache our Ray as it will be reused for player visibility
-        private Ray m_Ray;
-        
         // cache array of RaycastHit as it will be reused for player visibility
         private RaycastHit[] m_Hit;
 
@@ -48,31 +46,31 @@ namespace BossRoom.Server
 
         [Tooltip("Time between player distance & visibility scans, in seconds.")]
         [SerializeField]
-        float playerProximityValidationTimestep;
+        float m_PlayerProximityValidationTimestep;
         
         [Header("Wave parameters")]
         [Tooltip("Total number of waves.")]
         [SerializeField]
-        int numberOfWaves;
+        int m_NumberOfWaves;
         [Tooltip("Number of spawns per wave.")]
         [SerializeField]
-        int spawnsPerWave;
+        int m_SpawnsPerWave;
         [Tooltip("Time between individual spawns, in seconds.")]
         [SerializeField]
-        float timeBetweenSpawns;
+        float m_TimeBetweenSpawns;
         [Tooltip("Time between waves, in seconds.")]
         [SerializeField]
-        float timeBetweenWaves;
+        float m_TimeBetweenWaves;
         [Tooltip("Once last wave is spawned, the spawner waits this long to restart wave spawns, in seconds.")]
         [SerializeField]
-        float restartDelay;
+        float m_RestartDelay;
         [Tooltip("A player must be withing this distance to commence first wave spawn.")]
         [SerializeField]
-        float proximityDistance;
+        float m_ProximityDistance;
         [Tooltip("After being broken, the spawner waits this long to restart wave spawns, in seconds.")]
         [SerializeField]
-        float dormantCooldown;
-
+        float m_DormantCooldown;
+        
         void Awake()
         {
             m_Transform = transform;
@@ -87,7 +85,8 @@ namespace BossRoom.Server
                 enabled = false;
                 return;
             }
-            
+
+            m_Players = new List<NetworkedObject>();
             // TODO: replace block below with proper getter for players or RuntimeList
             NetworkCharacterState[] networkCharacterStates =
                 GameObject.FindObjectsOfType<NetworkCharacterState>();
@@ -96,7 +95,7 @@ namespace BossRoom.Server
                 m_Players.Add(networkCharacterState.GetComponent<NetworkedObject>());
             }
 
-            health.Value = k_maxHealth;
+            m_Health.Value = k_MaxHealth;
             m_Hit = new RaycastHit[1];
             StartPlayerProximityValidation();
         }
@@ -129,7 +128,7 @@ namespace BossRoom.Server
                     // do nothing, a wave spawning routine is currently underway
                 }
                 
-                yield return new WaitForSeconds(playerProximityValidationTimestep);
+                yield return new WaitForSeconds(m_PlayerProximityValidationTimestep);
             }
         }
 
@@ -153,14 +152,14 @@ namespace BossRoom.Server
         {
             m_WaveIndex = 0;
             
-            while (m_WaveIndex < numberOfWaves)
+            while (m_WaveIndex < m_NumberOfWaves)
             {
                 yield return SpawnWave();
                 
-                yield return new WaitForSeconds(timeBetweenWaves);
+                yield return new WaitForSeconds(m_TimeBetweenWaves);
             }
             
-            yield return new WaitForSeconds(restartDelay);
+            yield return new WaitForSeconds(m_RestartDelay);
 
             m_WaveSpawning = null;
         }
@@ -171,22 +170,20 @@ namespace BossRoom.Server
         /// <returns></returns>
         IEnumerator SpawnWave()
         {
-            for (var i = 0; i < spawnsPerWave; i++)
+            for (var i = 0; i < m_SpawnsPerWave; i++)
             {
-                SpawnPrefabClientRpc();
+                SpawnPrefab();
 
-                yield return new WaitForSeconds(timeBetweenSpawns);
+                yield return new WaitForSeconds(m_TimeBetweenSpawns);
             }
 
             m_WaveIndex++;
         }
         
-        // TODO: This is not being fired on the Host (the server-client)
         /// <summary>
         /// Server Rpc to spawn a NetworkedObject prefab clone.
         /// </summary>
-        [ClientRpc]
-        void SpawnPrefabClientRpc()
+        void SpawnPrefab()
         {
             if (m_NetworkedPrefab == null)
             {
@@ -208,31 +205,34 @@ namespace BossRoom.Server
         /// <returns> True if visible and within range, else false. </returns>
         bool IsAnyPlayerNearbyAndVisible()
         {
-            if (m_Players == null)
+            if (m_Players == null || m_Players.Count == 0)
             {
                 return false;
             }
 
             var spawnerPosition = m_Transform.position;
+            var proximityDistanceSquared = m_ProximityDistance * m_ProximityDistance;
+
+            var ray = new Ray();
 
             // iterate through players and only return true if a player is in range
             // and is not blocked by a blocking collider.
             foreach (var player in m_Players)
             {
                 var playerPosition = player.transform.position;
+                var direction = playerPosition - spawnerPosition;
                 
-                if (Vector3.Distance(playerPosition, spawnerPosition) >
-                    proximityDistance)
+                if (Vector3.SqrMagnitude(direction) > proximityDistanceSquared)
                 {
                     continue;
                 }
 
-                var direction = playerPosition - spawnerPosition;
-                m_Ray = new Ray(spawnerPosition, direction);
+                ray.origin = spawnerPosition;
+                ray.direction = direction;
 
                 // TODO: sort out layer for terrain/walls/blocker that this ray will try to hit
-                var hit = Physics.RaycastNonAlloc(m_Ray, m_Hit, 
-                    Mathf.Min(direction.magnitude, proximityDistance),m_BlockingMask);
+                var hit = Physics.RaycastNonAlloc(ray, m_Hit, 
+                    Mathf.Min(direction.magnitude, m_ProximityDistance),m_BlockingMask);
                 if (hit == 0)
                 {
                     return true;
@@ -243,7 +243,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Immediately stops current wave spawns and restarts proximity check after cooldown. 
+        /// Immediately stops current wave spawns and restarts proximity check after cooldown.
         /// </summary>
         void StartWaveSpawnCooldown()
         {
@@ -257,11 +257,11 @@ namespace BossRoom.Server
         /// <returns></returns>
         IEnumerator WaveSpawnCooldown()
         {
-            yield return new WaitForSeconds(dormantCooldown);
+            yield return new WaitForSeconds(m_DormantCooldown);
 
             // revive spawner back up to full health and visually show a revival
             ReviveClientRpc();
-            health.Value = k_maxHealth;
+            m_Health.Value = k_MaxHealth;
             StartPlayerProximityValidation();
         }
 
@@ -278,9 +278,9 @@ namespace BossRoom.Server
                 return;
             }
 
-            health.Value--;
+            m_Health.Value--;
 
-            if (health.Value <= 0)
+            if (m_Health.Value <= 0)
             {
                 BrokenClientRpc();
                 
