@@ -13,6 +13,7 @@ namespace BossRoom
         TANK_BASEATTACK,
         ARCHER_BASEATTACK,
         GENERAL_CHASE,
+        GENERAL_REVIVE,
     }
 
 
@@ -25,8 +26,9 @@ namespace BossRoom
         RANGED,
         RANGEDTARGETED,
         CHASE,
-
-        //O__O adding a new ActionLogic type? Update Action.MakeAction!
+        REVIVE,
+        
+        //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
     /// <summary>
@@ -99,6 +101,7 @@ namespace BossRoom
             {ActionLogic.RANGED, new ActionLogicInfo{HasDirection=true} },
             {ActionLogic.RANGEDTARGETED, new ActionLogicInfo{HasTarget=true} },
             {ActionLogic.CHASE, new ActionLogicInfo{HasTarget=true, HasAmount=true} },
+            {ActionLogic.REVIVE, new ActionLogicInfo{HasTarget=true} },
         };
 
         public static Dictionary<ActionType, List<ActionDescription>> ActionDescriptions = new Dictionary<ActionType, List<ActionDescription>>
@@ -123,7 +126,13 @@ namespace BossRoom
                 {
                     {new ActionDescription{Logic=ActionLogic.CHASE } }
                 } 
-            }
+            },
+            
+            { ActionType.GENERAL_REVIVE, new List<ActionDescription> 
+                {
+                    {new ActionDescription{Logic=ActionLogic.REVIVE, Amount=10, ExecTime_s=0.3f, Duration_s=0.5f, Anim="Todo"  } }
+                } 
+            }   
         };
     }
 
