@@ -16,7 +16,7 @@ namespace BossRoom.Client
         /// raycast in FixedUpdate, because raycasts done in Update won't work reliably. 
         /// This nullable vector will be set to a screen coordinate when an attack click was made. 
         /// </summary>
-        private System.Nullable<Vector3> m_AttackClickRequest;
+        private System.Nullable<Vector3> m_ClickRequest;
 
         public override void NetworkStart()
         {
@@ -50,23 +50,45 @@ namespace BossRoom.Client
                 }
             }
 
-            if (m_AttackClickRequest != null)
+            if (m_ClickRequest != null)
             {
                 RaycastHit hit;
 
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(m_AttackClickRequest.Value), out hit) && GetTargetObject(ref hit) != 0)
+                if (Physics.Raycast(Camera.main.ScreenPointToRay(m_ClickRequest.Value), out hit) && GetTargetObject(ref hit) != 0)
                 {
-                    //these two actions will queue one after the other, causing us to run over to our target and take a swing. 
+                    //if we have clicked on an enemy:
+                    // - two actions will queue one after the other, causing us to run over to our target and take a swing. 
+                    //if we have clicked on a fallen friend - we will revive him
+                    
                     var chase_data = new ActionRequestData();
                     chase_data.ActionTypeEnum = ActionType.GENERAL_CHASE;
                     chase_data.Amount = ActionData.ActionDescriptions[ActionType.TANK_BASEATTACK][0].Range;
                     chase_data.TargetIds = new ulong[] { GetTargetObject(ref hit) };
                     m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
 
-                    var hit_data = new ActionRequestData();
-                    hit_data.ShouldQueue = true; //wait your turn--don't clobber the chase action. 
-                    hit_data.ActionTypeEnum = ActionType.TANK_BASEATTACK;
-                    m_NetworkCharacter.ClientSendActionRequest(ref hit_data);
+                    //TODO fixme: there needs to be a better way to check if target is a PC or an NPC
+                    bool isTargetingNPC = hit.transform.gameObject.layer == LayerMask.GetMask("PCs");
+                   
+                    if (isTargetingNPC)
+                    {
+                        var hit_data = new ActionRequestData();
+                        hit_data.ShouldQueue = true; //wait your turn--don't clobber the chase action. 
+                        hit_data.ActionTypeEnum = ActionType.TANK_BASEATTACK;
+                        m_NetworkCharacter.ClientSendActionRequest(ref hit_data);
+                    }
+                    else
+                    {
+                        //proceed to revive the target if it's in FAINTED state
+                        var targetCharacterState = hit.transform.GetComponent<NetworkCharacterState>();
+
+                        if (targetCharacterState.NetworkLifeState.Value == LifeState.FAINTED)
+                        {
+                            var revive_data = new ActionRequestData();
+                            revive_data.ShouldQueue = true;
+                            revive_data.ActionTypeEnum = ActionType.GENERAL_REVIVE;
+                            m_NetworkCharacter.ClientSendActionRequest(ref revive_data);
+                        }
+                    }
                 }
                 else
                 {
@@ -75,7 +97,7 @@ namespace BossRoom.Client
                     m_NetworkCharacter.ClientSendActionRequest(ref data);
                 }
 
-                m_AttackClickRequest = null;
+                m_ClickRequest = null;
             }
         }
 
@@ -84,7 +106,7 @@ namespace BossRoom.Client
             //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate. 
             if (Input.GetMouseButtonDown(1))
             {
-                m_AttackClickRequest = Input.mousePosition;
+                m_ClickRequest = Input.mousePosition;
             }
         }
 
