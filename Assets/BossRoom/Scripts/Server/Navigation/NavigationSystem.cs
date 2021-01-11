@@ -14,7 +14,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Event that gets invoked when the navigation mesh changed. This happens when dynamic obstacles move or get active
         /// </summary>
-        public event System.Action OnNavigationMeshChanged;
+        public event System.Action OnNavigationMeshChanged = delegate{};
 
         /// <summary>
         /// Whether all paths need to be recalculated in the next fixed update.
@@ -36,7 +36,7 @@ namespace BossRoom.Server
             // This is done in fixed update to make sure that only one expensive global recalculation happens per fixed update.
             if (navMeshChanged)
             {
-                OnNavigationMeshChanged?.Invoke();
+                OnNavigationMeshChanged.Invoke();
                 navMeshChanged = false;
             }
         }

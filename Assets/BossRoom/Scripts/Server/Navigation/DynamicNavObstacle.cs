@@ -10,12 +10,12 @@ namespace BossRoom.Server
     {
         private NavigationSystem m_NavigationSystem;
 
-        void Awake()
+        private void Awake()
         {
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSytemTag).GetComponent<NavigationSystem>();
         }
 
-        void OnValidate()
+        private void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
@@ -26,12 +26,12 @@ namespace BossRoom.Server
             }
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
             m_NavigationSystem.OnDynamicObstacleEnabled();
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
             m_NavigationSystem.OnDynamicObstacleDisabled();
         }
