@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using BossRoom.Shared;
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkedVar;
@@ -187,7 +186,7 @@ namespace BossRoom.Server
         {
             if (m_NetworkedPrefab == null)
             {
-                return;
+                throw new System.ArgumentNullException("m_NetworkedPrefab");
             }
 
             // spawn clone right in front of spawner
@@ -296,7 +295,7 @@ namespace BossRoom.Server
         /// <summary>
         /// RPC sent from the server to display on client side that this spawner has been damaged.
         /// </summary>
-        [ClientRpc]
+        [ClientRPC]
         void ReceiveHitClientRpc()
         {
             // TODO: fire hit animation here
@@ -305,7 +304,7 @@ namespace BossRoom.Server
         /// <summary>
         /// RPC sent from the server to display on client side that this spawner has been broken.
         /// </summary>
-        [ClientRpc]
+        [ClientRPC]
         void BrokenClientRpc()
         {
             // TODO: fire die animation here
@@ -314,7 +313,7 @@ namespace BossRoom.Server
         /// <summary>
         /// RPC sent from the server to display on client side that this spawner has been revived.
         /// </summary>
-        [ClientRpc]
+        [ClientRPC]
         void ReviveClientRpc()
         {
             // TODO: fire revive animation here
