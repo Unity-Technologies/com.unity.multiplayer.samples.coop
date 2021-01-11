@@ -132,10 +132,9 @@ namespace BossRoom
         /// <param name="port">The port to connect to. </param>
         public void StartHost( string ipaddress, int port)
         {
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
-            var transport = NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
-            transport.ConnectAddress = ipaddress;
-            transport.ServerListenPort = port;
+            var transport = NetworkingManagerGO.GetComponent<UTPTransport>();
+            transport.Address = ipaddress;
+            transport.Port = (ushort)port;
 
             NetManager.StartHost();
         }

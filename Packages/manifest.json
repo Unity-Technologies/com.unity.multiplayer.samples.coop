@@ -6,6 +6,7 @@
     "com.unity.ide.visualstudio": "2.0.5",
     "com.unity.ide.vscode": "1.2.3",
     "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#develop",
+    "com.unity.multiplayer.transport.utp": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.transport.utp#develop",
     "com.unity.postprocessing": "2.3.0",
     "com.unity.test-framework": "1.1.19",
     "com.unity.textmeshpro": "3.0.1",
