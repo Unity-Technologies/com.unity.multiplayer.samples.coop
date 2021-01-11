@@ -1,5 +1,5 @@
-using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Server
 {
@@ -19,25 +19,25 @@ namespace BossRoom.Server
         /// <summary>
         /// Whether all paths need to be recalculated in the next fixed update.
         /// </summary>
-        private bool navMeshChanged;
+        private bool m_NavMeshChanged;
 
         public void OnDynamicObstacleDisabled()
         {
-            navMeshChanged = true;
+            m_NavMeshChanged = true;
         }
 
         public void OnDynamicObstacleEnabled()
         {
-            navMeshChanged = true;
+            m_NavMeshChanged = true;
         }
 
         private void FixedUpdate()
         {
             // This is done in fixed update to make sure that only one expensive global recalculation happens per fixed update.
-            if (navMeshChanged)
+            if (m_NavMeshChanged)
             {
                 OnNavigationMeshChanged.Invoke();
-                navMeshChanged = false;
+                m_NavMeshChanged = false;
             }
         }
 

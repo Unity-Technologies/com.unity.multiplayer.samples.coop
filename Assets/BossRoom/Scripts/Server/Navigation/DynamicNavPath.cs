@@ -93,7 +93,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Call this to recalculate the path when the navigation mesh or dynamic obstacles changed.
         /// </summary>
-        public void OnNavMeshChanged()
+        private void OnNavMeshChanged()
         {
             RecalculatePath();
         }
@@ -104,7 +104,6 @@ namespace BossRoom.Server
         public void Clear()
         {
             m_Path.Clear();
-            ;
         }
 
         /// <summary>
