@@ -22,7 +22,7 @@ namespace BossRoom.Server
         /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>
         public override bool Start()
         {
-            if(m_Data.TargetIds == null || m_Data.TargetIds.Length == 0 || !MLAPI.Spawning.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0])  )
+            if (!HasValidTarget())
             {
                 Debug.Log("Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore" );
                 return false;
@@ -37,13 +37,24 @@ namespace BossRoom.Server
         }
 
         /// <summary>
+        /// Returns true if our ActionRequestData came with a valid target. For the ChaseAction, this is pretty liberal (could be friend or foe, could be
+        /// dead or alive--just needs to be present). 
+        /// </summary>
+        private bool HasValidTarget()
+        {
+            return m_Data.TargetIds != null && 
+                   m_Data.TargetIds.Length > 0 && 
+                   MLAPI.Spawning.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
+        }
+
+        /// <summary>
         /// Called each frame while the action is running. 
         /// </summary>
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool Update()
         {
-            float dist_to_target = (m_Parent.transform.position - m_Target.transform.position).magnitude;
-            if( m_Data.Amount > dist_to_target )
+            float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
+            if( (m_Data.Amount*m_Data.Amount) > distToTarget2 )
             {
                 //we made it! we're done. 
                 Cancel();
@@ -55,10 +66,7 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
-            if( m_Movement != null )
-            {
-                m_Movement.CancelMove();
-            }
+            m_Movement?.CancelMove();
         }
 
     }

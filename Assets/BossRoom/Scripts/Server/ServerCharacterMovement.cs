@@ -31,6 +31,16 @@ namespace BossRoom.Server
         [SerializeField]
         private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition 
 
+        private void Awake()
+        {
+            m_NavMeshAgent = GetComponent<NavMeshAgent>();
+            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
+            m_CharLogic = GetComponent<ServerCharacter>();
+            m_Rigidbody = GetComponent<Rigidbody>();
+
+            m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSytemTag).GetComponent<NavigationSystem>();
+        }
+
         public override void NetworkStart()
         {
             if (!IsServer)
@@ -79,16 +89,6 @@ namespace BossRoom.Server
         {
             m_NavPath.Clear();
             m_MovementState = MovementState.Idle;
-        }
-
-        private void Awake()
-        {
-            m_NavMeshAgent = GetComponent<NavMeshAgent>();
-            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
-            m_CharLogic = GetComponent<ServerCharacter>();
-            m_Rigidbody = GetComponent<Rigidbody>();
-
-            m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSytemTag).GetComponent<NavigationSystem>();
         }
 
         private void FixedUpdate()

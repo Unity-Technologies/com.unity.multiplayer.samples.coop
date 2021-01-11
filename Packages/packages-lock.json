@@ -87,14 +87,6 @@
         "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
       }
     },
-    "com.unity.multiplayer.transport.photon-realtime": {
-      "version": "file:com.unity.multiplayer.transport.photon-realtime",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
-      }
-    },
     "com.unity.nuget.newtonsoft-json": {
       "version": "2.0.0-preview",
       "depth": 3,
