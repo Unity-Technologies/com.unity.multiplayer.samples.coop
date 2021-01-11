@@ -1,6 +1,5 @@
 using System;
 using System.Linq;
-using BossRoom.Shared;
 using MLAPI;
 using UnityEngine;
 using UnityEngine.AI;
@@ -16,17 +15,27 @@ namespace BossRoom.Server
     /// <summary>
     /// Component responsible for moving a character on the server side based on inputs.
     /// </summary>
-    [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent))]
+    [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent), typeof(ServerCharacter)), RequireComponent(typeof(Rigidbody))]
     public class ServerCharacterMovement : NetworkedBehaviour
     {
         private NavMeshAgent m_NavMeshAgent;
+        private Rigidbody m_Rigidbody;
         private NetworkCharacterState m_NetworkCharacterState;
 
         private NavMeshPath m_DesiredMovementPath;
         private MovementState m_MovementState;
+        private ServerCharacter m_CharLogic;
 
         [SerializeField]
         private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition 
+
+        private void Awake()
+        {
+            m_NavMeshAgent = GetComponent<NavMeshAgent>();
+            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
+            m_CharLogic = GetComponent<ServerCharacter>();
+            m_Rigidbody = GetComponent<Rigidbody>();
+        }
 
         public override void NetworkStart()
         {
@@ -39,23 +48,34 @@ namespace BossRoom.Server
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
-            m_NetworkCharacterState.OnReceivedClientInput += SetMovementTarget;
+            m_NetworkCharacterState.OnReceivedClientInput += OnReceivedClientInput;
             m_DesiredMovementPath = new NavMeshPath();
         }
 
-        private void SetMovementTarget(Vector3 position)
+        private void OnReceivedClientInput(Vector3 position )
+        {
+            m_CharLogic.ClearActions(); //a fresh movement request trumps whatever we were doing before. 
+            SetMovementTarget(position);
+        }
+
+        /// <summary>
+        /// Sets a movement target. We will path to this position, avoiding static obstacles. 
+        /// </summary>
+        /// <param name="position">Position in world space to path to. </param>
+        public void SetMovementTarget(Vector3 position)
         {
             m_MovementState = MovementState.PathFollowing;
 
             // Recalculate navigation path only on target change.
             m_NavMeshAgent.CalculatePath(position, m_DesiredMovementPath);
-
         }
 
-        private void Awake()
+        /// <summary>
+        /// Cancels any moves that are currently in progress. 
+        /// </summary>
+        public void CancelMove()
         {
-            m_NavMeshAgent = GetComponent<NavMeshAgent>();
-            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
+            m_MovementState = MovementState.Idle;
         }
 
         private void FixedUpdate()
@@ -68,6 +88,7 @@ namespace BossRoom.Server
             // Send new position values to the client
             m_NetworkCharacterState.NetworkPosition.Value = transform.position;
             m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
+            m_NetworkCharacterState.NetworkMovementSpeed.Value = m_MovementState == MovementState.Idle ? 0 : m_MovementSpeed;
         }
 
         private void Movement()
@@ -102,6 +123,12 @@ namespace BossRoom.Server
 
             m_NavMeshAgent.Move(movementVector);
             transform.rotation = Quaternion.LookRotation(movementVector);
+
+            //fixme--is this right? If I don't do this the Rigidbody is "left behind", and doesn't move with the GameObject. 
+            //also see ClientCharacterMovement before deleting this comment. 
+            m_Rigidbody.position = transform.position;
+            m_Rigidbody.rotation = transform.rotation;
+
             m_NavMeshAgent.CalculatePath(corners[corners.Length - 1], m_DesiredMovementPath);
         }
     }
