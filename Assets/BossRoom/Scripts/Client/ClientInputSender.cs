@@ -9,6 +9,8 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkedBehaviour
     {
+        private static readonly int NPCLayerMask = LayerMask.GetMask("NPCs");
+        
         private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
@@ -41,7 +43,7 @@ namespace BossRoom.Client
             if (Input.GetMouseButton(0))
             {
                 RaycastHit hit;
-                
+
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
@@ -59,16 +61,16 @@ namespace BossRoom.Client
                     //if we have clicked on an enemy:
                     // - two actions will queue one after the other, causing us to run over to our target and take a swing. 
                     //if we have clicked on a fallen friend - we will revive him
-                    
+
                     var chase_data = new ActionRequestData();
                     chase_data.ActionTypeEnum = ActionType.GENERAL_CHASE;
                     chase_data.Amount = ActionData.ActionDescriptions[ActionType.TANK_BASEATTACK][0].Range;
-                    chase_data.TargetIds = new ulong[] { GetTargetObject(ref hit) };
+                    chase_data.TargetIds = new ulong[] {GetTargetObject(ref hit)};
                     m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
 
                     //TODO fixme: there needs to be a better way to check if target is a PC or an NPC
-                    bool isTargetingNPC = hit.transform.gameObject.layer == LayerMask.GetMask("PCs");
-                   
+                    bool isTargetingNPC = hit.transform.gameObject.layer == NPCLayerMask;
+
                     if (isTargetingNPC)
                     {
                         var hit_data = new ActionRequestData();
@@ -86,6 +88,7 @@ namespace BossRoom.Client
                             var revive_data = new ActionRequestData();
                             revive_data.ShouldQueue = true;
                             revive_data.ActionTypeEnum = ActionType.GENERAL_REVIVE;
+                            revive_data.TargetIds = new [] {GetTargetObject(ref hit)};
                             m_NetworkCharacter.ClientSendActionRequest(ref revive_data);
                         }
                     }

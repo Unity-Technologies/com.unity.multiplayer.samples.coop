@@ -21,12 +21,6 @@ namespace BossRoom.Server
 
         public void PlayAction(ref ActionRequestData data )
         {
-            //sanity check that prevents dead or fainted characters from executing actions
-            if (m_parent.NetState.NetworkLifeState.Value != LifeState.ALIVE)
-            {
-                return;
-            }
-            
             if( !data.ShouldQueue )
             {
                 ClearActions();
