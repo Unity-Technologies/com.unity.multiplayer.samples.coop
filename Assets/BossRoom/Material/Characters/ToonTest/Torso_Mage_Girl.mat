@@ -67,8 +67,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _RimAmount: 0.675
-    - _RimThreshold: 0.05
+    - _RimAmount: 0.366
+    - _RimThreshold: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -76,7 +76,8 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.21698111, g: 0.21698111, b: 0.21698111, a: 1}
+    - _Color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SpecularColor: {r: 3.9999995, g: 3.8952875, b: 3.8952875, a: 1}
+    - _RimColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
+    - _SpecularColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
+  m_BuildTextureStacks: []
