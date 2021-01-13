@@ -9,9 +9,15 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkedBehaviour
     {
-        private NetworkCharacterState m_NetworkCharacter;
+        private const float k_MouseInputRaycastDistance = 100f;
 
-        private LayerMask k_MouseQueryLayerMask; // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
+        // Cache raycast hit array so that we can use non alloc raycasts
+        private readonly RaycastHit[] k_CachedHit = new RaycastHit[1];
+
+        // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
+        private LayerMask k_MouseQueryLayerMask;
+
+        private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
         /// We detect clicks in Update (because you can miss single discrete clicks in FixedUpdate). But we need to 
@@ -43,27 +49,25 @@ namespace BossRoom.Client
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
             if (Input.GetMouseButton(0))
             {
-                RaycastHit hit;
-
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit, 100f, k_MouseQueryLayerMask))
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_MouseQueryLayerMask) > 0)
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
-                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, hit.point,
-                        "MLAPI_INTERNAL");
+                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point, "MLAPI_INTERNAL");
                 }
             }
 
             if (m_AttackClickRequest != null)
             {
-                RaycastHit hit;
-
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(m_AttackClickRequest.Value), out hit) && GetTargetObject(ref hit) != 0)
+                var ray = Camera.main.ScreenPointToRay(m_AttackClickRequest.Value);
+                var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_MouseQueryLayerMask) > 0;
+                if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
                 {
                     //these two actions will queue one after the other, causing us to run over to our target and take a swing. 
                     var chase_data = new ActionRequestData();
                     chase_data.ActionTypeEnum = ActionType.GENERAL_CHASE;
                     chase_data.Amount = ActionData.ActionDescriptions[ActionType.TANK_BASEATTACK][0].Range;
-                    chase_data.TargetIds = new ulong[] { GetTargetObject(ref hit) };
+                    chase_data.TargetIds = new ulong[] {GetTargetObject(ref k_CachedHit[0])};
                     m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
 
                     var hit_data = new ActionRequestData();
@@ -100,6 +104,7 @@ namespace BossRoom.Client
             {
                 return 0;
             }
+
             var targetObj = hit.collider.GetComponent<NetworkedObject>();
             if (targetObj == null)
             {
