@@ -22,7 +22,7 @@ namespace BossRoom.Server
         {
             if (!HasValidTarget())
             {
-                Debug.Log("Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore" );
+                Debug.Log("Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore");
                 return false;
             }
 
@@ -40,8 +40,8 @@ namespace BossRoom.Server
         /// </summary>
         private bool HasValidTarget()
         {
-            return m_Data.TargetIds != null && 
-                   m_Data.TargetIds.Length > 0 && 
+            return m_Data.TargetIds != null &&
+                   m_Data.TargetIds.Length > 0 &&
                    MLAPI.Spawning.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
         }
 
@@ -51,8 +51,8 @@ namespace BossRoom.Server
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool Update()
         {
-            float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
-            if( (m_Data.Amount*m_Data.Amount) > distToTarget2 )
+            var distToTargetSqr = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
+            if (m_Data.Amount * m_Data.Amount > distToTargetSqr)
             {
                 //we made it! we're done. 
                 Cancel();
@@ -66,7 +66,5 @@ namespace BossRoom.Server
         {
             m_Movement?.CancelMove();
         }
-
     }
-
 }

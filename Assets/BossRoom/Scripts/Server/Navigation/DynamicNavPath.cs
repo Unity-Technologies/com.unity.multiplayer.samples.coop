@@ -123,8 +123,8 @@ namespace BossRoom.Server
                 return Vector3.zero;
             }
 
-            Vector3 currentPredictedPosition = m_Agent.transform.position;
-            float remainingDistance = distance;
+            var currentPredictedPosition = m_Agent.transform.position;
+            var remainingDistance = distance;
 
             while (remainingDistance > 0)
             {
