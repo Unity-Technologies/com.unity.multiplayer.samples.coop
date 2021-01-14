@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Client
 {
-  /**Responsible for managing and creating a feedback icon where the player clicked to move */
-  [RequireComponent(typeof(ClientInputSender))]
+    /// <summary>
+    /// Responsible for managing and creating a feedback icon where the player clicked to move 
+    /// </summary>
+    [RequireComponent(typeof(ClientInputSender))]
   public class ClickFeedback : MonoBehaviour
   {
     [SerializeField]
