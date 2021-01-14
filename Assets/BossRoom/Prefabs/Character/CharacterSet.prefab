@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8495415076674091646}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_LeftLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -40,7 +40,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6253947360469506501}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Head_Parent_Archer_Girl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -75,7 +75,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8572772498076945699}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_RightUpLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1127900067338103381}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_RightHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,7 +152,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2461953398364209455}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Head_Parent_Tank_Boy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -187,7 +187,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 945855194883756515}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Head_Parent_Archer_Boy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -222,7 +222,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1135220812264023273}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_RightFoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -253,7 +253,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3558062972909823336}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Head_Parent_Rogue_Girl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -288,7 +288,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7786521556504735325}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Head_Parent_Tank_Girl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -323,10 +323,20 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4076098699203836966}
+  - component: {fileID: 4547385851608603635}
+  - component: {fileID: 4547385851608603632}
+  - component: {fileID: 4547385851608603409}
+  - component: {fileID: 4547385851608603422}
+  - component: {fileID: 4547385851608603423}
+  - component: {fileID: 4547385851608603420}
+  - component: {fileID: 4547385851608603405}
+  - component: {fileID: 4547385851608603402}
+  - component: {fileID: 4547385851608603403}
+  - component: {fileID: 4547385851608601791}
+  - component: {fileID: 4547385851608601788}
+  - component: {fileID: 4547385851608601811}
   - component: {fileID: 4199396739699390757}
-  - component: {fileID: 4532006264828386692}
   - component: {fileID: 7943089997373843793}
-  - component: {fileID: 4654558647929214568}
   m_Layer: 9
   m_Name: CharacterSet
   m_TagString: Untagged
@@ -357,6 +367,270 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4547385851608603635
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 4984529728629224612}
+  - {fileID: 7583954262385114442}
+  - {fileID: 5495168480164858012}
+  - {fileID: 3031299923065806911}
+  - {fileID: 9050837806502146063}
+  - {fileID: 3197879114731797047}
+  - {fileID: 9110547478692365723}
+  - {fileID: 2767387628863870913}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608603632
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 6384206623454602747}
+  - {fileID: 5485558108050409640}
+  - {fileID: 8924157391495337738}
+  - {fileID: 5773592898381511357}
+  - {fileID: 3240150695109643015}
+  - {fileID: 5377066227307419219}
+  - {fileID: 7733041955828172184}
+  - {fileID: 2037562397139953176}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608603409
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 3315647717772617126}
+  - {fileID: 6715786524771158821}
+  - {fileID: 2664582909841472669}
+  - {fileID: 6193635572633873786}
+  - {fileID: 1942619982609780376}
+  - {fileID: 6699397568312395898}
+  - {fileID: 3056500194282619590}
+  - {fileID: 1247430151152165542}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608603422
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 3041631701937239552}
+  - {fileID: 2169438647797076309}
+  - {fileID: 4639807557990995351}
+  - {fileID: 1377849580146008685}
+  - {fileID: 5555833614698464238}
+  - {fileID: 1382085230529991733}
+  - {fileID: 7816463888039560887}
+  - {fileID: 7841305284959672188}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608603423
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 7705283312386798936}
+  - {fileID: 7813791235517615257}
+  - {fileID: 4355144762768297397}
+  - {fileID: 4600761015263129413}
+  - {fileID: 8805814283378961913}
+  - {fileID: 3368315891251839942}
+  - {fileID: 6312990622113991710}
+  - {fileID: 7600218593773897685}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608603420
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 1497750831970152200}
+  - {fileID: 1032627243168488120}
+  - {fileID: 1887906274417762581}
+  - {fileID: 3125399267724748823}
+  - {fileID: 7637464740376934602}
+  - {fileID: 7080003993000648899}
+  - {fileID: 425922695711241910}
+  - {fileID: 3309616343003613770}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608603405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 4547385850525906434}
+  - {fileID: 4547385850979936535}
+  - {fileID: 4547385852356386207}
+  - {fileID: 4547385850944476164}
+  - {fileID: 4547385852159820219}
+  - {fileID: 4547385851144630425}
+  - {fileID: 7977021810139058205}
+  - {fileID: 9099098836572460644}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608603402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 8332864890779340179}
+  - {fileID: 5457460188834904994}
+  - {fileID: 7591495331301406192}
+  - {fileID: 3885586153188589954}
+  - {fileID: 8476951863452003825}
+  - {fileID: 1421799770502368504}
+  - {fileID: 8534728331211606325}
+  - {fileID: 8782272346836785079}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608603403
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 4547385852123078731}
+  - {fileID: 4547385851686111995}
+  - {fileID: 4547385852239143095}
+  - {fileID: 4547385850560374706}
+  - {fileID: 4547385850462798308}
+  - {fileID: 4547385850965649145}
+  - {fileID: 370705487330802731}
+  - {fileID: 5136405861930368345}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608601791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 9187449357704579178}
+  - {fileID: 6956424951883403026}
+  - {fileID: 5205367149617213923}
+  - {fileID: 168353655861662898}
+  - {fileID: 6121441642964187457}
+  - {fileID: 3051343748963906177}
+  - {fileID: 2760465371479465096}
+  - {fileID: 668893896012404718}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608601788
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 2875260262347090163}
+  - {fileID: 3208043950912929606}
+  - {fileID: 2052198786977272620}
+  - {fileID: 5432401221594662492}
+  - {fileID: 161201284839019143}
+  - {fileID: 663526999149154047}
+  - {fileID: 2371120030489877325}
+  - {fileID: 951919032070258571}
+  m_ModelIndex: 0
+--- !u!114 &4547385851608601811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3736552308919084700}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b39799f0927e785428be8e47072883b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modelArray:
+  - {fileID: 2503478013837759990}
+  - {fileID: 3755598695813918582}
+  - {fileID: 4547385851565425507}
+  - {fileID: 4547385850763732415}
+  - {fileID: 4547385851833940654}
+  - {fileID: 4547385850585325791}
+  - {fileID: 1927926755814050025}
+  - {fileID: 8044371975584804473}
+  m_ModelIndex: 0
 --- !u!95 &4199396739699390757
 Animator:
   serializedVersion: 3
@@ -376,22 +650,6 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &4532006264828386692
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3736552308919084700}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: edb78c1621dad5149bb47b96120d3fbf, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  HitPoints:
-    InternalValue: 0
-  Mana:
-    InternalValue: 0
 --- !u!114 &7943089997373843793
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -399,124 +657,15 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3736552308919084700}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9520a47fc61d5ab4ca99cdac2d574909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ClientVisualsAnimator: {fileID: 4199396739699390757}
   MinZoomDistance: 3
   MaxZoomDistance: 30
   ZoomSpeed: 3
---- !u!114 &4654558647929214568
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3736552308919084700}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a3048059d1dc86848a814084448ace11, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ModelIndex: 0
-  m_CharacterModels:
-  - ears: {fileID: 9110547478692365723}
-    head: {fileID: 7733041955828172184}
-    mouth: {fileID: 3056500194282619590}
-    hair: {fileID: 7816463888039560887}
-    eyes: {fileID: 6312990622113991710}
-    torso: {fileID: 425922695711241910}
-    gear_right_hand: {fileID: 8534728331211606325}
-    gear_left_hand: {fileID: 7977021810139058205}
-    hand_right: {fileID: 2760465371479465096}
-    hand_left: {fileID: 2371120030489877325}
-    shoulder_right: {fileID: 370705487330802731}
-    shoulder_left: {fileID: 1927926755814050025}
-  - ears: {fileID: 2767387628863870913}
-    head: {fileID: 2037562397139953176}
-    mouth: {fileID: 1247430151152165542}
-    hair: {fileID: 7841305284959672188}
-    eyes: {fileID: 7600218593773897685}
-    torso: {fileID: 3309616343003613770}
-    gear_right_hand: {fileID: 8782272346836785079}
-    gear_left_hand: {fileID: 9099098836572460644}
-    hand_right: {fileID: 668893896012404718}
-    hand_left: {fileID: 951919032070258571}
-    shoulder_right: {fileID: 5136405861930368345}
-    shoulder_left: {fileID: 8044371975584804473}
-  - ears: {fileID: 4984529728629224612}
-    head: {fileID: 6384206623454602747}
-    mouth: {fileID: 3315647717772617126}
-    hair: {fileID: 3041631701937239552}
-    eyes: {fileID: 7705283312386798936}
-    torso: {fileID: 1497750831970152200}
-    gear_right_hand: {fileID: 8332864890779340179}
-    gear_left_hand: {fileID: 4547385850525906434}
-    hand_right: {fileID: 9187449357704579178}
-    hand_left: {fileID: 2875260262347090163}
-    shoulder_right: {fileID: 4547385852123078731}
-    shoulder_left: {fileID: 2503478013837759990}
-  - ears: {fileID: 7583954262385114442}
-    head: {fileID: 5485558108050409640}
-    mouth: {fileID: 6715786524771158821}
-    hair: {fileID: 2169438647797076309}
-    eyes: {fileID: 7813791235517615257}
-    torso: {fileID: 1032627243168488120}
-    gear_right_hand: {fileID: 5457460188834904994}
-    gear_left_hand: {fileID: 4547385850979936535}
-    hand_right: {fileID: 6956424951883403026}
-    hand_left: {fileID: 3208043950912929606}
-    shoulder_right: {fileID: 3755598695813918582}
-    shoulder_left: {fileID: 4547385851686111995}
-  - ears: {fileID: 5495168480164858012}
-    head: {fileID: 8924157391495337738}
-    mouth: {fileID: 2664582909841472669}
-    hair: {fileID: 4639807557990995351}
-    eyes: {fileID: 4355144762768297397}
-    torso: {fileID: 1887906274417762581}
-    gear_right_hand: {fileID: 7591495331301406192}
-    gear_left_hand: {fileID: 4547385852356386207}
-    hand_right: {fileID: 5205367149617213923}
-    hand_left: {fileID: 2052198786977272620}
-    shoulder_right: {fileID: 4547385852239143095}
-    shoulder_left: {fileID: 4547385851565425507}
-  - ears: {fileID: 3031299923065806911}
-    head: {fileID: 5773592898381511357}
-    mouth: {fileID: 6193635572633873786}
-    hair: {fileID: 1377849580146008685}
-    eyes: {fileID: 4600761015263129413}
-    torso: {fileID: 3125399267724748823}
-    gear_right_hand: {fileID: 3885586153188589954}
-    gear_left_hand: {fileID: 4547385850944476164}
-    hand_right: {fileID: 168353655861662898}
-    hand_left: {fileID: 5432401221594662492}
-    shoulder_right: {fileID: 4547385850560374706}
-    shoulder_left: {fileID: 4547385850763732415}
-  - ears: {fileID: 9050837806502146063}
-    head: {fileID: 3240150695109643015}
-    mouth: {fileID: 1942619982609780376}
-    hair: {fileID: 5555833614698464238}
-    eyes: {fileID: 8805814283378961913}
-    torso: {fileID: 7637464740376934602}
-    gear_right_hand: {fileID: 8476951863452003825}
-    gear_left_hand: {fileID: 4547385852159820219}
-    hand_right: {fileID: 6121441642964187457}
-    hand_left: {fileID: 161201284839019143}
-    shoulder_right: {fileID: 4547385850462798308}
-    shoulder_left: {fileID: 4547385851833940654}
-  - ears: {fileID: 3197879114731797047}
-    head: {fileID: 5377066227307419219}
-    mouth: {fileID: 6699397568312395898}
-    hair: {fileID: 1382085230529991733}
-    eyes: {fileID: 3368315891251839942}
-    torso: {fileID: 7080003993000648899}
-    gear_right_hand: {fileID: 1421799770502368504}
-    gear_left_hand: {fileID: 4547385851144630425}
-    hand_right: {fileID: 3051343748963906177}
-    hand_left: {fileID: 663526999149154047}
-    shoulder_right: {fileID: 4547385850965649145}
-    shoulder_left: {fileID: 4547385850585325791}
 --- !u!1 &3741846901656975085
 GameObject:
   m_ObjectHideFlags: 0
@@ -526,7 +675,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1958528639584346860}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_RightForeArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -557,7 +706,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1569872458223715547}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_RightArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -596,7 +745,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7525387521976179177}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_RightLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -627,7 +776,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3734616284646950590}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_Hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -660,7 +809,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8064768189409072093}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_LeftFoot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -691,7 +840,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9197077968316907432}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_LeftArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -728,7 +877,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7714553023173164591}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Head_Parent_Mage_Girl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -763,7 +912,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9213504012846294760}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -801,7 +950,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1385890853458294598}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_Toe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -831,7 +980,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1989619240171912113}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_Spine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -866,7 +1015,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1266787149250490723}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_LeftHand
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -912,7 +1061,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2885330880999498380}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_LeftForeArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -943,7 +1092,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5787538227139311733}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_LeftUpLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -974,7 +1123,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4694048970188743632}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Head_Parent_Rogue_Boy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1009,7 +1158,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1564428037941116370}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Bone_Toe 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1039,7 +1188,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 710853749213982249}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Head_Parent_Mage_Boy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1120,6 +1269,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empty_Gear_RS_Slot_Archer_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 4605464913980944299, guid: 16e18be1966134d449090777b5a7146f, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 16e18be1966134d449090777b5a7146f, type: 3}
 --- !u!1 &4547385851686111995 stripped
@@ -1187,16 +1340,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Head_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 8750697877993723498, guid: c6495be3123964d48b29699ede37ee97, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6495be3123964d48b29699ede37ee97, type: 3}
---- !u!4 &7055888984100734809 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7152786185192965689, guid: c6495be3123964d48b29699ede37ee97, type: 3}
-  m_PrefabInstance: {fileID: 191473932146377056}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8924157391495337738 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8750697877993723498, guid: c6495be3123964d48b29699ede37ee97, type: 3}
+  m_PrefabInstance: {fileID: 191473932146377056}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7055888984100734809 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7152786185192965689, guid: c6495be3123964d48b29699ede37ee97, type: 3}
   m_PrefabInstance: {fileID: 191473932146377056}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &332206951480292151
@@ -1209,6 +1366,10 @@ PrefabInstance:
     - target: {fileID: 6630845041802794700, guid: ac6c83cdac4b1c740951b39df73768fa, type: 3}
       propertyPath: m_Name
       value: Archer_Head_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6630845041802794700, guid: ac6c83cdac4b1c740951b39df73768fa, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8170087366217451729, guid: ac6c83cdac4b1c740951b39df73768fa, type: 3}
       propertyPath: m_RootOrder
@@ -1256,14 +1417,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ac6c83cdac4b1c740951b39df73768fa, type: 3}
---- !u!4 &8502170862947515366 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8170087366217451729, guid: ac6c83cdac4b1c740951b39df73768fa, type: 3}
-  m_PrefabInstance: {fileID: 332206951480292151}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6384206623454602747 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6630845041802794700, guid: ac6c83cdac4b1c740951b39df73768fa, type: 3}
+  m_PrefabInstance: {fileID: 332206951480292151}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8502170862947515366 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8170087366217451729, guid: ac6c83cdac4b1c740951b39df73768fa, type: 3}
   m_PrefabInstance: {fileID: 332206951480292151}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &454819820488923400
@@ -1276,6 +1437,10 @@ PrefabInstance:
     - target: {fileID: 8656185244455967891, guid: 9a3efc4a763898546862d4c3cb5fcf6a, type: 3}
       propertyPath: m_Name
       value: Tank_Ears_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 8656185244455967891, guid: 9a3efc4a763898546862d4c3cb5fcf6a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8916089576801293771, guid: 9a3efc4a763898546862d4c3cb5fcf6a, type: 3}
       propertyPath: m_RootOrder
@@ -1323,14 +1488,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9a3efc4a763898546862d4c3cb5fcf6a, type: 3}
---- !u!1 &9110547478692365723 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8656185244455967891, guid: 9a3efc4a763898546862d4c3cb5fcf6a, type: 3}
-  m_PrefabInstance: {fileID: 454819820488923400}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9075747261480258755 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8916089576801293771, guid: 9a3efc4a763898546862d4c3cb5fcf6a, type: 3}
+  m_PrefabInstance: {fileID: 454819820488923400}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &9110547478692365723 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8656185244455967891, guid: 9a3efc4a763898546862d4c3cb5fcf6a, type: 3}
   m_PrefabInstance: {fileID: 454819820488923400}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &499064400157911018
@@ -1343,6 +1508,10 @@ PrefabInstance:
     - target: {fileID: 853692977549121633, guid: 5963b1924fbd7644da2ea35007571557, type: 3}
       propertyPath: m_Name
       value: Tank_Glove_Lt_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 853692977549121633, guid: 5963b1924fbd7644da2ea35007571557, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 985397666056273849, guid: 5963b1924fbd7644da2ea35007571557, type: 3}
       propertyPath: m_RootOrder
@@ -1390,14 +1559,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5963b1924fbd7644da2ea35007571557, type: 3}
---- !u!4 &811173058524797011 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 985397666056273849, guid: 5963b1924fbd7644da2ea35007571557, type: 3}
-  m_PrefabInstance: {fileID: 499064400157911018}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &951919032070258571 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 853692977549121633, guid: 5963b1924fbd7644da2ea35007571557, type: 3}
+  m_PrefabInstance: {fileID: 499064400157911018}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &811173058524797011 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 985397666056273849, guid: 5963b1924fbd7644da2ea35007571557, type: 3}
   m_PrefabInstance: {fileID: 499064400157911018}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &579177113187023265
@@ -1410,6 +1579,10 @@ PrefabInstance:
     - target: {fileID: 1995826771073365337, guid: 10b351404ac8a7f46bf58430e1cc8eef, type: 3}
       propertyPath: m_Name
       value: Rogue_Weapon_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 1995826771073365337, guid: 10b351404ac8a7f46bf58430e1cc8eef, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4521519863307946919, guid: 10b351404ac8a7f46bf58430e1cc8eef, type: 3}
       propertyPath: m_RootOrder
@@ -1457,14 +1630,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 10b351404ac8a7f46bf58430e1cc8eef, type: 3}
---- !u!1 &1421799770502368504 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1995826771073365337, guid: 10b351404ac8a7f46bf58430e1cc8eef, type: 3}
-  m_PrefabInstance: {fileID: 579177113187023265}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3942352646146077190 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4521519863307946919, guid: 10b351404ac8a7f46bf58430e1cc8eef, type: 3}
+  m_PrefabInstance: {fileID: 579177113187023265}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1421799770502368504 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1995826771073365337, guid: 10b351404ac8a7f46bf58430e1cc8eef, type: 3}
   m_PrefabInstance: {fileID: 579177113187023265}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &728892584412951697
@@ -1521,6 +1694,10 @@ PrefabInstance:
     - target: {fileID: 3820746449368866965, guid: ed24796831d4621449bac9de9c857e31, type: 3}
       propertyPath: m_Name
       value: Empty_Gear_LH_Slot_Mage_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 3820746449368866965, guid: ed24796831d4621449bac9de9c857e31, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ed24796831d4621449bac9de9c857e31, type: 3}
@@ -1589,16 +1766,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Shield_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 8388066696719867140, guid: 1c5a02fd8ac41b24f96e43adf67b0c9e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1c5a02fd8ac41b24f96e43adf67b0c9e, type: 3}
---- !u!4 &1776240674478635343 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1335424411598189103, guid: 1c5a02fd8ac41b24f96e43adf67b0c9e, type: 3}
-  m_PrefabInstance: {fileID: 733550275437513568}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &9099098836572460644 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8388066696719867140, guid: 1c5a02fd8ac41b24f96e43adf67b0c9e, type: 3}
+  m_PrefabInstance: {fileID: 733550275437513568}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1776240674478635343 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1335424411598189103, guid: 1c5a02fd8ac41b24f96e43adf67b0c9e, type: 3}
   m_PrefabInstance: {fileID: 733550275437513568}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &753204829954258818
@@ -1656,16 +1837,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Mouth_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 6883714035873258232, guid: 1b7e977ff0655ae4cbdd17929b152e15, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1b7e977ff0655ae4cbdd17929b152e15, type: 3}
---- !u!4 &5416901757793235120 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4710581315785475890, guid: 1b7e977ff0655ae4cbdd17929b152e15, type: 3}
-  m_PrefabInstance: {fileID: 753204829954258818}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6193635572633873786 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6883714035873258232, guid: 1b7e977ff0655ae4cbdd17929b152e15, type: 3}
+  m_PrefabInstance: {fileID: 753204829954258818}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5416901757793235120 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4710581315785475890, guid: 1b7e977ff0655ae4cbdd17929b152e15, type: 3}
   m_PrefabInstance: {fileID: 753204829954258818}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &852324916834964655
@@ -1678,6 +1863,10 @@ PrefabInstance:
     - target: {fileID: 4704922131924845308, guid: 45766fd3a74500a4a9b4d039d6c96d70, type: 3}
       propertyPath: m_Name
       value: Rogue_Head_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 4704922131924845308, guid: 45766fd3a74500a4a9b4d039d6c96d70, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5231030559733277439, guid: 45766fd3a74500a4a9b4d039d6c96d70, type: 3}
       propertyPath: m_RootOrder
@@ -1790,6 +1979,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Weapon_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 4469419549292861277, guid: 38e0524ac233b6c40afb38c90691c4fa, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 38e0524ac233b6c40afb38c90691c4fa, type: 3}
 --- !u!4 &2580354841388530375 stripped
@@ -1812,6 +2005,10 @@ PrefabInstance:
     - target: {fileID: 5175067299823254053, guid: b97a7eee3b3ee204d84d439863d57625, type: 3}
       propertyPath: m_Name
       value: Archer_Head_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 5175067299823254053, guid: b97a7eee3b3ee204d84d439863d57625, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5840995426945643913, guid: b97a7eee3b3ee204d84d439863d57625, type: 3}
       propertyPath: m_RootOrder
@@ -1859,14 +2056,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b97a7eee3b3ee204d84d439863d57625, type: 3}
---- !u!1 &5485558108050409640 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5175067299823254053, guid: b97a7eee3b3ee204d84d439863d57625, type: 3}
-  m_PrefabInstance: {fileID: 860493482025792141}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6556805820806924036 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5840995426945643913, guid: b97a7eee3b3ee204d84d439863d57625, type: 3}
+  m_PrefabInstance: {fileID: 860493482025792141}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5485558108050409640 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5175067299823254053, guid: b97a7eee3b3ee204d84d439863d57625, type: 3}
   m_PrefabInstance: {fileID: 860493482025792141}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &946742905020422199
@@ -1976,6 +2173,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rogue_Torso_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 8026183889984403700, guid: bdccc0f84e2d51440b93b29a121c0c7b, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bdccc0f84e2d51440b93b29a121c0c7b, type: 3}
 --- !u!1 &7080003993000648899 stripped
@@ -1998,6 +2199,10 @@ PrefabInstance:
     - target: {fileID: 5562942396446229649, guid: 2c686e227421d0148832a6b1368303e0, type: 3}
       propertyPath: m_Name
       value: Mage_Hair_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5562942396446229649, guid: 2c686e227421d0148832a6b1368303e0, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6434060206775159765, guid: 2c686e227421d0148832a6b1368303e0, type: 3}
       propertyPath: m_RootOrder
@@ -2110,16 +2315,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Weapon_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 7470425904777492673, guid: 3dd11055e88456d49939bbd12cc0f06e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3dd11055e88456d49939bbd12cc0f06e, type: 3}
---- !u!4 &4670948833134756775 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5630813694421569174, guid: 3dd11055e88456d49939bbd12cc0f06e, type: 3}
-  m_PrefabInstance: {fileID: 1078084412004027697}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &7591495331301406192 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7470425904777492673, guid: 3dd11055e88456d49939bbd12cc0f06e, type: 3}
+  m_PrefabInstance: {fileID: 1078084412004027697}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4670948833134756775 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5630813694421569174, guid: 3dd11055e88456d49939bbd12cc0f06e, type: 3}
   m_PrefabInstance: {fileID: 1078084412004027697}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1298982770278458728
@@ -2177,16 +2386,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gear_LS_Tank_ShoulderPad_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 9053836426132196113, guid: 5d12ce98a47b50d4c8a8200298776161, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5d12ce98a47b50d4c8a8200298776161, type: 3}
---- !u!1 &8044371975584804473 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9053836426132196113, guid: 5d12ce98a47b50d4c8a8200298776161, type: 3}
-  m_PrefabInstance: {fileID: 1298982770278458728}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7505134407724153699 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8800453722438721035, guid: 5d12ce98a47b50d4c8a8200298776161, type: 3}
+  m_PrefabInstance: {fileID: 1298982770278458728}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &8044371975584804473 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 9053836426132196113, guid: 5d12ce98a47b50d4c8a8200298776161, type: 3}
   m_PrefabInstance: {fileID: 1298982770278458728}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1338131622577927935
@@ -2199,6 +2412,10 @@ PrefabInstance:
     - target: {fileID: 112279354506957970, guid: b8030b4fc426af24bbe0f7beb34946c3, type: 3}
       propertyPath: m_Name
       value: Mage_Hair_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 112279354506957970, guid: b8030b4fc426af24bbe0f7beb34946c3, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2556284620966837708, guid: b8030b4fc426af24bbe0f7beb34946c3, type: 3}
       propertyPath: m_RootOrder
@@ -2311,16 +2528,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empty_Gear_LS_Slot_Mage_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 3176612804033008686, guid: b3591f11ae6a1d240bdfd715fe8473f9, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b3591f11ae6a1d240bdfd715fe8473f9, type: 3}
---- !u!4 &4547385850763732412 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3176612804033008685, guid: b3591f11ae6a1d240bdfd715fe8473f9, type: 3}
-  m_PrefabInstance: {fileID: 1373061141570302353}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4547385850763732415 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3176612804033008686, guid: b3591f11ae6a1d240bdfd715fe8473f9, type: 3}
+  m_PrefabInstance: {fileID: 1373061141570302353}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4547385850763732412 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3176612804033008685, guid: b3591f11ae6a1d240bdfd715fe8473f9, type: 3}
   m_PrefabInstance: {fileID: 1373061141570302353}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1510936997650686283
@@ -2333,6 +2554,10 @@ PrefabInstance:
     - target: {fileID: 787155514437152798, guid: 40d11dd38418bb749b7f41d8e8d9f954, type: 3}
       propertyPath: m_Name
       value: Archer_Hair_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 787155514437152798, guid: 40d11dd38418bb749b7f41d8e8d9f954, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8915856424528665164, guid: 40d11dd38418bb749b7f41d8e8d9f954, type: 3}
       propertyPath: m_RootOrder
@@ -2380,14 +2605,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 40d11dd38418bb749b7f41d8e8d9f954, type: 3}
---- !u!4 &8019944601498204935 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8915856424528665164, guid: 40d11dd38418bb749b7f41d8e8d9f954, type: 3}
-  m_PrefabInstance: {fileID: 1510936997650686283}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2169438647797076309 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 787155514437152798, guid: 40d11dd38418bb749b7f41d8e8d9f954, type: 3}
+  m_PrefabInstance: {fileID: 1510936997650686283}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &8019944601498204935 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8915856424528665164, guid: 40d11dd38418bb749b7f41d8e8d9f954, type: 3}
   m_PrefabInstance: {fileID: 1510936997650686283}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1551159777671028041
@@ -2445,6 +2670,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer_Hair_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 4589406011315301193, guid: f3f30ec22ae42a24baf6c8a0c0391c95, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f3f30ec22ae42a24baf6c8a0c0391c95, type: 3}
 --- !u!4 &2150341864517573137 stripped
@@ -2467,6 +2696,10 @@ PrefabInstance:
     - target: {fileID: 5024707794122970212, guid: 536c048095afdf94eb5fe2d76b1eddac, type: 3}
       propertyPath: m_Name
       value: Mage_Head_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 5024707794122970212, guid: 536c048095afdf94eb5fe2d76b1eddac, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6852949516830729779, guid: 536c048095afdf94eb5fe2d76b1eddac, type: 3}
       propertyPath: m_RootOrder
@@ -2534,6 +2767,10 @@ PrefabInstance:
     - target: {fileID: 1394514479914851054, guid: d607de369828e294f84db65de7e31daf, type: 3}
       propertyPath: m_Name
       value: Tank_Torso_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1394514479914851054, guid: d607de369828e294f84db65de7e31daf, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2555174517495098405, guid: d607de369828e294f84db65de7e31daf, type: 3}
       propertyPath: m_RootOrder
@@ -2633,14 +2870,14 @@ PrefabInstance:
       objectReference: {fileID: 1385890853458294598}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d607de369828e294f84db65de7e31daf, type: 3}
---- !u!4 &3874973950823841917 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2555174517495098405, guid: d607de369828e294f84db65de7e31daf, type: 3}
-  m_PrefabInstance: {fileID: 1635758741189274712}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &425922695711241910 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1394514479914851054, guid: d607de369828e294f84db65de7e31daf, type: 3}
+  m_PrefabInstance: {fileID: 1635758741189274712}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3874973950823841917 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2555174517495098405, guid: d607de369828e294f84db65de7e31daf, type: 3}
   m_PrefabInstance: {fileID: 1635758741189274712}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1748790218336742982
@@ -2653,6 +2890,10 @@ PrefabInstance:
     - target: {fileID: 3961577799142944128, guid: 9f109be0d510c564a8ef7cf7c7ad1421, type: 3}
       propertyPath: m_Name
       value: Rogue_Eyes_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 3961577799142944128, guid: 9f109be0d510c564a8ef7cf7c7ad1421, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7451509403572055168, guid: 9f109be0d510c564a8ef7cf7c7ad1421, type: 3}
       propertyPath: m_RootOrder
@@ -2765,16 +3006,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer_Hand_Rt_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 7392418540706064189, guid: e84aef88fa5f76e469f6beca5b2be080, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e84aef88fa5f76e469f6beca5b2be080, type: 3}
---- !u!1 &9187449357704579178 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7392418540706064189, guid: e84aef88fa5f76e469f6beca5b2be080, type: 3}
-  m_PrefabInstance: {fileID: 1807990730490425175}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &151770530568373911 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1949064146791311808, guid: e84aef88fa5f76e469f6beca5b2be080, type: 3}
+  m_PrefabInstance: {fileID: 1807990730490425175}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &9187449357704579178 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7392418540706064189, guid: e84aef88fa5f76e469f6beca5b2be080, type: 3}
   m_PrefabInstance: {fileID: 1807990730490425175}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1941561175348504926
@@ -2831,6 +3076,10 @@ PrefabInstance:
     - target: {fileID: 8539359396138902983, guid: 21cff66c33770f04ba815a31a292c432, type: 3}
       propertyPath: m_Name
       value: Archer_Eyes_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 8539359396138902983, guid: 21cff66c33770f04ba815a31a292c432, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 21cff66c33770f04ba815a31a292c432, type: 3}
@@ -2899,16 +3148,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Eyes_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 8246332131752533889, guid: d07948daabd313d449f0f4c99aef7a1e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d07948daabd313d449f0f4c99aef7a1e, type: 3}
---- !u!1 &7600218593773897685 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8246332131752533889, guid: d07948daabd313d449f0f4c99aef7a1e, type: 3}
-  m_PrefabInstance: {fileID: 1948297122739230804}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3336581218452436569 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3838288550262042125, guid: d07948daabd313d449f0f4c99aef7a1e, type: 3}
+  m_PrefabInstance: {fileID: 1948297122739230804}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7600218593773897685 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8246332131752533889, guid: d07948daabd313d449f0f4c99aef7a1e, type: 3}
   m_PrefabInstance: {fileID: 1948297122739230804}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1977156738873174314
@@ -2965,6 +3218,10 @@ PrefabInstance:
     - target: {fileID: 4294090499849433703, guid: 186a9cf0e441da5479a997e25d041d8d, type: 3}
       propertyPath: m_Name
       value: Tank_Glove_Lt_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4294090499849433703, guid: 186a9cf0e441da5479a997e25d041d8d, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 186a9cf0e441da5479a997e25d041d8d, type: 3}
@@ -3033,6 +3290,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empty_Gear_LS_Slot_Rogue_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 2621124930539599550, guid: 33232a688db322c4487996ec15632341, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 33232a688db322c4487996ec15632341, type: 3}
 --- !u!1 &4547385850585325791 stripped
@@ -3100,16 +3361,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Eyes_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 2619177120714594885, guid: ebb599954eaed2048bca9849f3282180, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ebb599954eaed2048bca9849f3282180, type: 3}
---- !u!4 &2069767322817274026 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 520528713289520554, guid: ebb599954eaed2048bca9849f3282180, type: 3}
-  m_PrefabInstance: {fileID: 1981584328475243776}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4600761015263129413 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2619177120714594885, guid: ebb599954eaed2048bca9849f3282180, type: 3}
+  m_PrefabInstance: {fileID: 1981584328475243776}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2069767322817274026 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 520528713289520554, guid: ebb599954eaed2048bca9849f3282180, type: 3}
   m_PrefabInstance: {fileID: 1981584328475243776}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2153070319909740301
@@ -3167,6 +3432,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empty_Gear_LH_Slot_Archer_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 2520521945591834895, guid: 2487d13b49e97a942aa791451c11aff5, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2487d13b49e97a942aa791451c11aff5, type: 3}
 --- !u!1 &4547385850525906434 stripped
@@ -3189,6 +3458,10 @@ PrefabInstance:
     - target: {fileID: 1641877060808697813, guid: 87d3fa966871a354ab69c7694d7df857, type: 3}
       propertyPath: m_Name
       value: Rogue_Hand_Lt_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 1641877060808697813, guid: 87d3fa966871a354ab69c7694d7df857, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4585477292987236726, guid: 87d3fa966871a354ab69c7694d7df857, type: 3}
       propertyPath: m_RootOrder
@@ -3236,14 +3509,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 87d3fa966871a354ab69c7694d7df857, type: 3}
---- !u!1 &663526999149154047 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1641877060808697813, guid: 87d3fa966871a354ab69c7694d7df857, type: 3}
-  m_PrefabInstance: {fileID: 2304800906626459946}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &2332494599897491548 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4585477292987236726, guid: 87d3fa966871a354ab69c7694d7df857, type: 3}
+  m_PrefabInstance: {fileID: 2304800906626459946}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &663526999149154047 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1641877060808697813, guid: 87d3fa966871a354ab69c7694d7df857, type: 3}
   m_PrefabInstance: {fileID: 2304800906626459946}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2332375452339634652
@@ -3256,6 +3529,10 @@ PrefabInstance:
     - target: {fileID: 2253431811545332594, guid: d953efb8e63e08a4e9a8569fd8b5897a, type: 3}
       propertyPath: m_Name
       value: Empty_Gear_LS_Slot_Rogue_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2253431811545332594, guid: d953efb8e63e08a4e9a8569fd8b5897a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2253431811545332595, guid: d953efb8e63e08a4e9a8569fd8b5897a, type: 3}
       propertyPath: m_RootOrder
@@ -3324,6 +3601,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Hair_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 5680132819172247581, guid: f2614cfe7ec25e04daab46ef6fe016db, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 9084388714526285335, guid: f2614cfe7ec25e04daab46ef6fe016db, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -3390,6 +3671,10 @@ PrefabInstance:
     - target: {fileID: 1083606013360258926, guid: 9595d49816059ba4180a551ca688e4af, type: 3}
       propertyPath: m_Name
       value: Rogue_Ears_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 1083606013360258926, guid: 9595d49816059ba4180a551ca688e4af, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6686233771084108215, guid: 9595d49816059ba4180a551ca688e4af, type: 3}
       propertyPath: m_RootOrder
@@ -3458,6 +3743,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Mouth_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 650232806790545790, guid: f5529f8d35a95534f8758203ddd51329, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1209003708834249525, guid: f5529f8d35a95534f8758203ddd51329, type: 3}
       propertyPath: m_RootOrder
       value: 4
@@ -3504,14 +3793,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f5529f8d35a95534f8758203ddd51329, type: 3}
---- !u!4 &3723341675257362573 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1209003708834249525, guid: f5529f8d35a95534f8758203ddd51329, type: 3}
-  m_PrefabInstance: {fileID: 2552637127853507512}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3056500194282619590 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 650232806790545790, guid: f5529f8d35a95534f8758203ddd51329, type: 3}
+  m_PrefabInstance: {fileID: 2552637127853507512}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3723341675257362573 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1209003708834249525, guid: f5529f8d35a95534f8758203ddd51329, type: 3}
   m_PrefabInstance: {fileID: 2552637127853507512}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2559759718550300145
@@ -3569,16 +3858,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empty_Gear_RS_Slot_Mage_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 2061972087593140803, guid: 5a00a605bbd4cc641812bdd66c5f930a, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5a00a605bbd4cc641812bdd66c5f930a, type: 3}
---- !u!1 &4547385850560374706 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 2061972087593140803, guid: 5a00a605bbd4cc641812bdd66c5f930a, type: 3}
-  m_PrefabInstance: {fileID: 2559759718550300145}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4547385850560374707 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2061972087593140802, guid: 5a00a605bbd4cc641812bdd66c5f930a, type: 3}
+  m_PrefabInstance: {fileID: 2559759718550300145}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4547385850560374706 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2061972087593140803, guid: 5a00a605bbd4cc641812bdd66c5f930a, type: 3}
   m_PrefabInstance: {fileID: 2559759718550300145}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2578332822568035819
@@ -3591,6 +3884,10 @@ PrefabInstance:
     - target: {fileID: 2804923052008544704, guid: 911190f1bbf61c34294081b77f6680f7, type: 3}
       propertyPath: m_Name
       value: Gear_RS_Tank_ShoulderPad_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2804923052008544704, guid: 911190f1bbf61c34294081b77f6680f7, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7032222739674234600, guid: 911190f1bbf61c34294081b77f6680f7, type: 3}
       propertyPath: m_RootOrder
@@ -3659,6 +3956,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empty_Gear_RS_Slot_Mage_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 1891405313910436612, guid: 771cc7c8c90170547bb06f9c5e7f6949, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 1891405313910436615, guid: 771cc7c8c90170547bb06f9c5e7f6949, type: 3}
       propertyPath: m_RootOrder
       value: 6
@@ -3705,14 +4006,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 771cc7c8c90170547bb06f9c5e7f6949, type: 3}
---- !u!4 &4547385852239143092 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1891405313910436615, guid: 771cc7c8c90170547bb06f9c5e7f6949, type: 3}
-  m_PrefabInstance: {fileID: 2676281989898900403}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4547385852239143095 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1891405313910436612, guid: 771cc7c8c90170547bb06f9c5e7f6949, type: 3}
+  m_PrefabInstance: {fileID: 2676281989898900403}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4547385852239143092 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1891405313910436615, guid: 771cc7c8c90170547bb06f9c5e7f6949, type: 3}
   m_PrefabInstance: {fileID: 2676281989898900403}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2753837178931275032
@@ -3725,6 +4026,10 @@ PrefabInstance:
     - target: {fileID: 201844337772534149, guid: 0620affdd221fee4c920d5162afcf52a, type: 3}
       propertyPath: m_Name
       value: Mage_Mouth_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 201844337772534149, guid: 0620affdd221fee4c920d5162afcf52a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4610276671725283755, guid: 0620affdd221fee4c920d5162afcf52a, type: 3}
       propertyPath: m_RootOrder
@@ -3792,6 +4097,10 @@ PrefabInstance:
     - target: {fileID: 3652942943477059891, guid: 9ecc13c9e011bbe409915409b8f85f19, type: 3}
       propertyPath: m_Name
       value: Archer_Torso_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3652942943477059891, guid: 9ecc13c9e011bbe409915409b8f85f19, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6001182937684370987, guid: 9ecc13c9e011bbe409915409b8f85f19, type: 3}
       propertyPath: m_RootBone
@@ -3891,14 +4200,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ecc13c9e011bbe409915409b8f85f19, type: 3}
---- !u!1 &1497750831970152200 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3652942943477059891, guid: 9ecc13c9e011bbe409915409b8f85f19, type: 3}
-  m_PrefabInstance: {fileID: 2772185692000239163}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6848512346829018635 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8751063087064737840, guid: 9ecc13c9e011bbe409915409b8f85f19, type: 3}
+  m_PrefabInstance: {fileID: 2772185692000239163}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &1497750831970152200 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3652942943477059891, guid: 9ecc13c9e011bbe409915409b8f85f19, type: 3}
   m_PrefabInstance: {fileID: 2772185692000239163}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2895628046655954439
@@ -3911,6 +4220,10 @@ PrefabInstance:
     - target: {fileID: 414692744000754765, guid: e68d12b3ef24a434b9cbca2853581437, type: 3}
       propertyPath: m_Name
       value: Tank_Torso_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 414692744000754765, guid: e68d12b3ef24a434b9cbca2853581437, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3931337040595023963, guid: e68d12b3ef24a434b9cbca2853581437, type: 3}
       propertyPath: m_RootOrder
@@ -4010,14 +4323,14 @@ PrefabInstance:
       objectReference: {fileID: 8495415076674091646}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e68d12b3ef24a434b9cbca2853581437, type: 3}
---- !u!4 &2207252449257219676 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3931337040595023963, guid: e68d12b3ef24a434b9cbca2853581437, type: 3}
-  m_PrefabInstance: {fileID: 2895628046655954439}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3309616343003613770 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 414692744000754765, guid: e68d12b3ef24a434b9cbca2853581437, type: 3}
+  m_PrefabInstance: {fileID: 2895628046655954439}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2207252449257219676 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3931337040595023963, guid: e68d12b3ef24a434b9cbca2853581437, type: 3}
   m_PrefabInstance: {fileID: 2895628046655954439}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3079460002134734451
@@ -4074,6 +4387,10 @@ PrefabInstance:
     - target: {fileID: 3499086145158207334, guid: 5381f310736a7ee4299e4357a80bed5e, type: 3}
       propertyPath: m_Name
       value: Mage_Torso_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3499086145158207334, guid: 5381f310736a7ee4299e4357a80bed5e, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6201734315909232432, guid: 5381f310736a7ee4299e4357a80bed5e, type: 3}
       propertyPath: m_RootBone
@@ -4194,6 +4511,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Hand_Rt_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 7153681839820896491, guid: 1a67d2f98b599814bbf1b3a7017355aa, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1a67d2f98b599814bbf1b3a7017355aa, type: 3}
 --- !u!1 &5205367149617213923 stripped
@@ -4261,16 +4582,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rogue_Eyes_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 6153388255771542989, guid: a1ca400ab2423004b882142da178f6ed, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a1ca400ab2423004b882142da178f6ed, type: 3}
---- !u!4 &4251400791442014753 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1464146061705128469, guid: a1ca400ab2423004b882142da178f6ed, type: 3}
-  m_PrefabInstance: {fileID: 3409703666122221620}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8805814283378961913 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6153388255771542989, guid: a1ca400ab2423004b882142da178f6ed, type: 3}
+  m_PrefabInstance: {fileID: 3409703666122221620}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4251400791442014753 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1464146061705128469, guid: a1ca400ab2423004b882142da178f6ed, type: 3}
   m_PrefabInstance: {fileID: 3409703666122221620}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3777335569244496007
@@ -4328,16 +4653,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empty_Gear_RS_Slot_Rogue_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 824235669658650238, guid: 74a7d6d2f76fc6d4797beb48b1cd7646, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 74a7d6d2f76fc6d4797beb48b1cd7646, type: 3}
---- !u!4 &4547385850965649126 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 824235669658650209, guid: 74a7d6d2f76fc6d4797beb48b1cd7646, type: 3}
-  m_PrefabInstance: {fileID: 3777335569244496007}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4547385850965649145 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 824235669658650238, guid: 74a7d6d2f76fc6d4797beb48b1cd7646, type: 3}
+  m_PrefabInstance: {fileID: 3777335569244496007}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4547385850965649126 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 824235669658650209, guid: 74a7d6d2f76fc6d4797beb48b1cd7646, type: 3}
   m_PrefabInstance: {fileID: 3777335569244496007}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3837232923765061116
@@ -4350,6 +4679,10 @@ PrefabInstance:
     - target: {fileID: 746216920839762968, guid: 9f6459f592f802242a3d69d74824e9fe, type: 3}
       propertyPath: m_Name
       value: Empty_Gear_RS_Slot_Rogue_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 746216920839762968, guid: 9f6459f592f802242a3d69d74824e9fe, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 746216920839762969, guid: 9f6459f592f802242a3d69d74824e9fe, type: 3}
       propertyPath: m_RootOrder
@@ -4397,14 +4730,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f6459f592f802242a3d69d74824e9fe, type: 3}
---- !u!4 &4547385850462798309 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 746216920839762969, guid: 9f6459f592f802242a3d69d74824e9fe, type: 3}
-  m_PrefabInstance: {fileID: 3837232923765061116}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4547385850462798308 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 746216920839762968, guid: 9f6459f592f802242a3d69d74824e9fe, type: 3}
+  m_PrefabInstance: {fileID: 3837232923765061116}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4547385850462798309 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 746216920839762969, guid: 9f6459f592f802242a3d69d74824e9fe, type: 3}
   m_PrefabInstance: {fileID: 3837232923765061116}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3952688031147284258
@@ -4417,6 +4750,10 @@ PrefabInstance:
     - target: {fileID: 2127214981572673333, guid: 46c6c647a8887bf4d8b92d7a06cf9cad, type: 3}
       propertyPath: m_Name
       value: Mage_Torso_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 2127214981572673333, guid: 46c6c647a8887bf4d8b92d7a06cf9cad, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3663917393369578531, guid: 46c6c647a8887bf4d8b92d7a06cf9cad, type: 3}
       propertyPath: m_RootOrder
@@ -4537,6 +4874,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rogue_Hair_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 3126280509331847267, guid: 452b37393fff45a4190db85c07db5091, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6076351091479503201, guid: 452b37393fff45a4190db85c07db5091, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -4583,14 +4924,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 452b37393fff45a4190db85c07db5091, type: 3}
---- !u!4 &7791062021789650231 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6076351091479503201, guid: 452b37393fff45a4190db85c07db5091, type: 3}
-  m_PrefabInstance: {fileID: 4056864475129474134}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1382085230529991733 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3126280509331847267, guid: 452b37393fff45a4190db85c07db5091, type: 3}
+  m_PrefabInstance: {fileID: 4056864475129474134}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7791062021789650231 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6076351091479503201, guid: 452b37393fff45a4190db85c07db5091, type: 3}
   m_PrefabInstance: {fileID: 4056864475129474134}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4124759619680181128
@@ -4603,6 +4944,10 @@ PrefabInstance:
     - target: {fileID: 2593871274198242145, guid: 175aef56eb15ef148b324312411d9adf, type: 3}
       propertyPath: m_Name
       value: Gear_LS_Tank_ShoulderPad_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2593871274198242145, guid: 175aef56eb15ef148b324312411d9adf, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 2700939070313111850, guid: 175aef56eb15ef148b324312411d9adf, type: 3}
       propertyPath: m_RootOrder
@@ -4670,6 +5015,10 @@ PrefabInstance:
     - target: {fileID: 4159971166087916984, guid: f20e664f7ca7fe34f95a1ff9da56a56e, type: 3}
       propertyPath: m_Name
       value: Rogue_Hand_Lt_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4159971166087916984, guid: f20e664f7ca7fe34f95a1ff9da56a56e, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7933657354263531807, guid: f20e664f7ca7fe34f95a1ff9da56a56e, type: 3}
       propertyPath: m_RootOrder
@@ -4782,16 +5131,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer_Ears_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 8831709805888360725, guid: 62ae940ab9b27bc449dedb7dd79bc869, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 62ae940ab9b27bc449dedb7dd79bc869, type: 3}
---- !u!1 &4984529728629224612 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8831709805888360725, guid: 62ae940ab9b27bc449dedb7dd79bc869, type: 3}
-  m_PrefabInstance: {fileID: 4592565681611793841}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7839049908427350005 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6013981692920871492, guid: 62ae940ab9b27bc449dedb7dd79bc869, type: 3}
+  m_PrefabInstance: {fileID: 4592565681611793841}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4984529728629224612 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8831709805888360725, guid: 62ae940ab9b27bc449dedb7dd79bc869, type: 3}
   m_PrefabInstance: {fileID: 4592565681611793841}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4626253967895394050
@@ -4848,6 +5201,10 @@ PrefabInstance:
     - target: {fileID: 3861818777335306995, guid: 2c34ef7862d1e5047aff0903b1b96493, type: 3}
       propertyPath: m_Name
       value: Rogue_Weapon_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3861818777335306995, guid: 2c34ef7862d1e5047aff0903b1b96493, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2c34ef7862d1e5047aff0903b1b96493, type: 3}
@@ -4916,16 +5273,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Head_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 6643300061847769365, guid: 9ed4a7fa43677104884da057b3438060, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ed4a7fa43677104884da057b3438060, type: 3}
---- !u!4 &1264475380644712456 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5907332558130128645, guid: 9ed4a7fa43677104884da057b3438060, type: 3}
-  m_PrefabInstance: {fileID: 4645284899245012749}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2037562397139953176 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6643300061847769365, guid: 9ed4a7fa43677104884da057b3438060, type: 3}
+  m_PrefabInstance: {fileID: 4645284899245012749}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1264475380644712456 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5907332558130128645, guid: 9ed4a7fa43677104884da057b3438060, type: 3}
   m_PrefabInstance: {fileID: 4645284899245012749}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &4916513256612292579
@@ -4938,6 +5299,10 @@ PrefabInstance:
     - target: {fileID: 1416040443873192957, guid: 37ba91d0f871d5140bf96a7631ed99ab, type: 3}
       propertyPath: m_Name
       value: Tank_Eyes_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1416040443873192957, guid: 37ba91d0f871d5140bf96a7631ed99ab, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6694186955228017186, guid: 37ba91d0f871d5140bf96a7631ed99ab, type: 3}
       propertyPath: m_RootOrder
@@ -5050,16 +5415,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Ears_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 7816053487862504607, guid: 2483646f499e20448a2be9651b6dcd46, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2483646f499e20448a2be9651b6dcd46, type: 3}
---- !u!4 &2867547195291156996 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7035457144937889444, guid: 2483646f499e20448a2be9651b6dcd46, type: 3}
-  m_PrefabInstance: {fileID: 5073696425087270048}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &3031299923065806911 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7816053487862504607, guid: 2483646f499e20448a2be9651b6dcd46, type: 3}
+  m_PrefabInstance: {fileID: 5073696425087270048}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2867547195291156996 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 7035457144937889444, guid: 2483646f499e20448a2be9651b6dcd46, type: 3}
   m_PrefabInstance: {fileID: 5073696425087270048}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5121317938826002745
@@ -5117,16 +5486,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rogue_Hand_Rt_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 7875141469023335352, guid: 703f3506e74a649469495ada5e8e464f, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 703f3506e74a649469495ada5e8e464f, type: 3}
---- !u!1 &3051343748963906177 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7875141469023335352, guid: 703f3506e74a649469495ada5e8e464f, type: 3}
-  m_PrefabInstance: {fileID: 5121317938826002745}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &534770833101321263 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4645868414553896214, guid: 703f3506e74a649469495ada5e8e464f, type: 3}
+  m_PrefabInstance: {fileID: 5121317938826002745}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3051343748963906177 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7875141469023335352, guid: 703f3506e74a649469495ada5e8e464f, type: 3}
   m_PrefabInstance: {fileID: 5121317938826002745}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5171542828428279513
@@ -5184,16 +5557,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Mouth_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 6236009734968106111, guid: 262c3bed68fd4cd4992491e302590de6, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 262c3bed68fd4cd4992491e302590de6, type: 3}
---- !u!4 &7338646148094174711 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2458148490952219438, guid: 262c3bed68fd4cd4992491e302590de6, type: 3}
-  m_PrefabInstance: {fileID: 5171542828428279513}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1247430151152165542 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6236009734968106111, guid: 262c3bed68fd4cd4992491e302590de6, type: 3}
+  m_PrefabInstance: {fileID: 5171542828428279513}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7338646148094174711 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2458148490952219438, guid: 262c3bed68fd4cd4992491e302590de6, type: 3}
   m_PrefabInstance: {fileID: 5171542828428279513}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5199179225619728242
@@ -5250,6 +5627,10 @@ PrefabInstance:
     - target: {fileID: 7251484847085385780, guid: 44230123ba61ad348a74bf921fb43f55, type: 3}
       propertyPath: m_Name
       value: Archer_Hand_Lt_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 7251484847085385780, guid: 44230123ba61ad348a74bf921fb43f55, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 44230123ba61ad348a74bf921fb43f55, type: 3}
@@ -5318,16 +5699,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer_Hand_Rt_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 3074380291674168023, guid: 47674e55d0a657e449bda89ec0284444, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47674e55d0a657e449bda89ec0284444, type: 3}
---- !u!1 &6956424951883403026 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3074380291674168023, guid: 47674e55d0a657e449bda89ec0284444, type: 3}
-  m_PrefabInstance: {fileID: 5341351849974814149}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6034350816615062860 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1845940580957423753, guid: 47674e55d0a657e449bda89ec0284444, type: 3}
+  m_PrefabInstance: {fileID: 5341351849974814149}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6956424951883403026 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3074380291674168023, guid: 47674e55d0a657e449bda89ec0284444, type: 3}
   m_PrefabInstance: {fileID: 5341351849974814149}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5352777419765239849
@@ -5385,16 +5770,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Empty_Gear_LH_Slot_Rogue_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 8454221756294058386, guid: 00155254db96ce542a09c3e678c72b44, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 00155254db96ce542a09c3e678c72b44, type: 3}
---- !u!4 &4547385852159820216 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 8454221756294058385, guid: 00155254db96ce542a09c3e678c72b44, type: 3}
-  m_PrefabInstance: {fileID: 5352777419765239849}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &4547385852159820219 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 8454221756294058386, guid: 00155254db96ce542a09c3e678c72b44, type: 3}
+  m_PrefabInstance: {fileID: 5352777419765239849}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4547385852159820216 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8454221756294058385, guid: 00155254db96ce542a09c3e678c72b44, type: 3}
   m_PrefabInstance: {fileID: 5352777419765239849}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5629050180898783077
@@ -5407,6 +5796,10 @@ PrefabInstance:
     - target: {fileID: 1362178114493462303, guid: 0d6b4bf1ad026a348b7ca6cd309b4664, type: 3}
       propertyPath: m_Name
       value: Rogue_Mouth_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 1362178114493462303, guid: 0d6b4bf1ad026a348b7ca6cd309b4664, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5482619735690016621, guid: 0d6b4bf1ad026a348b7ca6cd309b4664, type: 3}
       propertyPath: m_RootOrder
@@ -5475,6 +5868,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rogue_Head_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 7164495942986138984, guid: 9f5e39a17f4f99f43860ebaa404d3539, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8138718837504108424, guid: 9f5e39a17f4f99f43860ebaa404d3539, type: 3}
       propertyPath: m_RootOrder
       value: 3
@@ -5521,14 +5918,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f5e39a17f4f99f43860ebaa404d3539, type: 3}
---- !u!1 &3240150695109643015 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7164495942986138984, guid: 9f5e39a17f4f99f43860ebaa404d3539, type: 3}
-  m_PrefabInstance: {fileID: 5735955324776762991}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4569109987370084839 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8138718837504108424, guid: 9f5e39a17f4f99f43860ebaa404d3539, type: 3}
+  m_PrefabInstance: {fileID: 5735955324776762991}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &3240150695109643015 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7164495942986138984, guid: 9f5e39a17f4f99f43860ebaa404d3539, type: 3}
   m_PrefabInstance: {fileID: 5735955324776762991}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5877817969239723307
@@ -5541,6 +5938,10 @@ PrefabInstance:
     - target: {fileID: 7965103143551427644, guid: e68ed9fb2d4ffb5478cd20996586aade, type: 3}
       propertyPath: m_Name
       value: Empty_Gear_LH_Slot_Archer_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 7965103143551427644, guid: e68ed9fb2d4ffb5478cd20996586aade, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7965103143551427647, guid: e68ed9fb2d4ffb5478cd20996586aade, type: 3}
       propertyPath: m_RootOrder
@@ -5588,14 +5989,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e68ed9fb2d4ffb5478cd20996586aade, type: 3}
---- !u!1 &4547385850979936535 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 7965103143551427644, guid: e68ed9fb2d4ffb5478cd20996586aade, type: 3}
-  m_PrefabInstance: {fileID: 5877817969239723307}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4547385850979936532 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7965103143551427647, guid: e68ed9fb2d4ffb5478cd20996586aade, type: 3}
+  m_PrefabInstance: {fileID: 5877817969239723307}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4547385850979936535 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7965103143551427644, guid: e68ed9fb2d4ffb5478cd20996586aade, type: 3}
   m_PrefabInstance: {fileID: 5877817969239723307}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5900010241816985954
@@ -5652,6 +6053,10 @@ PrefabInstance:
     - target: {fileID: 9215068552564892868, guid: 68025b7ccf083b74d874690d0f00dc19, type: 3}
       propertyPath: m_Name
       value: Archer_Mouth_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 9215068552564892868, guid: 68025b7ccf083b74d874690d0f00dc19, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 68025b7ccf083b74d874690d0f00dc19, type: 3}
@@ -5720,16 +6125,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Weapon_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 3061850003185879584, guid: 6bc2d2882ad4e134a8aff93a7c5db96e, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6bc2d2882ad4e134a8aff93a7c5db96e, type: 3}
---- !u!4 &4879175294589522193 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1165119916442111110, guid: 6bc2d2882ad4e134a8aff93a7c5db96e, type: 3}
-  m_PrefabInstance: {fileID: 6024978955715288471}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8782272346836785079 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3061850003185879584, guid: 6bc2d2882ad4e134a8aff93a7c5db96e, type: 3}
+  m_PrefabInstance: {fileID: 6024978955715288471}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &4879175294589522193 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1165119916442111110, guid: 6bc2d2882ad4e134a8aff93a7c5db96e, type: 3}
   m_PrefabInstance: {fileID: 6024978955715288471}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6047941035644436175
@@ -5787,6 +6196,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer_weapon_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 2326903244382679900, guid: 88e74ff676cdf7142aa2674edad0a004, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88e74ff676cdf7142aa2674edad0a004, type: 3}
 --- !u!4 &6017650269916891848 stripped
@@ -5809,6 +6222,10 @@ PrefabInstance:
     - target: {fileID: 1491482844725899744, guid: 31e2d218bdea6484aa2444529536bd4f, type: 3}
       propertyPath: m_Name
       value: Gear_RS_Tank_ShoulderPad_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 1491482844725899744, guid: 31e2d218bdea6484aa2444529536bd4f, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7779303979955980379, guid: 31e2d218bdea6484aa2444529536bd4f, type: 3}
       propertyPath: m_RootOrder
@@ -5921,6 +6338,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rogue_Ears_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 2983828450634303009, guid: 9f5862b9eb9fdda49af566eb54c4c619, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f5862b9eb9fdda49af566eb54c4c619, type: 3}
 --- !u!1 &9050837806502146063 stripped
@@ -5943,6 +6364,10 @@ PrefabInstance:
     - target: {fileID: 2154552346184451403, guid: 6faa76a506bd17d4e90290f4605e0a16, type: 3}
       propertyPath: m_Name
       value: Archer_weapon_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 2154552346184451403, guid: 6faa76a506bd17d4e90290f4605e0a16, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8877013684679081635, guid: 6faa76a506bd17d4e90290f4605e0a16, type: 3}
       propertyPath: m_RootOrder
@@ -6011,6 +6436,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rogue_Hand_Rt_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 231439608630822926, guid: 9b19e335c012acd4991a3b07812d4716, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5150510796769504336, guid: 9b19e335c012acd4991a3b07812d4716, type: 3}
       propertyPath: m_RootOrder
       value: 8
@@ -6057,14 +6486,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9b19e335c012acd4991a3b07812d4716, type: 3}
---- !u!4 &1206909600738975007 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5150510796769504336, guid: 9b19e335c012acd4991a3b07812d4716, type: 3}
-  m_PrefabInstance: {fileID: 6324610393801797967}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &6121441642964187457 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 231439608630822926, guid: 9b19e335c012acd4991a3b07812d4716, type: 3}
+  m_PrefabInstance: {fileID: 6324610393801797967}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &1206909600738975007 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5150510796769504336, guid: 9b19e335c012acd4991a3b07812d4716, type: 3}
   m_PrefabInstance: {fileID: 6324610393801797967}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6325765763770940777
@@ -6121,6 +6550,10 @@ PrefabInstance:
     - target: {fileID: 7553149160173740278, guid: 9247620d554536843aeffd44c5beac1a, type: 3}
       propertyPath: m_Name
       value: Empty_Gear_LH_Slot_Mage_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 7553149160173740278, guid: 9247620d554536843aeffd44c5beac1a, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9247620d554536843aeffd44c5beac1a, type: 3}
@@ -6189,6 +6622,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Hand_Lt1_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 4958489842200275732, guid: 2658078643132ad4e948769858149171, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2658078643132ad4e948769858149171, type: 3}
 --- !u!4 &8861105547073997969 stripped
@@ -6211,6 +6648,10 @@ PrefabInstance:
     - target: {fileID: 3417099743748970979, guid: 702056046fec9a242b2aca3bdcf500bd, type: 3}
       propertyPath: m_Name
       value: Tank_Weapon_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3417099743748970979, guid: 702056046fec9a242b2aca3bdcf500bd, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4554846651470087634, guid: 702056046fec9a242b2aca3bdcf500bd, type: 3}
       propertyPath: m_RootOrder
@@ -6258,14 +6699,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 702056046fec9a242b2aca3bdcf500bd, type: 3}
---- !u!4 &7362427491092813060 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4554846651470087634, guid: 702056046fec9a242b2aca3bdcf500bd, type: 3}
-  m_PrefabInstance: {fileID: 6420593949926805718}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &8534728331211606325 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 3417099743748970979, guid: 702056046fec9a242b2aca3bdcf500bd, type: 3}
+  m_PrefabInstance: {fileID: 6420593949926805718}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &7362427491092813060 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4554846651470087634, guid: 702056046fec9a242b2aca3bdcf500bd, type: 3}
   m_PrefabInstance: {fileID: 6420593949926805718}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6505776418882712968
@@ -6278,6 +6719,10 @@ PrefabInstance:
     - target: {fileID: 3934106151804199668, guid: d46c92b0e8e59fd4588327d16d538b8f, type: 3}
       propertyPath: m_Name
       value: Tank_Hair_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 3934106151804199668, guid: d46c92b0e8e59fd4588327d16d538b8f, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7904695551702704680, guid: d46c92b0e8e59fd4588327d16d538b8f, type: 3}
       propertyPath: m_RootOrder
@@ -6325,14 +6770,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d46c92b0e8e59fd4588327d16d538b8f, type: 3}
---- !u!1 &7841305284959672188 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3934106151804199668, guid: d46c92b0e8e59fd4588327d16d538b8f, type: 3}
-  m_PrefabInstance: {fileID: 6505776418882712968}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4033597534240004000 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7904695551702704680, guid: d46c92b0e8e59fd4588327d16d538b8f, type: 3}
+  m_PrefabInstance: {fileID: 6505776418882712968}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7841305284959672188 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3934106151804199668, guid: d46c92b0e8e59fd4588327d16d538b8f, type: 3}
   m_PrefabInstance: {fileID: 6505776418882712968}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6564140219370697799
@@ -6390,16 +6835,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Hand_Rt_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 6435254650080076021, guid: b6bf1531d38e6d0459ffbaa6196a20b3, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b6bf1531d38e6d0459ffbaa6196a20b3, type: 3}
---- !u!1 &168353655861662898 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6435254650080076021, guid: b6bf1531d38e6d0459ffbaa6196a20b3, type: 3}
-  m_PrefabInstance: {fileID: 6564140219370697799}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &5938380004121282511 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 680571201162015624, guid: b6bf1531d38e6d0459ffbaa6196a20b3, type: 3}
+  m_PrefabInstance: {fileID: 6564140219370697799}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &168353655861662898 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6435254650080076021, guid: b6bf1531d38e6d0459ffbaa6196a20b3, type: 3}
   m_PrefabInstance: {fileID: 6564140219370697799}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6786716989100507624
@@ -6457,6 +6906,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer_Ears_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 3967914386260491426, guid: de20aa000868a91418174947dcd6fd15, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de20aa000868a91418174947dcd6fd15, type: 3}
 --- !u!1 &7583954262385114442 stripped
@@ -6479,6 +6932,10 @@ PrefabInstance:
     - target: {fileID: 3485516033275284837, guid: fd4bd731eaad77f49a5d728885e2e982, type: 3}
       propertyPath: m_Name
       value: Tank_Shield_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 3485516033275284837, guid: fd4bd731eaad77f49a5d728885e2e982, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5356952053071459299, guid: fd4bd731eaad77f49a5d728885e2e982, type: 3}
       propertyPath: m_RootOrder
@@ -6546,6 +7003,10 @@ PrefabInstance:
     - target: {fileID: 684809618467943946, guid: f0213ce5798f369469a216cc5724766f, type: 3}
       propertyPath: m_Name
       value: Archer_Eyes_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 684809618467943946, guid: f0213ce5798f369469a216cc5724766f, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4810370351339258063, guid: f0213ce5798f369469a216cc5724766f, type: 3}
       propertyPath: m_RootOrder
@@ -6658,16 +7119,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gear_LS_Archer_Quiver_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 5113292468309394909, guid: 962df0864142a254eaec4d4cb2785aa0, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 962df0864142a254eaec4d4cb2785aa0, type: 3}
---- !u!1 &2503478013837759990 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5113292468309394909, guid: 962df0864142a254eaec4d4cb2785aa0, type: 3}
-  m_PrefabInstance: {fileID: 7226082320440086571}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8021949320386496443 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 800378435743324048, guid: 962df0864142a254eaec4d4cb2785aa0, type: 3}
+  m_PrefabInstance: {fileID: 7226082320440086571}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2503478013837759990 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5113292468309394909, guid: 962df0864142a254eaec4d4cb2785aa0, type: 3}
   m_PrefabInstance: {fileID: 7226082320440086571}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7247765245552551133
@@ -6680,6 +7145,10 @@ PrefabInstance:
     - target: {fileID: 2943100746237914177, guid: 1616aeac2ed89334a9bece048ef1d50b, type: 3}
       propertyPath: m_Name
       value: Mage_Ears_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 2943100746237914177, guid: 1616aeac2ed89334a9bece048ef1d50b, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 3348025160845645506, guid: 1616aeac2ed89334a9bece048ef1d50b, type: 3}
       propertyPath: m_RootOrder
@@ -6727,14 +7196,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1616aeac2ed89334a9bece048ef1d50b, type: 3}
---- !u!4 &5396349407934460447 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 3348025160845645506, guid: 1616aeac2ed89334a9bece048ef1d50b, type: 3}
-  m_PrefabInstance: {fileID: 7247765245552551133}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &5495168480164858012 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 2943100746237914177, guid: 1616aeac2ed89334a9bece048ef1d50b, type: 3}
+  m_PrefabInstance: {fileID: 7247765245552551133}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5396349407934460447 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3348025160845645506, guid: 1616aeac2ed89334a9bece048ef1d50b, type: 3}
   m_PrefabInstance: {fileID: 7247765245552551133}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7422625820664635599
@@ -6792,6 +7261,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Gear_LS_Archer_Quiver_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 5988916445502967737, guid: fbf0a5100c6b1f44ea87821130478299, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fbf0a5100c6b1f44ea87821130478299, type: 3}
 --- !u!4 &3174281523036423975 stripped
@@ -6814,6 +7287,10 @@ PrefabInstance:
     - target: {fileID: 3239483201471450237, guid: 4534848d12ab4c04290619c8f977223d, type: 3}
       propertyPath: m_Name
       value: Mage_Hand_Lt1_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 3239483201471450237, guid: 4534848d12ab4c04290619c8f977223d, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5297108964527965440, guid: 4534848d12ab4c04290619c8f977223d, type: 3}
       propertyPath: m_RootOrder
@@ -6861,14 +7338,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4534848d12ab4c04290619c8f977223d, type: 3}
---- !u!1 &5432401221594662492 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3239483201471450237, guid: 4534848d12ab4c04290619c8f977223d, type: 3}
-  m_PrefabInstance: {fileID: 7464488714287270433}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3320327643256803105 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5297108964527965440, guid: 4534848d12ab4c04290619c8f977223d, type: 3}
+  m_PrefabInstance: {fileID: 7464488714287270433}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5432401221594662492 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3239483201471450237, guid: 4534848d12ab4c04290619c8f977223d, type: 3}
   m_PrefabInstance: {fileID: 7464488714287270433}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7473840635319273692
@@ -6881,6 +7358,10 @@ PrefabInstance:
     - target: {fileID: 1028460923635445782, guid: 4f26ac214015a8a428b5f287e3e782ef, type: 3}
       propertyPath: m_Name
       value: Rogue_Torso_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 1028460923635445782, guid: 4f26ac214015a8a428b5f287e3e782ef, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1052540636117229461, guid: 4f26ac214015a8a428b5f287e3e782ef, type: 3}
       propertyPath: m_RootOrder
@@ -7045,16 +7526,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Glove_Rt_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 7085429341164392128, guid: c1c12c43882796c45ac83da7e3e76fc5, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c1c12c43882796c45ac83da7e3e76fc5, type: 3}
---- !u!4 &2883495682463089713 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 4834859450962615583, guid: c1c12c43882796c45ac83da7e3e76fc5, type: 3}
-  m_PrefabInstance: {fileID: 7718293477540550958}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &668893896012404718 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7085429341164392128, guid: c1c12c43882796c45ac83da7e3e76fc5, type: 3}
+  m_PrefabInstance: {fileID: 7718293477540550958}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2883495682463089713 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4834859450962615583, guid: c1c12c43882796c45ac83da7e3e76fc5, type: 3}
   m_PrefabInstance: {fileID: 7718293477540550958}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7824818163089416341
@@ -7067,6 +7552,10 @@ PrefabInstance:
     - target: {fileID: 6020426494497837068, guid: 3e983bd9d10c8114b8c111165ff2d489, type: 3}
       propertyPath: m_Name
       value: Empty_Gear_LH_Slot_Rogue_Girl
+      objectReference: {fileID: 0}
+    - target: {fileID: 6020426494497837068, guid: 3e983bd9d10c8114b8c111165ff2d489, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6020426494497837075, guid: 3e983bd9d10c8114b8c111165ff2d489, type: 3}
       propertyPath: m_RootOrder
@@ -7114,14 +7603,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3e983bd9d10c8114b8c111165ff2d489, type: 3}
---- !u!1 &4547385851144630425 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6020426494497837068, guid: 3e983bd9d10c8114b8c111165ff2d489, type: 3}
-  m_PrefabInstance: {fileID: 7824818163089416341}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4547385851144630406 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6020426494497837075, guid: 3e983bd9d10c8114b8c111165ff2d489, type: 3}
+  m_PrefabInstance: {fileID: 7824818163089416341}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4547385851144630425 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6020426494497837068, guid: 3e983bd9d10c8114b8c111165ff2d489, type: 3}
   m_PrefabInstance: {fileID: 7824818163089416341}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8109979917195724144
@@ -7179,6 +7668,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer_Mouth_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 3296401311353261653, guid: 2226a66895e83f14e9e85c0940a35d51, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2226a66895e83f14e9e85c0940a35d51, type: 3}
 --- !u!1 &6715786524771158821 stripped
@@ -7201,6 +7694,10 @@ PrefabInstance:
     - target: {fileID: 5613456398685740096, guid: e30891497dc4b1a418444a1b8b4ef6a1, type: 3}
       propertyPath: m_Name
       value: Empty_Gear_RS_Slot_Archer_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5613456398685740096, guid: e30891497dc4b1a418444a1b8b4ef6a1, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5613456398685740099, guid: e30891497dc4b1a418444a1b8b4ef6a1, type: 3}
       propertyPath: m_RootOrder
@@ -7248,14 +7745,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e30891497dc4b1a418444a1b8b4ef6a1, type: 3}
---- !u!1 &4547385852123078731 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5613456398685740096, guid: e30891497dc4b1a418444a1b8b4ef6a1, type: 3}
-  m_PrefabInstance: {fileID: 8285655248222059531}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4547385852123078728 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5613456398685740099, guid: e30891497dc4b1a418444a1b8b4ef6a1, type: 3}
+  m_PrefabInstance: {fileID: 8285655248222059531}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4547385852123078731 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5613456398685740096, guid: e30891497dc4b1a418444a1b8b4ef6a1, type: 3}
   m_PrefabInstance: {fileID: 8285655248222059531}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8437460648559628325
@@ -7313,16 +7810,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage_Eyes_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 5289324757518310800, guid: 9e4d9d7db79d480478283614b07db589, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9e4d9d7db79d480478283614b07db589, type: 3}
---- !u!1 &4355144762768297397 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5289324757518310800, guid: 9e4d9d7db79d480478283614b07db589, type: 3}
-  m_PrefabInstance: {fileID: 8437460648559628325}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7166287806086859235 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1613455296145824198, guid: 9e4d9d7db79d480478283614b07db589, type: 3}
+  m_PrefabInstance: {fileID: 8437460648559628325}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4355144762768297397 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 5289324757518310800, guid: 9e4d9d7db79d480478283614b07db589, type: 3}
   m_PrefabInstance: {fileID: 8437460648559628325}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8619195299117345507
@@ -7335,6 +7836,10 @@ PrefabInstance:
     - target: {fileID: 4217552098803181837, guid: 47609086cade114459272378dbd54c84, type: 3}
       propertyPath: m_Name
       value: Rogue_Hair_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4217552098803181837, guid: 47609086cade114459272378dbd54c84, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6733529486627085199, guid: 47609086cade114459272378dbd54c84, type: 3}
       propertyPath: m_RootOrder
@@ -7382,14 +7887,14 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 47609086cade114459272378dbd54c84, type: 3}
---- !u!1 &5555833614698464238 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4217552098803181837, guid: 47609086cade114459272378dbd54c84, type: 3}
-  m_PrefabInstance: {fileID: 8619195299117345507}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3093908146546913644 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6733529486627085199, guid: 47609086cade114459272378dbd54c84, type: 3}
+  m_PrefabInstance: {fileID: 8619195299117345507}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5555833614698464238 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4217552098803181837, guid: 47609086cade114459272378dbd54c84, type: 3}
   m_PrefabInstance: {fileID: 8619195299117345507}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8760278354213475920
@@ -7499,6 +8004,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Archer_Torso_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 8630695405241421032, guid: 8f204097121b14e43bd73fc671797fb9, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8f204097121b14e43bd73fc671797fb9, type: 3}
 --- !u!4 &2995822706927088220 stripped
@@ -7566,16 +8075,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Ears_Girl
       objectReference: {fileID: 0}
+    - target: {fileID: 6721120468174862185, guid: 3ac8975790f363c449a5811b44f2c2dd, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3ac8975790f363c449a5811b44f2c2dd, type: 3}
---- !u!4 &3994450207689216366 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 5498517302089068998, guid: 3ac8975790f363c449a5811b44f2c2dd, type: 3}
-  m_PrefabInstance: {fileID: 8872525669382660264}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2767387628863870913 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6721120468174862185, guid: 3ac8975790f363c449a5811b44f2c2dd, type: 3}
+  m_PrefabInstance: {fileID: 8872525669382660264}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &3994450207689216366 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5498517302089068998, guid: 3ac8975790f363c449a5811b44f2c2dd, type: 3}
   m_PrefabInstance: {fileID: 8872525669382660264}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8890895197321617453
@@ -7633,16 +8146,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Head_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 1167424872742151605, guid: effb9de4d8a9b6a42b081086f7580ce2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: effb9de4d8a9b6a42b081086f7580ce2, type: 3}
---- !u!1 &7733041955828172184 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1167424872742151605, guid: effb9de4d8a9b6a42b081086f7580ce2, type: 3}
-  m_PrefabInstance: {fileID: 8890895197321617453}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &9009294560115904428 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 460985334927568769, guid: effb9de4d8a9b6a42b081086f7580ce2, type: 3}
+  m_PrefabInstance: {fileID: 8890895197321617453}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7733041955828172184 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1167424872742151605, guid: effb9de4d8a9b6a42b081086f7580ce2, type: 3}
   m_PrefabInstance: {fileID: 8890895197321617453}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9029375231347491126
@@ -7700,16 +8217,20 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tank_Glove_Rt_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 6557782359995932094, guid: 7d1ba64bc16129d4bb75541d7c49ec05, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 7d1ba64bc16129d4bb75541d7c49ec05, type: 3}
---- !u!1 &2760465371479465096 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6557782359995932094, guid: 7d1ba64bc16129d4bb75541d7c49ec05, type: 3}
-  m_PrefabInstance: {fileID: 9029375231347491126}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &3698569048365922069 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5628721195025659427, guid: 7d1ba64bc16129d4bb75541d7c49ec05, type: 3}
+  m_PrefabInstance: {fileID: 9029375231347491126}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2760465371479465096 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6557782359995932094, guid: 7d1ba64bc16129d4bb75541d7c49ec05, type: 3}
   m_PrefabInstance: {fileID: 9029375231347491126}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &9036259825240657000
@@ -7767,6 +8288,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Rogue_Mouth_Boy
       objectReference: {fileID: 0}
+    - target: {fileID: 7463217729639695088, guid: 2ac46e815db5a5a49b0df4a3acc67549, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2ac46e815db5a5a49b0df4a3acc67549, type: 3}
 --- !u!1 &1942619982609780376 stripped
@@ -7789,6 +8314,10 @@ PrefabInstance:
     - target: {fileID: 4786498065510351345, guid: 366173ddb12eeaa44a8b07044adb53bf, type: 3}
       propertyPath: m_Name
       value: Empty_Gear_LS_Slot_Mage_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 4786498065510351345, guid: 366173ddb12eeaa44a8b07044adb53bf, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4786498065510351346, guid: 366173ddb12eeaa44a8b07044adb53bf, type: 3}
       propertyPath: m_RootOrder
@@ -7900,6 +8429,10 @@ PrefabInstance:
     - target: {fileID: 6359224528985749054, guid: 4e52a93e5e7209448906906efbaedad1, type: 3}
       propertyPath: m_Name
       value: Archer_Hand_Lt_Boy
+      objectReference: {fileID: 0}
+    - target: {fileID: 6359224528985749054, guid: 4e52a93e5e7209448906906efbaedad1, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4e52a93e5e7209448906906efbaedad1, type: 3}

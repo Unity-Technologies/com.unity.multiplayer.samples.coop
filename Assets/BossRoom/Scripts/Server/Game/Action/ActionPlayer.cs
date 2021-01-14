@@ -91,10 +91,11 @@ namespace BossRoom.Server
         {
             if( this.m_queue.Count > 0 )
             {
-                bool keepgoing = m_queue[0].Update();
-                bool expirable = m_queue[0].Description.Duration_s > 0f; //non-positive value is a sentinel indicating the duration is indefinite. 
-                bool time_expired = expirable && (Time.time - m_queue[0].TimeStarted) >= m_queue[0].Description.Duration_s;
-                if ( !keepgoing || time_expired )
+                Action runningAction = m_queue[0]; //action at the front of the queue is the one that is actively running. 
+                bool keepGoing = runningAction.Update();
+                bool expirable = runningAction.Description.Duration_s > 0f; //non-positive value is a sentinel indicating the duration is indefinite. 
+                bool timeExpired = expirable && (Time.time - runningAction.TimeStarted) >= runningAction.Description.Duration_s;
+                if ( !keepGoing || timeExpired )
                 {
                     AdvanceQueue(true);
                 }

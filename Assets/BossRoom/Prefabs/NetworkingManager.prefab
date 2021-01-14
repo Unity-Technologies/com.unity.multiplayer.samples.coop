@@ -12,7 +12,6 @@ GameObject:
   - component: {fileID: 5436007408952557924}
   - component: {fileID: 5436007408952557927}
   - component: {fileID: 5436007408952557926}
-  - component: {fileID: 5436007408952557945}
   m_Layer: 0
   m_Name: NetworkingManager
   m_TagString: Untagged
@@ -148,25 +147,3 @@ MonoBehaviour:
   SimulatePacketLossChance: 0
   SimulateMinLatency: 0
   SimulateMaxLatency: 0
---- !u!114 &5436007408952557945
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5436007408952557947}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 52c005b32a68a254cbe502a4e5cb8eb6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  appId: bc5b8b0d-edf3-4c61-9593-ce38da7f0c79
-  gameVersion: 0.0.0
-  region: EU
-  nickName: 
-  roomName: 
-  maxPlayers: 4
-  batchedTransportEventCode: 129
-  channelIdCodesStartRange: 130
-  attachSupportLogger: 1
-  sendQueueBatchSize: 4096
