@@ -9,7 +9,7 @@ namespace BossRoom.Server
     /// </summary>
     public class NavigationSystem : MonoBehaviour
     {
-        public const string NavigationSytemTag = "NavigationSystem";
+        public const string NavigationSystemTag = "NavigationSystem";
 
         /// <summary>
         /// Event that gets invoked when the navigation mesh changed. This happens when dynamic obstacles move or get active
@@ -43,7 +43,7 @@ namespace BossRoom.Server
 
         private void OnValidate()
         {
-            Assert.AreEqual(NavigationSytemTag, tag, $"The GameObject of the {nameof(NavigationSystem)} component has to use the {NavigationSystem.NavigationSytemTag} tag!");
+            Assert.AreEqual(NavigationSystemTag, tag, $"The GameObject of the {nameof(NavigationSystem)} component has to use the {NavigationSystem.NavigationSystemTag} tag!");
         }
     }
 }

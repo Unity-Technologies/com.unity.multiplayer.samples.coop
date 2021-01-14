@@ -12,7 +12,7 @@ namespace BossRoom.Server
 
         private void Awake()
         {
-            m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSytemTag).GetComponent<NavigationSystem>();
+            m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
         }
 
         private void OnValidate()
@@ -20,8 +20,8 @@ namespace BossRoom.Server
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
                 Assert.NotNull(
-                    GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSytemTag)?.GetComponent<NavigationSystem>(),
-                    $"NavigationSystem not found. Is there a NavigationSystem Behaviour in the Scene and does its GameObject have the {NavigationSystem.NavigationSytemTag} tag?"
+                    GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag)?.GetComponent<NavigationSystem>(),
+                    $"NavigationSystem not found. Is there a NavigationSystem Behaviour in the Scene and does its GameObject have the {NavigationSystem.NavigationSystemTag} tag?"
                 );
             }
         }
