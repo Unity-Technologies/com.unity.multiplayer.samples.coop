@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 7323075965458333149}
   - component: {fileID: -1287160331463954971}
   - component: {fileID: 4844841199312666291}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: EnemySpawner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,21 +108,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49b962917cae99f48a2a598485996b8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health:
+  m_Health:
     InternalValue: 0
-  m_Players: []
   m_NetworkedPrefab: {fileID: 5906022759614023167, guid: dce447d38ed8ce24e8ac4ef69c8d1da5, type: 3}
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 0
-  playerProximityValidationTimestep: 0
-  numberOfWaves: 0
-  spawnsPerWave: 0
-  timeBetweenSpawns: 0
-  timeBetweenWaves: 0
-  restartDelay: 0
-  proximityDistance: 0
-  dormantCooldown: 0
+  m_PlayerProximityValidationTimestep: 0
+  m_NumberOfWaves: 0
+  m_SpawnsPerWave: 0
+  m_TimeBetweenSpawns: 0
+  m_TimeBetweenWaves: 0
+  m_RestartDelay: 0
+  m_ProximityDistance: 0
+  m_DormantCooldown: 0
 --- !u!1 &6882351788430859438
 GameObject:
   m_ObjectHideFlags: 0

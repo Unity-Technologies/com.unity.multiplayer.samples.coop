@@ -1,16 +1,18 @@
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkedVar;
+using MLAPI.Serialization.Pooled;
 
 namespace BossRoom.Server
 {
     /// <summary>
     /// Component responsible for spawning prefab clones in waves on the server.
     /// </summary>
-    [RequireComponent(typeof(Collider))]
+    [RequireComponent(typeof(Collider)), RequireComponent(typeof(Animator))]
     public class ServerWaveSpawner : NetworkedBehaviour
     {
         // amount of hits it takes to break any spawner
@@ -20,28 +22,32 @@ namespace BossRoom.Server
         [SerializeField]
         NetworkedVarInt m_Health;
         
+        // cache reference to our animator
+        [SerializeField]
+        Animator m_Animator;
+        
         // proposal: reference a RuntimeList of players in game (list for now)
-        private List<NetworkedObject> m_Players;
+        List<NetworkedObject> m_Players;
         
         // networked object that will be spawned in waves
         [SerializeField]
-        private NetworkedObject m_NetworkedPrefab;
+        NetworkedObject m_NetworkedPrefab;
 
         // cache reference to our own transform
-        private Transform m_Transform;
-        
+        Transform m_Transform;
+
         // track wave index and reset once all waves are complete
-        private int m_WaveIndex;
+        int m_WaveIndex;
         
         // keep reference to our wave spawning coroutine
-        private Coroutine m_WaveSpawning;
+        Coroutine m_WaveSpawning;
         
         // cache array of RaycastHit as it will be reused for player visibility
-        private RaycastHit[] m_Hit;
+        RaycastHit[] m_Hit;
 
         [Tooltip("Select which layers will block visibility.")]
         [SerializeField]
-        private LayerMask m_BlockingMask;
+        LayerMask m_BlockingMask;
 
         [Tooltip("Time between player distance & visibility scans, in seconds.")]
         [SerializeField]
@@ -86,9 +92,8 @@ namespace BossRoom.Server
             }
 
             m_Players = new List<NetworkedObject>();
-            // TODO: replace block below with proper getter for players or RuntimeList
-            NetworkCharacterState[] networkCharacterStates =
-                GameObject.FindObjectsOfType<NetworkCharacterState>();
+            // TODO: replace block below with proper getter for players or RuntimeList (GOMPS-124)
+            NetworkCharacterState[] networkCharacterStates = FindObjectsOfType<NetworkCharacterState>();
             foreach (var networkCharacterState in networkCharacterStates)
             {
                 m_Players.Add(networkCharacterState.GetComponent<NetworkedObject>());
@@ -96,13 +101,6 @@ namespace BossRoom.Server
 
             m_Health.Value = k_MaxHealth;
             m_Hit = new RaycastHit[1];
-            StartPlayerProximityValidation();
-        }
-        
-        void StartPlayerProximityValidation()
-        {
-            m_WaveSpawning = null;
-            StopAllCoroutines();
             StartCoroutine(ValidatePlayersProximity(StartWaveSpawning));
         }
 
@@ -115,6 +113,12 @@ namespace BossRoom.Server
         {
             while (true)
             {
+                if (m_Health.Value <= 0)
+                {
+                    yield return new WaitForSeconds(m_DormantCooldown);
+                    ReviveSpawner();
+                }
+
                 if (m_WaveSpawning == null)
                 {
                     if (IsAnyPlayerNearbyAndVisible())
@@ -133,21 +137,26 @@ namespace BossRoom.Server
 
         void StartWaveSpawning()
         {
+            StopWaveSpawning();
+
+            m_WaveSpawning = StartCoroutine(SpawnWaves());
+        }
+
+        void StopWaveSpawning()
+        {
             if (m_WaveSpawning != null)
             {
                 StopCoroutine(m_WaveSpawning);
             }
-
-            m_WaveSpawning = StartCoroutine(WaveSpawn());
+            m_WaveSpawning = null;
         }
         
-        // TODO: [ServerOnly] attribute
         /// <summary>
         /// Coroutine for spawning prefabs clones in waves, waiting a duration before spawning a new wave.
         /// Once all waves are completed, it waits a restart time before termination. 
         /// </summary>
         /// <returns></returns>
-        IEnumerator WaveSpawn()
+        IEnumerator SpawnWaves()
         {
             m_WaveIndex = 0;
             
@@ -169,7 +178,7 @@ namespace BossRoom.Server
         /// <returns></returns>
         IEnumerator SpawnWave()
         {
-            for (var i = 0; i < m_SpawnsPerWave; i++)
+            for (int i = 0; i < m_SpawnsPerWave; i++)
             {
                 SpawnPrefab();
 
@@ -180,7 +189,7 @@ namespace BossRoom.Server
         }
         
         /// <summary>
-        /// Server Rpc to spawn a NetworkedObject prefab clone.
+        /// Spawn a NetworkedObject prefab clone.
         /// </summary>
         void SpawnPrefab()
         {
@@ -229,7 +238,6 @@ namespace BossRoom.Server
                 ray.origin = spawnerPosition;
                 ray.direction = direction;
 
-                // TODO: sort out layer for terrain/walls/blocker that this ray will try to hit
                 var hit = Physics.RaycastNonAlloc(ray, m_Hit, 
                     Mathf.Min(direction.magnitude, m_ProximityDistance),m_BlockingMask);
                 if (hit == 0)
@@ -241,54 +249,42 @@ namespace BossRoom.Server
             return false;
         }
 
-        /// <summary>
-        /// Immediately stops current wave spawns and restarts proximity check after cooldown.
-        /// </summary>
-        void StartWaveSpawnCooldown()
+        void ReviveSpawner()
         {
-            StopAllCoroutines();
-            StartCoroutine(WaveSpawnCooldown());
-        }
-
-        /// <summary>
-        /// Coroutine to wait a duration and restart player proximity validation.
-        /// </summary>
-        /// <returns></returns>
-        IEnumerator WaveSpawnCooldown()
-        {
-            yield return new WaitForSeconds(m_DormantCooldown);
-
-            // revive spawner back up to full health and visually show a revival
-            ReviveClientRpc();
             m_Health.Value = k_MaxHealth;
-            StartPlayerProximityValidation();
+            ServerBroadcast(ReviveClientRpc);
         }
-
-        private void OnTriggerEnter(Collider other)
+        
+        // TODO: David will create interface hookup for receiving hits on non-NPC/PC objects (GOMPS-ID TBD)
+        void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             if (!IsServer)
             {
                 return;
             }
-            
-            // TODO: sort out layer for player weapon that this collider will listen for (through Physics matrix)
-            if (!other.gameObject.CompareTag(("Weapon")))
-            {
-                return;
-            }
 
-            m_Health.Value--;
+            m_Health.Value += HP;
 
             if (m_Health.Value <= 0)
             {
-                BrokenClientRpc();
-                
-                // this spawner is dead; commence a cooldown coroutine before being revived
-                StartWaveSpawnCooldown();
+                StopWaveSpawning();
+                ServerBroadcast(BrokenClientRpc);
             }
             else
             {
-                ReceiveHitClientRpc();
+                ServerBroadcast(ReceiveHitClientRpc);
+            }
+        }
+        
+        /// <summary>
+        /// Server->Client RPC that broadcasts a certain RpcDelegate to fire on all clients.
+        /// </summary>
+        /// <param name="rpcDelegate"> RpcDelegate that will fire on each client. </param>
+        void ServerBroadcast(RpcDelegate rpcDelegate)
+        {
+            using (PooledBitStream stream = PooledBitStream.Get())
+            {
+                InvokeClientRpcOnEveryonePerformance(rpcDelegate, stream);
             }
         }
 
@@ -296,27 +292,27 @@ namespace BossRoom.Server
         /// RPC sent from the server to display on client side that this spawner has been damaged.
         /// </summary>
         [ClientRPC]
-        void ReceiveHitClientRpc()
+        void ReceiveHitClientRpc(ulong clientId, Stream stream)
         {
-            // TODO: fire hit animation here
+            // TODO: fire hit animation here (GOMPS-123)
         }
         
         /// <summary>
         /// RPC sent from the server to display on client side that this spawner has been broken.
         /// </summary>
         [ClientRPC]
-        void BrokenClientRpc()
+        void BrokenClientRpc(ulong clientId, Stream stream)
         {
-            // TODO: fire die animation here
+            // TODO: fire die animation here (GOMPS-123)
         }
         
         /// <summary>
         /// RPC sent from the server to display on client side that this spawner has been revived.
         /// </summary>
         [ClientRPC]
-        void ReviveClientRpc()
+        void ReviveClientRpc(ulong clientId, Stream stream)
         {
-            // TODO: fire revive animation here
+            // TODO: fire revive animation here (GOMPS-123) 
         }
     }
 }
