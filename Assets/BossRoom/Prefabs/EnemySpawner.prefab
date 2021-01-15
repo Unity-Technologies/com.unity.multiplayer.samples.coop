@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9136068542165043480}
+  - component: {fileID: 8205974096611502342}
   m_Layer: 0
   m_Name: Client_Visuals
   m_TagString: Untagged
@@ -31,6 +32,20 @@ Transform:
   m_Father: {fileID: 8727022540156222958}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8205974096611502342
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4132435922419856147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65e25a152b731564ebb6096eb5e9f0ed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NetworkSpawnerState: {fileID: 9132488263322830174}
+  m_Animator: {fileID: 0}
 --- !u!1 &6205854018081152875
 GameObject:
   m_ObjectHideFlags: 0
@@ -43,6 +58,7 @@ GameObject:
   - component: {fileID: 7323075965458333149}
   - component: {fileID: -1287160331463954971}
   - component: {fileID: 4844841199312666291}
+  - component: {fileID: 9132488263322830174}
   m_Layer: 6
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -108,20 +124,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49b962917cae99f48a2a598485996b8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Health:
-    InternalValue: 0
-  m_NetworkedPrefab: {fileID: 5906022759614023167, guid: dce447d38ed8ce24e8ac4ef69c8d1da5, type: 3}
+  m_NetworkSpawnerState: {fileID: 9132488263322830174}
+  m_NetworkedPrefab: {fileID: -7852138837387268381, guid: f520174fcd7d61441aa46a9923655dcd, type: 3}
   m_BlockingMask:
     serializedVersion: 2
-    m_Bits: 0
-  m_PlayerProximityValidationTimestep: 0
-  m_NumberOfWaves: 0
-  m_SpawnsPerWave: 0
-  m_TimeBetweenSpawns: 0
-  m_TimeBetweenWaves: 0
-  m_RestartDelay: 0
-  m_ProximityDistance: 0
-  m_DormantCooldown: 0
+    m_Bits: 1
+  m_PlayerProximityValidationTimestep: 2
+  m_NumberOfWaves: 2
+  m_SpawnsPerWave: 2
+  m_TimeBetweenSpawns: 0.5
+  m_TimeBetweenWaves: 5
+  m_RestartDelay: 10
+  m_ProximityDistance: 30
+  m_DormantCooldown: 10
+--- !u!114 &9132488263322830174
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6205854018081152875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4cfeccaf46c46e1458c3f7351d6753b3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6882351788430859438
 GameObject:
   m_ObjectHideFlags: 0
@@ -133,7 +160,6 @@ GameObject:
   - component: {fileID: 3784477753691126980}
   - component: {fileID: 1033544756360169842}
   - component: {fileID: 4871652750507758710}
-  - component: {fileID: 4498175590048722747}
   m_Layer: 0
   m_Name: Capsule
   m_TagString: Untagged
@@ -204,17 +230,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &4498175590048722747
-CapsuleCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6882351788430859438}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
