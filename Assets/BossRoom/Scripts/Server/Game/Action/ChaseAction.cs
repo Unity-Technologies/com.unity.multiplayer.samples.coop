@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using MLAPI;
+using UnityEngine;
 
 namespace BossRoom.Server
 {
@@ -25,16 +23,22 @@ namespace BossRoom.Server
         {
             if (!HasValidTarget())
             {
-                Debug.Log("Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore" );
+                Debug.Log("Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore");
                 return false;
             }
 
             m_Target = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
 
             m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
-            m_Movement.SetMovementTarget(m_Target.transform.position);
             m_CurrentTargetPos = m_Target.transform.position;
 
+            if (StopIfDone())
+            {
+                m_Parent.transform.LookAt(m_CurrentTargetPos); //even if we didn't move, snap to face the target!
+                return false;
+            }
+
+            m_Movement.SetMovementTarget(m_Target.transform.position);
             return true;
         }
 
@@ -44,9 +48,25 @@ namespace BossRoom.Server
         /// </summary>
         private bool HasValidTarget()
         {
-            return m_Data.TargetIds != null && 
-                   m_Data.TargetIds.Length > 0 && 
+            return m_Data.TargetIds != null &&
+                   m_Data.TargetIds.Length > 0 &&
                    MLAPI.Spawning.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
+        }
+
+        /// <summary>
+        /// Tests to see if we've reached our target. Returns true if we've reached our target, false otherwise (in which case it also stops our movement). 
+        /// </summary>
+        private bool StopIfDone()
+        {
+            float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
+            if ((m_Data.Amount * m_Data.Amount) > distToTarget2)
+            {
+                //we made it! we're done. 
+                Cancel();
+                return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -55,16 +75,10 @@ namespace BossRoom.Server
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool Update()
         {
-            float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
-            if( (m_Data.Amount*m_Data.Amount) > distToTarget2 )
-            {
-                //we made it! we're done. 
-                Cancel();
-                return false;
-            }
+            if (StopIfDone()) { return false; }
 
             float targetMoved2 = (m_Target.transform.position - m_CurrentTargetPos).sqrMagnitude;
-            if( (m_Data.Amount*m_Data.Amount) < targetMoved2 )
+            if ((m_Data.Amount * m_Data.Amount) < targetMoved2)
             {
                 //target has moved past our range tolerance. Must repath. 
                 this.m_Movement.SetMovementTarget(m_Target.transform.position);
