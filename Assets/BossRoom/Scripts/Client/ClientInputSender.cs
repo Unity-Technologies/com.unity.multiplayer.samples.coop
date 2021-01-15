@@ -9,8 +9,8 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkedBehaviour
     {
-        private static readonly int NPCLayerMask = LayerMask.GetMask("NPCs");
         
+        private int m_NPCLayerMask;
         private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
@@ -32,6 +32,7 @@ namespace BossRoom.Client
 
         void Awake()
         {
+            m_NPCLayerMask = LayerMask.GetMask("NPCs");
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
         }
 
@@ -69,7 +70,7 @@ namespace BossRoom.Client
                     m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
 
                     //TODO fixme: there needs to be a better way to check if target is a PC or an NPC
-                    bool isTargetingNPC = hit.transform.gameObject.layer == NPCLayerMask;
+                    bool isTargetingNPC = hit.transform.gameObject.layer == m_NPCLayerMask;
 
                     if (isTargetingNPC)
                     {
