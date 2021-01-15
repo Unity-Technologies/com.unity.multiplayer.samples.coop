@@ -68,7 +68,7 @@ namespace BossRoom.Client
                     m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
 
                     //TODO fixme: there needs to be a better way to check if target is a PC or an NPC
-                    bool isTargetingNPC = hit.transform.gameObject.layer == m_NPCLayerMask;
+                    bool isTargetingNPC = hit.transform.gameObject.layer == m_NpcLayerMask;
 
                     if (isTargetingNPC)
                     {
