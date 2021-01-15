@@ -14,7 +14,7 @@ namespace BossRoom
     {
         ALIVE,
         FAINTED,
-        DEAD
+        DEAD,
     }
 
     /// <summary>

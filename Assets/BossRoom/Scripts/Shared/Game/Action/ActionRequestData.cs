@@ -26,59 +26,59 @@ namespace BossRoom
         RANGEDTARGETED,
         CHASE,
         REVIVE,
-        
+
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
     /// <summary>
-    /// FIXME: [GOMPS-99] This will be turned into a ScriptableObject. 
+    /// FIXME: [GOMPS-99] This will be turned into a ScriptableObject.
     /// </summary>
     public class ActionDescription
     {
         /// <summary>
-        /// ActionLogic that drives this Action. This corresponds to the actual block of code that executes it. 
+        /// ActionLogic that drives this Action. This corresponds to the actual block of code that executes it.
         /// </summary>
         public ActionLogic Logic;
 
         /// <summary>
         /// Could be damage, could be healing, or other things. This is a base, nominal value that will get modified
-        /// by game logic when the action takes effect. 
+        /// by game logic when the action takes effect.
         /// </summary>
         public int Amount;
 
         /// <summary>
-        /// How much it consts in Mana to play this Action. 
+        /// How much it consts in Mana to play this Action.
         /// </summary>
         public int ManaCost;
 
         /// <summary>
-        /// How how the Action performer can be from the Target, or how far the action can go (for an untargeted action like a bowshot). 
+        /// How how the Action performer can be from the Target, or how far the action can go (for an untargeted action like a bowshot).
         /// </summary>
         public float Range;
 
         /// <summary>
-        /// Duration in seconds that this Action takes to play. 
+        /// Duration in seconds that this Action takes to play.
         /// </summary>
         public float Duration_s;
 
         /// <summary>
-        /// Time when the Action should do its "main thing" (e.g. when a melee attack should apply damage). 
+        /// Time when the Action should do its "main thing" (e.g. when a melee attack should apply damage).
         /// </summary>
         public float ExecTime_s;
 
         /// <summary>
-        /// How long the effect this Action leaves behind will last, in seconds. 
+        /// How long the effect this Action leaves behind will last, in seconds.
         /// </summary>
         public float EffectDuration_s;
 
         /// <summary>
-        /// The primary Animation action that gets played when visualizing this Action. 
+        /// The primary Animation action that gets played when visualizing this Action.
         /// </summary>
         public string Anim;
     }
 
     /// <summary>
-    /// FIXME [GOMPS-99]: this list will be turned into a collection of Scriptable Objects. 
+    /// FIXME [GOMPS-99]: this list will be turned into a collection of Scriptable Objects.
     /// Question: Do we want to show how to do skill levels, as I am doing here?
     /// </summary>
     public class ActionData

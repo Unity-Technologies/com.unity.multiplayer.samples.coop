@@ -85,10 +85,8 @@ namespace BossRoom.Visual
                 default:
                     throw new ArgumentOutOfRangeException();
             }
-            
-            
         }
-        
+
         private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             switch (newValue)

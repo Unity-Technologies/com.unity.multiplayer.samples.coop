@@ -9,14 +9,13 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkedBehaviour
     {
-        
-        private int m_NPCLayerMask;
+        private int m_NpcLayerMask;
         private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
-        /// We detect clicks in Update (because you can miss single discrete clicks in FixedUpdate). But we need to 
-        /// raycast in FixedUpdate, because raycasts done in Update won't work reliably. 
-        /// This nullable vector will be set to a screen coordinate when an attack click was made. 
+        /// We detect clicks in Update (because you can miss single discrete clicks in FixedUpdate). But we need to
+        /// raycast in FixedUpdate, because raycasts done in Update won't work reliably.
+        /// This nullable vector will be set to a screen coordinate when an attack click was made.
         /// </summary>
         private System.Nullable<Vector3> m_ClickRequest;
 
@@ -29,10 +28,9 @@ namespace BossRoom.Client
             }
         }
 
-
         void Awake()
         {
-            m_NPCLayerMask = LayerMask.GetMask("NPCs");
+            m_NpcLayerMask = LayerMask.GetMask("NPCs");
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
         }
 
