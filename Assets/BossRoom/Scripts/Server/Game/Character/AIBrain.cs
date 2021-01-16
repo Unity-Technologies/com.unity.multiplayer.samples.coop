@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,25 +17,25 @@ namespace BossRoom.Server
             IDLE,
         }
 
-        private ServerCharacter m_serverCharacter;
-        private ActionPlayer m_actionPlayer;
-        private AIStateType m_currentState;
-        private Dictionary<AIStateType, AIState> m_logics;
-        private List<ServerCharacter> m_hatedEnemies;
+        private ServerCharacter m_ServerCharacter;
+        private ActionPlayer m_ActionPlayer;
+        private AIStateType m_CurrentState;
+        private Dictionary<AIStateType, AIState> m_Logics;
+        private List<ServerCharacter> m_HatedEnemies;
 
         public AIBrain(ServerCharacter me, ActionPlayer myActionPlayer)
         {
-            m_serverCharacter = me;
-            m_actionPlayer = myActionPlayer;
+            m_ServerCharacter = me;
+            m_ActionPlayer = myActionPlayer;
 
-            m_logics = new Dictionary<AIStateType, AIState>
+            m_Logics = new Dictionary<AIStateType, AIState>
             {
-                [ AIStateType.IDLE ] = new IdleAIState(this),
+                [AIStateType.IDLE] = new IdleAIState(this),
                 //[ AIStateType.WANDER ] = new WanderAIState(this), // not written yet
-                [ AIStateType.ATTACK ] = new AttackAIState(this, m_actionPlayer),
+                [AIStateType.ATTACK] = new AttackAIState(this, m_ActionPlayer),
             };
-            m_hatedEnemies = new List<ServerCharacter>();
-            m_currentState = AIStateType.IDLE;
+            m_HatedEnemies = new List<ServerCharacter>();
+            m_CurrentState = AIStateType.IDLE;
         }
 
         /// <summary>
@@ -45,12 +44,12 @@ namespace BossRoom.Server
         public void Update()
         {
             AIStateType newState = FindBestEligibleAIState();
-            if (m_currentState != newState)
+            if (m_CurrentState != newState)
             {
-                m_logics[ newState ].Initialize();
+                m_Logics[newState].Initialize();
             }
-            m_currentState = newState;
-            m_logics[ m_currentState ].Update();
+            m_CurrentState = newState;
+            m_Logics[m_CurrentState].Update();
         }
 
         private AIStateType FindBestEligibleAIState()
@@ -59,7 +58,7 @@ namespace BossRoom.Server
             // which may be nonsensical when there are more states
             foreach (AIStateType type in Enum.GetValues(typeof(AIStateType)))
             {
-                if (m_logics[ type ].IsEligible())
+                if (m_Logics[type].IsEligible())
                 {
                     return type;
                 }
@@ -67,14 +66,14 @@ namespace BossRoom.Server
             Debug.LogError("No AI states are valid!?!");
             return AIStateType.IDLE;
         }
-        
+
         #region Functions for AIStateLogics
         /// <summary>
         /// Returns true if it be appropriate for us to murder this character, starting right now!
         /// </summary>
         public bool IsAppropriateFoe(ServerCharacter potentialFoe)
         {
-            if (potentialFoe == null || potentialFoe.IsNPC || potentialFoe.NetState.NetworkLifeState.Value != LifeState.ALIVE )
+            if (potentialFoe == null || potentialFoe.IsNPC || potentialFoe.NetState.NetworkLifeState.Value != LifeState.ALIVE)
             {
                 return false;
             }
@@ -89,9 +88,9 @@ namespace BossRoom.Server
         /// <param name="character"></param>
         public void Hate(ServerCharacter character)
         {
-            if (!m_hatedEnemies.Contains(character))
+            if (!m_HatedEnemies.Contains(character))
             {
-                m_hatedEnemies.Add(character);
+                m_HatedEnemies.Add(character);
             }
         }
 
@@ -101,8 +100,8 @@ namespace BossRoom.Server
         public List<ServerCharacter> GetHatedEnemies()
         {
             // first we clean the list -- remove any enemies that have disappeared (became null), are dead, etc.
-            m_hatedEnemies.RemoveAll(enemy => !IsAppropriateFoe(enemy));
-            return m_hatedEnemies;
+            m_HatedEnemies.RemoveAll(enemy => !IsAppropriateFoe(enemy));
+            return m_HatedEnemies;
         }
 
         /// <summary>
@@ -111,7 +110,7 @@ namespace BossRoom.Server
         /// <returns></returns>
         public ServerCharacter GetMyServerCharacter()
         {
-            return m_serverCharacter;
+            return m_ServerCharacter;
         }
 
         #endregion

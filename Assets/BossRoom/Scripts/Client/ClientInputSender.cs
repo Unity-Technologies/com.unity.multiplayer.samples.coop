@@ -65,7 +65,7 @@ namespace BossRoom.Client
                     var chase_data = new ActionRequestData();
                     chase_data.ActionTypeEnum = ActionType.GENERAL_CHASE;
                     chase_data.Amount = ActionData.ActionDescriptions[ActionType.TANK_BASEATTACK][0].Range;
-                    chase_data.TargetIds = new ulong[] {GetTargetObject(ref hit)};
+                    chase_data.TargetIds = new ulong[] { GetTargetObject(ref hit) };
                     m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
 
                     //TODO fixme: there needs to be a better way to check if target is a PC or an NPC
@@ -88,7 +88,7 @@ namespace BossRoom.Client
                             var revive_data = new ActionRequestData();
                             revive_data.ShouldQueue = true;
                             revive_data.ActionTypeEnum = ActionType.GENERAL_REVIVE;
-                            revive_data.TargetIds = new [] {GetTargetObject(ref hit)};
+                            revive_data.TargetIds = new[] { GetTargetObject(ref hit) };
                             m_NetworkCharacter.ClientSendActionRequest(ref revive_data);
                         }
                     }
@@ -116,11 +116,11 @@ namespace BossRoom.Client
         /// <summary>
         /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object. 
         /// </summary>
-        private ulong GetTargetObject(ref RaycastHit hit )
+        private ulong GetTargetObject(ref RaycastHit hit)
         {
             if (hit.collider == null) { return 0; }
             var targetObj = hit.collider.GetComponent<NetworkedObject>();
-            if (targetObj == null) { return 0;  }
+            if (targetObj == null) { return 0; }
 
             return targetObj.NetworkId;
         }

@@ -64,7 +64,6 @@ namespace BossRoom.Server
         }
 
 
-
         /// <summary>
         /// Returns the ServerCharacter of the foe we hit, or null if none found. 
         /// </summary>

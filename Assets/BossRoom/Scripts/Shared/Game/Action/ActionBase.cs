@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom
@@ -34,7 +32,7 @@ namespace BossRoom
             }
         }
 
-        public ActionBase(ref ActionRequestData data )
+        public ActionBase(ref ActionRequestData data)
         {
             m_Data = data;
         }

@@ -17,7 +17,7 @@ namespace BossRoom.Visual
         /// <summary>
         /// When we detect if our original target is still around, we use a bit of padding on the range check. 
         /// </summary>
-        private float k_RangePadding = 3f;
+        private const float k_RangePadding = 3f;
 
         // Start is called before the first frame update
         public override void Start()

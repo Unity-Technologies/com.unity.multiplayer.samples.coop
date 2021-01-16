@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom
@@ -21,7 +19,7 @@ namespace BossRoom
         /// the next similar query. 
         /// </remarks>
         /// <returns>Total number of foes encountered. </returns>
-        public static int DetectMeleeFoe(bool isNPC, Collider attacker, ActionDescription description, out RaycastHit[] results )
+        public static int DetectMeleeFoe(bool isNPC, Collider attacker, ActionDescription description, out RaycastHit[] results)
         {
             //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack. 
 
@@ -30,7 +28,7 @@ namespace BossRoom
             //NPCs (monsters) can hit PCs, and vice versa. No friendly fire allowed on either side. 
             int mask = LayerMask.GetMask(isNPC ? "PCs" : "NPCs");
 
-            int numResults = Physics.BoxCastNonAlloc( attacker.transform.position, myBounds.extents,
+            int numResults = Physics.BoxCastNonAlloc(attacker.transform.position, myBounds.extents,
                 attacker.transform.forward, s_Hits, Quaternion.identity, description.Range, mask);
 
             results = s_Hits;

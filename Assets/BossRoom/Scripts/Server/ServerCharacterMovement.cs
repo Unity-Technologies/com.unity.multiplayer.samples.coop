@@ -1,6 +1,5 @@
-using System;
-using System.Linq;
 using MLAPI;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -24,7 +23,7 @@ namespace BossRoom.Server
 
         private NavMeshPath m_DesiredMovementPath;
         private MovementState m_MovementState;
-        private ServerCharacter m_CharLogic;
+
 
         [SerializeField]
         private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition 
@@ -33,7 +32,6 @@ namespace BossRoom.Server
         {
             m_NavMeshAgent = GetComponent<NavMeshAgent>();
             m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
-            m_CharLogic = GetComponent<ServerCharacter>();
             m_Rigidbody = GetComponent<Rigidbody>();
         }
 

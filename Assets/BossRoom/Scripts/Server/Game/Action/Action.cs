@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -47,7 +45,7 @@ namespace BossRoom.Server
         /// <summary>
         /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory. 
         /// </summary>
-        public Action(ServerCharacter parent, ref ActionRequestData data )
+        public Action(ServerCharacter parent, ref ActionRequestData data)
         {
             m_Parent = parent;
             m_Data = data; //do a shallow copy. 
@@ -79,14 +77,14 @@ namespace BossRoom.Server
         /// <param name="data">the data to instantiate this skill from. </param>
         /// <param name="level">the level to play the skill at. </param>
         /// <returns>the newly created action. </returns>
-        public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data )
+        public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data)
         {
             var logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
 
-            switch(logic)
+            switch (logic)
             {
-                case ActionLogic.MELEE: return new MeleeAction(parent, ref data );
-                case ActionLogic.CHASE: return new ChaseAction(parent, ref data );
+                case ActionLogic.MELEE: return new MeleeAction(parent, ref data);
+                case ActionLogic.CHASE: return new ChaseAction(parent, ref data);
                 case ActionLogic.REVIVE: return new ReviveAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }

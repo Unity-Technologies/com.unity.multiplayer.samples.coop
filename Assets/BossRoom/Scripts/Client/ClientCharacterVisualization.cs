@@ -1,6 +1,6 @@
-using System;
 using Cinemachine;
 using MLAPI;
+using System;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -28,7 +28,7 @@ namespace BossRoom.Visual
         public float ZoomSpeed = 3;
 
         private const float k_MaxVizSpeed = 4;    //max speed at which we will chase the parent transform. 
-        private const float x_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
+        private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         public void Start()
         {
@@ -61,33 +61,10 @@ namespace BossRoom.Visual
 
         private void PerformActionFX(ActionRequestData data)
         {
-            //TODO: [GOMPS-13] break this method out into its own class, so we can drive multi-frame graphical effects. 
-            //FIXME: [GOMPS-13] hook this up to information in the ActionDescription. 
-
-            //m_ClientVisualsAnimator.SetInteger("AttackID", 1);
-            //m_ClientVisualsAnimator.SetTrigger("BeginAttack");
-
-            //if (data.TargetIds != null && data.TargetIds.Length > 0)
-            //{
-            //    NetworkedObject targetObject = MLAPI.Spawning.SpawnManager.SpawnedObjects[data.TargetIds[0]];
-            //    if (targetObject != null)
-            //    {
-            //        var targetAnimator = targetObject.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject.OurAnimator;
-            //        if (targetAnimator != null)
-            //        {
-            //            targetAnimator.SetTrigger("BeginHitReact");
-            //        }
-            //    }
-            //}
-			
-			//TBD: ADD 
-			// case ActionType.GENERAL_REVIVE:
-            //        m_ClientVisualsAnimator.SetTrigger("BeginRevive");
-
             m_ActionViz.PlayAction(ref data);
         }
-		
-		private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+
+        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             switch (newValue)
             {
@@ -160,7 +137,7 @@ namespace BossRoom.Visual
 
             if (angleDiff > 0)
             {
-                float maxAngleMove = timeDelta * x_MaxRotSpeed;
+                float maxAngleMove = timeDelta * k_MaxRotSpeed;
                 float angleMove = Mathf.Min(maxAngleMove, angleDiff);
                 float t = angleMove / angleDiff;
                 transform.rotation = Quaternion.Slerp(transform.rotation, Parent.transform.rotation, t);

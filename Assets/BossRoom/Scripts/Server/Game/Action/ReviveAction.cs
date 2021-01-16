@@ -35,7 +35,7 @@ namespace BossRoom.Server
 
                 if (m_TargetCharacter.NetState.NetworkLifeState.Value == LifeState.FAINTED)
                 {
-                    m_TargetCharacter.Revive(m_Parent, (int) m_Data.Amount);
+                    m_TargetCharacter.Revive(m_Parent, (int)m_Data.Amount);
                 }
                 else
                 {
