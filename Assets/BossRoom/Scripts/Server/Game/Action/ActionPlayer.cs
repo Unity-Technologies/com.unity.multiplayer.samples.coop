@@ -26,8 +26,7 @@ namespace BossRoom.Server
                 ClearActions();
             }
 
-            int level = 0; //todo, get this from parent's networked vars, maybe. 
-            var new_action = Action.MakeAction(m_parent, ref data, level);
+            var new_action = Action.MakeAction(m_parent, ref data);
 
             bool was_empty = m_queue.Count == 0;
             m_queue.Add(new_action);

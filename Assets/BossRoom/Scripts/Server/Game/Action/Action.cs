@@ -19,11 +19,6 @@ namespace BossRoom.Server
     {
         protected ServerCharacter m_Parent;
 
-        /// <summary>
-        /// The level this action plays back at. e.g. a weak "level 0" melee attack, vs a strong "level 3" melee attack. 
-        /// </summary>
-        protected int m_Level;
-
         protected ActionRequestData m_Data;
 
         /// <summary>
@@ -44,7 +39,7 @@ namespace BossRoom.Server
             get
             {
                 var list = ActionData.ActionDescriptions[Data.ActionTypeEnum];
-                int level = Mathf.Min(m_Level, list.Count - 1); //if we don't go up to the requested level, just cap at the max level. 
+                int level = Mathf.Min(Data.Level, list.Count - 1); //if we don't go up to the requested level, just cap at the max level. 
                 return list[level];
             }
         }
@@ -52,12 +47,10 @@ namespace BossRoom.Server
         /// <summary>
         /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory. 
         /// </summary>
-        public Action(ServerCharacter parent, ref ActionRequestData data, int level)
+        public Action(ServerCharacter parent, ref ActionRequestData data )
         {
             m_Parent = parent;
-            m_Level = level;
             m_Data = data; //do a shallow copy. 
-            m_Data.Level = level;
         }
 
         /// <summary>
@@ -86,14 +79,14 @@ namespace BossRoom.Server
         /// <param name="data">the data to instantiate this skill from. </param>
         /// <param name="level">the level to play the skill at. </param>
         /// <returns>the newly created action. </returns>
-        public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data, int level )
+        public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data )
         {
             var logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
 
             switch(logic)
             {
-                case ActionLogic.MELEE: return new MeleeAction(parent, ref data, level);
-                case ActionLogic.CHASE: return new ChaseAction(parent, ref data, level);
+                case ActionLogic.MELEE: return new MeleeAction(parent, ref data );
+                case ActionLogic.CHASE: return new ChaseAction(parent, ref data );
                 default: throw new System.NotImplementedException();
             }
         }

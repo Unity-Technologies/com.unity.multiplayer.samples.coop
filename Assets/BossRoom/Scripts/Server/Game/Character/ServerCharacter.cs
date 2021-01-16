@@ -17,6 +17,10 @@ namespace BossRoom.Server
         [Tooltip("If IsNPC, this is how far the npc can detect others (in meters)")]
         public float DetectRange = 10;
 
+        [SerializeField]
+        [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
+        private bool BrainEnabled = true;
+
         private ActionPlayer m_actionPlayer;
         private AIBrain m_aiBrain;
 
@@ -68,6 +72,11 @@ namespace BossRoom.Server
         /// <param name="data">Contains all data necessary to create the action</param>
         public void PlayAction(ref ActionRequestData data )
         {
+            if( !IsNPC )
+            {
+                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
+                data.Level = 0;
+            }
             this.m_actionPlayer.PlayAction(ref data);
         }
 
@@ -109,7 +118,7 @@ namespace BossRoom.Server
         void Update()
         {
             m_actionPlayer.Update();
-            if (m_aiBrain != null)
+            if (m_aiBrain != null && BrainEnabled )
             {
                 m_aiBrain.Update();
             }

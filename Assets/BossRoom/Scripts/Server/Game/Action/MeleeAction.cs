@@ -28,18 +28,10 @@ namespace BossRoom.Server
     public class MeleeAction : Action
     {
         private bool m_ExecFired;
-
-        //cache Physics Cast hits, to minimize allocs. 
-        private static RaycastHit[] s_Hits;
-        private const int k_MaxDetects = 4;
         private ulong m_ProvisionalTarget;
 
-        public MeleeAction(ServerCharacter parent, ref ActionRequestData data, int level) : base(parent, ref data, level)
+        public MeleeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
-            if (s_Hits == null)
-            {
-                s_Hits = new RaycastHit[k_MaxDetects];
-            }
         }
 
         public override bool Start()
@@ -78,26 +70,21 @@ namespace BossRoom.Server
         /// <returns></returns>
         private ServerCharacter DetectFoe(ulong foeHint = 0)
         {
-            //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack. 
+            //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack.
 
-            var myBounds = this.m_Parent.GetComponent<Collider>().bounds;
-
-            //NPCs (monsters) can hit PCs, and vice versa. No friendly fire allowed on either side. 
-            int mask = LayerMask.GetMask(m_Parent.IsNPC ? "PCs" : "NPCs");
-
-            int numResults = Physics.BoxCastNonAlloc(m_Parent.transform.position, myBounds.extents,
-                m_Parent.transform.forward, s_Hits, Quaternion.identity, Description.Range, mask);
+            RaycastHit[] results;
+            int numResults = ActionUtils.DetectMeleeFoe(m_Parent.IsNPC, m_Parent.GetComponent<Collider>(), Description, out results);
 
             if (numResults == 0) { return null; }
 
             //everything that passes the mask should have a ServerCharacter component. 
-            ServerCharacter foundFoe = s_Hits[0].collider.GetComponent<ServerCharacter>();
+            ServerCharacter foundFoe = results[0].collider.GetComponent<ServerCharacter>();
 
             //we always prefer the hinted foe. If he's still in range, he should take the damage, because he's who the client visualization
             //system will play the hit-react on (in case there's any ambiguity). 
             for (int i = 0; i < numResults; i++)
             {
-                var serverChar = s_Hits[i].collider.GetComponent<ServerCharacter>();
+                var serverChar = results[i].collider.GetComponent<ServerCharacter>();
                 if (serverChar.NetworkId == foeHint)
                 {
                     foundFoe = serverChar;
