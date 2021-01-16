@@ -50,6 +50,7 @@ namespace BossRoom.Visual
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
             Parent = transform.parent;
+            Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
 
             if (IsLocalPlayer)

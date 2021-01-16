@@ -30,7 +30,8 @@ namespace BossRoom.Client
 
         void Awake()
         {
-            m_NpcLayerMask = LayerMask.GetMask("NPCs");
+            m_NpcLayerMask = LayerMask.NameToLayer("NPCs");
+
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
         }
 

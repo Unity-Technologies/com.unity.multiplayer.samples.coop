@@ -8,7 +8,7 @@ namespace BossRoom.Server
         private bool m_ExecFired;
         private ServerCharacter m_TargetCharacter;
 
-        public ReviveAction(ServerCharacter parent, ref ActionRequestData data, int level) : base(parent, ref data, level)
+        public ReviveAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
         }
 
