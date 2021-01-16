@@ -184,7 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitPoints:
-    InternalValue: 1000000
+    InternalValue: 250
   Mana:
     InternalValue: 10
 --- !u!114 &4600110157238723776
@@ -278,6 +278,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsNPC: 0
   DetectRange: 10
+  BrainEnabled: 1
 --- !u!114 &7690172137830037487
 MonoBehaviour:
   m_ObjectHideFlags: 0

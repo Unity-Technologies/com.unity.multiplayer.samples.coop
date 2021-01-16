@@ -6,6 +6,8 @@ using UnityEngine;
 namespace BossRoom.Server
 {
     [RequireComponent(typeof(NetworkCharacterState))]
+
+    [RequireComponent(typeof(ServerCharacterMovement))]
     public class ServerCharacter : MLAPI.NetworkedBehaviour
     {
         public NetworkCharacterState NetState { get; private set; }
@@ -64,6 +66,8 @@ namespace BossRoom.Server
             {
                 this.NetState = GetComponent<NetworkCharacterState>();
                 this.NetState.DoActionEventServer += this.OnActionPlayRequest;
+                this.NetState.OnReceivedClientInput += this.OnClientMoveRequest;
+                this.NetState.NetworkLifeState.OnValueChanged += this.OnLifeStateChanged;
             }
         }
 
@@ -72,18 +76,36 @@ namespace BossRoom.Server
         /// </summary>
         /// <param name="data">Contains all data necessary to create the action</param>
         public void PlayAction(ref ActionRequestData data )
-		{
-		    if( !IsNPC )
+        {
+            if( !IsNPC )
             {
                 //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
                 data.Level = 0;
             }
-		
+
             //the character needs to be alive in order to be able to play actions
             if (NetState.NetworkLifeState.Value == LifeState.ALIVE)
             {
                 //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
                 this.m_actionPlayer.PlayAction(ref data);
+            }
+        }
+
+        private void OnClientMoveRequest( Vector3 targetPosition )
+        {
+            if (NetState.NetworkLifeState.Value == LifeState.ALIVE)
+            {
+                ClearActions();
+                GetComponent<ServerCharacterMovement>().SetMovementTarget(targetPosition);
+            }
+        }
+
+        private void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        {
+            if( lifeState != LifeState.ALIVE )
+            {
+                ClearActions();
+                GetComponent<ServerCharacterMovement>().CancelMove();
             }
         }
 

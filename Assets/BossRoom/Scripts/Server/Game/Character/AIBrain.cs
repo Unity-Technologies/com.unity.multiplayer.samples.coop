@@ -74,11 +74,11 @@ namespace BossRoom.Server
         /// </summary>
         public bool IsAppropriateFoe(ServerCharacter potentialFoe)
         {
-            if (potentialFoe == null || potentialFoe.IsNPC)
+            if (potentialFoe == null || potentialFoe.IsNPC || potentialFoe.NetState.NetworkLifeState.Value != LifeState.ALIVE )
             {
                 return false;
             }
-            // FIXME: check for dead!
+
             // Also, we could use NavMesh.Raycast() to see if we have line of sight to foe?
             return true;
         }

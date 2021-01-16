@@ -48,14 +48,7 @@ namespace BossRoom.Server
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
-            m_NetworkCharacterState.OnReceivedClientInput += OnReceivedClientInput;
             m_DesiredMovementPath = new NavMeshPath();
-        }
-
-        private void OnReceivedClientInput(Vector3 position )
-        {
-            m_CharLogic.ClearActions(); //a fresh movement request trumps whatever we were doing before. 
-            SetMovementTarget(position);
         }
 
         /// <summary>

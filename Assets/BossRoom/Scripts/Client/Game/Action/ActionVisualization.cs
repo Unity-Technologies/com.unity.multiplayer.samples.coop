@@ -40,7 +40,6 @@ namespace BossRoom.Visual
 
         public void OnAnimEvent(string id)
         {
-            Debug.Log("Animation event received: " + id);
             foreach (var action in m_PlayingActions)
             {
                 action.OnAnimEvent(id);
@@ -49,6 +48,14 @@ namespace BossRoom.Visual
 
         public void PlayAction(ref ActionRequestData data)
         {
+            //Do Trivial Actions (actions that just require playing a single animation, and don't require any state trackincg).
+            switch(data.ActionTypeEnum)
+            {
+                case ActionType.GENERAL_REVIVE:
+                    Parent.OurAnimator.SetTrigger("BeginRevive");
+                    return;
+            }
+
             ActionFX action = ActionFX.MakeActionFX(ref data, Parent);
             action.TimeStarted = Time.time;
             m_PlayingActions.Add(action);

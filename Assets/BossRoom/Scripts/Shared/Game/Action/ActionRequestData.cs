@@ -87,9 +87,9 @@ namespace BossRoom
         {
             { ActionType.TANK_BASEATTACK , new List<ActionDescription>
                 {
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=10, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 1
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=15, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 2
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=20, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 3
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=30, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 1
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=40, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 2
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=50, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 3
                 }
             },
 
