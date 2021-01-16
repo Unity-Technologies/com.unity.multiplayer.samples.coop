@@ -30,6 +30,7 @@ namespace BossRoom.Server
         private bool m_ExecFired;
         private ulong m_ProvisionalTarget;
 
+        //cache Physics Cast hits, to minimize allocs. 
         public MeleeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
         }

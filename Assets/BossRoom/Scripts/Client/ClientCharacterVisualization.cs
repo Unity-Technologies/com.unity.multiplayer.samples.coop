@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 using MLAPI;
 using UnityEngine;
@@ -45,10 +46,10 @@ namespace BossRoom.Visual
 
             m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += this.PerformActionFX;
+            m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
             Parent = transform.parent;
-            Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
 
             if (IsLocalPlayer)
@@ -61,6 +62,7 @@ namespace BossRoom.Visual
         {
             //TODO: [GOMPS-13] break this method out into its own class, so we can drive multi-frame graphical effects. 
             //FIXME: [GOMPS-13] hook this up to information in the ActionDescription. 
+
             //m_ClientVisualsAnimator.SetInteger("AttackID", 1);
             //m_ClientVisualsAnimator.SetTrigger("BeginAttack");
 
@@ -76,8 +78,30 @@ namespace BossRoom.Visual
             //        }
             //    }
             //}
+			
+			//TBD: ADD 
+			// case ActionType.GENERAL_REVIVE:
+            //        m_ClientVisualsAnimator.SetTrigger("BeginRevive");
 
             m_ActionViz.PlayAction(ref data);
+        }
+		
+		private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+        {
+            switch (newValue)
+            {
+                case LifeState.ALIVE:
+                    m_ClientVisualsAnimator.SetTrigger("StandUp");
+                    break;
+                case LifeState.FAINTED:
+                    m_ClientVisualsAnimator.SetTrigger("FallDown");
+                    break;
+                case LifeState.DEAD:
+                    m_ClientVisualsAnimator.SetTrigger("Dead");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
+            }
         }
 
         void Update()
