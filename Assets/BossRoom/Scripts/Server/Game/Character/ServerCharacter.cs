@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -68,7 +69,11 @@ namespace BossRoom.Server
         /// <param name="data">Contains all data necessary to create the action</param>
         public void PlayAction(ref ActionRequestData data )
         {
-            this.m_actionPlayer.PlayAction(ref data);
+            //the character needs to be alive in order to be able to play actions
+            if (NetState.NetworkLifeState.Value == LifeState.ALIVE)
+            {
+                this.m_actionPlayer.PlayAction(ref data);
+            }
         }
 
         /// <summary>
@@ -93,23 +98,45 @@ namespace BossRoom.Server
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight. 
-
+            
             NetState.HitPoints.Value += HP;
-
+            
+            //we can't currently heal a dead character back to Alive state. 
+            //that's handled by a separate function.
             if( NetState.HitPoints.Value <= 0 )
             {
-                //TODO: handle death state. 
-                GameObject.Destroy(this.gameObject);
+                ClearActions();
+                
+                if (IsNPC)
+                {
+                    NetState.NetworkLifeState.Value = LifeState.DEAD;
+                }
+                else
+                {
+                    NetState.NetworkLifeState.Value = LifeState.FAINTED;
+                }
             }
-
-
         }
 
+        /// <summary>
+        /// Receive a Life State change that brings Fainted characters back to Alive state.
+        /// </summary>
+        /// <param name="inflicter">Person reviving the character.</param>
+        /// <param name="HP">The HP to set to a newly revived character.</param>
+        public void Revive(ServerCharacter inflicter, int HP)
+        {
+            if (NetState.NetworkLifeState.Value == LifeState.FAINTED)
+            {
+                NetState.HitPoints.Value = HP;
+                NetState.NetworkLifeState.Value = LifeState.ALIVE;
+            }
+        }
+        
         // Update is called once per frame
         void Update()
         {
             m_actionPlayer.Update();
-            if (m_aiBrain != null)
+            if (m_aiBrain != null && NetState.NetworkLifeState.Value == LifeState.ALIVE)
             {
                 m_aiBrain.Update();
             }
