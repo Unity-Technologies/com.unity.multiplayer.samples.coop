@@ -10,7 +10,7 @@ namespace BossRoom.Server
 
         private Vector3 m_CurrentTargetPos;
 
-        public ChaseAction(ServerCharacter parent, ref ActionRequestData data, int level) : base(parent, ref data, level)
+        public ChaseAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
         }
 
