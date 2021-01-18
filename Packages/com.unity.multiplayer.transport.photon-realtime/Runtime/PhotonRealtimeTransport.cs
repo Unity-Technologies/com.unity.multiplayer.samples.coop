@@ -7,117 +7,150 @@ using System.Collections.Generic;
 using System.IO;
 using MLAPI.Logging;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace MLAPI.Transports
 {
     [DefaultExecutionOrder(-1000)]
     public class PhotonRealtimeTransport : Transport
     {
-        [Header("Photon Cloud Settings")] [SerializeField]
-        private string appId;
+        [Header("Photon Cloud Settings")]
+        [SerializeField]
+        string m_AppId;
 
-        [SerializeField] private string gameVersion = "0.0.0";
+        [SerializeField]
+        string m_GameVersion = "0.0.0";
 
         [Tooltip("The region master server to connect to. See https://doc.photonengine.com/en-us/realtime/current/connection-and-authentication/regions#available_regions for a list of regions.")]
         [SerializeField]
-        private string region = "EU";
+        string m_Region = "EU";
 
         [Tooltip("The nickname of the player in the photon room. This value is only relevant for other photon realtime features. Leaving it empty generates a random name.")]
         [SerializeField]
-        private string nickName;
+        string m_NickName;
 
-        [Header("Server Settings")] [Tooltip("Unique name of the room for this session.")] [SerializeField]
-        private string roomName;
+        [Header("Server Settings")]
+        [Tooltip("Unique name of the room for this session.")]
+        [SerializeField]
+        string m_RoomName;
 
-        [Tooltip("The maximum amount of players allowed in the room.")] [SerializeField]
-        private byte maxPlayers = 16;
+        [Tooltip("The maximum amount of players allowed in the room.")]
+        [SerializeField]
+        byte m_MaxPlayers = 16;
 
         [Header("Advanced Settings")]
-        [Tooltip("The Photon event code which will be used to send data over MLAPI channels.")]
+        [Tooltip("The first byte of the range of photon event codes which this transport will reserve for unbatched messages. Should be set to a number lower then 200 to not interfere with photon internal events. Approximately 8 events will be reserved.")]
         [SerializeField]
-        private byte batchedTransportEventCode = 129;
-
-        [Tooltip("The first byte of the range of photon event codes which this transport will reserve for unbatched messages. Should be set to a number lower then 128 to not interfere with photon internal events. Approximately 8 events will be reserved.")]
-        [SerializeField]
-        private byte channelIdCodesStartRange = 130;
+        byte m_ChannelIdCodesStartRange = 130;
 
         [Tooltip("Attaches the photon support logger to the transport. Useful for debugging disconnects or other issues.")]
         [SerializeField]
-        private bool attachSupportLogger = false;
+        bool m_AttachSupportLogger = false;
+
+        [Tooltip("The batching this transport should apply to MLAPI events. None only works for very simple scenes.")]
+        [SerializeField]
+        BatchMode m_BatchMode = BatchMode.SendAllReliable;
 
         [Tooltip("The maximum size of the send queue which batches MLAPI events into Photon events.")]
         [SerializeField]
-        private int sendQueueBatchSize = 4096;
+        int m_SendQueueBatchSize = 4096;
 
-        private SocketTask connectTask;
+        [Tooltip("The Photon event code which will be used to send batched data over MLAPI channels.")]
+        [SerializeField]
+        byte m_BatchedTransportEventCode = 129;
 
-        private LoadBalancingClient client;
+        SocketTask m_ConnectTask;
+        LoadBalancingClient m_Client;
 
-        private bool isHostOrServer;
+        bool m_IsHostOrServer;
 
-        private readonly Dictionary<string, byte> channelNameToId = new Dictionary<string, byte>();
-        private readonly Dictionary<byte, string> channelIdToName = new Dictionary<byte, string>();
-        private readonly Dictionary<ushort, RealtimeChannel> channels = new Dictionary<ushort, RealtimeChannel>();
+        readonly Dictionary<string, byte> m_ChannelNameToId = new Dictionary<string, byte>();
+        readonly Dictionary<byte, string> m_ChannelIdToName = new Dictionary<byte, string>();
+        readonly Dictionary<ushort, RealtimeChannel> m_Channels = new Dictionary<ushort, RealtimeChannel>();
 
-        private readonly Dictionary<ulong, SendQueue> sendQueue = new Dictionary<ulong, SendQueue>();
+        /// <summary>
+        /// SendQueue dictionary is used to batch events instead of sending them immediately.
+        /// </summary>
+        readonly Dictionary<SendTarget, SendQueue> m_SendQueue = new Dictionary<SendTarget, SendQueue>();
+
+        /// <summary>
+        /// This exists to cache raise event options when calling <see cref="RaisePhotonEvent"./> Saves us from 2 allocations per send.
+        /// </summary>
+        RaiseEventOptions m_CachedRaiseEventOptions = new RaiseEventOptions() { TargetActors = new int[1] };
 
         ///<inheritdoc/>
-        public override ulong ServerClientId => GetMLAPIClientId(0, true);
+        public override ulong ServerClientId => GetMlapiClientId(0, true);
 
         ///<inheritdoc/>
         public override void Send(ulong clientId, ArraySegment<byte> data, string channelName)
         {
-            RealtimeChannel channel = channels[channelNameToId[channelName]];
+            RealtimeChannel channel = m_Channels[m_ChannelNameToId[channelName]];
+
+            if (m_BatchMode == BatchMode.None)
+            {
+                RaisePhotonEvent(clientId, channel.SendMode.Reliability, data, channel.Id);
+            }
 
             SendQueue queue;
-            if (!sendQueue.TryGetValue(clientId, out queue))
+            SendTarget sendTarget = new SendTarget(clientId, channel.SendMode.Reliability);
+
+            if (m_BatchMode == BatchMode.SendAllReliable)
             {
-                queue = new SendQueue(sendQueueBatchSize);
-                sendQueue.Add(clientId, queue);
+                sendTarget.IsReliable = true;
+            }
+
+            if (!m_SendQueue.TryGetValue(sendTarget, out queue))
+            {
+                queue = new SendQueue(m_SendQueueBatchSize);
+                m_SendQueue.Add(sendTarget, queue);
             }
 
             if (!queue.AddEvent(channel.Id, data))
             {
+                // If we are in here data exceeded remaining queue size. This should not happen under normal operation.
                 if (data.Count > queue.Size)
                 {
-                    Debug.LogWarning($"Sent {data.Count} bytes on channel: {channelName}. Event size exceeds sendQueueBatchSize: ({sendQueueBatchSize}).");
-                    RaisePhotonEvent(clientId, data, channel.Id);
+                    // If data is too large to be batched, flush it out immediately. This happens with large initial spawn packets from MLAPI.
+                    Debug.LogWarning($"Sent {data.Count} bytes on channel: {channelName}. Event size exceeds sendQueueBatchSize: ({m_SendQueueBatchSize}).");
+                    RaisePhotonEvent(sendTarget.ClientId, sendTarget.IsReliable, data, channel.Id);
                 }
                 else
                 {
                     var sendBuffer = queue.GetData();
-                    RaisePhotonEvent(clientId, sendBuffer, batchedTransportEventCode);
+                    RaisePhotonEvent(sendTarget.ClientId, sendTarget.IsReliable, sendBuffer, m_BatchedTransportEventCode);
                     queue.Clear();
                     queue.AddEvent(channel.Id, data);
                 }
             }
         }
 
-        private void FlushAllSendQueues()
+        /// <summary>
+        /// Flushes all send queues. (Raises photon events with data from their buffers and clears them)
+        /// </summary>
+        void FlushAllSendQueues()
         {
-            foreach (var kvp in sendQueue)
+            foreach (var kvp in m_SendQueue)
             {
-                if (kvp.Value.IsEmpty())continue;
+                if (kvp.Value.IsEmpty()) continue;
 
                 var sendBuffer = kvp.Value.GetData();
-                RaisePhotonEvent(kvp.Key, sendBuffer, batchedTransportEventCode);
+                RaisePhotonEvent(kvp.Key.ClientId, kvp.Key.IsReliable, sendBuffer, m_BatchedTransportEventCode);
                 kvp.Value.Clear();
             }
         }
 
-        private void RaisePhotonEvent(ulong clientId, ArraySegment<byte> data, byte eventCode)
+        void RaisePhotonEvent(ulong clientId, bool isReliable, ArraySegment<byte> data, byte eventCode)
         {
-            client.OpRaiseEvent(
-                eventCode,
-                data,
-                new RaiseEventOptions()
-                {
-                    TargetActors = new int[] { GetPhotonRealtimeId(clientId) }
-                },
-                SendOptions.SendReliable);
+            m_CachedRaiseEventOptions.TargetActors[0] = GetPhotonRealtimeId(clientId);
+            var sendOptions = isReliable ? SendOptions.SendReliable : SendOptions.SendUnreliable;
+
+            // This allocates because data gets boxed to object.
+            m_Client.OpRaiseEvent(eventCode, data, m_CachedRaiseEventOptions, sendOptions);
         }
 
-        ///<inheritdoc/>
+        /// <summary>
+        /// Photon Realtime Transport is event based. Polling will always return nothing.
+        /// </summary>
         public override NetEventType PollEvent(out ulong clientId, out string channelName, out ArraySegment<byte> payload, out float receiveTime)
         {
             clientId = 0;
@@ -136,54 +169,58 @@ namespace MLAPI.Transports
         public override SocketTasks StartServer()
         {
             var task = ConnectPeer();
-            isHostOrServer = true;
+            m_IsHostOrServer = true;
             return task.AsTasks();
         }
 
-        private SocketTask ConnectPeer()
+        /// <summary>
+        /// Creates and connects a peer synchronously to the region master server and returns a <see cref="SocketTask"/> containing the result.
+        /// </summary>
+        /// <returns></returns>
+        SocketTask ConnectPeer()
         {
-            connectTask = SocketTask.Working;
+            m_ConnectTask = SocketTask.Working;
             InitializeClient();
 
-            bool couldConnect = client.ConnectToRegionMaster(region);
+            var connected = m_Client.ConnectToRegionMaster(m_Region);
 
-            if (!couldConnect)
+            if (!connected)
             {
-                connectTask = SocketTask.Fault;
-                connectTask.Message = $"Can't connect to region: {region}";
+                m_ConnectTask = SocketTask.Fault;
+                m_ConnectTask.Message = $"Can't connect to region: {m_Region}";
             }
-            return connectTask;
+
+            return m_ConnectTask;
         }
 
         ///<inheritdoc/>
         public override void DisconnectRemoteClient(ulong clientId)
         {
-            client.CurrentRoom.RemovePlayer(client.CurrentRoom.Players[GetPhotonRealtimeId(clientId)]);
+            m_Client.CurrentRoom.RemovePlayer(m_Client.CurrentRoom.Players[GetPhotonRealtimeId(clientId)]);
         }
 
         ///<inheritdoc/>
         public override void DisconnectLocalClient()
         {
-            client.Disconnect();
+            m_Client.Disconnect();
         }
 
         ///<inheritdoc/>
         public override ulong GetCurrentRtt(ulong clientId)
         {
             // This is only an approximate value based on the own client's rtt to the server and could cause issues, maybe use a similar approach as the Steamworks transport.
-            return (ulong) (client.LoadBalancingPeer.RoundTripTime * 2);
+            return (ulong)(m_Client.LoadBalancingPeer.RoundTripTime * 2);
         }
 
         ///<inheritdoc/>
         public override void Shutdown()
         {
-
-            if (client != null)
+            if (m_Client != null)
             {
-                client.EventReceived -= ClientOnEventReceived;
-                if (client.IsConnected)
+                m_Client.EventReceived -= ClientOnEventReceived;
+                if (m_Client.IsConnected)
                 {
-                    client.Disconnect();
+                    m_Client.Disconnect();
                 }
             }
         }
@@ -193,114 +230,114 @@ namespace MLAPI.Transports
         {
             for (byte i = 0; i < MLAPI_CHANNELS.Length; i++)
             {
-                channelIdToName.Add((byte) (i + channelIdCodesStartRange), MLAPI_CHANNELS[i].Name);
-                channelNameToId.Add(MLAPI_CHANNELS[i].Name, (byte)(i + channelIdCodesStartRange));
-                channels.Add((byte)(i + channelIdCodesStartRange), new RealtimeChannel()
+                m_ChannelIdToName.Add((byte)(i + m_ChannelIdCodesStartRange), MLAPI_CHANNELS[i].Name);
+                m_ChannelNameToId.Add(MLAPI_CHANNELS[i].Name, (byte)(i + m_ChannelIdCodesStartRange));
+                m_Channels.Add((byte)(i + m_ChannelIdCodesStartRange), new RealtimeChannel()
                 {
-                    Id = (byte)(i + channelIdCodesStartRange),
+                    Id = (byte)(i + m_ChannelIdCodesStartRange),
                     Name = MLAPI_CHANNELS[i].Name,
-                    SendMode = MLAPIChannelTypeToSendOptions(MLAPI_CHANNELS[i].Type)
+                    SendMode = MlapiChannelTypeToSendOptions(MLAPI_CHANNELS[i].Type)
                 });
             }
         }
 
-        private void Update()
+        /// <summary>
+        /// In Update before other scripts run we dispatch incoming commands.
+        /// </summary>
+        void Update()
         {
-            if (client != null)
+            if (m_Client != null)
             {
-                do ;
-                while (client.LoadBalancingPeer.DispatchIncomingCommands());
+                do { } while (m_Client.LoadBalancingPeer.DispatchIncomingCommands());
             }
         }
 
-        private void LateUpdate()
+        /// <summary>
+        /// Send batched messages out in LateUpdate.
+        /// </summary>
+        void LateUpdate()
         {
-            // Send messages at least once per update to make sure to receive messages even if MLAPI is not polling.
             FlushAllSendQueues();
 
-            if (client != null)
+            if (m_Client != null)
             {
-                do ;
-                while (client.LoadBalancingPeer.SendOutgoingCommands());
+                do { } while (m_Client.LoadBalancingPeer.SendOutgoingCommands());
             }
         }
 
-        private void InitializeClient()
+        void InitializeClient()
         {
-            if (client == null)
+            // This is taken from a Photon Realtime sample to get a random user name if none is provided.
+            var nickName = string.IsNullOrEmpty(m_NickName) ? m_NickName : "usr" + SupportClass.ThreadSafeRandom.Next() % 99;
+
+            if (m_Client == null)
             {
-                client = new LoadBalancingClient()
+                m_Client = new LoadBalancingClient
                 {
-                    AppId = appId,
-                    AppVersion = gameVersion,
+                    AppId = m_AppId,
+                    AppVersion = m_GameVersion,
+                    LocalPlayer = { NickName = nickName },
                 };
-                client.LocalPlayer.NickName = string.IsNullOrEmpty(nickName)
-                    ? nickName
-                    : "usr" + SupportClass.ThreadSafeRandom.Next() % 99;
             }
 
-            client.EventReceived += ClientOnEventReceived;
-            client.StateChanged += ClientOnStateChanged;
+            m_Client.EventReceived += ClientOnEventReceived;
+            m_Client.StateChanged += ClientOnStateChanged;
         }
 
-        private void ClientOnStateChanged(ClientState lastState, ClientState currentState)
+        void ClientOnStateChanged(ClientState lastState, ClientState currentState)
         {
             switch (currentState)
             {
                 case ClientState.ConnectedToMasterServer:
-                    // Once the client does connect to the master immediately redirect to the room.
-                    if (currentState == ClientState.ConnectedToMasterServer)
-                    {
-                        var enterRoomParams = new EnterRoomParams()
-                        {
-                            RoomName = roomName,
-                            RoomOptions = new RoomOptions()
-                            {
-                                MaxPlayers = maxPlayers,
-                            }
-                        };
 
-                        var success = isHostOrServer
-                            ? client.OpCreateRoom(enterRoomParams)
-                            : client.OpJoinRoom(enterRoomParams);
-                        if (!success)
+                    // Once the client does connect to the master immediately redirect to its room.
+                    var enterRoomParams = new EnterRoomParams()
+                    {
+                        RoomName = m_RoomName,
+                        RoomOptions = new RoomOptions()
                         {
-                            connectTask.IsDone = true;
-                            connectTask.Success = false;
-                            connectTask.TransportException =
-                                new InvalidOperationException("Unable to create or join room.");
+                            MaxPlayers = m_MaxPlayers,
                         }
+                    };
+
+                    var success = m_IsHostOrServer ? m_Client.OpCreateRoom(enterRoomParams) : m_Client.OpJoinRoom(enterRoomParams);
+
+                    if (!success)
+                    {
+                        m_ConnectTask.IsDone = true;
+                        m_ConnectTask.Success = false;
+                        m_ConnectTask.TransportException = new InvalidOperationException("Unable to create or join room.");
                     }
 
                     break;
 
                 case ClientState.Joined:
-                    if (attachSupportLogger)
+                    if (m_AttachSupportLogger)
                     {
                         var logger = gameObject.GetComponent<SupportLogger>() ?? gameObject.AddComponent<SupportLogger>();
-                        logger.Client = client;
-                        client.ConnectionCallbackTargets.Add(logger);
+                        logger.Client = m_Client;
+                        m_Client.ConnectionCallbackTargets.Add(logger);
                     }
-  
+
                     // Client connected to the room successfully, connection process is completed
-                    connectTask.IsDone = true;
-                    connectTask.Success = true;
+                    m_ConnectTask.IsDone = true;
+                    m_ConnectTask.Success = true;
                     break;
             }
         }
 
-        private void ClientOnEventReceived(EventData eventData)
+        void ClientOnEventReceived(EventData eventData)
         {
-   
-            var clientId = GetMLAPIClientId(eventData.Sender, false);
-            var localClientId = GetMLAPIClientId(client.LocalPlayer.ActorNumber, false);
-            var isRelevantConnectionUpdateMessage =
-                isHostOrServer ^ clientId == localClientId; // Clients should ignore connection events from other clients, server should ignore its own connection event.
+            var clientId = GetMlapiClientId(eventData.Sender, false);
+            var localClientId = GetMlapiClientId(m_Client.LocalPlayer.ActorNumber, false);
+
+            // Clients should ignore connection events from other clients, server should ignore its own connection event.
+            var isRelevantConnectionUpdateMessage = m_IsHostOrServer ^ clientId == localClientId;
 
             NetEventType netEvent = NetEventType.Nothing;
             ArraySegment<byte> payload = default;
             string channelName = default;
-            float receiveTime = Time.realtimeSinceStartup;
+            var receiveTime = Time.realtimeSinceStartup;
 
             switch (eventData.Code)
             {
@@ -309,6 +346,7 @@ namespace MLAPI.Transports
                     {
                         netEvent = NetEventType.Disconnect;
                     }
+
                     break;
 
                 case EventCode.Join:
@@ -316,19 +354,19 @@ namespace MLAPI.Transports
                     {
                         netEvent = NetEventType.Connect;
                     }
+
                     break;
 
                 default:
-                    if (eventData.Code >= 200)
-                    {
-                        return;
-                    }
+                    if (eventData.Code >= 200) { return; } // EventCode is a photon event.
 
+                    // Event though the object we sent was an ArraySegment, Photon Realtime just returns an array anyways.
                     byte[] array = (byte[])eventData.CustomData;
 
-                    if (eventData.Code == batchedTransportEventCode)
+                    if (eventData.Code == m_BatchedTransportEventCode)
                     {
-                        using (MemoryStream stream = new MemoryStream(array))
+                        // TODO This block is wasteful. ArraySegments can be created from the initial array no need to copy/allocate.
+                        using (MemoryStream stream = new MemoryStream(array)) 
                         {
                             using (PooledBitReader reader = PooledBitReader.Get(stream))
                             {
@@ -338,23 +376,26 @@ namespace MLAPI.Transports
                                     var length = reader.ReadInt32Packed();
                                     var dataArray = reader.ReadByteArray(null, length);
 
-                                    InvokeOnTransportEvent(NetEventType.Data, clientId, channelIdToName[channelId], new ArraySegment<byte>(dataArray, 0, dataArray.Length), receiveTime);
+                                    InvokeOnTransportEvent(NetEventType.Data, clientId, m_ChannelIdToName[channelId], new ArraySegment<byte>(dataArray, 0, dataArray.Length), receiveTime);
                                 }
                             }
                         }
+
                         return;
                     }
 
+                    // Event is a non-batched data event.
                     netEvent = NetEventType.Data;
                     payload = new ArraySegment<byte>(array);
-                    channelName = channelIdToName[eventData.Code];
+                    channelName = m_ChannelIdToName[eventData.Code];
                     break;
             }
+
             if (netEvent == NetEventType.Nothing) return;
             InvokeOnTransportEvent(netEvent, clientId, channelName, payload, receiveTime);
         }
 
-        private SendOptions MLAPIChannelTypeToSendOptions(ChannelType type)
+        SendOptions MlapiChannelTypeToSendOptions(ChannelType type)
         {
             switch (type)
             {
@@ -365,7 +406,7 @@ namespace MLAPI.Transports
             }
         }
 
-        private ulong GetMLAPIClientId(int photonId, bool isServer)
+        ulong GetMlapiClientId(int photonId, bool isServer)
         {
             if (isServer)
             {
@@ -373,25 +414,25 @@ namespace MLAPI.Transports
             }
             else
             {
-                return (ulong) (photonId + 1);
+                return (ulong)(photonId + 1);
             }
         }
 
-        private int GetPhotonRealtimeId(ulong clientId)
+        int GetPhotonRealtimeId(ulong clientId)
         {
             if (clientId == 0)
             {
-                return client.CurrentRoom.masterClientId;
+                return m_Client.CurrentRoom.masterClientId;
             }
             else
             {
-                return (int) (clientId - 1);
+                return (int)(clientId - 1);
             }
         }
 
-        private class SendQueue
+        class SendQueue
         {
-            private MemoryStream stream;
+            MemoryStream m_Stream;
 
             /// <summary>
             /// The size of the send queue.
@@ -402,22 +443,28 @@ namespace MLAPI.Transports
             {
                 Size = size;
                 byte[] buffer = new byte[size];
-                stream = new MemoryStream(buffer, 0, buffer.Length, true, true);
+                m_Stream = new MemoryStream(buffer, 0, buffer.Length, true, true);
             }
 
+            /// <summary>
+            /// Ads an event to the send queue.
+            /// </summary>
+            /// <param name="channelId">The channel this event should be sent on.</param>
+            /// <param name="data">The data to send.</param>
+            /// <returns>True if the event was added successfully to the queue. False if there was no space in the queue.</returns>
             internal bool AddEvent(byte channelId, ArraySegment<byte> data)
             {
-                if (stream.Position + data.Count + 4 > Size)
+                if (m_Stream.Position + data.Count + 4 > Size)
                 {
                     return false;
                 }
 
-                using (PooledBitWriter writer = PooledBitWriter.Get(stream))
+                using (PooledBitWriter writer = PooledBitWriter.Get(m_Stream))
                 {
                     writer.WriteByte(channelId);
                     writer.WriteInt32Packed(data.Count);
-                    Array.Copy(data.Array, data.Offset, stream.GetBuffer(), stream.Position, data.Count);
-                    stream.Position += data.Count;
+                    Array.Copy(data.Array, data.Offset, m_Stream.GetBuffer(), m_Stream.Position, data.Count);
+                    m_Stream.Position += data.Count;
                 }
 
                 return true;
@@ -425,25 +472,53 @@ namespace MLAPI.Transports
 
             internal void Clear()
             {
-                stream.Position = 0;
+                m_Stream.Position = 0;
             }
 
             internal bool IsEmpty()
             {
-                return stream.Position == 0;
+                return m_Stream.Position == 0;
             }
 
             internal ArraySegment<byte> GetData()
             {
-                return new ArraySegment<byte>(stream.GetBuffer(), 0, (int) stream.Position);
+                return new ArraySegment<byte>(m_Stream.GetBuffer(), 0, (int)m_Stream.Position);
             }
         }
 
-        private struct RealtimeChannel
+        struct RealtimeChannel
         {
             public byte Id;
             public string Name;
             public SendOptions SendMode;
+        }
+
+        struct SendTarget
+        {
+            public ulong ClientId;
+            public bool IsReliable;
+
+            public SendTarget(ulong clientId, bool isReliable)
+            {
+                ClientId = clientId;
+                IsReliable = isReliable;
+            }
+        }
+
+        enum BatchMode : byte
+        {
+            /// <summary>
+            /// The transport performs no batching.
+            /// </summary>
+            None = 0,
+            /// <summary>
+            /// Batches all MLAPI events into reliable sequenced messages.
+            /// </summary>
+            SendAllReliable = 1,
+            /// <summary>
+            /// Batches all reliable MLAPI events into a single photon event and all unreliable MLAPI events into an unreliable photon event.
+            /// </summary>
+            ReliableAndUnreliable = 2,
         }
     }
 }
