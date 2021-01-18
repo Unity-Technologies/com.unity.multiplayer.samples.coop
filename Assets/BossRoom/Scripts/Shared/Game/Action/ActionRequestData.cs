@@ -24,6 +24,7 @@ namespace BossRoom
         RANGED,
         RANGEDTARGETED,
         CHASE,
+        AOE,
 
         //O__O adding a new ActionLogic type? Update Action.MakeAction!
     }
