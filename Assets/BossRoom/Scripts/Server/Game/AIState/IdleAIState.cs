@@ -30,7 +30,7 @@ namespace BossRoom.Server
 
         protected void DetectFoes()
         {
-            float detectionRange = m_brain.GetMyServerCharacter().DetectRange;
+            float detectionRange = m_brain.CharacterData.DetectRange;
             // we are doing this check every Update, so we'll use square-magnitude distance to avoid the expensive sqrt (that's implicit in Vector3.magnitude)
             float detectionRangeSqr = detectionRange * detectionRange;
             Vector3 position = m_brain.GetMyServerCharacter().transform.position;

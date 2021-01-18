@@ -17,6 +17,14 @@ namespace BossRoom.Server
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
         private NetworkedObject m_EnemyPrefab;
 
+        [SerializeField]
+        [Tooltip("Set what sort of character class gets created for players by default.")]
+        private CharacterTypeEnum m_DefaultPlayerType = CharacterTypeEnum.TANK;
+
+        [SerializeField]
+        [Tooltip("Set the default Player Appearance (value between 0-7)")]
+        private int m_DefaultPlayerAppearance = 7;
+
         public override GameState ActiveState { get { return GameState.BOSSROOM; } }
 
 
@@ -64,6 +72,9 @@ namespace BossRoom.Server
         private void SpawnPlayer(ulong clientId)
         {
             var newPlayer = Instantiate(m_PlayerPrefab);
+            var netState = newPlayer.GetComponent<NetworkCharacterState>();
+            netState.CharacterType.Value = m_DefaultPlayerType;
+            netState.CharacterAppearance.Value = m_DefaultPlayerAppearance;
             newPlayer.SpawnAsPlayerObject(clientId);
         }
 

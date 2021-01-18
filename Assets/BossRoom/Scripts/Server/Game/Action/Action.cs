@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace BossRoom.Server
 {
     /// <summary>
@@ -13,39 +11,14 @@ namespace BossRoom.Server
     /// There is only ever one active Action at a time on a character, but multiple Actions may exist at once, with subsequent Actions
     /// pending behind the currently playing one. See ActionPlayer.cs
     /// </remarks>
-    public abstract class Action
+    public abstract class Action : ActionBase
     {
         protected ServerCharacter m_Parent;
-
-        protected ActionRequestData m_Data;
-
-        /// <summary>
-        /// Time when this Action was started (from Time.time) in seconds. Set by the ActionPlayer. 
-        /// </summary>
-        public float TimeStarted { get; set; }
-
-        /// <summary>
-        /// RequestData we were instantiated with. Value should be treated as readonly. 
-        /// </summary>
-        public ref ActionRequestData Data { get { return ref m_Data; } }
-
-        /// <summary>
-        /// Data Description for this action. 
-        /// </summary>
-        public ActionDescription Description
-        {
-            get
-            {
-                var list = ActionData.ActionDescriptions[Data.ActionTypeEnum];
-                int level = Mathf.Min(Data.Level, list.Count - 1); //if we don't go up to the requested level, just cap at the max level. 
-                return list[level];
-            }
-        }
 
         /// <summary>
         /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory. 
         /// </summary>
-        public Action(ServerCharacter parent, ref ActionRequestData data)
+        public Action(ServerCharacter parent, ref ActionRequestData data) : base(ref data)
         {
             m_Parent = parent;
             m_Data = data; //do a shallow copy. 
@@ -79,7 +52,13 @@ namespace BossRoom.Server
         /// <returns>the newly created action. </returns>
         public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data)
         {
-            var logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
+            ActionDescription actionDesc;
+            if (!GameDataSource.s_Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out actionDesc))
+            {
+                throw new System.Exception($"Trying to create Action {data.ActionTypeEnum} but it isn't defined on the GameDataSource!");
+            }
+
+            var logic = actionDesc.Logic;
 
             switch (logic)
             {

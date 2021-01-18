@@ -1,10 +1,10 @@
-using System;
-using System.IO;
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkedVar;
-using UnityEngine;
 using MLAPI.Serialization.Pooled;
+using System;
+using System.IO;
+using UnityEngine;
 
 
 namespace BossRoom
@@ -25,7 +25,7 @@ namespace BossRoom
         /// <summary>
         /// The networked position of this Character. This reflects the authorative position on the server.
         /// </summary>
-        public NetworkedVarVector3 NetworkPosition { get;} = new NetworkedVarVector3();
+        public NetworkedVarVector3 NetworkPosition { get; } = new NetworkedVarVector3();
 
         /// <summary>
         /// The networked rotation of this Character. This reflects the authorative rotation on the server.
@@ -33,14 +33,60 @@ namespace BossRoom
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
+        /// <summary>
+        /// Current HP. This value is populated at startup time from CharacterClass data. 
+        /// </summary>
+        [HideInInspector]
         public NetworkedVarInt HitPoints;
-        public NetworkedVarInt Mana; 
+
+        /// <summary>
+        /// Current Mana. This value is populated at startup time from CharacterClass data. 
+        /// </summary>
+        [HideInInspector]
+        public NetworkedVarInt Mana;
+
+        /// <summary>
+        /// Current LifeState. Only Players should enter the FAINTED state. 
+        /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.ALIVE);
-        
+
+        /// <summary>
+        /// Returns true if this Character is an NPC.
+        /// </summary>
+        public bool IsNPC
+        {
+            get
+            {
+                return GameDataSource.s_Instance.CharacterDataByType[CharacterType.Value].IsNPC;
+            }
+        }
+
+        [Tooltip("NPCs should set this value in their prefab. For players, this vaule is set at runtime.")]
+        public NetworkedVar<CharacterTypeEnum> CharacterType;
+
+        /// <summary>
+        /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
+        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc). 
+        /// </summary>
+        [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
+        public NetworkedVarInt CharacterAppearance;
+
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
         public event Action<Vector3> OnReceivedClientInput;
+
+        private void Awake()
+        {
+            CharacterClass data;
+            bool found = GameDataSource.s_Instance.CharacterDataByType.TryGetValue(CharacterType.Value, out data);
+            if (!found)
+            {
+                throw new System.Exception($"gameobject {gameObject.name} has charactertype {CharacterType.Value} specified, which isn't valid!");
+            }
+            HitPoints.Value = data.BaseHP;
+            Mana.Value = data.BaseMana;
+        }
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
@@ -82,7 +128,7 @@ namespace BossRoom
         /// Server->Client RPC that broadcasts this action play to all clients. 
         /// </summary>
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
-        public void ServerBroadcastAction(ref ActionRequestData data )
+        public void ServerBroadcastAction(ref ActionRequestData data)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {
@@ -92,7 +138,7 @@ namespace BossRoom
         }
 
         [ClientRPC]
-        private void RecvDoActionClient(ulong clientId, Stream stream )
+        private void RecvDoActionClient(ulong clientId, Stream stream)
         {
             var data = new ActionRequestData();
             data.Read(stream);

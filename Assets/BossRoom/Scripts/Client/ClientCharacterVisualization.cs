@@ -53,6 +53,14 @@ namespace BossRoom.Visual
             Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
 
+            if (!m_NetState.IsNPC)
+            {
+                foreach (var model in GetComponents<ModelSwap>())
+                {
+                    model.SetModel(m_NetState.CharacterAppearance.Value);
+                }
+            }
+
             if (IsLocalPlayer)
             {
                 AttachCamera();

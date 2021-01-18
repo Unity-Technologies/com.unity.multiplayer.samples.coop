@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -9,8 +8,13 @@ namespace BossRoom
     /// </summary>
     public enum ActionType
     {
+        NONE,
         TANK_BASEATTACK,
         ARCHER_BASEATTACK,
+        MAGE_BASEATTACK,
+        ROGUE_BASEATTACK,
+        IMP_BASEATTACK,
+        IMPBOSS_BASEATTACK,
         GENERAL_CHASE,
         GENERAL_REVIVE,
     }
@@ -30,92 +34,6 @@ namespace BossRoom
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
-    /// <summary>
-    /// FIXME: [GOMPS-99] This will be turned into a ScriptableObject.
-    /// </summary>
-    public class ActionDescription
-    {
-        /// <summary>
-        /// ActionLogic that drives this Action. This corresponds to the actual block of code that executes it.
-        /// </summary>
-        public ActionLogic Logic;
-
-        /// <summary>
-        /// Could be damage, could be healing, or other things. This is a base, nominal value that will get modified
-        /// by game logic when the action takes effect.
-        /// </summary>
-        public int Amount;
-
-        /// <summary>
-        /// How much it consts in Mana to play this Action.
-        /// </summary>
-        public int ManaCost;
-
-        /// <summary>
-        /// How how the Action performer can be from the Target, or how far the action can go (for an untargeted action like a bowshot).
-        /// </summary>
-        public float Range;
-
-        /// <summary>
-        /// Duration in seconds that this Action takes to play.
-        /// </summary>
-        public float Duration_s;
-
-        /// <summary>
-        /// Time when the Action should do its "main thing" (e.g. when a melee attack should apply damage).
-        /// </summary>
-        public float ExecTime_s;
-
-        /// <summary>
-        /// How long the effect this Action leaves behind will last, in seconds.
-        /// </summary>
-        public float EffectDuration_s;
-
-        /// <summary>
-        /// The primary Animation action that gets played when visualizing this Action.
-        /// </summary>
-        public string Anim;
-    }
-
-    /// <summary>
-    /// FIXME [GOMPS-99]: this list will be turned into a collection of Scriptable Objects.
-    /// Question: Do we want to show how to do skill levels, as I am doing here?
-    /// </summary>
-    public class ActionData
-    {
-        public static Dictionary<ActionType, List<ActionDescription>> ActionDescriptions = new Dictionary<ActionType, List<ActionDescription>>
-        {
-            { ActionType.TANK_BASEATTACK , new List<ActionDescription>
-                {
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=30, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 1
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=40, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 2
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=50, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 3
-                }
-            },
-
-            { ActionType.ARCHER_BASEATTACK, new List<ActionDescription>
-                {
-                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=7,  ManaCost=2, Duration_s=0.5f, Range=12f, Anim="Attack1" } }, //Level 1
-                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=12, ManaCost=2, Duration_s=0.5f, Range=15f, Anim="Attack1" } }, //Level 2
-                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=15, ManaCost=2, Duration_s=0.5f, Range=18f, Anim="Attack1" } }, //Level 3
-                }
-            },
-
-            { ActionType.GENERAL_CHASE, new List<ActionDescription>
-                {
-                    {new ActionDescription{Logic=ActionLogic.CHASE } }
-                }
-            },
-
-            { ActionType.GENERAL_REVIVE, new List<ActionDescription>
-                {
-                    {new ActionDescription{Logic=ActionLogic.REVIVE, Amount=10, ExecTime_s=0.3f, Duration_s=0.5f, Anim="Todo"  } }
-                }
-            }
-        };
-    }
-
-
 
     /// <summary>
     /// Comprehensive class that contains information needed to play back any action on the server. This is what gets sent client->server when
@@ -128,7 +46,6 @@ namespace BossRoom
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill. 
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing. 
         public ulong[] TargetIds;          //networkIds of targets, or null if untargeted. 
-        public int Level;                  //what level the Action plays at (server->client only). Levels are 0-based, with 0 being weakest. 
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
         public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately. 
 
@@ -141,9 +58,8 @@ namespace BossRoom
             HasPosition = 1,
             HasDirection = 1 << 1,
             HasTargetIds = 1 << 2,
-            HasLevel = 1 << 3,
-            HasAmount = 1 << 4,
-            ShouldQueue = 1 << 5
+            HasAmount = 1 << 3,
+            ShouldQueue = 1 << 4
             //currently serialized with a byte. Change Read/Write if you add more than 8 fields. 
         }
 
@@ -153,7 +69,6 @@ namespace BossRoom
             if (Position != Vector3.zero) { flags |= PackFlags.HasPosition; }
             if (Direction != Vector3.zero) { flags |= PackFlags.HasDirection; }
             if (TargetIds != null) { flags |= PackFlags.HasTargetIds; }
-            if (Level != 0) { flags |= PackFlags.HasLevel; }
             if (Amount != 0) { flags |= PackFlags.HasAmount; }
             if (ShouldQueue) { flags |= PackFlags.ShouldQueue; }
 
@@ -180,10 +95,6 @@ namespace BossRoom
                 if ((flags & PackFlags.HasTargetIds) != 0)
                 {
                     TargetIds = reader.ReadULongArray();
-                }
-                if ((flags & PackFlags.HasLevel) != 0)
-                {
-                    Level = reader.ReadInt32();
                 }
                 if ((flags & PackFlags.HasAmount) != 0)
                 {
@@ -212,10 +123,6 @@ namespace BossRoom
                 if ((flags & PackFlags.HasTargetIds) != 0)
                 {
                     writer.WriteULongArray(TargetIds);
-                }
-                if ((flags & PackFlags.HasLevel) != 0)
-                {
-                    writer.WriteInt32(Level);
                 }
                 if ((flags & PackFlags.HasAmount) != 0)
                 {

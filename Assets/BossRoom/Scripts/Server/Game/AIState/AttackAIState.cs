@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -24,7 +22,7 @@ namespace BossRoom.Server
 
         public override void Initialize()
         {
-            m_curAttackAction = ActionType.TANK_BASEATTACK;
+            m_curAttackAction = m_brain.CharacterData.Skill1;
 
             // clear any old foe info; we'll choose a new one in Update()
             m_foe = null;
@@ -51,24 +49,18 @@ namespace BossRoom.Server
             {
                 if (info.ActionTypeEnum == ActionType.GENERAL_CHASE)
                 {
-                    foreach (var id in info.TargetIds)
+                    if (info.TargetIds != null && info.TargetIds[0] == m_foe.NetworkId)
                     {
-                        if (id == m_foe.NetworkId)
-                        {
-                            // yep we're chasing our foe; all set! (The attack is enqueued after it)
-                            return;
-                        }
+                        // yep we're chasing our foe; all set! (The attack is enqueued after it)
+                        return;
                     }
                 }
                 else if (info.ActionTypeEnum == m_curAttackAction)
                 {
-                    foreach (var id in info.TargetIds)
+                    if (info.TargetIds != null && info.TargetIds[0] == m_foe.NetworkId)
                     {
-                        if (id == m_foe.NetworkId)
-                        {
-                            // yep we're attacking our foe; all set!
-                            return;
-                        }
+                        // yep we're attacking our foe; all set!
+                        return;
                     }
                 }
             }
@@ -138,9 +130,14 @@ namespace BossRoom.Server
 
         private ActionDescription GetCurrentAttackInfo()
         {
-            List<ActionDescription> actionLevels = ActionData.ActionDescriptions[ m_curAttackAction ];
-            int level = 0; // FIXME: pull this level from some character state var?
-            return actionLevels[ level ];
+            ActionDescription result;
+            bool found = GameDataSource.s_Instance.ActionDataByType.TryGetValue(m_curAttackAction, out result);
+            if (!found)
+            {
+                throw new System.Exception($"GameObject {m_brain.GetMyServerCharacter().gameObject.name} tried to play Action {m_curAttackAction} but this action does not exist");
+            }
+
+            return result;
         }
     }
 }

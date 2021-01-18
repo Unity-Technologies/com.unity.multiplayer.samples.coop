@@ -10,13 +10,14 @@ namespace BossRoom.Server
     {
         public NetworkCharacterState NetState { get; private set; }
 
-        [SerializeField]
-        [Tooltip("If enabled, this character has an AIBrain and behaves as an enemy")]
-        public bool IsNPC;
+        /// <summary>
+        /// Returns true if this Character is an NPC.
+        /// </summary>
+        public bool IsNPC
+        {
 
-        [SerializeField]
-        [Tooltip("If IsNPC, this is how far the npc can detect others (in meters)")]
-        public float DetectRange = 10;
+            get { return NetState.IsNPC; }
+        }
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
@@ -75,12 +76,6 @@ namespace BossRoom.Server
         /// <param name="data">Contains all data necessary to create the action</param>
         public void PlayAction(ref ActionRequestData data)
         {
-            if (!IsNPC)
-            {
-                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
-                data.Level = 0;
-            }
-
             //the character needs to be alive in order to be able to play actions
             if (NetState.NetworkLifeState.Value == LifeState.ALIVE)
             {

@@ -51,7 +51,8 @@ namespace BossRoom.Visual
             switch (data.ActionTypeEnum)
             {
                 case ActionType.GENERAL_REVIVE:
-                    Parent.OurAnimator.SetTrigger("BeginRevive");
+                    ActionDescription actionDesc = GameDataSource.s_Instance.ActionDataByType[data.ActionTypeEnum];
+                    Parent.OurAnimator.SetTrigger(actionDesc.Anim);
                     return;
             }
 
