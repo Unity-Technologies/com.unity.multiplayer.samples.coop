@@ -46,7 +46,6 @@ namespace BossRoom.Server
             return g_activeServerCharacters;
         }
 
-        // Start is called before the first frame update
         void Start()
         {
             NetState = GetComponent<NetworkCharacterState>();
@@ -59,13 +58,13 @@ namespace BossRoom.Server
 
         public override void NetworkStart()
         {
-            if (!IsServer) { this.enabled = false; }
+            if (!IsServer) { enabled = false; }
             else
             {
-                this.NetState = GetComponent<NetworkCharacterState>();
-                this.NetState.DoActionEventServer += this.OnActionPlayRequest;
-                this.NetState.OnReceivedClientInput += this.OnClientMoveRequest;
-                this.NetState.NetworkLifeState.OnValueChanged += this.OnLifeStateChanged;
+                NetState = GetComponent<NetworkCharacterState>();
+                NetState.DoActionEventServer += OnActionPlayRequest;
+                NetState.OnReceivedClientInput += OnClientMoveRequest;
+                NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             }
         }
 
@@ -125,7 +124,7 @@ namespace BossRoom.Server
         /// </summary>
         /// <param name="Inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
-        public void RecieveHP(ServerCharacter inflicter, int HP)
+        public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight. 
@@ -163,7 +162,6 @@ namespace BossRoom.Server
             }
         }
 
-        // Update is called once per frame
         void Update()
         {
             m_actionPlayer.Update();

@@ -7,7 +7,6 @@ namespace BossRoom.Visual
     /// This is a companion class to ClientCharacterVisualization that is specifically responsible for visualizing Actions. Action visualizations have lifetimes
     /// and ongoing state, making this class closely analogous in spirit to the BossRoom.Server.ActionPlayer class. 
     /// </summary>
-    [RequireComponent(typeof(ClientCharacterVisualization))]
     public class ActionVisualization
     {
         private List<ActionFX> m_PlayingActions;

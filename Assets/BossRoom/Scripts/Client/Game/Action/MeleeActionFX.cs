@@ -19,14 +19,12 @@ namespace BossRoom.Visual
         /// </summary>
         private const float k_RangePadding = 3f;
 
-        // Start is called before the first frame update
         public override bool Start()
         {
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
             return true;
         }
 
-        // Update is called once per frame
         public override bool Update()
         {
             return true;
