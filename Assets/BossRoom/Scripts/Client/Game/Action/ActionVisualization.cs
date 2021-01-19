@@ -57,8 +57,10 @@ namespace BossRoom.Visual
 
             ActionFX action = ActionFX.MakeActionFX(ref data, Parent);
             action.TimeStarted = Time.time;
-            m_PlayingActions.Add(action);
-            action.Start();
+            if (action.Start())
+            {
+                m_PlayingActions.Add(action);
+            }
         }
     }
 }
