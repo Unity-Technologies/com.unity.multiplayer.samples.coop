@@ -33,6 +33,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.editorcoroutines": {
+      "version": "1.0.0",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
     "com.unity.ext.nunit": {
       "version": "1.0.5",
       "depth": 1,
@@ -63,6 +70,16 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.learn.iet-framework": {
+      "version": "1.2.1",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.editorcoroutines": "1.0.0",
+        "com.unity.settings-manager": "1.0.2"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.mathematics": {
       "version": "1.2.1",
       "depth": 3,
@@ -78,6 +95,29 @@
         "com.unity.collections": "0.14.0-preview.16"
       },
       "hash": "726b77f90f2bb2879303cf72a22048ac0abf4084"
+    },
+    "com.unity.multiplayer.multipie": {
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.multipie.git#ec513520a8bba970366c572e88613664a2054353",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ec513520a8bba970366c572e88613664a2054353"
+    },
+    "com.unity.multiplayer.samples.coop": {
+      "version": "file:com.unity.multiplayer.samples.coop",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {
+        "com.unity.learn.iet-framework": "1.2.1",
+        "com.unity.multiplayer.mlapi": "0.0.1-preview.1",
+        "com.unity.test-framework": "1.1.19",
+        "com.unity.modules.ai": "1.0.0",
+        "com.unity.modules.animation": "1.0.0",
+        "com.unity.modules.particlesystem": "1.0.0",
+        "com.unity.modules.physics": "1.0.0",
+        "com.unity.modules.physics2d": "1.0.0",
+        "com.unity.modules.ui": "1.0.0"
+      }
     },
     "com.unity.multiplayer.transport.litenet": {
       "version": "file:com.unity.multiplayer.transport.litenet",
@@ -97,6 +137,13 @@
     "com.unity.postprocessing": {
       "version": "2.3.0",
       "depth": 0,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.settings-manager": {
+      "version": "1.0.2",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"

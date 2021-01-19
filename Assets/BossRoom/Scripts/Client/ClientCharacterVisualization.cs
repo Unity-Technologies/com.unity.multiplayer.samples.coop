@@ -30,7 +30,7 @@ namespace BossRoom.Visual
         /// <inheritdoc />
         public override void NetworkStart()
         {
-            if (!IsClient)
+            if (!IsClient || transform.parent == null)
             {
                 enabled = false;
                 return;
