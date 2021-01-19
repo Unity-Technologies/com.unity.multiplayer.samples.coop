@@ -1,3 +1,4 @@
+using System;
 using Cinemachine;
 using MLAPI;
 using UnityEngine;
@@ -37,6 +38,7 @@ namespace BossRoom.Visual
 
             m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += this.PerformActionFX;
+            m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
             m_Parent = transform.parent;
@@ -53,20 +55,53 @@ namespace BossRoom.Visual
         {
             //TODO: [GOMPS-13] break this method out into its own class, so we can drive multi-frame graphical effects. 
             //FIXME: [GOMPS-13] hook this up to information in the ActionDescription. 
-            m_ClientVisualsAnimator.SetInteger("AttackID", 1);
-            m_ClientVisualsAnimator.SetTrigger("BeginAttack");
 
-            if (data.TargetIds != null && data.TargetIds.Length > 0)
+            switch (data.ActionTypeEnum)
             {
-                NetworkedObject targetObject = MLAPI.Spawning.SpawnManager.SpawnedObjects[data.TargetIds[0]];
-                if (targetObject != null)
-                {
-                    var targetAnimator = targetObject.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject.OurAnimator;
-                    if (targetAnimator != null)
+                case ActionType.TANK_BASEATTACK:
+                    m_ClientVisualsAnimator.SetInteger("AttackID", 1);
+                    m_ClientVisualsAnimator.SetTrigger("BeginAttack");
+
+                    if (data.TargetIds != null && data.TargetIds.Length > 0)
                     {
-                        targetAnimator.SetTrigger("BeginHitReact");
+                        NetworkedObject targetObject = MLAPI.Spawning.SpawnManager.SpawnedObjects[data.TargetIds[0]];
+                        if (targetObject != null)
+                        {
+                            var targetAnimator = targetObject.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject.OurAnimator;
+                            if (targetAnimator != null)
+                            {
+                                targetAnimator.SetTrigger("BeginHitReact");
+                            }
+                        }
                     }
-                }
+                    break;
+                case ActionType.ARCHER_BASEATTACK:
+                    break;
+                case ActionType.GENERAL_CHASE:
+                    break;
+                case ActionType.GENERAL_REVIVE:
+                    m_ClientVisualsAnimator.SetTrigger("BeginRevive");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+        {
+            switch (newValue)
+            {
+                case LifeState.ALIVE:
+                    m_ClientVisualsAnimator.SetTrigger("StandUp");
+                    break;
+                case LifeState.FAINTED:
+                    m_ClientVisualsAnimator.SetTrigger("FallDown");
+                    break;
+                case LifeState.DEAD:
+                    m_ClientVisualsAnimator.SetTrigger("Dead");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
             }
         }
 
