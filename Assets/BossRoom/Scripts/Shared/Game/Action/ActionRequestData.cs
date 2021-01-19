@@ -106,12 +106,11 @@ namespace BossRoom
                     {new ActionDescription{Logic=ActionLogic.CHASE } }
                 }
             },
-
             { ActionType.GENERAL_REVIVE, new List<ActionDescription>
                 {
                     {new ActionDescription{Logic=ActionLogic.REVIVE, Amount=10, ExecTime_s=0.3f, Duration_s=0.5f, Anim="Todo"  } }
-                }
-            }
+                } 
+            }   
         };
     }
 

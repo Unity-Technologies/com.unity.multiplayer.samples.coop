@@ -65,7 +65,7 @@ namespace BossRoom.Client
                     var chase_data = new ActionRequestData();
                     chase_data.ActionTypeEnum = ActionType.GENERAL_CHASE;
                     chase_data.Amount = ActionData.ActionDescriptions[ActionType.TANK_BASEATTACK][0].Range;
-                    chase_data.TargetIds = new ulong[] { GetTargetObject(ref hit) };
+                    chase_data.TargetIds = new ulong[] {GetTargetObject(ref hit)};
                     m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
 
                     //TODO fixme: there needs to be a better way to check if target is a PC or an NPC

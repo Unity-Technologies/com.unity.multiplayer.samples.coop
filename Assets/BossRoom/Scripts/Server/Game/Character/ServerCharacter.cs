@@ -128,9 +128,9 @@ namespace BossRoom.Server
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight. 
-
+            
             NetState.HitPoints.Value += HP;
-
+            
             //we can't currently heal a dead character back to Alive state. 
             //that's handled by a separate function.
             if (NetState.HitPoints.Value <= 0)

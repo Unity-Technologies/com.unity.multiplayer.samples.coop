@@ -1143,6 +1143,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9520a47fc61d5ab4ca99cdac2d574909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ClientVisualsAnimator: {fileID: 0}
   MinZoomDistance: 3
   MaxZoomDistance: 30
   ZoomSpeed: 3
@@ -1458,13 +1459,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8397462235754238418}
-  m_LocalRotation: {x: -0.00000006657903, y: 4.432767e-15, z: -0.00000006657903, w: 1}
+  m_LocalRotation: {x: -0.27174827, y: 0.038688652, z: -0.0535553, w: 0.96009785}
   m_LocalPosition: {x: 37.481834, y: -14.9863205, z: 6.1115265}
   m_LocalScale: {x: 99.999985, y: 99.99999, z: 99.99997}
   m_Children: []
   m_Father: {fileID: 7104403373540100095}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -31.176, y: 6.941, z: -8.324}
 --- !u!33 &8731501901720154717
 MeshFilter:
   m_ObjectHideFlags: 0
