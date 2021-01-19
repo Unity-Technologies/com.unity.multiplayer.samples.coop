@@ -34,9 +34,9 @@ namespace BossRoom
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
         public NetworkedVarInt HitPoints;
-        public NetworkedVarInt Mana; 
+        public NetworkedVarInt Mana;
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.ALIVE);
-        
+
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
@@ -61,14 +61,14 @@ namespace BossRoom
         public event Action<BossRoom.ActionRequestData> DoActionEventServer;
 
         /// <summary>
-        /// This event is raised on the client when an action is being played back. 
+        /// This event is raised on the client when an action is being played back.
         /// </summary>
         public event Action<BossRoom.ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Client->Server RPC that sends a request to play an action. 
+        /// Client->Server RPC that sends a request to play an action.
         /// </summary>
-        /// <param name="data">Data about which action to play an dits associated details. </param>
+        /// <param name="data">Data about which action to play and its associated details. </param>
         public void ClientSendActionRequest(ref ActionRequestData data)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
@@ -79,7 +79,7 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// Server->Client RPC that broadcasts this action play to all clients. 
+        /// Server->Client RPC that broadcasts this action play to all clients.
         /// </summary>
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
         public void ServerBroadcastAction(ref ActionRequestData data )

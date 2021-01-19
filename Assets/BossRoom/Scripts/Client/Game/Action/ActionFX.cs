@@ -1,7 +1,7 @@
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// Abstract base class for playing back the visual feedback of an Action. 
+    /// Abstract base class for playing back the visual feedback of an Action.
     /// </summary>
     public abstract class ActionFX : ActionBase
     {
@@ -37,6 +37,7 @@ namespace BossRoom.Visual
             switch (logic)
             {
                 case ActionLogic.MELEE: return new MeleeActionFX(ref data, parent);
+                case ActionLogic.AOE: return new AOEActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }

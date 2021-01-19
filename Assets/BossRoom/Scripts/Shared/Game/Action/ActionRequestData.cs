@@ -11,6 +11,7 @@ namespace BossRoom
     {
         TANK_BASEATTACK,
         ARCHER_BASEATTACK,
+        TANK_TESTABILITY,
         GENERAL_CHASE,
         GENERAL_REVIVE,
     }
@@ -56,6 +57,11 @@ namespace BossRoom
         /// How how the Action performer can be from the Target, or how far the action can go (for an untargeted action like a bowshot).
         /// </summary>
         public float Range;
+
+        /// <summary>
+        /// radius of effect this action should have
+        /// </summary>
+        public float Radius;
 
         /// <summary>
         /// Duration in seconds that this Action takes to play.
@@ -112,7 +118,14 @@ namespace BossRoom
                 {
                     {new ActionDescription{Logic=ActionLogic.REVIVE, Amount=10, ExecTime_s=0.3f, Duration_s=0.5f, Anim="Todo"  } }
                 }
-            }
+            },
+
+            { ActionType.TANK_TESTABILITY, new List<ActionDescription>
+                {
+                    {new ActionDescription{Logic=ActionLogic.AOE, Amount = 30, ManaCost = 3, Range = 10, Radius = 7,  Anim = "TODO"} }
+                }
+            },
+
         };
     }
 
@@ -224,8 +237,6 @@ namespace BossRoom
                 }
             }
         }
-
     }
-
 }
 

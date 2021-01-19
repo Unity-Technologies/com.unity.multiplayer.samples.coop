@@ -1,5 +1,7 @@
+using System;
 using MLAPI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace BossRoom.Client
 {
@@ -35,10 +37,20 @@ namespace BossRoom.Client
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
         }
 
+        [SerializeField]
+        AoEActionInput m_AoePrefab;
         void FixedUpdate()
         {
             // TODO replace with new Unity Input System [GOMPS-81]
 
+            // TODO Sam before PR, talk with David on how we manage abilities
+            if (Input.GetKeyUp("1"))
+            {
+                var aoe = Instantiate(m_AoePrefab);
+                aoe.Initiate(m_NetworkCharacter, ActionType.TANK_TESTABILITY);
+                // todo sam bug: clicking the aoe shouldn't also trigger a move from the player
+                return;
+            }
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
             if (Input.GetMouseButton(0))
             {
@@ -59,7 +71,7 @@ namespace BossRoom.Client
                 if (Physics.Raycast(Camera.main.ScreenPointToRay(m_ClickRequest.Value), out hit) && GetTargetObject(ref hit) != 0)
                 {
                     //if we have clicked on an enemy:
-                    // - two actions will queue one after the other, causing us to run over to our target and take a swing. 
+                    // - two actions will queue one after the other, causing us to run over to our target and take a swing.
                     //if we have clicked on a fallen friend - we will revive him
 
                     var chase_data = new ActionRequestData();
@@ -74,7 +86,7 @@ namespace BossRoom.Client
                     if (isTargetingNPC)
                     {
                         var hit_data = new ActionRequestData();
-                        hit_data.ShouldQueue = true; //wait your turn--don't clobber the chase action. 
+                        hit_data.ShouldQueue = true; //wait your turn--don't clobber the chase action.
                         hit_data.ActionTypeEnum = ActionType.TANK_BASEATTACK;
                         m_NetworkCharacter.ClientSendActionRequest(ref hit_data);
                     }
@@ -106,7 +118,7 @@ namespace BossRoom.Client
 
         private void Update()
         {
-            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate. 
+            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
             if (Input.GetMouseButtonDown(1))
             {
                 m_ClickRequest = Input.mousePosition;
@@ -114,7 +126,7 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object. 
+        /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object.
         /// </summary>
         private ulong GetTargetObject(ref RaycastHit hit)
         {

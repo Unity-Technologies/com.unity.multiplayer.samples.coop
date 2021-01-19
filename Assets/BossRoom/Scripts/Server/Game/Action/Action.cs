@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -49,6 +50,15 @@ namespace BossRoom.Server
         {
             m_Parent = parent;
             m_Data = data; //do a shallow copy.
+        }
+
+        /// <summary>
+        /// Small utility to better understand action start and stop conclusion
+        /// </summary>
+        public static class ActionConclusion
+        {
+            public const bool Stop = false;
+            public const bool Continue = true;
         }
 
         /// <summary>
