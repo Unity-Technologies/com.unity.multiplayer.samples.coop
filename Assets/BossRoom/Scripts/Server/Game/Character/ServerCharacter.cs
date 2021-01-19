@@ -3,9 +3,7 @@ using UnityEngine;
 
 namespace BossRoom.Server
 {
-    [RequireComponent(typeof(NetworkCharacterState))]
-
-    [RequireComponent(typeof(ServerCharacterMovement))]
+    [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
     public class ServerCharacter : MLAPI.NetworkedBehaviour
     {
         public NetworkCharacterState NetState { get; private set; }
@@ -22,7 +20,7 @@ namespace BossRoom.Server
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
         private bool m_BrainEnabled = true;
 
-        private ActionPlayer m_actionPlayer;
+        private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
         /// <summary>
@@ -49,10 +47,10 @@ namespace BossRoom.Server
         void Start()
         {
             NetState = GetComponent<NetworkCharacterState>();
-            m_actionPlayer = new ActionPlayer(this);
+            m_ActionPlayer = new ActionPlayer(this);
             if (IsNPC)
             {
-                m_AIBrain = new AIBrain(this, m_actionPlayer);
+                m_AIBrain = new AIBrain(this, m_ActionPlayer);
             }
         }
 
@@ -84,7 +82,7 @@ namespace BossRoom.Server
             if (NetState.NetworkLifeState.Value == LifeState.ALIVE)
             {
                 //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
-                this.m_actionPlayer.PlayAction(ref data);
+                this.m_ActionPlayer.PlayAction(ref data);
             }
         }
 
@@ -111,7 +109,7 @@ namespace BossRoom.Server
         /// </summary>
         public void ClearActions()
         {
-            this.m_actionPlayer.ClearActions();
+            this.m_ActionPlayer.ClearActions();
         }
 
         private void OnActionPlayRequest(ActionRequestData data)
@@ -164,7 +162,7 @@ namespace BossRoom.Server
 
         void Update()
         {
-            m_actionPlayer.Update();
+            m_ActionPlayer.Update();
             if (m_AIBrain != null && NetState.NetworkLifeState.Value == LifeState.ALIVE && m_BrainEnabled)
             {
                 m_AIBrain.Update();
