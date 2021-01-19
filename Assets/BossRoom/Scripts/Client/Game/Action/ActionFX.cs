@@ -44,7 +44,7 @@ namespace BossRoom.Visual
             ActionLogic logic = GameDataSource.s_Instance.ActionDataByType[data.ActionTypeEnum].Logic;
             switch (logic)
             {
-                case ActionLogic.MELEE: return new MeleeActionFX(ref data, parent);
+                case ActionLogic.Melee: return new MeleeActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }

@@ -49,7 +49,7 @@ namespace BossRoom.Visual
             //Do Trivial Actions (actions that just require playing a single animation, and don't require any state trackincg).
             switch (data.ActionTypeEnum)
             {
-                case ActionType.GENERAL_REVIVE:
+                case ActionType.GeneralRevive:
                     ActionDescription actionDesc = GameDataSource.s_Instance.ActionDataByType[data.ActionTypeEnum];
                     Parent.OurAnimator.SetTrigger(actionDesc.Anim);
                     return;

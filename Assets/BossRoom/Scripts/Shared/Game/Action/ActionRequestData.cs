@@ -8,15 +8,15 @@ namespace BossRoom
     /// </summary>
     public enum ActionType
     {
-        NONE,
-        TANK_BASEATTACK,
-        ARCHER_BASEATTACK,
-        MAGE_BASEATTACK,
-        ROGUE_BASEATTACK,
-        IMP_BASEATTACK,
-        IMPBOSS_BASEATTACK,
-        GENERAL_CHASE,
-        GENERAL_REVIVE,
+        None,
+        TankBaseAttack,
+        ArcherBaseAttack,
+        MageBaseAttack,
+        RogueBaseAttack,
+        ImpBaseAttack,
+        ImpBossBaseAttack,
+        GeneralChase,
+        GeneralRevive,
     }
 
 
@@ -25,11 +25,11 @@ namespace BossRoom
     /// </summary>
     public enum ActionLogic
     {
-        MELEE,
-        RANGED,
-        RANGEDTARGETED,
-        CHASE,
-        REVIVE,
+        Melee,
+        Ranged,
+        RangedTargeted,
+        Chase,
+        Revive,
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }

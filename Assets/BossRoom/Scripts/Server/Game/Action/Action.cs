@@ -62,9 +62,9 @@ namespace BossRoom.Server
 
             switch (logic)
             {
-                case ActionLogic.MELEE: return new MeleeAction(parent, ref data);
-                case ActionLogic.CHASE: return new ChaseAction(parent, ref data);
-                case ActionLogic.REVIVE: return new ReviveAction(parent, ref data);
+                case ActionLogic.Melee: return new MeleeAction(parent, ref data);
+                case ActionLogic.Chase: return new ChaseAction(parent, ref data);
+                case ActionLogic.Revive: return new ReviveAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

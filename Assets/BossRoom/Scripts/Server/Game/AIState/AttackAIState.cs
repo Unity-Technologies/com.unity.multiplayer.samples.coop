@@ -47,7 +47,7 @@ namespace BossRoom.Server
             // see if we're already chasing or attacking our active foe!
             if (m_actionPlayer.GetActiveActionInfo(out var info))
             {
-                if (info.ActionTypeEnum == ActionType.GENERAL_CHASE)
+                if (info.ActionTypeEnum == ActionType.GeneralChase)
                 {
                     if (info.TargetIds != null && info.TargetIds[0] == m_foe.NetworkId)
                     {
@@ -85,7 +85,7 @@ namespace BossRoom.Server
                 // we are not in range so we will need to chase them
                 var chase_data = new ActionRequestData
                 {
-                    ActionTypeEnum = ActionType.GENERAL_CHASE,
+                    ActionTypeEnum = ActionType.GeneralChase,
                     Amount = attackInfo.Range,
                     ShouldQueue = false,
                     TargetIds = new ulong[] { m_foe.NetworkId }
