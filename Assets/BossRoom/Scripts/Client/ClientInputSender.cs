@@ -30,7 +30,8 @@ namespace BossRoom.Client
 
         void Awake()
         {
-            m_NpcLayerMask = LayerMask.GetMask("NPCs");
+            m_NpcLayerMask = LayerMask.NameToLayer("NPCs");
+
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
         }
 
@@ -87,7 +88,7 @@ namespace BossRoom.Client
                             var revive_data = new ActionRequestData();
                             revive_data.ShouldQueue = true;
                             revive_data.ActionTypeEnum = ActionType.GENERAL_REVIVE;
-                            revive_data.TargetIds = new [] {GetTargetObject(ref hit)};
+                            revive_data.TargetIds = new[] { GetTargetObject(ref hit) };
                             m_NetworkCharacter.ClientSendActionRequest(ref revive_data);
                         }
                     }
@@ -115,11 +116,11 @@ namespace BossRoom.Client
         /// <summary>
         /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object. 
         /// </summary>
-        private ulong GetTargetObject(ref RaycastHit hit )
+        private ulong GetTargetObject(ref RaycastHit hit)
         {
             if (hit.collider == null) { return 0; }
             var targetObj = hit.collider.GetComponent<NetworkedObject>();
-            if (targetObj == null) { return 0;  }
+            if (targetObj == null) { return 0; }
 
             return targetObj.NetworkId;
         }
