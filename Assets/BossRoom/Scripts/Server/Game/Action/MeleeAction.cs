@@ -56,7 +56,7 @@ namespace BossRoom.Server
                 var foe = DetectFoe(m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.RecieveHP(this.m_Parent, -Description.Amount);
+                    foe.ReceiveHP(this.m_Parent, -Description.Amount);
                 }
             }
 

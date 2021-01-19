@@ -44,14 +44,14 @@ namespace BossRoom.Visual
                 return;
             }
 
-            m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
-            m_NetState.DoActionEventClient += this.PerformActionFX;
-            m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
-
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
             Parent = transform.parent;
             Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
+
+            m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
+            m_NetState.DoActionEventClient += this.PerformActionFX;
+            m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
             if (!m_NetState.IsNPC)
             {
