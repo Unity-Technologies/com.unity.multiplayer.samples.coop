@@ -58,7 +58,7 @@ namespace BossRoom.Visual
 
                 if ((m_Parent.transform.position - originalTarget.transform.position).sqrMagnitude < (padRange * padRange))
                 {
-                    ClientCharacterVisualization targetViz = originalTarget.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject;
+                    ClientCharacterVisualization targetViz = originalTarget.GetComponent<Client.ClientCharacter>().ChildVizObject;
                     targetViz.OurAnimator.SetTrigger("HitReact1");
                 }
             }

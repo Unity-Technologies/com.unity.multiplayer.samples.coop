@@ -3,9 +3,7 @@ using UnityEngine;
 
 namespace BossRoom.Server
 {
-    [RequireComponent(typeof(NetworkCharacterState))]
-
-    [RequireComponent(typeof(ServerCharacterMovement))]
+    [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
     public class ServerCharacter : MLAPI.NetworkedBehaviour
     {
         public NetworkCharacterState NetState { get; private set; }
@@ -23,37 +21,37 @@ namespace BossRoom.Server
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
         private bool m_BrainEnabled = true;
 
-        private ActionPlayer m_actionPlayer;
+        private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
         /// <summary>
         /// Temp place to store all the active characters (to avoid having to
         /// perform insanely-expensive GameObject.Find operations during Update)
         /// </summary>
-        private static List<ServerCharacter> g_activeServerCharacters = new List<ServerCharacter>();
+        private static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
 
         private void OnEnable()
         {
-            g_activeServerCharacters.Add(this);
+            s_ActiveServerCharacters.Add(this);
         }
 
         private void OnDisable()
         {
-            g_activeServerCharacters.Remove(this);
+            s_ActiveServerCharacters.Remove(this);
         }
 
         public static List<ServerCharacter> GetAllActiveServerCharacters()
         {
-            return g_activeServerCharacters;
+            return s_ActiveServerCharacters;
         }
 
         void Start()
         {
             NetState = GetComponent<NetworkCharacterState>();
-            m_actionPlayer = new ActionPlayer(this);
+            m_ActionPlayer = new ActionPlayer(this);
             if (IsNPC)
             {
-                m_AIBrain = new AIBrain(this, m_actionPlayer);
+                m_AIBrain = new AIBrain(this, m_ActionPlayer);
             }
         }
 
@@ -79,7 +77,7 @@ namespace BossRoom.Server
             if (NetState.NetworkLifeState.Value == LifeState.ALIVE)
             {
                 //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
-                this.m_actionPlayer.PlayAction(ref data);
+                this.m_ActionPlayer.PlayAction(ref data);
             }
         }
 
@@ -106,7 +104,7 @@ namespace BossRoom.Server
         /// </summary>
         public void ClearActions()
         {
-            this.m_actionPlayer.ClearActions();
+            this.m_ActionPlayer.ClearActions();
         }
 
         private void OnActionPlayRequest(ActionRequestData data)
@@ -123,9 +121,9 @@ namespace BossRoom.Server
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight. 
-
+            
             NetState.HitPoints.Value += HP;
-
+            
             //we can't currently heal a dead character back to Alive state. 
             //that's handled by a separate function.
             if (NetState.HitPoints.Value <= 0)
@@ -159,7 +157,7 @@ namespace BossRoom.Server
 
         void Update()
         {
-            m_actionPlayer.Update();
+            m_ActionPlayer.Update();
             if (m_AIBrain != null && NetState.NetworkLifeState.Value == LifeState.ALIVE && m_BrainEnabled)
             {
                 m_AIBrain.Update();
