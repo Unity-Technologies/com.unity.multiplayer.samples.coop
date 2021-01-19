@@ -27,21 +27,21 @@ namespace BossRoom.Server
         /// Temp place to store all the active characters (to avoid having to
         /// perform insanely-expensive GameObject.Find operations during Update)
         /// </summary>
-        private static List<ServerCharacter> g_activeServerCharacters = new List<ServerCharacter>();
+        private static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
 
         private void OnEnable()
         {
-            g_activeServerCharacters.Add(this);
+            s_ActiveServerCharacters.Add(this);
         }
 
         private void OnDisable()
         {
-            g_activeServerCharacters.Remove(this);
+            s_ActiveServerCharacters.Remove(this);
         }
 
         public static List<ServerCharacter> GetAllActiveServerCharacters()
         {
-            return g_activeServerCharacters;
+            return s_ActiveServerCharacters;
         }
 
         void Start()
