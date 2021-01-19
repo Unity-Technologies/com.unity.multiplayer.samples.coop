@@ -25,7 +25,7 @@ namespace BossRoom.Server
         /// <summary>
         /// This field caches a NavMesh Path so that we don't have to allocate a new one each time.
         /// </summary>
-        private NavMeshPath m_navMeshPath;
+        private NavMeshPath m_NavMeshPath;
 
         /// <summary>
         /// The remaining path points to follow to reach the target position.
@@ -51,11 +51,12 @@ namespace BossRoom.Server
         /// Creates a new instance of the <see cref="DynamicNavPath"./>
         /// </summary>
         /// <param name="agent">The NavMeshAgent of the object which uses this path.</param>
+        /// <param name="navigationSystem">The navigation system which updates this path.</param>
         public DynamicNavPath(NavMeshAgent agent, NavigationSystem navigationSystem)
         {
             m_Agent = agent;
             m_Path = new List<Vector3>();
-            m_navMeshPath = new NavMeshPath();
+            m_NavMeshPath = new NavMeshPath();
             m_NavigationSystem = navigationSystem;
 
             navigationSystem.OnNavigationMeshChanged += OnNavMeshChanged;
@@ -167,11 +168,11 @@ namespace BossRoom.Server
         private void RecalculatePath()
         {
             m_CurrentPathOriginalTarget = TargetPosition;
-            m_Agent.CalculatePath(TargetPosition, m_navMeshPath);
+            m_Agent.CalculatePath(TargetPosition, m_NavMeshPath);
 
             m_Path.Clear();
 
-            var corners = m_navMeshPath.corners;
+            var corners = m_NavMeshPath.corners;
 
             for (int i = 1; i < corners.Length; i++) // Skip the first corner because it is the starting point.
             {
