@@ -41,9 +41,10 @@ public class AoEActionInput : MonoBehaviour
             Destroy(this.gameObject);
             return;
         }
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit))
+
+        int layerMask = LayerMask.GetMask("Floor");
+        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, float.PositiveInfinity, layerMask))
         {
-            // todo sam: should only follow floor, not walls or other characters...
             this.transform.position = hit.point;
         }
     }

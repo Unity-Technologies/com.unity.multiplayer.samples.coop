@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3792955485091636975}
   - component: {fileID: 2036526519701997008}
   - component: {fileID: -706112068806776112}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: wall2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,6 +57,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -81,6 +82,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &-706112068806776112
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -104,7 +106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8193510332667705931}
   - component: {fileID: 1064781519039568672}
-  m_Layer: 10
+  m_Layer: 0
   m_Name: Diagonal_Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
