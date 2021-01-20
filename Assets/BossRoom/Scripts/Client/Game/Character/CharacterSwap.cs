@@ -4,6 +4,7 @@ using UnityEngine;
 namespace BossRoom.Client
 {
     /// <summary>
+    /// Responsible for storing of all of the pieces of a character, and swapping the pieces out en masse when asked to.
     /// Debug: logic to allow designers to easily swap models in editor
     /// </summary>
     public class CharacterSwap : MonoBehaviour
