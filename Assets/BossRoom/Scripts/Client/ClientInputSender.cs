@@ -61,12 +61,12 @@ namespace BossRoom.Client
 
             if (m_ClickRequest != null)
             {
-                var ray = Camera.main.ScreenPointToRay(m_AttackClickRequest.Value);
+                var ray = Camera.main.ScreenPointToRay(m_ClickRequest.Value);
                 var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_MouseQueryLayerMask) > 0;
                 if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
                 {
                     //if we have clicked on an enemy:
-                    // - two actions will queue one after the other, causing us to run over to our target and take a swing. 
+                    // - two actions will queue one after the other, causing us to run over to our target and take a swing.
                     //if we have clicked on a fallen friend - we will revive him
 
                     var chase_data = new ActionRequestData();
@@ -76,26 +76,26 @@ namespace BossRoom.Client
                     m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
 
                     //TODO fixme: there needs to be a better way to check if target is a PC or an NPC
-                    bool isTargetingNPC = hit.transform.gameObject.layer == m_NpcLayerMask;
+                    bool isTargetingNPC =  k_CachedHit[0].transform.gameObject.layer == m_NpcLayerMask;
 
                     if (isTargetingNPC)
                     {
                         var hit_data = new ActionRequestData();
-                        hit_data.ShouldQueue = true; //wait your turn--don't clobber the chase action. 
+                        hit_data.ShouldQueue = true; //wait your turn--don't clobber the chase action.
                         hit_data.ActionTypeEnum = ActionType.TANK_BASEATTACK;
                         m_NetworkCharacter.ClientSendActionRequest(ref hit_data);
                     }
                     else
                     {
                         //proceed to revive the target if it's in FAINTED state
-                        var targetCharacterState = hit.transform.GetComponent<NetworkCharacterState>();
+                        var targetCharacterState = k_CachedHit[0].transform.GetComponent<NetworkCharacterState>();
 
                         if (targetCharacterState.NetworkLifeState.Value == LifeState.FAINTED)
                         {
                             var revive_data = new ActionRequestData();
                             revive_data.ShouldQueue = true;
                             revive_data.ActionTypeEnum = ActionType.GENERAL_REVIVE;
-                            revive_data.TargetIds = new[] { GetTargetObject(ref hit) };
+                            revive_data.TargetIds = new[] { GetTargetObject(ref k_CachedHit[0]) };
                             m_NetworkCharacter.ClientSendActionRequest(ref revive_data);
                         }
                     }
@@ -113,7 +113,7 @@ namespace BossRoom.Client
 
         private void Update()
         {
-            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate. 
+            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
             if (Input.GetMouseButtonDown(1))
             {
                 m_ClickRequest = Input.mousePosition;
@@ -121,7 +121,7 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object. 
+        /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object.
         /// </summary>
         private ulong GetTargetObject(ref RaycastHit hit)
         {
