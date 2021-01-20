@@ -74,7 +74,7 @@ namespace BossRoom.Server
                 }
             }
 
-            // Switch scenes after a short delay
+            // Delay a few seconds to give the UI time to react, then switch scenes
             StartCoroutine(CoroEndLobby());
         }
 
