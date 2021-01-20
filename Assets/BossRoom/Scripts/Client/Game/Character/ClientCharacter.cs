@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Client
@@ -7,11 +5,15 @@ namespace BossRoom.Client
     [RequireComponent(typeof(BossRoom.NetworkCharacterState))]
     public class ClientCharacter : MLAPI.NetworkedBehaviour
     {
-        //!!STUB. Client Character gamelogic will go here. 
+        /// <summary>
+        /// The Vizualization GameObject isn't in the same transform hierarchy as the object, but it registers itself here
+        /// so that the visual GameObject can be found from a NetworkId. 
+        /// </summary>
+        public BossRoom.Visual.ClientCharacterVisualization ChildVizObject { get; set; }
 
         public override void NetworkStart()
         {
-            if( !IsClient ) { this.enabled = false; }
+            if (!IsClient) { this.enabled = false; }
         }
 
     }
