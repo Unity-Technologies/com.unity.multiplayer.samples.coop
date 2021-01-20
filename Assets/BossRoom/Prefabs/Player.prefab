@@ -130,6 +130,7 @@ GameObject:
   - component: {fileID: 6970334877957368017}
   - component: {fileID: 4602672899881656135}
   - component: {fileID: 7690172137830037487}
+  - component: {fileID: -909640835356089789}
   m_Layer: 3
   m_Name: Player
   m_TagString: Player
@@ -183,7 +184,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitPoints:
-    InternalValue: 1000000
+    InternalValue: 250
   Mana:
     InternalValue: 10
 --- !u!114 &4600110157238723776
@@ -277,6 +278,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   IsNPC: 0
   DetectRange: 10
+  BrainEnabled: 1
 --- !u!114 &7690172137830037487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -287,6 +289,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 797d92969c575574d868e069887e8486, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &-909640835356089789
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600110157238723781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae9a06a3585027044ababe9f9cb7b8e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1001 &7872000410579295758

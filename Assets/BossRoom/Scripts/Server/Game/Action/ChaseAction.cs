@@ -1,5 +1,5 @@
-using UnityEngine;
 using MLAPI;
+using UnityEngine;
 
 namespace BossRoom.Server
 {
@@ -9,7 +9,7 @@ namespace BossRoom.Server
         private ServerCharacterMovement m_Movement;
 
 
-        public ChaseAction(ServerCharacter parent, ref ActionRequestData data, int level) : base(parent, ref data, level)
+        public ChaseAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
         }
 
@@ -30,7 +30,15 @@ namespace BossRoom.Server
 
             m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
             m_Movement.FollowTransform(m_Target.transform);
+            m_CurrentTargetPos = m_Target.transform.position;
 
+            if (StopIfDone())
+            {
+                m_Parent.transform.LookAt(m_CurrentTargetPos); //even if we didn't move, snap to face the target!
+                return false;
+            }
+
+            m_Movement.SetMovementTarget(m_Target.transform.position);
             return true;
         }
 
@@ -46,18 +54,30 @@ namespace BossRoom.Server
         }
 
         /// <summary>
+        /// Tests to see if we've reached our target. Returns true if we've reached our target, false otherwise (in which case it also stops our movement). 
+        /// </summary>
+        private bool StopIfDone()
+        {
+            float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
+            if ((m_Data.Amount * m_Data.Amount) > distToTarget2)
+            {
+                //we made it! we're done. 
+                Cancel();
+                return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Called each frame while the action is running. 
         /// </summary>
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool Update()
         {
-            var distToTargetSqr = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
-            if (m_Data.Amount * m_Data.Amount > distToTargetSqr)
-            {
-                //we made it! we're done. 
-                Cancel();
-                return false;
-            }
+            if (StopIfDone()) { return false; }
+
+            m_CurrentTargetPos = m_Target.transform.position;
 
             return true;
         }
