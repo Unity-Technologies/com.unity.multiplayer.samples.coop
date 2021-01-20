@@ -59,6 +59,10 @@ namespace BossRoom.Client
         }
 
 
+        /// <summary>
+        /// Swap the visuals of the character to the index passed in. 
+        /// </summary>
+        /// <param name="modelIndex"></param>
         public void SwapToModel(int modelIndex)
         {
             Assert.IsTrue(modelIndex < m_CharacterModels.Length);
@@ -67,6 +71,7 @@ namespace BossRoom.Client
             {
                 m_CharacterModels[i].SetFullActive(i == modelIndex);
             }
+            m_ModelIndex = modelIndex;
         }
 
         private void Update()
