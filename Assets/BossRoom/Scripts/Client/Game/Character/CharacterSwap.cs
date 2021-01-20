@@ -1,15 +1,14 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Reflection;
+using UnityEngine.Assertions;
 using UnityEngine;
 
 namespace BossRoom.Client
 {
-
-    //Debug: logic to allow designers to easily swap models in editor
+    /// <summary>
+    /// Debug: logic to allow designers to easily swap models in editor
+    /// </summary>
     public class CharacterSwap : MonoBehaviour
     {
-        [System.SerializableAttribute]
+        [System.Serializable]
         public class CharacterModelSet
         {
             public GameObject ears;
@@ -18,15 +17,15 @@ namespace BossRoom.Client
             public GameObject hair;
             public GameObject eyes;
             public GameObject torso;
-            public GameObject gear_right_hand;
-            public GameObject gear_left_hand;
-            public GameObject hand_right;
-            public GameObject hand_left;
-            public GameObject shoulder_right;
-            public GameObject shoulder_left;
+            public GameObject gearRightHand;
+            public GameObject gearLeftHand;
+            public GameObject handRight;
+            public GameObject handLeft;
+            public GameObject shoulderRight;
+            public GameObject shoulderLeft;
 
 
-            public void setFullActive(bool isActive)
+            public void SetFullActive(bool isActive)
             {
                 ears.SetActive(isActive);
                 head.SetActive(isActive);
@@ -34,22 +33,21 @@ namespace BossRoom.Client
                 hair.SetActive(isActive);
                 eyes.SetActive(isActive);
                 torso.SetActive(isActive);
-                gear_left_hand.SetActive(isActive);
-                hand_right.SetActive(isActive);
-                hand_left.SetActive(isActive);
-                shoulder_right.SetActive(isActive);
-                shoulder_left.SetActive(isActive);
-                gear_left_hand.SetActive(isActive);
-                gear_right_hand.SetActive(isActive);
+                gearLeftHand.SetActive(isActive);
+                gearRightHand.SetActive(isActive);
+                handRight.SetActive(isActive);
+                handLeft.SetActive(isActive);
+                shoulderRight.SetActive(isActive);
+                shoulderLeft.SetActive(isActive);
             }
         }
 
         [SerializeField]
-        int m_ModelIndex;
-        int m_LastModelIndex;
+        private int m_ModelIndex;
+        private int m_LastModelIndex;
 
         [SerializeField]
-        CharacterModelSet[] m_CharacterModels;
+        private CharacterModelSet[] m_CharacterModels;
         void Awake()
         {
             if (m_ModelIndex >= m_CharacterModels.Length)
@@ -60,22 +58,17 @@ namespace BossRoom.Client
         }
 
 
-        public void SwapToModel(int idx)
+        public void SwapToModel(int modelIndex)
         {
-            if (idx >= m_CharacterModels.Length)
-            {
-                print("Index out of bounds");
-                return;
-            }
+            Assert.IsTrue(modelIndex < m_CharacterModels.Length);
 
-            for (int x = 0; x < m_CharacterModels.Length; x++)
+            for (int i = 0; i < m_CharacterModels.Length; i++)
             {
-                m_CharacterModels[x].setFullActive(x == idx);
+                m_CharacterModels[i].SetFullActive(i == modelIndex);
             }
         }
 
-        // Update is called once per frame
-        void Update()
+        private void Update()
         {
             if (m_LastModelIndex != m_ModelIndex)
             {
