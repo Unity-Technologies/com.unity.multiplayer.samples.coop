@@ -37,6 +37,15 @@ namespace BossRoom.Server
         public abstract bool Update();
 
         /// <summary>
+        /// Called when the Action ends naturally. By default just calls logic in "cancel", but derived classes can do
+        /// different things in end vs cancel by overriding both. 
+        /// </summary>
+        public virtual void End()
+        {
+            Cancel();
+        }
+
+        /// <summary>
         /// This will get called when the Action gets canceled. The Action should clean up any ongoing effects at this point. 
         /// (e.g. an Action that involves moving should cancel the current active move). 
         /// </summary>
