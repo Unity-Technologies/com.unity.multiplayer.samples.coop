@@ -65,6 +65,8 @@ namespace BossRoom.Server
                 case ActionLogic.Melee: return new MeleeAction(parent, ref data);
                 case ActionLogic.Chase: return new ChaseAction(parent, ref data);
                 case ActionLogic.Revive: return new ReviveAction(parent, ref data);
+                case ActionLogic.LaunchProjectile: return new LaunchProjectileAction(parent, ref data);
+                case ActionLogic.DriveProjectile: return new DriveProjectileAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

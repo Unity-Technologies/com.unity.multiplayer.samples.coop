@@ -13,9 +13,12 @@ namespace BossRoom.Server
         /// </summary>
         public bool IsNPC
         {
-
             get { return NetState.IsNPC; }
         }
+
+        [SerializeField]
+        [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
+        private ActionType m_StartingAction = ActionType.None;
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
@@ -64,6 +67,12 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.OnReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+
+                if (m_StartingAction != ActionType.None)
+                {
+                    var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
+                    PlayAction(ref startingAction);
+                }
             }
         }
 
@@ -121,9 +130,9 @@ namespace BossRoom.Server
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight. 
-            
+
             NetState.HitPoints.Value += HP;
-            
+
             //we can't currently heal a dead character back to Alive state. 
             //that's handled by a separate function.
             if (NetState.HitPoints.Value <= 0)

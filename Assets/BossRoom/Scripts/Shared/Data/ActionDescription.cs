@@ -35,6 +35,9 @@ namespace BossRoom
 
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;
+
+        [Tooltip("If this action spawns GameObjects, list their prefabs here")]
+        public GameObject[] Spawns;
     }
 
 
