@@ -1,31 +1,44 @@
-using MLAPI;
-using UnityEngine;
 using Cinemachine;
+using MLAPI;
+using System;
+using UnityEngine;
 
-namespace BossRoom.Viz
+namespace BossRoom.Visual
 {
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacterVisualization : NetworkedBehaviour
     {
         private NetworkCharacterState m_NetState;
+
+        [SerializeField]
         private Animator m_ClientVisualsAnimator;
+
+        public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
+
+        private ActionVisualization m_ActionViz;
+
         private CinemachineVirtualCamera m_MainCamera;
-        private Transform m_Parent;
+
+        public Transform Parent { get; private set; }
 
         public float MinZoomDistance = 3;
         public float MaxZoomDistance = 30;
         public float ZoomSpeed = 3;
 
-        private const float MAX_VIZ_SPEED = 4;    //max speed at which we will chase the parent transform. 
-        private const float MAX_ROT_SPEED = 280;  //max angular speed at which we will rotate, in degrees/second. 
+        private const float k_MaxVizSpeed = 4;    //max speed at which we will chase the parent transform. 
+        private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
+
+        public void Start()
+        {
+            m_ActionViz = new ActionVisualization(this);
+        }
 
         /// <inheritdoc />
         public override void NetworkStart()
         {
-            if (!IsClient)
+            if (!IsClient || transform.parent == null)
             {
                 enabled = false;
                 return;
@@ -33,10 +46,12 @@ namespace BossRoom.Viz
 
             m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += this.PerformActionFX;
-
+            m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
-            m_Parent = transform.parent;
+            Parent = transform.parent;
+            Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
+
 
             if (IsLocalPlayer)
             {
@@ -44,23 +59,40 @@ namespace BossRoom.Viz
             }
         }
 
-        private void PerformActionFX(ActionRequestData data )
+        private void PerformActionFX(ActionRequestData data)
         {
-            //TODO: [GOMPS-13] break this method out into its own class, so we can drive multi-frame graphical effects. 
-            //FIXME: [GOMPS-13] hook this up to information in the ActionDescription. 
-            m_ClientVisualsAnimator.SetInteger("AttackID", 1);
-            m_ClientVisualsAnimator.SetTrigger("BeginAttack");
+
+            m_ActionViz.PlayAction(ref data);
         }
 
-        void Awake()
+        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
-            m_ClientVisualsAnimator = GetComponent<Animator>();
+            switch (newValue)
+            {
+                case LifeState.ALIVE:
+                    m_ClientVisualsAnimator.SetTrigger("StandUp");
+                    break;
+                case LifeState.FAINTED:
+                    m_ClientVisualsAnimator.SetTrigger("FallDown");
+                    break;
+                case LifeState.DEAD:
+                    m_ClientVisualsAnimator.SetTrigger("Dead");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
+            }
         }
 
         void Update()
         {
-            SmoothMove();
+            if (Parent == null)
+            {
+                //since we aren't in the transform hierarchy, we have to explicitly die when our parent dies. 
+                GameObject.Destroy(this.gameObject);
+                return;
+            }
 
+            SmoothMove();
 
             if (m_ClientVisualsAnimator)
             {
@@ -68,51 +100,57 @@ namespace BossRoom.Viz
                 m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.NetworkMovementSpeed.Value);
             }
 
+            m_ActionViz.Update();
+
             float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (scroll != 0 && m_MainCamera )
+            if (scroll != 0 && m_MainCamera)
             {
                 ZoomCamera(scroll);
             }
 
         }
 
+        public void OnAnimEvent(string id)
+        {
+            //if you are trying to figure out who calls this method, it's "magic". The Unity Animation Event system takes method names as strings,
+            //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one
+            //example of where this is configured. 
+
+            m_ActionViz.OnAnimEvent(id);
+        }
+
         private void SmoothMove()
         {
-            if (m_Parent == null)
+            var posDiff = Parent.transform.position - transform.position;
+            var angleDiff = Quaternion.Angle(Parent.transform.rotation, transform.rotation);
+
+            float timeDelta = Time.deltaTime;
+
+            float posDiffMag = posDiff.magnitude;
+            if (posDiffMag > 0)
             {
-                //since we aren't in the transform hierarchy, we have to explicitly die when our parent dies. 
-                GameObject.Destroy(this.gameObject);
-                return;
-            } 
+                float maxMove = timeDelta * k_MaxVizSpeed;
+                float moveDist = Mathf.Min(maxMove, posDiffMag);
+                posDiff *= (moveDist / posDiffMag);
 
-
-            var pos_diff = m_Parent.transform.position - transform.position;
-            var angle_diff = Quaternion.Angle(m_Parent.transform.rotation, transform.rotation);
-
-            float time_delta = Time.deltaTime;
-
-            float pos_diff_mag = pos_diff.magnitude;
-            if( pos_diff_mag > 0 )
-            {
-                float max_move = time_delta * MAX_VIZ_SPEED;
-                float move_dist = Mathf.Min(max_move, pos_diff_mag);
-                pos_diff *= (move_dist / pos_diff_mag);
-
-                transform.position += pos_diff;
+                transform.position += posDiff;
             }
 
-            if( angle_diff > 0 )
+            if (angleDiff > 0)
             {
-                float max_angle_move = time_delta * MAX_ROT_SPEED;
-                float angle_move = Mathf.Min(max_angle_move, angle_diff);
-                float t = angle_move / angle_diff;
-                transform.rotation = Quaternion.Slerp(transform.rotation, m_Parent.transform.rotation, t);
+                float maxAngleMove = timeDelta * k_MaxRotSpeed;
+                float angleMove = Mathf.Min(maxAngleMove, angleDiff);
+                float t = angleMove / angleDiff;
+                transform.rotation = Quaternion.Slerp(transform.rotation, Parent.transform.rotation, t);
             }
         }
 
         private void AttachCamera()
         {
-            m_MainCamera = (CinemachineVirtualCamera)FindObjectOfType(typeof(CinemachineVirtualCamera));
+            var cameraGO = GameObject.FindGameObjectWithTag("CMCamera");
+            if (cameraGO == null) { return; }
+
+            m_MainCamera = cameraGO.GetComponent<CinemachineVirtualCamera>();
             if (m_MainCamera)
             {
                 m_MainCamera.Follow = transform;

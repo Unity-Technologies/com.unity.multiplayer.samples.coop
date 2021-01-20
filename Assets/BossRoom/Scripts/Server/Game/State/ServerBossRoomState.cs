@@ -1,8 +1,5 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using BossRoom;
-using System;
 using MLAPI;
 
 namespace BossRoom.Server
@@ -14,11 +11,11 @@ namespace BossRoom.Server
     {
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
-        private NetworkedObject PlayerPrefab;
+        private NetworkedObject m_PlayerPrefab;
 
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
-        private NetworkedObject EnemyPrefab;
+        private NetworkedObject m_EnemyPrefab;
 
         public override GameState ActiveState { get { return GameState.BOSSROOM; } }
 
@@ -66,14 +63,14 @@ namespace BossRoom.Server
 
         private void SpawnPlayer(ulong clientId)
         {
-            var NewPlayer = Instantiate(PlayerPrefab);
-            NewPlayer.SpawnAsPlayerObject(clientId);
+            var newPlayer = Instantiate(m_PlayerPrefab);
+            newPlayer.SpawnAsPlayerObject(clientId);
         }
 
         private void SpawnEnemy()
         {
-            var NewEnemy = Instantiate(EnemyPrefab);
-            NewEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+            var newEnemy = Instantiate(m_EnemyPrefab);
+            newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
         }
 
         /// <summary>

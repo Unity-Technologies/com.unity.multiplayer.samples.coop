@@ -1,6 +1,5 @@
-using System;
-using System.Linq;
 using MLAPI;
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -24,10 +23,17 @@ namespace BossRoom.Server
 
         private NavMeshPath m_DesiredMovementPath;
         private MovementState m_MovementState;
-        private ServerCharacter m_CharLogic;
+
 
         [SerializeField]
         private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition 
+
+        private void Awake()
+        {
+            m_NavMeshAgent = GetComponent<NavMeshAgent>();
+            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
+            m_Rigidbody = GetComponent<Rigidbody>();
+        }
 
         public override void NetworkStart()
         {
@@ -40,14 +46,7 @@ namespace BossRoom.Server
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
-            m_NetworkCharacterState.OnReceivedClientInput += OnReceivedClientInput;
             m_DesiredMovementPath = new NavMeshPath();
-        }
-
-        private void OnReceivedClientInput(Vector3 position )
-        {
-            m_CharLogic.ClearActions(); //a fresh movement request trumps whatever we were doing before. 
-            SetMovementTarget(position);
         }
 
         /// <summary>
@@ -67,16 +66,7 @@ namespace BossRoom.Server
         /// </summary>
         public void CancelMove()
         {
-            //Luke, is there anything else I should do to clear move state here?
             m_MovementState = MovementState.Idle;
-        }
-
-        private void Awake()
-        {
-            m_NavMeshAgent = GetComponent<NavMeshAgent>();
-            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
-            m_CharLogic = GetComponent<ServerCharacter>();
-            m_Rigidbody = GetComponent<Rigidbody>();
         }
 
         private void FixedUpdate()

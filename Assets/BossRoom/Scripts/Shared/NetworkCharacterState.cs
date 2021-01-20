@@ -10,7 +10,12 @@ using MLAPI.Serialization.Pooled;
 namespace BossRoom
 {
 
-
+    public enum LifeState
+    {
+        ALIVE,
+        FAINTED,
+        DEAD,
+    }
 
     /// <summary>
     /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
@@ -29,8 +34,9 @@ namespace BossRoom
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
         public NetworkedVarInt HitPoints;
-        public NetworkedVarInt Mana;
-
+        public NetworkedVarInt Mana; 
+        public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.ALIVE);
+        
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
@@ -63,11 +69,11 @@ namespace BossRoom
         /// Client->Server RPC that sends a request to play an action. 
         /// </summary>
         /// <param name="data">Data about which action to play an dits associated details. </param>
-        public void C2S_DoAction(ref ActionRequestData data)
+        public void ClientSendActionRequest(ref ActionRequestData data)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {
-                SerializeAction(ref data, stream);
+                data.Write(stream);
                 InvokeServerRpcPerformance(RecvDoActionServer, stream);
             }
         }
@@ -76,91 +82,29 @@ namespace BossRoom
         /// Server->Client RPC that broadcasts this action play to all clients. 
         /// </summary>
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
-        public void S2C_BroadcastAction(ref ActionRequestData data )
+        public void ServerBroadcastAction(ref ActionRequestData data )
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {
-                SerializeAction(ref data, stream);
+                data.Write(stream);
                 InvokeClientRpcOnEveryonePerformance(RecvDoActionClient, stream);
-            }
-        }
-
-        private void SerializeAction( ref ActionRequestData data, PooledBitStream stream )
-        {
-            var Logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
-            var Info = ActionData.LogicInfos[Logic];
-
-            using (PooledBitWriter writer = PooledBitWriter.Get(stream))
-            {
-                writer.WriteInt16((short)data.ActionTypeEnum);
-                writer.WriteBool(data.ShouldQueue);
-                if( Info.HasPosition )
-                {
-                    writer.WriteVector3(data.Position);
-                }
-                if (Info.HasDirection)
-                {
-                    writer.WriteVector3(data.Direction);
-                }
-                if (Info.HasTarget )
-                {
-                    writer.WriteULongArray(data.TargetIds);
-                }
-                if( Info.HasAmount )
-                {
-                    writer.WriteSingle(data.Amount);
-                }
             }
         }
 
         [ClientRPC]
         private void RecvDoActionClient(ulong clientId, Stream stream )
         {
-            ActionRequestData data = RecvDoAction(clientId, stream);
+            var data = new ActionRequestData();
+            data.Read(stream);
             DoActionEventClient?.Invoke(data);
         }
 
         [ServerRPC]
         private void RecvDoActionServer(ulong clientId, Stream stream)
         {
-            ActionRequestData data = RecvDoAction(clientId, stream);
-
+            var data = new ActionRequestData();
+            data.Read(stream);
             DoActionEventServer?.Invoke(data);
         }
-
-        private ActionRequestData RecvDoAction(ulong clientId, Stream stream )
-        {
-            ActionRequestData data = new ActionRequestData();
-
-            using (PooledBitReader reader = PooledBitReader.Get(stream))
-            {
-                data.ActionTypeEnum = (ActionType)reader.ReadInt16();
-                data.ShouldQueue = reader.ReadBool();
-
-                var Logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
-                var Info = ActionData.LogicInfos[Logic];
-
-                if (Info.HasPosition)
-                {
-                    data.Position = reader.ReadVector3();
-                }
-                if (Info.HasDirection)
-                {
-                    data.Direction = reader.ReadVector3();
-                }
-                if (Info.HasTarget)
-                {
-                    data.TargetIds = reader.ReadULongArray();
-                }
-                if (Info.HasAmount)
-                {
-                    data.Amount = reader.ReadSingle();
-                }
-            }
-
-            return data;
-        }
-
-
     }
 }
