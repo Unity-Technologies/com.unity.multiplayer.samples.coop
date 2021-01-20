@@ -15,6 +15,9 @@ namespace BossRoom.Visual
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
+        [SerializeField]
+        private ModelAppearanceSetter m_ModelSetter;
+
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
 
         private ActionVisualization m_ActionViz;
@@ -52,6 +55,12 @@ namespace BossRoom.Visual
             Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
 
+            // listen for char-select info to change (in practice, this info doesn't
+            // change, but we may not have the values set yet) ...
+            m_NetState.CharacterClass.OnValueChanged += OnCharacterClassChanged;
+            m_NetState.IsMale.OnValueChanged += OnIsMaleChanged;
+            // ...and visualize the current char-select values that we know about
+            ApplyCharacterClassAndGender();
 
             if (IsLocalPlayer)
             {
@@ -80,6 +89,24 @@ namespace BossRoom.Visual
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
+            }
+        }
+
+        private void OnCharacterClassChanged(CharacterTypeEnum oldValue, CharacterTypeEnum newValue)
+        {
+            ApplyCharacterClassAndGender();
+        }
+
+        private void OnIsMaleChanged(bool oldValue, bool newValue)
+        {
+            ApplyCharacterClassAndGender();
+        }
+
+        private void ApplyCharacterClassAndGender()
+        {
+            if (m_ModelSetter)
+            {
+                m_ModelSetter.SetModel(m_NetState.CharacterClass.Value, m_NetState.IsMale.Value);
             }
         }
 

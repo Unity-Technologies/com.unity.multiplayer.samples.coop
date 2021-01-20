@@ -36,6 +36,16 @@ namespace BossRoom
         public NetworkedVarInt HitPoints;
         public NetworkedVarInt Mana; 
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.ALIVE);
+
+        /// <summary>
+        /// For players, indicates the class they chose in char-select. (Not currently used by monsters)
+        /// </summary>
+        public NetworkedVar<CharacterTypeEnum> CharacterClass { get; } = new NetworkedVar<CharacterTypeEnum>();
+
+        /// <summary>
+        /// For players, indicates whether they wanted a male or female avatar. (Not used by monsters)
+        /// </summary>
+        public NetworkedVarBool IsMale { get; } = new NetworkedVarBool();
         
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
