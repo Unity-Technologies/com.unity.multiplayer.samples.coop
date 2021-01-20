@@ -111,6 +111,7 @@ namespace BossRoom.Server
         {
             return m_ServerCharacter;
         }
+
         /// <summary>
         /// Convenience getter that returns the CharacterData associated with this creature. 
         /// </summary>

@@ -77,7 +77,7 @@ namespace BossRoom.Client
                     {
                         float range = GameDataSource.s_Instance.ActionDataByType[playerAction.ActionTypeEnum].Range;
                         var chaseData = new ActionRequestData();
-                        chaseData.ActionTypeEnum = ActionType.GENERAL_CHASE;
+                        chaseData.ActionTypeEnum = ActionType.GeneralChase;
                         chaseData.Amount = range;
                         chaseData.TargetIds = new ulong[] { GetTargetObject(ref hit) };
                         m_NetworkCharacter.ClientSendActionRequest(ref chaseData);
@@ -124,7 +124,7 @@ namespace BossRoom.Client
             {
                 resultData = new ActionRequestData();
                 resultData.ShouldQueue = true;
-                resultData.ActionTypeEnum = ActionType.GENERAL_REVIVE;
+                resultData.ActionTypeEnum = ActionType.GeneralRevive;
                 resultData.TargetIds = new[] { targetNetState.NetworkId };
                 return true;
             }
