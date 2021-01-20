@@ -122,7 +122,7 @@ namespace BossRoom
 
             { ActionType.TANK_TESTABILITY, new List<ActionDescription>
                 {
-                    {new ActionDescription{Logic=ActionLogic.AOE, Amount = 30, ManaCost = 3, Range = 10, Radius = 7,  Anim = "TODO"} }
+                    {new ActionDescription{Logic=ActionLogic.AOE, Amount = 30, ManaCost = 3, Range = 10, Radius = 7,  Anim = "Attack1"} }
                 }
             },
 

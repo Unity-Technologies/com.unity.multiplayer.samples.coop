@@ -43,6 +43,7 @@ public class AoEActionInput : MonoBehaviour
         }
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit))
         {
+            // todo sam: should only follow floor, not walls or other characters...
             this.transform.position = hit.point;
         }
     }

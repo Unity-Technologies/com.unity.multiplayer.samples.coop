@@ -15,11 +15,15 @@ public class AOEAction : Action
         // Note: could have a non alloc version of this overlap sphere where we statically store our collider array, but since this is a self
         // destroyed object, the complexity added doesn't seem worth it for now.
         var colliders = Physics.OverlapSphere(m_Data.Position, actionDescription.Radius, LayerMask.GetMask("NPCs"));
-        foreach (var detectedImp in colliders)
+        m_Data.TargetIds = new ulong[colliders.Length]; // we reset target IDs here, so clients can't set their own target ID list.
+        for (int i = 0; i < colliders.Length; i++)
         {
-            var enemy = detectedImp.GetComponent<ServerCharacter>();
+            var enemy = colliders[i].GetComponent<ServerCharacter>();
             enemy.ReceiveHP(m_Parent, -actionDescription.Amount);
+            m_Data.TargetIds[i++] = enemy.NetworkId;
         }
+        // broadcasting to all players including myself. Client is authoritative on input, but not on the actual gameplay effect of that input.
+        m_Parent.NetState.ServerBroadcastAction(ref Data);
         return ActionConclusion.Stop;
     }
 

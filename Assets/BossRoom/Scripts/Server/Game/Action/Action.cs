@@ -53,15 +53,6 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Small utility to better understand action start and stop conclusion
-        /// </summary>
-        public static class ActionConclusion
-        {
-            public const bool Stop = false;
-            public const bool Continue = true;
-        }
-
-        /// <summary>
         /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
         /// </summary>
         /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>

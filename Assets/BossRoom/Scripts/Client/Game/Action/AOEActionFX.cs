@@ -14,11 +14,13 @@ public class AOEActionFX : ActionFX
 
     public override void Start()
     {
-
+        Debug.Log($"AoE action FX Start, affecting characters {m_Data.TargetIds}");
+        m_Parent.OurAnimator.SetTrigger(Description.Anim);
     }
 
     public override bool Update()
     {
-        return false;
+        Debug.Log("AoE action FX Update");
+        return ActionConclusion.Stop;
     }
 }
