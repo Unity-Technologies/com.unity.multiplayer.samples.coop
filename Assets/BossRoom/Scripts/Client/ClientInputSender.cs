@@ -1,3 +1,4 @@
+using System;
 using MLAPI;
 using UnityEngine;
 
@@ -36,6 +37,8 @@ namespace BossRoom.Client
             }
         }
 
+        public event Action<Vector3> OnClientClick;
+
         void Awake()
         {
             m_NpcLayerMask = LayerMask.NameToLayer("NPCs");
@@ -55,7 +58,10 @@ namespace BossRoom.Client
                 if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_MouseQueryLayerMask) > 0)
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
-                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point, "MLAPI_INTERNAL");
+                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, hit.point,
+                        "MLAPI_INTERNAL");
+                    //Send our client only click request
+                    OnClientClick.Invoke(hit.point);
                 }
             }
 
