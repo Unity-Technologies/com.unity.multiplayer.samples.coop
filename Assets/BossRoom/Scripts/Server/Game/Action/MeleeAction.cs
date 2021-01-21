@@ -27,7 +27,7 @@ namespace BossRoom.Server
     /// </remarks>
     public class MeleeAction : Action
     {
-        private bool m_ExecFired;
+        private bool m_ExecutionFired;
         private ulong m_ProvisionalTarget;
 
         //cache Physics Cast hits, to minimize allocs.
@@ -50,9 +50,9 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (!m_ExecFired && (Time.time - TimeStarted) >= Description.ExecTime_s)
+            if (!m_ExecutionFired && (Time.time - TimeStarted) >= Description.ExecTime_s)
             {
-                m_ExecFired = true;
+                m_ExecutionFired = true;
                 var foe = DetectFoe(m_ProvisionalTarget);
                 if (foe != null)
                 {

@@ -7,7 +7,6 @@ namespace BossRoom.Visual
     /// This is a companion class to ClientCharacterVisualization that is specifically responsible for visualizing Actions. Action visualizations have lifetimes
     /// and ongoing state, making this class closely analogous in spirit to the BossRoom.Server.ActionPlayer class. 
     /// </summary>
-    [RequireComponent(typeof(ClientCharacterVisualization))]
     public class ActionVisualization
     {
         private List<ActionFX> m_PlayingActions;
@@ -50,15 +49,18 @@ namespace BossRoom.Visual
             //Do Trivial Actions (actions that just require playing a single animation, and don't require any state trackincg).
             switch (data.ActionTypeEnum)
             {
-                case ActionType.GENERAL_REVIVE:
-                    Parent.OurAnimator.SetTrigger("BeginRevive");
+                case ActionType.GeneralRevive:
+                    ActionDescription actionDesc = GameDataSource.s_Instance.ActionDataByType[data.ActionTypeEnum];
+                    Parent.OurAnimator.SetTrigger(actionDesc.Anim);
                     return;
             }
 
             ActionFX action = ActionFX.MakeActionFX(ref data, Parent);
             action.TimeStarted = Time.time;
-            m_PlayingActions.Add(action);
-            action.Start();
+            if (action.Start())
+            {
+                m_PlayingActions.Add(action);
+            }
         }
     }
 }

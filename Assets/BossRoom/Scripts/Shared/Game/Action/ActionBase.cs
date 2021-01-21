@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace BossRoom
 {
     /// <summary>
@@ -26,9 +24,7 @@ namespace BossRoom
         {
             get
             {
-                var list = ActionData.ActionDescriptions[Data.ActionTypeEnum];
-                int level = Mathf.Min(Data.Level, list.Count - 1); //if we don't go up to the requested level, just cap at the max level. 
-                return list[level];
+                return GameDataSource.s_Instance.ActionDataByType[Data.ActionTypeEnum];
             }
         }
 

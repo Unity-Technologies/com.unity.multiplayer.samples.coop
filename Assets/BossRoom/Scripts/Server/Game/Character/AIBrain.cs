@@ -67,7 +67,6 @@ namespace BossRoom.Server
             return AIStateType.IDLE;
         }
 
-        #region Functions for AIStateLogics
         /// <summary>
         /// Returns true if it be appropriate for us to murder this character, starting right now!
         /// </summary>
@@ -113,6 +112,16 @@ namespace BossRoom.Server
             return m_ServerCharacter;
         }
 
-        #endregion
+        /// <summary>
+        /// Convenience getter that returns the CharacterData associated with this creature. 
+        /// </summary>
+        public CharacterClass CharacterData
+        {
+            get
+            {
+                return GameDataSource.s_Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType.Value];
+            }
+        }
+
     }
 }

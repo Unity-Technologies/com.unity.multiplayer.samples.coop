@@ -8,14 +8,14 @@ namespace BossRoom.Server
     /// </summary>
     public class ActionPlayer
     {
-        private ServerCharacter m_parent;
+        private ServerCharacter m_Parent;
 
-        private List<Action> m_queue;
+        private List<Action> m_Queue;
 
         public ActionPlayer(ServerCharacter parent)
         {
-            m_parent = parent;
-            m_queue = new List<Action>();
+            m_Parent = parent;
+            m_Queue = new List<Action>();
         }
 
         public void PlayAction(ref ActionRequestData data)
@@ -25,11 +25,11 @@ namespace BossRoom.Server
                 ClearActions();
             }
 
-            var new_action = Action.MakeAction(m_parent, ref data);
+            var new_action = Action.MakeAction(m_Parent, ref data);
 
-            bool was_empty = m_queue.Count == 0;
-            m_queue.Add(new_action);
-            if (was_empty)
+            bool wasEmpty = m_Queue.Count == 0;
+            m_Queue.Add(new_action);
+            if (wasEmpty)
             {
                 AdvanceQueue(false);
             }
@@ -37,13 +37,13 @@ namespace BossRoom.Server
 
         public void ClearActions()
         {
-            if (m_queue.Count > 0)
+            if (m_Queue.Count > 0)
             {
-                m_queue[0].Cancel();
+                m_Queue[0].Cancel();
             }
 
             //only the first element of the queue is running, so it is the only one that needs to be canceled. 
-            m_queue.Clear();
+            m_Queue.Clear();
         }
 
         /// <summary>
@@ -51,9 +51,9 @@ namespace BossRoom.Server
         /// </summary>
         public bool GetActiveActionInfo(out ActionRequestData data)
         {
-            if (m_queue.Count > 0)
+            if (m_Queue.Count > 0)
             {
-                data = m_queue[0].Data;
+                data = m_Queue[0].Data;
                 return true;
             }
             else
@@ -69,15 +69,15 @@ namespace BossRoom.Server
         /// <param name="expireFirstElement">Pass true to remove the first element and advance to the next element. Pass false to "advance" to the 0th element</param>
         private void AdvanceQueue(bool expireFirstElement)
         {
-            if (expireFirstElement && m_queue.Count > 0)
+            if (expireFirstElement && m_Queue.Count > 0)
             {
-                m_queue.RemoveAt(0);
+                m_Queue.RemoveAt(0);
             }
 
-            if (m_queue.Count > 0)
+            if (m_Queue.Count > 0)
             {
-                m_queue[0].TimeStarted = Time.time;
-                bool play = m_queue[0].Start();
+                m_Queue[0].TimeStarted = Time.time;
+                bool play = m_Queue[0].Start();
                 if (!play)
                 {
                     AdvanceQueue(true);
@@ -87,9 +87,9 @@ namespace BossRoom.Server
 
         public void Update()
         {
-            if (this.m_queue.Count > 0)
+            if (m_Queue.Count > 0)
             {
-                Action runningAction = m_queue[0]; //action at the front of the queue is the one that is actively running. 
+                Action runningAction = m_Queue[0]; //action at the front of the queue is the one that is actively running. 
                 bool keepGoing = runningAction.Update();
                 bool expirable = runningAction.Description.Duration_s > 0f; //non-positive value is a sentinel indicating the duration is indefinite. 
                 bool timeExpired = expirable && (Time.time - runningAction.TimeStarted) >= runningAction.Description.Duration_s;

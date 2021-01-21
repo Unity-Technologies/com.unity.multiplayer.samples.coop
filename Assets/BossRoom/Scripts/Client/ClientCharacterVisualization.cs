@@ -38,7 +38,7 @@ namespace BossRoom.Visual
         /// <inheritdoc />
         public override void NetworkStart()
         {
-            if (!IsClient)
+            if (!IsClient || transform.parent == null)
             {
                 enabled = false;
                 return;
@@ -47,11 +47,19 @@ namespace BossRoom.Visual
             m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += this.PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
-
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
             Parent = transform.parent;
             Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
+
+
+            if (!m_NetState.IsNPC)
+            {
+                foreach (var model in GetComponents<ModelSwap>())
+                {
+                    model.SetModel(m_NetState.CharacterAppearance.Value);
+                }
+            }
 
             if (IsLocalPlayer)
             {
@@ -61,6 +69,7 @@ namespace BossRoom.Visual
 
         private void PerformActionFX(ActionRequestData data)
         {
+
             m_ActionViz.PlayAction(ref data);
         }
 
