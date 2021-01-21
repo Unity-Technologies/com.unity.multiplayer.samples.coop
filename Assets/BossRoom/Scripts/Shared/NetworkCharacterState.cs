@@ -34,23 +34,23 @@ namespace BossRoom
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
         /// <summary>
-        /// Current HP. This value is populated at startup time from CharacterClass data. 
+        /// Current HP. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
         public NetworkedVarInt HitPoints;
 
         /// <summary>
-        /// Current Mana. This value is populated at startup time from CharacterClass data. 
+        /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
         public NetworkedVarInt Mana;
 
         /// <summary>
-        /// Current LifeState. Only Players should enter the FAINTED state. 
+        /// Current LifeState. Only Players should enter the FAINTED state.
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.ALIVE);
 
-        
+
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNPC
@@ -66,7 +66,7 @@ namespace BossRoom
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
-        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc). 
+        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
         /// </summary>
         [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
         public NetworkedVarInt CharacterAppearance;

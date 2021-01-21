@@ -16,7 +16,7 @@ public class SelfDisable : MonoBehaviour
     {
         if (Time.time >= m_DisableTimestamp)
         {
-          gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 
