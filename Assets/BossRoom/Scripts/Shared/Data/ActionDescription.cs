@@ -4,7 +4,7 @@ namespace BossRoom
 {
     /// <summary>
     /// Data description of a single Action, including the information to visualize it (animations etc), and the information
-    /// to play it back on the server. 
+    /// to play it back on the server.
     /// </summary>
     [CreateAssetMenu(menuName = "GameData/ActionDescription", order = 1)]
     public class ActionDescription : ScriptableObject
@@ -35,8 +35,9 @@ namespace BossRoom
 
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;
+
+        [Tooltip("The radius of effect for this action. Default is 0 if not needed")]
+        public float Radius;
     }
-
-
 }
 

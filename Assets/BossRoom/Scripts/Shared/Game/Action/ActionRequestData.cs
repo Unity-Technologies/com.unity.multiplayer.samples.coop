@@ -36,12 +36,6 @@ namespace BossRoom
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
-        /// <summary>
-        /// radius of effect this action should have
-        /// </summary>
-        public float Radius;
-
-
     /// <summary>
     /// Comprehensive class that contains information needed to play back any action on the server. This is what gets sent client->server when
     /// the Action gets played, and also what gets sent server->client to broadcast the action event. Note that the OUTCOMES of the action effect

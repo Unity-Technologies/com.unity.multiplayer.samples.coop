@@ -22,7 +22,7 @@ public class AoEActionInput : MonoBehaviour
 
     void Start()
     {
-        var radius = ActionData.ActionDescriptions[m_ActionType][0].Radius;
+        var radius = GameDataSource.s_Instance.ActionDataByType[m_ActionType].Radius;
         this.transform.localScale = new Vector3(radius, radius, radius);
     }
 
