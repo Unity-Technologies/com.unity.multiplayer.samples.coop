@@ -30,7 +30,6 @@ namespace BossRoom.Server
             m_Target = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
 
             m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
-            m_Movement.FollowTransform(m_Target.transform);
             m_CurrentTargetPos = m_Target.transform.position;
 
             if (StopIfDone())
@@ -39,7 +38,7 @@ namespace BossRoom.Server
                 return false;
             }
 
-            m_Movement.SetMovementTarget(m_Target.transform.position);
+            m_Movement.FollowTransform(m_Target.transform);
             return true;
         }
 
