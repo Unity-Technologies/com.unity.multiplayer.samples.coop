@@ -1,6 +1,8 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
+using MLAPI.Connection;
 
 namespace BossRoom.Server
 {
@@ -12,10 +14,10 @@ namespace BossRoom.Server
     {
         [SerializeField]
         NetworkSpawnerState m_NetworkSpawnerState;
-        
+
         // amount of hits it takes to break any spawner
         const int k_MaxHealth = 3;
-        
+
         // networked object that will be spawned in waves
         [SerializeField]
         NetworkedObject m_NetworkedPrefab;
@@ -25,17 +27,12 @@ namespace BossRoom.Server
 
         // track wave index and reset once all waves are complete
         int m_WaveIndex;
-        
+
         // keep reference to our wave spawning coroutine
         Coroutine m_WaveSpawning;
-        
+
         // cache array of RaycastHit as it will be reused for player visibility
         RaycastHit[] m_Hit;
-
-        int m_PlayerLayerMask;
-        
-        // cache Collider array of OverlapSphere results for player proximity 
-        Collider[] m_Colliders;
 
         [Tooltip("Select which layers will block visibility.")]
         [SerializeField]
@@ -44,7 +41,7 @@ namespace BossRoom.Server
         [Tooltip("Time between player distance & visibility scans, in seconds.")]
         [SerializeField]
         float m_PlayerProximityValidationTimestep;
-        
+
         [Header("Wave parameters")]
         [Tooltip("Total number of waves.")]
         [SerializeField]
@@ -67,17 +64,16 @@ namespace BossRoom.Server
         [Tooltip("After being broken, the spawner waits this long to restart wave spawns, in seconds.")]
         [SerializeField]
         float m_DormantCooldown;
-        
+
         void Awake()
         {
             m_Transform = transform;
-            m_PlayerLayerMask = LayerMask.GetMask("PCs");
         }
-        
+
         public override void NetworkStart()
         {
             base.NetworkStart();
-            
+
             if (!IsServer)
             {
                 enabled = false;
@@ -86,7 +82,6 @@ namespace BossRoom.Server
 
             ReviveSpawner();
             m_Hit = new RaycastHit[1];
-            m_Colliders = new Collider[8];
             StartCoroutine(ValidatePlayersProximity(StartWaveSpawning));
         }
 
@@ -116,7 +111,7 @@ namespace BossRoom.Server
                 {
                     // do nothing, a wave spawning routine is currently underway
                 }
-                
+
                 yield return new WaitForSeconds(m_PlayerProximityValidationTimestep);
             }
         }
@@ -136,23 +131,23 @@ namespace BossRoom.Server
             }
             m_WaveSpawning = null;
         }
-        
+
         /// <summary>
         /// Coroutine for spawning prefabs clones in waves, waiting a duration before spawning a new wave.
-        /// Once all waves are completed, it waits a restart time before termination. 
+        /// Once all waves are completed, it waits a restart time before termination.
         /// </summary>
         /// <returns></returns>
         IEnumerator SpawnWaves()
         {
             m_WaveIndex = 0;
-            
+
             while (m_WaveIndex < m_NumberOfWaves)
             {
                 yield return SpawnWave();
-                
+
                 yield return new WaitForSeconds(m_TimeBetweenWaves);
             }
-            
+
             yield return new WaitForSeconds(m_RestartDelay);
 
             m_WaveSpawning = null;
@@ -173,7 +168,7 @@ namespace BossRoom.Server
 
             m_WaveIndex++;
         }
-        
+
         /// <summary>
         /// Spawn a NetworkedObject prefab clone.
         /// </summary>
@@ -203,32 +198,32 @@ namespace BossRoom.Server
 
             var ray = new Ray();
 
-            int hits = Physics.OverlapSphereNonAlloc(spawnerPosition, 
-                m_ProximityDistance, m_Colliders, m_PlayerLayerMask);
+            // note: this is not cached to allow runtime modifications to m_ProximityDistance
+            var squaredProximityDistance = m_ProximityDistance * m_ProximityDistance;
 
-            if (hits == 0)
-            {
-                return false;
-            }
-
-            // iterate through players and only return true if a player is in range
+            // iterate through clients and only return true if a player is in range
             // and is not occluded by a blocking collider.
-            foreach (var playerCollider in m_Colliders)
+            foreach (KeyValuePair<ulong, NetworkedClient> idToClient in NetworkingManager.Singleton.ConnectedClients)
             {
-                var playerPosition = playerCollider.transform.position;
+                var playerPosition = idToClient.Value.PlayerObject.transform.position;
                 var direction = playerPosition - spawnerPosition;
+
+                if (direction.sqrMagnitude > squaredProximityDistance)
+                {
+                    continue;
+                }
 
                 ray.origin = spawnerPosition;
                 ray.direction = direction;
 
-                var hit = Physics.RaycastNonAlloc(ray, m_Hit, 
+                var hit = Physics.RaycastNonAlloc(ray, m_Hit,
                     Mathf.Min(direction.magnitude, m_ProximityDistance),m_BlockingMask);
                 if (hit == 0)
                 {
                     return true;
                 }
             }
-            
+
             return false;
         }
 
@@ -237,7 +232,7 @@ namespace BossRoom.Server
             m_NetworkSpawnerState.HitPoints.Value = k_MaxHealth;
             m_NetworkSpawnerState.Broken.Value = false;
         }
-        
+
         // TODO: David will create interface hookup for receiving hits on non-NPC/PC objects (GOMPS-ID TBD)
         void ReceiveHP(ServerCharacter inflicter, int HP)
         {
