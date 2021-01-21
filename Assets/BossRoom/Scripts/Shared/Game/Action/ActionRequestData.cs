@@ -31,7 +31,6 @@ namespace BossRoom
         Chase,
         Revive,
         LaunchProjectile,
-        DriveProjectile,
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }

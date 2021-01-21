@@ -87,6 +87,7 @@ namespace BossRoom.Client
                 else
                 {
                     var data = new ActionRequestData();
+                    PopulateSkillRequest(ref hit, CharacterData.Skill1, ref data);
                     data.ActionTypeEnum = CharacterData.Skill1;
                     m_NetworkCharacter.ClientSendActionRequest(ref data);
                 }
@@ -116,8 +117,7 @@ namespace BossRoom.Client
             if (targetNetState.IsNPC)
             {
                 resultData.ShouldQueue = true; //wait your turn--don't clobber the chase action.
-                ActionType skill1 = CharacterData.Skill1;
-                resultData.ActionTypeEnum = skill1;
+                PopulateSkillRequest(ref hit, CharacterData.Skill1, ref resultData);
                 return true;
             }
             else if (targetNetState.NetworkLifeState.Value == LifeState.FAINTED)
@@ -130,6 +130,21 @@ namespace BossRoom.Client
             }
 
             return false;
+        }
+
+        private void PopulateSkillRequest(ref RaycastHit hit, ActionType action, ref ActionRequestData resultData)
+        {
+            resultData.ActionTypeEnum = action;
+            var actionInfo = GameDataSource.s_Instance.ActionDataByType[action];
+            switch (actionInfo.Logic)
+            {
+                //for projectile logic, infer the direction from the click position. 
+                case ActionLogic.LaunchProjectile:
+                    Vector3 offset = hit.point - transform.position;
+                    offset.y = 0;
+                    resultData.Direction = offset.normalized;
+                    return;
+            }
         }
 
         private void Update()

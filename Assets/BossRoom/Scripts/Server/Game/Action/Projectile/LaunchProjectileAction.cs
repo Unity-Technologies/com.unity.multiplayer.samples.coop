@@ -16,17 +16,22 @@ namespace BossRoom.Server
             if( Description.Spawns == null || Description.Spawns.Length == 0 )
             {
                 Debug.LogWarning("Misconfigured Action: " + Description.ActionTypeEnum + ", it uses LaunchProjectileAction, but has no spawns defined");
+                return false;
             }
 
-            //TODO, create the projectile.
-            return false;
+            //snap to face the direction we're firing!
+            m_Parent.transform.forward = Data.Direction;
+            return true;
         }
 
         public override bool Update()
         {
-            //if( (Time.time-TimeStarted))
+            if( TimeRunning >= Description.ExecTime_s && !m_Launched )
+            {
+                LaunchProjectile();
+            }
 
-            return false;
+            return true;
         }
 
         private void LaunchProjectile()
@@ -37,13 +42,15 @@ namespace BossRoom.Server
 
                 //TODO: use object pooling for arrows. 
                 GameObject projectile = UnityEngine.Object.Instantiate(Description.Spawns[0]);
-                projectile.transform.forward = m_Parent.transform.forward;
+                projectile.transform.forward = Data.Direction;
 
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
                 //where it appears next to the player. 
                 projectile.transform.position = m_Parent.transform.localToWorldMatrix.MultiplyPoint(projectile.transform.position);
+                projectile.GetComponent<ProjectileNetState>().SourceAction.Value = Data.ActionTypeEnum;
 
                 projectile.GetComponent<MLAPI.NetworkedObject>().Spawn(null, true);
+                m_Parent.NetState.ServerBroadcastAction(ref Data);
             }
         }
 
