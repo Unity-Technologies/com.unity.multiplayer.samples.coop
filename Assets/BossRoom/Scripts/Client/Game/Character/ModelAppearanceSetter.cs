@@ -21,10 +21,10 @@ namespace BossRoom.Visual
         public void SetModel(CharacterTypeEnum Class, bool IsMale)
         {
             int newModelIndex = MapToModelIdx(Class, IsMale);
-            for (int x = 0; x < m_BodyParts.Length; ++x)
+            for (int i = 0; i < m_BodyParts.Length; ++i)
             {
-                if (m_BodyParts[ x ])
-                    m_BodyParts[ x ].SetModel(newModelIndex);
+                if (m_BodyParts[ i ])
+                    m_BodyParts[ i ].SetModel(newModelIndex);
             }
         }
 

@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using BossRoom;
 using MLAPI;
+using UnityEngine;
 
 namespace BossRoom.Client
 {
@@ -15,7 +12,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Reference to the scene's state object so that UI can access state
         /// </summary>
-        public static ClientCharSelectState Instance;
+        public static ClientCharSelectState Instance { get; private set; }
 
         public override GameState ActiveState { get { return GameState.CHARSELECT; } }
         public CharSelectData CharSelectData { get; private set; }
@@ -27,8 +24,9 @@ namespace BossRoom.Client
             CharSelectData = GetComponent<CharSelectData>();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
+            base.OnDestroy();
             CharSelectData.OnAssignedLobbyIndex -= OnAssignedCharIndex;
             if (Instance == this)
                 Instance = null;
@@ -51,8 +49,8 @@ namespace BossRoom.Client
         {
             CharSelectData.InvokeServerRpc(CharSelectData.RpcChangeSlot,
                 NetworkingManager.Singleton.LocalClientId,
-                newClass, newIsMale, newState);
-        }
+                new CharSelectData.CharSelectSlot(newClass, newIsMale, newState));
+       }
 
         private void OnAssignedCharIndex(int index)
         {

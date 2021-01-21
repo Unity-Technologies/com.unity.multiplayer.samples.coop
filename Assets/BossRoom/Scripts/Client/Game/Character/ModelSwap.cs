@@ -1,7 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace BossRoom.Visual
 {
@@ -25,17 +22,17 @@ namespace BossRoom.Visual
         {
             index = System.Math.Min(index, modelArray.Length - 1);
             m_ModelIndex = index;
-            for (int x = 0; x < modelArray.Length; x++)
+            for (int i = 0; i < modelArray.Length; i++)
             {
-                modelArray[x].SetActive(x == m_ModelIndex);
+                modelArray[ i ].SetActive(i == m_ModelIndex);
             }
         }
 
         // Update is called once per frame
         public void Update()
         {
-			//DEBUG: This allows you to change models at runtime by tweaking the ModelIndex in the editor. 
-            if( m_lastModelIndex != m_ModelIndex )
+            //DEBUG: This allows you to change models at runtime by tweaking the ModelIndex in the editor. 
+            if (m_lastModelIndex != m_ModelIndex)
             {
                 m_lastModelIndex = m_ModelIndex;
                 SetModel(m_ModelIndex);

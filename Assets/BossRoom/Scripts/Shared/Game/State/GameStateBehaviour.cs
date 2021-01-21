@@ -52,7 +52,7 @@ namespace BossRoom
         private static GameObject s_activeStateGO;
 
         // Start is called before the first frame update
-        void Start()
+        protected virtual void Start()
         {
             if( s_activeStateGO != null )
             {
@@ -82,7 +82,7 @@ namespace BossRoom
             if( Persists ) { Object.DontDestroyOnLoad(this.gameObject); }
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
             if( !Persists )
             {

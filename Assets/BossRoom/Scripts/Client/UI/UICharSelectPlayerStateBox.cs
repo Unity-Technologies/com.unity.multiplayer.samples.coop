@@ -1,14 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace BossRoom.Client
 {
     public class UICharSelectPlayerStateBox : MonoBehaviour
     {
-        #region Variables set in editor
         [SerializeField]
         private UICharSelectPlayerStateBoxSettings m_StateInactive;
         [SerializeField]
@@ -27,11 +22,9 @@ namespace BossRoom.Client
         private UICharSelectPlayerStateBoxSettings m_StateArcherActive;
         [SerializeField]
         private UICharSelectPlayerStateBoxSettings m_StateArcherLockedIn;
-
         [SerializeField]
         [Tooltip("Label shown in each char-gen slot. {0} will be replaced with that slot's number")]
         private string m_SeatNumberMsg = "P{0}";
-        #endregion
 
         private int m_PlayerIndex; // 0-based; e.g. this is 0 for Player 1, 1 for Player 2, etc.
         private CharacterTypeEnum m_CharacterClass;

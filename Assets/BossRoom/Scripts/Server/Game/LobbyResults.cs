@@ -7,20 +7,12 @@ using System.Threading.Tasks;
 namespace BossRoom.Server
 {
     /// <summary>
-    /// Records the results of the lobby screen: all the players' choices.
-    /// This is used when setting up the in-game characters.
-    /// (It's a singleton so that it persists beyond the char-select scene.)
+    /// Simple data-storage of the choices made in the lobby screen for all players
+    /// in the lobby. This object is passed from the lobby scene to the gameplay
+    /// scene, so that the game knows how to set up the players' characters.
     /// </summary>
-    class LobbyResults
+    public class LobbyResults
     {
-        private static LobbyResults s_Instance;
-        public static LobbyResults GetInstance()
-        {
-            if (s_Instance == null)
-                s_Instance = new LobbyResults();
-            return s_Instance;
-        }
-
         public struct CharSelectChoice
         {
             public CharacterTypeEnum Class;
@@ -31,26 +23,6 @@ namespace BossRoom.Server
                 this.IsMale = IsMale;
             }
         }
-        private Dictionary<ulong, CharSelectChoice> m_Choices = new Dictionary<ulong, CharSelectChoice>();
-
-        public CharSelectChoice GetCharSelectChoiceForClient(ulong clientId)
-        {
-            CharSelectChoice returnValue;
-            if (!m_Choices.TryGetValue(clientId, out returnValue))
-            {
-                // We don't know about this client ID! That probably means they joined the game late!
-                // We don't yet handle this scenario (e.g. showing them a "wait for next game" screen, maybe?),
-                // so for now we just let them join. We'll give them some generic char-gen choices.
-                returnValue = new CharSelectChoice(CharacterTypeEnum.TANK, true);
-                m_Choices.Add(clientId, returnValue);
-            }
-            return returnValue;
-        }
-
-        public void SetCharSelectChoiceForClient(ulong clientId, CharSelectChoice choices)
-        {
-            m_Choices[ clientId ] = choices;
-        }
-
+        public readonly Dictionary<ulong, CharSelectChoice> Choices = new Dictionary<ulong, CharSelectChoice>();
     }
 }

@@ -19,6 +19,38 @@ namespace BossRoom.Server
 
         public override GameState ActiveState { get { return GameState.BOSSROOM; } }
 
+        /// <summary>
+        /// Reference to the scene's state object so that newly-spawned players can access state
+        /// </summary>
+        public static ServerBossRoomState Instance { get; private set; }
+
+        private LobbyResults m_LobbyResults;
+
+        public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
+        {
+            LobbyResults.CharSelectChoice returnValue;
+            if (!m_LobbyResults.Choices.TryGetValue(clientId, out returnValue))
+            {
+                // We don't know about this client ID! That probably means they joined the game late, after the lobby was closed.
+                // We don't yet handle this scenario well (e.g. showing them a "wait for next game" screen, maybe?),
+                // so for now we just let them join. We'll pretend that they made them some generic character choices.
+                returnValue = new LobbyResults.CharSelectChoice(CharacterTypeEnum.TANK, true);
+                m_LobbyResults.Choices[ clientId ] = returnValue;
+            }
+            return returnValue;
+        }
+
+        private void Awake()
+        {
+            Instance = this;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (Instance == this)
+                Instance = null;
+        }
 
         public override void NetworkStart()
         {
@@ -29,13 +61,19 @@ namespace BossRoom.Server
             }
             else
             {
+                // retrieve the lobby state info so that the players we're about to spawn can query it
+                System.Object o = GameStateRelay.GetRelayObject();
+                if (o != null && o.GetType() != typeof(LobbyResults))
+                    throw new System.Exception("No LobbyResults found!");
+                m_LobbyResults = (LobbyResults)o;
+
                 // listen for the client-connect event. This will only happen after
                 // the ServerGNHLogic's approval-callback is done, meaning that if we get this event,
-                // the client is officially allowed to be here.
+                // the client is officially allowed to be here. (And they are joining the game post-lobby...
+                // should we do something special here?)
                 NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
 
-                // if any other players are already connected to us (i.e. they connected while we were 
-                // in the login screen), give them player characters
+                // Now create player characters for all the players
                 foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
                 {
                     SpawnPlayer(connection.ClientId);
