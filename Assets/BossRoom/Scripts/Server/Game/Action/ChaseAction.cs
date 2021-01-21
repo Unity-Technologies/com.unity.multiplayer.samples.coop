@@ -38,7 +38,7 @@ namespace BossRoom.Server
                 return ActionConclusion.Stop;
             }
 
-            m_Movement.SetMovementTarget(m_Target.transform.position);
+            m_Movement.FollowTransform(m_Target.transform);
             return ActionConclusion.Continue;
         }
 
@@ -77,13 +77,7 @@ namespace BossRoom.Server
         {
             if (StopIfDone()) { return ActionConclusion.Stop; }
 
-            float targetMoved2 = (m_Target.transform.position - m_CurrentTargetPos).sqrMagnitude;
-            if ((m_Data.Amount * m_Data.Amount) < targetMoved2)
-            {
-                //target has moved past our range tolerance. Must repath.
-                this.m_Movement.SetMovementTarget(m_Target.transform.position);
-                m_CurrentTargetPos = m_Target.transform.position;
-            }
+            m_CurrentTargetPos = m_Target.transform.position;
 
             return ActionConclusion.Continue;
         }

@@ -1,10 +1,12 @@
 {
-    "name": "BossRoom.Shared",
+    "name": "BossRoom.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:1491147abca9d7d4bb7105af628b223e"
+        "GUID:1d78c7ef94888e246b441b10d1003f67"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
