@@ -1,3 +1,4 @@
+using System;
 using MLAPI;
 using UnityEngine;
 
@@ -9,6 +10,14 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkedBehaviour
     {
+        private const float k_MouseInputRaycastDistance = 100f;
+
+        // Cache raycast hit array so that we can use non alloc raycasts
+        private readonly RaycastHit[] k_CachedHit = new RaycastHit[1];
+
+        // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
+        private LayerMask k_MouseQueryLayerMask;
+
         private int m_NpcLayerMask;
         private NetworkCharacterState m_NetworkCharacter;
 
@@ -36,11 +45,14 @@ namespace BossRoom.Client
             }
         }
 
+        public event Action<Vector3> OnClientClick;
+
         void Awake()
         {
             m_NpcLayerMask = LayerMask.NameToLayer("NPCs");
 
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
+            k_MouseQueryLayerMask = LayerMask.GetMask(new[] {"Ground", "PCs", "NPCs"});
         }
 
         void FixedUpdate()
@@ -50,28 +62,29 @@ namespace BossRoom.Client
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
             if (Input.GetMouseButton(0))
             {
-                RaycastHit hit;
-
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit))
+                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_MouseQueryLayerMask) > 0)
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
-                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, hit.point,
+                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point,
                         "MLAPI_INTERNAL");
+                    //Send our client only click request
+                    OnClientClick.Invoke(k_CachedHit[0].point);
                 }
             }
 
             if (m_ClickRequest != null)
             {
-                RaycastHit hit;
-
-                if (Physics.Raycast(Camera.main.ScreenPointToRay(m_ClickRequest.Value), out hit) && GetTargetObject(ref hit) != 0)
+                var ray = Camera.main.ScreenPointToRay(m_ClickRequest.Value);
+                var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_MouseQueryLayerMask) > 0;
+                if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
                 {
                     //if we have clicked on an enemy:
-                    // - two actions will queue one after the other, causing us to run over to our target and take a swing. 
+                    // - two actions will queue one after the other, causing us to run over to our target and take a swing.
                     //if we have clicked on a fallen friend - we will revive him
 
                     ActionRequestData playerAction;
-                    bool doAction = GetActionRequestForTarget(ref hit, out playerAction);
+                    bool doAction = GetActionRequestForTarget(ref k_CachedHit[0], out playerAction);
 
                     if (doAction)
                     {
@@ -79,7 +92,7 @@ namespace BossRoom.Client
                         var chaseData = new ActionRequestData();
                         chaseData.ActionTypeEnum = ActionType.GeneralChase;
                         chaseData.Amount = range;
-                        chaseData.TargetIds = new ulong[] { GetTargetObject(ref hit) };
+                        chaseData.TargetIds = new ulong[] { GetTargetObject(ref k_CachedHit[0]) };
                         m_NetworkCharacter.ClientSendActionRequest(ref chaseData);
                         m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
                     }
@@ -87,7 +100,7 @@ namespace BossRoom.Client
                 else
                 {
                     var data = new ActionRequestData();
-                    PopulateSkillRequest(ref hit, CharacterData.Skill1, ref data);
+                    PopulateSkillRequest(ref k_CachedHit[0], CharacterData.Skill1, ref data);
                     data.ActionTypeEnum = CharacterData.Skill1;
                     m_NetworkCharacter.ClientSendActionRequest(ref data);
                 }
@@ -149,7 +162,7 @@ namespace BossRoom.Client
 
         private void Update()
         {
-            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate. 
+            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
             if (Input.GetMouseButtonDown(1))
             {
                 m_ClickRequest = Input.mousePosition;
@@ -157,11 +170,15 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object. 
+        /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object.
         /// </summary>
         private ulong GetTargetObject(ref RaycastHit hit)
         {
-            if (hit.collider == null) { return 0; }
+            if (hit.collider == null)
+            {
+                return 0;
+            }
+
             var targetObj = hit.collider.GetComponent<NetworkedObject>();
             if (targetObj == null) { return 0; }
 
