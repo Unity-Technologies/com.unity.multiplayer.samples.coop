@@ -61,7 +61,7 @@ namespace BossRoom
             }
         }
 
-        [Tooltip("NPCs should set this value in their prefab. For players, this vaule is set at runtime.")]
+        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;
 
         /// <summary>

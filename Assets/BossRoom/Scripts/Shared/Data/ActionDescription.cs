@@ -38,6 +38,9 @@ namespace BossRoom
 
         [Tooltip("The radius of effect for this action. Default is 0 if not needed")]
         public float Radius;
+
+        [Tooltip("Prefab to spawn if needed")]
+        public GameObject PrefabToSpawn;
     }
 }
 
