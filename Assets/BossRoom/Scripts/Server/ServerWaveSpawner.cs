@@ -198,13 +198,14 @@ namespace BossRoom.Server
 
             var ray = new Ray();
 
+            // note: this is not cached to allow runtime modifications to m_ProximityDistance
             var squaredProximityDistance = m_ProximityDistance * m_ProximityDistance;
 
             // iterate through clients and only return true if a player is in range
             // and is not occluded by a blocking collider.
-            foreach (KeyValuePair<ulong, NetworkedClient> client in NetworkingManager.Singleton.ConnectedClients)
+            foreach (KeyValuePair<ulong, NetworkedClient> idToClient in NetworkingManager.Singleton.ConnectedClients)
             {
-                var playerPosition = client.Value.PlayerObject.transform.position;
+                var playerPosition = idToClient.Value.PlayerObject.transform.position;
                 var direction = playerPosition - spawnerPosition;
 
                 if (direction.sqrMagnitude > squaredProximityDistance)
