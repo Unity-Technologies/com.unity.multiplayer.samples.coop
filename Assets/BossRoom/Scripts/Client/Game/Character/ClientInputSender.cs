@@ -69,7 +69,7 @@ namespace BossRoom.Client
                     m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point,
                         "MLAPI_INTERNAL");
                     //Send our client only click request
-                    OnClientClick.Invoke(k_CachedHit[0].point);
+                    OnClientClick?.Invoke(k_CachedHit[0].point);
                 }
             }
 
