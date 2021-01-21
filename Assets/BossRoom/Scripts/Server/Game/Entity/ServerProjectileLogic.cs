@@ -75,7 +75,10 @@ namespace BossRoom.Server
                 Destroy(gameObject);
             }
 
-            DetectCollisions();
+            if( m_MovementSpeed > 0 )
+            {
+                DetectCollisions();
+            }
 
             RefreshNetworkState();
         }
@@ -93,12 +96,6 @@ namespace BossRoom.Server
             int numCollisions = Physics.OverlapSphereNonAlloc(position, m_OurCollider.radius, m_CollisionCache);
             for( int i = 0; i < numCollisions; i++ )
             {
-                //if(1+1==2)
-                //{
-                //    Debug.Log("Arrow detected: " + m_CollisionCache[i].gameObject.name);
-                //    continue;
-                //}
-
                 if( m_CollisionCache[i].gameObject.layer == LayerMask.NameToLayer("Default") )
                 {
                     //hit a wall; leave it for a couple of seconds. 
