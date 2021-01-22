@@ -1,10 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 
 namespace BossRoom.Server
 {
+    /// <summary>
+    /// Action responsible for creating a projectile object. 
+    /// </summary>
     public class LaunchProjectileAction : Action
     {
         private bool m_Launched = false;
@@ -13,7 +14,7 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            if( Description.Spawns == null || Description.Spawns.Length == 0 )
+            if (Description.Spawns == null || Description.Spawns.Length == 0)
             {
                 Debug.LogWarning("Misconfigured Action: " + Description.ActionTypeEnum + ", it uses LaunchProjectileAction, but has no spawns defined");
                 return false;
@@ -26,7 +27,7 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if( TimeRunning >= Description.ExecTime_s && !m_Launched )
+            if (TimeRunning >= Description.ExecTime_s && !m_Launched)
             {
                 LaunchProjectile();
             }
@@ -36,7 +37,7 @@ namespace BossRoom.Server
 
         private void LaunchProjectile()
         {
-            if(!m_Launched)
+            if (!m_Launched)
             {
                 m_Launched = true;
 

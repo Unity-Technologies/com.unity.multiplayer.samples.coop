@@ -1,10 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+using MLAPI;
 using System.IO;
 using UnityEngine;
-using MLAPI;
-using MLAPI.Serialization;
-using MLAPI.Serialization.Pooled;
 
 namespace BossRoom.Server
 {
@@ -32,7 +28,7 @@ namespace BossRoom.Server
         private const int k_MaxCollisions = 4;
         private const float k_WallLingerSec = 2f; //time in seconds that arrows linger after hitting a target.
         private const float k_EnemyLingerSec = 0.2f; //time after hitting an enemy that we persist. 
-        private Collider[] m_CollisionCache= new Collider[k_MaxCollisions];
+        private Collider[] m_CollisionCache = new Collider[k_MaxCollisions];
 
         /// <summary>
         /// Time when we should destroy this arrow, in Time.time seconds. 
@@ -64,8 +60,8 @@ namespace BossRoom.Server
             m_MovementSpeed = m_DrivingAction.ProjectileSpeed_m_s;
             m_DestroyAtSec = Time.fixedTime + (m_DrivingAction.Range / m_DrivingAction.ProjectileSpeed_m_s);
 
-            m_CollisionMask = LayerMask.GetMask(new[]{"NPCs", "Default", "Ground" });
-            m_BlockerMask = LayerMask.GetMask(new[] {"Default", "Ground" });
+            m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Ground" });
+            m_BlockerMask = LayerMask.GetMask(new[] { "Default", "Ground" });
             m_NPCLayer = LayerMask.NameToLayer("NPCs");
 
             RefreshNetworkState();
@@ -78,13 +74,13 @@ namespace BossRoom.Server
             Vector3 displacement = transform.forward * (m_MovementSpeed * Time.fixedDeltaTime);
             transform.position += displacement;
 
-            if (m_DestroyAtSec < Time.fixedTime )
+            if (m_DestroyAtSec < Time.fixedTime)
             {
                 //we've reached our range terminus.End of the road! Time to go away.
                 Destroy(gameObject);
             }
 
-            if( !m_HitTarget )
+            if (!m_HitTarget)
             {
                 DetectCollisions();
             }
@@ -103,11 +99,11 @@ namespace BossRoom.Server
         {
             Vector3 position = transform.localToWorldMatrix.MultiplyPoint(m_OurCollider.center);
             int numCollisions = Physics.OverlapSphereNonAlloc(position, m_OurCollider.radius, m_CollisionCache, m_CollisionMask);
-            for( int i = 0; i < numCollisions; i++ )
+            for (int i = 0; i < numCollisions; i++)
             {
                 int layerTest = 1 << m_CollisionCache[i].gameObject.layer;
 
-                if( (layerTest & m_BlockerMask) != 0 )
+                if ((layerTest & m_BlockerMask) != 0)
                 {
                     //hit a wall; leave it for a couple of seconds. 
                     m_MovementSpeed = 0;
@@ -116,7 +112,7 @@ namespace BossRoom.Server
                     return;
                 }
 
-                if( m_CollisionCache[i].gameObject.layer == m_NPCLayer )
+                if (m_CollisionCache[i].gameObject.layer == m_NPCLayer)
                 {
                     //hit an enemy. We don't yet have a good way of visualizing this, so we just destroy ourselves quite quickly. 
                     m_DestroyAtSec = Time.fixedTime + k_EnemyLingerSec;

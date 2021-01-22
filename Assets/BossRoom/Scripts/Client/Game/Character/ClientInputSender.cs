@@ -1,5 +1,5 @@
-using System;
 using MLAPI;
+using System;
 using UnityEngine;
 
 namespace BossRoom.Client
@@ -52,7 +52,7 @@ namespace BossRoom.Client
             m_NpcLayerMask = LayerMask.NameToLayer("NPCs");
 
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
-            k_MouseQueryLayerMask = LayerMask.GetMask(new[] {"Ground", "PCs", "NPCs"});
+            k_MouseQueryLayerMask = LayerMask.GetMask(new[] { "Ground", "PCs", "NPCs" });
         }
 
         void FixedUpdate()

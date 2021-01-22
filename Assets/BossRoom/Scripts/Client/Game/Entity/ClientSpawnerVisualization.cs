@@ -1,4 +1,3 @@
-using System;
 using MLAPI;
 using UnityEngine;
 
@@ -8,11 +7,11 @@ namespace BossRoom
     {
         [SerializeField]
         NetworkSpawnerState m_NetworkSpawnerState;
-        
+
         // TODO: Integrate visuals (GOMPS-123)
         [SerializeField]
         Animator m_Animator;
-        
+
         public override void NetworkStart()
         {
             if (!IsClient)
@@ -20,11 +19,11 @@ namespace BossRoom
                 enabled = false;
                 return;
             }
-            
+
             m_NetworkSpawnerState.Broken.OnValueChanged += BrokenStateChanged;
             m_NetworkSpawnerState.HitPoints.OnValueChanged += HitPointsChanged;
         }
-        
+
         void BrokenStateChanged(bool previousValue, bool newValue)
         {
             if (newValue)

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -37,7 +35,7 @@ namespace BossRoom.Server
 
             foreach (ServerCharacter character in ServerCharacter.GetAllActiveServerCharacters())
             {
-                if (m_brain.IsAppropriateFoe(character) 
+                if (m_brain.IsAppropriateFoe(character)
                     && (character.transform.position - position).sqrMagnitude <= detectionRangeSqr)
                 {
                     m_brain.Hate(character);

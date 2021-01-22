@@ -1,9 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using MLAPI;
 using MLAPI.NetworkedVar;
-using MLAPI.Serialization;
 using MLAPI.Serialization.Pooled;
 using System.IO;
 
@@ -34,7 +30,7 @@ namespace BossRoom
         {
             using (Stream stream = PooledBitStream.Get())
             {
-                using(PooledBitWriter writer = PooledBitWriter.Get(stream))
+                using (PooledBitWriter writer = PooledBitWriter.Get(stream))
                 {
                     writer.WriteUInt64(enemyId);
                 }
@@ -45,7 +41,7 @@ namespace BossRoom
 
         [MLAPI.Messaging.ClientRPC]
         private void RecvHitEnemyClient(ulong clientId, Stream stream)
-        { 
+        {
             ulong enemyId;
             using (PooledBitReader reader = PooledBitReader.Get(stream))
             {

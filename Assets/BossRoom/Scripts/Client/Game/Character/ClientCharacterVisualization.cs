@@ -100,7 +100,7 @@ namespace BossRoom.Visual
             }
 
             VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime,
-                m_NetState.NetworkMovementSpeed.Value, k_MaxRotSpeed );
+                m_NetState.NetworkMovementSpeed.Value, k_MaxRotSpeed);
 
             if (m_ClientVisualsAnimator)
             {

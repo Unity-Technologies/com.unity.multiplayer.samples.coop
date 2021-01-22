@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Client
@@ -37,12 +35,12 @@ namespace BossRoom.Client
         // Update is called once per frame
         void Update()
         {
-            if(!m_Initialized) { return;  }
+            if (!m_Initialized) { return; }
 
             transform.position = m_MovementSource.NetworkPosition.Value;
             transform.rotation = Quaternion.Euler(0, m_MovementSource.NetworkRotationY.Value, 0);
 
-            if( m_Rigidbody != null )
+            if (m_Rigidbody != null)
             {
                 m_Rigidbody.position = transform.position;
                 m_Rigidbody.rotation = transform.rotation;

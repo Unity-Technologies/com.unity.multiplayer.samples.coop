@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using MLAPI;
+using UnityEngine;
 
 namespace BossRoom.Visual
 {
@@ -28,7 +26,7 @@ namespace BossRoom.Visual
 
         void Update()
         {
-            if( m_Parent == null )
+            if (m_Parent == null)
             {
                 Destroy(gameObject);
                 return;
@@ -44,7 +42,7 @@ namespace BossRoom.Visual
             //For the moment we just play the hitreact, however.
 
             NetworkedObject targetNetObject;
-            if( MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject) )
+            if (MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
             {
                 ClientCharacterVisualization charViz = targetNetObject.GetComponent<Client.ClientCharacter>().ChildVizObject;
                 charViz.OurAnimator.SetTrigger("HitReact1");

@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -16,7 +14,7 @@ public class SelfDisable : MonoBehaviour
     {
         if (Time.time >= m_DisableTimestamp)
         {
-          gameObject.SetActive(false);
+            gameObject.SetActive(false);
         }
     }
 
