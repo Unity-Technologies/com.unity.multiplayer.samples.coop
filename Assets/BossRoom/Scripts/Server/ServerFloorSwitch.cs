@@ -74,6 +74,7 @@ public class ServerFloorSwitch : NetworkedBehaviour
     {
         if (other.gameObject.layer == m_CachedPlayerLayerIdx)
         {
+            // TODO: should we check for IsAlive here? Right now corpses keep plates activated...
             ++m_NumPlayersInTriggerThisFrame;
         }
     }
