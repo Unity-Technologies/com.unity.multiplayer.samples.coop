@@ -1,6 +1,7 @@
+using System;
 using Unity.MultiPie;
 
-namespace BossRoom.Scripts.Shared.SliceBehaviors
+namespace BossRoom.Scripts.Editor.SliceBehaviors
 {
     public class EmptySliceBehavior : SliceBehavior
     {
