@@ -93,14 +93,14 @@ namespace BossRoom.Server
                 m_ActionPlayer.PlayAction(ref chaseData);
 
                 // queue up the actual attack for when we're in range
-                var attack_data = new ActionRequestData
+                var attackData = new ActionRequestData
                 {
                     ActionTypeEnum = m_CurAttackAction,
                     Amount = attackInfo.Amount,
                     ShouldQueue = true,
                     TargetIds = new ulong[] { m_Foe.NetworkId }
                 };
-                m_ActionPlayer.PlayAction(ref attack_data);
+                m_ActionPlayer.PlayAction(ref attackData);
             }
         }
 

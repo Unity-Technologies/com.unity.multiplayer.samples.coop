@@ -7,9 +7,9 @@ namespace BossRoom
 {
     public enum GameState
     {
-        MAINMENU,
-        CHARSELECT,
-        BOSSROOM,
+        MainMenu,
+        CharSelect,
+        BossRoom,
     }
 
     /// <summary>

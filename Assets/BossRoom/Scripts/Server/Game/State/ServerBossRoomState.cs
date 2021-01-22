@@ -25,7 +25,7 @@ namespace BossRoom.Server
         [Tooltip("Set the default Player Appearance (value between 0-7)")]
         private int m_DefaultPlayerAppearance = 7;
 
-        public override GameState ActiveState { get { return GameState.BOSSROOM; } }
+        public override GameState ActiveState { get { return GameState.BossRoom; } }
 
         public override void NetworkStart()
         {
