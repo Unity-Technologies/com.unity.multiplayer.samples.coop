@@ -26,8 +26,8 @@ namespace BossRoom.Visual
             {
                 var action = m_PlayingActions[i];
                 bool keepGoing = action.Update();
-                bool expirable = action.Description.Duration_s > 0f; //non-positive value is a sentinel indicating the duration is indefinite. 
-                bool timeExpired = expirable && (Time.time - action.TimeStarted) >= action.Description.Duration_s;
+                bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite. 
+                bool timeExpired = expirable && (Time.time - action.TimeStarted) >= action.Description.DurationSeconds;
                 if (!keepGoing || timeExpired)
                 {
                     action.End();
@@ -46,7 +46,7 @@ namespace BossRoom.Visual
 
         public void PlayAction(ref ActionRequestData data)
         {
-            //Do Trivial Actions (actions that just require playing a single animation, and don't require any state trackincg).
+            //Do Trivial Actions (actions that just require playing a single animation, and don't require any state tracking).
             switch (data.ActionTypeEnum)
             {
                 case ActionType.GeneralRevive:

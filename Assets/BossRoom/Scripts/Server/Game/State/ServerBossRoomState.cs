@@ -27,7 +27,6 @@ namespace BossRoom.Server
 
         public override GameState ActiveState { get { return GameState.BOSSROOM; } }
 
-
         public override void NetworkStart()
         {
             base.NetworkStart();

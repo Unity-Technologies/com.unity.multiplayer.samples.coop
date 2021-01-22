@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace BossRoom
 {
     /// <summary>
@@ -24,6 +26,10 @@ namespace BossRoom
         {
             get
             {
+                ActionDescription result;
+                bool found = GameDataSource.s_Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out result);
+                Debug.AssertFormat(found, "Tried to find ActionType %s but it was missing from GameDataSource!", Data.ActionTypeEnum);
+
                 return GameDataSource.s_Instance.ActionDataByType[Data.ActionTypeEnum];
             }
         }

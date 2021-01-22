@@ -48,7 +48,6 @@ namespace BossRoom.Server
         /// </summary>
         /// <param name="state">the NetworkCharacterState of the character that owns our ActionPlayer</param>
         /// <param name="data">the data to instantiate this skill from. </param>
-        /// <param name="level">the level to play the skill at. </param>
         /// <returns>the newly created action. </returns>
         public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data)
         {

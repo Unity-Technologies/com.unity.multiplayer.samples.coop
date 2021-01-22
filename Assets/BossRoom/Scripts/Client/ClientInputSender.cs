@@ -113,14 +113,14 @@ namespace BossRoom.Client
                 return false;
             }
 
-            if (targetNetState.IsNPC)
+            if (targetNetState.IsNpc)
             {
                 resultData.ShouldQueue = true; //wait your turn--don't clobber the chase action.
                 ActionType skill1 = CharacterData.Skill1;
                 resultData.ActionTypeEnum = skill1;
                 return true;
             }
-            else if (targetNetState.NetworkLifeState.Value == LifeState.FAINTED)
+            else if (targetNetState.NetworkLifeState.Value == LifeState.Fainted)
             {
                 resultData = new ActionRequestData();
                 resultData.ShouldQueue = true;

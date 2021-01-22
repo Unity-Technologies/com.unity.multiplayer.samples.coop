@@ -12,9 +12,9 @@ namespace BossRoom
 
     public enum LifeState
     {
-        ALIVE,
-        FAINTED,
-        DEAD,
+        Alive,
+        Fainted,
+        Dead,
     }
 
     /// <summary>
@@ -48,16 +48,16 @@ namespace BossRoom
         /// <summary>
         /// Current LifeState. Only Players should enter the FAINTED state. 
         /// </summary>
-        public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.ALIVE);
+        public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNPC
+        public bool IsNpc
         {
             get
             {
-                return GameDataSource.s_Instance.CharacterDataByType[CharacterType.Value].IsNPC;
+                return GameDataSource.s_Instance.CharacterDataByType[CharacterType.Value].IsNpc;
             }
         }
 
@@ -82,7 +82,7 @@ namespace BossRoom
             bool found = GameDataSource.s_Instance.CharacterDataByType.TryGetValue(CharacterType.Value, out data);
             if (!found)
             {
-                throw new System.Exception($"gameobject {gameObject.name} has charactertype {CharacterType.Value} specified, which isn't valid!");
+                throw new System.Exception($"gameobject {gameObject.name} has charactertype {CharacterType.Value} specified, which isn't in the GameDataSource's list!");
             }
             HitPoints.Value = data.BaseHP;
             Mana.Value = data.BaseMana;
