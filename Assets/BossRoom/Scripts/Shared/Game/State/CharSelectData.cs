@@ -104,7 +104,6 @@ namespace BossRoom
         /// <summary>
         /// RPC to tell a client that they cannot participate in the game due to a fatal error.
         /// </summary>
-        /// <param name="movementTarget">Index on the UI screen, starting at 0 for the first slot</param>
         [ClientRPC]
         public void RpcFatalLobbyError(FatalLobbyError error)
         {
