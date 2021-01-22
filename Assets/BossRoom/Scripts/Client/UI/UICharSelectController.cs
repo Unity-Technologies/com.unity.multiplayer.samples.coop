@@ -57,7 +57,6 @@ namespace BossRoom.Client
 
         private void Awake()
         {
-            Debug.Log("CharSelectUIController.Awake");
             m_ClassButtons = new Dictionary<CharacterTypeEnum, Button>
             {
                 [ CharacterTypeEnum.TANK ] = m_ClassButtonTank,
@@ -72,7 +71,7 @@ namespace BossRoom.Client
             m_Class = CharacterTypeEnum.TANK;
             m_IsMale = true;
 
-            CreateStateList();
+            SetupStateBoxes();
             if (ClientCharSelectState.Instance == null)
                 Debug.LogError("No CharSelectData in scene!");
             ClientCharSelectState.Instance.CharSelectData.OnAssignedLobbyIndex += OnAssignedLobbyIndex;
@@ -95,7 +94,7 @@ namespace BossRoom.Client
             }
         }
 
-        private void CreateStateList()
+        private void SetupStateBoxes()
         {
             for (int i = 0; i < m_PlayerStateBoxes.Count && i < CharSelectData.k_MaxLobbyPlayers; ++i)
             {

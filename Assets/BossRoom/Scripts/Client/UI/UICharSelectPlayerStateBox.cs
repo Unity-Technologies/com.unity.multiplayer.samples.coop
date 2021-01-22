@@ -23,7 +23,7 @@ namespace BossRoom.Client
         [SerializeField]
         private UICharSelectPlayerStateBoxSettings m_StateArcherLockedIn;
         [SerializeField]
-        [Tooltip("Label shown in each char-gen slot. {0} will be replaced with that slot's number")]
+        [Tooltip("Label shown in each character-slot in the lobby. {0} will be replaced with that slot's number")]
         private string m_SeatNumberMsg = "P{0}";
 
         private int m_PlayerIndex; // 0-based; e.g. this is 0 for Player 1, 1 for Player 2, etc.
