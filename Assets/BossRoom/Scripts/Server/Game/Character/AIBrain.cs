@@ -119,7 +119,7 @@ namespace BossRoom.Server
         {
             get
             {
-                return GameDataSource.s_Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType.Value];
+                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType.Value];
             }
         }
 

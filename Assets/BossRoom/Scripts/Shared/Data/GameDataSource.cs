@@ -57,17 +57,17 @@ namespace BossRoom
         /// <summary>
         /// static accessor for all GameData. 
         /// </summary>
-        public static GameDataSource s_Instance;
+        public static GameDataSource Instance { get; private set; }
 
         private void Awake()
         {
-            if (s_Instance != null)
+            if (Instance != null)
             {
                 throw new System.Exception("Multiple GameDataSources defined!");
             }
 
-            Object.DontDestroyOnLoad(gameObject);
-            s_Instance = this;
+            DontDestroyOnLoad(gameObject);
+            Instance = this;
         }
 
     }

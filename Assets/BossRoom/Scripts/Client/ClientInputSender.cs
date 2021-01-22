@@ -24,7 +24,7 @@ namespace BossRoom.Client
         /// </summary>
         private CharacterClass CharacterData
         {
-            get { return GameDataSource.s_Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value]; }
+            get { return GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value]; }
         }
 
         public override void NetworkStart()
@@ -75,7 +75,7 @@ namespace BossRoom.Client
 
                     if (doAction)
                     {
-                        float range = GameDataSource.s_Instance.ActionDataByType[playerAction.ActionTypeEnum].Range;
+                        float range = GameDataSource.Instance.ActionDataByType[playerAction.ActionTypeEnum].Range;
                         var chaseData = new ActionRequestData();
                         chaseData.ActionTypeEnum = ActionType.GeneralChase;
                         chaseData.Amount = range;

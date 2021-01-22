@@ -50,7 +50,7 @@ namespace BossRoom.Visual
             switch (data.ActionTypeEnum)
             {
                 case ActionType.GeneralRevive:
-                    ActionDescription actionDesc = GameDataSource.s_Instance.ActionDataByType[data.ActionTypeEnum];
+                    ActionDescription actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
                     Parent.OurAnimator.SetTrigger(actionDesc.Anim);
                     return;
             }

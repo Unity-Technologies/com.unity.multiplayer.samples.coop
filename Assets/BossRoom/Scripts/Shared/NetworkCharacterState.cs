@@ -23,12 +23,12 @@ namespace BossRoom
     public class NetworkCharacterState : NetworkedBehaviour
     {
         /// <summary>
-        /// The networked position of this Character. This reflects the authorative position on the server.
+        /// The networked position of this Character. This reflects the authoritative position on the server.
         /// </summary>
         public NetworkedVarVector3 NetworkPosition { get; } = new NetworkedVarVector3();
 
         /// <summary>
-        /// The networked rotation of this Character. This reflects the authorative rotation on the server.
+        /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
@@ -57,11 +57,11 @@ namespace BossRoom
         {
             get
             {
-                return GameDataSource.s_Instance.CharacterDataByType[CharacterType.Value].IsNpc;
+                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value].IsNpc;
             }
         }
 
-        [Tooltip("NPCs should set this value in their prefab. For players, this vaule is set at runtime.")]
+        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;
 
         /// <summary>
@@ -79,10 +79,10 @@ namespace BossRoom
         private void Awake()
         {
             CharacterClass data;
-            bool found = GameDataSource.s_Instance.CharacterDataByType.TryGetValue(CharacterType.Value, out data);
+            bool found = GameDataSource.Instance.CharacterDataByType.TryGetValue(CharacterType.Value, out data);
             if (!found)
             {
-                throw new System.Exception($"gameobject {gameObject.name} has charactertype {CharacterType.Value} specified, which isn't in the GameDataSource's list!");
+                throw new Exception($"gameobject {gameObject.name} has charactertype {CharacterType.Value} specified, which isn't in the GameDataSource's list!");
             }
             HitPoints.Value = data.BaseHP;
             Mana.Value = data.BaseMana;

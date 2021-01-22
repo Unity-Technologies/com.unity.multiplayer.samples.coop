@@ -19,7 +19,7 @@ namespace BossRoom.Server
 
         [SerializeField]
         [Tooltip("Set what sort of character class gets created for players by default.")]
-        private CharacterTypeEnum m_DefaultPlayerType = CharacterTypeEnum.TANK;
+        private CharacterTypeEnum m_DefaultPlayerType = CharacterTypeEnum.Tank;
 
         [SerializeField]
         [Tooltip("Set the default Player Appearance (value between 0-7)")]

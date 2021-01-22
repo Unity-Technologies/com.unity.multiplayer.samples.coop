@@ -131,7 +131,7 @@ namespace BossRoom.Server
         private ActionDescription GetCurrentAttackInfo()
         {
             ActionDescription result;
-            bool found = GameDataSource.s_Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out result);
+            bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out result);
             if (!found)
             {
                 throw new System.Exception($"GameObject {m_Brain.GetMyServerCharacter().gameObject.name} tried to play Action {m_CurAttackAction} but this action does not exist");
