@@ -1,9 +1,5 @@
 fileFormatVersion: 2
-<<<<<<< HEAD:Assets/BossRoom/Prefabs/Dungeon/Dungeon Pieces/boss_floor.prefab.meta
-guid: f6f5a6e2901d95846ac898d0cc8196c0
-=======
-guid: 86bfc5d7bdc268842947478bcdd38c08
->>>>>>> origin/develop:Assets/BossRoom/Prefabs/Click_Feedback.prefab.meta
+guid: 5d22c1d86e0e5604cbe14004bf924827
 PrefabImporter:
   externalObjects: {}
   userData: 
