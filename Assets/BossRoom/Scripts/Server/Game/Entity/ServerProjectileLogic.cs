@@ -14,7 +14,7 @@ namespace BossRoom.Server
         private bool m_Started = false;
 
         [SerializeField]
-        private ProjectileNetState m_NetState;
+        private NetworkProjectileState m_NetState;
 
         [SerializeField]
         private SphereCollider m_OurCollider;

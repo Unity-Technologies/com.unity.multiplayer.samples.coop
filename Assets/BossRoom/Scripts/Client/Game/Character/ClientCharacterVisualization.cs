@@ -27,7 +27,6 @@ namespace BossRoom.Visual
         public float MaxZoomDistance = 30;
         public float ZoomSpeed = 3;
 
-        private const float k_MaxVizSpeed = 4;    //max speed at which we will chase the parent transform. 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         public void Start()
@@ -100,7 +99,8 @@ namespace BossRoom.Visual
                 return;
             }
 
-            SmoothMove(transform, Parent.transform, Time.deltaTime, k_MaxVizSpeed, k_MaxRotSpeed );
+            VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime,
+                m_NetState.NetworkMovementSpeed.Value, k_MaxRotSpeed );
 
             if (m_ClientVisualsAnimator)
             {
@@ -127,37 +127,7 @@ namespace BossRoom.Visual
             m_ActionViz.OnAnimEvent(id);
         }
 
-        /// <summary>
-        /// Smoothly interpolates towards the parent transform. 
-        /// </summary>
-        /// <param name="moveTransform">The transform to interpolate</param>
-        /// <param name="targetTransform">The transform to interpolate towards.  </param>
-        /// <param name="timeDelta">Time in seconds that has elapsed, for purposes of interpolation.</param>
-        /// <param name="maxSpeed">The max speed to allow the moveTransform to advance at, in m/s </param>
-        /// <param name="maxAngularSpeed">The max angular speed to to rotate at, in degrees/s.</param>
-        public static void SmoothMove(Transform moveTransform, Transform targetTransform, float timeDelta, float maxSpeed, float maxAngularSpeed )
-        {
-            var posDiff = targetTransform.position - moveTransform.position;
-            var angleDiff = Quaternion.Angle(targetTransform.transform.rotation, moveTransform.rotation);
 
-            float posDiffMag = posDiff.magnitude;
-            if (posDiffMag > 0)
-            {
-                float maxMove = timeDelta * maxSpeed;
-                float moveDist = Mathf.Min(maxMove, posDiffMag);
-                posDiff *= (moveDist / posDiffMag);
-
-                moveTransform.position += posDiff;
-            }
-
-            if (angleDiff > 0)
-            {
-                float maxAngleMove = timeDelta * maxAngularSpeed;
-                float angleMove = Mathf.Min(maxAngleMove, angleDiff);
-                float t = angleMove / angleDiff;
-                moveTransform.rotation = Quaternion.Slerp(moveTransform.rotation, targetTransform.rotation, t);
-            }
-        }
 
         private void AttachCamera()
         {

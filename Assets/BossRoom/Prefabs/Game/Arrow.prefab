@@ -10,10 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2059489347505585154}
   - component: {fileID: 8403335067046434128}
-  - component: {fileID: 1106903277505077569}
   - component: {fileID: 144087972406990258}
   - component: {fileID: 3502399447191095046}
   - component: {fileID: 2323743718044421326}
+  - component: {fileID: 1392226273213099329}
   m_Layer: 0
   m_Name: Arrow
   m_TagString: Untagged
@@ -49,20 +49,6 @@ SphereCollider:
   serializedVersion: 2
   m_Radius: 0.2
   m_Center: {x: 0, y: 0, z: 0.6}
---- !u!114 &1106903277505077569
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2842198241268549130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f1775357f78b684294a25ef49f1a97d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SourceAction:
-    InternalValue: 0
 --- !u!114 &144087972406990258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,7 +61,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a091211e6ee54d14f965bccf3b7db5bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetState: {fileID: 1106903277505077569}
+  m_NetState: {fileID: 1392226273213099329}
   m_OurCollider: {fileID: 8403335067046434128}
 --- !u!114 &3502399447191095046
 MonoBehaviour:
@@ -106,6 +92,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 797d92969c575574d868e069887e8486, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &1392226273213099329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2842198241268549130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9f1775357f78b684294a25ef49f1a97d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SourceAction:
+    InternalValue: 0
 --- !u!1001 &1617519574143475747
 PrefabInstance:
   m_ObjectHideFlags: 0

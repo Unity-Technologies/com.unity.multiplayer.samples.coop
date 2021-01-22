@@ -47,7 +47,7 @@ namespace BossRoom.Server
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
                 //where it appears next to the player. 
                 projectile.transform.position = m_Parent.transform.localToWorldMatrix.MultiplyPoint(projectile.transform.position);
-                projectile.GetComponent<ProjectileNetState>().SourceAction.Value = Data.ActionTypeEnum;
+                projectile.GetComponent<NetworkProjectileState>().SourceAction.Value = Data.ActionTypeEnum;
                 projectile.GetComponent<ServerProjectileLogic>().SpawnerId = m_Parent.NetworkId;
 
                 projectile.GetComponent<MLAPI.NetworkedObject>().Spawn();

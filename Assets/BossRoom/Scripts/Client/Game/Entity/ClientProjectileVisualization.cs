@@ -7,8 +7,10 @@ namespace BossRoom.Visual
 {
     public class ClientProjectileVisualization : NetworkedBehaviour
     {
-        ProjectileNetState m_NetState;
+        NetworkProjectileState m_NetState;
         Transform m_Parent;
+
+        private const float k_MaxTurnRateDegreesSecond = 280;
 
         public override void NetworkStart()
         {
@@ -20,7 +22,7 @@ namespace BossRoom.Visual
 
             m_Parent = transform.parent;
             transform.parent = null;
-            m_NetState = m_Parent.GetComponent<ProjectileNetState>();
+            m_NetState = m_Parent.GetComponent<NetworkProjectileState>();
             m_NetState.HitEnemyEvent += OnEnemyHit;
         }
 
@@ -32,7 +34,8 @@ namespace BossRoom.Visual
                 return;
             }
 
-            ClientCharacterVisualization.SmoothMove(transform, m_Parent.transform, Time.deltaTime, m_NetState.NetworkMovementSpeed.Value, 280);
+            VisualUtils.SmoothMove(transform, m_Parent.transform, Time.deltaTime,
+                m_NetState.NetworkMovementSpeed.Value, k_MaxTurnRateDegreesSecond);
         }
 
         private void OnEnemyHit(ulong enemyId)

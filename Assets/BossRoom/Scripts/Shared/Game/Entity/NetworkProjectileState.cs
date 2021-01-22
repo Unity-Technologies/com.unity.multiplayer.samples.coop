@@ -12,7 +12,7 @@ namespace BossRoom
     /// <summary>
     /// Shared state for a Projectile. 
     /// </summary>
-    public class ProjectileNetState : NetworkedBehaviour, INetMovement
+    public class NetworkProjectileState : NetworkedBehaviour, INetMovement
     {
         public NetworkedVar<ActionType> SourceAction;
 
