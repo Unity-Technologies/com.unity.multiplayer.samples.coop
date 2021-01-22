@@ -12,7 +12,7 @@ namespace BossRoom
     /// <summary>
     /// Shared state for a Projectile. 
     /// </summary>
-    public class ProjectileNetState : NetworkedBehaviour
+    public class ProjectileNetState : NetworkedBehaviour, INetMovement
     {
         public NetworkedVar<ActionType> SourceAction;
 
@@ -29,9 +29,29 @@ namespace BossRoom
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
-        [MLAPI.Messaging.ClientRPC]
-        public void HitEnemy(ulong enemyId)
+
+        public void ServerBroadcastEnemyHit(ulong enemyId)
         {
+            using (Stream stream = PooledBitStream.Get())
+            {
+                using(PooledBitWriter writer = PooledBitWriter.Get(stream))
+                {
+                    writer.WriteUInt64(enemyId);
+                }
+                InvokeClientRpcOnEveryonePerformance(RecvHitEnemyClient, stream);
+            }
+        }
+
+
+        [MLAPI.Messaging.ClientRPC]
+        private void RecvHitEnemyClient(ulong clientId, Stream stream)
+        { 
+            ulong enemyId;
+            using (PooledBitReader reader = PooledBitReader.Get(stream))
+            {
+                enemyId = reader.ReadUInt64();
+            }
+
             HitEnemyEvent?.Invoke(enemyId);
         }
     }

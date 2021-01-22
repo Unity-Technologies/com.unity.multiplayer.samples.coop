@@ -48,8 +48,9 @@ namespace BossRoom.Server
                 //where it appears next to the player. 
                 projectile.transform.position = m_Parent.transform.localToWorldMatrix.MultiplyPoint(projectile.transform.position);
                 projectile.GetComponent<ProjectileNetState>().SourceAction.Value = Data.ActionTypeEnum;
+                projectile.GetComponent<ServerProjectileLogic>().SpawnerId = m_Parent.NetworkId;
 
-                projectile.GetComponent<MLAPI.NetworkedObject>().Spawn(null, true);
+                projectile.GetComponent<MLAPI.NetworkedObject>().Spawn();
                 m_Parent.NetState.ServerBroadcastAction(ref Data);
             }
         }

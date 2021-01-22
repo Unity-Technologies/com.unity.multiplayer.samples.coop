@@ -19,9 +19,20 @@ namespace BossRoom.Visual
             }
 
             m_Parent = transform.parent;
+            transform.parent = null;
             m_NetState = m_Parent.GetComponent<ProjectileNetState>();
             m_NetState.HitEnemyEvent += OnEnemyHit;
+        }
 
+        void Update()
+        {
+            if( m_Parent == null )
+            {
+                Destroy(gameObject);
+                return;
+            }
+
+            ClientCharacterVisualization.SmoothMove(transform, m_Parent.transform, Time.deltaTime, m_NetState.NetworkMovementSpeed.Value, 280);
         }
 
         private void OnEnemyHit(ulong enemyId)

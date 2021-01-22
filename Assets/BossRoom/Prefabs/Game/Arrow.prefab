@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 1106903277505077569}
   - component: {fileID: 144087972406990258}
   - component: {fileID: 3502399447191095046}
+  - component: {fileID: 2323743718044421326}
   m_Layer: 0
   m_Name: Arrow
   m_TagString: Untagged
@@ -93,6 +94,18 @@ MonoBehaviour:
   PrefabHashGenerator: Arrow
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+--- !u!114 &2323743718044421326
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2842198241268549130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 797d92969c575574d868e069887e8486, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1617519574143475747
 PrefabInstance:
   m_ObjectHideFlags: 0

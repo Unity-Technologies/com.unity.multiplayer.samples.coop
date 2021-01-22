@@ -21,7 +21,11 @@ namespace BossRoom.Server
 
         private float m_MovementSpeed;
 
-        private Vector3 m_StartPosition;
+        /// <summary>
+        /// The person that created us. Can be 0 to signal that we were created generically by the server.
+        /// </summary>
+        public ulong SpawnerId { get; set; }
+
 
         private ActionDescription m_DrivingAction;
 
@@ -35,7 +39,11 @@ namespace BossRoom.Server
         /// </summary>
         private float m_DestroyAtSec;
 
-        private int m_LayerMask;
+        private int m_CollisionMask;  //mask containing everything we test for while moving
+        private int m_BlockerMask;    //physics mask for things that block the arrow's flight.
+        private int m_NPCLayer;
+
+        private bool m_HitTarget;     //only do damage once. 
 
         public override void NetworkStart(Stream stream)
         {
@@ -54,10 +62,11 @@ namespace BossRoom.Server
             }
 
             m_MovementSpeed = m_DrivingAction.ProjectileSpeed_m_s;
-            m_StartPosition = transform.position;
             m_DestroyAtSec = Time.fixedTime + (m_DrivingAction.Range / m_DrivingAction.ProjectileSpeed_m_s);
 
-            m_LayerMask = LayerMask.GetMask(new string[]{"NPCs", "Default" });
+            m_CollisionMask = LayerMask.GetMask(new[]{"NPCs", "Default", "Ground" });
+            m_BlockerMask = LayerMask.GetMask(new[] {"Default", "Ground" });
+            m_NPCLayer = LayerMask.NameToLayer("NPCs");
 
             RefreshNetworkState();
         }
@@ -75,7 +84,7 @@ namespace BossRoom.Server
                 Destroy(gameObject);
             }
 
-            if( m_MovementSpeed > 0 )
+            if( !m_HitTarget )
             {
                 DetectCollisions();
             }
@@ -93,27 +102,36 @@ namespace BossRoom.Server
         private void DetectCollisions()
         {
             Vector3 position = transform.localToWorldMatrix.MultiplyPoint(m_OurCollider.center);
-            int numCollisions = Physics.OverlapSphereNonAlloc(position, m_OurCollider.radius, m_CollisionCache);
+            int numCollisions = Physics.OverlapSphereNonAlloc(position, m_OurCollider.radius, m_CollisionCache, m_CollisionMask);
             for( int i = 0; i < numCollisions; i++ )
             {
-                if( m_CollisionCache[i].gameObject.layer == LayerMask.NameToLayer("Default") )
+                int layerTest = 1 << m_CollisionCache[i].gameObject.layer;
+
+                if( (layerTest & m_BlockerMask) != 0 )
                 {
                     //hit a wall; leave it for a couple of seconds. 
                     m_MovementSpeed = 0;
+                    m_HitTarget = true;
                     m_DestroyAtSec = Time.fixedTime + k_WallLingerSec;
                     return;
                 }
 
-                if( m_CollisionCache[i].gameObject.layer == LayerMask.NameToLayer("NPCs") )
+                if( m_CollisionCache[i].gameObject.layer == m_NPCLayer )
                 {
                     //hit an enemy. We don't yet have a good way of visualizing this, so we just destroy ourselves quite quickly. 
-                    m_DestroyAtSec = Time.fixedTime + 0.2f;
+                    m_DestroyAtSec = Time.fixedTime + k_EnemyLingerSec;
+                    m_HitTarget = true;
 
                     //all NPC layer entities should have one of these. 
                     var targetNetObj = m_CollisionCache[i].GetComponent<NetworkedObject>();
-                    InvokeClientRpcOnEveryone(m_NetState.HitEnemy, targetNetObj.NetworkId);
+                    m_NetState.ServerBroadcastEnemyHit(targetNetObj.NetworkId);
 
-                    targetNetObj.GetComponent<ServerCharacter>().ReceiveHP(null, -m_DrivingAction.Amount);
+                    //retrieve the person that created us, if he's still around. 
+                    NetworkedObject spawnerNet;
+                    MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(SpawnerId, out spawnerNet);
+                    ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
+
+                    targetNetObj.GetComponent<ServerCharacter>().ReceiveHP(spawnerObj, -m_DrivingAction.Amount);
                     return;
                 }
             }

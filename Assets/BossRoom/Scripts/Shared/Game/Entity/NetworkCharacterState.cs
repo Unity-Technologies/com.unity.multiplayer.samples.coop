@@ -20,7 +20,7 @@ namespace BossRoom
     /// <summary>
     /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
-    public class NetworkCharacterState : NetworkedBehaviour
+    public class NetworkCharacterState : NetworkedBehaviour, INetMovement
     {
         /// <summary>
         /// The networked position of this Character. This reflects the authorative position on the server.
