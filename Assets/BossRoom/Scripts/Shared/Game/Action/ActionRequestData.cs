@@ -87,27 +87,26 @@ namespace BossRoom
         {
             { ActionType.TANK_BASEATTACK , new List<ActionDescription>
                 {
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=10, ManaCost=2, ExecTime_s=0.3f, Duration_s=0.5f, Range=2f, Anim="Todo" } },  //level 1
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=15, ManaCost=2, ExecTime_s=0.3f, Duration_s=0.5f, Range=2f, Anim="Todo" } },  //level 2
-                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=20, ManaCost=2, ExecTime_s=0.3f, Duration_s=0.5f, Range=2f, Anim="Todo" } },  //level 3
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=30, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 1
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=40, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 2
+                    {new ActionDescription{Logic=ActionLogic.MELEE, Amount=50, ManaCost=2, ExecTime_s=0.3f, Duration_s=1.2f, Range=2f, Anim="Attack1" } },  //level 3
                 }
             },
 
             { ActionType.ARCHER_BASEATTACK, new List<ActionDescription>
                 {
-                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=7,  ManaCost=2, Duration_s=0.5f, Range=12f, Anim="Todo" } }, //Level 1
-                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=12, ManaCost=2, Duration_s=0.5f, Range=15f, Anim="Todo" } }, //Level 2
-                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=15, ManaCost=2, Duration_s=0.5f, Range=18f, Anim="Todo" } }, //Level 3
+                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=7,  ManaCost=2, Duration_s=0.5f, Range=12f, Anim="Attack1" } }, //Level 1
+                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=12, ManaCost=2, Duration_s=0.5f, Range=15f, Anim="Attack1" } }, //Level 2
+                    {new ActionDescription{Logic=ActionLogic.RANGED, Amount=15, ManaCost=2, Duration_s=0.5f, Range=18f, Anim="Attack1" } }, //Level 3
                 }
             },
 
             { ActionType.GENERAL_CHASE, new List<ActionDescription>
                 {
                     {new ActionDescription{Logic=ActionLogic.CHASE } }
-                } 
+                }
             },
-            
-            { ActionType.GENERAL_REVIVE, new List<ActionDescription> 
+            { ActionType.GENERAL_REVIVE, new List<ActionDescription>
                 {
                     {new ActionDescription{Logic=ActionLogic.REVIVE, Amount=10, ExecTime_s=0.3f, Duration_s=0.5f, Anim="Todo"  } }
                 } 
