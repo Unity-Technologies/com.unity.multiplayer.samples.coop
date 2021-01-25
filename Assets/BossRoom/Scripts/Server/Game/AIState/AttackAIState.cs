@@ -1,114 +1,106 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
     public class AttackAIState : AIState
     {
-        private AIBrain m_brain;
-        private ActionPlayer m_actionPlayer;
-        private ServerCharacter m_foe;
-        private ActionType m_curAttackAction;
+        private AIBrain m_Brain;
+        private ActionPlayer m_ActionPlayer;
+        private ServerCharacter m_Foe;
+        private ActionType m_CurAttackAction;
 
         public AttackAIState(AIBrain brain, ActionPlayer actionPlayer)
         {
-            m_brain = brain;
-            m_actionPlayer = actionPlayer;
+            m_Brain = brain;
+            m_ActionPlayer = actionPlayer;
         }
 
         public override bool IsEligible()
         {
-            return m_foe != null || ChooseFoe() != null;
+            return m_Foe != null || ChooseFoe() != null;
         }
 
         public override void Initialize()
         {
-            m_curAttackAction = ActionType.TANK_BASEATTACK;
+            m_CurAttackAction = m_Brain.CharacterData.Skill1;
 
             // clear any old foe info; we'll choose a new one in Update()
-            m_foe = null;
+            m_Foe = null;
         }
 
         public override void Update()
         {
-            if (!m_brain.IsAppropriateFoe(m_foe))
+            if (!m_Brain.IsAppropriateFoe(m_Foe))
             {
                 // time for a new foe!
-                m_foe = ChooseFoe();
+                m_Foe = ChooseFoe();
                 // whatever we used to be doing, stop that. New plan is coming!
-                m_actionPlayer.ClearActions();
+                m_ActionPlayer.ClearActions();
             }
 
             // if we're out of foes, stop! IsEligible() will now return false so we'll soon switch to a new state
-            if (!m_foe)
+            if (!m_Foe)
             {
                 return;
             }
 
             // see if we're already chasing or attacking our active foe!
-            if (m_actionPlayer.GetActiveActionInfo(out var info))
+            if (m_ActionPlayer.GetActiveActionInfo(out var info))
             {
-                if (info.ActionTypeEnum == ActionType.GENERAL_CHASE)
+                if (info.ActionTypeEnum == ActionType.GeneralChase)
                 {
-                    foreach (var id in info.TargetIds)
+                    if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkId)
                     {
-                        if (id == m_foe.NetworkId)
-                        {
-                            // yep we're chasing our foe; all set! (The attack is enqueued after it)
-                            return;
-                        }
+                        // yep we're chasing our foe; all set! (The attack is enqueued after it)
+                        return;
                     }
                 }
-                else if (info.ActionTypeEnum == m_curAttackAction)
+                else if (info.ActionTypeEnum == m_CurAttackAction)
                 {
-                    foreach (var id in info.TargetIds)
+                    if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkId)
                     {
-                        if (id == m_foe.NetworkId)
-                        {
-                            // yep we're attacking our foe; all set!
-                            return;
-                        }
+                        // yep we're attacking our foe; all set!
+                        return;
                     }
                 }
             }
 
             // Choose whether we can attack our foe directly, or if we need to get closer first
             var attackInfo = GetCurrentAttackInfo();
-            Vector3 diff = m_brain.GetMyServerCharacter().transform.position - m_foe.transform.position;
+            Vector3 diff = m_Brain.GetMyServerCharacter().transform.position - m_Foe.transform.position;
             if (diff.sqrMagnitude < attackInfo.Range * attackInfo.Range)
             {
                 // yes! We are in range
-                var attack_data = new ActionRequestData
+                var attackData = new ActionRequestData
                 {
-                    ActionTypeEnum = m_curAttackAction,
+                    ActionTypeEnum = m_CurAttackAction,
                     Amount = attackInfo.Amount,
                     ShouldQueue = false,
-                    TargetIds = new ulong[] { m_foe.NetworkId }
+                    TargetIds = new ulong[] { m_Foe.NetworkId }
                 };
-                m_actionPlayer.PlayAction(ref attack_data);
+                m_ActionPlayer.PlayAction(ref attackData);
             }
             else
             {
                 // we are not in range so we will need to chase them
-                var chase_data = new ActionRequestData
+                var chaseData = new ActionRequestData
                 {
-                    ActionTypeEnum = ActionType.GENERAL_CHASE,
+                    ActionTypeEnum = ActionType.GeneralChase,
                     Amount = attackInfo.Range,
                     ShouldQueue = false,
-                    TargetIds = new ulong[] { m_foe.NetworkId }
+                    TargetIds = new ulong[] { m_Foe.NetworkId }
                 };
-                m_actionPlayer.PlayAction(ref chase_data);
+                m_ActionPlayer.PlayAction(ref chaseData);
 
                 // queue up the actual attack for when we're in range
-                var attack_data = new ActionRequestData
+                var attackData = new ActionRequestData
                 {
-                    ActionTypeEnum = m_curAttackAction,
+                    ActionTypeEnum = m_CurAttackAction,
                     Amount = attackInfo.Amount,
                     ShouldQueue = true,
-                    TargetIds = new ulong[] { m_foe.NetworkId }
+                    TargetIds = new ulong[] { m_Foe.NetworkId }
                 };
-                m_actionPlayer.PlayAction(ref attack_data);
+                m_ActionPlayer.PlayAction(ref attackData);
             }
         }
 
@@ -119,11 +111,11 @@ namespace BossRoom.Server
         /// <returns></returns>
         private ServerCharacter ChooseFoe()
         {
-            Vector3 myPosition = m_brain.GetMyServerCharacter().transform.position;
+            Vector3 myPosition = m_Brain.GetMyServerCharacter().transform.position;
 
             float closestDistanceSqr = int.MaxValue;
             ServerCharacter closestFoe = null;
-            foreach (var foe in m_brain.GetHatedEnemies())
+            foreach (var foe in m_Brain.GetHatedEnemies())
             {
                 float distanceSqr = (myPosition - foe.transform.position).sqrMagnitude;
                 if (distanceSqr < closestDistanceSqr)
@@ -138,9 +130,14 @@ namespace BossRoom.Server
 
         private ActionDescription GetCurrentAttackInfo()
         {
-            List<ActionDescription> actionLevels = ActionData.ActionDescriptions[ m_curAttackAction ];
-            int level = 0; // FIXME: pull this level from some character state var?
-            return actionLevels[ level ];
+            ActionDescription result;
+            bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out result);
+            if (!found)
+            {
+                throw new System.Exception($"GameObject {m_Brain.GetMyServerCharacter().gameObject.name} tried to play Action {m_CurAttackAction} but this action does not exist");
+            }
+
+            return result;
         }
     }
 }

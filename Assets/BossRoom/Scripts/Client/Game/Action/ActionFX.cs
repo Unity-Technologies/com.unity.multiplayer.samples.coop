@@ -12,14 +12,6 @@ namespace BossRoom.Visual
             m_Parent = parent;
         }
 
-        public ActionLogic Logic
-        {
-            get
-            {
-                return ActionData.ActionDescriptions[Data.ActionTypeEnum][0].Logic;
-            }
-        }
-
         /// <summary>
         /// Starts the ActionFX. Derived classes may return false if they wish to end immediately without their Update being called. 
         /// </summary>
@@ -49,10 +41,10 @@ namespace BossRoom.Visual
 
         public static ActionFX MakeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent)
         {
-            ActionLogic logic = ActionData.ActionDescriptions[data.ActionTypeEnum][0].Logic;
+            ActionLogic logic = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].Logic;
             switch (logic)
             {
-                case ActionLogic.MELEE: return new MeleeActionFX(ref data, parent);
+                case ActionLogic.Melee: return new MeleeActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }

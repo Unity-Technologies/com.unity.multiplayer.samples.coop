@@ -1,8 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 namespace BossRoom
 {
     /// <summary>
@@ -12,13 +7,13 @@ namespace BossRoom
     public enum CharacterTypeEnum
     {
         //heroes
-        TANK,
-        ARCHER,
-        MAGE,
-        ROGUE,
+        Tank,
+        Archer,
+        Mage,
+        Rogue,
 
         //monsters
-        IMP,
-        IMP_BOSS,
+        Imp,
+        ImpBoss,
     }
 }

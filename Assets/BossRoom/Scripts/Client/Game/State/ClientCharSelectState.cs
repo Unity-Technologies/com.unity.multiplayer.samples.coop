@@ -14,7 +14,7 @@ namespace BossRoom.Client
         /// </summary>
         public static ClientCharSelectState Instance { get; private set; }
 
-        public override GameState ActiveState { get { return GameState.CHARSELECT; } }
+        public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
         public int CharIndex { get; private set; }
 

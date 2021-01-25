@@ -62,6 +62,14 @@ namespace BossRoom.Visual
             // ...and visualize the current char-select values that we know about
             ApplyCharacterClassAndGender();
 
+            if (!m_NetState.IsNpc)
+            {
+                foreach (var model in GetComponents<ModelSwap>())
+                {
+                    model.SetModel(m_NetState.CharacterAppearance.Value);
+                }
+            }
+
             if (IsLocalPlayer)
             {
                 AttachCamera();
@@ -78,13 +86,13 @@ namespace BossRoom.Visual
         {
             switch (newValue)
             {
-                case LifeState.ALIVE:
+                case LifeState.Alive:
                     m_ClientVisualsAnimator.SetTrigger("StandUp");
                     break;
-                case LifeState.FAINTED:
+                case LifeState.Fainted:
                     m_ClientVisualsAnimator.SetTrigger("FallDown");
                     break;
-                case LifeState.DEAD:
+                case LifeState.Dead:
                     m_ClientVisualsAnimator.SetTrigger("Dead");
                     break;
                 default:

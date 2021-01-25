@@ -11,7 +11,7 @@ namespace BossRoom.Server
     [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.CHARSELECT; } }
+        public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
 
         private List<ulong> m_CharSlotClientIDs;

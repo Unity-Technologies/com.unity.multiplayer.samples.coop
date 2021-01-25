@@ -26,9 +26,11 @@ namespace BossRoom
         {
             get
             {
-                var list = ActionData.ActionDescriptions[Data.ActionTypeEnum];
-                int level = Mathf.Min(Data.Level, list.Count - 1); //if we don't go up to the requested level, just cap at the max level. 
-                return list[level];
+                ActionDescription result;
+                bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out result);
+                Debug.AssertFormat(found, "Tried to find ActionType %s but it was missing from GameDataSource!", Data.ActionTypeEnum);
+
+                return GameDataSource.Instance.ActionDataByType[Data.ActionTypeEnum];
             }
         }
 
