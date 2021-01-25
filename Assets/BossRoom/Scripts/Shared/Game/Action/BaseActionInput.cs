@@ -1,3 +1,4 @@
+using System;
 using BossRoom;
 using UnityEngine;
 using UnityEngine.Events;
@@ -15,9 +16,8 @@ public abstract class BaseActionInput : MonoBehaviour
         m_OnFinished = onFinished;
     }
 
-    public void Finish()
+    public void OnDestroy()
     {
-        Destroy(this.gameObject);
         m_OnFinished();
     }
 }

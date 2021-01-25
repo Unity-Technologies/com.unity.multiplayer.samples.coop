@@ -29,7 +29,7 @@ public class AoEActionInput : BaseActionInput
                 TargetIds = null
             };
             m_PlayerOwner.ClientSendActionRequest(ref data);
-            Finish();
+            Destroy(this.gameObject);
             return;
         }
 

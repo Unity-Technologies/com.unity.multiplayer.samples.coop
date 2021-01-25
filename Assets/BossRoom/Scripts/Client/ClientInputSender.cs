@@ -67,6 +67,8 @@ namespace BossRoom.Client
         void FixedUpdate()
         {
             // TODO replace with new Unity Input System [GOMPS-81]
+
+            // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
             if (m_SkillActive)
             {
                 return;
