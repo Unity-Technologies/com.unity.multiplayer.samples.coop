@@ -42,7 +42,7 @@ public class AoEActionInput : MonoBehaviour
             return;
         }
 
-        int layerMask = LayerMask.GetMask("Floor");
+        int layerMask = LayerMask.GetMask("Ground");
         if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, float.PositiveInfinity, layerMask))
         {
             this.transform.position = hit.point;

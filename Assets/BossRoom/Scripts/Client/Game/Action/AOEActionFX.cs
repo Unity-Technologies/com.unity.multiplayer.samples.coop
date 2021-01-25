@@ -16,7 +16,8 @@ public class AOEActionFX : ActionFX
         Debug.Log($"AoE action FX Start, affecting characters {m_Data.TargetIds}");
         m_Parent.OurAnimator.SetTrigger(Description.Anim);
         var actionDescription = GameDataSource.Instance.ActionDataByType[m_Data.ActionTypeEnum];
-        GameObject.Instantiate(actionDescription.PrefabToSpawn, m_Data.Position, Quaternion.identity);
+        var VFXObject = GameObject.Instantiate(actionDescription.PrefabToSpawn, m_Data.Position, Quaternion.identity);
+        VFXObject.transform.localScale = new Vector3(actionDescription.Radius, actionDescription.Radius, actionDescription.Radius);
         return ActionConclusion.Stop;
     }
 
