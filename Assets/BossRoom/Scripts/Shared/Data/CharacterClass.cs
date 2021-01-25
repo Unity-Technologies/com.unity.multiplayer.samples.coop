@@ -28,7 +28,7 @@ namespace BossRoom
         public int BaseMana;
 
         [Tooltip("Set to true if this represents an NPC, as opposed to a player.")]
-        public bool IsNPC;
+        public bool IsNpc;
 
         [Tooltip("For NPCs, this will be used as the aggro radius at which enemies wake up and attack the player")]
         public float DetectRange;

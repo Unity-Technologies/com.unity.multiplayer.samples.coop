@@ -72,7 +72,7 @@ namespace BossRoom.Server
         /// </summary>
         public bool IsAppropriateFoe(ServerCharacter potentialFoe)
         {
-            if (potentialFoe == null || potentialFoe.IsNPC || potentialFoe.NetState.NetworkLifeState.Value != LifeState.ALIVE)
+            if (potentialFoe == null || potentialFoe.IsNpc || potentialFoe.NetState.NetworkLifeState.Value != LifeState.Alive)
             {
                 return false;
             }
@@ -119,7 +119,7 @@ namespace BossRoom.Server
         {
             get
             {
-                return GameDataSource.s_Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType.Value];
+                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType.Value];
             }
         }
 

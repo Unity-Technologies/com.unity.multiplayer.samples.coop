@@ -50,7 +50,7 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (!m_ExecutionFired && (Time.time - TimeStarted) >= Description.ExecTime_s)
+            if (!m_ExecutionFired && (Time.time - TimeStarted) >= Description.ExecTimeSeconds)
             {
                 m_ExecutionFired = true;
                 var foe = DetectFoe(m_ProvisionalTarget);
@@ -73,7 +73,7 @@ namespace BossRoom.Server
             //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack.
 
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectMeleeFoe(m_Parent.IsNPC, m_Parent.GetComponent<Collider>(), Description, out results);
+            int numResults = ActionUtils.DetectMeleeFoe(m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description, out results);
 
             if (numResults == 0) { return null; }
 

@@ -1,4 +1,4 @@
-using System;
+using UnityEngine;
 namespace BossRoom.Server
 {
     /// <summary>
@@ -17,9 +17,6 @@ namespace BossRoom.Server
         protected ServerCharacter m_Parent;
 
         /// <summary>
-        /// Time when this Action was started (from Time.time) in seconds. Set by the ActionPlayer. 
-        /// RequestData we were instantiated with. Value should be treated as readonly. 
-        /// Data Description for this action. 
         /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
         /// </summary>
         public Action(ServerCharacter parent, ref ActionRequestData data) : base(ref data)
@@ -50,14 +47,13 @@ namespace BossRoom.Server
         /// <summary>
         /// Factory method that creates Actions from their request data.
         /// </summary>
-        /// <param name="state">the NetworkCharacterState of the character that owns our ActionPlayer</param>
+        /// <param name="parent">The component that owns the ActionPlayer this action is running on. </param>
         /// <param name="data">the data to instantiate this skill from. </param>
-        /// <param name="level">the level to play the skill at. </param>
         /// <returns>the newly created action. </returns>
         public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data)
         {
             ActionDescription actionDesc;
-            if (!GameDataSource.s_Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out actionDesc))
+            if (!GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out actionDesc))
             {
                 throw new System.Exception($"Trying to create Action {data.ActionTypeEnum} but it isn't defined on the GameDataSource!");
             }

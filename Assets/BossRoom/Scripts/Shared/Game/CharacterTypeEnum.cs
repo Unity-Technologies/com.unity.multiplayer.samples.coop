@@ -11,13 +11,13 @@ namespace BossRoom
     public enum CharacterTypeEnum
     {
         //heroes
-        TANK,
-        ARCHER,
-        MAGE,
-        ROGUE,
+        Tank,
+        Archer,
+        Mage,
+        Rogue,
 
         //monsters
-        IMP,
-        IMP_BOSS,
+        Imp,
+        ImpBoss,
     }
 }

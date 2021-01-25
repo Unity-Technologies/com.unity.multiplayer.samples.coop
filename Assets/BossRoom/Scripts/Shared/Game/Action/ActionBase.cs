@@ -24,7 +24,11 @@ namespace BossRoom
         {
             get
             {
-                return GameDataSource.s_Instance.ActionDataByType[Data.ActionTypeEnum];
+                ActionDescription result;
+                bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out result);
+                Debug.AssertFormat(found, "Tried to find ActionType %s but it was missing from GameDataSource!", Data.ActionTypeEnum);
+
+                return GameDataSource.Instance.ActionDataByType[Data.ActionTypeEnum];
             }
         }
 
