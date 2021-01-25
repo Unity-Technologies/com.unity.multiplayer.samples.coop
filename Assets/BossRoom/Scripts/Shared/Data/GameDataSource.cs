@@ -46,9 +46,6 @@ namespace BossRoom
         /// </summary>
         public Dictionary<ActionType, ActionDescription> ActionDataByType
         {
-        /// <summary>
-        /// static accessor for all GameData. 
-        /// </summary>
             get
             {
                 if( m_ActionDataMap == null )

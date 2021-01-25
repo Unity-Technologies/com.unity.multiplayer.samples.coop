@@ -34,24 +34,24 @@ namespace BossRoom
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
         /// <summary>
+        /// Current HP. This value is populated at startup time from CharacterClass data. 
         /// </summary>
         [HideInInspector]
         public NetworkedVarInt HitPoints;
 
         /// <summary>
+        /// Current Mana. This value is populated at startup time from CharacterClass data. 
         /// </summary>
         [HideInInspector]
         public NetworkedVarInt Mana;
 
         /// <summary>
+        /// Current LifeState. Only Players should enter the FAINTED state. 
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
-        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
-        public NetworkedVar<CharacterTypeEnum> CharacterType;
-
         /// <summary>
-        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
+        /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc
         {
@@ -60,6 +60,9 @@ namespace BossRoom
                 return GameDataSource.Instance.CharacterDataByType[CharacterType.Value].IsNpc;
             }
         }
+
+        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
+        public NetworkedVar<CharacterTypeEnum> CharacterType;
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like

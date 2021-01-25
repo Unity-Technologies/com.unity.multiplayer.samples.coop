@@ -34,5 +34,3 @@ namespace BossRoom
         public float DetectRange;
     }
 }
-
-
