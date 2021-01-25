@@ -47,17 +47,6 @@ namespace BossRoom
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
-
-        /// Returns true if this Character is an NPC.
-        /// </summary>
-        public bool IsNPC
-        {
-            get
-            {
-                return GameDataSource.s_Instance.CharacterDataByType[CharacterType.Value].IsNPC;
-            }
-        }
-
         [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;
 
@@ -72,12 +61,9 @@ namespace BossRoom
             }
         }
 
-        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
-        public NetworkedVar<CharacterTypeEnum> CharacterType;
-
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
-        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc). 
+        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
         /// </summary>
         [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
         public NetworkedVarInt CharacterAppearance;

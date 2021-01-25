@@ -10,7 +10,7 @@ public class AOEAction : Action
 
     public override bool Start()
     {
-        var actionDescription = GameDataSource.s_Instance.ActionDataByType[m_Data.ActionTypeEnum];
+        var actionDescription = GameDataSource.Instance.ActionDataByType[m_Data.ActionTypeEnum];
 
         // Note: could have a non alloc version of this overlap sphere where we statically store our collider array, but since this is a self
         // destroyed object, the complexity added doesn't seem worth it for now.

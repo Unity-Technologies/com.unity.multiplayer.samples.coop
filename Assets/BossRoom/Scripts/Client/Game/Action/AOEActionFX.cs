@@ -15,7 +15,7 @@ public class AOEActionFX : ActionFX
     {
         Debug.Log($"AoE action FX Start, affecting characters {m_Data.TargetIds}");
         m_Parent.OurAnimator.SetTrigger(Description.Anim);
-        var actionDescription = GameDataSource.s_Instance.ActionDataByType[m_Data.ActionTypeEnum];
+        var actionDescription = GameDataSource.Instance.ActionDataByType[m_Data.ActionTypeEnum];
         GameObject.Instantiate(actionDescription.PrefabToSpawn, m_Data.Position, Quaternion.identity);
         return ActionConclusion.Stop;
     }
