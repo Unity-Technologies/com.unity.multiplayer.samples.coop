@@ -46,50 +46,50 @@ namespace BossRoom.Client
 
         private void ChooseAndUpdateState()
         {
-            if (m_State == CharSelectData.SlotState.INACTIVE)
+            if (m_State == CharSelectData.SlotState.Inactive)
             {
                 UpdateState(m_StateInactive);
             }
-            else if (m_State == CharSelectData.SlotState.ACTIVE)
+            else if (m_State == CharSelectData.SlotState.Active)
             {
                 switch (m_CharacterClass)
                 {
-                case CharacterTypeEnum.TANK:
-                    UpdateState(m_StateTankActive);
-                    break;
-                case CharacterTypeEnum.MAGE:
-                    UpdateState(m_StateMageActive);
-                    break;
-                case CharacterTypeEnum.ROGUE:
-                    UpdateState(m_StateRogueActive);
-                    break;
-                case CharacterTypeEnum.ARCHER:
-                    UpdateState(m_StateArcherActive);
-                    break;
-                default:
-                    Debug.LogError("UI can't handle class " + m_CharacterClass);
-                    break;
+                    case CharacterTypeEnum.Tank:
+                        UpdateState(m_StateTankActive);
+                        break;
+                    case CharacterTypeEnum.Mage:
+                        UpdateState(m_StateMageActive);
+                        break;
+                    case CharacterTypeEnum.Rogue:
+                        UpdateState(m_StateRogueActive);
+                        break;
+                    case CharacterTypeEnum.Archer:
+                        UpdateState(m_StateArcherActive);
+                        break;
+                    default:
+                        Debug.LogError("UI can't handle class " + m_CharacterClass);
+                        break;
                 }
             }
-            else if (m_State == CharSelectData.SlotState.LOCKEDIN)
+            else if (m_State == CharSelectData.SlotState.LockedIn)
             {
                 switch (m_CharacterClass)
                 {
-                case CharacterTypeEnum.TANK:
-                    UpdateState(m_StateTankLockedIn);
-                    break;
-                case CharacterTypeEnum.MAGE:
-                    UpdateState(m_StateMageLockedIn);
-                    break;
-                case CharacterTypeEnum.ROGUE:
-                    UpdateState(m_StateRogueLockedIn);
-                    break;
-                case CharacterTypeEnum.ARCHER:
-                    UpdateState(m_StateArcherLockedIn);
-                    break;
-                default:
-                    Debug.LogError("UI can't handle class " + m_CharacterClass);
-                    break;
+                    case CharacterTypeEnum.Tank:
+                        UpdateState(m_StateTankLockedIn);
+                        break;
+                    case CharacterTypeEnum.Mage:
+                        UpdateState(m_StateMageLockedIn);
+                        break;
+                    case CharacterTypeEnum.Rogue:
+                        UpdateState(m_StateRogueLockedIn);
+                        break;
+                    case CharacterTypeEnum.Archer:
+                        UpdateState(m_StateArcherLockedIn);
+                        break;
+                    default:
+                        Debug.LogError("UI can't handle class " + m_CharacterClass);
+                        break;
                 }
             }
         }
@@ -102,7 +102,7 @@ namespace BossRoom.Client
             }
             m_CurStateGraphics = stateGraphics;
             m_CurStateGraphics.GraphicsRoot.SetActive(true);
-            if (m_State == CharSelectData.SlotState.INACTIVE)
+            if (m_State == CharSelectData.SlotState.Inactive)
                 m_CurStateGraphics.PlayerIndexText.text = "";
             else
                 m_CurStateGraphics.PlayerIndexText.text = string.Format(m_SeatNumberMsg, (m_PlayerIndex + 1));

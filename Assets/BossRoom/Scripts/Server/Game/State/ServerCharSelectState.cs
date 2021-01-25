@@ -36,7 +36,7 @@ namespace BossRoom.Server
                 throw new System.Exception("OnClientChangedSlot: unknown client ID " + clientId);
 
             CharSelectData.CharacterSlots[ idx ] = newSlot;
-            if (newSlot.State == CharSelectData.SlotState.LOCKEDIN)
+            if (newSlot.State == CharSelectData.SlotState.LockedIn)
             {
                 // it's possible that this is the last person we were waiting for. See if we're fully locked in!
                 LockLobbyIfReady();
@@ -52,7 +52,7 @@ namespace BossRoom.Server
             for (int x = 0; x < m_CharSlotClientIDs.Count; ++x)
             {
                 if (MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[ x ]) &&
-                    CharSelectData.CharacterSlots[ x ].State != CharSelectData.SlotState.LOCKEDIN)
+                    CharSelectData.CharacterSlots[ x ].State != CharSelectData.SlotState.LockedIn)
                 {
                     return; // this is a real player, and they are not ready to start, so we're done
                 }
@@ -188,7 +188,7 @@ namespace BossRoom.Server
             if (newClientIdx == -1)
             {
                 // there was no room!
-                CharSelectData.InvokeClientRpcOnClient(CharSelectData.RpcFatalLobbyError, clientId, CharSelectData.FatalLobbyError.LOBBY_FULL, "MLAPI_INTERNAL");
+                CharSelectData.InvokeClientRpcOnClient(CharSelectData.RpcFatalLobbyError, clientId, CharSelectData.FatalLobbyError.LobbyFull, "MLAPI_INTERNAL");
             }
             else
             {
@@ -202,7 +202,7 @@ namespace BossRoom.Server
             int idx = FindClientIdx(clientId);
             if (idx != -1)
             {
-                CharSelectData.CharacterSlots[ idx ] = new CharSelectData.CharSelectSlot(CharSelectData.SlotState.INACTIVE);
+                CharSelectData.CharacterSlots[ idx ] = new CharSelectData.CharSelectSlot(CharSelectData.SlotState.Inactive);
             }
         }
     }

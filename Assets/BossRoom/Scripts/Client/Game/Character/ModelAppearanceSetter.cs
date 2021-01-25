@@ -58,13 +58,13 @@ namespace BossRoom.Visual
         {
             switch (Class)
             {
-            case CharacterTypeEnum.ARCHER:
+            case CharacterTypeEnum.Archer:
                 return IsMale ? 0 : 1;
-            case CharacterTypeEnum.MAGE:
+            case CharacterTypeEnum.Mage:
                 return IsMale ? 2 : 3;
-            case CharacterTypeEnum.ROGUE:
+            case CharacterTypeEnum.Rogue:
                 return IsMale ? 4 : 5;
-            case CharacterTypeEnum.TANK:
+            case CharacterTypeEnum.Tank:
                 return IsMale ? 6 : 7;
             default:
                 Debug.LogError("Cannot map " + Class + " " + (IsMale ? "male" : "female") + "!");

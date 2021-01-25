@@ -1,6 +1,6 @@
+using MLAPI;
 using System.Collections;
 using UnityEngine;
-using MLAPI;
 
 namespace BossRoom.Server
 {
@@ -17,19 +17,7 @@ namespace BossRoom.Server
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
         private NetworkedObject m_EnemyPrefab;
 
-        [SerializeField]
-        [Tooltip("Set what sort of character class gets created for players by default.")]
-        private CharacterTypeEnum m_DefaultPlayerType = CharacterTypeEnum.Tank;
-
-        [SerializeField]
-        [Tooltip("Set the default Player Appearance (value between 0-7)")]
-        private int m_DefaultPlayerAppearance = 7;
-
         public override GameState ActiveState { get { return GameState.BossRoom; } }
-        /// <summary>
-        /// Reference to the scene's state object so that newly-spawned players can access state
-        /// </summary>
-        public static ServerBossRoomState Instance { get; private set; }
 
         private LobbyResults m_LobbyResults;
 
@@ -41,22 +29,10 @@ namespace BossRoom.Server
                 // We don't know about this client ID! That probably means they joined the game late, after the lobby was closed.
                 // We don't yet handle this scenario well (e.g. showing them a "wait for next game" screen, maybe?),
                 // so for now we just let them join. We'll pretend that they made them some generic character choices.
-                returnValue = new LobbyResults.CharSelectChoice(CharacterTypeEnum.TANK, true);
-                m_LobbyResults.Choices[ clientId ] = returnValue;
+                returnValue = new LobbyResults.CharSelectChoice(CharacterTypeEnum.Tank, true);
+                m_LobbyResults.Choices[clientId] = returnValue;
             }
             return returnValue;
-        }
-
-        private void Awake()
-        {
-            Instance = this;
-        }
-
-        protected override void OnDestroy()
-        {
-            base.OnDestroy();
-            if (Instance == this)
-                Instance = null;
         }
 
         public override void NetworkStart()
@@ -110,8 +86,11 @@ namespace BossRoom.Server
         {
             var newPlayer = Instantiate(m_PlayerPrefab);
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
-            netState.CharacterType.Value = m_DefaultPlayerType;
-            netState.CharacterAppearance.Value = m_DefaultPlayerAppearance;
+
+            var lobbyResults = GetLobbyResultsForClient(clientId);
+
+            netState.CharacterType.Value = lobbyResults.Class;
+            netState.CharacterAppearance.Value = lobbyResults.GetAppearance();
             newPlayer.SpawnAsPlayerObject(clientId);
         }
 

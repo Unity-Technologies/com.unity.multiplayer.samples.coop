@@ -63,14 +63,6 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.OnReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
-
-                // store our character-creation choices in NetworkedVars so clients can figure out how to visualize us
-                if (!IsNPC)
-                {
-                    var lobbyChoices = ServerBossRoomState.Instance.GetLobbyResultsForClient(OwnerClientId);
-                    NetState.CharacterClass.Value = lobbyChoices.Class;
-                    NetState.IsMale.Value = lobbyChoices.IsMale;
-                }
             }
         }
 
