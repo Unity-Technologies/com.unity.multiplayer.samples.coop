@@ -9,17 +9,8 @@ using UnityEngine;
  * The server side gameplay action will then trigger the client side resulting FX.
  * This action's flow is this: (Client) AoEActionInput --> (Server) AoEAction --> (Client) AoEActionFX
  */
-public class AoEActionInput : MonoBehaviour
+public class AoEActionInput : BaseActionInput
 {
-    NetworkCharacterState m_PlayerOwner;
-    ActionType m_ActionType;
-
-    public void Initiate(NetworkCharacterState playerOwner, ActionType actionType)
-    {
-        m_PlayerOwner = playerOwner;
-        m_ActionType = actionType;
-    }
-
     void Start()
     {
         var radius = GameDataSource.Instance.ActionDataByType[m_ActionType].Radius;
@@ -38,7 +29,7 @@ public class AoEActionInput : MonoBehaviour
                 TargetIds = null
             };
             m_PlayerOwner.ClientSendActionRequest(ref data);
-            Destroy(this.gameObject);
+            Finish();
             return;
         }
 

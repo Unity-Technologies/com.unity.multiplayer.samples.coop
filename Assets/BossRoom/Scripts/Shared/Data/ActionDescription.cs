@@ -4,7 +4,7 @@ namespace BossRoom
 {
     /// <summary>
     /// Data description of a single Action, including the information to visualize it (animations etc), and the information
-    /// to play it back on the server. 
+    /// to play it back on the server.
     /// </summary>
     [CreateAssetMenu(menuName = "GameData/ActionDescription", order = 1)]
     public class ActionDescription : ScriptableObject
@@ -40,9 +40,10 @@ namespace BossRoom
         public float Radius;
 
         [Tooltip("Prefab to spawn if needed")]
-        public GameObject PrefabToSpawn;
+        public GameObject ActionVisualization;
+
+        [Tooltip("Prefab to spawn that will manage this action's input")]
+        public BaseActionInput ActionInput;
     }
-
-
 }
 

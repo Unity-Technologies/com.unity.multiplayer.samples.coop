@@ -1,5 +1,6 @@
 using System;
 using MLAPI;
+using NUnit.Framework.Constraints;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -56,18 +57,25 @@ namespace BossRoom.Client
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
         }
 
-        [SerializeField]
-        AoEActionInput m_AoePrefab;
+        bool m_SkillActive = false;
+
+        public void FinishSkill()
+        {
+            m_SkillActive = false;
+        }
+
         void FixedUpdate()
         {
             // TODO replace with new Unity Input System [GOMPS-81]
-
-            // TODO Sam before PR, talk with David on how we manage abilities
+            if (m_SkillActive)
+            {
+                return;
+            }
             if (Input.GetKeyUp("1"))
             {
-                var aoe = Instantiate(m_AoePrefab);
-                aoe.Initiate(m_NetworkCharacter, ActionType.TANK_TESTABILITY);
-                // todo sam bug: clicking the aoe shouldn't also trigger a move from the player
+                var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
+                skill2.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
+                m_SkillActive = true;
                 return;
             }
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
@@ -121,7 +129,7 @@ namespace BossRoom.Client
 
         /// <summary>
         /// When you right-click on something you will want to do contextually different things. For example you might attack an enemy,
-        /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED). 
+        /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED).
         /// </summary>
         /// <param name="hit">The RaycastHit of the entity we clicked on.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
