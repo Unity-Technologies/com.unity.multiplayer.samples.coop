@@ -11,7 +11,7 @@ namespace BossRoom.Client
     /// </summary>
     public class ClientMainMenuState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.MAINMENU;  } }
+        public override GameState ActiveState { get { return GameState.MainMenu;  } }
 
         public override void NetworkStart()
         {

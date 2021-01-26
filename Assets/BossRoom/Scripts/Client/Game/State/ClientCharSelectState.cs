@@ -11,7 +11,7 @@ namespace BossRoom.Client
     [RequireComponent(typeof(CharSelectData))]
     public class ClientCharSelectState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.CHARSELECT; } }
+        public override GameState ActiveState { get { return GameState.CharSelect; } }
 
 
         public override void NetworkStart()
