@@ -56,6 +56,7 @@ namespace BossRoom.Server
         /// Factory method that creates Actions from their request data. 
         /// </summary>
         /// <param name="parent">The component that owns the ActionPlayer this action is running on. </param>
+        /// <param name="state">the NetworkCharacterState of the character that owns our ActionPlayer</param>
         /// <param name="data">the data to instantiate this skill from. </param>
         /// <returns>the newly created action. </returns>
         public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data)
