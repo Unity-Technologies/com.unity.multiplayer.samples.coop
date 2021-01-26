@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -11,6 +9,8 @@ namespace BossRoom.Visual
     {
         public GameObject GameHubGO;
         public GameObject InputTextGO;
+
+        public PopupPanelManager m_ResponsePopup;
 
         private BossRoom.GameNetPortal m_netHub;
 
@@ -25,31 +25,35 @@ namespace BossRoom.Visual
             m_netHub = GameHubGO.GetComponent<BossRoom.GameNetPortal>();
         }
 
-        /// <summary>
-        /// Gets the IP Address the user set in the UI, or returns 127.0.0.1 if IP is not present. 
-        /// </summary>
-        /// <returns>IP address entered by user, in string form. </returns>
-        private string GetIPAddress()
-        {
-            string iptext = InputTextGO.GetComponent<UnityEngine.UI.Text>().text;
-            if( iptext == "" )
-            {
-                return "127.0.0.1";
-            }
-
-            return iptext;
-        }
-
         public void OnHostClicked()
         {
-            GetIPAddress();
 
-            m_netHub.StartHost(GetIPAddress(), k_connectPort);
+            m_ResponsePopup.SetupInputDisplay("Host Game", "Input the IP to host on", "iphost", "Confirm", (string input) =>
+            {
+                string ipAddress = input;
+                if (input == "")
+                {
+                    ipAddress = "127.0.0.1";
+                }
+
+                Debug.Log(ipAddress);
+
+                m_netHub.StartHost(ipAddress, k_connectPort);
+            });
         }
 
         public void OnConnectClicked()
         {
-            BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, GetIPAddress(), k_connectPort);
+            m_ResponsePopup.SetupInputDisplay("Join Game", "Input the host IP below", "iphost", "Join", (string input) =>
+            {
+                string ipAddress = input;
+                if (input == "")
+                {
+                    ipAddress = "127.0.0.1";
+                }
+
+                BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, ipAddress, k_connectPort);
+            });
         }
     }
 }
