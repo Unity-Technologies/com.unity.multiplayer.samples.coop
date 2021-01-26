@@ -68,6 +68,9 @@ namespace BossRoom.Server
                 NetState.OnReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
+                NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
+                NetState.Mana.Value = NetState.CharacterData.BaseMana;
+
                 if (m_StartingAction != ActionType.None)
                 {
                     var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
