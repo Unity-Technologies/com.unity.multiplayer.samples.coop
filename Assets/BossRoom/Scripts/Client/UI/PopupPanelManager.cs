@@ -28,7 +28,7 @@ public class PopupPanelManager : MonoBehaviour
     private OnConfirmFunction m_ConfirmFunction;
 
 
-    private const string k_DEFAULT_CONFIRM_TEXT = "OK";
+    private const string k_DefaultConfirmText = "OK";
 
 
     public delegate void OnConfirmFunction(string input);
@@ -45,6 +45,9 @@ public class PopupPanelManager : MonoBehaviour
     public void SetupInputDisplay(string titleText, string mainText, string inputFieldText,
         string confirmationText, OnConfirmFunction confirmCallback, string defaultInput = "")
     {
+        //Clear any previous settings of the Panel first
+        ResetState();
+
         m_TitleText.text = titleText;
         m_MainText.text = mainText;
         m_SubText.text = "";
@@ -71,7 +74,6 @@ public class PopupPanelManager : MonoBehaviour
         var inputField = m_InputFieldParent.GetComponent<InputField>();
         m_ConfirmFunction.Invoke(inputField.text);
 
-        ResetState();
     }
 
     /// <summary>
@@ -88,7 +90,7 @@ public class PopupPanelManager : MonoBehaviour
     /// </summary>
     private void ResetState()
     {
-        m_ConfirmationButton.GetComponentInChildren<Text>().text = k_DEFAULT_CONFIRM_TEXT;
+        m_ConfirmationButton.GetComponentInChildren<Text>().text = k_DefaultConfirmText;
         m_TitleText.text = "";
         m_MainText.text = "";
         m_SubText.text = "";
@@ -105,21 +107,23 @@ public class PopupPanelManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Sets the notifier panel to match the given specificiations.  
+    /// Sets the panel to match the given specificiations to notify the player.  If display image is set to true, it will display
     /// </summary>
     /// <param name="titleText">The title text at the top of the panel</param>
     /// <param name="displayImage">set to true if the notifier should display the animating icon for being busy</param>
     /// <param name="displayConfirmation"> set to true if the panel expects the user to click the button to close the panel.</param>
     /// <param name="subText">optional text in the middle of the panel.  Is not meant to coincide with the displayImage</param>
-    public void SetNotifierAndDisplay(string titleText, bool displayImage, bool displayConfirmation, string subText = "")
+    public void SetupNotifierDisplay(string titleText, string mainText, bool displayImage, bool displayConfirmation, string subText = "")
     {
+        ResetState();
+
         m_TitleText.text = titleText;
+        m_MainText.text = mainText;
         m_SubText.text = subText;
 
         if (displayImage)
         {
             m_ReconnectingImage.SetActive(true);
-            //TODO: Fix for Animating image
         }
         else
         {

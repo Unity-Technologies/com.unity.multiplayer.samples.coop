@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-
-using BossRoom;
 
 namespace BossRoom.Client
 {
@@ -14,6 +11,8 @@ namespace BossRoom.Client
     {
         private GameNetPortal m_Hub;
 
+        public event Action<ConnectStatus> onConnectFinished;
+
         public void Start()
         {
             m_Hub = GetComponent<GameNetPortal>();
@@ -23,15 +22,21 @@ namespace BossRoom.Client
 
         public void NetworkStart()
         {
-            if( !m_Hub.NetManager.IsClient ) { this.enabled = false; }
+            if (!m_Hub.NetManager.IsClient) { this.enabled = false; }
         }
 
 
-        public void OnConnectFinished( ConnectStatus status )
+        public void OnConnectFinished(ConnectStatus status)
         {
             //on success, there is nothing to do (the MLAPI scene management system will take us to the next scene). 
             //on failure, we must raise an event so that the UI layer can display something. 
             Debug.Log("RecvConnectFinished Got status: " + status);
+
+            //For now only invoke the event to the UI layer on failure
+            if (status != ConnectStatus.SUCCESS)
+            {
+                onConnectFinished.Invoke(status);
+            }
         }
 
 
@@ -41,7 +46,7 @@ namespace BossRoom.Client
         /// <returns>The Guid that uniquely identifies this client install, in string form. </returns>
         private static string GetOrCreateGuid()
         {
-            if( PlayerPrefs.HasKey("client_guid"))
+            if (PlayerPrefs.HasKey("client_guid"))
             {
                 return PlayerPrefs.GetString("client_guid");
             }

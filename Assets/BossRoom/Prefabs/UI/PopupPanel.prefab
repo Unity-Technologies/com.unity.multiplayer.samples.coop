@@ -995,6 +995,7 @@ GameObject:
   - component: {fileID: 9087685862192593396}
   - component: {fileID: 3767999954931857550}
   - component: {fileID: 6520085348622530102}
+  - component: {fileID: 2925091974493458561}
   m_Layer: 5
   m_Name: Connecting Image
   m_TagString: Untagged
@@ -1059,3 +1060,16 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2925091974493458561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8861405945138489867}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2239312c08bc5bb478d49bd7ce25903a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RotationSpeed: 50
