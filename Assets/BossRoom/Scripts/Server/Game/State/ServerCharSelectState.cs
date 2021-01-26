@@ -11,7 +11,7 @@ namespace BossRoom.Server
     [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.CHARSELECT; } }
+        public override GameState ActiveState { get { return GameState.CharSelect; } }
 
         //TODO: GOMPS-83. Remove this temp variable and replace with core CharSelect logic. 
         private float m_start_s; //TEMP. manages transition. 

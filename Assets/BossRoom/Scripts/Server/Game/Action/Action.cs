@@ -55,14 +55,13 @@ namespace BossRoom.Server
         /// <summary>
         /// Factory method that creates Actions from their request data. 
         /// </summary>
-        /// <param name="state">the NetworkCharacterState of the character that owns our ActionPlayer</param>
+        /// <param name="parent">The component that owns the ActionPlayer this action is running on. </param>
         /// <param name="data">the data to instantiate this skill from. </param>
-        /// <param name="level">the level to play the skill at. </param>
         /// <returns>the newly created action. </returns>
         public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data)
         {
             ActionDescription actionDesc;
-            if (!GameDataSource.s_Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out actionDesc))
+            if (!GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out actionDesc))
             {
                 throw new System.Exception($"Trying to create Action {data.ActionTypeEnum} but it isn't defined on the GameDataSource!");
             }

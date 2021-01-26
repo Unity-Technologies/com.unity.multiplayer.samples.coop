@@ -19,14 +19,13 @@ namespace BossRoom.Server
 
         [SerializeField]
         [Tooltip("Set what sort of character class gets created for players by default.")]
-        private CharacterTypeEnum m_DefaultPlayerType = CharacterTypeEnum.TANK;
+        private CharacterTypeEnum m_DefaultPlayerType = CharacterTypeEnum.Tank;
 
         [SerializeField]
         [Tooltip("Set the default Player Appearance (value between 0-7)")]
         private int m_DefaultPlayerAppearance = 7;
 
-        public override GameState ActiveState { get { return GameState.BOSSROOM; } }
-
+        public override GameState ActiveState { get { return GameState.BossRoom; } }
 
         public override void NetworkStart()
         {

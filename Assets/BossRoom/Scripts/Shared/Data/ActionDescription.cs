@@ -18,20 +18,20 @@ namespace BossRoom
         [Tooltip("Could be damage, could be healing, or other things. This is a base, nominal value that will get modified by game logic when the action takes effect")]
         public int Amount;
 
-        [Tooltip("How much it consts in Mana to play this Action")]
+        [Tooltip("How much it costs in Mana to play this Action")]
         public int ManaCost;
 
         [Tooltip("How how the Action performer can be from the Target, or how far the action can go (for an untargeted action like a bowshot")]
         public float Range;
 
         [Tooltip("Duration in seconds that this Action takes to play")]
-        public float Duration_s;
+        public float DurationSeconds;
 
         [Tooltip("Time when the Action should do its \"main thing\" (e.g. when a melee attack should apply damage")]
-        public float ExecTime_s;
+        public float ExecTimeSeconds;
 
         [Tooltip("How long the effect this Action leaves behind will last, in seconds")]
-        public float EffectDuration_s;
+        public float EffectDurationSeconds;
 
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;

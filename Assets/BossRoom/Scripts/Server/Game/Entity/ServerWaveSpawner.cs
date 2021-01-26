@@ -1,6 +1,8 @@
 using MLAPI;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+using MLAPI.Connection;
 
 namespace BossRoom.Server
 {
@@ -32,11 +34,7 @@ namespace BossRoom.Server
         // cache array of RaycastHit as it will be reused for player visibility
         RaycastHit[] m_Hit;
 
-        int m_PlayerLayerMask;
-
-        // cache Collider array of OverlapSphere results for player proximity 
-        Collider[] m_Colliders;
-
+        
         [Tooltip("Select which layers will block visibility.")]
         [SerializeField]
         LayerMask m_BlockingMask;
@@ -71,7 +69,6 @@ namespace BossRoom.Server
         void Awake()
         {
             m_Transform = transform;
-            m_PlayerLayerMask = LayerMask.GetMask("PCs");
         }
 
         public override void NetworkStart()
@@ -86,7 +83,6 @@ namespace BossRoom.Server
 
             ReviveSpawner();
             m_Hit = new RaycastHit[1];
-            m_Colliders = new Collider[8];
             StartCoroutine(ValidatePlayersProximity(StartWaveSpawning));
         }
 
@@ -139,7 +135,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Coroutine for spawning prefabs clones in waves, waiting a duration before spawning a new wave.
-        /// Once all waves are completed, it waits a restart time before termination. 
+        /// Once all waves are completed, it waits a restart time before termination.
         /// </summary>
         /// <returns></returns>
         IEnumerator SpawnWaves()
@@ -203,20 +199,20 @@ namespace BossRoom.Server
 
             var ray = new Ray();
 
-            int hits = Physics.OverlapSphereNonAlloc(spawnerPosition,
-                m_ProximityDistance, m_Colliders, m_PlayerLayerMask);
+            // note: this is not cached to allow runtime modifications to m_ProximityDistance
+            var squaredProximityDistance = m_ProximityDistance * m_ProximityDistance;
 
-            if (hits == 0)
-            {
-                return false;
-            }
-
-            // iterate through players and only return true if a player is in range
+            // iterate through clients and only return true if a player is in range
             // and is not occluded by a blocking collider.
-            foreach (var playerCollider in m_Colliders)
+            foreach (KeyValuePair<ulong, NetworkedClient> idToClient in NetworkingManager.Singleton.ConnectedClients)
             {
-                var playerPosition = playerCollider.transform.position;
+                var playerPosition = idToClient.Value.PlayerObject.transform.position;
                 var direction = playerPosition - spawnerPosition;
+
+                if (direction.sqrMagnitude > squaredProximityDistance)
+                {
+                    continue;
+                }
 
                 ray.origin = spawnerPosition;
                 ray.direction = direction;
