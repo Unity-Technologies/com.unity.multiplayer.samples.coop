@@ -11,12 +11,29 @@ namespace BossRoom.Client
     {
         private GameNetPortal m_Hub;
 
+        /// <summary>
+        /// Time in seconds before the client considers a lack of server response a timeout
+        /// </summary>
+        private const float k_TimeoutDuration = 10;
+
         public event Action<ConnectStatus> onConnectFinished;
+
+
+        /// <summary>
+        /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
+        /// time from the host.  
+        /// </summary>
+        public event Action networkTimeOutEvent;
+
+        /// <summary>
+        /// Timestamp  when 
+        /// </summary>
+        private static float NetworkStartTimestamp = 0;
 
         public void Start()
         {
             m_Hub = GetComponent<GameNetPortal>();
-            m_Hub.NetworkStartEvent += this.NetworkStart;
+            m_Hub.networkStartEvent += this.NetworkStart;
             m_Hub.ConnectFinishedEvent += this.OnConnectFinished;
         }
 
@@ -32,10 +49,18 @@ namespace BossRoom.Client
             //on failure, we must raise an event so that the UI layer can display something. 
             Debug.Log("RecvConnectFinished Got status: " + status);
 
-            //For now only invoke the event to the UI layer on failure
-            if (status != ConnectStatus.SUCCESS)
+            onConnectFinished?.Invoke(status);
+        }
+
+        public void Update()
+        {
+            //Check if we have a timestamp set and we've crossed the timeout threshhold
+            if (NetworkStartTimestamp > 0 && (Time.time - NetworkStartTimestamp) > k_TimeoutDuration)
             {
-                onConnectFinished.Invoke(status);
+                //Stop our client connection and send the timeout event
+                m_Hub.NetManager.StopClient();
+                networkTimeOutEvent?.Invoke();
+                NetworkStartTimestamp = 0;
             }
         }
 
@@ -85,6 +110,9 @@ namespace BossRoom.Client
             //  If the socket connection fails, we'll hear back by [???] (FIXME: GOMPS-79, need to handle transport layer failures too).
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported. 
             hub.NetManager.StartClient();
+
+            //Now set our timestamp for when the client connection started. This is so we know when our connection has timed out.
+            NetworkStartTimestamp = Time.time;
         }
 
     }

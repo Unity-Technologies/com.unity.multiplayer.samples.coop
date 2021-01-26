@@ -8,13 +8,14 @@ namespace BossRoom.Visual
     public class MainMenuUI : MonoBehaviour
     {
         public GameObject GameHubGO;
-        public GameObject InputTextGO;
 
         public PopupPanelManager m_ResponsePopup;
 
         private const string k_DefaultIP = "127.0.0.1";
 
         private BossRoom.GameNetPortal m_netHub;
+
+        private Client.ClientGameNetPortal m_ClientNetPortal;
 
         /// <summary>
         /// This will get more sophisticated as we move to a true relay model.
@@ -25,6 +26,9 @@ namespace BossRoom.Visual
         void Start()
         {
             m_netHub = GameHubGO.GetComponent<BossRoom.GameNetPortal>();
+            m_ClientNetPortal = GameHubGO.GetComponent<Client.ClientGameNetPortal>();
+
+            m_ClientNetPortal.networkTimeOutEvent += OnNetworkTimeout;
         }
 
         public void OnHostClicked()
@@ -37,8 +41,6 @@ namespace BossRoom.Visual
                 {
                     ipAddress = k_DefaultIP;
                 }
-
-                Debug.Log(ipAddress);
 
                 m_netHub.StartHost(ipAddress, k_ConnectPort);
             }, k_DefaultIP);
@@ -62,12 +64,11 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Callback when the server sends us back 
+        /// Callback when the server sends us back a connection finished event.
         /// </summary>
         /// <param name="status"></param>
-        public void OnConnectFinished(ConnectStatus status)
+        private void OnConnectFinished(ConnectStatus status)
         {
-            Debug.Log("HI");
             if (status != ConnectStatus.SUCCESS)
             {
                 
@@ -75,8 +76,18 @@ namespace BossRoom.Visual
             }
             else
             {
-               //Here we want to display that the connection was successful.
+                //Here we want to display that the connection was successful before we load in game.
+                m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now", false, false);
             }
+        }
+
+        /// <summary>
+        /// Invoked when the client sent a connection request to the server and didn't hear back at all.
+        /// This should create a UI letting the player know that something went wrong and to try again
+        /// </summary>
+        private void OnNetworkTimeout()
+        {
+            m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Unable to Reach Host/Server", false, true, "Please try again");
         }
     }
 }

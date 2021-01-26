@@ -19,7 +19,7 @@ namespace BossRoom.Server
         public void Start()
         {
             m_Hub = GetComponent<GameNetPortal>();
-            m_Hub.NetworkStartEvent += NetworkStart;
+            m_Hub.networkStartEvent += NetworkStart;
             // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Hub.NetManager.ConnectionApprovalCallback += ApprovalCheck;

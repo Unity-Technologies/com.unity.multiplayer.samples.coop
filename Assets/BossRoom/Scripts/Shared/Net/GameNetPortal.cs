@@ -44,7 +44,7 @@ namespace BossRoom
         /// This synthesizes a general NetworkStart event out of other events provided by MLAPI. This can be removed
         /// when the NetworkingManager starts publishing this event directly. 
         /// </summary>
-        public event System.Action NetworkStartEvent;
+        public event System.Action networkStartEvent;
 
         /// <summary>
         /// This event contains the game-level results of the ApprovalCheck carried out by the server, and is fired
@@ -97,6 +97,12 @@ namespace BossRoom
         }
 
 
+        public void Update()
+        {
+            
+        }
+
+
         /// <summary>
         /// This method runs when NetworkingManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkedBehaviour.NetworkStart, and serves the same role, even though GameNetHub itself isn't a NetworkedBehaviour.
@@ -118,7 +124,7 @@ namespace BossRoom
                 ConnectFinishedEvent?.Invoke(ConnectStatus.SUCCESS);
             }
 
-            NetworkStartEvent?.Invoke();
+            networkStartEvent?.Invoke();
         }
 
         /// <summary>

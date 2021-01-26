@@ -62,6 +62,7 @@ public class PopupPanelManager : MonoBehaviour
         m_CancelButton.onClick.AddListener(OnCancelClick);
         m_CancelButton.gameObject.SetActive(true);
 
+        m_InputFieldParent.SetActive(true);
         var inputField = m_InputFieldParent.GetComponent<InputField>();
         inputField.text = defaultInput;
 
@@ -121,14 +122,7 @@ public class PopupPanelManager : MonoBehaviour
         m_MainText.text = mainText;
         m_SubText.text = subText;
 
-        if (displayImage)
-        {
-            m_ReconnectingImage.SetActive(true);
-        }
-        else
-        {
-            m_ReconnectingImage.SetActive(true);
-        }
+        m_ReconnectingImage.SetActive(displayImage);
 
         m_ConfirmationButton.gameObject.SetActive(displayConfirmation);
         m_InputFieldParent.gameObject.SetActive(false);
