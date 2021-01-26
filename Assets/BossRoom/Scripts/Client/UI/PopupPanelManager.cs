@@ -86,9 +86,12 @@ public class PopupPanelManager : MonoBehaviour
         m_TitleText.text = "";
         m_MainText.text = "";
         m_SubText.text = "";
+        var inputField = m_InputFieldParent.GetComponent<InputField>();
+        inputField.text = "";
         m_ReconnectingImage.SetActive(false);
         m_ConfirmationButton.gameObject.SetActive(false);
         m_CancelButton.gameObject.SetActive(false);
+
 
         m_CancelButton.onClick.RemoveListener(onCancelClick);
         m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
@@ -120,10 +123,5 @@ public class PopupPanelManager : MonoBehaviour
         m_ConfirmationButton.gameObject.SetActive(displayConfirmation);
         m_InputFieldParent.gameObject.SetActive(false);
         gameObject.SetActive(true);
-    }
-
-    public void Hide()
-    {
-        gameObject.SetActive(false);
     }
 }
