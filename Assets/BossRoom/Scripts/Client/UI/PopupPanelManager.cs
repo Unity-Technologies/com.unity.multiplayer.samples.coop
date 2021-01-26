@@ -34,13 +34,16 @@ public class PopupPanelManager : MonoBehaviour
     public delegate void OnConfirmFunction(string input);
 
     /// <summary>
-    /// 
+    /// Setup this panel to be an input accepting panel, complete with the ability for the player to cancel their input 
     /// </summary>
-    /// <param name="titleText"></param>
-    /// <param name="inputFieldText"></param>
-    /// <param name="confirmationText"></param>
-    /// <param name="confirmCallback"></param>
-    public void SetupInputDisplay(string titleText, string mainText, string inputFieldText, string confirmationText, OnConfirmFunction confirmCallback)
+    /// <param name="titleText">The Title String at the top of the panel</param>
+    /// <param name="mainText"> The text just below the title text</param>
+    /// <param name="inputFieldText">the text displayed within the input field if empty</param>
+    /// <param name="confirmationText"> Text to display on the confirmation button</param>
+    /// <param name="confirmCallback">  The delegate to invoke when the player confirms.  It sends what the player input.</param>
+    /// <param name="defaultInput"> If Set, will default the input value to this string</param>
+    public void SetupInputDisplay(string titleText, string mainText, string inputFieldText,
+        string confirmationText, OnConfirmFunction confirmCallback, string defaultInput = "")
     {
         m_TitleText.text = titleText;
         m_MainText.text = mainText;
@@ -48,13 +51,16 @@ public class PopupPanelManager : MonoBehaviour
         m_InputBox.GetComponent<Text>().text = inputFieldText;
         m_ConfirmFunction = confirmCallback;
 
-   
+
         m_ConfirmationButton.GetComponentInChildren<Text>().text = confirmationText;
         m_ConfirmationButton.onClick.AddListener(OnConfirmClick);
         m_ConfirmationButton.gameObject.SetActive(true);
 
-        m_CancelButton.onClick.AddListener(onCancelClick);
+        m_CancelButton.onClick.AddListener(OnCancelClick);
         m_CancelButton.gameObject.SetActive(true);
+
+        var inputField = m_InputFieldParent.GetComponent<InputField>();
+        inputField.text = defaultInput;
 
         gameObject.SetActive(true);
     }
@@ -72,7 +78,7 @@ public class PopupPanelManager : MonoBehaviour
     /// Called when the user clicks on the cancel button when in a mode where the player is expecting to input something.
     /// Primary responsibility for this method is to reset the UI state.
     /// </summary>
-    private void onCancelClick()
+    private void OnCancelClick()
     {
         ResetState();
     }
@@ -93,7 +99,7 @@ public class PopupPanelManager : MonoBehaviour
         m_CancelButton.gameObject.SetActive(false);
 
 
-        m_CancelButton.onClick.RemoveListener(onCancelClick);
+        m_CancelButton.onClick.RemoveListener(OnCancelClick);
         m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
         m_ConfirmFunction = null;
     }

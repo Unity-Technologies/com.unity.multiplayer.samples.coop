@@ -12,6 +12,8 @@ namespace BossRoom.Visual
 
         public PopupPanelManager m_ResponsePopup;
 
+        private string k_DEFAULT_IP = "127.0.0.1";
+
         private BossRoom.GameNetPortal m_netHub;
 
         /// <summary>
@@ -33,13 +35,13 @@ namespace BossRoom.Visual
                 string ipAddress = input;
                 if (input == "")
                 {
-                    ipAddress = "127.0.0.1";
+                    ipAddress = k_DEFAULT_IP;
                 }
 
                 Debug.Log(ipAddress);
 
                 m_netHub.StartHost(ipAddress, k_connectPort);
-            });
+            }, k_DEFAULT_IP);
         }
 
         public void OnConnectClicked()
@@ -49,11 +51,11 @@ namespace BossRoom.Visual
                 string ipAddress = input;
                 if (input == "")
                 {
-                    ipAddress = "127.0.0.1";
+                    ipAddress = k_DEFAULT_IP;
                 }
 
                 BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, ipAddress, k_connectPort);
-            });
+            }, k_DEFAULT_IP);
         }
     }
 }
