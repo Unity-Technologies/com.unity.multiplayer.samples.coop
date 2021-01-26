@@ -50,7 +50,7 @@ namespace BossRoom.Server
             }
 
             m_Started = true;
-            bool actionGotten = GameDataSource.s_Instance.ActionDataByType.TryGetValue(m_NetState.SourceAction.Value, out m_DrivingAction);
+            bool actionGotten = GameDataSource.Instance.ActionDataByType.TryGetValue(m_NetState.SourceAction.Value, out m_DrivingAction);
             if (!actionGotten)
             {
                 enabled = false;

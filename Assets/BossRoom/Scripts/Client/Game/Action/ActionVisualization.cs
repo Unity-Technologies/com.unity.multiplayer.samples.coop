@@ -46,7 +46,7 @@ namespace BossRoom.Visual
 
         public void PlayAction(ref ActionRequestData data)
         {
-            ActionDescription actionDesc = GameDataSource.s_Instance.ActionDataByType[data.ActionTypeEnum];
+            ActionDescription actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
 
             //Do Trivial Actions (actions that just require playing a single animation, and don't require any state tracking).
             switch (actionDesc.Logic)

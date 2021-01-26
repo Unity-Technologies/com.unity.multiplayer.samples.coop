@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7019901313856816375}
   - component: {fileID: 7061959325340752229}
   - component: {fileID: 2709196059380009115}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: floor_grate
   m_TagString: Untagged
   m_Icon: {fileID: 0}
