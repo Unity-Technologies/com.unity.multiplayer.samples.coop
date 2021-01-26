@@ -30,6 +30,8 @@ namespace BossRoom.Client
         /// </summary>
         private System.Nullable<Vector3> m_ClickRequest;
 
+        bool m_Skill2Request;
+
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
@@ -73,11 +75,12 @@ namespace BossRoom.Client
             {
                 return;
             }
-            if (Input.GetKeyUp("1"))
+            if (m_Skill2Request)
             {
                 var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
                 skill2.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
                 m_SkillActive = true;
+                m_Skill2Request = false;
                 return;
             }
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
@@ -172,6 +175,11 @@ namespace BossRoom.Client
             if (Input.GetMouseButtonDown(1))
             {
                 m_ClickRequest = Input.mousePosition;
+            }
+
+            if (Input.GetKeyUp("1"))
+            {
+                m_Skill2Request = true;
             }
         }
 
