@@ -11,7 +11,7 @@ namespace BossRoom.Client
     /// </summary>
     public class ClientBossRoomState : GameStateBehaviour
     {
-        public override GameState ActiveState {  get { return GameState.BOSSROOM; } }
+        public override GameState ActiveState {  get { return GameState.BossRoom; } }
 
 
         public override void NetworkStart()

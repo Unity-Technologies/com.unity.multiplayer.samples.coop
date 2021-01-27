@@ -41,7 +41,7 @@ namespace BossRoom.Visual
 
         public static ActionFX MakeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent)
         {
-            ActionLogic logic = GameDataSource.s_Instance.ActionDataByType[data.ActionTypeEnum].Logic;
+            ActionLogic logic = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].Logic;
             switch (logic)
             {
                 case ActionLogic.Melee: return new MeleeActionFX(ref data, parent);

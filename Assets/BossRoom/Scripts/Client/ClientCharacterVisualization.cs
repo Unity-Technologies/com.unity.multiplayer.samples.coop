@@ -53,14 +53,12 @@ namespace BossRoom.Visual
             transform.parent = null;
 
 
-            if (!m_NetState.IsNPC)
+            if (!m_NetState.IsNpc)
             {
-                var model = GetComponent<Client.CharacterSwap>();
-                model.SwapToModel(m_NetState.CharacterAppearance.Value);
-                //foreach (var model in GetComponents<ModelSwap>())
-                //{
-                //    model.SetModel(m_NetState.CharacterAppearance.Value);
-                //}
+                foreach (var model in GetComponents<ModelSwap>())
+                {
+                    model.SetModel(m_NetState.CharacterAppearance.Value);
+                }
             }
 
             if (IsLocalPlayer)
@@ -79,13 +77,13 @@ namespace BossRoom.Visual
         {
             switch (newValue)
             {
-                case LifeState.ALIVE:
+                case LifeState.Alive:
                     m_ClientVisualsAnimator.SetTrigger("StandUp");
                     break;
-                case LifeState.FAINTED:
+                case LifeState.Fainted:
                     m_ClientVisualsAnimator.SetTrigger("FallDown");
                     break;
-                case LifeState.DEAD:
+                case LifeState.Dead:
                     m_ClientVisualsAnimator.SetTrigger("Dead");
                     break;
                 default:

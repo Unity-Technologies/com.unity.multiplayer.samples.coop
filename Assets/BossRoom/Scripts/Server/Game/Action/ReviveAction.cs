@@ -29,11 +29,11 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (!m_ExecFired && Time.time - TimeStarted >= Description.ExecTime_s)
+            if (!m_ExecFired && Time.time - TimeStarted >= Description.ExecTimeSeconds)
             {
                 m_ExecFired = true;
 
-                if (m_TargetCharacter.NetState.NetworkLifeState.Value == LifeState.FAINTED)
+                if (m_TargetCharacter.NetState.NetworkLifeState.Value == LifeState.Fainted)
                 {
                     m_TargetCharacter.Revive(m_Parent, (int)m_Data.Amount);
                 }

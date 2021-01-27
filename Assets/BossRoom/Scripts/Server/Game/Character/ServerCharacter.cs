@@ -11,10 +11,9 @@ namespace BossRoom.Server
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNPC
+        public bool IsNpc
         {
-
-            get { return NetState.IsNPC; }
+            get { return NetState.IsNpc; }
         }
 
         [SerializeField]
@@ -49,7 +48,7 @@ namespace BossRoom.Server
         {
             NetState = GetComponent<NetworkCharacterState>();
             m_ActionPlayer = new ActionPlayer(this);
-            if (IsNPC)
+            if (IsNpc)
             {
                 m_AIBrain = new AIBrain(this, m_ActionPlayer);
             }
@@ -74,7 +73,7 @@ namespace BossRoom.Server
         public void PlayAction(ref ActionRequestData data)
         {
             //the character needs to be alive in order to be able to play actions
-            if (NetState.NetworkLifeState.Value == LifeState.ALIVE)
+            if (NetState.NetworkLifeState.Value == LifeState.Alive)
             {
                 //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
                 this.m_ActionPlayer.PlayAction(ref data);
@@ -83,7 +82,7 @@ namespace BossRoom.Server
 
         private void OnClientMoveRequest(Vector3 targetPosition)
         {
-            if (NetState.NetworkLifeState.Value == LifeState.ALIVE)
+            if (NetState.NetworkLifeState.Value == LifeState.Alive)
             {
                 ClearActions();
                 GetComponent<ServerCharacterMovement>().SetMovementTarget(targetPosition);
@@ -92,7 +91,7 @@ namespace BossRoom.Server
 
         private void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
-            if (lifeState != LifeState.ALIVE)
+            if (lifeState != LifeState.Alive)
             {
                 ClearActions();
                 GetComponent<ServerCharacterMovement>().CancelMove();
@@ -130,13 +129,13 @@ namespace BossRoom.Server
             {
                 ClearActions();
 
-                if (IsNPC)
+                if (IsNpc)
                 {
-                    NetState.NetworkLifeState.Value = LifeState.DEAD;
+                    NetState.NetworkLifeState.Value = LifeState.Dead;
                 }
                 else
                 {
-                    NetState.NetworkLifeState.Value = LifeState.FAINTED;
+                    NetState.NetworkLifeState.Value = LifeState.Fainted;
                 }
             }
         }
@@ -148,17 +147,17 @@ namespace BossRoom.Server
         /// <param name="HP">The HP to set to a newly revived character.</param>
         public void Revive(ServerCharacter inflicter, int HP)
         {
-            if (NetState.NetworkLifeState.Value == LifeState.FAINTED)
+            if (NetState.NetworkLifeState.Value == LifeState.Fainted)
             {
                 NetState.HitPoints.Value = HP;
-                NetState.NetworkLifeState.Value = LifeState.ALIVE;
+                NetState.NetworkLifeState.Value = LifeState.Alive;
             }
         }
 
         void Update()
         {
             m_ActionPlayer.Update();
-            if (m_AIBrain != null && NetState.NetworkLifeState.Value == LifeState.ALIVE && m_BrainEnabled)
+            if (m_AIBrain != null && NetState.NetworkLifeState.Value == LifeState.Alive && m_BrainEnabled)
             {
                 m_AIBrain.Update();
             }

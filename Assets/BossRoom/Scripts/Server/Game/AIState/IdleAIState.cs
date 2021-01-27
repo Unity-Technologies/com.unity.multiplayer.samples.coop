@@ -6,16 +6,16 @@ namespace BossRoom.Server
 {
     public class IdleAIState : AIState
     {
-        private AIBrain m_brain;
+        private AIBrain m_Brain;
 
         public IdleAIState(AIBrain brain)
         {
-            m_brain = brain;
+            m_Brain = brain;
         }
 
         public override bool IsEligible()
         {
-            return m_brain.GetHatedEnemies().Count == 0;
+            return m_Brain.GetHatedEnemies().Count == 0;
         }
 
         public override void Initialize()
@@ -30,17 +30,17 @@ namespace BossRoom.Server
 
         protected void DetectFoes()
         {
-            float detectionRange = m_brain.CharacterData.DetectRange;
+            float detectionRange = m_Brain.CharacterData.DetectRange;
             // we are doing this check every Update, so we'll use square-magnitude distance to avoid the expensive sqrt (that's implicit in Vector3.magnitude)
             float detectionRangeSqr = detectionRange * detectionRange;
-            Vector3 position = m_brain.GetMyServerCharacter().transform.position;
+            Vector3 position = m_Brain.GetMyServerCharacter().transform.position;
 
             foreach (ServerCharacter character in ServerCharacter.GetAllActiveServerCharacters())
             {
-                if (m_brain.IsAppropriateFoe(character) 
+                if (m_Brain.IsAppropriateFoe(character) 
                     && (character.transform.position - position).sqrMagnitude <= detectionRangeSqr)
                 {
-                    m_brain.Hate(character);
+                    m_Brain.Hate(character);
                 }
             }
         }
