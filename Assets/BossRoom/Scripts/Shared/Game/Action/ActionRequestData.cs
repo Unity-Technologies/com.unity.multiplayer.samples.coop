@@ -4,7 +4,7 @@ using UnityEngine;
 namespace BossRoom
 {
     /// <summary>
-    /// List of all Actions supported in the game. 
+    /// List of all Actions supported in the game.
     /// </summary>
     public enum ActionType
     {
@@ -17,11 +17,12 @@ namespace BossRoom
         ImpBossBaseAttack,
         GeneralChase,
         GeneralRevive,
+        Emote
     }
 
 
     /// <summary>
-    /// List of all Types of Actions. There is a many-to-one mapping of Actions to ActionLogics. 
+    /// List of all Types of Actions. There is a many-to-one mapping of Actions to ActionLogics.
     /// </summary>
     public enum ActionLogic
     {
@@ -42,14 +43,14 @@ namespace BossRoom
     /// </summary>
     public struct ActionRequestData : MLAPI.Serialization.IBitWritable
     {
-        public ActionType ActionTypeEnum;      //the action to play. 
-        public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill. 
-        public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing. 
-        public ulong[] TargetIds;          //networkIds of targets, or null if untargeted. 
+        public ActionType ActionTypeEnum;      //the action to play.
+        public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill.
+        public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing.
+        public ulong[] TargetIds;          //networkIds of targets, or null if untargeted.
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
-        public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately. 
+        public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately.
 
-        //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below. 
+        //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below.
 
         //[System.Flags]
         private enum PackFlags
@@ -60,7 +61,7 @@ namespace BossRoom
             HasTargetIds = 1 << 2,
             HasAmount = 1 << 3,
             ShouldQueue = 1 << 4
-            //currently serialized with a byte. Change Read/Write if you add more than 8 fields. 
+            //currently serialized with a byte. Change Read/Write if you add more than 8 fields.
         }
 
         private PackFlags GetPackFlags()

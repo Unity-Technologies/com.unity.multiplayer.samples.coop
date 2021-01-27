@@ -110,7 +110,7 @@ namespace BossRoom.Client
 
         /// <summary>
         /// When you right-click on something you will want to do contextually different things. For example you might attack an enemy,
-        /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED). 
+        /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED).
         /// </summary>
         /// <param name="hit">The RaycastHit of the entity we clicked on.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
@@ -151,6 +151,12 @@ namespace BossRoom.Client
             if (Input.GetMouseButtonDown(1))
             {
                 m_ClickRequest = Input.mousePosition;
+            }
+            else if (Input.GetKeyDown(KeyCode.E))
+            {
+                var emoteData = new ActionRequestData();
+                emoteData.ActionTypeEnum = ActionType.Emote;
+                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
         }
 
