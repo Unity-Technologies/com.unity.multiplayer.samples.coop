@@ -43,7 +43,7 @@ namespace BossRoom.Visual
                 }
 
                 m_netHub.StartHost(ipAddress, k_ConnectPort);
-            }, true, k_DefaultIP);
+            }, k_DefaultIP);
         }
 
         public void OnConnectClicked()
@@ -62,7 +62,7 @@ namespace BossRoom.Visual
                 //Immediately after this change the display to show the
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
 
-            }, true, k_DefaultIP);
+            }, k_DefaultIP);
         }
 
         /// <summary>

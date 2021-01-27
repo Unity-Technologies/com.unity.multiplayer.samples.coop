@@ -42,7 +42,9 @@ namespace BossRoom.Visual
 
 
         /// <summary>
-        /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to cancel their input 
+        /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
+        /// cancel their input and requests.
+        /// This also adds the player name prompt to the display
         /// </summary>
         /// <param name="titleText">The Title String at the top of the panel</param>
         /// <param name="mainText"> The text just below the title text</param>
@@ -51,7 +53,7 @@ namespace BossRoom.Visual
         /// <param name="confirmCallback">  The delegate to invoke when the player confirms.  It sends what the player input.</param>
         /// <param name="defaultInput"> If Set, will default the input value to this string</param>
         public void SetupEnterGameDisplay(string titleText, string mainText, string inputFieldText,
-            string confirmationText, OnConfirmFunction confirmCallback, bool showDisplayName, string defaultInput = "")
+            string confirmationText, OnConfirmFunction confirmCallback, string defaultInput = "")
         {
             //Clear any previous settings of the Panel first
             ResetState();
@@ -74,7 +76,7 @@ namespace BossRoom.Visual
             var inputField = m_InputFieldParent.GetComponent<InputField>();
             inputField.text = defaultInput;
 
-            m_NameDisplayGO.SetActive(showDisplayName);
+            m_NameDisplayGO.SetActive(true);
 
             gameObject.SetActive(true);
         }
