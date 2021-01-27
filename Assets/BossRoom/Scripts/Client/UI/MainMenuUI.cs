@@ -34,33 +34,35 @@ namespace BossRoom.Visual
         public void OnHostClicked()
         {
 
-            m_ResponsePopup.SetupInputDisplay("Host Game", "Input the IP to host on", "iphost", "Confirm", (string input) =>
+            m_ResponsePopup.SetupEnterGameDisplay("Host Game", "Input the IP to host on", "iphost", "Confirm", (string IPinput, string playerName) =>
             {
-                string ipAddress = input;
-                if (input == "")
+                string ipAddress = IPinput;
+                if (IPinput == "")
                 {
                     ipAddress = k_DefaultIP;
                 }
 
                 m_netHub.StartHost(ipAddress, k_ConnectPort);
-            }, k_DefaultIP);
+            }, true, k_DefaultIP);
         }
 
         public void OnConnectClicked()
         {
-            m_ResponsePopup.SetupInputDisplay("Join Game", "Input the host IP below", "iphost", "Join", (string input) =>
+            m_ResponsePopup.SetupEnterGameDisplay("Join Game", "Input the host IP below", "iphost", "Join", (string IPinput, string playerName) =>
             {
-                string ipAddress = input;
-                if (input == "")
+                string ipAddress = IPinput;
+                if (IPinput == "")
                 {
                     ipAddress = k_DefaultIP;
                 }
+
+                Debug.Log(playerName);
 
                 BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, ipAddress, k_ConnectPort);
                 //Immediately after this change the display to show the
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
 
-            }, k_DefaultIP);
+            }, true, k_DefaultIP);
         }
 
         /// <summary>
@@ -71,7 +73,7 @@ namespace BossRoom.Visual
         {
             if (status != ConnectStatus.SUCCESS)
             {
-                
+
                 m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Something went wrong", false, true);
             }
             else
