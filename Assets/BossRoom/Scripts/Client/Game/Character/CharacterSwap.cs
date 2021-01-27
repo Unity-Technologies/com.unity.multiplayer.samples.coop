@@ -49,7 +49,7 @@ namespace BossRoom.Client
 
         [SerializeField]
         private CharacterModelSet[] m_CharacterModels;
-        void Awake()
+        private void Awake()
         {
             if (m_ModelIndex >= m_CharacterModels.Length)
             {
