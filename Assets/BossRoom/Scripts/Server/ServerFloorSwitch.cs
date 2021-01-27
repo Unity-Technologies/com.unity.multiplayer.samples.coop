@@ -13,20 +13,23 @@ public class ServerFloorSwitch : NetworkedBehaviour
     private Collider m_Collider;
     private NetworkFloorSwitchState m_FloorSwitchState;
     private int m_CachedPlayerLayerIdx;
+    private int m_CachedHeavyObjectLayerIdx;
     private int m_NumPlayersInTriggerThisFrame;
     private Coroutine m_StateCheckCoroutine;
 
     private void Awake()
     {
         m_Collider = GetComponent<Collider>();
-        if (!m_Collider.isTrigger)
-            Debug.LogError("ServerFloorSwitch's Collider is not set to be a Trigger.");
+        m_Collider.isTrigger = true;
 
         m_FloorSwitchState = GetComponent<NetworkFloorSwitchState>();
 
         m_CachedPlayerLayerIdx = LayerMask.NameToLayer("PCs");
         if (m_CachedPlayerLayerIdx == -1)
             Debug.LogError("Project does not have a layer named 'PCs'");
+        m_CachedHeavyObjectLayerIdx = LayerMask.NameToLayer("HeavyObject");
+        if (m_CachedHeavyObjectLayerIdx == -1)
+            Debug.LogError("Project does not have a layer named 'HeavyObject'");
     }
 
     public override void NetworkStart()
@@ -72,9 +75,8 @@ public class ServerFloorSwitch : NetworkedBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if (other.gameObject.layer == m_CachedPlayerLayerIdx)
+        if (other.gameObject.layer == m_CachedPlayerLayerIdx || other.gameObject.layer == m_CachedHeavyObjectLayerIdx)
         {
-            // TODO: should we check for IsAlive here? Right now corpses keep plates activated...
             ++m_NumPlayersInTriggerThisFrame;
         }
     }
