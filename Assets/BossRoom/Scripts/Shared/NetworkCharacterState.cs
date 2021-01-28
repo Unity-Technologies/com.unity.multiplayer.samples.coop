@@ -33,6 +33,8 @@ namespace BossRoom
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
+
+
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data. 
         /// </summary>
@@ -70,6 +72,13 @@ namespace BossRoom
         /// </summary>
         [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
         public NetworkedVarInt CharacterAppearance;
+
+        /// <summary>
+        /// The name this player selected when joining the game
+        /// </summary>
+        ///
+        [Tooltip("The name of the character.  For players this is the name they selected when joining the game")]
+        public NetworkedVar<string> CharacterName;
 
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
