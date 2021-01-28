@@ -15,7 +15,8 @@ public class AOEAction : Action
         // destroyed object, the complexity added to have a static pool of colliders that could be called by multiplayer players at the same time
         // doesn't seem worth it for now.
         var colliders = Physics.OverlapSphere(m_Data.Position, actionDescription.Radius, LayerMask.GetMask("NPCs"));
-        m_Data.TargetIds = new ulong[colliders.Length]; // we reset target IDs here, so clients can't set their own target ID list.
+        m_Data.TargetIds = new ulong[colliders.Length]; // Security: We can't trust users! We reset target IDs here, so clients
+                                                        // can't set their own target ID list.
         for (var i = 0; i < colliders.Length; i++)
         {
             var enemy = colliders[i].GetComponent<ServerCharacter>();
