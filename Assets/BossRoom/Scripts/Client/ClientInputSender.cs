@@ -1,8 +1,6 @@
 using System;
 using MLAPI;
-using NUnit.Framework.Constraints;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace BossRoom.Client
 {
@@ -35,10 +33,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
-        private CharacterClass CharacterData
-        {
-            get { return GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value]; }
-        }
+        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value];
 
         public override void NetworkStart()
         {
@@ -48,15 +43,18 @@ namespace BossRoom.Client
                 enabled = false;
             }
 
-            k_GroundLayerMask = LayerMask.GetMask(new [] { "Ground" });
-            k_TargetableLayerMask = LayerMask.GetMask(new [] { "PCs", "NPCs" });
+            k_GroundLayerMask = LayerMask.GetMask("Ground");
+            k_TargetableLayerMask = LayerMask.GetMask("PCs", "NPCs");
     }
 
         public event Action<Vector3> OnClientClick;
 
+        Camera m_MainCamera;
+
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
+            m_MainCamera = Camera.main;
         }
 
         bool m_SkillActive = false;
@@ -86,7 +84,7 @@ namespace BossRoom.Client
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
             if (Input.GetMouseButton(0))
             {
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
@@ -99,7 +97,7 @@ namespace BossRoom.Client
 
             if (m_ClickRequest != null)
             {
-                var ray = Camera.main.ScreenPointToRay(m_ClickRequest.Value);
+                var ray = m_MainCamera.ScreenPointToRay(m_ClickRequest.Value);
                 var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_TargetableLayerMask) > 0;
                 if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
                 {
@@ -107,8 +105,7 @@ namespace BossRoom.Client
                     // - two actions will queue one after the other, causing us to run over to our target and take a swing.
                     //if we have clicked on a fallen friend - we will revive him
 
-                    ActionRequestData playerAction;
-                    bool doAction = GetActionRequestForTarget(ref k_CachedHit[0], out playerAction);
+                    var doAction = GetActionRequestForTarget(ref k_CachedHit[0], out var playerAction);
 
                     if (doAction)
                     {
@@ -169,7 +166,7 @@ namespace BossRoom.Client
             return false;
         }
 
-        private void Update()
+        void Update()
         {
             //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
             if (Input.GetMouseButtonDown(1))
@@ -186,7 +183,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object.
         /// </summary>
-        private ulong GetTargetObject(ref RaycastHit hit)
+        ulong GetTargetObject(ref RaycastHit hit)
         {
             if (hit.collider == null)
             {

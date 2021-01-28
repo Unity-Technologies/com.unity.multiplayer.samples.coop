@@ -52,8 +52,7 @@ namespace BossRoom.Server
         /// <returns>the newly created action. </returns>
         public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data)
         {
-            ActionDescription actionDesc;
-            if (!GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out actionDesc))
+            if (!GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out var actionDesc))
             {
                 throw new System.Exception($"Trying to create Action {data.ActionTypeEnum} but it isn't defined on the GameDataSource!");
             }

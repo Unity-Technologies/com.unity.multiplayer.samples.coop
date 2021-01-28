@@ -17,7 +17,7 @@ namespace BossRoom
         /// <summary>
         /// RequestData we were instantiated with. Value should be treated as readonly.
         /// </summary>
-        public ref ActionRequestData Data { get { return ref m_Data; } }
+        public ref ActionRequestData Data => ref m_Data;
 
         /// <summary>
         /// Data Description for this action.
@@ -27,7 +27,7 @@ namespace BossRoom
             get
             {
                 ActionDescription result;
-                bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out result);
+                var found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out result);
                 Debug.AssertFormat(found, "Tried to find ActionType %s but it was missing from GameDataSource!", Data.ActionTypeEnum);
 
                 return GameDataSource.Instance.ActionDataByType[Data.ActionTypeEnum];
