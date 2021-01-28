@@ -2,9 +2,7 @@ using MLAPI;
 using UnityEngine;
 
 /// <summary>
-/// Client-side representation of a floor switch. For now
-/// we don't try to animate the switch; we just turn on/off
-/// a different "look" for on vs. off.
+/// Client-side representation of a floor switch.
 /// </summary>
 [RequireComponent(typeof(NetworkFloorSwitchState))]
 public class ClientFloorSwitchVisualization : NetworkedBehaviour
