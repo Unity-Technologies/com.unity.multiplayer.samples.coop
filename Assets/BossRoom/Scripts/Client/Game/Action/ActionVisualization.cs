@@ -54,7 +54,10 @@ namespace BossRoom.Visual
                     actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
                     Parent.OurAnimator.SetTrigger(actionDesc.Anim);
                     return;
-                case ActionType.Emote:
+                case ActionType.Emote1:
+                case ActionType.Emote2:
+                case ActionType.Emote3:
+                case ActionType.Emote4:
                     actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
                     Parent.OurAnimator.SetTrigger(actionDesc.Anim);
                     break;

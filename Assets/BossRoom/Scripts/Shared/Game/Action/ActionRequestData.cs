@@ -17,7 +17,10 @@ namespace BossRoom
         ImpBossBaseAttack,
         GeneralChase,
         GeneralRevive,
-        Emote
+        Emote1,
+        Emote2,
+        Emote3,
+        Emote4,
     }
 
 

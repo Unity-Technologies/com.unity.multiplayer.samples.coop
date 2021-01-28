@@ -152,10 +152,32 @@ namespace BossRoom.Client
             {
                 m_ClickRequest = Input.mousePosition;
             }
-            else if (Input.GetKeyDown(KeyCode.I))
+
+            if (Input.GetKeyDown(KeyCode.Alpha4))
             {
                 var emoteData = new ActionRequestData();
-                emoteData.ActionTypeEnum = ActionType.Emote;
+                emoteData.ActionTypeEnum = ActionType.Emote1;
+                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                var emoteData = new ActionRequestData();
+                emoteData.ActionTypeEnum = ActionType.Emote2;
+                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                var emoteData = new ActionRequestData();
+                emoteData.ActionTypeEnum = ActionType.Emote3;
+                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                var emoteData = new ActionRequestData();
+                emoteData.ActionTypeEnum = ActionType.Emote4;
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
         }
