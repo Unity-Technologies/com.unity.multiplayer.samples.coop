@@ -16,7 +16,7 @@ public class ServerFloorSwitch : NetworkedBehaviour
     private int m_CachedPlayerLayerIdx;
     private int m_CachedHeavyObjectLayerIdx;
 
-    private List<Collider> m_CollidersInTrigger = new List<Collider>();
+    private List<Collider> m_RelevantCollidersInTrigger = new List<Collider>();
 
     private void Awake()
     {
@@ -50,15 +50,15 @@ public class ServerFloorSwitch : NetworkedBehaviour
     {
         if (IsColliderAbleToTriggerSwitch(other))
         {
-            m_CollidersInTrigger.Add(other);
+            m_RelevantCollidersInTrigger.Add(other);
             m_FloorSwitchState.IsSwitchedOn.Value = true;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        m_CollidersInTrigger.Remove(other);
-        m_FloorSwitchState.IsSwitchedOn.Value = m_CollidersInTrigger.Count > 0;
+        m_RelevantCollidersInTrigger.Remove(other);
+        m_FloorSwitchState.IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
     }
 
     private void FixedUpdate()
@@ -66,7 +66,7 @@ public class ServerFloorSwitch : NetworkedBehaviour
         // it's possible that the Colliders in our trigger have been destroyed, while still inside our trigger.
         // In this case, OnTriggerExit() won't get called for them! We can tell if a Collider was destroyed
         // because its reference will become null. So here we remove any nulls and see if we're still active.
-        m_CollidersInTrigger.RemoveAll(collider => { return collider == null; });
-        m_FloorSwitchState.IsSwitchedOn.Value = m_CollidersInTrigger.Count > 0;
+        m_RelevantCollidersInTrigger.RemoveAll(collider => { return collider == null; });
+        m_FloorSwitchState.IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
     }
 }
