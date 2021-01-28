@@ -14,7 +14,7 @@ public class ServerFloorSwitch : NetworkedBehaviour
     private NetworkFloorSwitchState m_FloorSwitchState;
     private int m_CachedPlayerLayerIdx;
     private int m_CachedHeavyObjectLayerIdx;
-    private int m_NumPlayersInTriggerThisFrame;
+    private bool m_IsPlayerInTriggerThisFrame;
     private Coroutine m_StateCheckCoroutine;
 
     private void Awake()
@@ -64,12 +64,12 @@ public class ServerFloorSwitch : NetworkedBehaviour
             //
             // So we basically just pause until the end of the physics frame. OnTriggerStay()
             // will have been called in the mean time, so we can see if it found anyone standing in us.
-            m_NumPlayersInTriggerThisFrame = 0;
+            m_IsPlayerInTriggerThisFrame = false;
 
             // pause until the current physics frame has just finished
             yield return new WaitForFixedUpdate();
 
-            m_FloorSwitchState.IsSwitchedOn.Value = m_NumPlayersInTriggerThisFrame > 0;
+            m_FloorSwitchState.IsSwitchedOn.Value = m_IsPlayerInTriggerThisFrame;
         }
     }
 
@@ -77,7 +77,7 @@ public class ServerFloorSwitch : NetworkedBehaviour
     {
         if (other.gameObject.layer == m_CachedPlayerLayerIdx || other.gameObject.layer == m_CachedHeavyObjectLayerIdx)
         {
-            ++m_NumPlayersInTriggerThisFrame;
+            m_IsPlayerInTriggerThisFrame = true;
         }
     }
 
