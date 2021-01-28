@@ -25,11 +25,15 @@ namespace BossRoom.Server
         [Tooltip("Set the default Player Appearance (value between 0-7)")]
         private int m_DefaultPlayerAppearance = 7;
 
+
+        private GameObject m_GameHub;
+
         public override GameState ActiveState { get { return GameState.BossRoom; } }
 
         public override void NetworkStart()
         {
             base.NetworkStart();
+            m_GameHub = GameObject.FindWithTag("GameHub");
             if (!IsServer)
             {
                 this.enabled = false;
@@ -74,7 +78,19 @@ namespace BossRoom.Server
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
             netState.CharacterType.Value = m_DefaultPlayerType;
             netState.CharacterAppearance.Value = m_DefaultPlayerAppearance;
+
+            var playerData = m_GameHub.GetComponent<ServerGameNetPortal>().GetPlayerData(clientId);
+            if (playerData == null)
+            {
+                Debug.Log("We shouldn't be spawning any player the server net portal does not recognize");
+                return;
+            }
+            else
+            {
+                netState.CharacterName.Value = playerData.Value.m_PlayerName;
+            }
             newPlayer.SpawnAsPlayerObject(clientId);
+         
         }
 
         private void SpawnEnemy()

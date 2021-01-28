@@ -42,6 +42,9 @@ namespace BossRoom.Visual
                     ipAddress = k_DefaultIP;
                 }
 
+                //Set the name field in our NetPortal
+                m_netHub.PlayerName = playerName;
+
                 m_netHub.StartHost(ipAddress, k_ConnectPort);
             }, k_DefaultIP);
         }
@@ -56,7 +59,8 @@ namespace BossRoom.Visual
                     ipAddress = k_DefaultIP;
                 }
 
-                Debug.Log(playerName);
+                //Set the name field in our NetPortal
+                m_netHub.PlayerName = playerName;
 
                 BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, ipAddress, k_ConnectPort);
                 //Immediately after this change the display to show the

@@ -95,7 +95,8 @@ namespace BossRoom.Client
         public static void StartClient(GameNetPortal hub, string ipaddress, int port)
         {
             string client_guid = GetOrCreateGuid();
-            string payload = $"client_guid={client_guid}\n"; //minimal format where key=value pairs are separated by newlines. 
+            string payload = $"client_guid={client_guid}\n"; //minimal format where key=value pairs are separated by newlines.
+            payload += $"player_name={hub.PlayerName}\n";
 
             byte[] payload_bytes = System.Text.Encoding.UTF8.GetBytes(payload);
 

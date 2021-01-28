@@ -49,6 +49,11 @@ namespace BossRoom
         /// </summary>
         public event Action<ConnectStatus> ConnectFinishedEvent;
 
+        /// <summary>
+        /// the name of the player chosen at game start
+        /// </summary>
+        public string PlayerName;
+
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
         // Start is called before the first frame update
@@ -139,6 +144,8 @@ namespace BossRoom
             var transport = NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
             transport.ConnectAddress = ipaddress;
             transport.ServerListenPort = port;
+
+
 
             NetManager.StartHost();
         }
