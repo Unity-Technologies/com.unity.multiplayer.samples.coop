@@ -27,7 +27,7 @@ namespace BossRoom.Server
                 return false;
             }
 
-            m_Target = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+            m_Target = m_Data.TargetObjects[0];
 
             m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
             m_CurrentTargetPos = m_Target.transform.position;
@@ -48,9 +48,7 @@ namespace BossRoom.Server
         /// </summary>
         private bool HasValidTarget()
         {
-            return m_Data.TargetIds != null &&
-                   m_Data.TargetIds.Length > 0 &&
-                   MLAPI.Spawning.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
+            return m_Data.TryGetSingleTarget(out _);
         }
 
         /// <summary>

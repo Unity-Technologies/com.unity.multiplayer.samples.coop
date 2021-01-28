@@ -44,9 +44,9 @@ namespace BossRoom.Client
                 enabled = false;
             }
 
-            k_GroundLayerMask = LayerMask.GetMask(new [] { "Ground" });
-            k_TargetableLayerMask = LayerMask.GetMask(new [] { "PCs", "NPCs" });
-    }
+            k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
+            k_TargetableLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs" });
+        }
 
         public event Action<Vector3> OnClientClick;
 
@@ -68,6 +68,7 @@ namespace BossRoom.Client
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
                     m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point,
                         "MLAPI_INTERNAL");
+
                     //Send our client only click request
                     OnClientClick?.Invoke(k_CachedHit[0].point);
                 }
@@ -77,7 +78,7 @@ namespace BossRoom.Client
             {
                 var ray = Camera.main.ScreenPointToRay(m_ClickRequest.Value);
                 var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_TargetableLayerMask) > 0;
-                if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
+                if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != null)
                 {
                     //if we have clicked on an enemy:
                     // - two actions will queue one after the other, causing us to run over to our target and take a swing.
@@ -92,7 +93,7 @@ namespace BossRoom.Client
                         var chaseData = new ActionRequestData();
                         chaseData.ActionTypeEnum = ActionType.GeneralChase;
                         chaseData.Amount = range;
-                        chaseData.TargetIds = new ulong[] { GetTargetObject(ref k_CachedHit[0]) };
+                        chaseData.TargetObjects = new[] { GetTargetObject(ref k_CachedHit[0]) };
                         m_NetworkCharacter.ClientSendActionRequest(ref chaseData);
                         m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
                     }
@@ -138,7 +139,7 @@ namespace BossRoom.Client
                 resultData = new ActionRequestData();
                 resultData.ShouldQueue = true;
                 resultData.ActionTypeEnum = ActionType.GeneralRevive;
-                resultData.TargetIds = new[] { targetNetState.NetworkId };
+                resultData.TargetObjects = new[] { targetNetState.NetworkedObject };
                 return true;
             }
 
@@ -157,17 +158,14 @@ namespace BossRoom.Client
         /// <summary>
         /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object.
         /// </summary>
-        private ulong GetTargetObject(ref RaycastHit hit)
+        private NetworkedObject GetTargetObject(ref RaycastHit hit)
         {
             if (hit.collider == null)
             {
-                return 0;
+                return null;
             }
 
-            var targetObj = hit.collider.GetComponent<NetworkedObject>();
-            if (targetObj == null) { return 0; }
-
-            return targetObj.NetworkId;
+            return hit.collider.GetComponent<NetworkedObject>();
         }
     }
 }

@@ -1,3 +1,4 @@
+using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
 
@@ -14,17 +15,17 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            if (m_Data.TargetIds == null || m_Data.TargetIds.Length == 0 || !SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]))
+            if (m_Data.TryGetSingleTarget(out NetworkedObject targetNetworkedObj))
+            {
+                m_TargetCharacter = targetNetworkedObj.GetComponent<ServerCharacter>();
+                m_Parent.NetState.ServerBroadcastAction(ref Data);
+                return true;
+            }
+            else
             {
                 Debug.Log("Failed to start ReviveAction. The target entity  wasn't submitted or doesn't exist anymore");
                 return false;
             }
-
-            var targetNeworkedObj = SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
-            m_TargetCharacter = targetNeworkedObj.GetComponent<ServerCharacter>();
-            m_Parent.NetState.ServerBroadcastAction(ref Data);
-
-            return true;
         }
 
         public override bool Update()

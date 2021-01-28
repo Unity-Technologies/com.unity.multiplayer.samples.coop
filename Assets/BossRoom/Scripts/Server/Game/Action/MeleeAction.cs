@@ -30,10 +30,9 @@ namespace BossRoom.Server
         private bool m_ExecutionFired;
         private ulong m_ProvisionalTarget;
 
-        //cache Physics Cast hits, to minimize allocs. 
-        public MeleeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
-        {
-        }
+        //cache Physics Cast hits, to minimize allocs.
+        public MeleeAction(ServerCharacter parent, ref ActionRequestData data)
+            : base(parent, ref data) { }
 
         public override bool Start()
         {
@@ -41,7 +40,7 @@ namespace BossRoom.Server
             if (foe != null)
             {
                 m_ProvisionalTarget = foe.NetworkId;
-                Data.TargetIds = new ulong[] { foe.NetworkId };
+                Data.TargetObjects = new[] { foe.NetworkedObject };
             }
 
             m_Parent.NetState.ServerBroadcastAction(ref Data);
@@ -62,7 +61,6 @@ namespace BossRoom.Server
 
             return true;
         }
-
 
         /// <summary>
         /// Returns the ServerCharacter of the foe we hit, or null if none found. 

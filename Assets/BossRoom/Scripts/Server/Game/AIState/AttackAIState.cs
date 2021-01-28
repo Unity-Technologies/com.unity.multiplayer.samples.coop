@@ -1,3 +1,4 @@
+using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -34,6 +35,7 @@ namespace BossRoom.Server
             {
                 // time for a new foe!
                 m_Foe = ChooseFoe();
+
                 // whatever we used to be doing, stop that. New plan is coming!
                 m_ActionPlayer.ClearActions();
             }
@@ -46,10 +48,9 @@ namespace BossRoom.Server
 
             // see if we're already chasing or attacking our active foe!
             if (m_ActionPlayer.GetActiveActionInfo(out var info))
-            {
                 if (info.ActionTypeEnum == ActionType.GeneralChase)
                 {
-                    if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkId)
+                    if (info.TryGetSingleTarget(out NetworkedObject targetObject) && targetObject == m_Foe.NetworkedObject)
                     {
                         // yep we're chasing our foe; all set! (The attack is enqueued after it)
                         return;
@@ -57,13 +58,12 @@ namespace BossRoom.Server
                 }
                 else if (info.ActionTypeEnum == m_CurAttackAction)
                 {
-                    if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkId)
+                    if (info.TryGetSingleTarget(out NetworkedObject targetObject) && targetObject == m_Foe.NetworkedObject)
                     {
                         // yep we're attacking our foe; all set!
                         return;
                     }
                 }
-            }
 
             // Choose whether we can attack our foe directly, or if we need to get closer first
             var attackInfo = GetCurrentAttackInfo();
@@ -76,7 +76,7 @@ namespace BossRoom.Server
                     ActionTypeEnum = m_CurAttackAction,
                     Amount = attackInfo.Amount,
                     ShouldQueue = false,
-                    TargetIds = new ulong[] { m_Foe.NetworkId }
+                    TargetObjects = new[] { m_Foe.NetworkedObject }
                 };
                 m_ActionPlayer.PlayAction(ref attackData);
             }
@@ -88,7 +88,7 @@ namespace BossRoom.Server
                     ActionTypeEnum = ActionType.GeneralChase,
                     Amount = attackInfo.Range,
                     ShouldQueue = false,
-                    TargetIds = new ulong[] { m_Foe.NetworkId }
+                    TargetObjects = new[] { m_Foe.NetworkedObject }
                 };
                 m_ActionPlayer.PlayAction(ref chaseData);
 
@@ -98,7 +98,7 @@ namespace BossRoom.Server
                     ActionTypeEnum = m_CurAttackAction,
                     Amount = attackInfo.Amount,
                     ShouldQueue = true,
-                    TargetIds = new ulong[] { m_Foe.NetworkId }
+                    TargetObjects = new[] { m_Foe.NetworkedObject }
                 };
                 m_ActionPlayer.PlayAction(ref attackData);
             }
@@ -124,9 +124,9 @@ namespace BossRoom.Server
                     closestFoe = foe;
                 }
             }
+
             return closestFoe;
         }
-
 
         private ActionDescription GetCurrentAttackInfo()
         {

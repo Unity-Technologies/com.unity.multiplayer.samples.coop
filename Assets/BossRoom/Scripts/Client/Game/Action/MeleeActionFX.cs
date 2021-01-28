@@ -51,20 +51,19 @@ namespace BossRoom.Visual
             m_ImpactPlayed = true;
 
             //Is my original target still in range? Then definitely get him!
-            if (Data.TargetIds != null && Data.TargetIds.Length > 0 && SpawnManager.SpawnedObjects.ContainsKey(Data.TargetIds[0]))
+            if (Data.TryGetSingleTarget(out NetworkedObject originalTarget))
             {
-                NetworkedObject originalTarget = SpawnManager.SpawnedObjects[Data.TargetIds[0]];
                 float padRange = Description.Range + k_RangePadding;
 
                 if ((m_Parent.transform.position - originalTarget.transform.position).sqrMagnitude < (padRange * padRange))
                 {
                     ClientCharacterVisualization targetViz = originalTarget.GetComponent<Client.ClientCharacter>().ChildVizObject;
                     targetViz.OurAnimator.SetTrigger("HitReact1");
+
+                    //in the future we may do another physics check to handle the case where a target "ran under our weapon".
+                    //But for now, if the original target is no longer present, then we just don't play our hit react on anything.
                 }
             }
-
-            //in the future we may do another physics check to handle the case where a target "ran under our weapon".
-            //But for now, if the original target is no longer present, then we just don't play our hit react on anything. 
         }
     }
 }
