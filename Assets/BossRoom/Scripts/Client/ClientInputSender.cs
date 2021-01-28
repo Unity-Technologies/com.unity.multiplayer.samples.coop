@@ -152,7 +152,7 @@ namespace BossRoom.Client
             {
                 m_ClickRequest = Input.mousePosition;
             }
-            else if (Input.GetKeyDown(KeyCode.E))
+            else if (Input.GetKeyDown(KeyCode.I))
             {
                 var emoteData = new ActionRequestData();
                 emoteData.ActionTypeEnum = ActionType.Emote;
