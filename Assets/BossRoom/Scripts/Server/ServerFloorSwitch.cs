@@ -1,5 +1,6 @@
 using MLAPI;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -14,8 +15,8 @@ public class ServerFloorSwitch : NetworkedBehaviour
     private NetworkFloorSwitchState m_FloorSwitchState;
     private int m_CachedPlayerLayerIdx;
     private int m_CachedHeavyObjectLayerIdx;
-    private bool m_IsPlayerInTriggerThisFrame;
-    private Coroutine m_StateCheckCoroutine;
+
+    private List<Collider> m_CollidersInTrigger = new List<Collider>();
 
     private void Awake()
     {
@@ -38,47 +39,34 @@ public class ServerFloorSwitch : NetworkedBehaviour
         {
             enabled = false;
         }
-        else
-        {
-            m_StateCheckCoroutine = StartCoroutine(CoroMaintainSwitchState());
-        }
     }
 
-    private void OnDestroy()
+    private bool IsColliderAbleToTriggerSwitch(Collider collider)
     {
-        if (m_StateCheckCoroutine != null)
-        {
-            StopCoroutine(m_StateCheckCoroutine);
-            m_StateCheckCoroutine = null;
-        }
+        return collider.gameObject.layer == m_CachedPlayerLayerIdx || collider.gameObject.layer == m_CachedHeavyObjectLayerIdx;
     }
 
-    private IEnumerator CoroMaintainSwitchState()
+    private void OnTriggerEnter(Collider other)
     {
-        yield return new WaitForFixedUpdate();
-        while (enabled)
+        if (IsColliderAbleToTriggerSwitch(other))
         {
-            // Every physics frame, we need to know if players are in our collider. An easy
-            // way to do that is to use OnTriggerStay(), which will be called every frame for each
-            // collider in our trigger.
-            //
-            // So we basically just pause until the end of the physics frame. OnTriggerStay()
-            // will have been called in the mean time, so we can see if it found anyone standing in us.
-            m_IsPlayerInTriggerThisFrame = false;
-
-            // pause until the current physics frame has just finished
-            yield return new WaitForFixedUpdate();
-
-            m_FloorSwitchState.IsSwitchedOn.Value = m_IsPlayerInTriggerThisFrame;
+            m_CollidersInTrigger.Add(other);
+            m_FloorSwitchState.IsSwitchedOn.Value = true;
         }
     }
 
-    private void OnTriggerStay(Collider other)
+    private void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.layer == m_CachedPlayerLayerIdx || other.gameObject.layer == m_CachedHeavyObjectLayerIdx)
-        {
-            m_IsPlayerInTriggerThisFrame = true;
-        }
+        m_CollidersInTrigger.Remove(other);
+        m_FloorSwitchState.IsSwitchedOn.Value = m_CollidersInTrigger.Count > 0;
     }
 
+    private void FixedUpdate()
+    {
+        // it's possible that the Colliders in our trigger have been destroyed, while still inside our trigger.
+        // In this case, OnTriggerExit() won't get called for them! We can tell if a Collider was destroyed
+        // because its reference will become null. So here we remove any nulls and see if we're still active.
+        m_CollidersInTrigger.RemoveAll(collider => { return collider == null; });
+        m_FloorSwitchState.IsSwitchedOn.Value = m_CollidersInTrigger.Count > 0;
+    }
 }
