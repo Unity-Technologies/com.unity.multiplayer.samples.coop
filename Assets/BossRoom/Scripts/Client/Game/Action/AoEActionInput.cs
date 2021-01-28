@@ -1,42 +1,44 @@
-using System.Collections;
-using System.Collections.Generic;
 using BossRoom;
 using UnityEngine;
 
 /*
- * First step in AoE ability. Will update the initial input visuals and will be in charge of tracking the user inputs. Once the ability
+ * This class is the first step in AoE ability. It will update the initial input visuals' position and will be in charge of tracking the user inputs. Once the ability
  * is confirmed and the mouse is clicked, it'll send the appropriate RPC to the server, triggering the AoE serer side gameplay logic.
  * The server side gameplay action will then trigger the client side resulting FX.
  * This action's flow is this: (Client) AoEActionInput --> (Server) AoEAction --> (Client) AoEActionFX
  */
 public class AoEActionInput : BaseActionInput
 {
+    Camera m_Camera;
+    int m_GroundLayerMask;
+
     void Start()
     {
         var radius = GameDataSource.Instance.ActionDataByType[m_ActionType].Radius;
-        this.transform.localScale = new Vector3(radius, radius, radius);
+        transform.localScale = new Vector3(radius, radius, radius);
+        m_Camera = Camera.main;
+        m_GroundLayerMask = LayerMask.GetMask("Ground");
     }
 
     void Update()
     {
         if (Input.GetMouseButtonUp(0))
         {
-            var data = new ActionRequestData()
+            var data = new ActionRequestData
             {
-                Position = this.transform.position,
+                Position = transform.position,
                 ActionTypeEnum = m_ActionType,
                 ShouldQueue = false,
                 TargetIds = null
             };
             m_PlayerOwner.ClientSendActionRequest(ref data);
-            Destroy(this.gameObject);
+            Destroy(gameObject);
             return;
         }
 
-        int layerMask = LayerMask.GetMask("Ground");
-        if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out var hit, float.PositiveInfinity, layerMask))
+        if (Physics.Raycast(m_Camera.ScreenPointToRay(Input.mousePosition), out var hit, float.PositiveInfinity, m_GroundLayerMask))
         {
-            this.transform.position = hit.point;
+            transform.position = hit.point;
         }
     }
 }
