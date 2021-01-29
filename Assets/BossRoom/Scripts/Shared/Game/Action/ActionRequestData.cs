@@ -28,10 +28,24 @@ namespace BossRoom
         Melee,
         Ranged,
         RangedTargeted,
+        RangedFXTargeted,
         Chase,
         Revive,
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
+    }
+
+
+    /// <summary>
+    /// Retrieves static information about ActionLogics
+    /// </summary>
+    public static class ActionLogicUtils
+    {
+        public static bool IsTargetRequired(ActionLogic logic)
+        {
+            return logic == ActionLogic.RangedTargeted ||
+                   logic == ActionLogic.RangedFXTargeted;
+        }
     }
 
 

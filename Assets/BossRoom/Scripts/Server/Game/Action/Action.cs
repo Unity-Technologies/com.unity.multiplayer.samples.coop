@@ -64,6 +64,7 @@ namespace BossRoom.Server
                 case ActionLogic.Melee: return new MeleeAction(parent, ref data);
                 case ActionLogic.Chase: return new ChaseAction(parent, ref data);
                 case ActionLogic.Revive: return new ReviveAction(parent, ref data);
+                case ActionLogic.RangedFXTargeted: return new FXProjectileTargetedAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

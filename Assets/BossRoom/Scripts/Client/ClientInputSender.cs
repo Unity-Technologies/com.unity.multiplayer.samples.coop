@@ -44,9 +44,9 @@ namespace BossRoom.Client
                 enabled = false;
             }
 
-            k_GroundLayerMask = LayerMask.GetMask(new [] { "Ground" });
-            k_TargetableLayerMask = LayerMask.GetMask(new [] { "PCs", "NPCs" });
-    }
+            k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
+            k_TargetableLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs" });
+        }
 
         public event Action<Vector3> OnClientClick;
 
@@ -99,9 +99,14 @@ namespace BossRoom.Client
                 }
                 else
                 {
-                    var data = new ActionRequestData();
-                    data.ActionTypeEnum = CharacterData.Skill1;
-                    m_NetworkCharacter.ClientSendActionRequest(ref data);
+                    var defaultSkill = CharacterData.Skill1;
+                    if (!ActionLogicUtils.IsTargetRequired(GameDataSource.Instance.ActionDataByType[defaultSkill].Logic))
+                    {
+                        var data = new ActionRequestData();
+                        data.ActionTypeEnum = defaultSkill;
+                        m_NetworkCharacter.ClientSendActionRequest(ref data);
+                    }
+
                 }
 
                 m_ClickRequest = null;
@@ -131,6 +136,11 @@ namespace BossRoom.Client
                 resultData.ShouldQueue = true; //wait your turn--don't clobber the chase action.
                 ActionType skill1 = CharacterData.Skill1;
                 resultData.ActionTypeEnum = skill1;
+                if (k_CachedHit.Length > 0)
+                {
+                    // record our target in case this action uses that info (non-targeted attacks will ignore this)
+                    resultData.TargetIds = new ulong[] { GetTargetObject(ref k_CachedHit[0]) };
+                }
                 return true;
             }
             else if (targetNetState.NetworkLifeState.Value == LifeState.Fainted)

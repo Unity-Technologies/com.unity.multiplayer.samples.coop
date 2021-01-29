@@ -35,6 +35,14 @@ namespace BossRoom
 
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;
+
+        [Tooltip("If this is a RangedFXTargeted attack, minimum time for the projectile FX to play")]
+        public float FXProjectileMinDurationSeconds = 0.3f;
+
+        [Tooltip("If this is a RangedFXTargeted attack, maximum time for the projectile FX to play")]
+        public float FXProjectileMaxDurationSeconds = 0.6f;
+
+        public GameObject FXParticlePrefab;
     }
 
 

@@ -76,3 +76,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
   m_EnemyPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
+  m_DefaultPlayerType: 2
+  m_DefaultPlayerAppearance: 2

@@ -34,6 +34,17 @@ namespace BossRoom
             results = s_Hits;
             return numResults;
         }
+
+        /// <summary>
+        /// Determines the in-the-air duration of a pretend-missile FX projectile. (Not including casting time!)
+        /// </summary>
+        /// <returns>duration, which will be between minDuration and maxDuration</returns>
+        public static float CalculateFXProjectileDuration(ActionDescription description, float initialDistance)
+        {
+            // rangePct is a value between 0 and 1 representing how close to the maximum range we are
+            float rangePct = initialDistance / description.Range;
+            return Mathf.Lerp(description.FXProjectileMinDurationSeconds, description.FXProjectileMaxDurationSeconds, rangePct);
+        }
     }
 
 
