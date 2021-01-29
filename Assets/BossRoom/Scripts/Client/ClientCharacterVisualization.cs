@@ -55,10 +55,8 @@ namespace BossRoom.Visual
 
             if (!m_NetState.IsNpc)
             {
-                foreach (var model in GetComponents<ModelSwap>())
-                {
-                    model.SetModel(m_NetState.CharacterAppearance.Value);
-                }
+                Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
+                model.SwapToModel(m_NetState.CharacterAppearance.Value);
             }
 
             if (IsLocalPlayer)
