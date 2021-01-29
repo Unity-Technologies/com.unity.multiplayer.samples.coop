@@ -17,7 +17,7 @@ namespace BossRoom
         ImpBossBaseAttack,
         GeneralChase,
         GeneralRevive,
-		TANK_TESTABILITY,
+        TankTestability,
     }
 
 
@@ -31,7 +31,7 @@ namespace BossRoom
         RangedTargeted,
         Chase,
         Revive,
-		AOE,
+        AoE,
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }

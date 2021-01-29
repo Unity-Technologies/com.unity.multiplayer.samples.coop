@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class SelfDestroy : MonoBehaviour
@@ -15,7 +14,7 @@ public class SelfDestroy : MonoBehaviour
         // since multiple characters could need to spawn it at the same time.
         if (Time.time >= m_DestroyTimestamp)
         {
-            Destroy(this.gameObject);
+            Destroy(gameObject);
         }
     }
 

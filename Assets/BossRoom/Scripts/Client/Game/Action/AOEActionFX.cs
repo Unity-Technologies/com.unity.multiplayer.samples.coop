@@ -15,8 +15,8 @@ public class AOEActionFX : ActionFX
     {
         m_Parent.OurAnimator.SetTrigger(Description.Anim);
         var actionDescription = GameDataSource.Instance.ActionDataByType[m_Data.ActionTypeEnum];
-        var VFXObject = GameObject.Instantiate(actionDescription.ActionVisualization, m_Data.Position, Quaternion.identity);
-        VFXObject.transform.localScale = new Vector3(actionDescription.Radius, actionDescription.Radius, actionDescription.Radius);
+        var vfxObject = GameObject.Instantiate(actionDescription.ActionVisualization, m_Data.Position, Quaternion.identity);
+        vfxObject.transform.localScale = new Vector3(actionDescription.Radius, actionDescription.Radius, actionDescription.Radius);
         return ActionConclusion.Stop;
     }
 
