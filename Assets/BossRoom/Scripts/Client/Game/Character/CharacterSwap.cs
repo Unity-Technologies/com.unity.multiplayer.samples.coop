@@ -44,19 +44,7 @@ namespace BossRoom.Client
         }
 
         [SerializeField]
-        private int m_ModelIndex;
-        private int m_LastModelIndex;
-
-        [SerializeField]
         private CharacterModelSet[] m_CharacterModels;
-        private void Awake()
-        {
-            if (m_ModelIndex >= m_CharacterModels.Length)
-            {
-                m_ModelIndex = 0;
-            }
-            SwapToModel(m_ModelIndex);
-        }
 
 
         /// <summary>
@@ -70,16 +58,6 @@ namespace BossRoom.Client
             for (int i = 0; i < m_CharacterModels.Length; i++)
             {
                 m_CharacterModels[i].SetFullActive(i == modelIndex);
-            }
-            m_ModelIndex = modelIndex;
-        }
-
-        private void Update()
-        {
-            if (m_LastModelIndex != m_ModelIndex)
-            {
-                m_LastModelIndex = m_ModelIndex;
-                SwapToModel(m_ModelIndex);
             }
         }
     }
