@@ -29,6 +29,7 @@ namespace BossRoom.Visual
             m_ClientNetPortal = GameHubGO.GetComponent<Client.ClientGameNetPortal>();
 
             m_ClientNetPortal.networkTimeOutEvent += OnNetworkTimeout;
+            m_ClientNetPortal.onConnectFinished += OnConnectFinished;
         }
 
         public void OnHostClicked()
@@ -88,6 +89,12 @@ namespace BossRoom.Visual
         private void OnNetworkTimeout()
         {
             m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Unable to Reach Host/Server", false, true, "Please try again");
+        }
+
+        private void OnDestroy()
+        {
+            m_ClientNetPortal.networkTimeOutEvent -= OnNetworkTimeout;
+            m_ClientNetPortal.onConnectFinished -= OnConnectFinished;
         }
     }
 }

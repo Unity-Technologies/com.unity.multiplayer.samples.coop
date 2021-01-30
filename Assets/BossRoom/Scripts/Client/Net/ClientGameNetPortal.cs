@@ -49,7 +49,9 @@ namespace BossRoom.Client
             //on failure, we must raise an event so that the UI layer can display something. 
             Debug.Log("RecvConnectFinished Got status: " + status);
 
+            NetworkStartTimestamp = 0;
             onConnectFinished?.Invoke(status);
+
         }
 
         public void Update()
