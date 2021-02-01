@@ -157,6 +157,7 @@ namespace BossRoom.Client
             {
                 var emoteData = new ActionRequestData();
                 emoteData.ActionTypeEnum = ActionType.Emote1;
+                emoteData.CancelMovement = true;
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
 
@@ -164,6 +165,7 @@ namespace BossRoom.Client
             {
                 var emoteData = new ActionRequestData();
                 emoteData.ActionTypeEnum = ActionType.Emote2;
+                emoteData.CancelMovement = true;
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
 
@@ -171,6 +173,7 @@ namespace BossRoom.Client
             {
                 var emoteData = new ActionRequestData();
                 emoteData.ActionTypeEnum = ActionType.Emote3;
+                emoteData.CancelMovement = true;
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
 
@@ -178,6 +181,7 @@ namespace BossRoom.Client
             {
                 var emoteData = new ActionRequestData();
                 emoteData.ActionTypeEnum = ActionType.Emote4;
+                emoteData.CancelMovement = true;
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
         }
