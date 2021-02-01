@@ -20,6 +20,10 @@ namespace BossRoom.Server
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
         private bool m_BrainEnabled = true;
 
+        [SerializeField]
+        [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
+        private ActionType m_StartingAction = ActionType.None;
+
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
@@ -63,6 +67,16 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.OnReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+
+
+                NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
+                NetState.Mana.Value = NetState.CharacterData.BaseMana;
+
+                if (m_StartingAction != ActionType.None)
+                {
+                    var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
+                    PlayAction(ref startingAction);
+                }
             }
         }
 

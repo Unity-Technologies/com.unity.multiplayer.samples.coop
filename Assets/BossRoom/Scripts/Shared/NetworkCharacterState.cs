@@ -53,15 +53,20 @@ namespace BossRoom
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNpc
+        public bool IsNpc { get { return CharacterData.IsNpc; } }
+
+        /// <summary>
+        /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
+        /// </summary>
+        public CharacterClass CharacterData
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value].IsNpc;
+                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value];
             }
         }
 
-        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
+                [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;
 
         /// <summary>
@@ -75,18 +80,6 @@ namespace BossRoom
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
         public event Action<Vector3> OnReceivedClientInput;
-
-        private void Awake()
-        {
-            CharacterClass data;
-            bool found = GameDataSource.Instance.CharacterDataByType.TryGetValue(CharacterType.Value, out data);
-            if (!found)
-            {
-                throw new Exception($"gameobject {gameObject.name} has charactertype {CharacterType.Value} specified, which isn't in the GameDataSource's list!");
-            }
-            HitPoints.Value = data.BaseHP;
-            Mana.Value = data.BaseMana;
-        }
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.

@@ -51,7 +51,6 @@ namespace BossRoom.Client
 
             NetworkStartTimestamp = 0;
             onConnectFinished?.Invoke(status);
-
         }
 
         public void Update()
@@ -60,7 +59,11 @@ namespace BossRoom.Client
             if (NetworkStartTimestamp > 0 && (Time.time - NetworkStartTimestamp) > k_TimeoutDuration)
             {
                 //Stop our client connection and send the timeout event
-                m_Hub.NetManager.StopClient();
+                //TODO: Find a way to stop client but ONLY if we haven't connected yet.
+                if (!m_Hub.NetManager.IsConnectedClient)
+                {
+                    m_Hub.NetManager.StopClient();
+                }
                 networkTimeOutEvent?.Invoke();
                 NetworkStartTimestamp = 0;
             }
