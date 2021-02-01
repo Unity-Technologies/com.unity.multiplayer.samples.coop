@@ -8,7 +8,7 @@ namespace BossRoom.Server
         private bool m_ExecFired;
         private ServerCharacter m_TargetCharacter;
 
-        public ReviveAction(ServerCharacter parent, ref ActionRequestData data, int level) : base(parent, ref data, level)
+        public ReviveAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
         }
 
@@ -29,13 +29,13 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (!m_ExecFired && Time.time - TimeStarted >= Description.ExecTime_s)
+            if (!m_ExecFired && Time.time - TimeStarted >= Description.ExecTimeSeconds)
             {
                 m_ExecFired = true;
 
-                if (m_TargetCharacter.NetState.NetworkLifeState.Value == LifeState.FAINTED)
+                if (m_TargetCharacter.NetState.NetworkLifeState.Value == LifeState.Fainted)
                 {
-                    m_TargetCharacter.Revive(m_Parent, (int) m_Data.Amount);
+                    m_TargetCharacter.Revive(m_Parent, (int)m_Data.Amount);
                 }
                 else
                 {

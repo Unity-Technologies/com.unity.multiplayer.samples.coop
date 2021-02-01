@@ -74,5 +74,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927521835ae055247b17e4abe805b4ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PlayerPrefab: {fileID: 4600110157238723790, guid: bb87f9bac2595f8499c048016c4b2e1d, type: 3}
-  m_EnemyPrefab: {fileID: -3741253011127748524, guid: 5f8daaa54415e5e41b5162cd13121359, type: 3}
+  m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
+  m_EnemyPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
+  m_DefaultPlayerType: 0
+  m_DefaultPlayerAppearance: 1
