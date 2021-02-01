@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 5436007408952557925}
   - component: {fileID: 5436007408952557924}
-  - component: {fileID: 5436007408952557926}
   - component: {fileID: 5436007408952557927}
+  - component: {fileID: 5436007408952557926}
   m_Layer: 0
   m_Name: NetworkingManager
   m_TagString: Untagged
@@ -50,7 +50,7 @@ MonoBehaviour:
   LogLevel: 1
   NetworkConfig:
     ProtocolVersion: 0
-    NetworkTransport: {fileID: 5436007408952557926}
+    NetworkTransport: {fileID: 5436007408952557927}
     RegisteredScenes:
     - MainMenu
     - CharSelect
@@ -101,6 +101,31 @@ MonoBehaviour:
       type: {class: NullableBoolSerializable, ns: MLAPI.Configuration, asm: Unity.Multiplayer.MLAPI.Runtime}
       data:
         Value: 1897319656204293034
+--- !u!114 &5436007408952557927
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436007408952557947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b84c2d8dfe509a34fb59e2b81f8e1319, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  MessageBufferSize: 5120
+  MaxConnections: 100
+  MaxSentMessageQueueSize: 128
+  ConnectAddress: 127.0.0.1
+  ConnectPort: 7777
+  ServerListenPort: 7777
+  ServerWebsocketListenPort: 8887
+  SupportWebsocket: 0
+  Channels: []
+  UseMLAPIRelay: 0
+  MLAPIRelayAddress: 184.72.104.138
+  MLAPIRelayPort: 8888
+  MessageSendMode: 0
 --- !u!114 &5436007408952557926
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,30 +147,5 @@ MonoBehaviour:
   channels: []
   MessageBufferSize: 5120
   SimulatePacketLossChance: 0
-  SimulateMinLatency: 0
-  SimulateMaxLatency: 0
---- !u!114 &5436007408952557927
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5436007408952557947}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b84c2d8dfe509a34fb59e2b81f8e1319, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  MessageBufferSize: 5120
-  MaxConnections: 100
-  MaxSentMessageQueueSize: 128
-  ConnectAddress: 127.0.0.1
-  ConnectPort: 7777
-  ServerListenPort: 7777
-  ServerWebsocketListenPort: 8887
-  SupportWebsocket: 0
-  Channels: []
-  UseMLAPIRelay: 0
-  MLAPIRelayAddress: 184.72.104.138
-  MLAPIRelayPort: 8888
-  MessageSendMode: 0
+  SimulateMinLatency: 100
+  SimulateMaxLatency: 300

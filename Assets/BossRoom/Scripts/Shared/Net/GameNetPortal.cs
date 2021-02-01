@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using MLAPI;
 using UnityEngine;
 
@@ -131,26 +129,30 @@ namespace BossRoom
         /// <param name="hub">The GameNetHub that is invoking us. </param>
         /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
         /// <param name="port">The port to connect to. </param>
-        public void StartHost( string ipaddress, int port)
+        public void StartHost(string ipaddress, int port)
         {
+            var chosenTransport = NetworkingManager.Singleton.NetworkConfig.NetworkTransport;
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
-            var transport = NetworkingManagerGO.GetComponent<LiteNetLibTransport.LiteNetLibTransport>();
-            transport.Address = ipaddress;
-            transport.Port = (ushort)port;
-
-            // //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
-            // var transport = NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
-            // transport.ConnectAddress = ipaddress;
-            // transport.ServerListenPort = port;
-
+            switch (chosenTransport)
+            {
+                case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                    liteNetLibTransport = NetworkingManagerGO.GetComponent<LiteNetLibTransport.LiteNetLibTransport>();
+                    liteNetLibTransport.Address = ipaddress;
+                    liteNetLibTransport.Port = (ushort)port;
+                    break;
+                case MLAPI.Transports.UNET.UnetTransport unetTransport:
+                    unetTransport = NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
+                    unetTransport.ConnectAddress = ipaddress;
+                    unetTransport.ServerListenPort = port;
+                    break;
+                default:
+                    throw new Exception($"unhandled transport {chosenTransport.GetType()}");
+            }
 
             NetManager.StartHost();
         }
 
-
-
         //Server->Client RPCs
-
         public void S2C_ConnectResult( ulong netId, ConnectStatus status )
         {
             using (PooledBitStream stream = PooledBitStream.Get())

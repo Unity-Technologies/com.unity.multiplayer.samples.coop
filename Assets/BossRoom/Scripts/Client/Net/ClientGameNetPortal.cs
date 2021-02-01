@@ -1,8 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using UnityEngine;
-
-using BossRoom;
+using MLAPI;
+using MLAPI.Transports.UNET;
 
 namespace BossRoom.Client
 {
@@ -64,23 +63,30 @@ namespace BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public static void StartClient(GameNetPortal hub, string ipaddress, int port)
         {
-            string client_guid = GetOrCreateGuid();
-            string payload = $"client_guid={client_guid}\n"; //minimal format where key=value pairs are separated by newlines.
+            var clientGUID = GetOrCreateGuid();
+            var payload = $"client_guid={clientGUID}\n"; //minimal format where key=value pairs are separated by newlines.
 
-            byte[] payload_bytes = System.Text.Encoding.UTF8.GetBytes(payload);
-
-            // //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
-            // var transport = hub.NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
-            // transport.ConnectAddress = ipaddress;
-            // transport.ConnectPort = port;
-
+            var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
-            var transport = hub.NetworkingManagerGO.GetComponent<LiteNetLibTransport.LiteNetLibTransport>();
-            transport.Address = ipaddress;
-            transport.Port = (ushort)port;
+            var chosenTransport = NetworkingManager.Singleton.NetworkConfig.NetworkTransport;
+            switch (chosenTransport)
+            {
+                case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                    liteNetLibTransport = hub.NetworkingManagerGO.GetComponent<LiteNetLibTransport.LiteNetLibTransport>();
+                    liteNetLibTransport.Address = ipaddress;
+                    liteNetLibTransport.Port = (ushort)port;
+                    break;
+                case UnetTransport unetTransport:
+                    unetTransport = hub.NetworkingManagerGO.GetComponent<UnetTransport>();
+                    unetTransport.ConnectAddress = ipaddress;
+                    unetTransport.ConnectPort = port;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(chosenTransport));
+            }
 
-            hub.NetManager.NetworkConfig.ConnectionData = payload_bytes;
+            hub.NetManager.NetworkConfig.ConnectionData = payloadBytes;
 
             //and...we're off! MLAPI will establish a socket connection to the host.
             //  If the socket connection fails, we'll hear back by [???] (FIXME: GOMPS-79, need to handle transport layer failures too).

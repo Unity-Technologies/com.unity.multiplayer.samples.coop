@@ -1,11 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// Provides backing logic for all of the UI that runs in the MainMenu stage. 
+    /// Provides backing logic for all of the UI that runs in the MainMenu stage.
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
@@ -26,7 +24,7 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Gets the IP Address the user set in the UI, or returns 127.0.0.1 if IP is not present. 
+        /// Gets the IP Address the user set in the UI, or returns 127.0.0.1 if IP is not present.
         /// </summary>
         /// <returns>IP address entered by user, in string form. </returns>
         private string GetIPAddress()
