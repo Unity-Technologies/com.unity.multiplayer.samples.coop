@@ -72,7 +72,7 @@ namespace BossRoom.Visual
         {
             if (status != ConnectStatus.SUCCESS)
             {
-                
+
                 m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Something went wrong", false, true);
             }
             else

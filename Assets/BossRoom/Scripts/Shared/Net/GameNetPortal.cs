@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 using MLAPI.Serialization.Pooled;
+using System;
+using UnityEngine;
 
 namespace BossRoom
 {
@@ -105,12 +102,6 @@ namespace BossRoom
         }
 
 
-        public void Update()
-        {
-            
-        }
-
-
         /// <summary>
         /// This method runs when NetworkingManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkedBehaviour.NetworkStart, and serves the same role, even though GameNetHub itself isn't a NetworkedBehaviour.
@@ -144,7 +135,7 @@ namespace BossRoom
         /// <param name="hub">The GameNetHub that is invoking us. </param>
         /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
         /// <param name="port">The port to connect to. </param>
-        public void StartHost( string ipaddress, int port)
+        public void StartHost(string ipaddress, int port)
         {
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
             var transport = NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
@@ -158,7 +149,7 @@ namespace BossRoom
 
         //Server->Client RPCs
 
-        public void S2C_ConnectResult( ulong netId, ConnectStatus status )
+        public void S2C_ConnectResult(ulong netId, ConnectStatus status)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {

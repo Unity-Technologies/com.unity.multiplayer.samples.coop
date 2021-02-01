@@ -51,7 +51,7 @@ namespace BossRoom.Client
 
         private void OnDisconnectOrTimeout()
         {
- 
+
             //On a client disconnect we want to take them back to the main menu.
             //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
