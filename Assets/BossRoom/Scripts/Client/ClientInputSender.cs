@@ -28,6 +28,8 @@ namespace BossRoom.Client
         /// </summary>
         private System.Nullable<Vector3> m_ClickRequest;
 
+        ActionType m_EmoteAction;
+
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
@@ -153,34 +155,27 @@ namespace BossRoom.Client
                 m_ClickRequest = Input.mousePosition;
             }
 
+            m_EmoteAction = ActionType.None;
             if (Input.GetKeyDown(KeyCode.Alpha4))
             {
-                var emoteData = new ActionRequestData();
-                emoteData.ActionTypeEnum = ActionType.Emote1;
-                emoteData.CancelMovement = true;
-                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
+                m_EmoteAction = ActionType.Emote1;
             }
-
             if (Input.GetKeyDown(KeyCode.Alpha5))
             {
-                var emoteData = new ActionRequestData();
-                emoteData.ActionTypeEnum = ActionType.Emote2;
-                emoteData.CancelMovement = true;
-                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
+                m_EmoteAction = ActionType.Emote2;
             }
-
             if (Input.GetKeyDown(KeyCode.Alpha6))
             {
-                var emoteData = new ActionRequestData();
-                emoteData.ActionTypeEnum = ActionType.Emote3;
-                emoteData.CancelMovement = true;
-                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
+                m_EmoteAction = ActionType.Emote3;
             }
-
             if (Input.GetKeyDown(KeyCode.Alpha7))
             {
+                m_EmoteAction = ActionType.Emote4;
+            }
+            if (m_EmoteAction != ActionType.None)
+            {
                 var emoteData = new ActionRequestData();
-                emoteData.ActionTypeEnum = ActionType.Emote4;
+                emoteData.ActionTypeEnum = m_EmoteAction;
                 emoteData.CancelMovement = true;
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
