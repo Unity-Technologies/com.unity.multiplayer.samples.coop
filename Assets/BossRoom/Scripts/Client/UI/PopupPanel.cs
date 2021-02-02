@@ -6,7 +6,7 @@ using UnityEngine.UI;
 ///
 namespace BossRoom.Visual
 {
-    public class PopupPanelManager : MonoBehaviour
+    public class PopupPanel : MonoBehaviour
     {
         [SerializeField]
         private Text m_TitleText;

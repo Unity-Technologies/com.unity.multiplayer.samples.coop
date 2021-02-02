@@ -1,6 +1,6 @@
+using MLAPI;
 using System.Collections;
 using UnityEngine;
-using MLAPI;
 
 namespace BossRoom.Server
 {
@@ -25,15 +25,14 @@ namespace BossRoom.Server
         [Tooltip("Set the default Player Appearance (value between 0-7)")]
         private int m_DefaultPlayerAppearance = 7;
 
+        public override GameState ActiveState { get { return GameState.BossRoom; } }
 
         private GameObject m_GameHub;
-
-        public override GameState ActiveState { get { return GameState.BossRoom; } }
 
         public override void NetworkStart()
         {
             base.NetworkStart();
-            m_GameHub = GameObject.FindWithTag("GameHub");
+            m_GameHub =  GameObject.FindWithTag("GameHub");
             if (!IsServer)
             {
                 this.enabled = false;
@@ -90,7 +89,6 @@ namespace BossRoom.Server
                 netState.CharacterName.Value = playerData.Value.m_PlayerName;
             }
             newPlayer.SpawnAsPlayerObject(clientId);
-         
         }
 
         private void SpawnEnemy()

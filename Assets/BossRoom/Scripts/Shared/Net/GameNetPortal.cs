@@ -99,12 +99,6 @@ namespace BossRoom
         }
 
 
-        public void Update()
-        {
-
-        }
-
-
         /// <summary>
         /// This method runs when NetworkingManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkedBehaviour.NetworkStart, and serves the same role, even though GameNetHub itself isn't a NetworkedBehaviour.
@@ -144,8 +138,6 @@ namespace BossRoom
             var transport = NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
             transport.ConnectAddress = ipaddress;
             transport.ServerListenPort = port;
-
-
 
             NetManager.StartHost();
         }
