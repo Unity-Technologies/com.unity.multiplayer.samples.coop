@@ -93,20 +93,26 @@ namespace BossRoom.Client
                         chaseData.ActionTypeEnum = ActionType.GeneralChase;
                         chaseData.Amount = range;
                         chaseData.TargetIds = new ulong[] { GetTargetObject(ref k_CachedHit[0]) };
-                        m_NetworkCharacter.ClientSendActionRequest(ref chaseData);
-                        m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
+
+                        ActionSequence sequence = new ActionSequence();
+                        sequence.Add(ref chaseData);
+                        sequence.Add(ref playerAction);
+                        m_NetworkCharacter.ClientSendActionRequests(sequence);
                     }
                 }
                 else
                 {
-                    var defaultSkill = CharacterData.Skill1;
-                    if (!ActionLogicUtils.IsTargetRequired(GameDataSource.Instance.ActionDataByType[defaultSkill].Logic))
+                    // clicked on nothing... perform a "miss" attack on the spot they clicked on
+                    var data = new ActionRequestData();
+                    data.ActionTypeEnum = CharacterData.Skill1;
+                    if (ActionLogicUtils.IsPositionUsed(GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].Logic) &&
+                        Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                     {
-                        var data = new ActionRequestData();
-                        data.ActionTypeEnum = defaultSkill;
-                        m_NetworkCharacter.ClientSendActionRequest(ref data);
+                        data.Position = k_CachedHit[0].point;
                     }
-
+                    ActionSequence sequence = new ActionSequence();
+                    sequence.Add(ref data);
+                    m_NetworkCharacter.ClientSendActionRequests(sequence);
                 }
 
                 m_ClickRequest = null;
@@ -133,20 +139,22 @@ namespace BossRoom.Client
 
             if (targetNetState.IsNpc)
             {
-                resultData.ShouldQueue = true; //wait your turn--don't clobber the chase action.
                 ActionType skill1 = CharacterData.Skill1;
                 resultData.ActionTypeEnum = skill1;
-                if (k_CachedHit.Length > 0)
+
+                // record our target in case this action uses that info (non-targeted attacks will ignore this)
+                resultData.TargetIds = new ulong[] { targetNetState.NetworkId };
+
+                // record position if relevant
+                if (ActionLogicUtils.IsPositionUsed(GameDataSource.Instance.ActionDataByType[resultData.ActionTypeEnum].Logic))
                 {
-                    // record our target in case this action uses that info (non-targeted attacks will ignore this)
-                    resultData.TargetIds = new ulong[] { GetTargetObject(ref k_CachedHit[0]) };
+                    resultData.Position = targetNetState.transform.position;
                 }
                 return true;
             }
             else if (targetNetState.NetworkLifeState.Value == LifeState.Fainted)
             {
                 resultData = new ActionRequestData();
-                resultData.ShouldQueue = true;
                 resultData.ActionTypeEnum = ActionType.GeneralRevive;
                 resultData.TargetIds = new[] { targetNetState.NetworkId };
                 return true;

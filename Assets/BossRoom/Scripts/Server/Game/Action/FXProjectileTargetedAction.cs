@@ -8,6 +8,8 @@ namespace BossRoom.Server
     /// Action that represents an always-hit raybeam-style ranged attack. A particle is shown from caster to target, and then the
     /// target takes damage. (It is not possible to escape the hit; the target ALWAYS takes damage.) This is intended for fairly
     /// swift particles; the time before it's applied is based on a simple distance-check at the attack's start.
+    /// (If no target is provided, it means the user clicked on an empty spot on the map. In that case we still perform an action,
+    /// it just hits nothing.)
     /// </summary>
     public class FXProjectileTargetedAction : Action
     {
@@ -15,23 +17,25 @@ namespace BossRoom.Server
         private float m_TimeUntilImpact;
         private ServerCharacter m_Target;
 
-        public FXProjectileTargetedAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
-        {
-            if (data.TargetIds == null || data.TargetIds.Length == 0)
-                throw new System.Exception("FXProjectileTargetedAction requires a target; no target provided!");
-        }
+        public FXProjectileTargetedAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
         public override bool Start()
         {
             m_Target = GetTarget();
-            if (m_Target == null)
+            if (m_Target == null && HasTarget())
             {
                 // target has disappeared! Abort.
                 return false;
             }
 
-            float distanceToTarget = Vector3.Distance(m_Target.transform.position, m_Parent.transform.position);
-            m_TimeUntilImpact = Description.ExecTimeSeconds + ActionUtils.CalculateFXProjectileDuration(Description, distanceToTarget);
+            Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
+
+            // turn to face our target!
+            m_Parent.transform.LookAt(targetPos);
+
+            // figure out how long the pretend-projectile will be flying to the target
+            float distanceToTargetPos = Vector3.Distance(targetPos, m_Parent.transform.position);
+            m_TimeUntilImpact = Description.ExecTimeSeconds + ActionUtils.CalculateFXProjectileDuration(Description, distanceToTargetPos);
             m_Parent.NetState.ServerBroadcastAction(ref Data);
             return true;
         }
@@ -54,11 +58,22 @@ namespace BossRoom.Server
             // TODO: somehow tell the corresponding FX to abort!
         }
 
+        /// <summary>
+        /// Are we even supposed to have a target? (If not, we're representing a "missed" bolt that just hits nothing.)
+        /// </summary>
+        private bool HasTarget()
+        {
+            return Data.TargetIds != null && Data.TargetIds.Length > 0;
+        }
+
+        /// <summary>
+        /// Returns our intended target, or null if not found/no target.
+        /// </summary>
         private ServerCharacter GetTarget()
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
-                throw new System.Exception("FXProjectileTargetedAction has no Targets! Cannot possibly fire a projectile!");
+                return null;
             }
 
             NetworkedObject obj;

@@ -26,14 +26,15 @@ namespace BossRoom.Visual
         public override bool Start()
         {
             m_Target = GetTarget();
-            if (m_Target == null)
+            if (HasTarget() && m_Target == null)
             {
                 // target has disappeared! Abort.
                 return false;
             }
 
             // figure out how long the pretend-projectile will be flying to the target
-            float initialDistance = Vector3.Distance(m_Target.transform.position, m_Parent.transform.position);
+            Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
+            float initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
             m_ProjectileDuration = ActionUtils.CalculateFXProjectileDuration(Description, initialDistance);
 
             // create the projectile. It will control itself from here on out
@@ -82,11 +83,19 @@ namespace BossRoom.Visual
             }
         }
 
+        /// <summary>
+        /// Do we even have a target? (If false, it means player clicked on nothing, and we're rendering a "missed" fake bolt.)
+        /// </summary>
+        private bool HasTarget()
+        {
+            return Data.TargetIds != null && Data.TargetIds.Length > 0;
+        }
+
         private Client.ClientCharacter GetTarget()
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
-                throw new System.Exception("FXProjectileTargetedActionFX has no Targets! Cannot possibly fire a projectile!");
+                return null;
             }
 
             NetworkedObject obj;
@@ -113,7 +122,7 @@ namespace BossRoom.Visual
             }
 
             // now that we have our projectile, initialize it so it'll fly at the target appropriately
-            projectile.Initialize(m_Parent.transform.position, m_Target.transform, Description.ExecTimeSeconds, m_ProjectileDuration);
+            projectile.Initialize(m_Parent.transform.position, m_Target?.transform, m_Data.Position, Description.ExecTimeSeconds, m_ProjectileDuration);
             return projectile;
         }
     }

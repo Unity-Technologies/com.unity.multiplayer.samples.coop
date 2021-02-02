@@ -41,11 +41,15 @@ namespace BossRoom
     /// </summary>
     public static class ActionLogicUtils
     {
-        public static bool IsTargetRequired(ActionLogic logic)
+        /// <summary>
+        /// When requesting an action with this type of ActionLogic, do we need to store the Position where player clicked?
+        /// (We separate this out so that we don't need to send the extra Vector3 across the network if unneeded.)
+        /// </summary>
+        public static bool IsPositionUsed(ActionLogic logic)
         {
-            return logic == ActionLogic.RangedTargeted ||
-                   logic == ActionLogic.RangedFXTargeted;
+            return logic == ActionLogic.RangedFXTargeted;
         }
+
     }
 
 
@@ -61,7 +65,6 @@ namespace BossRoom
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing. 
         public ulong[] TargetIds;          //networkIds of targets, or null if untargeted. 
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
-        public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately. 
 
         //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below. 
 
@@ -73,7 +76,6 @@ namespace BossRoom
             HasDirection = 1 << 1,
             HasTargetIds = 1 << 2,
             HasAmount = 1 << 3,
-            ShouldQueue = 1 << 4
             //currently serialized with a byte. Change Read/Write if you add more than 8 fields. 
         }
 
@@ -84,7 +86,6 @@ namespace BossRoom
             if (Direction != Vector3.zero) { flags |= PackFlags.HasDirection; }
             if (TargetIds != null) { flags |= PackFlags.HasTargetIds; }
             if (Amount != 0) { flags |= PackFlags.HasAmount; }
-            if (ShouldQueue) { flags |= PackFlags.ShouldQueue; }
 
             return flags;
         }
@@ -95,8 +96,6 @@ namespace BossRoom
             {
                 ActionTypeEnum = (ActionType)reader.ReadInt16();
                 PackFlags flags = (PackFlags)reader.ReadByte();
-
-                ShouldQueue = (flags & PackFlags.ShouldQueue) != 0;
 
                 if ((flags & PackFlags.HasPosition) != 0)
                 {

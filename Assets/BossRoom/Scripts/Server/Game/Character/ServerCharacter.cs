@@ -60,23 +60,22 @@ namespace BossRoom.Server
             else
             {
                 NetState = GetComponent<NetworkCharacterState>();
-                NetState.DoActionEventServer += OnActionPlayRequest;
+                NetState.DoActionsEventServer += OnActionPlayRequest;
                 NetState.OnReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             }
         }
 
         /// <summary>
-        /// Play an action!
+        /// Play a sequence of actions!
         /// </summary>
-        /// <param name="data">Contains all data necessary to create the action</param>
-        public void PlayAction(ref ActionRequestData data)
+        public void PlayActions(ActionSequence listOfActions)
         {
             //the character needs to be alive in order to be able to play actions
             if (NetState.NetworkLifeState.Value == LifeState.Alive)
             {
-                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
-                this.m_ActionPlayer.PlayAction(ref data);
+                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct.
+                this.m_ActionPlayer.PlayActions(listOfActions);
             }
         }
 
@@ -106,9 +105,9 @@ namespace BossRoom.Server
             this.m_ActionPlayer.ClearActions();
         }
 
-        private void OnActionPlayRequest(ActionRequestData data)
+        private void OnActionPlayRequest(ActionSequence list)
         {
-            this.PlayAction(ref data);
+            this.PlayActions(list);
         }
 
         /// <summary>

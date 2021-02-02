@@ -6,8 +6,7 @@ using UnityEngine;
 /// There are three stages to this missile:
 ///     - wind-up (while the caster is animating)
 ///     - flying through the air
-///     - impacted the target
-/// Note that there is no way for this type of projectile to miss, so we always go through all three stages!
+///     - impacted the target/impacted the ground (in the case of a miss)
 /// 
 /// This script should be attached to a projectile prefab. The prefab's initial state should be set up for the "windup"
 /// stage -- that is, any game objects needed for display in this state should be enabled, and game objects needed for
@@ -22,17 +21,24 @@ public class FXProjectile : MonoBehaviour
     private List<GameObject> m_HideTheseWhenFiring;
 
     [SerializeField]
-    private List<GameObject> m_ShowTheseOnImpact;
+    private List<GameObject> m_ShowTheseOnTargetImpact;
 
     [SerializeField]
-    private List<GameObject> m_HideTheseOnImpact;
+    private List<GameObject> m_HideTheseOnTargetImpact;
+
+    [SerializeField]
+    private List<GameObject> m_ShowTheseOnFloorImpact;
+
+    [SerializeField]
+    private List<GameObject> m_HideTheseOnFloorImpact;
 
     [SerializeField]
     [Tooltip("If this projectile plays an impact particle, how long should we stay alive for it to keep playing?")]
     private float m_PostImpactDurationSeconds = 1;
 
     private Vector3 m_StartPoint;
-    private Transform m_Destination;
+    private Transform m_TargetDestination; // null if we're a "miss" projectile (i.e. we hit nothing)
+    private Vector3 m_MissDestination; // only used if m_TargetDestination is null
     private float m_WindupDuration;
     private float m_FlightDuration;
     private float m_Age;
@@ -45,10 +51,11 @@ public class FXProjectile : MonoBehaviour
     }
     private State m_State;
 
-    public void Initialize(Vector3 startPoint, Transform destination, float windupTime, float flightTime)
+    public void Initialize(Vector3 startPoint, Transform target, Vector3 missPos, float windupTime, float flightTime)
     {
         m_StartPoint = startPoint;
-        m_Destination = destination;
+        m_TargetDestination = target;
+        m_MissDestination = missPos;
         m_WindupDuration = windupTime;
         m_FlightDuration = flightTime;
         m_State = State.WINDUP;
@@ -80,7 +87,7 @@ public class FXProjectile : MonoBehaviour
                 {
                     // we're flying through the air. Reposition ourselves to be closer to the destination
                     float progress = (m_Age - m_WindupDuration) / m_FlightDuration;
-                    transform.position = Vector3.Lerp(m_StartPoint, m_Destination.position, progress);
+                    transform.position = Vector3.Lerp(m_StartPoint, m_TargetDestination?m_TargetDestination.position:m_MissDestination, progress);
                 }
                 break;
             case State.IMPACT:
@@ -108,14 +115,30 @@ public class FXProjectile : MonoBehaviour
         }
         else if (newState == State.IMPACT)
         {
-            foreach (var gameObject in m_HideTheseOnImpact)
+            // is it impacting an actual enemy? We allow different graphics for the "miss" case
+            if (m_TargetDestination)
             {
-                gameObject.SetActive(false);
+                foreach (var gameObject in m_HideTheseOnTargetImpact)
+                {
+                    gameObject.SetActive(false);
+                }
+                foreach (var gameObject in m_ShowTheseOnTargetImpact)
+                {
+                    gameObject.SetActive(true);
+                }
             }
-            foreach (var gameObject in m_ShowTheseOnImpact)
+            else
             {
-                gameObject.SetActive(true);
+                foreach (var gameObject in m_HideTheseOnFloorImpact)
+                {
+                    gameObject.SetActive(false);
+                }
+                foreach (var gameObject in m_ShowTheseOnFloorImpact)
+                {
+                    gameObject.SetActive(true);
+                }
             }
+
         }
         m_State = newState;
     }

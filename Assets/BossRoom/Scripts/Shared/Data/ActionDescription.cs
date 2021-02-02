@@ -36,6 +36,15 @@ namespace BossRoom
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;
 
+        [System.Serializable]
+        public enum BlockingModeType
+        {
+            EntireDuration,
+            OnlyDuringExecTime,
+        }
+        [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
+        public BlockingModeType BlockingMode;
+
         [Tooltip("If this is a RangedFXTargeted attack, minimum time for the projectile FX to play")]
         public float FXProjectileMinDurationSeconds = 0.3f;
 

@@ -75,10 +75,11 @@ namespace BossRoom.Server
                 {
                     ActionTypeEnum = m_CurAttackAction,
                     Amount = attackInfo.Amount,
-                    ShouldQueue = false,
                     TargetIds = new ulong[] { m_Foe.NetworkId }
                 };
-                m_ActionPlayer.PlayAction(ref attackData);
+                var actionSequence = new ActionSequence();
+                actionSequence.Add(ref attackData);
+                m_ActionPlayer.PlayActions(actionSequence);
             }
             else
             {
@@ -87,20 +88,21 @@ namespace BossRoom.Server
                 {
                     ActionTypeEnum = ActionType.GeneralChase,
                     Amount = attackInfo.Range,
-                    ShouldQueue = false,
                     TargetIds = new ulong[] { m_Foe.NetworkId }
                 };
-                m_ActionPlayer.PlayAction(ref chaseData);
 
                 // queue up the actual attack for when we're in range
                 var attackData = new ActionRequestData
                 {
                     ActionTypeEnum = m_CurAttackAction,
                     Amount = attackInfo.Amount,
-                    ShouldQueue = true,
                     TargetIds = new ulong[] { m_Foe.NetworkId }
                 };
-                m_ActionPlayer.PlayAction(ref attackData);
+
+                var actionSequence = new ActionSequence();
+                actionSequence.Add(ref chaseData);
+                actionSequence.Add(ref attackData);
+                m_ActionPlayer.PlayActions(actionSequence);
             }
         }
 
