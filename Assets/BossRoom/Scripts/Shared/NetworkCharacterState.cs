@@ -98,7 +98,6 @@ namespace BossRoom
             OnReceivedClientInput?.Invoke(movementTarget);
         }
 
-
         // ACTION SYSTEM
 
         /// <summary>
@@ -151,6 +150,30 @@ namespace BossRoom
             var data = new ActionRequestData();
             data.Read(stream);
             DoActionEventServer?.Invoke(data);
+        }
+
+        // UTILITY AND SPECIAL-PURPOSE RPCs
+
+        /// <summary>
+        /// Called when the character needs to perform a one-off "I've been hit" animation.
+        /// </summary>
+        public event Action OnPerformHitReaction;
+
+        /// <summary>
+        /// Called by Actions when this character needs to perform a one-off "ouch" reaction-animation.
+        /// Note: this is not the normal way to trigger hit-react animations! Normally the client-side
+        /// ActionFX directly controls animation. But some Actions can have unpredictable targets. In cases
+        /// where the ActionFX can't predict who gets hit, the Action calls this to manually trigger animation.
+        /// </summary>
+        public void ServerBroadcastHitReaction()
+        {
+            InvokeClientRpcOnEveryone(RecvPerformHitReactionClient);
+        }
+
+        [ClientRPC]
+        public void RecvPerformHitReactionClient()
+        {
+            OnPerformHitReaction?.Invoke();
         }
     }
 }

@@ -162,5 +162,10 @@ namespace BossRoom.Server
                 m_AIBrain.Update();
             }
         }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            m_ActionPlayer.OnCollisionEnter(collision);
+        }
     }
 }

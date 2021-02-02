@@ -27,7 +27,7 @@ namespace BossRoom.Visual
         public float MaxZoomDistance = 30;
         public float ZoomSpeed = 3;
 
-        private const float k_MaxVizSpeed = 4;    //max speed at which we will chase the parent transform. 
+        private const float k_MaxVizSpeed = 30;    //max speed at which we will chase the parent transform. 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         public void Start()
@@ -47,6 +47,7 @@ namespace BossRoom.Visual
             m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += this.PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+            m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
             Parent = transform.parent;
             Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
@@ -63,6 +64,11 @@ namespace BossRoom.Visual
             {
                 AttachCamera();
             }
+        }
+
+        private void OnPerformHitReaction()
+        {
+            m_ClientVisualsAnimator.SetTrigger("HitReact1");
         }
 
         private void PerformActionFX(ActionRequestData data)

@@ -30,7 +30,7 @@ namespace BossRoom
         RangedTargeted,
         Chase,
         Revive,
-
+        Trample,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 

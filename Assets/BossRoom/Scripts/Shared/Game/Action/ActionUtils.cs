@@ -21,6 +21,21 @@ namespace BossRoom
         /// <returns>Total number of foes encountered. </returns>
         public static int DetectMeleeFoe(bool isNPC, Collider attacker, ActionDescription description, out RaycastHit[] results)
         {
+            return DetectNearbyFoe(isNPC, attacker, description.Range, out results);
+        }
+
+        /// <summary>
+        /// Detects foes near us. (This is like DetectMeleeFoe() but doesn't need an ActionDescription, just a range.
+        /// We'll probably want to completely phase out DetectMeleeFoe()... but both functions can exist for now until it's
+        /// more obvious if DetectMeleeFoe() will need to be more sophisticated.)
+        /// </summary>
+        /// <param name="isNPC">true if the attacker is an NPC (and therefore should hit PCs). False for the reverse.</param>
+        /// <param name="attacker">The collider of the attacking GameObject.</param>
+        /// <param name="range">The range in meters to check.</param>
+        /// <param name="results">Place an uninitialized RayCastHit[] ref in here. It will be set to the results array. </param>
+        /// <returns></returns>
+        public static int DetectNearbyFoe(bool isNPC, Collider attacker, float range, out RaycastHit[] results)
+        {
             //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack. 
 
             var myBounds = attacker.bounds;
@@ -29,11 +44,12 @@ namespace BossRoom
             int mask = LayerMask.GetMask(isNPC ? "PCs" : "NPCs");
 
             int numResults = Physics.BoxCastNonAlloc(attacker.transform.position, myBounds.extents,
-                attacker.transform.forward, s_Hits, Quaternion.identity, description.Range, mask);
+                attacker.transform.forward, s_Hits, Quaternion.identity, range, mask);
 
             results = s_Hits;
             return numResults;
         }
+
     }
 
 

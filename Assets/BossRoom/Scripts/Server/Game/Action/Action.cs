@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace BossRoom.Server
 {
     /// <summary>
@@ -42,6 +45,8 @@ namespace BossRoom.Server
         /// </summary>
         public virtual void Cancel() { }
 
+        public virtual void OnCollisionEnter(Collision collision) { }
+
 
         /// <summary>
         /// Factory method that creates Actions from their request data. 
@@ -64,6 +69,7 @@ namespace BossRoom.Server
                 case ActionLogic.Melee: return new MeleeAction(parent, ref data);
                 case ActionLogic.Chase: return new ChaseAction(parent, ref data);
                 case ActionLogic.Revive: return new ReviveAction(parent, ref data);
+                case ActionLogic.Trample: return new TrampleAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

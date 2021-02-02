@@ -9,6 +9,7 @@ namespace BossRoom.Server
     {
         Idle = 0,
         PathFollowing = 1,
+        Charging = 2,
     }
 
     /// <summary>
@@ -28,7 +29,11 @@ namespace BossRoom.Server
         private ServerCharacter m_CharLogic;
 
         [SerializeField]
-        private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition 
+        private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition
+
+        // when we are in charging mode, we use these additional variables
+        private float m_ChargingSpeed;
+        private float m_ChargeDurationRemaining;
 
         private void Awake()
         {
@@ -71,6 +76,14 @@ namespace BossRoom.Server
             m_NavPath.SetTargetPosition(position);
         }
 
+        public void StartForwardCharge(float speed, float duration)
+        {
+            m_NavPath.Clear();
+            m_MovementState = MovementState.Charging;
+            m_ChargingSpeed = speed;
+            m_ChargeDurationRemaining = duration;
+        }
+
         /// <summary>
         /// Follow the given transform until it is reached.
         /// </summary>
@@ -92,7 +105,7 @@ namespace BossRoom.Server
 
         private void FixedUpdate()
         {
-            if (m_MovementState == MovementState.PathFollowing)
+            if (m_MovementState != MovementState.Idle)
             {
                 Movement();
             }
@@ -122,15 +135,32 @@ namespace BossRoom.Server
 
         private void Movement()
         {
-            var desiredMovementAmount = m_MovementSpeed * Time.fixedDeltaTime;
+            Vector3 movementVector;
 
-            var movementVector = m_NavPath.MoveAlongPath(desiredMovementAmount);
-
-            // If we didn't move stop moving.
-            if (movementVector == Vector3.zero)
+            if (m_MovementState == MovementState.Charging)
             {
-                m_MovementState = MovementState.Idle;
-                return;
+                // if we're done charging, stop moving
+                m_ChargeDurationRemaining -= Time.fixedDeltaTime;
+                if (m_ChargeDurationRemaining <= 0)
+                {
+                    m_MovementState = MovementState.Idle;
+                    return;
+                }
+
+                var desiredMovementAmount = m_ChargingSpeed * Time.fixedDeltaTime;
+                movementVector = transform.forward * desiredMovementAmount;
+            }
+            else
+            {
+                var desiredMovementAmount = m_MovementSpeed * Time.fixedDeltaTime;
+                movementVector = m_NavPath.MoveAlongPath(desiredMovementAmount);
+
+                // If we didn't move stop moving.
+                if (movementVector == Vector3.zero)
+                {
+                    m_MovementState = MovementState.Idle;
+                    return;
+                }
             }
 
             m_NavMeshAgent.Move(movementVector);

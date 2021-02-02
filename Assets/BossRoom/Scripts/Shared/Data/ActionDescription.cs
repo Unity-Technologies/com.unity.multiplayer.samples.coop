@@ -35,6 +35,15 @@ namespace BossRoom
 
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;
+
+        [Tooltip("For Actions that can hit multiple enemies, this determines how much damage is done to non-primary targets")]
+        public int SplashDamage;
+
+        [Tooltip("For actions that change your speed (e.g. Trample), what speed do we have?")]
+        public float MoveSpeed;
+
+        [Tooltip("A list of prefabs that are spawned by this visualization")]
+        public GameObject[] SpawnedObjects;
     }
 
 
