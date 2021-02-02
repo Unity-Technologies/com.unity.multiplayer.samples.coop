@@ -459,7 +459,7 @@ GameObject:
   - component: {fileID: 6702871171647363811}
   - component: {fileID: 6702871171647363813}
   - component: {fileID: 6702871171647363810}
-  - component: {fileID: 2699227445768669173}
+  - component: {fileID: 1707062852210220952}
   m_Layer: 5
   m_Name: PopupPanel
   m_TagString: Untagged
@@ -531,7 +531,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &2699227445768669173
+--- !u!114 &1707062852210220952
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

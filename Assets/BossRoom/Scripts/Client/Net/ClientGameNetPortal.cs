@@ -23,7 +23,7 @@ namespace BossRoom.Client
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
         /// time from the host.  
         /// </summary>
-        public event Action networkTimeOutEvent;
+        public event Action NetworkTimeOutEvent;
 
 
         public void Start()
@@ -31,7 +31,7 @@ namespace BossRoom.Client
             m_Hub = GetComponent<GameNetPortal>();
             m_Hub.networkStartEvent += this.NetworkStart;
             m_Hub.ConnectFinishedEvent += this.OnConnectFinished;
-            m_Hub.DisconnectEvent += OnDisconnectOrTimeout;
+            m_Hub.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
 
         public void NetworkStart()
@@ -49,21 +49,20 @@ namespace BossRoom.Client
             onConnectFinished?.Invoke(status);
         }
 
-        private void OnDisconnectOrTimeout()
+        private void OnDisconnectOrTimeout(ulong clientID)
         {
 
             //On a client disconnect we want to take them back to the main menu.
             //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != 0)
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
             {
                 //FIXME:  Currently it is not possible to safely load back to the Main Menu scene due to Persisting objects getting recreated
                 //We still don't want to invoke the network timeout event, however.
             }
             else
             {
-                networkTimeOutEvent?.Invoke();
+                NetworkTimeOutEvent?.Invoke();
             }
-
         }
 
 

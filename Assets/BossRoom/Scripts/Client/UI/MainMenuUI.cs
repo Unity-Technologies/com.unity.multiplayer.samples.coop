@@ -9,7 +9,7 @@ namespace BossRoom.Visual
     {
         public GameObject GameHubGO;
 
-        public PopupPanelManager m_ResponsePopup;
+        public PopupPanel m_ResponsePopup;
 
         private const string k_DefaultIP = "127.0.0.1";
 
@@ -28,7 +28,7 @@ namespace BossRoom.Visual
             m_netHub = GameHubGO.GetComponent<BossRoom.GameNetPortal>();
             m_ClientNetPortal = GameHubGO.GetComponent<Client.ClientGameNetPortal>();
 
-            m_ClientNetPortal.networkTimeOutEvent += OnNetworkTimeout;
+            m_ClientNetPortal.NetworkTimeOutEvent += OnNetworkTimeout;
             m_ClientNetPortal.onConnectFinished += OnConnectFinished;
         }
 
@@ -58,7 +58,6 @@ namespace BossRoom.Visual
                 }
 
                 BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, ipAddress, k_ConnectPort);
-                //Immediately after this change the display to show the
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
 
             }, k_DefaultIP);
@@ -93,7 +92,7 @@ namespace BossRoom.Visual
 
         private void OnDestroy()
         {
-            m_ClientNetPortal.networkTimeOutEvent -= OnNetworkTimeout;
+            m_ClientNetPortal.NetworkTimeOutEvent -= OnNetworkTimeout;
             m_ClientNetPortal.onConnectFinished -= OnConnectFinished;
         }
     }

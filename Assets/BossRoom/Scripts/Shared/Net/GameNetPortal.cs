@@ -49,8 +49,6 @@ namespace BossRoom
         /// </summary>
         public event Action<ConnectStatus> ConnectFinishedEvent;
 
-        public event Action DisconnectEvent;
-
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
         // Start is called before the first frame update
@@ -74,12 +72,6 @@ namespace BossRoom
                 {
                     NetworkStart();
                 }
-            };
-
-            //Register for a callback on disconnect.  
-            NetManager.OnClientDisconnectCallback += (clientid) =>
-            {
-                DisconnectEvent?.Invoke();
             };
         }
 
