@@ -1850,8 +1850,8 @@ ModelImporter:
       name: archer interact
       takeName: Take 001
       internalID: 0
-      firstFrame: 1111
-      lastFrame: 1151
+      firstFrame: 1512
+      lastFrame: 1551
       wrapMode: 0
       orientationOffsetY: 0
       level: 0
