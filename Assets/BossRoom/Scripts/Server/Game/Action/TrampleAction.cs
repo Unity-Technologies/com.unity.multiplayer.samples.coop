@@ -101,11 +101,11 @@ namespace BossRoom.Server
             int damage;
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0 && m_Data.TargetIds[0] == victim.NetworkId)
             {
-                damage = Description.SplashDamage;
+                damage = Description.Amount;
             }
             else
             {
-                damage = Description.Amount;
+                damage = Description.SplashDamage;
             }
             victim.NetState.ServerBroadcastHitReaction();
             victim.ReceiveHP(this.m_Parent, -damage);
