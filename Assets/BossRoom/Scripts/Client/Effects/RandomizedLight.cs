@@ -4,10 +4,7 @@ using UnityEngine;
 
 namespace BossRoom.Visual
 {
-
-}
-
-public class RandomizedLight : MonoBehaviour
+    public class RandomizedLight : MonoBehaviour
 {
     private const int k_IntensityScale = 100;
 
@@ -61,4 +58,7 @@ public class RandomizedLight : MonoBehaviour
 
         UpdateNoiseBuffer();
     }
+}
+
+
 }
