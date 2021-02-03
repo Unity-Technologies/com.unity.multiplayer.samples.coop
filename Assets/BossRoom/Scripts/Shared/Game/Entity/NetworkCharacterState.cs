@@ -54,7 +54,6 @@ namespace BossRoom
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
-
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
