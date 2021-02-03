@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3325143161705299546}
   - component: {fileID: 445632146649864073}
   - component: {fileID: 7463718357983197496}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: door_gears
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +25,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4371491365999748502}
-  m_LocalRotation: {x: 0.000000021855694, y: 0.00000011920929, z: -2.6054018e-15, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a5ae1fec41c1a7941a54415341be0e8f, type: 2}
+  - {fileID: 2100000, guid: de7d8b0cdceac8140b98a459d9533db4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
