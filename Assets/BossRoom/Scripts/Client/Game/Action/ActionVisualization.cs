@@ -60,7 +60,7 @@ namespace BossRoom.Visual
                 case ActionType.Emote4:
                     actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
                     Parent.OurAnimator.SetTrigger(actionDesc.Anim);
-                    break;
+                    return;
             }
 
             ActionFX action = ActionFX.MakeActionFX(ref data, Parent);

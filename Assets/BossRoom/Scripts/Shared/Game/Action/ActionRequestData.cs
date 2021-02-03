@@ -34,6 +34,7 @@ namespace BossRoom
         RangedTargeted,
         Chase,
         Revive,
+        Emote
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
