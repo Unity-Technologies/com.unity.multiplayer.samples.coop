@@ -1,7 +1,7 @@
+using MLAPI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MLAPI;
 using MLAPI.Connection;
 
 namespace BossRoom.Server
@@ -34,6 +34,7 @@ namespace BossRoom.Server
         // cache array of RaycastHit as it will be reused for player visibility
         RaycastHit[] m_Hit;
 
+        
         [Tooltip("Select which layers will block visibility.")]
         [SerializeField]
         LayerMask m_BlockingMask;
@@ -181,7 +182,7 @@ namespace BossRoom.Server
 
             // spawn clone right in front of spawner
             var spawnPosition = m_Transform.position + m_Transform.forward;
-            var clone =  Instantiate(m_NetworkedPrefab, spawnPosition, Quaternion.identity);
+            var clone = Instantiate(m_NetworkedPrefab, spawnPosition, Quaternion.identity);
             if (!clone.IsSpawned)
             {
                 clone.Spawn();
@@ -217,7 +218,7 @@ namespace BossRoom.Server
                 ray.direction = direction;
 
                 var hit = Physics.RaycastNonAlloc(ray, m_Hit,
-                    Mathf.Min(direction.magnitude, m_ProximityDistance),m_BlockingMask);
+                    Mathf.Min(direction.magnitude, m_ProximityDistance), m_BlockingMask);
                 if (hit == 0)
                 {
                     return true;

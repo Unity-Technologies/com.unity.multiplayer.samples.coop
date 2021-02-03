@@ -35,6 +35,12 @@ namespace BossRoom
 
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;
+
+        [Tooltip("If this action spawns GameObjects, list their prefabs here")]
+        public GameObject[] Spawns;
+
+        [Tooltip("If this Action spawns a projectile, how fast should that projectile move? (meters/second)")]
+        public float ProjectileSpeed_m_s;
     }
 
 

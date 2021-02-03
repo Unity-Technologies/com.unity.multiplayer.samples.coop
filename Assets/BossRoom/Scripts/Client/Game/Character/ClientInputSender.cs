@@ -1,5 +1,5 @@
-using System;
 using MLAPI;
+using System;
 using UnityEngine;
 
 namespace BossRoom.Client
@@ -17,7 +17,7 @@ namespace BossRoom.Client
 
         // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
         private LayerMask k_GroundLayerMask;
-        private LayerMask k_TargetableLayerMask;
+        private LayerMask k_ActionLayerMask;
 
         private NetworkCharacterState m_NetworkCharacter;
 
@@ -45,7 +45,7 @@ namespace BossRoom.Client
             }
 
             k_GroundLayerMask = LayerMask.GetMask(new [] { "Ground" });
-            k_TargetableLayerMask = LayerMask.GetMask(new [] { "PCs", "NPCs" });
+            k_ActionLayerMask = LayerMask.GetMask(new [] { "PCs", "NPCs", "Ground" });
     }
 
         public event Action<Vector3> OnClientClick;
@@ -76,7 +76,7 @@ namespace BossRoom.Client
             if (m_ClickRequest != null)
             {
                 var ray = Camera.main.ScreenPointToRay(m_ClickRequest.Value);
-                var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_TargetableLayerMask) > 0;
+                var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask) > 0;
                 if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
                 {
                     //if we have clicked on an enemy:
@@ -100,6 +100,7 @@ namespace BossRoom.Client
                 else
                 {
                     var data = new ActionRequestData();
+                    PopulateSkillRequest(ref k_CachedHit[0], CharacterData.Skill1, ref data);
                     data.ActionTypeEnum = CharacterData.Skill1;
                     m_NetworkCharacter.ClientSendActionRequest(ref data);
                 }
@@ -129,8 +130,7 @@ namespace BossRoom.Client
             if (targetNetState.IsNpc)
             {
                 resultData.ShouldQueue = true; //wait your turn--don't clobber the chase action.
-                ActionType skill1 = CharacterData.Skill1;
-                resultData.ActionTypeEnum = skill1;
+                PopulateSkillRequest(ref hit, CharacterData.Skill1, ref resultData);
                 return true;
             }
             else if (targetNetState.NetworkLifeState.Value == LifeState.Fainted)
@@ -143,6 +143,21 @@ namespace BossRoom.Client
             }
 
             return false;
+        }
+
+        private void PopulateSkillRequest(ref RaycastHit hit, ActionType action, ref ActionRequestData resultData)
+        {
+            resultData.ActionTypeEnum = action;
+            var actionInfo = GameDataSource.Instance.ActionDataByType[action];
+            switch (actionInfo.Logic)
+            {
+                //for projectile logic, infer the direction from the click position. 
+                case ActionLogic.LaunchProjectile:
+                    Vector3 offset = hit.point - transform.position;
+                    offset.y = 0;
+                    resultData.Direction = offset.normalized;
+                    return;
+            }
         }
 
         private void Update()

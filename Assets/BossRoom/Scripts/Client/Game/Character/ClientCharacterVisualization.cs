@@ -27,7 +27,6 @@ namespace BossRoom.Visual
         public float MaxZoomDistance = 30;
         public float ZoomSpeed = 3;
 
-        private const float k_MaxVizSpeed = 4;    //max speed at which we will chase the parent transform. 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         public void Start()
@@ -98,7 +97,8 @@ namespace BossRoom.Visual
                 return;
             }
 
-            SmoothMove();
+            VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime,
+                m_NetState.NetworkMovementSpeed.Value, k_MaxRotSpeed);
 
             if (m_ClientVisualsAnimator)
             {
@@ -125,31 +125,7 @@ namespace BossRoom.Visual
             m_ActionViz.OnAnimEvent(id);
         }
 
-        private void SmoothMove()
-        {
-            var posDiff = Parent.transform.position - transform.position;
-            var angleDiff = Quaternion.Angle(Parent.transform.rotation, transform.rotation);
 
-            float timeDelta = Time.deltaTime;
-
-            float posDiffMag = posDiff.magnitude;
-            if (posDiffMag > 0)
-            {
-                float maxMove = timeDelta * k_MaxVizSpeed;
-                float moveDist = Mathf.Min(maxMove, posDiffMag);
-                posDiff *= (moveDist / posDiffMag);
-
-                transform.position += posDiff;
-            }
-
-            if (angleDiff > 0)
-            {
-                float maxAngleMove = timeDelta * k_MaxRotSpeed;
-                float angleMove = Mathf.Min(maxAngleMove, angleDiff);
-                float t = angleMove / angleDiff;
-                transform.rotation = Quaternion.Slerp(transform.rotation, Parent.transform.rotation, t);
-            }
-        }
 
         private void AttachCamera()
         {

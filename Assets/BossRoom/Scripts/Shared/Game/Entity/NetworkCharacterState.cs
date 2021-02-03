@@ -20,7 +20,7 @@ namespace BossRoom
     /// <summary>
     /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
-    public class NetworkCharacterState : NetworkedBehaviour
+    public class NetworkCharacterState : NetworkedBehaviour, INetMovement
     {
         /// <summary>
         /// The networked position of this Character. This reflects the authoritative position on the server.
@@ -53,11 +53,15 @@ namespace BossRoom
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNpc
+        public bool IsNpc { get { return CharacterData.IsNpc; } }
+        /// <summary>
+        /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
+        /// </summary>
+        public CharacterClass CharacterData
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value].IsNpc;
+                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value];
             }
         }
 
@@ -75,18 +79,6 @@ namespace BossRoom
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
         public event Action<Vector3> OnReceivedClientInput;
-
-        private void Awake()
-        {
-            CharacterClass data;
-            bool found = GameDataSource.Instance.CharacterDataByType.TryGetValue(CharacterType.Value, out data);
-            if (!found)
-            {
-                throw new Exception($"gameobject {gameObject.name} has charactertype {CharacterType.Value} specified, which isn't in the GameDataSource's list!");
-            }
-            HitPoints.Value = data.BaseHP;
-            Mana.Value = data.BaseMana;
-        }
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
