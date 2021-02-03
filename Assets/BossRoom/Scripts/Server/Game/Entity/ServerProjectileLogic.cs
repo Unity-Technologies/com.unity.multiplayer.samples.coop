@@ -120,14 +120,18 @@ namespace BossRoom.Server
 
                     //all NPC layer entities should have one of these. 
                     var targetNetObj = m_CollisionCache[i].GetComponent<NetworkedObject>();
-                    m_NetState.ServerBroadcastEnemyHit(targetNetObj.NetworkId);
+                    if(targetNetObj != null )
+                    {
+                        m_NetState.ServerBroadcastEnemyHit(targetNetObj.NetworkId);
 
-                    //retrieve the person that created us, if he's still around. 
-                    NetworkedObject spawnerNet;
-                    MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(SpawnerId, out spawnerNet);
-                    ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
+                        //retrieve the person that created us, if he's still around. 
+                        NetworkedObject spawnerNet;
+                        MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(SpawnerId, out spawnerNet);
+                        ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
-                    targetNetObj.GetComponent<ServerCharacter>().ReceiveHP(spawnerObj, -m_DrivingAction.Amount);
+                        targetNetObj.GetComponent<ServerCharacter>().ReceiveHP(spawnerObj, -m_DrivingAction.Amount);
+                    }
+
                     return;
                 }
             }

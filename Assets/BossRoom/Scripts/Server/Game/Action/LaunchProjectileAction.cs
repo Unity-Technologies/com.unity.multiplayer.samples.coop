@@ -20,8 +20,9 @@ namespace BossRoom.Server
                 return false;
             }
 
-            //snap to face the direction we're firing!
+            //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
             m_Parent.transform.forward = Data.Direction;
+            m_Parent.NetState.ServerBroadcastAction(ref Data);
             return true;
         }
 
@@ -52,7 +53,6 @@ namespace BossRoom.Server
                 projectile.GetComponent<ServerProjectileLogic>().SpawnerId = m_Parent.NetworkId;
 
                 projectile.GetComponent<MLAPI.NetworkedObject>().Spawn();
-                m_Parent.NetState.ServerBroadcastAction(ref Data);
             }
         }
 
