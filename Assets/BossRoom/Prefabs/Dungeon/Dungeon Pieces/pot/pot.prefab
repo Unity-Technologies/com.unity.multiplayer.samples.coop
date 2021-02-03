@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 3325143161705299546}
   - component: {fileID: 445632146649864073}
   - component: {fileID: 7463718357983197496}
-  - component: {fileID: 9171614278831548904}
   - component: {fileID: -2116509465241817417}
   m_Layer: 6
   m_Name: pot
@@ -83,19 +82,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &9171614278831548904
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4371491365999748502}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 020740b66180aa34e93d829ae6a08252, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  broken: {fileID: 1001931975397017578, guid: 03e282e700b05664daab32d4e7965212, type: 3}
 --- !u!65 &-2116509465241817417
 BoxCollider:
   m_ObjectHideFlags: 0
