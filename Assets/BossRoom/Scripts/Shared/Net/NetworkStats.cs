@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using MLAPI;
 using MLAPI.Messaging;
@@ -7,24 +6,52 @@ using UnityEngine;
 using UnityEngine.UI;
 
 /*
- * This component attaches to the player object.
- * It'll spawn all the needed text and canvas
+ * This utility help showing Network statistics at runtime.
+ *
+ * This component attaches to any networked object.
+ * It'll spawn all the needed text and canvas.
  */
+[RequireComponent(typeof(NetworkedObject))]
 public class NetworkStats : NetworkedBehaviour
 {
-    Queue<float> m_MovingWindow = new Queue<float>();
-    const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to change
-    private float m_MaxWindowSize => k_MaxWindowSizeSeconds / m_PingIntervalSeconds;
+    /*
+     * RTT
+     * Client sends a ping RPC to the server and starts it's timer.
+     * The server receives the ping and sends a pong response to the client.
+     * The client receives that pong response and stops its time.
+     * The RPC value is using a moving average, so we don't have a value that moves too much, but is still reactive to RTT changes.
+     *
+     * Note: when adding more stats, it might be worth it to abstract these in their own classes instead of having a bunch
+     * of attributes floating around.
+     */
 
+    // Moving average attributes
+    Queue<float> m_MovingWindow = new Queue<float>();
+    const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to react to change
+    float m_MaxWindowSize => k_MaxWindowSizeSeconds / m_PingIntervalSeconds;
+
+    // RTT configurations
     [SerializeField]
+    [Tooltip("The interval to send ping RPCs to calculate the RTT. The bigger the number, the less reactive the stat will be to RTT changes")]
     float m_PingIntervalSeconds = 0.1f;
-    float m_LastPingTime = 0f;
+
+    float m_LastPingTime;
 
     public float LastRTT { get; private set; }
 
     Text m_RTTText;
-    int m_CurrentId;
+
+    // When receiving pong client RPCs, we need to know when the initiating ping sent it so we can calculate its individual RTT
+    int m_CurrentRTTPingId;
     Dictionary<int, float> m_PingHistoryStartTimes = new Dictionary<int, float>();
+
+    void Awake()
+    {
+        if (!Debug.isDebugBuild)
+        {
+            Destroy(this);
+        }
+    }
 
     public override void NetworkStart()
     {
@@ -41,7 +68,8 @@ public class NetworkStats : NetworkedBehaviour
         CreateTextOverlay();
     }
 
-    private void CreateTextOverlay()
+    // Creating our own canvas so this component is easy to add and remove from the project
+    void CreateTextOverlay()
     {
         GameObject canvasGameObject = new GameObject("Debug Overlay Canvas");
         var canvas = canvasGameObject.AddComponent<Canvas>();
@@ -67,9 +95,11 @@ public class NetworkStats : NetworkedBehaviour
         {
             if (Time.realtimeSinceStartup - m_LastPingTime > m_PingIntervalSeconds)
             {
-                InvokeServerRpc<int>(PingServerRPC, m_CurrentId);
-                m_PingHistoryStartTimes[m_CurrentId] = Time.realtimeSinceStartup;
-                m_CurrentId++;
+                // We could have had a ping/pong where the ping sends the pong and the pong sends the ping. Issue with this
+                // is the higher the latency, the lower the sampling would be. We need pings to be sent at a regular interval
+                InvokeServerRpc<int>(PingServerRPC, m_CurrentRTTPingId);
+                m_PingHistoryStartTimes[m_CurrentRTTPingId] = Time.realtimeSinceStartup;
+                m_CurrentRTTPingId++;
                 m_LastPingTime = Time.realtimeSinceStartup;
             }
         }
@@ -78,23 +108,19 @@ public class NetworkStats : NetworkedBehaviour
     [ServerRPC]
     public void PingServerRPC(int pingId)
     {
-        Debug.Log("ping");
         InvokeClientRpcOnOwner<int>(PongClientRPC, pingId);
     }
 
     [ClientRPC]
     public void PongClientRPC(int pingId)
     {
-        // can't call ping from the pong, since higher latencies would mean we have a lower sample rate. We need to call ping regularly.
-        Debug.Log("pong");
-
         var startTime = m_PingHistoryStartTimes[pingId];
         m_PingHistoryStartTimes.Remove(pingId);
         m_MovingWindow.Enqueue(Time.realtimeSinceStartup - startTime);
-        UpdateRTTAverage();
+        UpdateRTTSlidingWindowAverage();
     }
 
-    private void UpdateRTTAverage()
+    void UpdateRTTSlidingWindowAverage()
     {
         if (m_MovingWindow.Count > m_MaxWindowSize)
         {
@@ -110,7 +136,7 @@ public class NetworkStats : NetworkedBehaviour
         LastRTT = RTTSum / m_MaxWindowSize;
         if (m_RTTText != null)
         {
-            m_RTTText.text = $"RTT: {LastRTT}";
+            m_RTTText.text = $"RTT: {LastRTT * 1000f} ms";
         }
     }
 }
