@@ -35,8 +35,6 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Keeps track of which Colliders we've already hit, so that our attack doesn't hit the same character twice.
-        /// (Note that it's a mapping of Collider->nothing. We just check whether specific keys are already in the map,
-        /// so the value is never used!)
         /// </summary>
         private HashSet<Collider> m_CollidedAlready = new HashSet<Collider>();
 
