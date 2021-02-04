@@ -16,9 +16,9 @@ namespace BossRoom.Client
         private readonly RaycastHit[] k_CachedHit = new RaycastHit[1];
 
         // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
-        private LayerMask k_MouseQueryLayerMask;
+        private LayerMask k_GroundLayerMask;
+        private LayerMask k_TargetableLayerMask;
 
-        private int m_NpcLayerMask;
         private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
@@ -28,6 +28,14 @@ namespace BossRoom.Client
         /// </summary>
         private System.Nullable<Vector3> m_ClickRequest;
 
+        /// <summary>
+        /// Convenience getter that returns our CharacterData
+        /// </summary>
+        private CharacterClass CharacterData
+        {
+            get { return GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value]; }
+        }
+
         public override void NetworkStart()
         {
             // TODO Don't use NetworkedBehaviour for just NetworkStart [GOMPS-81]
@@ -35,16 +43,16 @@ namespace BossRoom.Client
             {
                 enabled = false;
             }
-        }
+
+            k_GroundLayerMask = LayerMask.GetMask(new [] { "Ground" });
+            k_TargetableLayerMask = LayerMask.GetMask(new [] { "PCs", "NPCs" });
+    }
 
         public event Action<Vector3> OnClientClick;
 
         void Awake()
         {
-            m_NpcLayerMask = LayerMask.NameToLayer("NPCs");
-
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
-            k_MouseQueryLayerMask = LayerMask.GetMask(new[] {"Ground", "PCs", "NPCs"});
         }
 
         void FixedUpdate()
@@ -55,66 +63,86 @@ namespace BossRoom.Client
             if (Input.GetMouseButton(0))
             {
                 var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_MouseQueryLayerMask) > 0)
+                if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
                     m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point,
                         "MLAPI_INTERNAL");
                     //Send our client only click request
-                    OnClientClick.Invoke(k_CachedHit[0].point);
+                    OnClientClick?.Invoke(k_CachedHit[0].point);
                 }
             }
 
             if (m_ClickRequest != null)
             {
                 var ray = Camera.main.ScreenPointToRay(m_ClickRequest.Value);
-                var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_MouseQueryLayerMask) > 0;
+                var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_TargetableLayerMask) > 0;
                 if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
                 {
                     //if we have clicked on an enemy:
                     // - two actions will queue one after the other, causing us to run over to our target and take a swing.
                     //if we have clicked on a fallen friend - we will revive him
 
-                    var chase_data = new ActionRequestData();
-                    chase_data.ActionTypeEnum = ActionType.GENERAL_CHASE;
-                    chase_data.Amount = ActionData.ActionDescriptions[ActionType.TANK_BASEATTACK][0].Range;
-                    chase_data.TargetIds = new ulong[] {GetTargetObject(ref k_CachedHit[0])};
-                    m_NetworkCharacter.ClientSendActionRequest(ref chase_data);
+                    ActionRequestData playerAction;
+                    bool doAction = GetActionRequestForTarget(ref k_CachedHit[0], out playerAction);
 
-                    //TODO fixme: there needs to be a better way to check if target is a PC or an NPC
-                    bool isTargetingNPC =  k_CachedHit[0].transform.gameObject.layer == m_NpcLayerMask;
-
-                    if (isTargetingNPC)
+                    if (doAction)
                     {
-                        var hit_data = new ActionRequestData();
-                        hit_data.ShouldQueue = true; //wait your turn--don't clobber the chase action.
-                        hit_data.ActionTypeEnum = ActionType.TANK_BASEATTACK;
-                        m_NetworkCharacter.ClientSendActionRequest(ref hit_data);
-                    }
-                    else
-                    {
-                        //proceed to revive the target if it's in FAINTED state
-                        var targetCharacterState = k_CachedHit[0].transform.GetComponent<NetworkCharacterState>();
-
-                        if (targetCharacterState.NetworkLifeState.Value == LifeState.FAINTED)
-                        {
-                            var revive_data = new ActionRequestData();
-                            revive_data.ShouldQueue = true;
-                            revive_data.ActionTypeEnum = ActionType.GENERAL_REVIVE;
-                            revive_data.TargetIds = new[] { GetTargetObject(ref k_CachedHit[0]) };
-                            m_NetworkCharacter.ClientSendActionRequest(ref revive_data);
-                        }
+                        float range = GameDataSource.Instance.ActionDataByType[playerAction.ActionTypeEnum].Range;
+                        var chaseData = new ActionRequestData();
+                        chaseData.ActionTypeEnum = ActionType.GeneralChase;
+                        chaseData.Amount = range;
+                        chaseData.TargetIds = new ulong[] { GetTargetObject(ref k_CachedHit[0]) };
+                        m_NetworkCharacter.ClientSendActionRequest(ref chaseData);
+                        m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
                     }
                 }
                 else
                 {
                     var data = new ActionRequestData();
-                    data.ActionTypeEnum = ActionType.TANK_BASEATTACK;
+                    data.ActionTypeEnum = CharacterData.Skill1;
                     m_NetworkCharacter.ClientSendActionRequest(ref data);
                 }
 
                 m_ClickRequest = null;
             }
+        }
+
+        /// <summary>
+        /// When you right-click on something you will want to do contextually different things. For example you might attack an enemy,
+        /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED). 
+        /// </summary>
+        /// <param name="hit">The RaycastHit of the entity we clicked on.</param>
+        /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
+        /// <returns>true if we should play an action, false otherwise. </returns>
+        private bool GetActionRequestForTarget(ref RaycastHit hit, out ActionRequestData resultData)
+        {
+            resultData = new ActionRequestData();
+            var targetNetState = hit.transform.GetComponent<NetworkCharacterState>();
+            if (targetNetState == null)
+            {
+                //Not a Character. In the future this could represent interacting with some other interactable, but for
+                //now, it implies we just do nothing.
+                return false;
+            }
+
+            if (targetNetState.IsNpc)
+            {
+                resultData.ShouldQueue = true; //wait your turn--don't clobber the chase action.
+                ActionType skill1 = CharacterData.Skill1;
+                resultData.ActionTypeEnum = skill1;
+                return true;
+            }
+            else if (targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+            {
+                resultData = new ActionRequestData();
+                resultData.ShouldQueue = true;
+                resultData.ActionTypeEnum = ActionType.GeneralRevive;
+                resultData.TargetIds = new[] { targetNetState.NetworkId };
+                return true;
+            }
+
+            return false;
         }
 
         private void Update()

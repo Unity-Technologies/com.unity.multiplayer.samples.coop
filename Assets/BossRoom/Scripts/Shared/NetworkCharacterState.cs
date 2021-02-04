@@ -1,10 +1,10 @@
-using System;
-using System.IO;
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkedVar;
-using UnityEngine;
 using MLAPI.Serialization.Pooled;
+using System;
+using System.IO;
+using UnityEngine;
 
 
 namespace BossRoom
@@ -12,9 +12,9 @@ namespace BossRoom
 
     public enum LifeState
     {
-        ALIVE,
-        FAINTED,
-        DEAD,
+        Alive,
+        Fainted,
+        Dead,
     }
 
     /// <summary>
@@ -23,19 +23,32 @@ namespace BossRoom
     public class NetworkCharacterState : NetworkedBehaviour
     {
         /// <summary>
-        /// The networked position of this Character. This reflects the authorative position on the server.
+        /// The networked position of this Character. This reflects the authoritative position on the server.
         /// </summary>
-        public NetworkedVarVector3 NetworkPosition { get;} = new NetworkedVarVector3();
+        public NetworkedVarVector3 NetworkPosition { get; } = new NetworkedVarVector3();
 
         /// <summary>
-        /// The networked rotation of this Character. This reflects the authorative rotation on the server.
+        /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
+        /// <summary>
+        /// Current HP. This value is populated at startup time from CharacterClass data. 
+        /// </summary>
+        [HideInInspector]
         public NetworkedVarInt HitPoints;
-        public NetworkedVarInt Mana; 
-        public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.ALIVE);
+
+        /// <summary>
+        /// Current Mana. This value is populated at startup time from CharacterClass data. 
+        /// </summary>
+        [HideInInspector]
+        public NetworkedVarInt Mana;
+
+        /// <summary>
+        /// Current LifeState. Only Players should enter the FAINTED state. 
+        /// </summary>
+        public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
         /// <summary>
         /// For players, indicates the class they chose in char-select. (Not currently used by monsters)
@@ -46,11 +59,43 @@ namespace BossRoom
         /// For players, indicates whether they wanted a male or female avatar. (Not used by monsters)
         /// </summary>
         public NetworkedVarBool IsMale { get; } = new NetworkedVarBool();
-        
+        /// <summary>
+        /// Returns true if this Character is an NPC.
+        /// </summary>
+        public bool IsNpc
+        {
+            get
+            {
+                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value].IsNpc;
+            }
+        }
+
+        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
+        public NetworkedVar<CharacterTypeEnum> CharacterType;
+
+        /// <summary>
+        /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
+        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc). 
+        /// </summary>
+        [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
+        public NetworkedVarInt CharacterAppearance;
+
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
         public event Action<Vector3> OnReceivedClientInput;
+
+        private void Awake()
+        {
+            CharacterClass data;
+            bool found = GameDataSource.Instance.CharacterDataByType.TryGetValue(CharacterType.Value, out data);
+            if (!found)
+            {
+                throw new Exception($"gameobject {gameObject.name} has charactertype {CharacterType.Value} specified, which isn't in the GameDataSource's list!");
+            }
+            HitPoints.Value = data.BaseHP;
+            Mana.Value = data.BaseMana;
+        }
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
@@ -92,7 +137,7 @@ namespace BossRoom
         /// Server->Client RPC that broadcasts this action play to all clients. 
         /// </summary>
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
-        public void ServerBroadcastAction(ref ActionRequestData data )
+        public void ServerBroadcastAction(ref ActionRequestData data)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {
@@ -102,7 +147,7 @@ namespace BossRoom
         }
 
         [ClientRPC]
-        private void RecvDoActionClient(ulong clientId, Stream stream )
+        private void RecvDoActionClient(ulong clientId, Stream stream)
         {
             var data = new ActionRequestData();
             data.Read(stream);

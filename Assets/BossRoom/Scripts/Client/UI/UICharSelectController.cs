@@ -59,16 +59,16 @@ namespace BossRoom.Client
         {
             m_ClassButtons = new Dictionary<CharacterTypeEnum, Button>
             {
-                [ CharacterTypeEnum.TANK ] = m_ClassButtonTank,
-                [ CharacterTypeEnum.MAGE ] = m_ClassButtonMage,
-                [ CharacterTypeEnum.ROGUE ] = m_ClassButtonRogue,
-                [ CharacterTypeEnum.ARCHER ] = m_ClassButtonArcher,
+                [CharacterTypeEnum.Tank] = m_ClassButtonTank,
+                [CharacterTypeEnum.Mage] = m_ClassButtonMage,
+                [CharacterTypeEnum.Rogue] = m_ClassButtonRogue,
+                [CharacterTypeEnum.Archer] = m_ClassButtonArcher,
             };
         }
 
         private void Start()
         {
-            m_Class = CharacterTypeEnum.TANK;
+            m_Class = CharacterTypeEnum.Tank;
             m_IsMale = true;
 
             SetupStateBoxes();
@@ -98,9 +98,9 @@ namespace BossRoom.Client
         {
             for (int i = 0; i < m_PlayerStateBoxes.Count && i < CharSelectData.k_MaxLobbyPlayers; ++i)
             {
-                m_PlayerStateBoxes[ i ].SetPlayerSlotIndex(i);
-                var slotData = ClientCharSelectState.Instance.CharSelectData.CharacterSlots[ i ];
-                m_PlayerStateBoxes[ i ].SetClassAndState(slotData.Class, slotData.State);
+                m_PlayerStateBoxes[i].SetPlayerSlotIndex(i);
+                var slotData = ClientCharSelectState.Instance.CharSelectData.CharacterSlots[i];
+                m_PlayerStateBoxes[i].SetClassAndState(slotData.Class, slotData.State);
             }
         }
 
@@ -110,27 +110,27 @@ namespace BossRoom.Client
             string className = "";
             switch (newClass)
             {
-            case CharacterTypeEnum.TANK:
-                className = "TANK";
-                break;
-            case CharacterTypeEnum.MAGE:
-                className = "MAGE";
-                break;
-            case CharacterTypeEnum.ROGUE:
-                className = "ROGUE";
-                break;
-            case CharacterTypeEnum.ARCHER:
-                className = "ARCHER";
-                break;
-            default:
-                className = "error";
-                Debug.LogError("Can't handle class " + newClass);
-                break;
+                case CharacterTypeEnum.Tank:
+                    className = "TANK";
+                    break;
+                case CharacterTypeEnum.Mage:
+                    className = "MAGE";
+                    break;
+                case CharacterTypeEnum.Rogue:
+                    className = "ROGUE";
+                    break;
+                case CharacterTypeEnum.Archer:
+                    className = "ARCHER";
+                    break;
+                default:
+                    className = "error";
+                    Debug.LogError("Can't handle class " + newClass);
+                    break;
             }
             m_ClassNameText.text = className;
 
             m_Class = newClass;
-            m_SlotState = CharSelectData.SlotState.ACTIVE;
+            m_SlotState = CharSelectData.SlotState.Active;
             m_InSceneCharacter.SetModel(m_Class, m_IsMale);
             m_InSceneCharacter.PerformUIGesture(Visual.ModelAppearanceSetter.UIGesture.Selected);
             SetButtonInteractibleness();
@@ -142,7 +142,7 @@ namespace BossRoom.Client
             m_SlotState = newSlotState;
             SetButtonInteractibleness();
             ClientCharSelectState.Instance.ChangeSlot(m_Class, m_IsMale, m_SlotState);
-            if (newSlotState == CharSelectData.SlotState.LOCKEDIN)
+            if (newSlotState == CharSelectData.SlotState.LockedIn)
             {
                 m_InSceneCharacter.PerformUIGesture(Visual.ModelAppearanceSetter.UIGesture.LockedIn);
             }
@@ -163,7 +163,7 @@ namespace BossRoom.Client
             {
                 btn.interactable = true;
             }
-            m_ClassButtons[ m_Class ].interactable = false;
+            m_ClassButtons[m_Class].interactable = false;
 
             m_GenderButtonMale.interactable = !m_IsMale;
             m_GenderButtonFemale.interactable = m_IsMale;
@@ -173,27 +173,27 @@ namespace BossRoom.Client
         // UI Event callbacks (these are directly called by the UI elements in CharSelect scene)
         public void OnClickClassButtonTank()
         {
-            SetClass(CharacterTypeEnum.TANK);
+            SetClass(CharacterTypeEnum.Tank);
         }
 
         public void OnClickClassButtonCaster()
         {
-            SetClass(CharacterTypeEnum.MAGE);
+            SetClass(CharacterTypeEnum.Mage);
         }
 
         public void OnClickClassButtonRogue()
         {
-            SetClass(CharacterTypeEnum.ROGUE);
+            SetClass(CharacterTypeEnum.Rogue);
         }
 
         public void OnClickClassButtonArcher()
         {
-            SetClass(CharacterTypeEnum.ARCHER);
+            SetClass(CharacterTypeEnum.Archer);
         }
 
         public void OnClickLock()
         {
-            SetSlotState(CharSelectData.SlotState.LOCKEDIN);
+            SetSlotState(CharSelectData.SlotState.LockedIn);
         }
 
         public void OnClickMale()
@@ -211,12 +211,12 @@ namespace BossRoom.Client
         private void OnAssignedLobbyIndex(int index)
         {
             m_PlayerNumberText.text = string.Format(m_WelcomeMsg, (index + 1));
-            SetClass(CharacterTypeEnum.TANK);
+            SetClass(CharacterTypeEnum.Tank);
         }
 
         private void OnCharSelectSlotChanged(NetworkedListEvent<CharSelectData.CharSelectSlot> changeEvent)
         {
-            m_PlayerStateBoxes[ changeEvent.index ].SetClassAndState(changeEvent.value.Class, changeEvent.value.State);
+            m_PlayerStateBoxes[changeEvent.index].SetClassAndState(changeEvent.value.Class, changeEvent.value.State);
         }
 
         private void OnLobbyLockedInChanged(bool wasLockedIn, bool isLockedIn)
@@ -248,12 +248,12 @@ namespace BossRoom.Client
 
             switch (error)
             {
-            case CharSelectData.FatalLobbyError.LOBBY_FULL:
-                m_FatalLobbyErrorText.text = m_FatalErrorLobbyFullMsg;
-                break;
-            default:
-                Debug.LogError("Unknown fatal error " + error);
-                break;
+                case CharSelectData.FatalLobbyError.LobbyFull:
+                    m_FatalLobbyErrorText.text = m_FatalErrorLobbyFullMsg;
+                    break;
+                default:
+                    Debug.LogError("Unknown fatal error " + error);
+                    break;
             }
         }
 
@@ -267,7 +267,7 @@ namespace BossRoom.Client
             }
             for (int i = 0; i < m_PlayerStateBoxes.Count; ++i)
             {
-                if (m_PlayerStateBoxes[ i ] == null)
+                if (m_PlayerStateBoxes[i] == null)
                 {
                     Debug.LogError("Entry index " + i + " Player State Boxes list is null");
                 }
