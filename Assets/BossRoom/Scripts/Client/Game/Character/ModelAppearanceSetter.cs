@@ -61,13 +61,13 @@ namespace BossRoom.Visual
         {
             switch (characterClass)
             {
-            case CharacterTypeEnum.ARCHER:
+            case CharacterTypeEnum.Archer:
                 return isMale ? 0 : 1;
-            case CharacterTypeEnum.MAGE:
+            case CharacterTypeEnum.Mage:
                 return isMale ? 2 : 3;
-            case CharacterTypeEnum.ROGUE:
+            case CharacterTypeEnum.Rogue:
                 return isMale ? 4 : 5;
-            case CharacterTypeEnum.TANK:
+            case CharacterTypeEnum.Tank:
                 return isMale ? 6 : 7;
             default:
                 throw new System.Exception($"Cannot map {characterClass} male={isMale} to a model index!");

@@ -13,14 +13,14 @@ namespace BossRoom
     {
         public enum SlotState
         {
-            Inactive,
-            Active,
-            LockedIn,
+            INACTIVE,
+            ACTIVE,
+            LOCKEDIN,
         }
 
         public enum FatalLobbyError
         {
-            LobbyFull,
+            LOBBY_FULL,
         }
 
         public const int k_MaxLobbyPlayers = 8;
@@ -129,7 +129,7 @@ namespace BossRoom
             List<CharSelectSlot> initialList = new List<CharSelectSlot>();
             for (int i = 0; i < k_MaxLobbyPlayers; ++i)
             {
-                initialList.Add(new CharSelectSlot(SlotState.Inactive));
+                initialList.Add(new CharSelectSlot(SlotState.INACTIVE));
             }
 
             // initialize the char-slots list with all the slots it will ever have

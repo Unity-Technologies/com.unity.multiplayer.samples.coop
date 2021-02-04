@@ -46,11 +46,11 @@ namespace BossRoom.Client
 
         private void ChooseAndUpdateState()
         {
-            if (m_State == CharSelectData.SlotState.Inactive)
+            if (m_State == CharSelectData.SlotState.INACTIVE)
             {
                 UpdateState(m_StateInactive);
             }
-            else if (m_State == CharSelectData.SlotState.Active)
+            else if (m_State == CharSelectData.SlotState.ACTIVE)
             {
                 switch (m_CharacterClass)
                 {
@@ -71,7 +71,7 @@ namespace BossRoom.Client
                         break;
                 }
             }
-            else if (m_State == CharSelectData.SlotState.LockedIn)
+            else if (m_State == CharSelectData.SlotState.LOCKEDIN)
             {
                 switch (m_CharacterClass)
                 {
@@ -102,7 +102,7 @@ namespace BossRoom.Client
             }
             m_CurStateGraphics = stateGraphics;
             m_CurStateGraphics.GraphicsRoot.SetActive(true);
-            if (m_State == CharSelectData.SlotState.Inactive)
+            if (m_State == CharSelectData.SlotState.INACTIVE)
                 m_CurStateGraphics.PlayerIndexText.text = "";
             else
                 m_CurStateGraphics.PlayerIndexText.text = string.Format(m_SeatNumberMsg, (m_PlayerIndex + 1));

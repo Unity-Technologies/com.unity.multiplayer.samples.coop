@@ -130,7 +130,7 @@ namespace BossRoom.Client
             m_ClassNameText.text = className;
 
             m_Class = newClass;
-            m_SlotState = CharSelectData.SlotState.Active;
+            m_SlotState = CharSelectData.SlotState.ACTIVE;
             m_InSceneCharacter.SetModel(m_Class, m_IsMale);
             m_InSceneCharacter.PerformUIGesture(Visual.ModelAppearanceSetter.UIGesture.Selected);
             SetButtonInteractibleness();
@@ -142,7 +142,7 @@ namespace BossRoom.Client
             m_SlotState = newSlotState;
             SetButtonInteractibleness();
             ClientCharSelectState.Instance.ChangeSlot(m_Class, m_IsMale, m_SlotState);
-            if (newSlotState == CharSelectData.SlotState.LockedIn)
+            if (newSlotState == CharSelectData.SlotState.LOCKEDIN)
             {
                 m_InSceneCharacter.PerformUIGesture(Visual.ModelAppearanceSetter.UIGesture.LockedIn);
             }
@@ -193,7 +193,7 @@ namespace BossRoom.Client
 
         public void OnClickLock()
         {
-            SetSlotState(CharSelectData.SlotState.LockedIn);
+            SetSlotState(CharSelectData.SlotState.LOCKEDIN);
         }
 
         public void OnClickMale()
@@ -248,7 +248,7 @@ namespace BossRoom.Client
 
             switch (error)
             {
-                case CharSelectData.FatalLobbyError.LobbyFull:
+                case CharSelectData.FatalLobbyError.LOBBY_FULL:
                     m_FatalLobbyErrorText.text = m_FatalErrorLobbyFullMsg;
                     break;
                 default:
