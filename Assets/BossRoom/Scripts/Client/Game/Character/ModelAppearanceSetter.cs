@@ -10,25 +10,15 @@ namespace BossRoom.Visual
     public class ModelAppearanceSetter : MonoBehaviour
     {
         [SerializeField]
-        private ModelSwap[] m_BodyParts;
+        private Client.CharacterSwap m_CharacterSwapper;
 
         [SerializeField]
         private Animator m_Animator;
 
-        private void Awake()
-        {
-            //m_BodyParts = GetComponents<ModelSwap>();
-            //m_Animator = GetComponent<Animator>();
-        }
-
         public void SetModel(CharacterTypeEnum characterClass, bool isMale)
         {
             int newModelIndex = MapToModelIdx(characterClass, isMale);
-            for (int i = 0; i < m_BodyParts.Length; ++i)
-            {
-                if (m_BodyParts[i])
-                    m_BodyParts[i].SetModel(newModelIndex);
-            }
+            m_CharacterSwapper.SwapToModel(newModelIndex);
         }
 
         public enum UIGesture
@@ -62,13 +52,13 @@ namespace BossRoom.Visual
             switch (characterClass)
             {
             case CharacterTypeEnum.Archer:
-                return isMale ? 0 : 1;
-            case CharacterTypeEnum.Mage:
                 return isMale ? 2 : 3;
-            case CharacterTypeEnum.Rogue:
+            case CharacterTypeEnum.Mage:
                 return isMale ? 4 : 5;
-            case CharacterTypeEnum.Tank:
+            case CharacterTypeEnum.Rogue:
                 return isMale ? 6 : 7;
+            case CharacterTypeEnum.Tank:
+                return isMale ? 0 : 1;
             default:
                 throw new System.Exception($"Cannot map {characterClass} male={isMale} to a model index!");
             }
