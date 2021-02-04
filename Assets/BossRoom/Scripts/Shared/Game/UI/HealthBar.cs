@@ -6,18 +6,18 @@ namespace BossRoom
     public class HealthBar : MonoBehaviour
     {
         [SerializeField]
-        Slider hitPointsSlider;
+        Slider m_HitPointsSlider;
 
         public void InitializeSlider(int maxValue, int minValue = 0)
         {
-            hitPointsSlider.minValue = minValue;
-            hitPointsSlider.maxValue = maxValue;
-            hitPointsSlider.value = maxValue;
+            m_HitPointsSlider.minValue = minValue;
+            m_HitPointsSlider.maxValue = maxValue;
+            m_HitPointsSlider.value = maxValue;
         }
 
         public void SetHitPoints(int hitPoints)
         {
-            hitPointsSlider.value = hitPoints;
+            m_HitPointsSlider.value = hitPoints;
         }
     }
 }
