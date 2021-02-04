@@ -57,12 +57,12 @@ namespace BossRoom.Server
             base.NetworkStart();
             if (!IsServer)
             {
-                this.enabled = false;
+                enabled = false;
             }
             else
             {
                 // retrieve the lobby state info so that the players we're about to spawn can query it
-                System.Object o = GameStateRelay.GetRelayObject();
+                var o = GameStateRelay.GetRelayObject();
                 if (o != null && o.GetType() != typeof(LobbyResults))
                     throw new System.Exception("No LobbyResults found!");
                 m_LobbyResults = (LobbyResults)o;

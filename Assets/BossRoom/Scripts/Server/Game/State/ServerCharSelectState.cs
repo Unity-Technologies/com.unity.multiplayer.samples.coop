@@ -35,7 +35,7 @@ namespace BossRoom.Server
             if (idx == -1)
                 throw new System.Exception("OnClientChangedSlot: unknown client ID " + clientId);
 
-            CharSelectData.CharacterSlots[ idx ] = newSlot;
+            CharSelectData.CharacterSlots[idx] = newSlot;
             if (newSlot.State == CharSelectData.SlotState.LOCKEDIN)
             {
                 // it's possible that this is the last person we were waiting for. See if we're fully locked in!
@@ -49,10 +49,10 @@ namespace BossRoom.Server
         /// </summary>
         private void LockLobbyIfReady()
         {
-            for (int x = 0; x < m_CharSlotClientIDs.Count; ++x)
+            for (int i = 0; i < m_CharSlotClientIDs.Count; ++i)
             {
-                if (MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[ x ]) &&
-                    CharSelectData.CharacterSlots[ x ].State != CharSelectData.SlotState.LOCKEDIN)
+                if (MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[i]) &&
+                    CharSelectData.CharacterSlots[i].State != CharSelectData.SlotState.LOCKEDIN)
                 {
                     return; // this is a real player, and they are not ready to start, so we're done
                 }
@@ -65,10 +65,10 @@ namespace BossRoom.Server
             LobbyResults lobbyResults = new LobbyResults();
             for (int i = 0; i < m_CharSlotClientIDs.Count; ++i)
             {
-                if (MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[ i ]))
+                if (MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[i]))
                 {
-                    var charSelectChoices = CharSelectData.CharacterSlots[ i ];
-                    lobbyResults.Choices[ m_CharSlotClientIDs[ i ] ] = new LobbyResults.CharSelectChoice(charSelectChoices.Class, charSelectChoices.IsMale);
+                    var charSelectChoices = CharSelectData.CharacterSlots[i];
+                    lobbyResults.Choices[m_CharSlotClientIDs[i]] = new LobbyResults.CharSelectChoice(charSelectChoices.Class, charSelectChoices.IsMale);
                 }
             }
             GameStateRelay.SetRelayObject(lobbyResults);
@@ -98,7 +98,7 @@ namespace BossRoom.Server
         {
             for (int i = 0; i < m_CharSlotClientIDs.Count; ++i)
             {
-                if (m_CharSlotClientIDs[ i ] == clientId)
+                if (m_CharSlotClientIDs[i] == clientId)
                     return i;
             }
             return -1;
@@ -109,7 +109,7 @@ namespace BossRoom.Server
             base.NetworkStart();
             if (!IsServer)
             {
-                this.enabled = false;
+                enabled = false;
             }
             else
             {
@@ -148,7 +148,7 @@ namespace BossRoom.Server
 
         private IEnumerator CoroWorkAroundMlapiBug(ulong clientId)
         {
-            var client = NetworkingManager.Singleton.ConnectedClients[ clientId ];
+            var client = NetworkingManager.Singleton.ConnectedClients[clientId];
 
             // for the host-mode client, a single frame of delay seems to be enough;
             // for networked connections, it often takes longer, so we wait a second.
@@ -168,11 +168,11 @@ namespace BossRoom.Server
             // else was in the lobby, but then quit, and a new client got their ID.
             for (int i = 0; i < m_CharSlotClientIDs.Count; ++i)
             {
-                if (m_CharSlotClientIDs[ i ] == clientId ||
-                    !MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[ i ]))
+                if (m_CharSlotClientIDs[i] == clientId ||
+                    !MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[i]))
                 {
                     // it's a dead slot; reuse it!
-                    m_CharSlotClientIDs[ i ] = clientId;
+                    m_CharSlotClientIDs[i] = clientId;
                     newClientIdx = i;
                     break;
                 }
@@ -202,7 +202,7 @@ namespace BossRoom.Server
             int idx = FindClientIdx(clientId);
             if (idx != -1)
             {
-                CharSelectData.CharacterSlots[ idx ] = new CharSelectData.CharSelectSlot(CharSelectData.SlotState.INACTIVE);
+                CharSelectData.CharacterSlots[idx] = new CharSelectData.CharSelectSlot(CharSelectData.SlotState.INACTIVE);
             }
         }
     }

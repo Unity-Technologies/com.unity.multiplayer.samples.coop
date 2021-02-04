@@ -9,22 +9,25 @@ namespace BossRoom.Visual
     /// </summary>
     public class ModelAppearanceSetter : MonoBehaviour
     {
+        [SerializeField]
         private ModelSwap[] m_BodyParts;
+
+        [SerializeField]
         private Animator m_Animator;
 
         private void Awake()
         {
-            m_BodyParts = GetComponents<ModelSwap>();
-            m_Animator = GetComponent<Animator>();
+            //m_BodyParts = GetComponents<ModelSwap>();
+            //m_Animator = GetComponent<Animator>();
         }
 
-        public void SetModel(CharacterTypeEnum Class, bool IsMale)
+        public void SetModel(CharacterTypeEnum characterClass, bool isMale)
         {
-            int newModelIndex = MapToModelIdx(Class, IsMale);
+            int newModelIndex = MapToModelIdx(characterClass, isMale);
             for (int i = 0; i < m_BodyParts.Length; ++i)
             {
-                if (m_BodyParts[ i ])
-                    m_BodyParts[ i ].SetModel(newModelIndex);
+                if (m_BodyParts[i])
+                    m_BodyParts[i].SetModel(newModelIndex);
             }
         }
 
@@ -54,21 +57,20 @@ namespace BossRoom.Visual
             }
         }
 
-        private int MapToModelIdx(CharacterTypeEnum Class, bool IsMale)
+        private int MapToModelIdx(CharacterTypeEnum characterClass, bool isMale)
         {
-            switch (Class)
+            switch (characterClass)
             {
             case CharacterTypeEnum.ARCHER:
-                return IsMale ? 0 : 1;
+                return isMale ? 0 : 1;
             case CharacterTypeEnum.MAGE:
-                return IsMale ? 2 : 3;
+                return isMale ? 2 : 3;
             case CharacterTypeEnum.ROGUE:
-                return IsMale ? 4 : 5;
+                return isMale ? 4 : 5;
             case CharacterTypeEnum.TANK:
-                return IsMale ? 6 : 7;
+                return isMale ? 6 : 7;
             default:
-                Debug.LogError("Cannot map " + Class + " " + (IsMale ? "male" : "female") + "!");
-                return 0;
+                throw new System.Exception($"Cannot map {characterClass} male={isMale} to a model index!");
             }
         }
 
