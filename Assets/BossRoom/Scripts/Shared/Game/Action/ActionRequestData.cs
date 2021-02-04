@@ -15,6 +15,7 @@ namespace BossRoom
         RogueBaseAttack,
         ImpBaseAttack,
         ImpBossBaseAttack,
+        ImpBossBaseAttack2,
         GeneralChase,
         GeneralRevive,
     }
