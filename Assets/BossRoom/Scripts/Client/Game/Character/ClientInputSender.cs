@@ -28,6 +28,8 @@ namespace BossRoom.Client
         /// </summary>
         private System.Nullable<Vector3> m_ClickRequest;
 
+        ActionType m_EmoteAction;
+
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
@@ -111,7 +113,7 @@ namespace BossRoom.Client
 
         /// <summary>
         /// When you right-click on something you will want to do contextually different things. For example you might attack an enemy,
-        /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED). 
+        /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED).
         /// </summary>
         /// <param name="hit">The RaycastHit of the entity we clicked on.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
@@ -166,6 +168,31 @@ namespace BossRoom.Client
             if (Input.GetMouseButtonDown(1))
             {
                 m_ClickRequest = Input.mousePosition;
+            }
+
+            m_EmoteAction = ActionType.None;
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                m_EmoteAction = ActionType.Emote1;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha5))
+            {
+                m_EmoteAction = ActionType.Emote2;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                m_EmoteAction = ActionType.Emote3;
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                m_EmoteAction = ActionType.Emote4;
+            }
+            if (m_EmoteAction != ActionType.None)
+            {
+                var emoteData = new ActionRequestData();
+                emoteData.ActionTypeEnum = m_EmoteAction;
+                emoteData.CancelMovement = true;
+                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
         }
 

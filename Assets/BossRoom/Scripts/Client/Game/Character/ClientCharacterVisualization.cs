@@ -43,12 +43,12 @@ namespace BossRoom.Visual
                 return;
             }
 
-            m_NetState = this.transform.parent.gameObject.GetComponent<NetworkCharacterState>();
-            m_NetState.DoActionEventClient += this.PerformActionFX;
+            m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
+            m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
-            //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy. 
+            //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent = transform.parent;
-            Parent.GetComponent<BossRoom.Client.ClientCharacter>().ChildVizObject = this;
+            Parent.GetComponent<Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
 
 
@@ -66,7 +66,6 @@ namespace BossRoom.Visual
 
         private void PerformActionFX(ActionRequestData data)
         {
-
             m_ActionViz.PlayAction(ref data);
         }
 
@@ -92,8 +91,8 @@ namespace BossRoom.Visual
         {
             if (Parent == null)
             {
-                //since we aren't in the transform hierarchy, we have to explicitly die when our parent dies. 
-                GameObject.Destroy(this.gameObject);
+                // since we aren't in the transform hierarchy, we have to explicitly die when our parent dies.
+                Destroy(gameObject);
                 return;
             }
 
@@ -120,12 +119,10 @@ namespace BossRoom.Visual
         {
             //if you are trying to figure out who calls this method, it's "magic". The Unity Animation Event system takes method names as strings,
             //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one
-            //example of where this is configured. 
+            //example of where this is configured.
 
             m_ActionViz.OnAnimEvent(id);
         }
-
-
 
         private void AttachCamera()
         {
