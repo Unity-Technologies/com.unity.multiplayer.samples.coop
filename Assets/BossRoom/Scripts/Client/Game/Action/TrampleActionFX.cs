@@ -28,6 +28,10 @@ namespace BossRoom.Visual
         /// <summary>
         /// Prior to spawning graphics, this is null. Once we spawn the graphics, this is a list of everything we spawned.
         /// </summary>
+        /// <remarks>
+        /// Mobile performance note: constantly creating new GameObjects like this has bad performance on mobile and should
+        /// be replaced with object-pooling (i.e. reusing the same art GameObjects repeatedly). But that's outside the scope of this demo.
+        /// </remarks>
         private List<GameObject> m_SpawnedGraphics = null;
 
         public override bool Start()
