@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -15,7 +16,7 @@ namespace BossRoom.Server
         public override bool Start()
         {
             m_Parent.NetState.ServerBroadcastAction(ref Data);
-            return true;
+            return false;
         }
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace BossRoom.Server
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool Update()
         {
-            return true;
+            throw new Exception("This should not execute!");
         }
     }
 }
