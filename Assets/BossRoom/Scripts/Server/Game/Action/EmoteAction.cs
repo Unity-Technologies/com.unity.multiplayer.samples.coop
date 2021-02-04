@@ -9,23 +9,16 @@ namespace BossRoom.Server
         {
         }
 
-        /// <summary>
-        /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
-        /// </summary>
-        /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>
         public override bool Start()
         {
             m_Parent.NetState.ServerBroadcastAction(ref Data);
             return false;
         }
 
-        /// <summary>
-        /// Called each frame while the action is running.
-        /// </summary>
-        /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool Update()
         {
-            throw new Exception("This should not execute!");
+            // since we return false at Start(), this method should not execute
+            throw new InvalidOperationException("No logic defined.");
         }
     }
 }
