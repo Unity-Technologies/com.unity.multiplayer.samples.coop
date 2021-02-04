@@ -10,6 +10,7 @@ namespace BossRoom.Server
         Idle = 0,
         PathFollowing = 1,
         Charging = 2,
+        Knockback = 3,
     }
 
     /// <summary>
@@ -31,9 +32,12 @@ namespace BossRoom.Server
         [SerializeField]
         private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition
 
-        // when we are in charging mode, we use these additional variables
-        private float m_ChargingSpeed;
-        private float m_ChargeDurationRemaining;
+        // when we are in charging and knockback mode, we use these additional variables
+        private float m_ForcedSpeed;
+        private float m_SpecialModeDurationRemaining;
+
+        // this one is specific to knockback mode
+        private Vector3 m_KnockbackVector;
 
         private void Awake()
         {
@@ -80,8 +84,17 @@ namespace BossRoom.Server
         {
             m_NavPath.Clear();
             m_MovementState = MovementState.Charging;
-            m_ChargingSpeed = speed;
-            m_ChargeDurationRemaining = duration;
+            m_ForcedSpeed = speed;
+            m_SpecialModeDurationRemaining = duration;
+        }
+
+        public void StartKnockback(Vector3 knocker, float speed, float duration)
+        {
+            m_NavPath.Clear();
+            m_MovementState = MovementState.Knockback;
+            m_KnockbackVector = transform.position - knocker;
+            m_ForcedSpeed = speed;
+            m_SpecialModeDurationRemaining = duration;
         }
 
         /// <summary>
@@ -95,6 +108,15 @@ namespace BossRoom.Server
         }
 
         /// <summary>
+        /// Returns true if the current movement-mode is unabortable (e.g. a knockback effect)
+        /// </summary>
+        /// <returns></returns>
+        public bool IsPerformingForcedMovement()
+        {
+            return m_MovementState != MovementState.Knockback;
+        }
+
+        /// <summary>
         /// Cancels any moves that are currently in progress. 
         /// </summary>
         public void CancelMove()
@@ -105,16 +127,12 @@ namespace BossRoom.Server
 
         private void FixedUpdate()
         {
-            if (m_MovementState != MovementState.Idle)
-            {
-                Movement();
-            }
+            PerformMovement();
 
             // Send new position values to the client
             m_NetworkCharacterState.NetworkPosition.Value = transform.position;
             m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
-            m_NetworkCharacterState.NetworkMovementSpeed.Value =
-                m_MovementState == MovementState.Idle ? 0 : m_MovementSpeed;
+            m_NetworkCharacterState.NetworkMovementSpeed.Value = GetVisualMovementSpeed();
         }
 
         private void OnValidate()
@@ -133,22 +151,37 @@ namespace BossRoom.Server
             m_NavPath.Dispose();
         }
 
-        private void Movement()
+        private void PerformMovement()
         {
+            if (m_MovementState == MovementState.Idle)
+                return;
+
             Vector3 movementVector;
 
             if (m_MovementState == MovementState.Charging)
             {
                 // if we're done charging, stop moving
-                m_ChargeDurationRemaining -= Time.fixedDeltaTime;
-                if (m_ChargeDurationRemaining <= 0)
+                m_SpecialModeDurationRemaining -= Time.fixedDeltaTime;
+                if (m_SpecialModeDurationRemaining <= 0)
                 {
                     m_MovementState = MovementState.Idle;
                     return;
                 }
 
-                var desiredMovementAmount = m_ChargingSpeed * Time.fixedDeltaTime;
+                var desiredMovementAmount = m_ForcedSpeed * Time.fixedDeltaTime;
                 movementVector = transform.forward * desiredMovementAmount;
+            }
+            else if (m_MovementState == MovementState.Knockback)
+            {
+                m_SpecialModeDurationRemaining -= Time.fixedDeltaTime;
+                if (m_SpecialModeDurationRemaining <= 0)
+                {
+                    m_MovementState = MovementState.Idle;
+                    return;
+                }
+
+                var desiredMovementAmount = m_ForcedSpeed * Time.fixedDeltaTime;
+                movementVector = m_KnockbackVector * desiredMovementAmount;
             }
             else
             {
@@ -169,6 +202,14 @@ namespace BossRoom.Server
             // After moving adjust the position of the dynamic rigidbody.
             m_Rigidbody.position = transform.position;
             m_Rigidbody.rotation = transform.rotation;
+        }
+
+        private float GetVisualMovementSpeed()
+        {
+            if (m_MovementState == MovementState.Idle || m_MovementState == MovementState.Knockback)
+                return 0;
+            else
+                return m_MovementSpeed;
         }
     }
 }

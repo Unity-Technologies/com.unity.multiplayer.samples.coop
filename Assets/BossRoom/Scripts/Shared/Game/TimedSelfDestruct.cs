@@ -10,13 +10,9 @@ namespace BossRoom
         [SerializeField]
         private float m_LifespanSeconds;
 
-        private void Update()
+        private void Start()
         {
-            m_LifespanSeconds -= Time.deltaTime;
-            if (m_LifespanSeconds <= 0)
-            {
-                Destroy(gameObject);
-            }
+            Destroy(gameObject, m_LifespanSeconds);
         }
     }
 

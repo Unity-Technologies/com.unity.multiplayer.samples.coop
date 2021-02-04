@@ -44,9 +44,8 @@ namespace BossRoom.Visual
                 m_SpawnedGraphics = new List<GameObject>();
                 foreach (var go in Description.SpawnedObjects)
                 {
-                    GameObject newGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
-                    newGO.GetComponent<NetworkedObject>().Spawn();
-                    m_SpawnedGraphics.Add(newGO);
+                    GameObject cueGraphicsGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
+                    m_SpawnedGraphics.Add(cueGraphicsGO);
                 }
             }
             return true;

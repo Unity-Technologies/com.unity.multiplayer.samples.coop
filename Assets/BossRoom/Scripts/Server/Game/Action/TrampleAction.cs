@@ -38,7 +38,7 @@ namespace BossRoom.Server
         /// (Note that it's a mapping of Collider->nothing. We just check whether specific keys are already in the map,
         /// so the value is never used!)
         /// </summary>
-        private Dictionary<Collider, bool> m_CollidedAlready = new Dictionary<Collider, bool>();
+        private HashSet<Collider> m_CollidedAlready = new HashSet<Collider>();
 
         /// <summary>
         /// When we begin our charge-attack, anyone within this range is treated as having already been touching us.
@@ -109,6 +109,9 @@ namespace BossRoom.Server
             }
             victim.NetState.ServerBroadcastHitReaction();
             victim.ReceiveHP(this.m_Parent, -damage);
+
+            var victimMovement = victim.GetComponent<ServerCharacterMovement>();
+            victimMovement.StartKnockback(m_Parent.transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
         }
 
         public override void OnCollisionEnter(Collision collision)
@@ -116,10 +119,10 @@ namespace BossRoom.Server
             if (GetCurrentStage() == ActionStage.Windup)
                 return; // it's too early to deal damage to 'em, we'll detect them when we start charging
 
-            if (m_CollidedAlready.ContainsKey(collision.collider))
+            if (m_CollidedAlready.Contains(collision.collider))
                 return; // already hit them!
 
-            m_CollidedAlready[collision.collider] = true;
+            m_CollidedAlready.Add(collision.collider);
 
             var victim = collision.collider.gameObject.GetComponent<ServerCharacter>();
             if (victim)
@@ -140,7 +143,7 @@ namespace BossRoom.Server
             int numResults = ActionUtils.DetectNearbyFoe(m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), k_PhysicalTouchDistance, out results);
             for (int i = 0; i < numResults; i++)
             {
-                m_CollidedAlready[results[i].collider] = true;
+                m_CollidedAlready.Add(results[i].collider);
                 var serverChar = results[i].collider.GetComponent<ServerCharacter>();
                 if (serverChar)
                 {

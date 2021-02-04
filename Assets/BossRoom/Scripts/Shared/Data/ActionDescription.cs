@@ -42,6 +42,12 @@ namespace BossRoom
         [Tooltip("For actions that change your speed (e.g. Trample), what speed do we have?")]
         public float MoveSpeed;
 
+        [Tooltip("For actions that cause a knockback, how potent is the knockback force?")]
+        public float KnockbackSpeed;
+
+        [Tooltip("For actions that cause a knockback, how long does it apply force to the target?")]
+        public float KnockbackDuration;
+
         [Tooltip("A list of prefabs that are spawned by this visualization")]
         public GameObject[] SpawnedObjects;
     }
