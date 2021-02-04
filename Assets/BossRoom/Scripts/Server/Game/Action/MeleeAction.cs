@@ -71,24 +71,34 @@ namespace BossRoom.Server
         private ServerCharacter DetectFoe(ulong foeHint = 0)
         {
             //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack.
+            Vector3? direction = null;
+            var collider = m_Parent.GetComponent<Collider>();
+            //If the action data has a direction, pass the face matching the 
+            if (Description.HitStartDirection != HitDirection.NoDirection)
+            {
+                direction = ActionUtils.ComputeDirectionPoint(collider, Description.HitStartDirection);
+            }
 
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectMeleeFoe(m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description, out results);
+            int numResults = ActionUtils.DetectMeleeFoe(m_Parent.IsNpc, collider, Description, out results, direction);
 
             if (numResults == 0) { return null; }
 
             //everything that passes the mask should have a ServerCharacter component. 
             ServerCharacter foundFoe = results[0].collider.GetComponent<ServerCharacter>();
 
-            //we always prefer the hinted foe. If he's still in range, he should take the damage, because he's who the client visualization
-            //system will play the hit-react on (in case there's any ambiguity). 
-            for (int i = 0; i < numResults; i++)
+            if (Description.HitStartDirection == HitDirection.NoDirection)
             {
-                var serverChar = results[i].collider.GetComponent<ServerCharacter>();
-                if (serverChar.NetworkId == foeHint)
+                //In the case we have no direction set, we always prefer the hinted foe. If he's still in range, he should take the damage,
+                //because he's who the client visualization  system will play the hit-react on (in case there's any ambiguity). 
+                for (int i = 0; i < numResults; i++)
                 {
-                    foundFoe = serverChar;
-                    break;
+                    var serverChar = results[i].collider.GetComponent<ServerCharacter>();
+                    if (serverChar.NetworkId == foeHint)
+                    {
+                        foundFoe = serverChar;
+                        break;
+                    }
                 }
             }
 
