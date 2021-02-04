@@ -17,6 +17,7 @@ namespace BossRoom
         ImpBossBaseAttack,
         GeneralChase,
         GeneralRevive,
+        DriveArrow,
         Emote1,
         Emote2,
         Emote3,
@@ -30,10 +31,10 @@ namespace BossRoom
     public enum ActionLogic
     {
         Melee,
-        Ranged,
         RangedTargeted,
         Chase,
         Revive,
+        LaunchProjectile,
         Emote
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!

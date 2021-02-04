@@ -46,19 +46,14 @@ namespace BossRoom.Visual
 
         public void PlayAction(ref ActionRequestData data)
         {
-            ActionDescription actionDesc;
+            ActionDescription actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
+
             //Do Trivial Actions (actions that just require playing a single animation, and don't require any state tracking).
-            switch (data.ActionTypeEnum)
+            switch (actionDesc.Logic)
             {
-                case ActionType.GeneralRevive:
-                    actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
-                    Parent.OurAnimator.SetTrigger(actionDesc.Anim);
-                    return;
-                case ActionType.Emote1:
-                case ActionType.Emote2:
-                case ActionType.Emote3:
-                case ActionType.Emote4:
-                    actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
+                case ActionLogic.LaunchProjectile:
+                case ActionLogic.Revive:
+                case ActionLogic.Emote:
                     Parent.OurAnimator.SetTrigger(actionDesc.Anim);
                     return;
             }
