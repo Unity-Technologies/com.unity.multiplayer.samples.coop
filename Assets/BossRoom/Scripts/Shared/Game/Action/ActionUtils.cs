@@ -54,7 +54,6 @@ namespace BossRoom
                         }
                         else
                         {
-                            Debug.Log(Vector3.Distance(x.transform.position, favorPoint.Value) - Vector3.Distance(y.transform.position, favorPoint.Value));
                             return Vector3.Distance(x.transform.position, favorPoint.Value).CompareTo(Vector3.Distance(y.transform.position, favorPoint.Value));
                         }
                     });
@@ -68,10 +67,11 @@ namespace BossRoom
         /// <summary>
         /// Calculates the relative point for the collider based on the given hit direction.  This essentially gets the desired face of the collider in world coordinates
         /// </summary>
-        /// <param name="col"></param>
-        /// <param name="dir"></param>
+        /// <param name="col">The Collider to use as the base point</param>
+        /// <param name="dir">The direction to place the point relative to the collider</param>
+        /// <param name="range"> the range to pass in to offset the point by</param>
         /// <returns></returns>
-        public static Vector3 ComputeDirectionPoint(Collider col, HitDirection dir)
+        public static Vector3 ComputeDirectionPoint(Collider col, HitDirection dir, float range)
         {
             var position = col.transform.position;
             switch (dir)
@@ -83,11 +83,11 @@ namespace BossRoom
                     }
                 case HitDirection.Left:
                     {
-                        return position - col.transform.right * col.bounds.extents.x;
+                        return position - col.transform.right * (range/2);
                     }
                 case HitDirection.Right:
                     {
-                        return position + col.transform.right * col.bounds.extents.x;
+                        return position + col.transform.right * (range/2);
                     }
                 default:
                     {
@@ -96,6 +96,4 @@ namespace BossRoom
             }
         }
     }
-
-
 }

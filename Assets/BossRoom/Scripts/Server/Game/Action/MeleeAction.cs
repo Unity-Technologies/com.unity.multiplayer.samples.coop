@@ -76,7 +76,7 @@ namespace BossRoom.Server
             //If the action data has a direction, pass the face matching the 
             if (Description.HitStartDirection != HitDirection.NoDirection)
             {
-                direction = ActionUtils.ComputeDirectionPoint(collider, Description.HitStartDirection);
+                direction = ActionUtils.ComputeDirectionPoint(collider, Description.HitStartDirection, Description.Range);
             }
 
             RaycastHit[] results;
