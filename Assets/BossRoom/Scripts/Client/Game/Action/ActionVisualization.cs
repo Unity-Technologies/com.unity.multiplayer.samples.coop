@@ -5,7 +5,7 @@ namespace BossRoom.Visual
 {
     /// <summary>
     /// This is a companion class to ClientCharacterVisualization that is specifically responsible for visualizing Actions. Action visualizations have lifetimes
-    /// and ongoing state, making this class closely analogous in spirit to the BossRoom.Server.ActionPlayer class. 
+    /// and ongoing state, making this class closely analogous in spirit to the BossRoom.Server.ActionPlayer class.
     /// </summary>
     public class ActionVisualization
     {
@@ -21,12 +21,12 @@ namespace BossRoom.Visual
 
         public void Update()
         {
-            //do a reverse-walk so we can safely remove inside the loop. 
+            //do a reverse-walk so we can safely remove inside the loop.
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
                 var action = m_PlayingActions[i];
                 bool keepGoing = action.Update();
-                bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite. 
+                bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
                 bool timeExpired = expirable && (Time.time - action.TimeStarted) >= action.Description.DurationSeconds;
                 if (!keepGoing || timeExpired)
                 {
@@ -46,11 +46,14 @@ namespace BossRoom.Visual
 
         public void PlayAction(ref ActionRequestData data)
         {
+            ActionDescription actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
+
             //Do Trivial Actions (actions that just require playing a single animation, and don't require any state tracking).
-            switch (data.ActionTypeEnum)
+            switch (actionDesc.Logic)
             {
-                case ActionType.GeneralRevive:
-                    ActionDescription actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
+                case ActionLogic.LaunchProjectile:
+                case ActionLogic.Revive:
+                case ActionLogic.Emote:
                     Parent.OurAnimator.SetTrigger(actionDesc.Anim);
                     return;
             }

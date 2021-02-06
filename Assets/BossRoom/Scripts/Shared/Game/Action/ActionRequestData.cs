@@ -4,7 +4,7 @@ using UnityEngine;
 namespace BossRoom
 {
     /// <summary>
-    /// List of all Actions supported in the game. 
+    /// List of all Actions supported in the game.
     /// </summary>
     public enum ActionType
     {
@@ -17,20 +17,26 @@ namespace BossRoom
         ImpBossBaseAttack,
         GeneralChase,
         GeneralRevive,
+        DriveArrow,
+        Emote1,
+        Emote2,
+        Emote3,
+        Emote4,
     }
 
 
     /// <summary>
-    /// List of all Types of Actions. There is a many-to-one mapping of Actions to ActionLogics. 
+    /// List of all Types of Actions. There is a many-to-one mapping of Actions to ActionLogics.
     /// </summary>
     public enum ActionLogic
     {
         Melee,
-        Ranged,
         RangedTargeted,
-        RangedFXTargeted,
         Chase,
         Revive,
+        LaunchProjectile,
+        Emote,
+        RangedFXTargeted,
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
@@ -60,13 +66,14 @@ namespace BossRoom
     /// </summary>
     public struct ActionRequestData : MLAPI.Serialization.IBitWritable
     {
-        public ActionType ActionTypeEnum;      //the action to play. 
-        public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill. 
-        public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing. 
-        public ulong[] TargetIds;          //networkIds of targets, or null if untargeted. 
+        public ActionType ActionTypeEnum;      //the action to play.
+        public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill.
+        public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing.
+        public ulong[] TargetIds;          //networkIds of targets, or null if untargeted.
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
+        public bool CancelMovement;        // if true, movement is cancelled before playing this action
 
-        //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below. 
+        //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below.
 
         //[System.Flags]
         private enum PackFlags
@@ -76,7 +83,9 @@ namespace BossRoom
             HasDirection = 1 << 1,
             HasTargetIds = 1 << 2,
             HasAmount = 1 << 3,
-            //currently serialized with a byte. Change Read/Write if you add more than 8 fields. 
+            ShouldQueue = 1 << 4
+            CancelMovement = 1 << 5
+            //currently serialized with a byte. Change Read/Write if you add more than 8 fields.
         }
 
         private PackFlags GetPackFlags()
@@ -86,6 +95,7 @@ namespace BossRoom
             if (Direction != Vector3.zero) { flags |= PackFlags.HasDirection; }
             if (TargetIds != null) { flags |= PackFlags.HasTargetIds; }
             if (Amount != 0) { flags |= PackFlags.HasAmount; }
+            if (CancelMovement) {flags |= PackFlags.CancelMovement; }
 
             return flags;
         }
@@ -96,6 +106,7 @@ namespace BossRoom
             {
                 ActionTypeEnum = (ActionType)reader.ReadInt16();
                 PackFlags flags = (PackFlags)reader.ReadByte();
+                CancelMovement = (flags & PackFlags.CancelMovement) != 0;
 
                 if ((flags & PackFlags.HasPosition) != 0)
                 {
