@@ -104,21 +104,21 @@ namespace BossRoom
         /// <summary>
         /// This event is raised on the server when an action request arrives
         /// </summary>
-        public event Action<BossRoom.ActionSequence> DoActionsEventServer;
+        public event Action<ActionRequestData> DoActionEventServer;
 
         /// <summary>
         /// This event is raised on the client when an action is being played back. 
         /// </summary>
-        public event Action<BossRoom.ActionRequestData> DoActionEventClient;
+        public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
         /// Client->Server RPC that sends a request to play some actions.
         /// </summary>
-        public void ClientSendActionRequests(ActionSequence actions)
+        public void ClientSendActionRequest(ref ActionRequestData action)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {
-                actions.Write(stream);
+                action.Write(stream);
                 InvokeServerRpcPerformance(RecvDoActionsServer, stream);
             }
         }
@@ -147,9 +147,9 @@ namespace BossRoom
         [ServerRPC]
         private void RecvDoActionsServer(ulong clientId, Stream stream)
         {
-            var list = new ActionSequence();
-            list.Read(stream);
-            DoActionsEventServer?.Invoke(list);
+            var action = new ActionRequestData();
+            action.Read(stream);
+            DoActionEventServer?.Invoke(action);
         }
     }
 }

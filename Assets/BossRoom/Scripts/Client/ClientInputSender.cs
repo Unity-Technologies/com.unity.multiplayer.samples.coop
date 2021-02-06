@@ -79,25 +79,9 @@ namespace BossRoom.Client
                 var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_TargetableLayerMask) > 0;
                 if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
                 {
-                    //if we have clicked on an enemy:
-                    // - two actions will queue one after the other, causing us to run over to our target and take a swing.
-                    //if we have clicked on a fallen friend - we will revive him
-
-                    ActionRequestData playerAction;
-                    bool doAction = GetActionRequestForTarget(ref k_CachedHit[0], out playerAction);
-
-                    if (doAction)
+                    if( GetActionRequestForTarget(ref k_CachedHit[0], out ActionRequestData playerAction) )
                     {
-                        float range = GameDataSource.Instance.ActionDataByType[playerAction.ActionTypeEnum].Range;
-                        var chaseData = new ActionRequestData();
-                        chaseData.ActionTypeEnum = ActionType.GeneralChase;
-                        chaseData.Amount = range;
-                        chaseData.TargetIds = new ulong[] { GetTargetObject(ref k_CachedHit[0]) };
-
-                        ActionSequence sequence = new ActionSequence();
-                        sequence.Add(ref chaseData);
-                        sequence.Add(ref playerAction);
-                        m_NetworkCharacter.ClientSendActionRequests(sequence);
+                        m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
                     }
                 }
                 else

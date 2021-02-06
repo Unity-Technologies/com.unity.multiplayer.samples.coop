@@ -60,7 +60,7 @@ namespace BossRoom.Server
             else
             {
                 NetState = GetComponent<NetworkCharacterState>();
-                NetState.DoActionsEventServer += OnActionPlayRequest;
+                NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.OnReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             }

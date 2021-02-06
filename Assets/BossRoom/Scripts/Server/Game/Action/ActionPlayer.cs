@@ -14,6 +14,13 @@ namespace BossRoom.Server
 
         private List<Action> m_NonBlockingActions;
 
+        /// <summary>
+        /// To prevent identical actions from piling up, we start discarding actions that are identical to the last played one
+        /// if the queue is deeper than this number. It's a soft cap in that longer queues are possible if they are made of different
+        /// actions--this is mainly targeted at situations like melee attacks, where many may get spammed out quickly. 
+        /// </summary>
+        private const int k_QueueSoftMax = 3;
+
         public ActionPlayer(ServerCharacter parent)
         {
             m_Parent = parent;
@@ -24,33 +31,24 @@ namespace BossRoom.Server
         /// <summary>
         /// Perform a sequence of actions.
         /// </summary>
-        public void PlayActions(ActionSequence actions)
+        public void PlayAction(ref ActionRequestData action )
         {
-            var appendMode = GetAppendability(actions);
-            if (appendMode == AppendabilityInfo.Discard)
-            {
-                // this is effectively the same action as what we're currently running...
-                // BUT we already have another one of these enqueued! So we'll silently
-                // drop this third copy of the same sequence.
-                return;
-            }
-
-            if (appendMode == AppendabilityInfo.Clear)
+            if( !action.ShouldQueue )
             {
                 ClearActions();
             }
 
-            for (int i = 0; i < actions.Count; ++i)
-            {
-                var new_action = Action.MakeAction(m_Parent, ref actions.Get(i));
 
-                bool wasEmpty = m_Queue.Count == 0;
-                m_Queue.Add(new_action);
-                if (wasEmpty)
-                {
-                    AdvanceQueue(false);
-                }
+            if( m_Queue.Count > k_QueueSoftMax && m_Queue[m_Queue.Count-1].Data.Compare(ref action) )
+            {
+                //this action is redundant with the last action performed. We simply discard it.
+                Debug.Log("Discarding a redundant action: " + action.ActionTypeEnum);
+                return; 
             }
+
+            var newAction = Action.MakeAction(m_Parent, ref action);
+            m_Queue.Add(newAction);
+            StartAction();
         }
 
         public void ClearActions()
@@ -82,25 +80,36 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Optionally end the currently playing action, and advance to the next Action that wants to play. 
+        /// Starts the action at the head of the queue, if any. 
         /// </summary>
-        /// <param name="expireFirstElement">Pass true to remove the first element and advance to the next element. Pass false to "advance" to the 0th element</param>
-        private void AdvanceQueue(bool expireFirstElement)
+        private void StartAction()
         {
-            if (expireFirstElement && m_Queue.Count > 0)
-            {
-                m_Queue.RemoveAt(0);
-            }
-
             if (m_Queue.Count > 0)
             {
                 m_Queue[0].TimeStarted = Time.time;
                 bool play = m_Queue[0].Start();
                 if (!play)
                 {
-                    AdvanceQueue(true);
+                    AdvanceQueue();
                 }
             }
+
+        }
+
+        /// <summary>
+        /// Optionally end the currently playing action, and advance to the next Action that wants to play. 
+        /// </summary>
+        private Action AdvanceQueue()
+        {
+            Action removed = null;
+            if (m_Queue.Count > 0)
+            {
+                removed = m_Queue[0];
+                m_Queue.RemoveAt(0);
+            }
+
+            StartAction();
+            return removed;
         }
 
         public void Update()
@@ -113,7 +122,7 @@ namespace BossRoom.Server
                 // non-blocking one. (We use this for e.g. projectile attacks, so the projectiles can keep flying, but
                 // the player can enqueue other actions in the meantime.)
                 m_NonBlockingActions.Add(m_Queue[0]);
-                AdvanceQueue(true);
+                AdvanceQueue();
             }
             
             // if there's a blocking action, update it
@@ -121,7 +130,7 @@ namespace BossRoom.Server
             {
                 if (!UpdateAction(m_Queue[0]))
                 {
-                    AdvanceQueue(true);
+                    AdvanceQueue(); //TODO make this AdvanceQueue().End();
                 }
             }
 
@@ -132,6 +141,7 @@ namespace BossRoom.Server
                 if (!UpdateAction(runningAction))
                 {
                     // it's dead!
+                    //TODO: add runningAction.End();
                     m_NonBlockingActions.RemoveAt(i);
                 }
             }
@@ -149,59 +159,6 @@ namespace BossRoom.Server
             return keepGoing && !timeExpired;
         }
 
-        private enum AppendabilityInfo
-        {
-            Append,     // this new sequence can be appended to what we're currently running
-            Clear,      // this new sequence should replace what we're currently running
-            Discard,    // this new sequence COULD be appended, but we already have more than one of these queued up, so throw it out
-        }
-
-        /// <summary>
-        /// Answers the question: "Can this new sequence of actions be appended to our currently-running queue of actions?"
-        /// </summary>
-        /// <remarks>
-        /// Normally when we get a new sequence, we discard any currently-running sequence. But there's an important special case:
-        /// If the new sequence is basically the same as the currently-running sequence, we append this sequence to the end of our list.
-        /// We do this to support spam-clicking of basic attacks! When players are clicking like crazy on a monster, they don't want
-        /// their previous clicks to be aborted by later clicks... they just want to attack as fast as possible!
-        /// </remarks>
-        private AppendabilityInfo GetAppendability(ActionSequence sequence)
-        {
-            if (m_Queue.Count == 0)
-            {
-                return AppendabilityInfo.Append; // moot
-            }
-
-            // We only append sequences if they're basically the same as what we're running. Specifically:
-            // - The new sequence is either a singular attack, or a Chase followed by an attack
-            // - AND we're currently running that same singular attack (or a chase followed by that attack)
-            if (sequence.Count == 0 ||
-                sequence.Count > 2 ||
-                (sequence.Count == 2 && sequence.Get(0).ActionTypeEnum != ActionType.GeneralChase))
-            {
-                return AppendabilityInfo.Clear; // don't know how to enqueue this sequence
-            }
-
-            ref ActionRequestData actionToCompareWith = ref sequence.Get(sequence.Count - 1);
-
-            int i = 0;
-            if (m_Queue[i].Data.ActionTypeEnum == ActionType.GeneralChase)
-            {
-                ++i; // skip over the currently-running Chase action
-            }
-            if (m_Queue.Count <= i || m_Queue[i].Data.ActionTypeEnum != actionToCompareWith.ActionTypeEnum)
-            {
-                return AppendabilityInfo.Clear; // not compatible!
-            }
-
-            if (m_Queue.Count > i+1)
-            {
-                // the new sequence IS compatible, but there's other stuff already enqueued! (Limit 1 extra sequence)
-                return AppendabilityInfo.Discard;
-            }
-
-            return AppendabilityInfo.Append; // yes! Met all prerequisites for appendability!
-        }
     }
 }
 
