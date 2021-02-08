@@ -113,7 +113,7 @@ namespace BossRoom.Server
         /// <returns></returns>
         public bool IsPerformingForcedMovement()
         {
-            return m_MovementState != MovementState.Knockback;
+            return m_MovementState == MovementState.Knockback;
         }
 
         /// <summary>

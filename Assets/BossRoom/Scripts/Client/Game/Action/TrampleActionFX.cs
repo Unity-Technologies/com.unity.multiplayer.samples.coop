@@ -46,7 +46,7 @@ namespace BossRoom.Visual
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
             {
                 m_SpawnedGraphics = new List<GameObject>();
-                foreach (var go in Description.SpawnedObjects)
+                foreach (var go in Description.Spawns)
                 {
                     GameObject cueGraphicsGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
                     m_SpawnedGraphics.Add(cueGraphicsGO);
