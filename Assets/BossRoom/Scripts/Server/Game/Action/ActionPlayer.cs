@@ -71,6 +71,7 @@ namespace BossRoom.Server
         {
             if (expireFirstElement && m_Queue.Count > 0)
             {
+                m_Queue[0].End();
                 m_Queue.RemoveAt(0);
             }
 

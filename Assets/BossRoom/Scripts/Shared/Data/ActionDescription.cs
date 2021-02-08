@@ -48,8 +48,12 @@ namespace BossRoom
         [Tooltip("For actions that cause a knockback, how long does it apply force to the target?")]
         public float KnockbackDuration;
 
-        [Tooltip("A list of prefabs that are spawned by this visualization")]
-        public GameObject[] SpawnedObjects;
+        [Tooltip("If this action spawns GameObjects, list their prefabs here")]
+        public GameObject[] Spawns;
+
+        [Tooltip("If this Action spawns a projectile, how fast should that projectile move? (meters/second)")]
+        public float ProjectileSpeed_m_s;
+
     }
 
 
