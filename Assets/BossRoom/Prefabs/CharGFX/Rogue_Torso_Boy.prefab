@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &1028460923635445782
+--- !u!1 &4873742077042584900
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,36 +8,36 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1052540636117229461}
-  - component: {fileID: 1505688400791032159}
-  m_Layer: 9
+  - component: {fileID: 4863238318113424071}
+  - component: {fileID: 6414136068798745613}
+  m_Layer: 6
   m_Name: Rogue_Torso_Boy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1052540636117229461
+  m_IsActive: 0
+--- !u!4 &4863238318113424071
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1028460923635445782}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0, y: 0, z: 0}
+  m_GameObject: {fileID: 4873742077042584900}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.01, y: 0.01, z: 0.01}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!137 &1505688400791032159
+--- !u!137 &6414136068798745613
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1028460923635445782}
+  m_GameObject: {fileID: 4873742077042584900}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -45,11 +45,11 @@ SkinnedMeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
-  m_RayTracingMode: 0
+  m_RayTracingMode: 3
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2a8c13481190f9744a67d67139f52502, type: 2}
   - {fileID: 2100000, guid: 2a8c13481190f9744a67d67139f52502, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
@@ -92,6 +92,6 @@ SkinnedMeshRenderer:
   m_BlendShapeWeights: []
   m_RootBone: {fileID: 0}
   m_AABB:
-    m_Center: {x: 1.522358, y: -3.2291756, z: 4.4266243}
-    m_Extent: {x: 42.72865, y: 55.48927, z: 37.30438}
+    m_Center: {x: 1.5223694, y: -6.0542984, z: 1.9651432}
+    m_Extent: {x: 42.728638, y: 52.664154, z: 42.015633}
   m_DirtyAABB: 0
