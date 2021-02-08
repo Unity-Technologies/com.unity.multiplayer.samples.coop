@@ -104,7 +104,7 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Client->Server RPC that sends a request to play an action. 
+        /// Client->Server RPC that sends a request to play an action.
         /// </summary>
         public void ClientSendActionRequest(ref ActionRequestData action)
         {

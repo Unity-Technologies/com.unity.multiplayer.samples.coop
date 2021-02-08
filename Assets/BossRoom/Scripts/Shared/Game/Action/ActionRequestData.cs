@@ -71,7 +71,7 @@ namespace BossRoom
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing.
         public ulong[] TargetIds;          //networkIds of targets, or null if untargeted.
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
-        public bool ShouldQueue;           //if true, Action should be queued. If false, should clear the existing queue and play immediately.
+        public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately. 
         public bool ShouldClose;           //if true, the server should synthesize a ChaseAction to close to within range of the target before playing the Action. Ignored for untargeted actions.
         public bool CancelMovement;        // if true, movement is cancelled before playing this action
 

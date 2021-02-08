@@ -38,7 +38,6 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Called when the Action ends naturally. By default just calls logic in "cancel", but derived classes can do
-        /// different things in end vs cancel by overriding both. This is NOT called if the Action returns "false" from Start.
         /// </summary>
         public virtual void End()
         {

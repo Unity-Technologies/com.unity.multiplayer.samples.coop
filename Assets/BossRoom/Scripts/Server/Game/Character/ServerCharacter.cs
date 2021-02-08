@@ -124,7 +124,7 @@ namespace BossRoom.Server
 
         private void OnActionPlayRequest(ActionRequestData data )
         {
-            this.PlayAction(ref data);
+            PlayAction(ref data);
         }
 
         /// <summary>
