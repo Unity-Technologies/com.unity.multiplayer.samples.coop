@@ -35,7 +35,7 @@ namespace BossRoom.Visual
             // figure out how long the pretend-projectile will be flying to the target
             Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
             float initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
-            m_ProjectileDuration = ActionUtils.CalculateFXProjectileDuration(Description, initialDistance);
+            m_ProjectileDuration = initialDistance / Description.ProjectileSpeed_m_s;
 
             // create the projectile. It will control itself from here on out
             m_Projectile = SpawnAndInitializeProjectile();
@@ -113,7 +113,7 @@ namespace BossRoom.Visual
 
         private FXProjectile SpawnAndInitializeProjectile()
         {
-            GameObject projectileGO = Object.Instantiate(Description.FXParticlePrefab, m_Parent.transform.position, m_Parent.transform.rotation, null);
+            GameObject projectileGO = Object.Instantiate(Description.Spawns[0], m_Parent.transform.position, m_Parent.transform.rotation, null);
 
             FXProjectile projectile = projectileGO.GetComponent<FXProjectile>();
             if (!projectile)

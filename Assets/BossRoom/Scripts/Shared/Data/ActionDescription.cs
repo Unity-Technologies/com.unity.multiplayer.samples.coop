@@ -45,13 +45,11 @@ namespace BossRoom
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;
 
-        [Tooltip("If this is a RangedFXTargeted attack, minimum time for the projectile FX to play")]
-        public float FXProjectileMinDurationSeconds = 0.3f;
+        [Tooltip("If this action spawns GameObjects, list their prefabs here")]
+        public GameObject[] Spawns;
 
-        [Tooltip("If this is a RangedFXTargeted attack, maximum time for the projectile FX to play")]
-        public float FXProjectileMaxDurationSeconds = 0.6f;
-
-        public GameObject FXParticlePrefab;
+        [Tooltip("If this Action spawns a projectile, how fast should that projectile move? (meters/second)")]
+        public float ProjectileSpeed_m_s;
     }
 
 
