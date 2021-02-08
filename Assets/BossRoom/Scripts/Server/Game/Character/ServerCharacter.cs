@@ -82,19 +82,17 @@ namespace BossRoom.Server
         /// <summary>
         /// Play a sequence of actions!
         /// </summary>
-        public void PlayActions(ActionSequence listOfActions)
+        public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
             if (NetState.NetworkLifeState.Value == LifeState.Alive)
             {
-			    //FIXME: revisit this after returning to ActionRequestData input. 
-                //if (data.CancelMovement)
-                //{
-                //    GetComponent<ServerCharacterMovement>().CancelMove();
-                //}
+                if (action.CancelMovement)
+                {
+                    GetComponent<ServerCharacterMovement>().CancelMove();
+                }
 
-                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct.
-                this.m_ActionPlayer.PlayActions(listOfActions);
+                this.m_ActionPlayer.PlayAction(ref action);
             }
         }
 
@@ -124,9 +122,9 @@ namespace BossRoom.Server
             m_ActionPlayer.ClearActions();
         }
 
-        private void OnActionPlayRequest(ActionSequence list)
+        private void OnActionPlayRequest(ActionRequestData data )
         {
-            this.PlayActions(list);
+            this.PlayAction(ref data);
         }
 
         /// <summary>

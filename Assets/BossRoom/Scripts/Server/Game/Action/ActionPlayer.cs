@@ -86,6 +86,8 @@ namespace BossRoom.Server
         {
             if (m_Queue.Count > 0)
             {
+                SynthesizeChaseIfNecessary();
+
                 m_Queue[0].TimeStarted = Time.time;
                 bool play = m_Queue[0].Start();
                 if (!play)
@@ -93,7 +95,28 @@ namespace BossRoom.Server
                     AdvanceQueue();
                 }
             }
+        }
 
+        /// <summary>
+        /// Synthesizes a Chase Action for the action at the Head of the queue, if necessary (the base action must have a target,
+        /// and must have the ShouldClose flag set). This method must not be called when the queue is empty. 
+        /// </summary>
+        private void SynthesizeChaseIfNecessary()
+        {
+            Action baseAction = m_Queue[0];
+
+            if( baseAction.Data.ShouldClose && baseAction.Data.TargetIds != null )
+            {
+                ActionRequestData data = new ActionRequestData
+                {
+                    ActionTypeEnum = ActionType.GeneralChase,
+                    TargetIds = baseAction.Data.TargetIds,
+                    Amount = baseAction.Description.Range
+                };
+                baseAction.Data.ShouldClose = false; //you only get to do this once!
+                Action chaseAction = Action.MakeAction(m_Parent, ref data);
+                m_Queue.Insert(0, chaseAction);
+            }
         }
 
         /// <summary>

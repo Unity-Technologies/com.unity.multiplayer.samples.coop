@@ -13,7 +13,7 @@ namespace BossRoom.Client
         private const float k_MouseInputRaycastDistance = 100f;
 
         // Cache raycast hit array so that we can use non alloc raycasts
-        private readonly RaycastHit[] k_CachedHit = new RaycastHit[1];
+        private readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
 
         // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
         private LayerMask k_GroundLayerMask;
@@ -78,10 +78,27 @@ namespace BossRoom.Client
             if (m_ClickRequest != null)
             {
                 var ray = Camera.main.ScreenPointToRay(m_ClickRequest.Value);
-                var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask) > 0;
-                if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
+                m_ClickRequest = null;
+
+                int numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
+                if( numHits == 0 )
                 {
-                    if( GetActionRequestForTarget(ref k_CachedHit[0], out ActionRequestData playerAction) )
+                    return;
+                }
+
+                int networkedHitIndex = -1;
+                for ( int i = 0; i < numHits; i++ )
+                {
+                    if( k_CachedHit[i].transform.GetComponent<NetworkedObject>() )
+                    {
+                        networkedHitIndex = i;
+                        break;
+                    }
+                }
+
+                if (networkedHitIndex >= 0)
+                {
+                    if( GetActionRequestForTarget(ref k_CachedHit[networkedHitIndex], out ActionRequestData playerAction) )
                     {
                         m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
                     }
@@ -90,19 +107,9 @@ namespace BossRoom.Client
                 {
                     // clicked on nothing... perform a "miss" attack on the spot they clicked on
                     var data = new ActionRequestData();
-                    PopulateSkillRequest(ref k_CachedHit[0], CharacterData.Skill1, ref data);
-                    data.ActionTypeEnum = CharacterData.Skill1;
-                    if (ActionLogicUtils.IsPositionUsed(GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].Logic) &&
-                        Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
-                    {
-                        data.Position = k_CachedHit[0].point;
-                    }
-                    ActionSequence sequence = new ActionSequence();
-                    sequence.Add(ref data);
-                    m_NetworkCharacter.ClientSendActionRequests(sequence);
+                    PopulateSkillRequest(k_CachedHit[0].point, CharacterData.Skill1, ref data);
+                    m_NetworkCharacter.ClientSendActionRequest(ref data);
                 }
-
-                m_ClickRequest = null;
             }
         }
 
@@ -127,40 +134,48 @@ namespace BossRoom.Client
             if (targetNetState.IsNpc)
             {
                 ActionType skill1 = CharacterData.Skill1;
-                resultData.ActionTypeEnum = skill1;
 
                 // record our target in case this action uses that info (non-targeted attacks will ignore this)
                 resultData.TargetIds = new ulong[] { targetNetState.NetworkId };
-
-                // record position if relevant
-                if (ActionLogicUtils.IsPositionUsed(GameDataSource.Instance.ActionDataByType[resultData.ActionTypeEnum].Logic))
-                {
-                    resultData.Position = targetNetState.transform.position;
-                }
+                PopulateSkillRequest(hit.point, skill1, ref resultData);
                 return true;
             }
             else if (targetNetState.NetworkLifeState.Value == LifeState.Fainted)
             {
                 resultData = new ActionRequestData();
-                resultData.ActionTypeEnum = ActionType.GeneralRevive;
                 resultData.TargetIds = new[] { targetNetState.NetworkId };
+                PopulateSkillRequest(hit.point, ActionType.GeneralRevive, ref resultData);
                 return true;
             }
 
             return false;
         }
 
-        private void PopulateSkillRequest(ref RaycastHit hit, ActionType action, ref ActionRequestData resultData)
+        /// <summary>
+        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this. 
+        /// </summary>
+        /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
+        /// <param name="action">The action to perform (will be stamped on the resultData)</param>
+        /// <param name="resultData">The ActionRequestData to be filled out with additional information.</param>
+        private void PopulateSkillRequest(Vector3 hitPoint, ActionType action, ref ActionRequestData resultData)
         {
             resultData.ActionTypeEnum = action;
             var actionInfo = GameDataSource.Instance.ActionDataByType[action];
+
+            //currently all skills but LaunchProjectile should trigger an implicit ChaseAction, so we default to true and disable in the subsequent switch-case.
+            resultData.ShouldClose = true;
+
             switch (actionInfo.Logic)
             {
                 //for projectile logic, infer the direction from the click position. 
                 case ActionLogic.LaunchProjectile:
-                    Vector3 offset = hit.point - transform.position;
+                    Vector3 offset = hitPoint - transform.position;
                     offset.y = 0;
                     resultData.Direction = offset.normalized;
+                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive. 
+                    return;
+                case ActionLogic.RangedFXTargeted:
+                    if(resultData.TargetIds == null) { resultData.Position = hitPoint; }
                     return;
             }
         }
@@ -197,22 +212,6 @@ namespace BossRoom.Client
                 emoteData.CancelMovement = true;
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
-        }
-
-        /// <summary>
-        /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object.
-        /// </summary>
-        private ulong GetTargetObject(ref RaycastHit hit)
-        {
-            if (hit.collider == null)
-            {
-                return 0;
-            }
-
-            var targetObj = hit.collider.GetComponent<NetworkedObject>();
-            if (targetObj == null) { return 0; }
-
-            return targetObj.NetworkId;
         }
     }
 }
