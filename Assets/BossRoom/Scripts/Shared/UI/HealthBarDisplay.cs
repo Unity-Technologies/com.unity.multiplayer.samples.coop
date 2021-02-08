@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace BossRoom
 {
+    /// <summary>
+    /// Add this component to a GameObject to visually represent it's NetworkHealthState on UI.
+    /// </summary>
     [RequireComponent(typeof(NetworkHealthState))]
     public class HealthBarDisplay : NetworkedBehaviour
     {
@@ -22,40 +25,31 @@ namespace BossRoom
         {
             if (!IsClient)
             {
+                enabled = false;
                 return;
             }
 
-            HealthBarManager.Instance.AddHealthState(NetworkedObject.NetworkId,
-                m_NetworkHealthState, m_TransformToTrack);
-            m_NetworkHealthState.HitPoints.OnValueChanged += HitPointsChanged;
+            AddHealthBar();
+            m_NetworkHealthState.HitPointsReplenished += AddHealthBar;
+            m_NetworkHealthState.HitPointsDepleted += RemoveHealthBar;
         }
 
-        void HitPointsChanged(int previousValue, int newValue)
+        void AddHealthBar()
         {
-            if (previousValue > 0)
-            {
-                if (newValue <= 0)
-                {
-                    // newly reached 0 HP
-                    StartCoroutine(WaitToHideHealthBar());
-                }
-            }
-            else
-            {
-                if (newValue > 0)
-                {
-                    // newly revived
-                    HealthBarManager.Instance.AddHealthState(NetworkedObject.NetworkId, m_NetworkHealthState,
-                        m_TransformToTrack);
-                }
-            }
+            HealthBarManager.Instance.AddHealthBar(NetworkedObject.NetworkId, m_NetworkHealthState.HitPoints,
+                m_TransformToTrack == null ? transform : m_TransformToTrack);
+        }
+
+        void RemoveHealthBar()
+        {
+            StartCoroutine(WaitToHideHealthBar());
         }
 
         IEnumerator WaitToHideHealthBar()
         {
             yield return new WaitForSeconds(k_DurationSeconds);
 
-            HealthBarManager.Instance.Remove(NetworkedObject.NetworkId);
+            HealthBarManager.Instance.RemoveHealthBar(NetworkedObject.NetworkId);
         }
     }
 }
