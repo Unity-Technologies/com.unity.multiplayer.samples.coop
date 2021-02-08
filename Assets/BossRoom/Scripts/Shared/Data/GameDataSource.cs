@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-
 namespace BossRoom
 {
     public class GameDataSource : MonoBehaviour
@@ -18,12 +17,12 @@ namespace BossRoom
         private Dictionary<ActionType, ActionDescription> m_ActionDataMap;
 
         /// <summary>
-        /// static accessor for all GameData. 
+        /// static accessor for all GameData.
         /// </summary>
         public static GameDataSource Instance { get; private set; }
 
         /// <summary>
-        /// Contents of the CharacterData list, indexed by CharacterType for convenience. 
+        /// Contents of the CharacterData list, indexed by CharacterType for convenience.
         /// </summary>
         public Dictionary<CharacterTypeEnum, CharacterClass> CharacterDataByType
         {
@@ -42,7 +41,7 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// Contents of the ActionData list, indexed by ActionType for convenience. 
+        /// Contents of the ActionData list, indexed by ActionType for convenience.
         /// </summary>
         public Dictionary<ActionType, ActionDescription> ActionDataByType
         {
@@ -58,7 +57,7 @@ namespace BossRoom
                 }
                 return m_ActionDataMap;
             }
-            }
+        }
 
         private void Awake()
         {
@@ -70,7 +69,5 @@ namespace BossRoom
             DontDestroyOnLoad(gameObject);
             Instance = this;
         }
-
     }
 }
-

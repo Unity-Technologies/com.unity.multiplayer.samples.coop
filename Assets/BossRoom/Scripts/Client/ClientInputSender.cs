@@ -26,9 +26,13 @@ namespace BossRoom.Client
         /// raycast in FixedUpdate, because raycasts done in Update won't work reliably.
         /// This nullable vector will be set to a screen coordinate when an attack click was made.
         /// </summary>
-        private System.Nullable<Vector3> m_ClickRequest;
-
+        System.Nullable<Vector3> m_ClickRequest;
         bool m_Skill2Request;
+        bool m_SkillActive = false;
+
+        Camera m_MainCamera;
+
+        public event Action<Vector3> OnClientClick;
 
         /// <summary>
         /// Convenience getter that returns our CharacterData
@@ -45,19 +49,13 @@ namespace BossRoom.Client
 
             k_GroundLayerMask = LayerMask.GetMask("Ground");
             k_TargetableLayerMask = LayerMask.GetMask("PCs", "NPCs");
-    }
-
-        public event Action<Vector3> OnClientClick;
-
-        Camera m_MainCamera;
+        }
 
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
             m_MainCamera = Camera.main;
         }
-
-        bool m_SkillActive = false;
 
         public void FinishSkill()
         {
