@@ -47,7 +47,7 @@ namespace BossRoom.Client
             }
 
             k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
-            k_ActionLayerMask = LayerMask.GetMask(new [] { "PCs", "NPCs", "Ground" });
+            k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
         }
 
         public event Action<Vector3> OnClientClick;
@@ -81,15 +81,15 @@ namespace BossRoom.Client
                 m_ClickRequest = null;
 
                 int numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
-                if( numHits == 0 )
+                if (numHits == 0)
                 {
                     return;
                 }
 
                 int networkedHitIndex = -1;
-                for ( int i = 0; i < numHits; i++ )
+                for (int i = 0; i < numHits; i++)
                 {
-                    if( k_CachedHit[i].transform.GetComponent<NetworkedObject>() )
+                    if (k_CachedHit[i].transform.GetComponent<NetworkedObject>())
                     {
                         networkedHitIndex = i;
                         break;
@@ -98,7 +98,7 @@ namespace BossRoom.Client
 
                 if (networkedHitIndex >= 0)
                 {
-                    if( GetActionRequestForTarget(ref k_CachedHit[networkedHitIndex], out ActionRequestData playerAction) )
+                    if (GetActionRequestForTarget(ref k_CachedHit[networkedHitIndex], out ActionRequestData playerAction))
                     {
                         m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
                     }
@@ -175,7 +175,7 @@ namespace BossRoom.Client
                     resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive. 
                     return;
                 case ActionLogic.RangedFXTargeted:
-                    if(resultData.TargetIds == null) { resultData.Position = hitPoint; }
+                    if (resultData.TargetIds == null) { resultData.Position = hitPoint; }
                     return;
             }
         }
