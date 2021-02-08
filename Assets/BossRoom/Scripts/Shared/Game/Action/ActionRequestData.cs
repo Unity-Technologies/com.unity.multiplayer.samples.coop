@@ -79,7 +79,7 @@ namespace BossRoom
 
 
 
-        //[System.Flags]
+        [System.Flags]
         private enum PackFlags
         {
             None = 0,
@@ -89,23 +89,23 @@ namespace BossRoom
             HasAmount = 1 << 3,
             ShouldQueue = 1 << 4,
             ShouldClose = 1 << 5,
-			CancelMovement = 1 << 6,
+            CancelMovement = 1 << 6,
             //currently serialized with a byte. Change Read/Write if you add more than 8 fields.
         }
 
         /// <summary>
         /// Returns true if the ActionRequestDatas are "functionally equivalent" (not including their Queueing or Closing properties). 
         /// </summary>
-        public bool Compare(ref ActionRequestData rhs )
+        public bool Compare(ref ActionRequestData rhs)
         {
             bool scalarParamsEqual = (ActionTypeEnum, Position, Direction, Amount) == (rhs.ActionTypeEnum, rhs.Position, rhs.Direction, rhs.Amount);
-            if(!scalarParamsEqual ) { return false; }
+            if (!scalarParamsEqual) { return false; }
 
-            if( TargetIds == rhs.TargetIds ) { return true; } //covers case of both being null. 
-            if( TargetIds == null || rhs.TargetIds == null || TargetIds.Length!=rhs.TargetIds.Length ) { return false; }
-            for( int i = 0; i < TargetIds.Length; i++ )
+            if (TargetIds == rhs.TargetIds) { return true; } //covers case of both being null. 
+            if (TargetIds == null || rhs.TargetIds == null || TargetIds.Length != rhs.TargetIds.Length) { return false; }
+            for (int i = 0; i < TargetIds.Length; i++)
             {
-                if( TargetIds[i]!= rhs.TargetIds[i]) { return false;  }
+                if (TargetIds[i] != rhs.TargetIds[i]) { return false; }
             }
 
             return true;
@@ -119,10 +119,10 @@ namespace BossRoom
             if (Direction != Vector3.zero) { flags |= PackFlags.HasDirection; }
             if (TargetIds != null) { flags |= PackFlags.HasTargetIds; }
             if (Amount != 0) { flags |= PackFlags.HasAmount; }
-            if (ShouldQueue) { flags |= PackFlags.ShouldQueue;  }
-            if (ShouldClose) { flags |= PackFlags.ShouldClose;  }
-            if (CancelMovement) {flags |= PackFlags.CancelMovement; }
-			
+            if (ShouldQueue) { flags |= PackFlags.ShouldQueue; }
+            if (ShouldClose) { flags |= PackFlags.ShouldClose; }
+            if (CancelMovement) { flags |= PackFlags.CancelMovement; }
+
 
             return flags;
         }
