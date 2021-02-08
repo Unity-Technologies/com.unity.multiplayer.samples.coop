@@ -15,6 +15,11 @@ namespace BossRoom
         public float TimeStarted { get; set; }
 
         /// <summary>
+        /// How long the Action has been running (since its Start was called)--in seconds, measured via Time.time.
+        /// </summary>
+        public float TimeRunning { get { return (Time.time - TimeStarted); } }
+
+        /// <summary>
         /// RequestData we were instantiated with. Value should be treated as readonly.
         /// </summary>
         public ref ActionRequestData Data => ref m_Data;

@@ -1,23 +1,24 @@
 using System;
-using BossRoom;
 using UnityEngine;
-using UnityEngine.Events;
 
-public abstract class BaseActionInput : MonoBehaviour
+namespace BossRoom
 {
-    protected NetworkCharacterState m_PlayerOwner;
-    protected ActionType m_ActionType;
-    UnityAction m_OnFinished;
-
-    public void Initiate(NetworkCharacterState playerOwner, ActionType actionType, UnityAction onFinished)
+    public abstract class BaseActionInput : MonoBehaviour
     {
-        m_PlayerOwner = playerOwner;
-        m_ActionType = actionType;
-        m_OnFinished = onFinished;
-    }
+        protected NetworkCharacterState m_PlayerOwner;
+        protected ActionType m_ActionType;
+        Action m_OnFinished;
 
-    public void OnDestroy()
-    {
-        m_OnFinished();
+        public void Initiate(NetworkCharacterState playerOwner, ActionType actionType, Action onFinished)
+        {
+            m_PlayerOwner = playerOwner;
+            m_ActionType = actionType;
+            m_OnFinished = onFinished;
+        }
+
+        public void OnDestroy()
+        {
+            m_OnFinished();
+        }
     }
 }
