@@ -18,6 +18,11 @@ namespace BossRoom
         GeneralChase,
         GeneralRevive,
         TankTestability,
+        DriveArrow,
+        Emote1,
+        Emote2,
+        Emote3,
+        Emote4,
     }
 
 
@@ -27,11 +32,12 @@ namespace BossRoom
     public enum ActionLogic
     {
         Melee,
-        Ranged,
         RangedTargeted,
         Chase,
         Revive,
         AoE,
+        LaunchProjectile,
+        Emote
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
@@ -49,6 +55,7 @@ namespace BossRoom
         public ulong[] TargetIds;          //networkIds of targets, or null if untargeted.
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
         public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately.
+        public bool CancelMovement;        // if true, movement is cancelled before playing this action
 
         //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below.
 
@@ -60,7 +67,8 @@ namespace BossRoom
             HasDirection = 1 << 1,
             HasTargetIds = 1 << 2,
             HasAmount = 1 << 3,
-            ShouldQueue = 1 << 4
+            ShouldQueue = 1 << 4,
+            CancelMovement = 1 << 5
             //currently serialized with a byte. Change Read/Write if you add more than 8 fields.
         }
 
@@ -72,6 +80,7 @@ namespace BossRoom
             if (TargetIds != null) { flags |= PackFlags.HasTargetIds; }
             if (Amount != 0) { flags |= PackFlags.HasAmount; }
             if (ShouldQueue) { flags |= PackFlags.ShouldQueue; }
+            if (CancelMovement) {flags |= PackFlags.CancelMovement; }
 
             return flags;
         }
@@ -84,6 +93,7 @@ namespace BossRoom
                 PackFlags flags = (PackFlags)reader.ReadByte();
 
                 ShouldQueue = (flags & PackFlags.ShouldQueue) != 0;
+                CancelMovement = (flags & PackFlags.CancelMovement) != 0;
 
                 if ((flags & PackFlags.HasPosition) != 0)
                 {

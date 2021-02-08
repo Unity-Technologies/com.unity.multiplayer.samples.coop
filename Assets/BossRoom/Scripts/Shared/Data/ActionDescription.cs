@@ -39,11 +39,14 @@ namespace BossRoom
         [Tooltip("The radius of effect for this action. Default is 0 if not needed")]
         public float Radius;
 
-        [Tooltip("Prefab to spawn if needed")]
-        public GameObject ActionVisualization;
-
         [Tooltip("Prefab to spawn that will manage this action's input")]
         public BaseActionInput ActionInput;
+		
+        [Tooltip("If this action spawns GameObjects, list their prefabs here")]
+        public GameObject[] Spawns;
+
+        [Tooltip("If this Action spawns a projectile, how fast should that projectile move? (meters/second)")]
+        public float ProjectileSpeed_m_s;
     }
 }
 

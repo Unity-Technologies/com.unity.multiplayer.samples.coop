@@ -17,6 +17,10 @@ namespace BossRoom.Server
         }
 
         [SerializeField]
+        [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
+        private ActionType m_StartingAction = ActionType.None;
+
+        [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
         private bool m_BrainEnabled = true;
 
@@ -63,6 +67,15 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.OnReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+
+                NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
+                NetState.Mana.Value = NetState.CharacterData.BaseMana;
+
+                if (m_StartingAction != ActionType.None)
+                {
+                    var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
+                    PlayAction(ref startingAction);
+                }
             }
         }
 
@@ -75,8 +88,13 @@ namespace BossRoom.Server
             //the character needs to be alive in order to be able to play actions
             if (NetState.NetworkLifeState.Value == LifeState.Alive)
             {
+                if (data.CancelMovement)
+                {
+                    GetComponent<ServerCharacterMovement>().CancelMove();
+                }
+
                 //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct.
-                this.m_ActionPlayer.PlayAction(ref data);
+                m_ActionPlayer.PlayAction(ref data);
             }
         }
 
@@ -103,12 +121,12 @@ namespace BossRoom.Server
         /// </summary>
         public void ClearActions()
         {
-            this.m_ActionPlayer.ClearActions();
+            m_ActionPlayer.ClearActions();
         }
 
         private void OnActionPlayRequest(ActionRequestData data)
         {
-            this.PlayAction(ref data);
+            PlayAction(ref data);
         }
 
         /// <summary>
@@ -120,9 +138,9 @@ namespace BossRoom.Server
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
-            
+
             NetState.HitPoints.Value += HP;
-            
+
             //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
             if (NetState.HitPoints.Value <= 0)

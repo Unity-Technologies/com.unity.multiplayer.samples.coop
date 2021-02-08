@@ -1,6 +1,6 @@
+using MLAPI;
 using System.Collections;
 using UnityEngine;
-using MLAPI;
 
 namespace BossRoom.Server
 {
