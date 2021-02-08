@@ -14,7 +14,7 @@ namespace BossRoom.Visual
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
             var actionDescription = GameDataSource.Instance.ActionDataByType[m_Data.ActionTypeEnum];
             var vfxObject = GameObject.Instantiate(actionDescription.Spawns[0], m_Data.Position, Quaternion.identity);
-            vfxObject.transform.localScale = new Vector3(actionDescription.Radius, actionDescription.Radius, actionDescription.Radius);
+            vfxObject.transform.localScale = new Vector3(actionDescription.Radius * 2, actionDescription.Radius * 2, actionDescription.Radius * 2);
             return ActionConclusion.Stop;
         }
 

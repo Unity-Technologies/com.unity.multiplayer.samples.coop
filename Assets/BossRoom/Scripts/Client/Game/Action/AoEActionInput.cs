@@ -17,7 +17,7 @@ namespace BossRoom.Visual
         void Start()
         {
             var radius = GameDataSource.Instance.ActionDataByType[m_ActionType].Radius;
-            transform.localScale = new Vector3(radius, radius, radius);
+            transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
             m_Camera = Camera.main;
             m_GroundLayerMask = LayerMask.GetMask("Ground");
         }

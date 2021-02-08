@@ -20,8 +20,11 @@ public class AOEAction : Action
         for (var i = 0; i < colliders.Length; i++)
         {
             var enemy = colliders[i].GetComponent<ServerCharacter>();
-            enemy.ReceiveHP(m_Parent, -actionDescription.Amount);
-            m_Data.TargetIds[i++] = enemy.NetworkId;
+            if (enemy) // pots for example have the NPC layer but not the ServerCharacter component. If we want destructible pots, this component will need to be added
+            {
+                enemy.ReceiveHP(m_Parent, -actionDescription.Amount);
+                m_Data.TargetIds[i] = enemy.NetworkId;
+            }
         }
 
         // broadcasting to all players including myself. Client is authoritative on input, but not on the actual gameplay effect of that input.
