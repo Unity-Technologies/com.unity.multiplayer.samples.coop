@@ -205,9 +205,8 @@ namespace BossRoom.Server
                 case MovementState.Charging:
                 case MovementState.Knockback:
                     return m_ForcedSpeed;
-                case MovementState.Idle:
-                    return 0;
-                case MovementState.PathFollowing:
+            case MovementState.Idle:
+            case MovementState.PathFollowing:
                 default:
                     return m_MovementSpeed;
             }
