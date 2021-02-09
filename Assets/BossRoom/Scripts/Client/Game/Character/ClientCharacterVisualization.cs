@@ -46,6 +46,12 @@ namespace BossRoom.Visual
             m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+            // When connecting mid game, you want to update your visuals to the most up to date value
+            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
+            // we should investigate for a way to have the imps already appear as down when connecting.
+            // todo gomps-220
+            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
+
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent = transform.parent;
             Parent.GetComponent<Client.ClientCharacter>().ChildVizObject = this;
