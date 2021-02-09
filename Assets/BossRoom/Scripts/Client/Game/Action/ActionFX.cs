@@ -45,7 +45,7 @@ namespace BossRoom.Visual
             switch (logic)
             {
                 case ActionLogic.Melee: return new MeleeActionFX(ref data, parent);
-                case ActionLogic.AoE: return new AOEActionFX(ref data, parent);
+                case ActionLogic.AoE: return new AoeActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }

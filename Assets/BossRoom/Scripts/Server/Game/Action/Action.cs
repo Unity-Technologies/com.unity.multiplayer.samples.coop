@@ -71,7 +71,7 @@ namespace BossRoom.Server
             switch (logic)
             {
                 case ActionLogic.Melee: return new MeleeAction(parent, ref data);
-                case ActionLogic.AoE: return new AOEAction(parent, ref data);
+                case ActionLogic.AoE: return new AoeAction(parent, ref data);
                 case ActionLogic.Chase: return new ChaseAction(parent, ref data);
                 case ActionLogic.Revive: return new ReviveAction(parent, ref data);
                 case ActionLogic.LaunchProjectile: return new LaunchProjectileAction(parent, ref data);

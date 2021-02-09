@@ -4,9 +4,9 @@ using UnityEngine;
 namespace BossRoom.Visual
 {
     /// Final step in the AoE action flow. Please see AoEActionInput for the first step and more details on overall flow
-    public class AOEActionFX : ActionFX
+    public class AoeActionFX : ActionFX
     {
-        public AOEActionFX(ref ActionRequestData data, ClientCharacterVisualization parent)
+        public AoeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent)
             : base(ref data, parent) { }
 
         public override bool Start()
