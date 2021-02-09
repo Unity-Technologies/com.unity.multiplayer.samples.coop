@@ -4,26 +4,46 @@ namespace BossRoom.Visual
 {
     /// <summary>
     /// Provides logic for a Hero Action Bar with attack, skill button and a button to open emotes panel
-    /// this bar tracks button clicks on hero action buttons for later use by ClientInputSender
+    /// This bar tracks button clicks on hero action buttons for later use by ClientInputSender
     /// </summary>
     public class HeroActionBar : MonoBehaviour
     {
+        // All buttons in this action bar
+        [SerializeField]
+        private HeroActionButton[] m_Buttons;
+
+        // The Emote panel will be enabled or disabled when clicking the last button
+        [SerializeField]
+        private GameObject m_EmotePanel;
+
+        // This class will track clicks on eack of its buttons
+        // ButtonWasClicked will deliver each click only once
+        private bool[] m_ButtonClicked;
+
+        // Currently this class handles setting icons for the first 3 buttons based on character type
+        // Eventually this can change so it is driven by the data for each skill instead
+        // Current logic will be better for demos until skills are fully implemented with icon data
+        // SetPlayerType is currentlhy called to change this and trigger icon changes
         private CharacterTypeEnum m_PlayerType = CharacterTypeEnum.Tank;
 
-        public HeroActionButton[] m_Buttons;
-        private bool[] m_ButtonClicked;
-        public GameObject m_EmotePanel;
+        // allow icons for each class to be configured
+        [SerializeField]
+        private Material[] m_TankIcons;
 
-        public Material[] m_TankIcons;
-        public Material[] m_ArcherIcons;
-        public Material[] m_RogueIcons;
-        public Material[] m_MageIcons;
+        [SerializeField]
+        private Material[] m_ArcherIcons;
+
+        [SerializeField]
+        private Material[] m_RogueIcons;
+
+        [SerializeField]
+        private Material[] m_MageIcons;
 
         // Start is called before the first frame update
         void Start()
         {
             // clear clicked state
-            m_ButtonClicked = new bool[4];
+            m_ButtonClicked = new bool[m_Buttons.Length];
             for (int i = 0; i < m_Buttons.Length; i++)
             {
                 // initialize all button states to not clicked
@@ -80,7 +100,7 @@ namespace BossRoom.Visual
             m_ButtonClicked[buttonIndex] = true;
         }
 
-        // return if a button was clicked since last queried - this will also clear the value until a new click is received
+        // Return if a given button was clicked since last queried - this will also clear the value until a new click is received
         public bool ButtonWasClicked(int buttonIndex)
         {
             // if we are not started yet or index is above our array lengths just rethr false

@@ -4,18 +4,23 @@ namespace BossRoom.Visual
 {
     /// <summary>
     /// Provides logic for a Hero Emote Bar
-    /// this button bar tracks button clicks and hides after a click
+    /// This button bar tracks button clicks and also hides after any click
     /// </summary>
     public class HeroEmoteBar : MonoBehaviour
     {
-        public HeroActionButton[] m_Buttons;
+        // All buttons in this UI button bar
+        [SerializeField]
+        private HeroActionButton[] m_Buttons;
+
+        // This class will track clicks on eack of its buttons
+        // ButtonWasClicked will deliver each click only once
         private bool[] m_ButtonClicked;
 
         // Start is called before the first frame update
         void Start()
         {
             // clear clicked state
-            m_ButtonClicked = new bool[4];
+            m_ButtonClicked = new bool[m_Buttons.Length];
             for (int i = 0; i < m_Buttons.Length; i++)
             {
                 // initialize all button states to not clicked
