@@ -1,3 +1,4 @@
+
 namespace BossRoom.Visual
 {
     /// <summary>
@@ -45,12 +46,12 @@ namespace BossRoom.Visual
             switch (logic)
             {
                 case ActionLogic.Melee: return new MeleeActionFX(ref data, parent);
+                case ActionLogic.Trample: return new TrampleActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }
 
         public virtual void OnAnimEvent(string id) { }
-
     }
 
 }

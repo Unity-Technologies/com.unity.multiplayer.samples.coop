@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace BossRoom.Server
 {
     /// <summary>
@@ -51,6 +53,8 @@ namespace BossRoom.Server
         /// </summary>
         public virtual void Cancel() { }
 
+        public virtual void OnCollisionEnter(Collision collision) { }
+
 
         /// <summary>
         /// Factory method that creates Actions from their request data.
@@ -75,6 +79,7 @@ namespace BossRoom.Server
                 case ActionLogic.Revive: return new ReviveAction(parent, ref data);
                 case ActionLogic.LaunchProjectile: return new LaunchProjectileAction(parent, ref data);
                 case ActionLogic.Emote: return new EmoteAction(parent, ref data);
+                case ActionLogic.Trample: return new TrampleAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }
