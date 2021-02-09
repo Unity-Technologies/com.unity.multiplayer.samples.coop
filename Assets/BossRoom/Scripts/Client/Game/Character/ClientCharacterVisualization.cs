@@ -27,6 +27,7 @@ namespace BossRoom.Visual
         public float MaxZoomDistance = 30;
         public float ZoomSpeed = 3;
 
+        private const float k_MaxSmoothSpeed = 50;
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         public void Start()
@@ -103,12 +104,12 @@ namespace BossRoom.Visual
             }
 
             VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime,
-                m_NetState.NetworkMovementSpeed.Value, k_MaxRotSpeed);
+                k_MaxSmoothSpeed, k_MaxRotSpeed);
 
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.NetworkMovementSpeed.Value);
+                m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.VisualMovementSpeed.Value);
             }
 
             m_ActionViz.Update();

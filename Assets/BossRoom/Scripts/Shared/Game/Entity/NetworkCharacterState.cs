@@ -31,7 +31,19 @@ namespace BossRoom
         /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
+
+        /// <summary>
+        /// The speed that the character is currently allowed to move, according to the server.
+        /// </summary>
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
+
+        /// <summary>
+        /// Used by animations. Indicates how fast the character should "look like" they're moving,
+        /// according to the server. This is a value from 0 (not moving) to 1 (moving as fast as possible).
+        /// This does not always correspond to the NetworkMovementSpeed; for instance when a player is being
+        /// "knocked back", they are moving, but they visually look like they're standing still.
+        /// </summary>
+        public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
 
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.

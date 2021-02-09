@@ -95,18 +95,22 @@ namespace BossRoom.Server
 
         private void CollideWithVictim(ServerCharacter victim)
         {
-            // We deal a certain amount of damage to our "initial" target and a different amount to all other victims.
-            int damage;
-            if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0 && m_Data.TargetIds[0] == victim.NetworkId)
+            // if we collide with allies, we don't want to hurt them (but we do knock them back, see below)
+            if (m_Parent.IsNpc != victim.IsNpc) 
             {
-                damage = Description.Amount;
+                // We deal a certain amount of damage to our "initial" target and a different amount to all other victims.
+                int damage;
+                if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0 && m_Data.TargetIds[0] == victim.NetworkId)
+                {
+                    damage = Description.Amount;
+                }
+                else
+                {
+                    damage = Description.SplashDamage;
+                }
+                victim.NetState.ServerBroadcastHitReaction();
+                victim.ReceiveHP(this.m_Parent, -damage);
             }
-            else
-            {
-                damage = Description.SplashDamage;
-            }
-            victim.NetState.ServerBroadcastHitReaction();
-            victim.ReceiveHP(this.m_Parent, -damage);
 
             var victimMovement = victim.GetComponent<ServerCharacterMovement>();
             victimMovement.StartKnockback(m_Parent.transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
@@ -125,10 +129,7 @@ namespace BossRoom.Server
             var victim = collision.collider.gameObject.GetComponent<ServerCharacter>();
             if (victim)
             {
-                if (m_Parent.IsNpc != victim.IsNpc) // make sure we're not hitting our allies!
-                {
-                    CollideWithVictim(victim);
-                }
+                CollideWithVictim(victim);
             }
         }
 
@@ -136,9 +137,9 @@ namespace BossRoom.Server
         {
             // We don't get OnCollisionEnter() calls for things that are already collided with us!
             // So when we start charging across the screen, we check to see what's already touching us
-            // (or close enough) and treat that like a collision, dealing damage.
+            // (or close enough) and treat that like a collision.
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectNearbyFoe(m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), k_PhysicalTouchDistance, out results);
+            int numResults = ActionUtils.DetectNearbyEntities(true, true, m_Parent.GetComponent<Collider>(), k_PhysicalTouchDistance, out results);
             for (int i = 0; i < numResults; i++)
             {
                 m_CollidedAlready.Add(results[i].collider);

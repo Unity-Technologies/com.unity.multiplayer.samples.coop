@@ -60,14 +60,7 @@ namespace BossRoom.Server
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
-            m_NetworkCharacterState.OnReceivedClientInput += OnReceivedClientInput;
             m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
-        }
-
-        private void OnReceivedClientInput(Vector3 position)
-        {
-            m_CharLogic.ClearActions(); //a fresh movement request trumps whatever we were doing before. 
-            SetMovementTarget(position);
         }
 
         /// <summary>
@@ -132,7 +125,8 @@ namespace BossRoom.Server
             // Send new position values to the client
             m_NetworkCharacterState.NetworkPosition.Value = transform.position;
             m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
-            m_NetworkCharacterState.NetworkMovementSpeed.Value = GetVisualMovementSpeed();
+            m_NetworkCharacterState.NetworkMovementSpeed.Value = GetMaxMovementSpeed();
+            m_NetworkCharacterState.VisualMovementSpeed.Value = GetVisualMovementSpeed();
         }
 
         private void OnValidate()
@@ -204,12 +198,29 @@ namespace BossRoom.Server
             m_Rigidbody.rotation = transform.rotation;
         }
 
+        private float GetMaxMovementSpeed()
+        {
+            switch (m_MovementState)
+            {
+                case MovementState.Charging:
+                case MovementState.Knockback:
+                    return m_ForcedSpeed;
+                case MovementState.Idle:
+                    return 0;
+                case MovementState.PathFollowing:
+                default:
+                    return m_MovementSpeed;
+            }
+        }
+
         private float GetVisualMovementSpeed()
         {
             if (m_MovementState == MovementState.Idle || m_MovementState == MovementState.Knockback)
                 return 0;
             else
-                return m_MovementSpeed;
+                return 1;
+            // if we had a "movement-slow" special-effect, we could return 0.5 from this function, which would
+            // make the character use the walk animation instead of the run animation
         }
     }
 }
