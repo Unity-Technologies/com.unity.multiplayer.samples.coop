@@ -46,27 +46,27 @@ namespace BossRoom
         public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
 
         /// <summary>
-        /// Current HP. This value is populated at startup time from CharacterClass data. 
+        /// Current HP. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
         public NetworkedVarInt HitPoints;
 
         /// <summary>
-        /// Current Mana. This value is populated at startup time from CharacterClass data. 
+        /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
         public NetworkedVarInt Mana;
 
         /// <summary>
-        /// Current LifeState. Only Players should enter the FAINTED state. 
+        /// Current LifeState. Only Players should enter the FAINTED state.
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
-        /// <summary>
+       /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
-
+        
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
@@ -78,12 +78,13 @@ namespace BossRoom
             }
         }
 
+
         [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
-        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc). 
+        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
         /// </summary>
         [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
         public NetworkedVarInt CharacterAppearance;
@@ -103,7 +104,6 @@ namespace BossRoom
             ReceivedClientInput?.Invoke(movementTarget);
         }
 
-
         // ACTION SYSTEM
 
         /// <summary>
@@ -112,14 +112,14 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventServer;
 
         /// <summary>
-        /// This event is raised on the client when an action is being played back. 
+        /// This event is raised on the client when an action is being played back.
         /// </summary>
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Client->Server RPC that sends a request to play an action. 
+        /// Client->Server RPC that sends a request to play an action.
         /// </summary>
-        /// <param name="data">Data about which action to play an dits associated details. </param>
+        /// <param name="data">Data about which action to play and its associated details. </param>
         public void ClientSendActionRequest(ref ActionRequestData data)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
@@ -130,7 +130,7 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// Server->Client RPC that broadcasts this action play to all clients. 
+        /// Server->Client RPC that broadcasts this action play to all clients.
         /// </summary>
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
         public void ServerBroadcastAction(ref ActionRequestData data)

@@ -24,8 +24,6 @@ namespace BossRoom.Server
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
         private bool m_BrainEnabled = true;
 
-
-
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
@@ -78,7 +76,6 @@ namespace BossRoom.Server
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
-
                 NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
                 NetState.Mana.Value = NetState.CharacterData.BaseMana;
 
@@ -128,7 +125,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Clear all active Actions. 
+        /// Clear all active Actions.
         /// </summary>
         public void ClearActions()
         {
