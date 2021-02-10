@@ -6,19 +6,19 @@ namespace BossRoom
 {
     public enum ConnectStatus
     {
-        SUCCESS,           //client successfully connected. This may also be a successful reconnect. 
-        ESERVERFULL,       //can't join, server is already at capacity. 
-        EMATCHSTARTED,     //can't join, match is already in progress. 
-        EUNKNOWN,          //can't join, reason unknown. 
+        Success,           //client successfully connected. This may also be a successful reconnect. 
+        EServerFull,       //can't join, server is already at capacity. 
+        EMatchStarted,     //can't join, match is already in progress. 
+        EUnknown,          //can't join, reason unknown. 
     }
 
     /// <summary>
-    /// The GameNetHub is the general purpose entry-point for game network messages between the client and server. It is available
+    /// The GameNetPortal is the general purpose entry-point for game network messages between the client and server. It is available
     /// as soon as the initial network connection has completed, and persists across all scenes. Its purpose is to move non-GameObject-specific
     /// methods between server and client. Generally these have to do with connection, and match end conditions. 
     /// </summary>
     /// 
-    /// <remarks
+    /// <remarks>
     /// Why is there a C2S_ConnectFinished event here? How is that different from the "ApprovalCheck" logic that MLAPI optionally runs
     /// when establishing a new client connection? 
     /// MLAPI's ApprovalCheck logic doesn't offer a way to return rich data. We need to know certain things directly upon logging in, such as
@@ -41,17 +41,16 @@ namespace BossRoom
         /// This synthesizes a general NetworkStart event out of other events provided by MLAPI. This can be removed
         /// when the NetworkingManager starts publishing this event directly. 
         /// </summary>
-        public event System.Action networkStartEvent;
+        public event Action NetworkStarted;
 
         /// <summary>
         /// This event contains the game-level results of the ApprovalCheck carried out by the server, and is fired
         /// immediately after the socket connection completing. It won't fire in the event of a socket level failure. 
         /// </summary>
-        public event Action<ConnectStatus> ConnectFinishedEvent;
+        public event Action<ConnectStatus> ConnectFinished;
 
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
-        // Start is called before the first frame update
         void Start()
         {
             UnityEngine.Object.DontDestroyOnLoad(this.gameObject);
@@ -83,7 +82,7 @@ namespace BossRoom
                 {
                     ConnectStatus status = (ConnectStatus)reader.ReadInt32();
 
-                    ConnectFinishedEvent?.Invoke(status);
+                    ConnectFinished?.Invoke(status);
                 }
             });
         }
@@ -96,9 +95,9 @@ namespace BossRoom
 
         /// <summary>
         /// This method runs when NetworkingManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
-        /// on the host). It is named to match NetworkedBehaviour.NetworkStart, and serves the same role, even though GameNetHub itself isn't a NetworkedBehaviour.
+        /// on the host). It is named to match NetworkedBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkedBehaviour.
         /// </summary>
-        public void NetworkStart()
+        private void NetworkStart()
         {
             if (NetManager.IsClient)
             {
@@ -112,10 +111,10 @@ namespace BossRoom
             {
                 //special host code. This is what kicks off the flow that happens on a regular client
                 //when it has finished connecting successfully. A dedicated server would remove this. 
-                ConnectFinishedEvent?.Invoke(ConnectStatus.SUCCESS);
+                ConnectFinished?.Invoke(ConnectStatus.Success);
             }
 
-            networkStartEvent?.Invoke();
+            NetworkStarted?.Invoke();
         }
 
         /// <summary>
@@ -124,12 +123,11 @@ namespace BossRoom
         /// <remarks>
         /// See notes in GNH_Client.StartClient about why this must be static. 
         /// </remarks>
-        /// <param name="hub">The GameNetHub that is invoking us. </param>
         /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
         /// <param name="port">The port to connect to. </param>
         public void StartHost(string ipaddress, int port)
         {
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
+            //non-portable. We need to be updated when moving to UTP transport. 
             var transport = NetworkingManagerGO.GetComponent<MLAPI.Transports.UNET.UnetTransport>();
             transport.ConnectAddress = ipaddress;
             transport.ServerListenPort = port;

@@ -51,7 +51,7 @@ namespace BossRoom.Server
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
-            m_NetworkCharacterState.OnReceivedClientInput += OnReceivedClientInput;
+            m_NetworkCharacterState.ReceivedClientInput += OnReceivedClientInput;
             m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
         }
 

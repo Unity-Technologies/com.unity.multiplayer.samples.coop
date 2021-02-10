@@ -66,7 +66,7 @@ namespace BossRoom
             }
         }
 
-                [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
+        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;
 
         /// <summary>
@@ -79,7 +79,7 @@ namespace BossRoom
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
-        public event Action<Vector3> OnReceivedClientInput;
+        public event Action<Vector3> ReceivedClientInput;
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
@@ -88,7 +88,7 @@ namespace BossRoom
         [ServerRPC]
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
-            OnReceivedClientInput?.Invoke(movementTarget);
+            ReceivedClientInput?.Invoke(movementTarget);
         }
 
 
@@ -97,12 +97,12 @@ namespace BossRoom
         /// <summary>
         /// This event is raised on the server when an action request arrives
         /// </summary>
-        public event Action<BossRoom.ActionRequestData> DoActionEventServer;
+        public event Action<ActionRequestData> DoActionEventServer;
 
         /// <summary>
         /// This event is raised on the client when an action is being played back. 
         /// </summary>
-        public event Action<BossRoom.ActionRequestData> DoActionEventClient;
+        public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
         /// Client->Server RPC that sends a request to play an action. 

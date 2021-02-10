@@ -21,7 +21,7 @@ namespace BossRoom.Server
         private bool m_BrainEnabled = true;
 
         [SerializeField]
-        [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
+        [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created")]
         private ActionType m_StartingAction = ActionType.None;
 
         private ActionPlayer m_ActionPlayer;
@@ -65,7 +65,7 @@ namespace BossRoom.Server
             {
                 NetState = GetComponent<NetworkCharacterState>();
                 NetState.DoActionEventServer += OnActionPlayRequest;
-                NetState.OnReceivedClientInput += OnClientMoveRequest;
+                NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
 

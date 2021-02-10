@@ -7,13 +7,15 @@ namespace BossRoom.Visual
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
-        public GameObject GameHubGO;
+        [SerializeField]
+        private GameObject GamePortalGO;
 
-        public PopupPanel m_ResponsePopup;
+        [SerializeField]
+        private PopupPanel m_ResponsePopup;
 
         private const string k_DefaultIP = "127.0.0.1";
 
-        private BossRoom.GameNetPortal m_netHub;
+        private BossRoom.GameNetPortal m_netPortal;
 
         private Client.ClientGameNetPortal m_ClientNetPortal;
 
@@ -22,11 +24,10 @@ namespace BossRoom.Visual
         /// </summary>
         private const int k_ConnectPort = 9998;
 
-        // Start is called before the first frame update
         void Start()
         {
-            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetPortal>();
-            m_ClientNetPortal = GameHubGO.GetComponent<Client.ClientGameNetPortal>();
+            m_netPortal = GamePortalGO.GetComponent<BossRoom.GameNetPortal>();
+            m_ClientNetPortal = GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
             m_ClientNetPortal.NetworkTimeOutEvent += OnNetworkTimeout;
             m_ClientNetPortal.onConnectFinished += OnConnectFinished;
@@ -43,7 +44,7 @@ namespace BossRoom.Visual
                     ipAddress = k_DefaultIP;
                 }
 
-                m_netHub.StartHost(ipAddress, k_ConnectPort);
+                m_netPortal.StartHost(ipAddress, k_ConnectPort);
             }, k_DefaultIP);
         }
 
@@ -57,7 +58,7 @@ namespace BossRoom.Visual
                     ipAddress = k_DefaultIP;
                 }
 
-                BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, ipAddress, k_ConnectPort);
+                BossRoom.Client.ClientGameNetPortal.StartClient(m_netPortal, ipAddress, k_ConnectPort);
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
 
             }, k_DefaultIP);
@@ -69,7 +70,7 @@ namespace BossRoom.Visual
         /// <param name="status"></param>
         private void OnConnectFinished(ConnectStatus status)
         {
-            if (status != ConnectStatus.SUCCESS)
+            if (status != ConnectStatus.Success)
             {
 
                 m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Something went wrong", false, true);
