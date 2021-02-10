@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &3074380291674168023
+--- !u!1 &6204630729657250600
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,45 +8,45 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1845940580957423753}
-  - component: {fileID: 2096249355265067026}
-  - component: {fileID: 8200147638403335803}
-  m_Layer: 9
+  - component: {fileID: 7291111733323637110}
+  - component: {fileID: 7036450001634288109}
+  - component: {fileID: 972184354376134532}
+  m_Layer: 6
   m_Name: Archer_Hand_Rt_Girl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1845940580957423753
+  m_IsActive: 0
+--- !u!4 &7291111733323637110
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3074380291674168023}
+  m_GameObject: {fileID: 6204630729657250600}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -92.707275, y: -86.047585, z: 0}
+  m_LocalPosition: {x: -92.707245, y: -86.04758, z: 0.0000076293945}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &2096249355265067026
+--- !u!33 &7036450001634288109
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3074380291674168023}
+  m_GameObject: {fileID: 6204630729657250600}
   m_Mesh: {fileID: -4641826895877553535, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
---- !u!23 &8200147638403335803
+--- !u!23 &972184354376134532
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3074380291674168023}
+  m_GameObject: {fileID: 6204630729657250600}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -55,6 +55,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -79,3 +80,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

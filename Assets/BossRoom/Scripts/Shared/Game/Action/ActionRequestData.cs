@@ -38,7 +38,7 @@ namespace BossRoom
         LaunchProjectile,
         Emote,
         AoE,
-
+        Trample,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 

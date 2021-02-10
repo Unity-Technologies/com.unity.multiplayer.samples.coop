@@ -9,13 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8454221756294058385}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Empty_Gear_LH_Slot_Rogue_Boy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8454221756294058385
 Transform:
   m_ObjectHideFlags: 0
