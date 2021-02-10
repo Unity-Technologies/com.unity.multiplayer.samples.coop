@@ -35,8 +35,8 @@ namespace BossRoom
         Chase,
         Revive,
         LaunchProjectile,
-        Emote
-
+        Emote,
+        Trample,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
