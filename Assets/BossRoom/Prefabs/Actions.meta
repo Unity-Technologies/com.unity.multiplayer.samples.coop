@@ -1,6 +1,11 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
 <<<<<<< HEAD:Assets/BossRoom/Models/Animated.meta
 guid: 0ef2cdce62222c84894e2f00d0664849
+=======
+<<<<<<< HEAD:Assets/BossRoom/Prefabs/Dungeon/Dungeon Pieces/animated.meta
+guid: 3a9f853f412d0884e95d5856601c46b7
+>>>>>>> develop
 =======
 guid: 1cea9a73dd6704cb493ae6fbd42cdd18
 >>>>>>> develop:Assets/BossRoom/Prefabs/Actions.meta

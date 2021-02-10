@@ -1,5 +1,13 @@
 fileFormatVersion: 2
+<<<<<<< HEAD
+<<<<<<< HEAD:Assets/BossRoom/Prefabs/Dungeon/Dungeon Pieces/animated.meta
 guid: 3a9f853f412d0884e95d5856601c46b7
+=======
+guid: 1cea9a73dd6704cb493ae6fbd42cdd18
+>>>>>>> develop:Assets/BossRoom/Prefabs/Actions.meta
+=======
+guid: 3a9f853f412d0884e95d5856601c46b7
+>>>>>>> develop
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

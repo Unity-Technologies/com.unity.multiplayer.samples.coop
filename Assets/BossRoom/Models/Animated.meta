@@ -1,5 +1,6 @@
 fileFormatVersion: 2
 <<<<<<< HEAD
+<<<<<<< HEAD
 <<<<<<< HEAD:Assets/BossRoom/Models/Animated.meta
 guid: d17afa65ef0bdf04aa0887465a3a1005
 =======
@@ -7,6 +8,13 @@ guid: 1cea9a73dd6704cb493ae6fbd42cdd18
 >>>>>>> develop:Assets/BossRoom/Prefabs/Actions.meta
 =======
 guid: d17afa65ef0bdf04aa0887465a3a1005
+>>>>>>> develop
+=======
+<<<<<<< HEAD:Assets/BossRoom/GameData/Action/Boss.meta
+guid: 3475ba239bdef5c41a29797d5db6bed5
+=======
+guid: d17afa65ef0bdf04aa0887465a3a1005
+>>>>>>> develop:Assets/BossRoom/Models/Animated.meta
 >>>>>>> develop
 folderAsset: yes
 DefaultImporter:
