@@ -22,7 +22,7 @@ namespace BossRoom.Server
             if (!HasValidTarget())
             {
                 Debug.Log("Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore");
-                return false;
+                return ActionConclusion.Stop;
             }
 
             m_Target = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
@@ -33,14 +33,14 @@ namespace BossRoom.Server
             if (StopIfDone())
             {
                 m_Parent.transform.LookAt(currentTargetPos); //even if we didn't move, snap to face the target!
-                return false;
+                return ActionConclusion.Stop;
             }
 
             if (!m_Movement.IsPerformingForcedMovement())
             {
                 m_Movement.FollowTransform(m_Target.transform);
             }
-            return true;
+            return ActionConclusion.Continue;
         }
 
         /// <summary>
@@ -76,7 +76,7 @@ namespace BossRoom.Server
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool Update()
         {
-            if (StopIfDone()) { return false; }
+            if (StopIfDone()) { return ActionConclusion.Stop; }
 
             // Keep re-assigning our chase target whenever possible.
             // This way, if we get Knocked Back mid-chase, we pick right back up and continue the chase.
@@ -85,7 +85,7 @@ namespace BossRoom.Server
                 m_Movement.FollowTransform(m_Target.transform);
             }
 
-            return true;
+            return ActionConclusion.Continue;
         }
 
         public override void Cancel()
