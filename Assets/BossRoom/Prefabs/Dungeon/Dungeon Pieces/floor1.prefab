@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7019901313856816375}
   - component: {fileID: 7061959325340752229}
   - component: {fileID: 3946375560253007557}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: floor1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -57,10 +57,11 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a5ae1fec41c1a7941a54415341be0e8f, type: 2}
+  - {fileID: 2100000, guid: de7d8b0cdceac8140b98a459d9533db4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -81,6 +82,7 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
 --- !u!65 &3946375560253007557
 BoxCollider:
   m_ObjectHideFlags: 0

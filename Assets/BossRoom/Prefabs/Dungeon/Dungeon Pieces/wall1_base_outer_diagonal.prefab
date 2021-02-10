@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4437348436208465204}
   - component: {fileID: 3432985996055369824}
   - component: {fileID: 2212805465033422730}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: wall1_base_outer_diagonal
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: a5ae1fec41c1a7941a54415341be0e8f, type: 2}
+  - {fileID: 2100000, guid: de7d8b0cdceac8140b98a459d9533db4, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -92,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5915529853195630635}
   - component: {fileID: 7898993292670171814}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Diagonal_Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
