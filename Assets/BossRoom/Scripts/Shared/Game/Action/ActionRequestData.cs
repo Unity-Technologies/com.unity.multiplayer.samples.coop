@@ -1,4 +1,6 @@
+using System;
 using System.IO;
+using MLAPI.Serialization;
 using UnityEngine;
 
 namespace BossRoom
@@ -67,7 +69,7 @@ namespace BossRoom
     /// the Action gets played, and also what gets sent server->client to broadcast the action event. Note that the OUTCOMES of the action effect
     /// don't ride along with this object when it is broadcast to clients; that information is sync'd separately, usually by NetworkedVars.
     /// </summary>
-    public struct ActionRequestData : MLAPI.Serialization.IBitWritable
+    public struct ActionRequestData : INetworkSerializable
     {
         public ActionType ActionTypeEnum;      //the action to play.
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill.
@@ -80,9 +82,7 @@ namespace BossRoom
 
         //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below.
 
-
-
-        [System.Flags]
+        [Flags]
         private enum PackFlags
         {
             None = 0,
@@ -130,63 +130,38 @@ namespace BossRoom
             return flags;
         }
 
-        public void Read(Stream stream)
+        public void NetworkSerialize(BitSerializer serializer)
         {
-            using (var reader = MLAPI.Serialization.Pooled.PooledBitReader.Get(stream))
+            PackFlags flags = PackFlags.None;
+            if (!serializer.IsReading)
             {
-                ActionTypeEnum = (ActionType)reader.ReadInt16();
-                PackFlags flags = (PackFlags)reader.ReadByte();
+                flags = GetPackFlags();
+            }
 
-                ShouldClose = (flags & PackFlags.ShouldClose) != 0;
+            serializer.Serialize(ref ActionTypeEnum);
+            serializer.Serialize(ref flags);
+
+            if (serializer.IsReading)
+            {
                 ShouldQueue = (flags & PackFlags.ShouldQueue) != 0;
                 CancelMovement = (flags & PackFlags.CancelMovement) != 0;
-
-                if ((flags & PackFlags.HasPosition) != 0)
-                {
-                    Position = reader.ReadVector3();
-                }
-                if ((flags & PackFlags.HasDirection) != 0)
-                {
-                    Direction = reader.ReadVector3();
-                }
-                if ((flags & PackFlags.HasTargetIds) != 0)
-                {
-                    TargetIds = reader.ReadULongArray();
-                }
-                if ((flags & PackFlags.HasAmount) != 0)
-                {
-                    Amount = reader.ReadSingle();
-                }
             }
-        }
 
-        public void Write(Stream stream)
-        {
-            using (var writer = MLAPI.Serialization.Pooled.PooledBitWriter.Get(stream))
+            if ((flags & PackFlags.HasPosition) != 0)
             {
-                PackFlags flags = GetPackFlags();
-
-                writer.WriteInt16((short)ActionTypeEnum);
-                writer.WriteByte((byte)flags);
-
-                //booleans are implicitly serialized just by setting their respective bit in GetPackFlags.
-
-                if ((flags & PackFlags.HasPosition) != 0)
-                {
-                    writer.WriteVector3(Position);
-                }
-                if ((flags & PackFlags.HasDirection) != 0)
-                {
-                    writer.WriteVector3(Direction);
-                }
-                if ((flags & PackFlags.HasTargetIds) != 0)
-                {
-                    writer.WriteULongArray(TargetIds);
-                }
-                if ((flags & PackFlags.HasAmount) != 0)
-                {
-                    writer.WriteSingle(Amount);
-                }
+                serializer.Serialize(ref Position);
+            }
+            if ((flags & PackFlags.HasDirection) != 0)
+            {
+                serializer.Serialize(ref Direction);
+            }
+            if ((flags & PackFlags.HasTargetIds) != 0)
+            {
+                serializer.Serialize(ref TargetIds);
+            }
+            if ((flags & PackFlags.HasAmount) != 0)
+            {
+                serializer.Serialize(ref Amount);
             }
         }
     }

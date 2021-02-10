@@ -97,7 +97,7 @@ namespace BossRoom
         /// RPC to send inputs for this character from a client to a server.
         /// </summary>
         /// <param name="movementTarget">The position which this character should move towards.</param>
-        [ServerRPC]
+        [ServerRpc]
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
             ReceivedClientInput?.Invoke(movementTarget);
@@ -121,11 +121,7 @@ namespace BossRoom
         /// <param name="data">Data about which action to play an dits associated details. </param>
         public void ClientSendActionRequest(ref ActionRequestData action)
         {
-            using (PooledBitStream stream = PooledBitStream.Get())
-            {
-                action.Write(stream);
-                InvokeServerRpcPerformance(RecvDoActionsServer, stream);
-            }
+            RecvDoActionServerRPC(ref data);
         }
 
         /// <summary>
@@ -134,27 +130,19 @@ namespace BossRoom
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
         public void ServerBroadcastAction(ref ActionRequestData data)
         {
-            using (PooledBitStream stream = PooledBitStream.Get())
-            {
-                data.Write(stream);
-                InvokeClientRpcOnEveryonePerformance(RecvDoActionClient, stream);
-            }
+            RecvDoActionClientRPC(ref data);
         }
 
-        [ClientRPC]
-        private void RecvDoActionClient(ulong clientId, Stream stream)
+        [ClientRpc]
+        private void RecvDoActionClientRPC(ref ActionRequestData data)
         {
-            var data = new ActionRequestData();
-            data.Read(stream);
             DoActionEventClient?.Invoke(data);
         }
 
-        [ServerRPC]
-        private void RecvDoActionsServer(ulong clientId, Stream stream)
+        [ServerRpc]
+        private void RecvDoActionServerRPC(ref ActionRequestData data)
         {
-            var action = new ActionRequestData();
-            action.Read(stream);
-            DoActionEventServer?.Invoke(action);
+            DoActionEventServer?.Invoke(data);
         }
 
         // UTILITY AND SPECIAL-PURPOSE RPCs
@@ -172,11 +160,11 @@ namespace BossRoom
         /// </summary>
         public void ServerBroadcastHitReaction()
         {
-            InvokeClientRpcOnEveryone(RecvPerformHitReactionClient);
+            RecvPerformHitReactionClientRPC();
         }
 
-        [ClientRPC]
-        public void RecvPerformHitReactionClient()
+        [ClientRpc]
+        public void RecvPerformHitReactionClientRPC()
         {
             OnPerformHitReaction?.Invoke();
         }
