@@ -31,8 +31,10 @@ namespace BossRoom
         /// </summary>
         /// <param name="networkID"> Network ID of this NetworkedObject. </param>
         /// <param name="networkedHealth"> Health as Networked Int. </param>
+        /// <param name="maxHP"> Max Health value of a health bar. </param>
         /// <param name="trackedTransform"> Health bar will appear at this Transform. </param>
-        public void AddHealthBar(ulong networkID, NetworkedVarInt networkedHealth, Transform trackedTransform)
+        public void AddHealthBar(ulong networkID, NetworkedVarInt networkedHealth, int maxHP,
+            Transform trackedTransform)
         {
             if (m_HealthItems.ContainsKey(networkID))
             {
@@ -41,7 +43,7 @@ namespace BossRoom
 
             var healthItem = new HealthItem();
             var healthBarClone = Instantiate(m_HealthBarPrefab, transform);
-            healthBarClone.InitializeSlider(networkedHealth);
+            healthBarClone.InitializeSlider(networkedHealth, maxHP);
             healthItem.HealthBar = healthBarClone;
             healthItem.TrackedTransform = trackedTransform;
             m_HealthItems.Add(networkID, healthItem);

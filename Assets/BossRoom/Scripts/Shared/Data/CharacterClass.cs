@@ -22,10 +22,7 @@ namespace BossRoom
         public ActionType Skill3;
 
         [Tooltip("Starting HP of this character class")]
-        [SerializeField]
-        IntVariable m_BaseHPVariable;
-
-        public int BaseHP => m_BaseHPVariable.Value;
+        public IntVariable BaseHP;
 
         [Tooltip("Starting Mana of this character class")]
         public int BaseMana;

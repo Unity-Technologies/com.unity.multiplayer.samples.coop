@@ -68,8 +68,7 @@ namespace BossRoom.Server
                 NetState.OnReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
-                NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
-                NetState.Mana.Value = NetState.CharacterData.BaseMana;
+                NetState.ApplyCharacterData();
 
                 if (m_StartingAction != ActionType.None)
                 {
@@ -88,7 +87,7 @@ namespace BossRoom.Server
             //the character needs to be alive in order to be able to play actions
             if (NetState.NetworkLifeState.Value == LifeState.Alive)
             {
-                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
+                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct.
                 this.m_ActionPlayer.PlayAction(ref data);
             }
         }
@@ -112,7 +111,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Clear all active Actions. 
+        /// Clear all active Actions.
         /// </summary>
         public void ClearActions()
         {
@@ -125,18 +124,18 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Receive an HP change from somewhere. Could be healing or damage. 
+        /// Receive an HP change from somewhere. Could be healing or damage.
         /// </summary>
         /// <param name="Inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
-            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight. 
+            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
 
             NetState.HitPoints.Value += HP;
 
-            //we can't currently heal a dead character back to Alive state. 
+            //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
             if (NetState.HitPoints.Value <= 0)
             {

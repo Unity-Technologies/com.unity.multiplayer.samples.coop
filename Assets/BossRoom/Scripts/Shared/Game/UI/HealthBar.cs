@@ -16,13 +16,13 @@ namespace BossRoom
 
         NetworkedVarInt m_NetworkedHealth;
 
-        public void InitializeSlider(NetworkedVarInt networkedHealth)
+        public void InitializeSlider(NetworkedVarInt networkedHealth, int maxValue)
         {
             m_NetworkedHealth = networkedHealth;
 
             m_HitPointsSlider.minValue = 0;
-            m_HitPointsSlider.maxValue = m_NetworkedHealth.Value;
-            m_HitPointsSlider.value = m_NetworkedHealth.Value;
+            m_HitPointsSlider.maxValue = maxValue;
+            m_HitPointsSlider.value = maxValue;
 
             m_NetworkedHealth.OnValueChanged += HealthChanged;
         }

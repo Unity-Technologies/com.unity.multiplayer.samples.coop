@@ -20,6 +20,7 @@ GameObject:
   - component: {fileID: 7690172137830037487}
   - component: {fileID: -909640835356089789}
   - component: {fileID: 514105321093282895}
+  - component: {fileID: 4462343263575301329}
   m_Layer: 3
   m_Name: Character
   m_TagString: Player
@@ -73,10 +74,7 @@ MonoBehaviour:
   m_NetworkHealthState: {fileID: 514105321093282895}
   Mana:
     InternalValue: 10
-  NetworkLifeState:
-    InternalValue: 0
-  CharacterType:
-    InternalValue: 0
+  m_NetworkCharacterTypeState: {fileID: 4462343263575301329}
   CharacterAppearance:
     InternalValue: 0
 --- !u!114 &4600110157238723776
@@ -168,6 +166,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920a440eb254ba348915767fd046027a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_StartingAction: 0
   m_BrainEnabled: 1
 --- !u!114 &7690172137830037487
 MonoBehaviour:
@@ -206,4 +205,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   HitPoints:
+    InternalValue: 0
+--- !u!114 &4462343263575301329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600110157238723781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 082f826a48a1017479079f944dff718f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterType:
     InternalValue: 0

@@ -13,6 +13,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NetworkHealthState: {fileID: 848206395698055335}
+  m_BaseHP: {fileID: 11400000, guid: f393c51c2bce455478a0b995b8d4e3dd, type: 2}
+  m_TransformToTrack: {fileID: 0}
 --- !u!1001 &2203142923062114684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20,6 +22,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2954370187172202191, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: CharacterType.InternalValue
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3288448142974003537, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_Name
       value: ImpBoss
@@ -79,6 +85,10 @@ PrefabInstance:
     - target: {fileID: 3288448142974003547, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3429869860599894341, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: CharacterType.InternalValue
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8273023854864590149, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_Height

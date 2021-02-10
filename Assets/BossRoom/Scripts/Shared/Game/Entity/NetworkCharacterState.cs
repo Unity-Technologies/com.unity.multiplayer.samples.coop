@@ -18,7 +18,7 @@ namespace BossRoom
     /// <summary>
     /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
-    [RequireComponent(typeof(NetworkHealthState))]
+    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
     public class NetworkCharacterState : NetworkedBehaviour, INetMovement
     {
         /// <summary>
@@ -66,8 +66,10 @@ namespace BossRoom
             }
         }
 
-        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
-        public NetworkedVar<CharacterTypeEnum> CharacterType;
+        [SerializeField]
+        NetworkCharacterTypeState m_NetworkCharacterTypeState;
+
+        public NetworkedVar<CharacterTypeEnum> CharacterType => m_NetworkCharacterTypeState.CharacterType;
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
@@ -91,6 +93,17 @@ namespace BossRoom
             OnReceivedClientInput?.Invoke(movementTarget);
         }
 
+        public void SetPlayer(CharacterTypeEnum playerType, int playerAppearance)
+        {
+            CharacterType.Value = playerType;
+            CharacterAppearance.Value = playerAppearance;
+        }
+
+        public void ApplyCharacterData()
+        {
+            HitPoints.Value = CharacterData.BaseHP.Value;
+            Mana.Value = CharacterData.BaseMana;
+        }
 
         // ACTION SYSTEM
 

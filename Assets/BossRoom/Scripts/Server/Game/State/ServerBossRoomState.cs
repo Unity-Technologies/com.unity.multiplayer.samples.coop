@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BossRoom.Server
 {
     /// <summary>
-    /// Server specialization of core BossRoom game logic. 
+    /// Server specialization of core BossRoom game logic.
     /// </summary>
     public class ServerBossRoomState : GameStateBehaviour
     {
@@ -32,7 +32,7 @@ namespace BossRoom.Server
             base.NetworkStart();
             if (!IsServer)
             {
-                this.enabled = false;
+                enabled = false;
             }
             else
             {
@@ -41,7 +41,7 @@ namespace BossRoom.Server
                 // the client is officially allowed to be here.
                 NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
 
-                // if any other players are already connected to us (i.e. they connected while we were 
+                // if any other players are already connected to us (i.e. they connected while we were
                 // in the login screen), give them player characters
                 foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
                 {
@@ -52,12 +52,12 @@ namespace BossRoom.Server
 
         private void OnClientConnected(ulong clientId)
         {
-            // FIXME: this is a work-around for an MLAPI timing problem which happens semi-reliably; 
-            // when it happens, it generates the same errors and has the same behavior as this: 
+            // FIXME: this is a work-around for an MLAPI timing problem which happens semi-reliably;
+            // when it happens, it generates the same errors and has the same behavior as this:
             //      https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/328
             // We can't use the workaround suggested there, which is to avoid using MLAPI's scene manager.
             // Instead, we wait a bit for MLAPI to get its state organized, because we can't safely create entities in OnClientConnected().
-            // (Note: on further explortation, I think this is due to some sort of scene-loading synchronization: the new client is briefly 
+            // (Note: on further explortation, I think this is due to some sort of scene-loading synchronization: the new client is briefly
             // "in" the lobby screen, but has already told the server it's in the game scene. Or something similar.)
             StartCoroutine(CoroSpawnPlayer(clientId));
         }
@@ -72,8 +72,7 @@ namespace BossRoom.Server
         {
             var newPlayer = Instantiate(m_PlayerPrefab);
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
-            netState.CharacterType.Value = m_DefaultPlayerType;
-            netState.CharacterAppearance.Value = m_DefaultPlayerAppearance;
+            netState.SetPlayer(m_DefaultPlayerType, m_DefaultPlayerAppearance);
             newPlayer.SpawnAsPlayerObject(clientId);
         }
 
