@@ -48,6 +48,11 @@ namespace BossRoom.Visual
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
+            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
+            // we should investigate for a way to have the imps already appear as down when connecting.
+            // todo gomps-220
+            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
+
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent = transform.parent;
             Parent.GetComponent<Client.ClientCharacter>().ChildVizObject = this;
