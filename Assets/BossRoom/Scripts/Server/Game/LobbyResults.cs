@@ -9,6 +9,8 @@ namespace BossRoom.Server
     /// </summary>
     public class LobbyResults
     {
+        public readonly Dictionary<ulong, CharSelectChoice> Choices = new Dictionary<ulong, CharSelectChoice>();
+
         public struct CharSelectChoice
         {
             public int PlayerNumber;
@@ -22,6 +24,5 @@ namespace BossRoom.Server
                 Appearance = appearanceIdx;
             }
         }
-        public readonly Dictionary<ulong, CharSelectChoice> Choices = new Dictionary<ulong, CharSelectChoice>();
     }
 }

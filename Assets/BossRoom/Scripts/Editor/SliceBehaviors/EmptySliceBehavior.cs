@@ -12,6 +12,5 @@ namespace BossRoom.Scripts.Editor.SliceBehaviors
         public override void OnSliceMessageReceived(int senderId, string message)
         {
         }
-
     }
 }
