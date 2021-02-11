@@ -219,8 +219,8 @@ namespace BossRoom.Client
             else
             {
                 m_InSceneCharacter.gameObject.SetActive(true);
-                m_InSceneCharacter.SwapToModel(CharSelectData.k_LobbySeatConfigurations[seatIdx].CharacterArtIdx);
-                m_ClassInfoBox.ConfigureForClass(CharSelectData.k_LobbySeatConfigurations[seatIdx].Class);
+                m_InSceneCharacter.SwapToModel(CharSelectData.LobbySeatConfigurations[seatIdx].CharacterArtIdx);
+                m_ClassInfoBox.ConfigureForClass(CharSelectData.LobbySeatConfigurations[seatIdx].Class);
                 if (state == CharSelectData.SeatState.LockedIn && !m_HasLocalPlayerLockedIn)
                 {
                     // the local player has locked in their seat choice! Rearrange the UI appropriately

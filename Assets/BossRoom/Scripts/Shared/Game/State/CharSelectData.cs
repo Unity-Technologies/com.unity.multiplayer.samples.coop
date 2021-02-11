@@ -25,6 +25,7 @@ namespace BossRoom
             LobbyFull,
         }
 
+        [Serializable]
         public struct LobbySeatConfiguration
         {
             public CharacterTypeEnum Class;
@@ -37,9 +38,11 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// Each "seat" in the lobby has an assigned class/gender, and this tells us what it is
+        /// Indicates which class and appearance is used for each "seat" in the lobby.
+        /// Note: this must match up with the order of classes/appearances in the lobby UI elements!
         /// </summary>
-        public static LobbySeatConfiguration[] k_LobbySeatConfigurations = new LobbySeatConfiguration[]
+        [SerializeField]
+        public LobbySeatConfiguration[] LobbySeatConfigurations = new LobbySeatConfiguration[]
         {
             new LobbySeatConfiguration(CharacterTypeEnum.Tank, 0),
             new LobbySeatConfiguration(CharacterTypeEnum.Archer, 2),
