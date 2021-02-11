@@ -27,11 +27,19 @@ namespace BossRoom.Server
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
+        // Cached component reference
+        private ServerCharacterMovement m_Movement;
+
         /// <summary>
         /// Temp place to store all the active characters (to avoid having to
         /// perform insanely-expensive GameObject.Find operations during Update)
         /// </summary>
         private static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
+
+        private void Awake()
+        {
+            m_Movement = GetComponent<ServerCharacterMovement>();
+        }
 
         private void OnEnable()
         {
@@ -85,7 +93,7 @@ namespace BossRoom.Server
         public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
-            if (NetState.NetworkLifeState.Value == LifeState.Alive)
+            if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 if (action.CancelMovement)
                 {
@@ -98,10 +106,10 @@ namespace BossRoom.Server
 
         private void OnClientMoveRequest(Vector3 targetPosition)
         {
-            if (NetState.NetworkLifeState.Value == LifeState.Alive)
+            if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 ClearActions();
-                GetComponent<ServerCharacterMovement>().SetMovementTarget(targetPosition);
+                m_Movement.SetMovementTarget(targetPosition);
             }
         }
 
@@ -110,7 +118,7 @@ namespace BossRoom.Server
             if (lifeState != LifeState.Alive)
             {
                 ClearActions();
-                GetComponent<ServerCharacterMovement>().CancelMove();
+                m_Movement.CancelMove();
             }
         }
 
@@ -177,6 +185,11 @@ namespace BossRoom.Server
             {
                 m_AIBrain.Update();
             }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            m_ActionPlayer.OnCollisionEnter(collision);
         }
     }
 }

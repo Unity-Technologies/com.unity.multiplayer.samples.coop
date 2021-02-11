@@ -15,7 +15,7 @@ namespace BossRoom.Visual
         private bool m_ImpactPlayed;
 
         /// <summary>
-        /// When we detect if our original target is still around, we use a bit of padding on the range check. 
+        /// When we detect if our original target is still around, we use a bit of padding on the range check.
         /// </summary>
         private const float k_RangePadding = 3f;
 
@@ -27,7 +27,7 @@ namespace BossRoom.Visual
 
         public override bool Update()
         {
-            return true;
+            return ActionConclusion.Continue;
         }
 
         public override void OnAnimEvent(string id)
@@ -41,7 +41,7 @@ namespace BossRoom.Visual
         public override void End()
         {
             //if this didn't already happen, make sure it gets a chance to run. This could have failed to run because
-            //our animationclip didn't have the "impact" event properly configured (as one possibility). 
+            //our animationclip didn't have the "impact" event properly configured (as one possibility).
             PlayHitReact();
         }
 
@@ -64,7 +64,7 @@ namespace BossRoom.Visual
             }
 
             //in the future we may do another physics check to handle the case where a target "ran under our weapon".
-            //But for now, if the original target is no longer present, then we just don't play our hit react on anything. 
+            //But for now, if the original target is no longer present, then we just don't play our hit react on anything.
         }
     }
 }

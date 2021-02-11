@@ -31,7 +31,19 @@ namespace BossRoom
         /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
+
+        /// <summary>
+        /// The speed that the character is currently allowed to move, according to the server.
+        /// </summary>
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
+
+        /// <summary>
+        /// Used by animations. Indicates how fast the character should "look like" they're moving,
+        /// according to the server. This is a value from 0 (not moving) to 1 (moving as fast as possible).
+        /// This does not always correspond to the NetworkMovementSpeed; for instance when a player is being
+        /// "knocked back", they are moving, but they visually look like they're standing still.
+        /// </summary>
+        public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
 
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.
@@ -50,7 +62,7 @@ namespace BossRoom
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
-        /// <summary>
+       /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
@@ -64,6 +76,7 @@ namespace BossRoom
                 return GameDataSource.Instance.CharacterDataByType[CharacterType.Value];
             }
         }
+
 
         [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;
@@ -90,7 +103,6 @@ namespace BossRoom
             OnReceivedClientInput?.Invoke(movementTarget);
         }
 
-
         // ACTION SYSTEM
 
         /// <summary>
@@ -106,6 +118,7 @@ namespace BossRoom
         /// <summary>
         /// Client->Server RPC that sends a request to play an action.
         /// </summary>
+        /// <param name="data">Data about which action to play an dits associated details. </param>
         public void ClientSendActionRequest(ref ActionRequestData action)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
@@ -142,6 +155,30 @@ namespace BossRoom
             var action = new ActionRequestData();
             action.Read(stream);
             DoActionEventServer?.Invoke(action);
+        }
+
+        // UTILITY AND SPECIAL-PURPOSE RPCs
+
+        /// <summary>
+        /// Called when the character needs to perform a one-off "I've been hit" animation.
+        /// </summary>
+        public event Action OnPerformHitReaction;
+
+        /// <summary>
+        /// Called by Actions when this character needs to perform a one-off "ouch" reaction-animation.
+        /// Note: this is not the normal way to trigger hit-react animations! Normally the client-side
+        /// ActionFX directly controls animation. But some Actions can have unpredictable targets. In cases
+        /// where the ActionFX can't predict who gets hit, the Action calls this to manually trigger animation.
+        /// </summary>
+        public void ServerBroadcastHitReaction()
+        {
+            InvokeClientRpcOnEveryone(RecvPerformHitReactionClient);
+        }
+
+        [ClientRPC]
+        public void RecvPerformHitReactionClient()
+        {
+            OnPerformHitReaction?.Invoke();
         }
     }
 }

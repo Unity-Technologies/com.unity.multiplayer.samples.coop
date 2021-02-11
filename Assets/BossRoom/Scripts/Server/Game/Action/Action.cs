@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace BossRoom.Server
 {
     /// <summary>
@@ -50,6 +52,8 @@ namespace BossRoom.Server
         /// </summary>
         public virtual void Cancel() { }
 
+        public virtual void OnCollisionEnter(Collision collision) { }
+
 
         /// <summary>
         /// Factory method that creates Actions from their request data.
@@ -59,8 +63,7 @@ namespace BossRoom.Server
         /// <returns>the newly created action. </returns>
         public static Action MakeAction(ServerCharacter parent, ref ActionRequestData data)
         {
-            ActionDescription actionDesc;
-            if (!GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out actionDesc))
+            if (!GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out var actionDesc))
             {
                 throw new System.Exception($"Trying to create Action {data.ActionTypeEnum} but it isn't defined on the GameDataSource!");
             }
@@ -70,11 +73,13 @@ namespace BossRoom.Server
             switch (logic)
             {
                 case ActionLogic.Melee: return new MeleeAction(parent, ref data);
+                case ActionLogic.AoE: return new AoeAction(parent, ref data);
                 case ActionLogic.Chase: return new ChaseAction(parent, ref data);
                 case ActionLogic.Revive: return new ReviveAction(parent, ref data);
                 case ActionLogic.RangedFXTargeted: return new FXProjectileTargetedAction(parent, ref data);
                 case ActionLogic.LaunchProjectile: return new LaunchProjectileAction(parent, ref data);
                 case ActionLogic.Emote: return new EmoteAction(parent, ref data);
+                case ActionLogic.Trample: return new TrampleAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

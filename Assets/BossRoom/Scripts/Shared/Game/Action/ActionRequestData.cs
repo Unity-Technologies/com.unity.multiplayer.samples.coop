@@ -17,11 +17,13 @@ namespace BossRoom
         ImpBossBaseAttack,
         GeneralChase,
         GeneralRevive,
+
         DriveArrow,
         Emote1,
         Emote2,
         Emote3,
         Emote4,
+        TankTestability,
     }
 
 
@@ -37,6 +39,8 @@ namespace BossRoom
         LaunchProjectile,
         Emote,
         RangedFXTargeted,
+        AoE,
+        Trample,
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
@@ -57,7 +61,6 @@ namespace BossRoom
         }
 
     }
-
 
     /// <summary>
     /// Comprehensive class that contains information needed to play back any action on the server. This is what gets sent client->server when
@@ -187,6 +190,5 @@ namespace BossRoom
             }
         }
     }
-
 }
 
