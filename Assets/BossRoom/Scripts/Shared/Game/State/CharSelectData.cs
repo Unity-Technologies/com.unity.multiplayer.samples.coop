@@ -1,8 +1,10 @@
 using MLAPI;
 using MLAPI.Messaging;
+using MLAPI.NetworkedVar;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using UnityEngine;
 
 namespace BossRoom
 {
@@ -11,50 +13,78 @@ namespace BossRoom
     /// </summary>
     public class CharSelectData : NetworkedBehaviour
     {
-        public enum SlotState
+        public enum SeatState
         {
-            INACTIVE,
-            ACTIVE,
-            LOCKEDIN,
+            Inactive,
+            Active,
+            LockedIn,
         }
 
         public enum FatalLobbyError
         {
-            LOBBY_FULL,
+            LobbyFull,
         }
+
+        public struct LobbySeatConfiguration
+        {
+            public CharacterTypeEnum Class;
+            public int CharacterArtIdx;
+            public LobbySeatConfiguration(CharacterTypeEnum charClass, int artIdx)
+            {
+                Class = charClass;
+                CharacterArtIdx = artIdx;
+            }
+        }
+
+        /// <summary>
+        /// Each "seat" in the lobby has an assigned class/gender, and this tells us what it is
+        /// </summary>
+        public static LobbySeatConfiguration[] k_LobbySeatConfigurations = new LobbySeatConfiguration[]
+        {
+            new LobbySeatConfiguration(CharacterTypeEnum.Tank, 0),
+            new LobbySeatConfiguration(CharacterTypeEnum.Archer, 2),
+            new LobbySeatConfiguration(CharacterTypeEnum.Mage, 4),
+            new LobbySeatConfiguration(CharacterTypeEnum.Rogue, 6),
+            new LobbySeatConfiguration(CharacterTypeEnum.Tank, 1),
+            new LobbySeatConfiguration(CharacterTypeEnum.Archer, 3),
+            new LobbySeatConfiguration(CharacterTypeEnum.Mage, 5),
+            new LobbySeatConfiguration(CharacterTypeEnum.Rogue, 7),
+        };
 
         public const int k_MaxLobbyPlayers = 8;
 
         /// <summary>
-        /// Describes one of the eight lobby slots in the character-select screen.
+        /// Describes one of players in the lobby, and their current character-select status.
         /// </summary>
-        public struct CharSelectSlot : MLAPI.Serialization.IBitWritable
+        public struct LobbyPlayerState : MLAPI.Serialization.IBitWritable
         {
-            public CharacterTypeEnum Class;
-            public bool IsMale;
-            public SlotState State;
+            public ulong ClientId;
+            public string PlayerName;
+            public int PlayerNum; // this player's assigned "P#". (0=P1, 1=P2, etc.)
+            public int SeatIdx; // the latest seat they were in. -1 means none
+            public SeatState SeatState;
+            public float LastChangeTime;
 
-            public CharSelectSlot(CharacterTypeEnum Class, bool IsMale, SlotState State)
+            public LobbyPlayerState(ulong clientId, string name, int playerNum, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
             {
-                this.State = State;
-                this.IsMale = IsMale;
-                this.Class = Class;
-            }
-
-            public CharSelectSlot(SlotState State)
-            {
-                this.State = State;
-                this.IsMale = true;
-                this.Class = CharacterTypeEnum.Tank;
+                ClientId = clientId;
+                PlayerName = name;
+                PlayerNum = playerNum;
+                SeatState = state;
+                SeatIdx = seatIdx;
+                LastChangeTime = lastChangeTime;
             }
 
             public void Read(Stream stream)
             {
                 using (var reader = MLAPI.Serialization.Pooled.PooledBitReader.Get(stream))
                 {
-                    Class = (CharacterTypeEnum)reader.ReadInt16();
-                    IsMale = reader.ReadBool();
-                    State = (SlotState)reader.ReadByte();
+                    ClientId = reader.ReadUInt64();
+                    PlayerName = reader.ReadString().ToString();
+                    PlayerNum = reader.ReadInt16();
+                    SeatState = (SeatState)reader.ReadInt16();
+                    SeatIdx = reader.ReadInt16();
+                    LastChangeTime = reader.ReadSingle();
                 }
             }
 
@@ -62,37 +92,40 @@ namespace BossRoom
             {
                 using (var writer = MLAPI.Serialization.Pooled.PooledBitWriter.Get(stream))
                 {
-                    writer.WriteInt16((short)Class);
-                    writer.WriteBool(IsMale);
-                    writer.WriteByte((byte)State);
+                    writer.WriteUInt64(ClientId);
+                    writer.WriteString(PlayerName);
+                    writer.WriteInt16((short)PlayerNum);
+                    writer.WriteInt16((short)SeatState);
+                    writer.WriteInt16((short)SeatIdx);
+                    writer.WriteSingle(LastChangeTime);
                 }
             }
         }
 
         /// <summary>
-        /// Current state of each of the seats in the lobby.
+        /// Current state of all players in the lobby.
         /// </summary>
-        public MLAPI.NetworkedVar.Collections.NetworkedList<CharSelectSlot> CharacterSlots { get; private set; }
+        public MLAPI.NetworkedVar.Collections.NetworkedList<LobbyPlayerState> LobbyPlayers { get; } = new MLAPI.NetworkedVar.Collections.NetworkedList<LobbyPlayerState>();
 
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
         /// </summary>
-        public MLAPI.NetworkedVar.NetworkedVarBool IsLobbyLocked { get; } = new MLAPI.NetworkedVar.NetworkedVarBool(false);
+        public MLAPI.NetworkedVar.NetworkedVarBool IsLobbyClosed { get; } = new MLAPI.NetworkedVar.NetworkedVarBool(false);
 
         /// <summary>
         /// Client notification when the server has assigned this client a player Index (from 0 to 7);
         /// UI uses this tell whether we are "P1", "P2", etc. in the char-select UI
         /// </summary>
-        public event Action<int> OnAssignedLobbyIndex;
+        public event Action<int> OnAssignedPlayerNumber;
 
         /// <summary>
         /// RPC to tell a client which slot in the char-gen screen they will be using.
         /// </summary>
         /// <param name="idx">Index on the UI screen, starting at 0 for the first slot</param>
         [ClientRPC]
-        public void RpcAssignLobbyIndex(int idx)
+        public void RpcAssignPlayerNumber(int idx)
         {
-            OnAssignedLobbyIndex?.Invoke(idx);
+            OnAssignedPlayerNumber?.Invoke(idx);
         }
 
         /// <summary>
@@ -111,31 +144,17 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// Server notification when a client requests changes to their char-gen state
+        /// Server notification when a client requests a different lobby-seat, or locks in their seat choice
         /// </summary>
-        public event Action<ulong, CharSelectSlot> OnClientChangedSlot;
+        public event Action<ulong, int, bool> OnClientChangedSeat;
 
         /// <summary>
-        /// RPC to notify the server that a client has chosen their class and/or locked in their choice.
+        /// RPC to notify the server that a client has chosen a seat.
         /// </summary>
         [ServerRPC(RequireOwnership = false)]
-        public void RpcChangeSlot(ulong clientId, CharSelectSlot newSlot)
+        public void RpcChangeSeat(ulong clientId, int seatIdx, bool lockedIn)
         {
-            OnClientChangedSlot?.Invoke(clientId, newSlot);
+            OnClientChangedSeat?.Invoke(clientId, seatIdx, lockedIn);
         }
-
-        private void Awake()
-        {
-            List<CharSelectSlot> initialList = new List<CharSelectSlot>();
-            for (int i = 0; i < k_MaxLobbyPlayers; ++i)
-            {
-                initialList.Add(new CharSelectSlot(SlotState.INACTIVE));
-            }
-
-            // initialize the char-slots list with all the slots it will ever have
-            CharacterSlots = new MLAPI.NetworkedVar.Collections.NetworkedList<CharSelectSlot>(initialList);
-        }
-
     }
-
 }

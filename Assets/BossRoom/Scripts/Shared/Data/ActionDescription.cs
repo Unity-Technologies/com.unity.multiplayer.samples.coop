@@ -41,6 +41,18 @@ namespace BossRoom
 
         [Tooltip("If this Action spawns a projectile, how fast should that projectile move? (meters/second)")]
         public float ProjectileSpeed_m_s;
+
+        [Header("In-game description info (Only used for player abilities!)")]
+        [Tooltip("If this Action describes a player ability, this is the ability's iconic representation")]
+        public Sprite Icon;
+
+        [Tooltip("If this Action describes a player ability, this is the name we show for the ability")]
+        public string DisplayedName;
+
+        [Tooltip("If this Action describes a player ability, this is the tooltip description we show for the ability")]
+        [Multiline]
+        public string Description;
+
     }
 
 

@@ -32,5 +32,14 @@ namespace BossRoom
 
         [Tooltip("For NPCs, this will be used as the aggro radius at which enemies wake up and attack the player")]
         public float DetectRange;
+
+        [Tooltip("For players, this is the displayed \"class name\". (Not used for monsters)")]
+        public string DisplayedName;
+
+        [Tooltip("For players, this is the class banner (when active). (Not used for monsters)")]
+        public Sprite ClassBannerLit;
+
+        [Tooltip("For players, this is the class banner (when inactive). (Not used for monsters)")]
+        public Sprite ClassBannerUnlit;
     }
 }

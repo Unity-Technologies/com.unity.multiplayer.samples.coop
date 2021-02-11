@@ -14,67 +14,106 @@ namespace BossRoom.Server
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
 
-        private List<ulong> m_CharSlotClientIDs;
-
         private void Awake()
         {
             CharSelectData = GetComponent<CharSelectData>();
-            CharSelectData.OnClientChangedSlot += OnClientChangedSlot;
-            m_CharSlotClientIDs = new List<ulong>();
         }
 
-        private void OnClientChangedSlot(ulong clientId, CharSelectData.CharSelectSlot newSlot)
+        private void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
         {
-            if (CharSelectData.IsLobbyLocked.Value)
+            int idx = FindLobbyPlayerIdx(clientId);
+            if (idx == -1)
+                throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
+
+            if (CharSelectData.IsLobbyClosed.Value)
             {
                 // The user tried to change their class after everything was locked in... too late! Discard this choice
                 return;
             }
 
-            int idx = FindClientIdx(clientId);
-            if (idx == -1)
-                throw new System.Exception("OnClientChangedSlot: unknown client ID " + clientId);
-
-            CharSelectData.CharacterSlots[idx] = newSlot;
-            if (newSlot.State == CharSelectData.SlotState.LOCKEDIN)
+            // see if someone has already locked-in that seat! If so, too late... discard this choice
+            foreach (var playerInfo in CharSelectData.LobbyPlayers)
             {
-                // it's possible that this is the last person we were waiting for. See if we're fully locked in!
-                LockLobbyIfReady();
+                if (playerInfo.SeatIdx == newSeatIdx && playerInfo.SeatState == CharSelectData.SeatState.LockedIn)
+                {
+                    // yep, somebody already locked this choice in. Stop!
+                    return;
+                }
             }
+
+            CharSelectData.LobbyPlayers[idx] = new CharSelectData.LobbyPlayerState(clientId,
+                CharSelectData.LobbyPlayers[idx].PlayerName,
+                CharSelectData.LobbyPlayers[idx].PlayerNum,
+                lockedIn ? CharSelectData.SeatState.LockedIn : CharSelectData.SeatState.Active,
+                newSeatIdx,
+                Time.time);
+
+            if (lockedIn)
+            {
+                // to help the clients visually keep track of who's in what seat, we'll "kick out" any other players
+                // who were also in that seat. (Those players didn't click "Ready!" fast enough, somebody else took their seat!)
+                for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
+                {
+                    if (CharSelectData.LobbyPlayers[i].SeatIdx == newSeatIdx && i != idx)
+                    {
+                        // change this player to Inactive state.
+                        CharSelectData.LobbyPlayers[i] = new CharSelectData.LobbyPlayerState(
+                            CharSelectData.LobbyPlayers[i].ClientId,
+                            CharSelectData.LobbyPlayers[i].PlayerName,
+                            CharSelectData.LobbyPlayers[i].PlayerNum,
+                            CharSelectData.SeatState.Inactive);
+                    }
+                }
+            }
+
+            CloseLobbyIfReady();
+        }
+
+        /// <summary>
+        /// Returns the index of a client in the master LobbyPlayer list, or -1 if not found
+        /// </summary>
+        private int FindLobbyPlayerIdx(ulong clientId)
+        {
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
+            {
+                if (CharSelectData.LobbyPlayers[i].ClientId == clientId)
+                    return i;
+            }
+            return -1;
         }
 
         /// <summary>
         /// Looks through all our connections and sees if everyone has locked in their choice;
         /// if so, we lock in the whole lobby, save state, and begin the transition to gameplay
         /// </summary>
-        private void LockLobbyIfReady()
+        private void CloseLobbyIfReady()
         {
-            for (int i = 0; i < m_CharSlotClientIDs.Count; ++i)
+            foreach (var playerInfo in CharSelectData.LobbyPlayers)
             {
-                if (MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[i]) &&
-                    CharSelectData.CharacterSlots[i].State != CharSelectData.SlotState.LOCKEDIN)
-                {
-                    return; // this is a real player, and they are not ready to start, so we're done
-                }
+                if (playerInfo.SeatState != CharSelectData.SeatState.LockedIn)
+                    return; // nope, at least one player isn't locked in yet!
             }
 
             // everybody's ready at the same time! Lock it down!
-            CharSelectData.IsLobbyLocked.Value = true;
+            CharSelectData.IsLobbyClosed.Value = true;
 
             // remember our choices so the next scene can use the info
-            LobbyResults lobbyResults = new LobbyResults();
-            for (int i = 0; i < m_CharSlotClientIDs.Count; ++i)
-            {
-                if (MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[i]))
-                {
-                    var charSelectChoices = CharSelectData.CharacterSlots[i];
-                    lobbyResults.Choices[m_CharSlotClientIDs[i]] = new LobbyResults.CharSelectChoice(charSelectChoices.Class, charSelectChoices.IsMale);
-                }
-            }
-            GameStateRelay.SetRelayObject(lobbyResults);
+            SaveLobbyResults();
 
             // Delay a few seconds to give the UI time to react, then switch scenes
             StartCoroutine(CoroEndLobby());
+        }
+
+        private void SaveLobbyResults()
+        {
+            LobbyResults lobbyResults = new LobbyResults();
+            foreach (var playerInfo in CharSelectData.LobbyPlayers)
+            {
+                lobbyResults.Choices[playerInfo.ClientId] = new LobbyResults.CharSelectChoice(playerInfo.PlayerNum,
+                    CharSelectData.k_LobbySeatConfigurations[playerInfo.SeatIdx].Class,
+                    CharSelectData.k_LobbySeatConfigurations[playerInfo.SeatIdx].CharacterArtIdx);
+            }
+            GameStateRelay.SetRelayObject(lobbyResults);
         }
 
         private IEnumerator CoroEndLobby()
@@ -91,17 +130,10 @@ namespace BossRoom.Server
                 NetworkingManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkingManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
             }
-            CharSelectData.OnClientChangedSlot -= OnClientChangedSlot;
-        }
-
-        private int FindClientIdx(ulong clientId)
-        {
-            for (int i = 0; i < m_CharSlotClientIDs.Count; ++i)
+            if (CharSelectData)
             {
-                if (m_CharSlotClientIDs[i] == clientId)
-                    return i;
+                CharSelectData.OnClientChangedSeat -= OnClientChangedSeat;
             }
-            return -1;
         }
 
         public override void NetworkStart()
@@ -115,6 +147,7 @@ namespace BossRoom.Server
             {
                 NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
                 NetworkingManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
+                CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
                 if (IsHost)
                 {
@@ -156,56 +189,58 @@ namespace BossRoom.Server
                 yield return new WaitForFixedUpdate();
             else
                 yield return new WaitForSeconds(1);
-            AssignNewLobbyIndex(clientId);
+            SeatNewPlayer(clientId);
         }
 
-        private void AssignNewLobbyIndex(ulong clientId)
+        private int GetAvailablePlayerNum()
         {
-            int newClientIdx = -1;
-            // see if any of the existing slots are for a client ID that's dead.
-            // Note that we may find this new clientId is already in our list, if
-            // "reuse client IDs" is enabled... and it is! This means that somebody
-            // else was in the lobby, but then quit, and a new client got their ID.
-            for (int i = 0; i < m_CharSlotClientIDs.Count; ++i)
+            for (int possiblePlayerNum = 0; possiblePlayerNum < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNum)
             {
-                if (m_CharSlotClientIDs[i] == clientId ||
-                    !MLAPI.NetworkingManager.Singleton.ConnectedClients.ContainsKey(m_CharSlotClientIDs[i]))
+                bool found = false;
+                foreach (var playerState in CharSelectData.LobbyPlayers)
                 {
-                    // it's a dead slot; reuse it!
-                    m_CharSlotClientIDs[i] = clientId;
-                    newClientIdx = i;
-                    break;
+                    if (playerState.PlayerNum == possiblePlayerNum)
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    return possiblePlayerNum;
                 }
             }
+            // we couldn't get a Player# for this person... which means the lobby is full!
+            return -1;
+        }
 
-            if (newClientIdx == -1 && m_CharSlotClientIDs.Count < CharSelectData.k_MaxLobbyPlayers)
+        private void SeatNewPlayer(ulong clientId)
+        {
+            int playerNum = GetAvailablePlayerNum();
+            if (playerNum == -1)
             {
-                // all existing slots are in use; get a new one, if there's room...
-                newClientIdx = m_CharSlotClientIDs.Count;
-                m_CharSlotClientIDs.Add(clientId);
+                // we ran out of seats... there was no room!
+                CharSelectData.InvokeClientRpcOnClient(CharSelectData.RpcFatalLobbyError, clientId, CharSelectData.FatalLobbyError.LobbyFull, "MLAPI_INTERNAL");
+                return;
             }
 
-            if (newClientIdx == -1)
-            {
-                // there was no room!
-                CharSelectData.InvokeClientRpcOnClient(CharSelectData.RpcFatalLobbyError, clientId, CharSelectData.FatalLobbyError.LOBBY_FULL, "MLAPI_INTERNAL");
-            }
-            else
-            {
-                CharSelectData.InvokeClientRpcOnClient(CharSelectData.RpcAssignLobbyIndex, clientId, newClientIdx, "MLAPI_INTERNAL");
-            }
+            // this will be replaced with an auto-generated name
+            string playerName = "Player" + (playerNum+1);
+
+            CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
         }
 
         private void OnClientDisconnectCallback(ulong clientId)
         {
-            // find this player's old slot and set their visuals to inactive, so other players know they're gone.
-            int idx = FindClientIdx(clientId);
-            if (idx != -1)
+            // clear this client's PlayerNumber and any associated visuals (so other players know they're gone).
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
-                CharSelectData.CharacterSlots[idx] = new CharSelectData.CharSelectSlot(CharSelectData.SlotState.INACTIVE);
+                if (CharSelectData.LobbyPlayers[i].ClientId == clientId)
+                {
+                    CharSelectData.LobbyPlayers.RemoveAt(i);
+                    break;
+                }
             }
         }
     }
-
 }
-

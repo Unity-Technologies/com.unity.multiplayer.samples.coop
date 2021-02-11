@@ -18,6 +18,8 @@ namespace BossRoom
         GeneralChase,
         GeneralRevive,
         DriveArrow,
+        TankShieldBuff,
+        TankShieldRush,
     }
 
 

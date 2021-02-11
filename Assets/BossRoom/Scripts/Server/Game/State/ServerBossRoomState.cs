@@ -29,7 +29,7 @@ namespace BossRoom.Server
                 // We don't know about this client ID! That probably means they joined the game late, after the lobby was closed.
                 // We don't yet handle this scenario well (e.g. showing them a "wait for next game" screen, maybe?),
                 // so for now we just let them join. We'll pretend that they made them some generic character choices.
-                returnValue = new LobbyResults.CharSelectChoice(CharacterTypeEnum.Tank, true);
+                returnValue = new LobbyResults.CharSelectChoice(-1, CharacterTypeEnum.Tank, 0);
                 m_LobbyResults.Choices[clientId] = returnValue;
             }
             return returnValue;
@@ -90,7 +90,7 @@ namespace BossRoom.Server
             var lobbyResults = GetLobbyResultsForClient(clientId);
 
             netState.CharacterType.Value = lobbyResults.Class;
-            netState.CharacterAppearance.Value = lobbyResults.GetAppearance();
+            netState.CharacterAppearance.Value = lobbyResults.Appearance;
             newPlayer.SpawnAsPlayerObject(clientId);
         }
 

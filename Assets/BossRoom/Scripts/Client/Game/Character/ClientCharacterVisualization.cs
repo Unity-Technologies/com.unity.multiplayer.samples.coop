@@ -1,3 +1,4 @@
+using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
@@ -16,7 +17,7 @@ namespace BossRoom.Visual
         private Animator m_ClientVisualsAnimator;
 
         [SerializeField]
-        private ModelAppearanceSetter m_ModelSetter;
+        private CharacterSwap m_CharacterSwapper;
 
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
 
@@ -56,10 +57,13 @@ namespace BossRoom.Visual
 
             // listen for char-select info to change (in practice, this info doesn't
             // change, but we may not have the values set yet) ...
-            m_NetState.CharacterClass.OnValueChanged += OnCharacterClassChanged;
-            m_NetState.IsMale.OnValueChanged += OnIsMaleChanged;
-            // ...and visualize the current char-select values that we know about
-            ApplyCharacterClassAndGender();
+            m_NetState.CharacterAppearance.OnValueChanged += OnCharacterAppearanceChanged;
+
+            // ...and visualize the current char-select value that we know about
+            if (m_CharacterSwapper)
+            {
+                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
+            }
 
             if (!m_NetState.IsNpc)
             {
@@ -97,21 +101,11 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnCharacterClassChanged(CharacterTypeEnum oldValue, CharacterTypeEnum newValue)
+        private void OnCharacterAppearanceChanged(int oldValue, int newValue)
         {
-            ApplyCharacterClassAndGender();
-        }
-
-        private void OnIsMaleChanged(bool oldValue, bool newValue)
-        {
-            ApplyCharacterClassAndGender();
-        }
-
-        private void ApplyCharacterClassAndGender()
-        {
-            if (m_ModelSetter)
+            if (m_CharacterSwapper)
             {
-                m_ModelSetter.SetModel(m_NetState.CharacterClass.Value, m_NetState.IsMale.Value);
+                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
             }
         }
 
@@ -151,8 +145,6 @@ namespace BossRoom.Visual
 
             m_ActionViz.OnAnimEvent(id);
         }
-
-
 
         private void AttachCamera()
         {
