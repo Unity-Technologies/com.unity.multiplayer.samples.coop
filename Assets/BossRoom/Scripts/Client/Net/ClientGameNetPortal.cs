@@ -4,7 +4,7 @@ using UnityEngine;
 namespace BossRoom.Client
 {
     /// <summary>
-    /// Client side logic for a GameNetPortal. Contains implementations for all of GameNetPortal's's S2C RPCs. 
+    /// Client side logic for a GameNetPortal. Contains implementations for all of GameNetPortal's S2C RPCs. 
     /// </summary>
     [RequireComponent(typeof(GameNetPortal))]
     public class ClientGameNetPortal : MonoBehaviour
@@ -76,8 +76,8 @@ namespace BossRoom.Client
                 return PlayerPrefs.GetString("client_guid");
             }
 
-            System.Guid guid = System.Guid.NewGuid();
-            string guidString = guid.ToString();
+            var guid = System.Guid.NewGuid();
+            var guidString = guid.ToString();
 
             PlayerPrefs.SetString("client_guid", guidString);
             return guidString;

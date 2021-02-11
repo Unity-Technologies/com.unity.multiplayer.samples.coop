@@ -62,24 +62,24 @@ namespace BossRoom.Server
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
 
             string[] config_lines = payload.Split('\n');
-            var payload_config = new Dictionary<string, string>();
+            var payloadConfig = new Dictionary<string, string>();
             foreach (var line in config_lines)
             {
                 //key-value pair. 
                 if (line.Contains("="))
                 {
                     string[] kv = line.Split('=');
-                    payload_config.Add(kv[0], kv[1]);
+                    payloadConfig.Add(kv[0], kv[1]);
                 }
                 else if (line.Trim() != "")
                 {
                     //single token, with no value present. 
-                    payload_config.Add(line, null);
+                    payloadConfig.Add(line, null);
                 }
             }
 
             //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect. 
-            Debug.Log("host ApprovalCheck: client guid was: " + payload_config["client_guid"]);
+            Debug.Log("host ApprovalCheck: client guid was: " + payloadConfig["client_guid"]);
 
 
             //TODO: GOMPS-79 handle different error cases. 
@@ -89,7 +89,7 @@ namespace BossRoom.Server
             //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
             //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably 
             //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection. 
-            m_Portal.S2C_ConnectResult(clientId, ConnectStatus.Success);
+            m_Portal.S2CConnectResult(clientId, ConnectStatus.Success);
         }
 
     }

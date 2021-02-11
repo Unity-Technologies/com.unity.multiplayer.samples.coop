@@ -7,9 +7,9 @@ namespace BossRoom
     public enum ConnectStatus
     {
         Success,           //client successfully connected. This may also be a successful reconnect. 
-        EServerFull,       //can't join, server is already at capacity. 
-        EMatchStarted,     //can't join, match is already in progress. 
-        EUnknown,          //can't join, reason unknown. 
+        ServerFull,       //can't join, server is already at capacity. 
+        MatchStarted,     //can't join, match is already in progress. 
+        Unknown,          //can't join, reason unknown. 
     }
 
     /// <summary>
@@ -135,11 +135,12 @@ namespace BossRoom
             NetManager.StartHost();
         }
 
-
-
-        //Server->Client RPCs
-
-        public void S2C_ConnectResult(ulong netId, ConnectStatus status)
+        /// <summary>
+        /// Responsible for the Server->Client RPC's of the connection result.
+        /// </summary>
+        /// <param name="netId"> id of the client to send to </param>
+        /// <param name="status"> the status to pass to the client</param>
+        public void S2CConnectResult(ulong netId, ConnectStatus status)
         {
             using (PooledBitStream stream = PooledBitStream.Get())
             {

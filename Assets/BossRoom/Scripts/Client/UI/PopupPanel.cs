@@ -53,7 +53,7 @@ namespace BossRoom.Visual
 
             m_TitleText.text = titleText;
             m_MainText.text = mainText;
-            m_SubText.text = "";
+            m_SubText.text = string.Empty;
             m_InputBox.GetComponent<Text>().text = inputFieldText;
             m_ConfirmFunction = confirmCallback;
 
@@ -95,11 +95,11 @@ namespace BossRoom.Visual
         private void ResetState()
         {
             m_ConfirmationButton.GetComponentInChildren<Text>().text = k_DefaultConfirmText;
-            m_TitleText.text = "";
-            m_MainText.text = "";
-            m_SubText.text = "";
+            m_TitleText.text = string.Empty;
+            m_MainText.text = string.Empty;
+            m_SubText.text = string.Empty;
             var inputField = m_InputFieldParent.GetComponent<InputField>();
-            inputField.text = "";
+            inputField.text = string.Empty;
             m_ReconnectingImage.SetActive(false);
             m_ConfirmationButton.gameObject.SetActive(false);
             m_CancelButton.gameObject.SetActive(false);

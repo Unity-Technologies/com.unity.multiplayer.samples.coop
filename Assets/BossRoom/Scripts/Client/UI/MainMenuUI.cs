@@ -8,14 +8,14 @@ namespace BossRoom.Visual
     public class MainMenuUI : MonoBehaviour
     {
         [SerializeField]
-        private GameObject GamePortalGO;
+        private GameObject m_GamePortalGO;
 
         [SerializeField]
         private PopupPanel m_ResponsePopup;
 
         private const string k_DefaultIP = "127.0.0.1";
 
-        private BossRoom.GameNetPortal m_netPortal;
+        private GameNetPortal m_GameNetPortal;
 
         private Client.ClientGameNetPortal m_ClientNetPortal;
 
@@ -26,8 +26,8 @@ namespace BossRoom.Visual
 
         void Start()
         {
-            m_netPortal = GamePortalGO.GetComponent<BossRoom.GameNetPortal>();
-            m_ClientNetPortal = GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
+            m_GameNetPortal = m_GamePortalGO.GetComponent<GameNetPortal>();
+            m_ClientNetPortal = m_GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
             m_ClientNetPortal.NetworkTimeOutEvent += OnNetworkTimeout;
             m_ClientNetPortal.onConnectFinished += OnConnectFinished;
@@ -44,7 +44,7 @@ namespace BossRoom.Visual
                     ipAddress = k_DefaultIP;
                 }
 
-                m_netPortal.StartHost(ipAddress, k_ConnectPort);
+                m_GameNetPortal.StartHost(ipAddress, k_ConnectPort);
             }, k_DefaultIP);
         }
 
@@ -58,7 +58,7 @@ namespace BossRoom.Visual
                     ipAddress = k_DefaultIP;
                 }
 
-                BossRoom.Client.ClientGameNetPortal.StartClient(m_netPortal, ipAddress, k_ConnectPort);
+                Client.ClientGameNetPortal.StartClient(m_GameNetPortal, ipAddress, k_ConnectPort);
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
 
             }, k_DefaultIP);
