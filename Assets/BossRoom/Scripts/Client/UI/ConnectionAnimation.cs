@@ -1,8 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-
-
 namespace BossRoom.Visual
 {
     /// <summary>
