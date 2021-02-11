@@ -27,6 +27,7 @@ namespace BossRoom.Visual
         public float MaxZoomDistance = 30;
         public float ZoomSpeed = 3;
 
+        private const float k_MaxSmoothSpeed = 50;
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         public void Start()
@@ -46,6 +47,7 @@ namespace BossRoom.Visual
             m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+            m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent = transform.parent;
             Parent.GetComponent<Client.ClientCharacter>().ChildVizObject = this;
@@ -62,6 +64,11 @@ namespace BossRoom.Visual
             {
                 AttachCamera();
             }
+        }
+
+        private void OnPerformHitReaction()
+        {
+            m_ClientVisualsAnimator.SetTrigger("HitReact1");
         }
 
         private void PerformActionFX(ActionRequestData data)
@@ -97,12 +104,12 @@ namespace BossRoom.Visual
             }
 
             VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime,
-                m_NetState.NetworkMovementSpeed.Value, k_MaxRotSpeed);
+                k_MaxSmoothSpeed, k_MaxRotSpeed);
 
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.NetworkMovementSpeed.Value);
+                m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.VisualMovementSpeed.Value);
             }
 
             m_ActionViz.Update();

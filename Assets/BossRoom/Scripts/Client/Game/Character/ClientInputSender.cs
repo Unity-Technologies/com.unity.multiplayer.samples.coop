@@ -26,17 +26,20 @@ namespace BossRoom.Client
         /// raycast in FixedUpdate, because raycasts done in Update won't work reliably.
         /// This nullable vector will be set to a screen coordinate when an attack click was made.
         /// </summary>
-        private System.Nullable<Vector3> m_ClickRequest;
+        System.Nullable<Vector3> m_ClickRequest;
+        bool m_Skill2Request;
+        bool m_SkillActive = false;
 
-        ActionType m_EmoteAction;
+        Camera m_MainCamera;
+		
+		ActionType m_EmoteAction;
+
+        public event Action<Vector3> OnClientClick;
 
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
-        private CharacterClass CharacterData
-        {
-            get { return GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value]; }
-        }
+        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value];
 
         public override void NetworkStart()
         {
@@ -48,23 +51,40 @@ namespace BossRoom.Client
 
             k_GroundLayerMask = LayerMask.GetMask(new [] { "Ground" });
             k_ActionLayerMask = LayerMask.GetMask(new [] { "PCs", "NPCs", "Ground" });
-    }
-
-        public event Action<Vector3> OnClientClick;
+        }
 
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
+            m_MainCamera = Camera.main;
+        }
+
+        public void FinishSkill()
+        {
+            m_SkillActive = false;
         }
 
         void FixedUpdate()
         {
             // TODO replace with new Unity Input System [GOMPS-81]
 
+            // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
+            if (m_SkillActive)
+            {
+                return;
+            }
+            if (m_Skill2Request)
+            {
+                var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
+                skill2.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
+                m_SkillActive = true;
+                m_Skill2Request = false;
+                return;
+            }
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
             if (Input.GetMouseButton(0))
             {
-                var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+                var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                 {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
@@ -77,7 +97,7 @@ namespace BossRoom.Client
 
             if (m_ClickRequest != null)
             {
-                var ray = Camera.main.ScreenPointToRay(m_ClickRequest.Value);
+                var ray = m_MainCamera.ScreenPointToRay(m_ClickRequest.Value);
                 var rayCastHit = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask) > 0;
                 if (rayCastHit && GetTargetObject(ref k_CachedHit[0]) != 0)
                 {
@@ -85,8 +105,7 @@ namespace BossRoom.Client
                     // - two actions will queue one after the other, causing us to run over to our target and take a swing.
                     //if we have clicked on a fallen friend - we will revive him
 
-                    ActionRequestData playerAction;
-                    bool doAction = GetActionRequestForTarget(ref k_CachedHit[0], out playerAction);
+                    var doAction = GetActionRequestForTarget(ref k_CachedHit[0], out var playerAction);
 
                     if (doAction)
                     {
@@ -147,7 +166,7 @@ namespace BossRoom.Client
             return false;
         }
 
-        private void PopulateSkillRequest(ref RaycastHit hit, ActionType action, ref ActionRequestData resultData)
+        void PopulateSkillRequest(ref RaycastHit hit, ActionType action, ref ActionRequestData resultData)
         {
             resultData.ActionTypeEnum = action;
             var actionInfo = GameDataSource.Instance.ActionDataByType[action];
@@ -162,7 +181,7 @@ namespace BossRoom.Client
             }
         }
 
-        private void Update()
+        void Update()
         {
             //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
             if (Input.GetMouseButtonDown(1))
@@ -194,12 +213,17 @@ namespace BossRoom.Client
                 emoteData.CancelMovement = true;
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
+
+            if (Input.GetKeyUp("1"))
+            {
+                m_Skill2Request = true;
+            }
         }
 
         /// <summary>
         /// Gets the Target NetworkId from the Raycast hit, or 0 if Raycast didn't contact a Networked Object.
         /// </summary>
-        private ulong GetTargetObject(ref RaycastHit hit)
+        ulong GetTargetObject(ref RaycastHit hit)
         {
             if (hit.collider == null)
             {

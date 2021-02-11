@@ -17,6 +17,7 @@ namespace BossRoom
         ImpBossBaseAttack,
         GeneralChase,
         GeneralRevive,
+        TankTestability,
         DriveArrow,
         Emote1,
         Emote2,
@@ -35,11 +36,11 @@ namespace BossRoom
         Chase,
         Revive,
         LaunchProjectile,
-        Emote
-
+        Emote,
+        AoE,
+        Trample,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
-
 
     /// <summary>
     /// Comprehensive class that contains information needed to play back any action on the server. This is what gets sent client->server when
@@ -140,8 +141,6 @@ namespace BossRoom
                 }
             }
         }
-
     }
-
 }
 
