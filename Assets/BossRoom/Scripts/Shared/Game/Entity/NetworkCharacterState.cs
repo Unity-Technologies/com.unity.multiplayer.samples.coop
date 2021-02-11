@@ -121,7 +121,7 @@ namespace BossRoom
         /// <param name="data">Data about which action to play an dits associated details. </param>
         public void ClientSendActionRequest(ref ActionRequestData action)
         {
-            RecvDoActionServerRPC(ref data);
+            RecvDoActionServerRPC(data);
         }
 
         /// <summary>
@@ -130,17 +130,17 @@ namespace BossRoom
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
         public void ServerBroadcastAction(ref ActionRequestData data)
         {
-            RecvDoActionClientRPC(ref data);
+            RecvDoActionClientRPC(data);
         }
 
         [ClientRpc]
-        private void RecvDoActionClientRPC(ref ActionRequestData data)
+        private void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);
         }
 
         [ServerRpc]
-        private void RecvDoActionServerRPC(ref ActionRequestData data)
+        private void RecvDoActionServerRPC(ActionRequestData data)
         {
             DoActionEventServer?.Invoke(data);
         }
