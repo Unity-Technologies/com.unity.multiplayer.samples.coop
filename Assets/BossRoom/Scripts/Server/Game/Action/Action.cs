@@ -40,7 +40,6 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Called when the Action ends naturally. By default just calls logic in "cancel", but derived classes can do
-        /// different things in end vs cancel by overriding both.
         /// </summary>
         public virtual void End()
         {
@@ -77,6 +76,7 @@ namespace BossRoom.Server
                 case ActionLogic.AoE: return new AoeAction(parent, ref data);
                 case ActionLogic.Chase: return new ChaseAction(parent, ref data);
                 case ActionLogic.Revive: return new ReviveAction(parent, ref data);
+                case ActionLogic.RangedFXTargeted: return new FXProjectileTargetedAction(parent, ref data);
                 case ActionLogic.LaunchProjectile: return new LaunchProjectileAction(parent, ref data);
                 case ActionLogic.Emote: return new EmoteAction(parent, ref data);
                 case ActionLogic.Trample: return new TrampleAction(parent, ref data);

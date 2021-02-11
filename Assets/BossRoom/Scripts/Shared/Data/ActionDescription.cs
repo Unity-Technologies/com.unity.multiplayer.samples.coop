@@ -54,6 +54,16 @@ namespace BossRoom
         [Tooltip("Prefab to spawn that will manage this action's input")]
         public BaseActionInput ActionInput;
 
+        [System.Serializable]
+        public enum BlockingModeType
+        {
+            EntireDuration,
+            OnlyDuringExecTime,
+        }
+        [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
+        public BlockingModeType BlockingMode;
+
+
         [Tooltip("If this action spawns GameObjects, list their prefabs here")]
         public GameObject[] Spawns;
 
