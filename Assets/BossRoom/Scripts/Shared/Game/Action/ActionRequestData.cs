@@ -23,6 +23,7 @@ namespace BossRoom
         Emote2,
         Emote3,
         Emote4,
+        GeneralTarget,
     }
 
 
@@ -39,6 +40,7 @@ namespace BossRoom
         Emote,
         AoE,
         Trample,
+        Target,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 

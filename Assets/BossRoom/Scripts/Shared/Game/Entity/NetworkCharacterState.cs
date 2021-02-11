@@ -46,6 +46,11 @@ namespace BossRoom
         public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
 
         /// <summary>
+        /// The active target of this character. 
+        /// </summary>
+        public NetworkedVarULong TargetId { get; } = new NetworkedVarULong();
+
+        /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
