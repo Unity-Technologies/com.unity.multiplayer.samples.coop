@@ -101,6 +101,13 @@ namespace BossRoom.Server
             }
         }
 
+        public void OnCollisionEnter(Collision collision)
+        {
+            if (m_Queue.Count > 0)
+            {
+                m_Queue[0].OnCollisionEnter(collision);
+            }
+        }
 
     }
 }

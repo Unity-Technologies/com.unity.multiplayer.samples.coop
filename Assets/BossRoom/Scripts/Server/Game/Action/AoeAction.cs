@@ -2,9 +2,9 @@ using BossRoom;
 using BossRoom.Server;
 using UnityEngine;
 
-public class AOEAction : Action
+public class AoeAction : Action
 {
-    public AOEAction(ServerCharacter parent, ref ActionRequestData data)
+    public AoeAction(ServerCharacter parent, ref ActionRequestData data)
         : base(parent, ref data) { }
 
     public override bool Start()

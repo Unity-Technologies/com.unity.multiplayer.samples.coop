@@ -7,7 +7,7 @@ namespace BossRoom.Visual
     /// is confirmed and the mouse is clicked, it'll send the appropriate RPC to the server, triggering the AoE serer side gameplay logic.
     /// The server side gameplay action will then trigger the client side resulting FX.
     /// This action's flow is this: (Client) AoEActionInput --> (Server) AoEAction --> (Client) AoEActionFX
-    public class AoEActionInput : BaseActionInput
+    public class AoeActionInput : BaseActionInput
     {
         Camera m_Camera;
         int m_GroundLayerMask;
