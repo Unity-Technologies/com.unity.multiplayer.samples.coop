@@ -80,5 +80,5 @@ MonoBehaviour:
     type: 3}
   m_BossPrefab: {fileID: 3688950541947916326, guid: 365e94337fd10fe4ebde1906df413ac7,
     type: 3}
-  m_DefaultPlayerType: 0
-  m_DefaultPlayerAppearance: 1
+  m_DefaultPlayerType: 2
+  m_DefaultPlayerAppearance: 4
