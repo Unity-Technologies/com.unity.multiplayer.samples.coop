@@ -88,21 +88,19 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Play an action!
+        /// Play a sequence of actions!
         /// </summary>
-        /// <param name="data">Contains all data necessary to create the action</param>
-        public void PlayAction(ref ActionRequestData data)
+        public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
             if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                if (data.CancelMovement)
+                if (action.CancelMovement)
                 {
                     GetComponent<ServerCharacterMovement>().CancelMove();
                 }
 
-                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct.
-                m_ActionPlayer.PlayAction(ref data);
+                this.m_ActionPlayer.PlayAction(ref action);
             }
         }
 
@@ -132,7 +130,7 @@ namespace BossRoom.Server
             m_ActionPlayer.ClearActions();
         }
 
-        private void OnActionPlayRequest(ActionRequestData data)
+        private void OnActionPlayRequest(ActionRequestData data )
         {
             PlayAction(ref data);
         }
