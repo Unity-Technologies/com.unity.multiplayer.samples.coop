@@ -29,8 +29,8 @@ namespace BossRoom.Visual
             m_GameNetPortal = m_GamePortalGO.GetComponent<GameNetPortal>();
             m_ClientNetPortal = m_GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
-            m_ClientNetPortal.NetworkTimeOutEvent += OnNetworkTimeout;
-            m_ClientNetPortal.onConnectFinished += OnConnectFinished;
+            m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
+            m_ClientNetPortal.ConnectFinished += OnConnectFinished;
         }
 
         public void OnHostClicked()
@@ -93,8 +93,8 @@ namespace BossRoom.Visual
 
         private void OnDestroy()
         {
-            m_ClientNetPortal.NetworkTimeOutEvent -= OnNetworkTimeout;
-            m_ClientNetPortal.onConnectFinished -= OnConnectFinished;
+            m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
+            m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
         }
     }
 }

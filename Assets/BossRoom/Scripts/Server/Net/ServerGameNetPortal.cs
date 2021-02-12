@@ -61,9 +61,9 @@ namespace BossRoom.Server
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
 
-            string[] config_lines = payload.Split('\n');
+            string[] configLines = payload.Split('\n');
             var payloadConfig = new Dictionary<string, string>();
-            foreach (var line in config_lines)
+            foreach (var line in configLines)
             {
                 //key-value pair. 
                 if (line.Contains("="))

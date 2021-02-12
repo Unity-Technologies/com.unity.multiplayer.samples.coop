@@ -16,13 +16,13 @@ namespace BossRoom.Client
         /// </summary>
         private const int k_TimeoutDuration = 10;
 
-        public event Action<ConnectStatus> onConnectFinished;
+        public event Action<ConnectStatus> ConnectFinished;
 
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
         /// time from the host.  
         /// </summary>
-        public event Action NetworkTimeOutEvent;
+        public event Action NetworkTimedOut;
 
 
         public void Start()
@@ -33,19 +33,19 @@ namespace BossRoom.Client
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
 
-        public void NetworkStart()
+        private void NetworkStart()
         {
             if (!m_Portal.NetManager.IsClient) { enabled = false; }
         }
 
 
-        public void OnConnectFinished(ConnectStatus status)
+        private void OnConnectFinished(ConnectStatus status)
         {
             //on success, there is nothing to do (the MLAPI scene management system will take us to the next scene). 
             //on failure, we must raise an event so that the UI layer can display something. 
             Debug.Log("RecvConnectFinished Got status: " + status);
 
-            onConnectFinished?.Invoke(status);
+            ConnectFinished?.Invoke(status);
         }
 
         private void OnDisconnectOrTimeout(ulong clientID)
@@ -60,7 +60,7 @@ namespace BossRoom.Client
             }
             else
             {
-                NetworkTimeOutEvent?.Invoke();
+                NetworkTimedOut?.Invoke();
             }
         }
 
@@ -88,7 +88,7 @@ namespace BossRoom.Client
         /// </summary>
         /// <remarks>
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
-        /// yet initialized its client and server GNHLogic objects yet (which it does in NetworkStart, based on the role that the current player is performing). 
+        /// yet initialized its client and server GNP-Logic objects yet (which it does in NetworkStart, based on the role that the current player is performing). 
         /// </remarks>
         /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
