@@ -52,7 +52,7 @@ namespace BossRoom.Visual
         public void setHeroHealth(int hp)
         {
             // TO DO - get real max hp
-            m_HeroHealthbar.localScale = new Vector3(((float)hp) / 100.0f, 1.0f, 1.0f); ;
+            m_HeroHealthbar.localScale = new Vector3(((float)hp) / 800.0f, 1.0f, 1.0f);
         }
 
         // Update is called once per frame

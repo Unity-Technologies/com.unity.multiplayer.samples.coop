@@ -100,7 +100,10 @@ namespace BossRoom.Visual
 
         private void OnHealthChanged(int previousValue, int newValue)
         {
-            this.m_PartyHUD.setHeroHealth(newValue);
+            if (IsLocalPlayer)
+            {
+                this.m_PartyHUD.setHeroHealth(newValue);
+            }
         }
 
         void Update()
