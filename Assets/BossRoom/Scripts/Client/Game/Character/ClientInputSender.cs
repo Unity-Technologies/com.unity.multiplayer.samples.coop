@@ -1,6 +1,7 @@
 using MLAPI;
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace BossRoom.Client
 {
@@ -36,6 +37,12 @@ namespace BossRoom.Client
 
         public event Action<Vector3> OnClientClick;
 
+        // We connect with the action bar on start for the player
+        private Visual.HeroActionBar m_ActionUI;
+
+        /// We also track the state of the Emote bar to send emotes
+        private Visual.HeroEmoteBar m_EmoteUI;
+
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
@@ -47,15 +54,33 @@ namespace BossRoom.Client
             if (!IsClient || !IsOwner)
             {
                 enabled = false;
+                // dont need to do anything else if not the owner
+                return;
             }
 
             k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
             k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
+
+            // find the hero action UI bar
+            GameObject actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
+            m_ActionUI = actionUIobj.GetComponent<Visual.HeroActionBar>();
+
+            // figure out our hero type
+            NetworkCharacterState netState = GetComponent<NetworkCharacterState>();
+            CharacterTypeEnum heroType = netState.CharacterType.Value;
+            m_ActionUI.SetPlayerType(heroType);
+
+            // find the emote bar to track its buttons
+            GameObject emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
+            m_EmoteUI = emoteUIobj.GetComponent<Visual.HeroEmoteBar>();
+            // once connected to the emote bar, hide it
+            emoteUIobj.SetActive(false);
         }
 
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
+
             m_MainCamera = Camera.main;
         }
 
@@ -67,7 +92,6 @@ namespace BossRoom.Client
         void FixedUpdate()
         {
             // TODO replace with new Unity Input System [GOMPS-81]
-
             // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
             if (m_SkillActive)
             {
@@ -82,7 +106,8 @@ namespace BossRoom.Client
                 return;
             }
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
-            if (Input.GetMouseButton(0))
+            // Check IsPointerOverGameObject to make sure we dont count clicks on the UI
+            if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
             {
                 var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
@@ -128,6 +153,29 @@ namespace BossRoom.Client
                     // clicked on nothing... perform a "miss" attack on the spot they clicked on
                     var data = new ActionRequestData();
                     PopulateSkillRequest(k_CachedHit[0].point, CharacterData.Skill1, ref data);
+                    m_NetworkCharacter.ClientSendActionRequest(ref data);
+                }
+            }
+            else
+            {
+                // if we aren't processing a direct click request look for Action from UI button clicks
+                ActionType uiAction = ActionType.None;
+                if (m_ActionUI.ButtonWasClicked(0))
+                {
+                    uiAction = CharacterData.Skill1;
+                }
+                if (m_ActionUI.ButtonWasClicked(1))
+                {
+                    uiAction = CharacterData.Skill2;
+                }
+                if (m_ActionUI.ButtonWasClicked(2))
+                {
+                    uiAction = CharacterData.Skill3;
+                }
+                if (uiAction != ActionType.None)
+                {
+                    var data = new ActionRequestData();
+                    data.ActionTypeEnum = uiAction;
                     m_NetworkCharacter.ClientSendActionRequest(ref data);
                 }
             }
@@ -209,19 +257,19 @@ namespace BossRoom.Client
             }
 
             m_EmoteAction = ActionType.None;
-            if (Input.GetKeyDown(KeyCode.Alpha4))
+            if (Input.GetKeyDown(KeyCode.Alpha4) || m_EmoteUI.ButtonWasClicked(0))
             {
                 m_EmoteAction = ActionType.Emote1;
             }
-            if (Input.GetKeyDown(KeyCode.Alpha5))
+            if (Input.GetKeyDown(KeyCode.Alpha5) || m_EmoteUI.ButtonWasClicked(1))
             {
                 m_EmoteAction = ActionType.Emote2;
             }
-            if (Input.GetKeyDown(KeyCode.Alpha6))
+            if (Input.GetKeyDown(KeyCode.Alpha6) || m_EmoteUI.ButtonWasClicked(2))
             {
                 m_EmoteAction = ActionType.Emote3;
             }
-            if (Input.GetKeyDown(KeyCode.Alpha7))
+            if (Input.GetKeyDown(KeyCode.Alpha7) || m_EmoteUI.ButtonWasClicked(3))
             {
                 m_EmoteAction = ActionType.Emote4;
             }
