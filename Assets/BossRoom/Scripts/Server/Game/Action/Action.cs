@@ -80,6 +80,7 @@ namespace BossRoom.Server
                 case ActionLogic.LaunchProjectile: return new LaunchProjectileAction(parent, ref data);
                 case ActionLogic.Emote: return new EmoteAction(parent, ref data);
                 case ActionLogic.Trample: return new TrampleAction(parent, ref data);
+                case ActionLogic.Target: return new TargetAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

@@ -10,6 +10,8 @@ namespace BossRoom.Visual
 
         private const float k_MaxTurnRateDegreesSecond = 280;
 
+        private float m_SmoothedSpeed;
+
         public override void NetworkStart()
         {
             if (!IsClient || transform.parent == null)
@@ -32,8 +34,7 @@ namespace BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, m_Parent.transform, Time.deltaTime,
-                m_NetState.NetworkMovementSpeed.Value, k_MaxTurnRateDegreesSecond);
+            VisualUtils.SmoothMove(transform, m_Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxTurnRateDegreesSecond);
         }
 
         private void OnEnemyHit(ulong enemyId)

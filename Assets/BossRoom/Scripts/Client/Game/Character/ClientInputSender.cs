@@ -21,18 +21,27 @@ namespace BossRoom.Client
 
         private NetworkCharacterState m_NetworkCharacter;
 
+        private enum SkillTriggerStyle
+        {
+            None,        //no skill was triggered.
+            MouseClick,  //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
+            Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
+            UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target. 
+        }
+
         /// <summary>
         /// We detect clicks in Update (because you can miss single discrete clicks in FixedUpdate). But we need to
         /// raycast in FixedUpdate, because raycasts done in Update won't work reliably.
         /// This nullable vector will be set to a screen coordinate when an attack click was made.
         /// </summary>
-        System.Nullable<Vector3> m_ClickRequest;
-        bool m_Skill2Request;
+        SkillTriggerStyle m_Skill1Request;
+        SkillTriggerStyle m_Skill2Request;
+        bool m_TargetRequest = false;
         bool m_SkillActive = false;
 
         Camera m_MainCamera;
-		
-		ActionType m_EmoteAction;
+
+        ActionType m_EmoteAction;
 
         public event Action<Vector3> OnClientClick;
 
@@ -73,14 +82,31 @@ namespace BossRoom.Client
             {
                 return;
             }
-            if (m_Skill2Request)
+
+            if (m_Skill2Request != SkillTriggerStyle.None)
             {
-                var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
-                skill2.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
-                m_SkillActive = true;
-                m_Skill2Request = false;
+                var actionInput = GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput;
+                if( actionInput != null )
+                {
+                    var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
+                    skill2.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
+                    m_SkillActive = true;
+                }
+                else
+                {
+                    PerformSkill(CharacterData.Skill2, m_Skill2Request);
+                }
+
+                m_Skill2Request = SkillTriggerStyle.None;
                 return;
             }
+
+            if( m_TargetRequest==true )
+            {
+                PerformSkill(ActionType.GeneralTarget, SkillTriggerStyle.MouseClick);
+
+            }
+
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
             if (Input.GetMouseButton(0))
             {
@@ -95,41 +121,43 @@ namespace BossRoom.Client
                 }
             }
 
-            if (m_ClickRequest != null)
+            if (m_Skill1Request != SkillTriggerStyle.None)
             {
-                var ray = m_MainCamera.ScreenPointToRay(m_ClickRequest.Value);
-                m_ClickRequest = null;
+                PerformSkill(CharacterData.Skill1, m_Skill1Request);
+                m_Skill1Request = SkillTriggerStyle.None;
+            }
+        }
 
-                int numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
-                if (numHits == 0)
-                {
-                    return;
-                }
+        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle )
+        {
+            int numHits = 0;
+            if( triggerStyle == SkillTriggerStyle.MouseClick )
+            {
+                var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+                numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
+            }
 
-                int networkedHitIndex = -1;
-                for (int i = 0; i < numHits; i++)
+            int networkedHitIndex = -1;
+            for (int i = 0; i < numHits; i++)
+            {
+                if (k_CachedHit[i].transform.GetComponent<NetworkedObject>())
                 {
-                    if (k_CachedHit[i].transform.GetComponent<NetworkedObject>())
-                    {
-                        networkedHitIndex = i;
-                        break;
-                    }
+                    networkedHitIndex = i;
+                    break;
                 }
+            }
 
-                if (networkedHitIndex >= 0)
-                {
-                    if (GetActionRequestForTarget(ref k_CachedHit[networkedHitIndex], out ActionRequestData playerAction))
-                    {
-                        m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
-                    }
-                }
-                else
-                {
-                    // clicked on nothing... perform a "miss" attack on the spot they clicked on
-                    var data = new ActionRequestData();
-                    PopulateSkillRequest(k_CachedHit[0].point, CharacterData.Skill1, ref data);
-                    m_NetworkCharacter.ClientSendActionRequest(ref data);
-                }
+            Transform hitTransform = networkedHitIndex >= 0 ? k_CachedHit[networkedHitIndex].transform : null;
+            if( GetActionRequestForTarget(hitTransform, actionType, out ActionRequestData playerAction ))
+            {
+                m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
+            }
+            else
+            {
+                // clicked on nothing... perform a "miss" attack on the spot they clicked on
+                var data = new ActionRequestData();
+                PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
+                m_NetworkCharacter.ClientSendActionRequest(ref data);
             }
         }
 
@@ -137,13 +165,27 @@ namespace BossRoom.Client
         /// When you right-click on something you will want to do contextually different things. For example you might attack an enemy,
         /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED).
         /// </summary>
-        /// <param name="hit">The RaycastHit of the entity we clicked on.</param>
+        /// <param name="hit">The Transform of the entity we clicked on, or null if none.</param>
+        /// <param name="actionType">The Action to build for</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
         /// <returns>true if we should play an action, false otherwise. </returns>
-        private bool GetActionRequestForTarget(ref RaycastHit hit, out ActionRequestData resultData)
+        private bool GetActionRequestForTarget(Transform hit, ActionType actionType, out ActionRequestData resultData)
         {
             resultData = new ActionRequestData();
-            var targetNetState = hit.transform.GetComponent<NetworkCharacterState>();
+
+            var targetNetObj = hit != null ? hit.GetComponent<NetworkedObject>() : null;
+
+            //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState. 
+            if(!targetNetObj)
+            {
+                ulong targetId = m_NetworkCharacter.TargetId.Value;
+                if(ActionUtils.IsValidTarget(targetId))
+                {
+                    targetNetObj = MLAPI.Spawning.SpawnManager.SpawnedObjects[targetId];
+                }
+            }
+
+            var targetNetState = targetNetObj.GetComponent<NetworkCharacterState>();
             if (targetNetState == null)
             {
                 //Not a Character. In the future this could represent interacting with some other interactable, but for
@@ -153,18 +195,16 @@ namespace BossRoom.Client
 
             if (targetNetState.IsNpc)
             {
-                ActionType skill1 = CharacterData.Skill1;
-
                 // record our target in case this action uses that info (non-targeted attacks will ignore this)
                 resultData.TargetIds = new ulong[] { targetNetState.NetworkId };
-                PopulateSkillRequest(hit.point, skill1, ref resultData);
+                PopulateSkillRequest(hit.position, actionType, ref resultData);
                 return true;
             }
             else if (targetNetState.NetworkLifeState.Value == LifeState.Fainted)
             {
                 resultData = new ActionRequestData();
                 resultData.TargetIds = new[] { targetNetState.NetworkId };
-                PopulateSkillRequest(hit.point, ActionType.GeneralRevive, ref resultData);
+                PopulateSkillRequest(hit.position, ActionType.GeneralRevive, ref resultData);
                 return true;
             }
 
@@ -205,7 +245,7 @@ namespace BossRoom.Client
             //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
             if (Input.GetMouseButtonDown(1))
             {
-                m_ClickRequest = Input.mousePosition;
+                m_Skill1Request = SkillTriggerStyle.MouseClick;
             }
 
             m_EmoteAction = ActionType.None;
@@ -235,7 +275,12 @@ namespace BossRoom.Client
 
             if (Input.GetKeyUp("1"))
             {
-                m_Skill2Request = true;
+                m_Skill2Request = SkillTriggerStyle.Keyboard;
+            }
+
+            if( Input.GetMouseButtonUp(0) )
+            {
+                m_TargetRequest = true;
             }
         }
     }

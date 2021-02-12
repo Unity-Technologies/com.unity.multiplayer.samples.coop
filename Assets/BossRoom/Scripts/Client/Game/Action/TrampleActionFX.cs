@@ -55,7 +55,7 @@ namespace BossRoom.Visual
             return true;
         }
 
-        protected override void Cancel()
+        public override void Cancel()
         {
             // we've been aborted -- destroy the "cue graphics"
             if (m_SpawnedGraphics != null)

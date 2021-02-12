@@ -15,6 +15,15 @@ namespace BossRoom.Visual
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
+        [Tooltip("Prefab for the Target Reticule used by this Character")]
+        public GameObject TargetReticule;
+
+        [Tooltip("Material to use when displaying a friendly target reticule (e.g. green color)")]
+        public Material ReticuleFriendlyMat;
+
+        [Tooltip("Material to use when displaying a hostile target reticule (e.g. red color)")]
+        public Material ReticuleHostileMat;
+
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
 
         private ActionVisualization m_ActionViz;
@@ -27,13 +36,9 @@ namespace BossRoom.Visual
         public float MaxZoomDistance = 30;
         public float ZoomSpeed = 3;
 
-        private const float k_MaxSmoothSpeed = 50;
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
-        public void Start()
-        {
-            m_ActionViz = new ActionVisualization(this);
-        }
+        private float m_SmoothedSpeed;
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -43,6 +48,8 @@ namespace BossRoom.Visual
                 enabled = false;
                 return;
             }
+
+            m_ActionViz = new ActionVisualization(this);
 
             m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
@@ -62,6 +69,8 @@ namespace BossRoom.Visual
 
             if (IsLocalPlayer)
             {
+                ActionRequestData data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
+                m_ActionViz.PlayAction(ref data);
                 AttachCamera();
             }
         }
@@ -103,8 +112,7 @@ namespace BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime,
-                k_MaxSmoothSpeed, k_MaxRotSpeed);
+            VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
 
             if (m_ClientVisualsAnimator)
             {
@@ -120,6 +128,15 @@ namespace BossRoom.Visual
                 ZoomCamera(scroll);
             }
 
+        }
+
+        private void OnDestroy()
+        {
+            if( m_ActionViz != null )
+            {
+                //make sure we don't leave any dangling effects playing if we've been destroyed. 
+                m_ActionViz.CancelAll();
+            }
         }
 
         public void OnAnimEvent(string id)

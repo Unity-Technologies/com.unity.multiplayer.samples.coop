@@ -17,9 +17,14 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            if( Data.TargetIds == null || Data.TargetIds.Length == 0 ) { return false; }
+            //we must always clear the existing target, even if we don't run. This is how targets get cleared--running a TargetAction
+            //with no target selected.
+            m_Parent.NetState.TargetId.Value = 0;
 
-            if( !IsValidTarget(TargetId)) { return false; }
+            //there can only be one TargetAction at a time!
+            m_Parent.RunningActions.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
+
+            if ( Data.TargetIds == null || Data.TargetIds.Length == 0 ) { return false; }
 
             m_Parent.NetState.TargetId.Value = TargetId;
 
@@ -30,10 +35,15 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            //TODO: it would be neat to actively turn to face our target, as long as we weren't doing anything else important.
-            //The tricky bit would be the logic to make sure we weren't disrupting other Actions that also wanted to change our rotation.
+            bool isValid = ActionUtils.IsValidTarget(TargetId);
 
-            return IsValidTarget(TargetId);
+            if( m_Parent.RunningActions.RunningActionCount == 1 && !m_Parent.GetComponent<ServerCharacterMovement>().IsMoving() && isValid )
+            {
+                //we're the only action running, and we're not moving, so let's swivel to face our target, just to be cool!
+                FaceTarget(TargetId);
+            }
+
+            return isValid;
         }
 
         public override void Cancel()
@@ -46,38 +56,22 @@ namespace BossRoom.Server
 
         private ulong TargetId { get { return Data.TargetIds[0]; } }
 
-        private bool IsValidTarget(ulong targetId)
-        {
-            //note that we DON'T check if you're an ally. It's perfectly valid to target friends,
-            //because there are friendly skills, such as Heal.
-
-            if(!MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkedObject targetChar))
-            {
-                return false;
-            }
-
-            var targetNetState = targetChar.GetComponent<NetworkCharacterState>();
-            if(targetNetState == null )
-            {
-                return false;
-            }
-
-            //only Dead characters are untargetable. All others are 
-            return targetNetState.NetworkLifeState.Value != LifeState.Dead;
-        }
-
         /// <summary>
         /// Only call this after validating the target via IsValidTarget.
         /// </summary>
         /// <param name="targetId"></param>
         private void FaceTarget(ulong targetId)
         {
-            var targetPos = MLAPI.Spawning.SpawnManager.SpawnedObjects[targetId].transform.position;
+            if( MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkedObject targetObject))
+            {
+                Vector3 diff = targetObject.transform.position - m_Parent.transform.position;
 
-            Vector3 diff = targetPos - m_Parent.transform.position;
-
-            diff.y = 0;
-            m_Parent.transform.forward = diff;
+                diff.y = 0;
+                if(diff != Vector3.zero )
+                {
+                    m_Parent.transform.forward = diff;
+                }
+            }
         }
     }
 }

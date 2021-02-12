@@ -53,7 +53,6 @@ namespace BossRoom
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.
         /// </summary>
-        [HideInInspector]
         public NetworkedVarInt HitPoints;
 
         /// <summary>

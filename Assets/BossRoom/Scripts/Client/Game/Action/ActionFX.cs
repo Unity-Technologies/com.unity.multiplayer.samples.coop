@@ -38,7 +38,7 @@ namespace BossRoom.Visual
         /// completing. For example, a "ChargeShot" action might want to emit a projectile object in its End method, but
         /// instead play a "Stagger" animation in its Cancel method.
         /// </summary>
-        protected virtual void Cancel() { }
+        public virtual void Cancel() { }
 
         public static ActionFX MakeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent)
         {
@@ -49,6 +49,7 @@ namespace BossRoom.Visual
                 case ActionLogic.RangedFXTargeted: return new FXProjectileTargetedActionFX(ref data, parent);
                 case ActionLogic.Trample: return new TrampleActionFX(ref data, parent);
                 case ActionLogic.AoE: return new AoeActionFX(ref data, parent);
+                case ActionLogic.Target: return new TargetActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }

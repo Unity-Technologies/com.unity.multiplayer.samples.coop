@@ -16,6 +16,12 @@ namespace BossRoom.Server
             get { return NetState.IsNpc; }
         }
 
+        /// <summary>
+        /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
+        /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
+        /// </summary>
+        public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
+
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
         private ActionType m_StartingAction = ActionType.None;
@@ -189,7 +195,10 @@ namespace BossRoom.Server
 
         private void OnCollisionEnter(Collision collision)
         {
-            m_ActionPlayer.OnCollisionEnter(collision);
+            if( m_ActionPlayer != null )
+            {
+                m_ActionPlayer.OnCollisionEnter(collision);
+            }
         }
     }
 }

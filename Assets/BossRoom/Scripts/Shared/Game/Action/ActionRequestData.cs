@@ -25,6 +25,7 @@ namespace BossRoom
         Emote4,
         TankTestability,
         GeneralTarget,
+        MageHeal,
     }
 
 
