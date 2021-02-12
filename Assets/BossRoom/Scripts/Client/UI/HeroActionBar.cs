@@ -39,7 +39,7 @@ namespace BossRoom.Visual
         [SerializeField]
         private Material[] m_MageIcons;
 
-        // Start is called before the first frame update
+
         void Start()
         {
             // clear clicked state
@@ -81,11 +81,6 @@ namespace BossRoom.Visual
                     m_Buttons[i].image.material = icons[i];
                 }
             }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
 
         public void onButtonClicked(int buttonIndex)

@@ -16,7 +16,6 @@ namespace BossRoom.Visual
         // ButtonWasClicked will deliver each click only once
         private bool[] m_ButtonClicked;
 
-        // Start is called before the first frame update
         void Start()
         {
             // clear clicked state
@@ -26,11 +25,6 @@ namespace BossRoom.Visual
                 // initialize all button states to not clicked
                 m_ButtonClicked[i] = false;
             }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
 
         public void onButtonClicked(int buttonIndex)
