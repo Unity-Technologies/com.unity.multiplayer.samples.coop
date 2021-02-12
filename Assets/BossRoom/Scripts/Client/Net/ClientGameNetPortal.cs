@@ -25,7 +25,7 @@ namespace BossRoom.Client
         public event Action NetworkTimedOut;
 
 
-        public void Start()
+        void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
             m_Portal.NetworkStarted += NetworkStart;
