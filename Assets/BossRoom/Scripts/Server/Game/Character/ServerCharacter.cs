@@ -73,7 +73,7 @@ namespace BossRoom.Server
             {
                 NetState = GetComponent<NetworkCharacterState>();
                 NetState.DoActionEventServer += OnActionPlayRequest;
-                NetState.OnReceivedClientInput += OnClientMoveRequest;
+                NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
                 NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
