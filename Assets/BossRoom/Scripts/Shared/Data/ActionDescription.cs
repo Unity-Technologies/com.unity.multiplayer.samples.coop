@@ -36,6 +36,9 @@ namespace BossRoom
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;
 
+        [Tooltip("The reaction anim to play in response to being hit by this skill")]
+        public string ReactAnim;
+
         [Tooltip("For Actions that can hit multiple enemies, this determines how much damage is done to non-primary targets")]
         public int SplashDamage;
 

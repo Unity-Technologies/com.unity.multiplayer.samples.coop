@@ -56,8 +56,13 @@ namespace BossRoom.Server
                 m_Queue[0].Cancel();
             }
 
-            //only the first element of the queue is running, so it is the only one that needs to be canceled. 
+            foreach( var action in m_NonBlockingActions )
+            {
+                action.Cancel();
+            }
+
             m_Queue.Clear();
+            m_NonBlockingActions.Clear();
         }
 
         /// <summary>
@@ -109,7 +114,8 @@ namespace BossRoom.Server
                     AdvanceQueue(false);
                 }
 
-                if( m_Queue[0].Description.ExecTimeSeconds==0 && m_Queue[0].Description.BlockingMode==ActionDescription.BlockingModeType.OnlyDuringExecTime)
+                if( m_Queue.Count > 0 && m_Queue[0].Description.ExecTimeSeconds==0 &&
+                    m_Queue[0].Description.BlockingMode==ActionDescription.BlockingModeType.OnlyDuringExecTime)
                 {
                     //this is a non-blocking action with no exec time. It should never be hanging out at the front of the queue (not even for a frame),
                     //because it could get cleared if a new Action came in in that interval. 

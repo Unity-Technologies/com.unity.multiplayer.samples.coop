@@ -37,7 +37,7 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            ulong target = (Data.TargetIds != null & Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_Parent.NetState.TargetId.Value;
+            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_Parent.NetState.TargetId.Value;
             ServerCharacter foe = DetectFoe(target);
             if (foe != null)
             {
