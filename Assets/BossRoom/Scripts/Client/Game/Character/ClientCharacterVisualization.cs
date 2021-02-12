@@ -29,6 +29,9 @@ namespace BossRoom.Visual
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
+        /// Player characters need to report health changes and chracter info to the PartyHUD
+        private Visual.PartyHUD m_PartyHUD;
+
         public void Start()
         {
             m_ActionViz = new ActionVisualization(this);
@@ -46,6 +49,7 @@ namespace BossRoom.Visual
             m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+            m_NetState.HitPoints.OnValueChanged += OnHealthChanged;
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent = transform.parent;
             Parent.GetComponent<Client.ClientCharacter>().ChildVizObject = this;
@@ -55,12 +59,19 @@ namespace BossRoom.Visual
             if (!m_NetState.IsNpc)
             {
                 Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
-                model.SwapToModel(m_NetState.CharacterAppearance.Value);
-            }
+                int heroAppearance = m_NetState.CharacterAppearance.Value;
+                model.SwapToModel(heroAppearance);
 
-            if (IsLocalPlayer)
-            {
-                AttachCamera();
+                // find the emote bar to track its buttons
+                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
+                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
+
+                if (IsLocalPlayer)
+                {
+                    AttachCamera();
+                    m_PartyHUD.setHeroAppearance(heroAppearance);
+                    m_PartyHUD.setHeroType(m_NetState.CharacterType.Value);
+                }
             }
         }
 
@@ -85,6 +96,11 @@ namespace BossRoom.Visual
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
             }
+        }
+
+        private void OnHealthChanged(int previousValue, int newValue)
+        {
+            this.m_PartyHUD.setHeroHealth(newValue);
         }
 
         void Update()
