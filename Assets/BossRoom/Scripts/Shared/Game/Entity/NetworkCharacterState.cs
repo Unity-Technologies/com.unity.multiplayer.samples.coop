@@ -62,7 +62,7 @@ namespace BossRoom
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
-       /// <summary>
+        /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
@@ -76,7 +76,6 @@ namespace BossRoom
                 return GameDataSource.Instance.CharacterDataByType[CharacterType.Value];
             }
         }
-
 
         [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;

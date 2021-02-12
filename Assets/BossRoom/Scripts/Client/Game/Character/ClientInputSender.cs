@@ -31,7 +31,7 @@ namespace BossRoom.Client
         bool m_SkillActive = false;
 
         Camera m_MainCamera;
-		
+
 		ActionType m_EmoteAction;
 
         public event Action<Vector3> OnClientClick;
@@ -187,7 +187,7 @@ namespace BossRoom.Client
 
             switch (actionInfo.Logic)
             {
-                //for projectile logic, infer the direction from the click position. 
+                //for projectile logic, infer the direction from the click position.
                 case ActionLogic.LaunchProjectile:
                     Vector3 offset = hitPoint - transform.position;
                     offset.y = 0;
