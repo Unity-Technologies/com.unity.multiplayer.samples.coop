@@ -226,6 +226,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 864229686395814670, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: de7d8b0cdceac8140b98a459d9533db4, type: 2}
     - target: {fileID: 919132149155446097, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
       propertyPath: m_Name
       value: floor_switch_ani
@@ -233,6 +237,26 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5029021640412094685, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5029021640412094685, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5029021640412094685, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 5029021640412094685, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5029021640412094685, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: -90
       objectReference: {fileID: 0}
     - target: {fileID: 7571486532614922445, guid: 502aacab84d1c9442a19893ca9cd0755, type: 3}
       propertyPath: m_IsActive

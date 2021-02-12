@@ -9,13 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4605464913980944296}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Empty_Gear_RS_Slot_Archer_Girl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &4605464913980944296
 Transform:
   m_ObjectHideFlags: 0
