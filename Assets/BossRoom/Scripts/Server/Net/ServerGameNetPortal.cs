@@ -13,7 +13,7 @@ namespace BossRoom.Server
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage. 
         private const int k_MaxConnectPayload = 1024;
 
-        public void Start()
+        void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
             m_Portal.NetworkStarted += NetworkStart;

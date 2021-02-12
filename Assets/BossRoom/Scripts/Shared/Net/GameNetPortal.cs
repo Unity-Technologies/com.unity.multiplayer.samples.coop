@@ -53,7 +53,7 @@ namespace BossRoom
 
         void Start()
         {
-            UnityEngine.Object.DontDestroyOnLoad(this.gameObject);
+            DontDestroyOnLoad(gameObject);
 
             NetManager = NetworkingManagerGO.GetComponent<MLAPI.NetworkingManager>();
 
@@ -61,10 +61,7 @@ namespace BossRoom
             //where we know if we're a host or client. So we fake a "NetworkingManager.OnNetworkStarted" event out of the existing OnServerStarted
             //and OnClientConnectedCallback events. 
             //FIXME_DMW could this be improved?
-            NetManager.OnServerStarted += () =>
-            {
-                NetworkStart();
-            };
+            NetManager.OnServerStarted += NetworkStart;
             NetManager.OnClientConnectedCallback += (clientId) =>
             {
                 if (clientId == NetManager.LocalClientId)
