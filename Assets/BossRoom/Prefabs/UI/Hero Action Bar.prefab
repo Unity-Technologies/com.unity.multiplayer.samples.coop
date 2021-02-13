@@ -202,7 +202,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9059929381720061998}
         m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: onButtonClicked
+        m_MethodName: OnButtonClicked
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -414,7 +414,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9059929381720061998}
         m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: onButtonClicked
+        m_MethodName: OnButtonClicked
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -626,7 +626,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9059929381720061998}
         m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: onButtonClicked
+        m_MethodName: OnButtonClicked
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -898,7 +898,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9059929381720061998}
         m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: onButtonClicked
+        m_MethodName: OnButtonClicked
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

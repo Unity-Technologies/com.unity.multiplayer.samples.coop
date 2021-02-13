@@ -27,7 +27,7 @@ namespace BossRoom.Visual
             }
         }
 
-        public void onButtonClicked(int buttonIndex)
+        public void OnButtonClicked(int buttonIndex)
         {
             m_ButtonClicked[buttonIndex] = true;
 

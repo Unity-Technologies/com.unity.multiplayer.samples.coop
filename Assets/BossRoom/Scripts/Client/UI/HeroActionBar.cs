@@ -83,7 +83,7 @@ namespace BossRoom.Visual
             }
         }
 
-        public void onButtonClicked(int buttonIndex)
+        public void OnButtonClicked(int buttonIndex)
         {
             // handle emote panel as a special case
             if (buttonIndex == 3)

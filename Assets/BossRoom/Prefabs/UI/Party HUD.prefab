@@ -91,7 +91,7 @@ GameObject:
   - component: {fileID: 5210474332185164139}
   - component: {fileID: 5210474332185164140}
   m_Layer: 5
-  m_Name: Class Symbol
+  m_Name: Ally Symbol 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -166,7 +166,7 @@ GameObject:
   - component: {fileID: 5210474332204224119}
   - component: {fileID: 5210474332204224104}
   m_Layer: 5
-  m_Name: Healthbar
+  m_Name: Ally Healthbar 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -363,7 +363,7 @@ GameObject:
   - component: {fileID: 5210474332259633306}
   - component: {fileID: 5210474332259633307}
   m_Layer: 5
-  m_Name: Class Symbol
+  m_Name: Ally Symbol 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -597,7 +597,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5210474332398139192
 RectTransform:
   m_ObjectHideFlags: 0
@@ -749,7 +749,7 @@ GameObject:
   - component: {fileID: 5210474332410338202}
   - component: {fileID: 5210474332410338203}
   m_Layer: 5
-  m_Name: Healthbar
+  m_Name: Ally Healthbar 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1062,7 +1062,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5210474332492849445
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1214,7 +1214,7 @@ GameObject:
   - component: {fileID: 5210474332587078363}
   - component: {fileID: 5210474332587078364}
   m_Layer: 5
-  m_Name: Class Symbol
+  m_Name: Ally Symbol 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1294,7 +1294,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5210474332599699686
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1880,6 +1880,30 @@ MonoBehaviour:
   m_HeroPortrait: {fileID: 5210474332450112926}
   m_HeroClassSymbol: {fileID: 5210474333996684296}
   m_HeroHealthbar: {fileID: 5210474334111348187}
+  m_AllyPanel:
+  - {fileID: 5210474332398139193}
+  - {fileID: 5210474333491607281}
+  - {fileID: 5210474332599699687}
+  - {fileID: 5210474333217907759}
+  - {fileID: 5210474333480107704}
+  - {fileID: 5210474333608407908}
+  - {fileID: 5210474332492849446}
+  m_AllyClassSymbol:
+  - {fileID: 5210474332259633307}
+  - {fileID: 5210474332587078364}
+  - {fileID: 5210474332185164140}
+  - {fileID: 5210474333461063621}
+  - {fileID: 5210474333799988783}
+  - {fileID: 5210474333686258497}
+  - {fileID: 5210474333779760867}
+  m_AllyHealthbar:
+  - {fileID: 5210474333791882907}
+  - {fileID: 5210474333835599775}
+  - {fileID: 5210474332410338204}
+  - {fileID: 5210474333382315746}
+  - {fileID: 5210474333732748277}
+  - {fileID: 5210474332204224105}
+  - {fileID: 5210474333110502175}
   m_PortraitAppearances:
   - {fileID: -6710387467502326305, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
   - {fileID: -5935337979838524249, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
@@ -2028,7 +2052,7 @@ GameObject:
   - component: {fileID: 5210474333110502173}
   - component: {fileID: 5210474333110502174}
   m_Layer: 5
-  m_Name: Healthbar
+  m_Name: Ally Healthbar 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2387,7 +2411,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5210474333217907758
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2732,7 +2756,7 @@ GameObject:
   - component: {fileID: 5210474333382315744}
   - component: {fileID: 5210474333382315745}
   m_Layer: 5
-  m_Name: Healthbar
+  m_Name: Ally Healthbar 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2807,7 +2831,7 @@ GameObject:
   - component: {fileID: 5210474333461063620}
   - component: {fileID: 5210474333461063621}
   m_Layer: 5
-  m_Name: Class Symbol
+  m_Name: Ally Symbol 4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2887,7 +2911,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5210474333480107655
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2965,7 +2989,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5210474333491607280
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3043,7 +3067,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5210474333608407907
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3191,7 +3215,7 @@ GameObject:
   - component: {fileID: 5210474333686258496}
   - component: {fileID: 5210474333686258497}
   m_Layer: 5
-  m_Name: Class Symbol
+  m_Name: Ally Symbol 6
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3266,7 +3290,7 @@ GameObject:
   - component: {fileID: 5210474333732748275}
   - component: {fileID: 5210474333732748276}
   m_Layer: 5
-  m_Name: Healthbar
+  m_Name: Ally Healthbar 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3341,7 +3365,7 @@ GameObject:
   - component: {fileID: 5210474333779760866}
   - component: {fileID: 5210474333779760867}
   m_Layer: 5
-  m_Name: Class Symbol
+  m_Name: Ally Symbol 7
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3416,7 +3440,7 @@ GameObject:
   - component: {fileID: 5210474333791882905}
   - component: {fileID: 5210474333791882906}
   m_Layer: 5
-  m_Name: Healthbar
+  m_Name: Ally Healthbar 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3491,7 +3515,7 @@ GameObject:
   - component: {fileID: 5210474333799988782}
   - component: {fileID: 5210474333799988783}
   m_Layer: 5
-  m_Name: Class Symbol
+  m_Name: Ally Symbol 5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3566,7 +3590,7 @@ GameObject:
   - component: {fileID: 5210474333835599773}
   - component: {fileID: 5210474333835599774}
   m_Layer: 5
-  m_Name: Healthbar
+  m_Name: Ally Healthbar 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

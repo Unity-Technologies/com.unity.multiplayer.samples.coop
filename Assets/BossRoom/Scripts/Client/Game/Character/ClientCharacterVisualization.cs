@@ -50,7 +50,6 @@ namespace BossRoom.Visual
             m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
-            m_NetState.HitPoints.OnValueChanged += OnHealthChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
             // we should investigate for a way to have the imps already appear as down when connecting.
@@ -65,6 +64,9 @@ namespace BossRoom.Visual
 
             if (!m_NetState.IsNpc)
             {
+                // track health for heroes
+                m_NetState.HitPoints.OnValueChanged += OnHealthChanged;
+
                 Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
                 int heroAppearance = m_NetState.CharacterAppearance.Value;
                 model.SwapToModel(heroAppearance);
@@ -76,8 +78,12 @@ namespace BossRoom.Visual
                 if (IsLocalPlayer)
                 {
                     AttachCamera();
-                    m_PartyHUD.setHeroAppearance(heroAppearance);
-                    m_PartyHUD.setHeroType(m_NetState.CharacterType.Value);
+                    m_PartyHUD.SetHeroAppearance(heroAppearance);
+                    m_PartyHUD.SetHeroType(m_NetState.CharacterType.Value);
+                }
+                else
+                {
+                    m_PartyHUD.SetAllyType(heroAppearance,m_NetState.CharacterType.Value);
                 }
             }
         }
@@ -114,7 +120,12 @@ namespace BossRoom.Visual
         {
             if (IsLocalPlayer)
             {
-                this.m_PartyHUD.setHeroHealth(newValue);
+                this.m_PartyHUD.SetHeroHealth(newValue);
+            }
+            else
+            {
+                int heroAppearance = m_NetState.CharacterAppearance.Value;
+                this.m_PartyHUD.SetAllyHealth(heroAppearance,newValue);
             }
         }
 
