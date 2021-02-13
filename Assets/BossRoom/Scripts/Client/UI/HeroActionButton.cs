@@ -9,19 +9,19 @@ namespace BossRoom.Visual
     /// </summary>
     public class HeroActionButton : Button, IPointerDownHandler, IPointerUpHandler
     {
-        private const float k_DownScale = 0.95f;
-        //Renderer rend;
+        // We apply a uniform 95% scale to buttons when pressed
+        static readonly Vector3 k_DownScale = new Vector3(0.95f, 0.95f, 0.95f);
 
         public override void OnPointerDown(PointerEventData eventData)
         {
             base.OnPointerDown(eventData);
-            transform.localScale = new Vector3(k_DownScale, k_DownScale, k_DownScale);
+            transform.localScale = HeroActionButton.k_DownScale;
         }
 
         public override void OnPointerUp(PointerEventData eventData)
         {
             base.OnPointerUp(eventData);
-            transform.localScale = new Vector3(1f, 1f, 1f);
+            transform.localScale = Vector3.one;
         }
     }
 }

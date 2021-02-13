@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace BossRoom.Visual
 {
@@ -28,18 +29,17 @@ namespace BossRoom.Visual
 
         // allow icons for each class to be configured
         [SerializeField]
-        private Material[] m_TankIcons;
+        private Sprite[] m_TankIcons;
 
         [SerializeField]
-        private Material[] m_ArcherIcons;
+        private Sprite[] m_ArcherIcons;
 
         [SerializeField]
-        private Material[] m_RogueIcons;
+        private Sprite[] m_RogueIcons;
 
         [SerializeField]
-        private Material[] m_MageIcons;
+        private Sprite[] m_MageIcons;
 
-        // Start is called before the first frame update
         void Start()
         {
             // clear clicked state
@@ -72,20 +72,15 @@ namespace BossRoom.Visual
             }
         }
 
-        void SetButtonIcons(Material[] icons)
+        void SetButtonIcons(Sprite[] icons)
         {
             for (int i = 0; i < m_Buttons.Length; i++)
             {
                 if (i < icons.Length)
                 {
-                    m_Buttons[i].image.material = icons[i];
+                    m_Buttons[i].image.sprite = icons[i];
                 }
             }
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
         }
 
         public void onButtonClicked(int buttonIndex)

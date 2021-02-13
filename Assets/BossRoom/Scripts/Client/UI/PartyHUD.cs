@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -30,7 +28,7 @@ namespace BossRoom.Visual
 
         public void setHeroAppearance(int appearance)
         {
-            if( appearance > m_PortraitAppearances.Length )
+            if (appearance > m_PortraitAppearances.Length)
             {
                 return;
             }
@@ -41,7 +39,7 @@ namespace BossRoom.Visual
         {
             // treat character type as an index into our symbol array
             int symbol = (int)characterType;
-            if (symbol  > m_ClassSymbols.Length)
+            if (symbol > m_ClassSymbols.Length)
             {
                 return;
             }
