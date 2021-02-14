@@ -66,10 +66,11 @@ namespace BossRoom
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
-       /// <summary>
+        /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
+
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
@@ -80,7 +81,6 @@ namespace BossRoom
                 return GameDataSource.Instance.CharacterDataByType[CharacterType.Value];
             }
         }
-
 
         [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
         public NetworkedVar<CharacterTypeEnum> CharacterType;
@@ -95,7 +95,7 @@ namespace BossRoom
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
-        public event Action<Vector3> OnReceivedClientInput;
+        public event Action<Vector3> ReceivedClientInput;
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
@@ -104,7 +104,7 @@ namespace BossRoom
         [ServerRPC]
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
-            OnReceivedClientInput?.Invoke(movementTarget);
+            ReceivedClientInput?.Invoke(movementTarget);
         }
 
         // ACTION SYSTEM

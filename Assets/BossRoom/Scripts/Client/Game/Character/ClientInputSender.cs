@@ -1,6 +1,7 @@
 using MLAPI;
 using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace BossRoom.Client
 {
@@ -50,6 +51,12 @@ namespace BossRoom.Client
 
         public event Action<Vector3> OnClientClick;
 
+        // We connect with the action bar on start for the player
+        private Visual.HeroActionBar m_ActionUI;
+
+        /// We also track the state of the Emote bar to send emotes
+        private Visual.HeroEmoteBar m_EmoteUI;
+
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
@@ -61,15 +68,33 @@ namespace BossRoom.Client
             if (!IsClient || !IsOwner)
             {
                 enabled = false;
+                // dont need to do anything else if not the owner
+                return;
             }
 
             k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
             k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
+
+            // find the hero action UI bar
+            GameObject actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
+            m_ActionUI = actionUIobj.GetComponent<Visual.HeroActionBar>();
+
+            // figure out our hero type
+            NetworkCharacterState netState = GetComponent<NetworkCharacterState>();
+            CharacterTypeEnum heroType = netState.CharacterType.Value;
+            m_ActionUI.SetPlayerType(heroType);
+
+            // find the emote bar to track its buttons
+            GameObject emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
+            m_EmoteUI = emoteUIobj.GetComponent<Visual.HeroEmoteBar>();
+            // once connected to the emote bar, hide it
+            emoteUIobj.SetActive(false);
         }
 
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
+
             m_MainCamera = Camera.main;
         }
 
@@ -81,7 +106,6 @@ namespace BossRoom.Client
         void FixedUpdate()
         {
             // TODO replace with new Unity Input System [GOMPS-81]
-
             // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
             if (m_SkillActive)
             {
@@ -245,7 +269,7 @@ namespace BossRoom.Client
 
             switch (actionInfo.Logic)
             {
-                //for projectile logic, infer the direction from the click position. 
+                //for projectile logic, infer the direction from the click position.
                 case ActionLogic.LaunchProjectile:
                     Vector3 offset = hitPoint - transform.position;
                     offset.y = 0;
@@ -270,19 +294,19 @@ namespace BossRoom.Client
             }
 
             m_EmoteAction = ActionType.None;
-            if (Input.GetKeyDown(KeyCode.Alpha4))
+            if (Input.GetKeyDown(KeyCode.Alpha4) || m_EmoteUI.ButtonWasClicked(0))
             {
                 m_EmoteAction = ActionType.Emote1;
             }
-            if (Input.GetKeyDown(KeyCode.Alpha5))
+            if (Input.GetKeyDown(KeyCode.Alpha5) || m_EmoteUI.ButtonWasClicked(1))
             {
                 m_EmoteAction = ActionType.Emote2;
             }
-            if (Input.GetKeyDown(KeyCode.Alpha6))
+            if (Input.GetKeyDown(KeyCode.Alpha6) || m_EmoteUI.ButtonWasClicked(2))
             {
                 m_EmoteAction = ActionType.Emote3;
             }
-            if (Input.GetKeyDown(KeyCode.Alpha7))
+            if (Input.GetKeyDown(KeyCode.Alpha7) || m_EmoteUI.ButtonWasClicked(3))
             {
                 m_EmoteAction = ActionType.Emote4;
             }
