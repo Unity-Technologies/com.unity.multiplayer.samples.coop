@@ -1,5 +1,6 @@
 using MLAPI;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -26,7 +27,11 @@ namespace BossRoom.Client
 
         private NetworkCharacterState m_NetworkCharacter;
 
-        private enum SkillTriggerStyle
+        /// <summary>
+        /// This describes how a skill was requested. Skills requested via mouse click will do raycasts to determine their target; skills requested
+        /// in other matters will use the stateful target stored in NetworkCharacterState. 
+        /// </summary>
+        public enum SkillTriggerStyle
         {
             None,        //no skill was triggered.
             MouseClick,  //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
@@ -35,27 +40,36 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// We detect clicks in Update (because you can miss single discrete clicks in FixedUpdate). But we need to
-        /// raycast in FixedUpdate, because raycasts done in Update won't work reliably.
-        /// This nullable vector will be set to a screen coordinate when an attack click was made.
+        /// This struct essentially relays the call params of RequestAction to FixedUpdate. Recall that we may need to do raycasts
+        /// as part of doing the action, and raycasts done outside of FixedUpdate can give inconsistent results (otherwise we would
+        /// just expose PerformAction as a public method, and let it be called in whatever scoped it liked. 
         /// </summary>
-        SkillTriggerStyle m_Skill1Request;
-        SkillTriggerStyle m_Skill2Request;
-        bool m_TargetRequest = false;
+        /// <remarks>
+        /// Reference: https://answers.unity.com/questions/1141633/why-does-fixedupdate-work-when-update-doesnt.html
+        /// </remarks>
+        private struct ActionRequest
+        {
+            public SkillTriggerStyle TriggerStyle;
+            public ActionType RequestedAction;
+        }
+
+        /// <summary>
+        /// List of ActionRequests that have been received since the last FixedUpdate ran. This is a static array, to avoid allocs, and
+        /// because we don't really want to let this list grow indefinitely.
+        /// </summary>
+        private readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
+
+        /// <summary>
+        /// Number of ActionRequests that have been queued since the last FixedUpdate. 
+        /// </summary>
+        private int m_ActionRequestCount;
+
         bool m_SkillActive = false;
         bool m_MoveRequest = false;
 
         Camera m_MainCamera;
 
-        ActionType m_EmoteAction;
-
         public event Action<Vector3> OnClientClick;
-
-        // We connect with the action bar on start for the player
-        private Visual.HeroActionBar m_ActionUI;
-
-        /// We also track the state of the Emote bar to send emotes
-        private Visual.HeroEmoteBar m_EmoteUI;
 
         /// <summary>
         /// Convenience getter that returns our CharacterData
@@ -77,16 +91,11 @@ namespace BossRoom.Client
 
             // find the hero action UI bar
             GameObject actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
-            m_ActionUI = actionUIobj.GetComponent<Visual.HeroActionBar>();
-
-            // figure out our hero type
-            NetworkCharacterState netState = GetComponent<NetworkCharacterState>();
-            CharacterTypeEnum heroType = netState.CharacterType.Value;
-            m_ActionUI.SetPlayerType(heroType);
+            actionUIobj.GetComponent<Visual.HeroActionBar>().RegisterInputSender(this);
 
             // find the emote bar to track its buttons
             GameObject emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
-            m_EmoteUI = emoteUIobj.GetComponent<Visual.HeroEmoteBar>();
+            emoteUIobj.GetComponent<Visual.HeroEmoteBar>().RegisterInputSender(this);
             // once connected to the emote bar, hide it
             emoteUIobj.SetActive(false);
         }
@@ -109,40 +118,27 @@ namespace BossRoom.Client
             // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
             if (m_SkillActive)
             {
+                m_ActionRequestCount = 0; //throw away any action requests we've received. 
                 return;
             }
 
-            if (m_Skill2Request != SkillTriggerStyle.None)
+            //play all ActionRequests, in FIFO order. 
+            for( int i = 0; i < m_ActionRequestCount; ++i )
             {
-                var actionInput = GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput;
-                if (actionInput != null)
+                var actionData = GameDataSource.Instance.ActionDataByType[m_ActionRequests[i].RequestedAction];
+                if (actionData.ActionInput != null)
                 {
-                    var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
-                    skill2.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
+                    var skillPlayer = Instantiate(actionData.ActionInput);
+                    skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, FinishSkill);
                     m_SkillActive = true;
                 }
                 else
                 {
-                    PerformSkill(CharacterData.Skill2, m_Skill2Request);
+                    PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle);
                 }
-
-                m_Skill2Request = SkillTriggerStyle.None;
-                return;
             }
+            m_ActionRequestCount = 0;
 
-            if (m_TargetRequest == true)
-            {
-                PerformSkill(ActionType.GeneralTarget, SkillTriggerStyle.MouseClick);
-                m_TargetRequest = false;
-                return;
-            }
-
-            if (m_Skill1Request != SkillTriggerStyle.None)
-            {
-                PerformSkill(CharacterData.Skill1, m_Skill1Request);
-                m_Skill1Request = SkillTriggerStyle.None;
-                return;
-            }
 
             if( m_MoveRequest )
             {
@@ -279,57 +275,72 @@ namespace BossRoom.Client
                 case ActionLogic.Target:
                     resultData.ShouldClose = false;
                     return;
+                case ActionLogic.Emote:
+                    resultData.CancelMovement = true;
+                    return;
                 case ActionLogic.RangedFXTargeted:
                     if (resultData.TargetIds == null) { resultData.Position = hitPoint; }
                     return;
             }
         }
 
+        /// <summary>
+        /// Request an action be performed. This will occur on the next FixedUpdate. 
+        /// </summary>
+        /// <param name="action">the action you'd like to perform. </param>
+        /// <param name="triggerStyle">What input style triggered this action.</param>
+        public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle )
+        {
+            if( m_ActionRequestCount < m_ActionRequests.Length )
+            {
+                m_ActionRequests[m_ActionRequestCount].RequestedAction = action;
+                m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
+                m_ActionRequestCount++;
+            }
+        }
+
         void Update()
         {
-            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
-            if (Input.GetMouseButtonDown(1))
-            {
-                m_Skill1Request = SkillTriggerStyle.MouseClick;
-            }
-
-            m_EmoteAction = ActionType.None;
-            if (Input.GetKeyDown(KeyCode.Alpha4) || m_EmoteUI.ButtonWasClicked(0))
-            {
-                m_EmoteAction = ActionType.Emote1;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha5) || m_EmoteUI.ButtonWasClicked(1))
-            {
-                m_EmoteAction = ActionType.Emote2;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha6) || m_EmoteUI.ButtonWasClicked(2))
-            {
-                m_EmoteAction = ActionType.Emote3;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha7) || m_EmoteUI.ButtonWasClicked(3))
-            {
-                m_EmoteAction = ActionType.Emote4;
-            }
-            if (m_EmoteAction != ActionType.None)
-            {
-                var emoteData = new ActionRequestData();
-                emoteData.ActionTypeEnum = m_EmoteAction;
-                emoteData.CancelMovement = true;
-                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
-            }
-
             if (Input.GetKeyUp("1"))
             {
-                m_Skill2Request = SkillTriggerStyle.Keyboard;
+                RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
             }
 
-            if (Input.GetMouseButtonDown(0))
+            if (Input.GetKeyDown(KeyCode.Alpha4))
             {
-                m_TargetRequest = true;
+                RequestAction(ActionType.Emote1, SkillTriggerStyle.Keyboard);
             }
-            else if(Input.GetMouseButton(0) )
+            if (Input.GetKeyDown(KeyCode.Alpha5))
             {
-                m_MoveRequest = true;
+                RequestAction(ActionType.Emote2, SkillTriggerStyle.Keyboard);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha6))
+            {
+                RequestAction(ActionType.Emote3, SkillTriggerStyle.Keyboard);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha7))
+            {
+                RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
+            }
+
+            if ( !EventSystem.current.IsPointerOverGameObject())
+            {
+                //this is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
+                //to model the button "blocking" mouse clicks from falling through and interacting with the world.
+
+                if (Input.GetMouseButtonDown(1))
+                {
+                    RequestAction(CharacterData.Skill1, SkillTriggerStyle.MouseClick);
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    RequestAction(ActionType.GeneralTarget, SkillTriggerStyle.MouseClick);
+                }
+                else if (Input.GetMouseButton(0))
+                {
+                    m_MoveRequest = true;
+                }
             }
         }
     }
