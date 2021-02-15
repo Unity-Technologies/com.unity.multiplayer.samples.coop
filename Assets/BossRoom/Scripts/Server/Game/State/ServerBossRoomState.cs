@@ -98,6 +98,10 @@ namespace BossRoom.Server
                 var newEnemy = Instantiate(m_BossPrefab);
                 newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
             }
+            if (Input.GetKeyDown(KeyCode.Q))
+            {
+                MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
+            }
         }
     }
 }
