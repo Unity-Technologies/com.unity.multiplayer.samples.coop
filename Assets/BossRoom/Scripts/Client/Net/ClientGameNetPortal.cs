@@ -73,12 +73,10 @@ namespace BossRoom.Client
             switch (chosenTransport)
             {
                 case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
-                    liteNetLibTransport = hub.NetworkingManagerGO.GetComponentInChildren<LiteNetLibTransport.LiteNetLibTransport>();
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;
                 case UnetTransport unetTransport:
-                    unetTransport = hub.NetworkingManagerGO.GetComponentInChildren<UnetTransport>();
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;

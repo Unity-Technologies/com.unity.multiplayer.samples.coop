@@ -102,16 +102,14 @@ namespace BossRoom
 
                 if (m_TextStat != null)
                 {
-                    textToDisplay += $"RTT: {LastRTT * 1000f} ms ";
+                    textToDisplay = $"{textToDisplay}RTT: {(LastRTT * 1000f).ToString()} ms ";
                 }
             }
 
             if (IsServer)
             {
-                textToDisplay += $"Connected players: {NetworkingManager.Singleton.ConnectedClients.Count} ";
+                textToDisplay = $"{textToDisplay}Connected players: {NetworkingManager.Singleton.ConnectedClients.Count.ToString()} ";
             }
-
-            // Debug.Log($"Fixed update, m_TextStat:{m_TextStat}, {textToDisplay}");
 
             if (m_TextStat)
             {
@@ -141,13 +139,13 @@ namespace BossRoom
                 m_MovingWindow.Dequeue();
             }
 
-            float RTTSum = 0;
+            float rttSum = 0;
             foreach (var singleRTT in m_MovingWindow)
             {
-                RTTSum += singleRTT;
+                rttSum += singleRTT;
             }
 
-            LastRTT = RTTSum / m_MaxWindowSize;
+            LastRTT = rttSum / m_MaxWindowSize;
         }
     }
 }
