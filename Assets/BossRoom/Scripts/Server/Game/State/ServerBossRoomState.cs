@@ -21,6 +21,9 @@ namespace BossRoom.Server
 
         private LobbyResults m_LobbyResults;
 
+        //see note in OnClientConnected
+        private const float k_TempSpawnDelaySeconds = 5;
+
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
         {
             LobbyResults.CharSelectChoice returnValue;
@@ -59,7 +62,8 @@ namespace BossRoom.Server
                 // Now create player characters for all the players
                 foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
                 {
-                    SpawnPlayer(connection.ClientId);
+                    //see note in OnClientConnected for why this is a coroutine. 
+                    StartCoroutine(CoroSpawnPlayer(connection.ClientId));
                 }
             }
         }
@@ -78,7 +82,7 @@ namespace BossRoom.Server
 
         private IEnumerator CoroSpawnPlayer(ulong clientId)
         {
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(k_TempSpawnDelaySeconds);
             SpawnPlayer(clientId);
         }
 
