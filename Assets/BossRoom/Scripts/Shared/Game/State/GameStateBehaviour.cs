@@ -10,6 +10,7 @@ namespace BossRoom
         MainMenu,
         CharSelect,
         BossRoom,
+        PostGame
     }
 
     /// <summary>
