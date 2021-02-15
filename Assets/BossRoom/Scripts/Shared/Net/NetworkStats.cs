@@ -76,7 +76,7 @@ namespace BossRoom
             statUI.transform.SetParent(canvas.transform);
             m_TextStat = statUI.AddComponent<Text>();
             m_TextStat.text = "No Stat";
-            m_TextStat.font = Font.CreateDynamicFontFromOSFont("Arial", 14);
+            m_TextStat.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
             m_TextStat.horizontalOverflow = HorizontalWrapMode.Overflow;
 
             var rectTransform = statUI.GetComponent<RectTransform>();
