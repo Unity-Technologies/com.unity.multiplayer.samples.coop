@@ -26,26 +26,19 @@ namespace BossRoom
         // Note: when adding more stats, it might be worth it to abstract these in their own classes instead of having a bunch
         // of attributes floating around.
 
-        // bool m_ShouldDisplayRTTStats = true;
+        public float LastRTT { get; private set; }
 
-        // Moving average attributes
-        Queue<float> m_MovingWindow = new Queue<float>();
-        const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to react to change
-        float m_MaxWindowSize => k_MaxWindowSizeSeconds / m_PingIntervalSeconds;
-
-        // RTT configurations
         [SerializeField]
         [Tooltip("The interval to send ping RPCs to calculate the RTT. The bigger the number, the less reactive the stat will be to RTT changes")]
         float m_PingIntervalSeconds = 0.1f;
-
         float m_LastPingTime;
-
-        public float LastRTT { get; private set; }
-
         Text m_TextStat;
-
         // When receiving pong client RPCs, we need to know when the initiating ping sent it so we can calculate its individual RTT
         int m_CurrentRTTPingId;
+
+        Queue<float> m_MovingWindow = new Queue<float>();
+        const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to react to change
+        float m_MaxWindowSize => k_MaxWindowSizeSeconds / m_PingIntervalSeconds;
         Dictionary<int, float> m_PingHistoryStartTimes = new Dictionary<int, float>();
 
         public override void NetworkStart()
