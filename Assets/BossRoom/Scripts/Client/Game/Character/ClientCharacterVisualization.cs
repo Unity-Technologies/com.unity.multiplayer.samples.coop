@@ -1,3 +1,4 @@
+using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
@@ -14,6 +15,9 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
+
+        [SerializeField]
+        private CharacterSwap m_CharacterSwapper;
 
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
 
@@ -61,6 +65,15 @@ namespace BossRoom.Visual
             Parent.GetComponent<Client.ClientCharacter>().ChildVizObject = this;
             transform.parent = null;
 
+            // listen for char-select info to change (in practice, this info doesn't
+            // change, but we may not have the values set yet) ...
+            m_NetState.CharacterAppearance.OnValueChanged += OnCharacterAppearanceChanged;
+
+            // ...and visualize the current char-select value that we know about
+            if (m_CharacterSwapper)
+            {
+                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
+            }
 
             if (!m_NetState.IsNpc)
             {
@@ -125,6 +138,14 @@ namespace BossRoom.Visual
             else
             {
                 this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkId, newValue);
+            }
+        }
+
+        private void OnCharacterAppearanceChanged(int oldValue, int newValue)
+        {
+            if (m_CharacterSwapper)
+            {
+                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
             }
         }
 
