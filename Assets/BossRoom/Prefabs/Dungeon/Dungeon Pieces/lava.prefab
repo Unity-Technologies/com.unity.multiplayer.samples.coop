@@ -14,11 +14,11 @@ GameObject:
   - component: {fileID: 4180546739471925412}
   - component: {fileID: 8072434617646181483}
   m_Layer: 0
-  m_Name: lava (4)
+  m_Name: lava
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
+  m_StaticEditorFlags: 4294967295
   m_IsActive: 1
 --- !u!4 &6923725348669878280
 Transform:
