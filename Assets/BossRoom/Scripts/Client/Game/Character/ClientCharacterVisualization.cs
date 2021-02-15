@@ -83,7 +83,7 @@ namespace BossRoom.Visual
                 }
                 else
                 {
-                    m_PartyHUD.SetAllyType(heroAppearance,m_NetState.CharacterType.Value);
+                    m_PartyHUD.SetAllyType(m_NetState.NetworkId,m_NetState.CharacterType.Value);
                 }
             }
         }
@@ -124,8 +124,7 @@ namespace BossRoom.Visual
             }
             else
             {
-                int heroAppearance = m_NetState.CharacterAppearance.Value;
-                this.m_PartyHUD.SetAllyHealth(heroAppearance,newValue);
+                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkId, newValue);
             }
         }
 

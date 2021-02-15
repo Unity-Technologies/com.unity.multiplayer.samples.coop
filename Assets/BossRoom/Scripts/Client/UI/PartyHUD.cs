@@ -19,6 +19,8 @@ namespace BossRoom.Visual
         [SerializeField]
         private RectTransform m_HeroHealthbar;
 
+        private int m_HeroMaxHealth;
+
         [SerializeField]
         private GameObject[] m_AllyPanel;
 
@@ -36,18 +38,9 @@ namespace BossRoom.Visual
         private Sprite[] m_ClassSymbols;
 
         // track a list of allies
-        private int[] m_Allies;
-
-        void Start()
-        {
-            // clear clicked state
-            m_Allies = new int[m_AllyHealthbar.Length];
-            for (int i = 0; i < m_AllyHealthbar.Length; i++)
-            {
-                // initialize all ally positions to -1
-                m_Allies[i] = -1;
-            }
-        }
+        private ulong[] m_Allies;
+        // and their max HP
+        private int[] m_AllyMaxHP;
 
         public void SetHeroAppearance(int appearance)
         {
@@ -68,16 +61,33 @@ namespace BossRoom.Visual
             }
 
             m_HeroClassSymbol.sprite = m_ClassSymbols[symbol];
+            m_HeroMaxHealth = GetMaxHPForClass(characterType);
         }
 
         public void SetHeroHealth(int hp)
         {
             // TO DO - get real max hp
-            m_HeroHealthbar.localScale = new Vector3(((float)hp) / 800.0f, 1.0f, 1.0f);
+            m_HeroHealthbar.localScale = new Vector3(((float)hp) / (float)m_HeroMaxHealth, 1.0f, 1.0f);
+        }
+
+        private int GetMaxHPForClass(CharacterTypeEnum characterType)
+        {
+            // TO DO - make this come from character data
+            if (characterType == CharacterTypeEnum.Archer || characterType == CharacterTypeEnum.Mage)
+            {
+                return 800;
+            }
+            else if (characterType == CharacterTypeEnum.Rogue)
+            {
+                return 900;
+            }
+            // otherwise including for (characterType == CharacterTypeEnum.Tank)
+            // default to 1000
+            return 1000;
         }
 
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id 
-        public void SetAllyType(int appearance, CharacterTypeEnum characterType)
+        public void SetAllyType(ulong id, CharacterTypeEnum characterType)
         {
             int symbol = (int)characterType;
             if (symbol > m_ClassSymbols.Length)
@@ -85,36 +95,68 @@ namespace BossRoom.Visual
                 return;
             }
 
-            int slot = FindOrAddAlly(appearance);
+            int slot = FindOrAddAlly(id);
+            // do nothing if not in a slot 
+            if ( slot == -1 ) { return; }
+
             m_AllyClassSymbol[slot].sprite = m_ClassSymbols[symbol];
+            m_AllyMaxHP[slot] = GetMaxHPForClass(characterType);
         }
 
-        public void SetAllyHealth(int appearance, int hp)
+        public void SetAllyHealth(ulong id, int hp)
         {
-            int slot = FindOrAddAlly(appearance);
-            m_AllyHealthbar[slot].localScale = new Vector3(((float)hp) / 800.0f, 1.0f, 1.0f);
+            int slot = FindOrAddAlly(id);
+            // do nothing if not in a slot 
+            if (slot == -1) { return; }
+
+            m_AllyHealthbar[slot].localScale = new Vector3(((float)hp) / (float)m_AllyMaxHP[slot], 1.0f, 1.0f);
         }
 
-        private int FindOrAddAlly(int appearance)
+        // helper to initialize the Allies array - safe to call multiple times
+        private void InitAllies()
         {
-            int slot = -1;
-            for(int i =0; i < m_Allies.Length; i++)
+            if (m_Allies == null)
             {
-                if ( m_Allies[i] == appearance ) { return i; }
-                if ( slot == -1 && m_Allies[i] == -1)
+                // clear clicked state
+                m_Allies = new ulong[m_AllyHealthbar.Length];
+
+                // also setup the max HP array
+                m_AllyMaxHP = new int[m_AllyHealthbar.Length];
+                for (int i = 0; i < m_AllyHealthbar.Length; i++)
                 {
-                    slot = i;
+                    // initialize all ally positions to 0 and HP to 1000
+                    m_Allies[i] = 0;
+                    m_AllyMaxHP[i] = 1000;
+                }
+            }
+        }
+
+        private int FindOrAddAlly(ulong id)
+        {
+            // make sure allies array is ready
+            InitAllies();
+
+            int openslot = -1;
+            for (int i = 0; i < m_Allies.Length; i++)
+            {
+                // if this Ally is in the list, return the slot index
+                if (m_Allies[i] == id) { return i; }
+                // otherwise, record the first open slot
+                if (openslot == -1 && m_Allies[i] == 0)
+                {
+                    openslot = i;
                 }
             }
 
             // ally slot was not found - add one in an open slot 
-            if ( slot >= 0 )
+            if (openslot >= 0)
             {
-                m_AllyPanel[slot].SetActive(true);
-                return slot;
+                m_AllyPanel[openslot].SetActive(true);
+                m_Allies[openslot] = id;
+                return openslot;
             }
 
-            // this should not happen - we didnt find the ally or a slot
+            // this should not happen unless wthere are too many players- we didnt find the ally or a slot
             return -1;
         }
     }
