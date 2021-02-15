@@ -146,7 +146,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -1472494204491392689, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  m_Sprite: {fileID: 653711104564485137, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -358,7 +358,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5674376572046109326, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  m_Sprite: {fileID: 4629006799232479851, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -570,7 +570,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -2825189325306509334, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  m_Sprite: {fileID: -2825189325306509334, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -760,21 +760,21 @@ MonoBehaviour:
   - {fileID: 9059929381413149708}
   m_EmotePanel: {fileID: 0}
   m_TankIcons:
-  - {fileID: 1540522687219259310, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
-  - {fileID: -4296359016634765864, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
-  - {fileID: -2388657405067991389, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - {fileID: 1540522687219259310, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -4296359016634765864, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -2388657405067991389, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_ArcherIcons:
-  - {fileID: -86643989335773967, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
-  - {fileID: -648594524209405482, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
-  - {fileID: 6176100515346893140, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - {fileID: -86643989335773967, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -648594524209405482, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -648594524209405482, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_RogueIcons:
-  - {fileID: -5674376572046109326, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
-  - {fileID: -538430575990610775, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
-  - {fileID: -1472494204491392689, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - {fileID: -5674376572046109326, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -538430575990610775, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -1472494204491392689, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_MageIcons:
-  - {fileID: 4629006799232479851, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
-  - {fileID: 2812619407168195412, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
-  - {fileID: 653711104564485137, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - {fileID: 4629006799232479851, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: 2812619407168195412, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: 653711104564485137, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
 --- !u!1 &9059929381734582208
 GameObject:
   m_ObjectHideFlags: 0
@@ -842,7 +842,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -538430575990610775, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  m_Sprite: {fileID: 2812619407168195412, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
