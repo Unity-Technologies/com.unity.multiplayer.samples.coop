@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2943100746237914177
+--- !u!1 &4968564450267304767
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,45 +8,45 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 3348025160845645506}
-  - component: {fileID: 3009152920502554165}
-  - component: {fileID: 797999280711772784}
-  m_Layer: 9
+  - component: {fileID: 4779039001483274684}
+  - component: {fileID: 5036912385475080523}
+  - component: {fileID: 7437428280836494606}
+  m_Layer: 6
   m_Name: Mage_Ears_Boy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3348025160845645506
+  m_IsActive: 0
+--- !u!4 &4779039001483274684
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2943100746237914177}
+  m_GameObject: {fileID: 4968564450267304767}
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.00000071525574, y: 131.48639, z: -6.742525}
+  m_LocalPosition: {x: 0.00006580353, y: 131.48639, z: -6.743724}
   m_LocalScale: {x: 0.856131, y: 0.856131, z: 0.856131}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &3009152920502554165
+--- !u!33 &5036912385475080523
 MeshFilter:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2943100746237914177}
+  m_GameObject: {fileID: 4968564450267304767}
   m_Mesh: {fileID: 2715349619566466365, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
---- !u!23 &797999280711772784
+--- !u!23 &7437428280836494606
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2943100746237914177}
+  m_GameObject: {fileID: 4968564450267304767}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -55,6 +55,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -79,3 +80,4 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}

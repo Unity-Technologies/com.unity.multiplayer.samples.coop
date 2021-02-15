@@ -27,11 +27,19 @@ namespace BossRoom.Server
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
+        // Cached component reference
+        private ServerCharacterMovement m_Movement;
+
         /// <summary>
         /// Temp place to store all the active characters (to avoid having to
         /// perform insanely-expensive GameObject.Find operations during Update)
         /// </summary>
         private static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
+
+        private void Awake()
+        {
+            m_Movement = GetComponent<ServerCharacterMovement>();
+        }
 
         private void OnEnable()
         {
@@ -65,7 +73,7 @@ namespace BossRoom.Server
             {
                 NetState = GetComponent<NetworkCharacterState>();
                 NetState.DoActionEventServer += OnActionPlayRequest;
-                NetState.OnReceivedClientInput += OnClientMoveRequest;
+                NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
                 NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
@@ -80,25 +88,28 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Play an action!
+        /// Play a sequence of actions!
         /// </summary>
-        /// <param name="data">Contains all data necessary to create the action</param>
-        public void PlayAction(ref ActionRequestData data)
+        public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
-            if (NetState.NetworkLifeState.Value == LifeState.Alive)
+            if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct. 
-                this.m_ActionPlayer.PlayAction(ref data);
+                if (action.CancelMovement)
+                {
+                    GetComponent<ServerCharacterMovement>().CancelMove();
+                }
+
+                this.m_ActionPlayer.PlayAction(ref action);
             }
         }
 
         private void OnClientMoveRequest(Vector3 targetPosition)
         {
-            if (NetState.NetworkLifeState.Value == LifeState.Alive)
+            if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 ClearActions();
-                GetComponent<ServerCharacterMovement>().SetMovementTarget(targetPosition);
+                m_Movement.SetMovementTarget(targetPosition);
             }
         }
 
@@ -107,36 +118,36 @@ namespace BossRoom.Server
             if (lifeState != LifeState.Alive)
             {
                 ClearActions();
-                GetComponent<ServerCharacterMovement>().CancelMove();
+                m_Movement.CancelMove();
             }
         }
 
         /// <summary>
-        /// Clear all active Actions. 
+        /// Clear all active Actions.
         /// </summary>
         public void ClearActions()
         {
-            this.m_ActionPlayer.ClearActions();
+            m_ActionPlayer.ClearActions();
         }
 
-        private void OnActionPlayRequest(ActionRequestData data)
+        private void OnActionPlayRequest(ActionRequestData data )
         {
-            this.PlayAction(ref data);
+            PlayAction(ref data);
         }
 
         /// <summary>
-        /// Receive an HP change from somewhere. Could be healing or damage. 
+        /// Receive an HP change from somewhere. Could be healing or damage.
         /// </summary>
         /// <param name="Inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
-            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight. 
+            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
 
             NetState.HitPoints.Value += HP;
 
-            //we can't currently heal a dead character back to Alive state. 
+            //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
             if (NetState.HitPoints.Value <= 0)
             {
@@ -174,6 +185,11 @@ namespace BossRoom.Server
             {
                 m_AIBrain.Update();
             }
+        }
+
+        private void OnCollisionEnter(Collision collision)
+        {
+            m_ActionPlayer.OnCollisionEnter(collision);
         }
     }
 }
