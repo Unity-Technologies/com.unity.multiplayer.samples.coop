@@ -74,6 +74,7 @@ namespace BossRoom.Server
                 NetState = GetComponent<NetworkCharacterState>();
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.ReceivedClientInput += OnClientMoveRequest;
+                NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
                 NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
@@ -142,9 +143,19 @@ namespace BossRoom.Server
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
-            //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
-            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
-
+            // Give our Actions a chance to alter the amount of damage (or healing) we take.
+            if (HP > 0)
+            {
+                m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.Healed);
+                float healingMod = m_ActionPlayer.GetEnchantedValue(Action.EnchantmentType.PercentHealingReceived);
+                HP = (int)(HP * healingMod);
+            }
+            else
+            {
+                m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
+                float damageMod = m_ActionPlayer.GetEnchantedValue(Action.EnchantmentType.PercentDamageReceived);
+                HP = (int)(HP * damageMod);
+            }
             NetState.HitPoints.Value += HP;
 
             //we can't currently heal a dead character back to Alive state.
@@ -162,6 +173,17 @@ namespace BossRoom.Server
                     NetState.NetworkLifeState.Value = LifeState.Fainted;
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines a gameplay variable for this character. The value is determined
+        /// by the character's active Actions.
+        /// </summary>
+        /// <param name="enchantmentType"></param>
+        /// <returns></returns>
+        public float GetEnchantedValue(Action.EnchantmentType enchantmentType)
+        {
+            return m_ActionPlayer.GetEnchantedValue(enchantmentType);
         }
 
         /// <summary>
@@ -190,6 +212,11 @@ namespace BossRoom.Server
         private void OnCollisionEnter(Collision collision)
         {
             m_ActionPlayer.OnCollisionEnter(collision);
+        }
+
+        private void OnStoppedChargingUp()
+        {
+            m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }
     }
 }

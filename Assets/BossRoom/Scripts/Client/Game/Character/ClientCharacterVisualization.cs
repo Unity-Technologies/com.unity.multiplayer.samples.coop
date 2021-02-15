@@ -46,8 +46,10 @@ namespace BossRoom.Visual
 
             m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
+            m_NetState.CancelActionEventClient += CancelActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
+            m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
             // we should investigate for a way to have the imps already appear as down when connecting.
             // todo gomps-220
@@ -79,6 +81,16 @@ namespace BossRoom.Visual
         private void PerformActionFX(ActionRequestData data)
         {
             m_ActionViz.PlayAction(ref data);
+        }
+
+        private void CancelActionFX()
+        {
+            m_ActionViz.CancelActions();
+        }
+
+        private void OnStoppedChargingUp()
+        {
+            m_ActionViz.OnStoppedChargingUp();
         }
 
         private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)

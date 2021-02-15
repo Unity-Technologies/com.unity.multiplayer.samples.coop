@@ -33,8 +33,11 @@ namespace BossRoom
         [Tooltip("How long the effect this Action leaves behind will last, in seconds")]
         public float EffectDurationSeconds;
 
-        [Tooltip("The primary Animation action that gets played when visualizing this Action")]
+        [Tooltip("The primary Animation trigger that gets raised when visualizing this Action")]
         public string Anim;
+
+        [Tooltip("The auxiliary Animation trigger for this Action (e.g. to end an animation loop)")]
+        public string Anim2;
 
         [Tooltip("For Actions that can hit multiple enemies, this determines how much damage is done to non-primary targets")]
         public int SplashDamage;

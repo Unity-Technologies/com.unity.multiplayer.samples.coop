@@ -56,7 +56,7 @@ namespace BossRoom.Visual
             //Debug.Log($"Anim event: {id}");
         }
 
-        protected override void Cancel()
+        public override void Cancel()
         {
             if (m_Projectile)
             {

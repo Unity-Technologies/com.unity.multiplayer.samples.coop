@@ -44,6 +44,14 @@ namespace BossRoom.Visual
             }
         }
 
+        public void OnStoppedChargingUp()
+        {
+            foreach (var action in m_PlayingActions)
+            {
+                action.OnStoppedChargingUp();
+            }
+        }
+
         public void PlayAction(ref ActionRequestData data)
         {
             ActionDescription actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
@@ -63,6 +71,14 @@ namespace BossRoom.Visual
             if (action.Start())
             {
                 m_PlayingActions.Add(action);
+            }
+        }
+
+        public void CancelActions()
+        {
+            foreach (var actionFx in m_PlayingActions)
+            {
+                actionFx.Cancel();
             }
         }
     }

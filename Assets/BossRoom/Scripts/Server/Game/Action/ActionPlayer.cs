@@ -21,6 +21,9 @@ namespace BossRoom.Server
         /// </summary>
         private const int k_QueueSoftMax = 3;
 
+        private ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
+        private bool m_HasPendingSynthesizedAction;
+
         public ActionPlayer(ServerCharacter parent)
         {
             m_Parent = parent;
@@ -56,7 +59,7 @@ namespace BossRoom.Server
                 m_Queue[0].Cancel();
             }
 
-            //only the first element of the queue is running, so it is the only one that needs to be canceled. 
+            //only the first element of the queue is running, so it is the only one that needs to be canceled.
             m_Queue.Clear();
         }
 
@@ -126,18 +129,34 @@ namespace BossRoom.Server
         {
             if (m_Queue.Count > 0)
             {
-                if (endRemoved) { m_Queue[0].End(); }
+                if (endRemoved)
+                {
+                    m_Queue[0].End();
+                    if (m_Queue[0].ChainIntoNewAction(ref m_PendingSynthesizedAction))
+                    {
+                        Debug.Log($"Going to chain into a new Action: {m_PendingSynthesizedAction.ActionTypeEnum}");
+                        m_HasPendingSynthesizedAction = true;
+                    }
+                }
                 m_Queue.RemoveAt(0);
             }
 
-            StartAction();
+            // now start the new Action! ... unless we now have a pending Action that will supercede it
+            if (!m_HasPendingSynthesizedAction || m_PendingSynthesizedAction.ShouldQueue)
+            {
+                StartAction();
+            }
         }
 
         public void Update()
         {
-            if (m_Queue.Count > 0 &&
-                m_Queue[0].Description.BlockingMode == ActionDescription.BlockingModeType.OnlyDuringExecTime &&
-                Time.time - m_Queue[0].TimeStarted >= m_Queue[0].Description.ExecTimeSeconds)
+            if (m_HasPendingSynthesizedAction)
+            {
+                m_HasPendingSynthesizedAction = false;
+                PlayAction(ref m_PendingSynthesizedAction);
+            }
+
+            if (m_Queue.Count > 0 && m_Queue[0].ShouldBecomeNonBlocking())
             {
                 // the active action is no longer blocking, meaning it should be moved out of the blocking queue and into the
                 // non-blocking one. (We use this for e.g. projectile attacks, so the projectiles can keep flying, but
@@ -185,6 +204,43 @@ namespace BossRoom.Server
             if (m_Queue.Count > 0)
             {
                 m_Queue[0].OnCollisionEnter(collision);
+            }
+        }
+
+
+        /// <summary>
+        /// Gives all active Actions a chance to alter a gameplay variable.
+        /// </summary>
+        /// <param name="enchantmentType">Which gameplay variable is being calculated</param>
+        /// <returns>The final ("enchanted") value of the variable</returns>
+        public float GetEnchantedValue(Action.EnchantmentType enchantmentType)
+        {
+            float enchantedValue = Action.GetUnenchantedValue(enchantmentType);
+            if (m_Queue.Count > 0)
+            {
+                m_Queue[0].EnchantValue(enchantmentType, ref enchantedValue);
+            }
+            foreach (var action in m_NonBlockingActions)
+            {
+                action.EnchantValue(enchantmentType, ref enchantedValue);
+            }
+            return enchantedValue;
+        }
+
+        /// <summary>
+        /// Tells all active Actions that a particular gameplay event happened, such as being hit,
+        /// getting healed, dying, etc. Actions can change their behavior as a result.
+        /// </summary>
+        /// <param name="activityThatOccurred">The type of event that has occurred</param>
+        public void OnGameplayActivity(Action.GameplayActivity activityThatOccurred)
+        {
+            if (m_Queue.Count > 0)
+            {
+                m_Queue[0].OnGameplayActivity(activityThatOccurred);
+            }
+            foreach (var action in m_NonBlockingActions)
+            {
+                action.OnGameplayActivity(activityThatOccurred);
             }
         }
 

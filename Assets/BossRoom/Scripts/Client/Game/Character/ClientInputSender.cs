@@ -28,8 +28,20 @@ namespace BossRoom.Client
         /// This nullable vector will be set to a screen coordinate when an attack click was made.
         /// </summary>
         System.Nullable<Vector3> m_ClickRequest;
-        bool m_Skill2Request;
-        bool m_SkillActive = false;
+
+        private enum ActionInputEvent
+        {
+            None,
+            InitSkill2,
+            ReleaseKey,
+        }
+        /// <summary>
+        /// If we detect that we need a custom skill-input during Update, we set this value to the needed event,
+        /// and then do the event in FixedUpdate(), in case they need need physics raycasts.
+        /// </summary>
+        private ActionInputEvent m_PendingInputEvent = ActionInputEvent.None;
+
+        private BaseActionInput m_CurrentSkillInput = null;
 
         Camera m_MainCamera;
 
@@ -86,25 +98,28 @@ namespace BossRoom.Client
 
         public void FinishSkill()
         {
-            m_SkillActive = false;
+            m_CurrentSkillInput = null;
         }
 
         void FixedUpdate()
         {
             // TODO replace with new Unity Input System [GOMPS-81]
-            // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
-            if (m_SkillActive)
+            if (m_CurrentSkillInput || m_PendingInputEvent != ActionInputEvent.None)
             {
+                if (m_PendingInputEvent == ActionInputEvent.InitSkill2)
+                {
+                    m_CurrentSkillInput = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
+                    m_CurrentSkillInput.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
+                }
+                else if (m_PendingInputEvent == ActionInputEvent.ReleaseKey)
+                {
+                    m_CurrentSkillInput.OnReleaseKey();
+                }
+                m_PendingInputEvent = ActionInputEvent.None;
+                // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
                 return;
             }
-            if (m_Skill2Request)
-            {
-                var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
-                skill2.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
-                m_SkillActive = true;
-                m_Skill2Request = false;
-                return;
-            }
+
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
             // Check IsPointerOverGameObject to make sure we dont count clicks on the UI
             if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
@@ -281,9 +296,13 @@ namespace BossRoom.Client
                 m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
             }
 
-            if (Input.GetKeyUp("1"))
+            if (Input.GetKeyDown("1"))
             {
-                m_Skill2Request = true;
+                m_PendingInputEvent = ActionInputEvent.InitSkill2; // wait to initialize it during FixedUpdate(), in case it needs to do physics stuff
+            }
+            else if (Input.GetKeyUp("1") && m_CurrentSkillInput)
+            {
+                m_PendingInputEvent = ActionInputEvent.ReleaseKey; // wait to tell it during FixedUpdate()
             }
         }
     }

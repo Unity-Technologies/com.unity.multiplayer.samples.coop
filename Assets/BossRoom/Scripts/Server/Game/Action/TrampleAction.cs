@@ -43,6 +43,11 @@ namespace BossRoom.Server
         /// </summary>
         private const float k_PhysicalTouchDistance = 1;
 
+        /// <summary>
+        /// Set to true in the special-case scenario where we are stunned by one of the characters we tried to trample
+        /// </summary>
+        private bool m_WasStunned;
+
         public TrampleAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
         public override bool Start()
@@ -89,15 +94,44 @@ namespace BossRoom.Server
             }
 
             m_PreviousStage = newState;
-
-            return newState != ActionStage.Complete;
+            return newState != ActionStage.Complete && !m_WasStunned;
         }
 
+        /// <summary>
+        /// We've crashed into a victim! This function determines what happens to them... and to us!
+        /// It's possible for us to be stunned by our victim if they have a special power that allows that.
+        /// This function checks for that special case; if we become stunned, the victim is entirely unharmed,
+        /// and further collisions with other victims will also have no effect.
+        /// </summary>
+        /// <param name="victim">The character we've collided with</param>
         private void CollideWithVictim(ServerCharacter victim)
         {
+            if (victim == m_Parent)
+            {
+                // can't collide with ourselves!
+                return;
+            }
+
+            if (m_WasStunned)
+            {
+                // someone already stunned us, so no further damage can happen
+                return;
+            }
+
             // if we collide with allies, we don't want to hurt them (but we do knock them back, see below)
             if (m_Parent.IsNpc != victim.IsNpc) 
             {
+                // first see if this victim has the special ability to stun us!
+                float chanceToStun = victim.GetEnchantedValue(EnchantmentType.ChanceToStunTramplers);
+                if (chanceToStun > 0 && Random.Range(0,1) < chanceToStun)
+                {
+                    // we're stunned! No collision behavior for the victim. Stun ourselves and abort.
+                    m_WasStunned = true;
+                    m_Movement.CancelMove();
+                    m_Parent.NetState.ServerBroadcastCancelActions();
+                    return;
+                }
+
                 // We deal a certain amount of damage to our "initial" target and a different amount to all other victims.
                 int damage;
                 if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0 && m_Data.TargetIds[0] == victim.NetworkId)
@@ -149,6 +183,20 @@ namespace BossRoom.Server
                     CollideWithVictim(serverChar);
                 }
             }
+        }
+
+        public override bool ChainIntoNewAction(ref ActionRequestData newAction)
+        {
+            if (m_WasStunned)
+            {
+                newAction = new ActionRequestData()
+                {
+                    ActionTypeEnum = ActionType.Stunned,
+                    ShouldQueue = false,
+                };
+                return true;
+            }
+            return false;
         }
 
     }

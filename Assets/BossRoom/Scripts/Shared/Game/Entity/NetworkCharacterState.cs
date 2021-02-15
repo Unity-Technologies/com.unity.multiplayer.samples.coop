@@ -116,6 +116,11 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
+        /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
+        /// </summary>
+        public event Action CancelActionEventClient;
+
+        /// <summary>
         /// Client->Server RPC that sends a request to play an action.
         /// </summary>
         /// <param name="data">Data about which action to play an dits associated details. </param>
@@ -141,12 +146,27 @@ namespace BossRoom
             }
         }
 
+        /// <summary>
+        /// Server->Client RPC that broadcasts that the current ActionFX should be stopped.
+        /// </summary>
+        public void ServerBroadcastCancelActions()
+        {
+            InvokeClientRpcOnEveryone(RecvCancelActionClient);
+        }
+
+
         [ClientRPC]
         private void RecvDoActionClient(ulong clientId, Stream stream)
         {
             var data = new ActionRequestData();
             data.Read(stream);
             DoActionEventClient?.Invoke(data);
+        }
+
+        [ClientRPC]
+        private void RecvCancelActionClient()
+        {
+            CancelActionEventClient?.Invoke();
         }
 
         [ServerRPC]
@@ -179,6 +199,43 @@ namespace BossRoom
         public void RecvPerformHitReactionClient()
         {
             OnPerformHitReaction?.Invoke();
+        }
+
+        /// <summary>
+        /// Called on server when the character's client decides they have stopped "charging up" an attack.
+        /// </summary>
+        public event Action OnStopChargingUpServer;
+
+        /// <summary>
+        /// Called on all clients when this character has stopped "charging up" an attack.
+        /// </summary>
+        public event Action OnStopChargingUpClient;
+
+        /// <summary>
+        /// Called on the server when a player's client decides the player has stopped "charging up" their attack (e.g. holding down the input key)
+        /// </summary>
+        public void ClientSendStopChargingUp()
+        {
+            InvokeServerRpc(RecvStopChargingUpServer);
+        }
+
+        /// <summary>
+        /// Called on clients when a player's current Action should visually change to indicate that it's not "charging up" anymore
+        /// </summary>
+        public void ServerBroadcastStopChargingUp()
+        {
+            InvokeClientRpcOnEveryone(RecvStopChargingUpClient);
+        }
+
+        [ServerRPC]
+        public void RecvStopChargingUpServer()
+        {
+            OnStopChargingUpServer?.Invoke();
+        }
+        [ClientRPC]
+        public void RecvStopChargingUpClient()
+        {
+            OnStopChargingUpClient?.Invoke();
         }
     }
 }

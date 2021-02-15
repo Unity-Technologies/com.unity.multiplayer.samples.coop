@@ -24,6 +24,9 @@ namespace BossRoom
         Emote3,
         Emote4,
         TankTestability,
+        TankShieldBuff,
+        ImpBossTrampleAttack,
+        Stunned,
     }
 
 
@@ -41,6 +44,8 @@ namespace BossRoom
         RangedFXTargeted,
         AoE,
         Trample,
+        ChargedShield,
+        Stunned,
 
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
