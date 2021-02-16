@@ -7,13 +7,15 @@ namespace BossRoom.Visual
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {
-        public GameObject GameHubGO;
+        [SerializeField]
+        private GameObject m_GamePortalGO;
 
-        public PopupPanel m_ResponsePopup;
+        [SerializeField]
+        private PopupPanel m_ResponsePopup;
 
         private const string k_DefaultIP = "127.0.0.1";
 
-        private BossRoom.GameNetPortal m_netHub;
+        private GameNetPortal m_GameNetPortal;
 
         private Client.ClientGameNetPortal m_ClientNetPortal;
 
@@ -22,14 +24,13 @@ namespace BossRoom.Visual
         /// </summary>
         private const int k_ConnectPort = 9998;
 
-        // Start is called before the first frame update
         void Start()
         {
-            m_netHub = GameHubGO.GetComponent<BossRoom.GameNetPortal>();
-            m_ClientNetPortal = GameHubGO.GetComponent<Client.ClientGameNetPortal>();
+            m_GameNetPortal = m_GamePortalGO.GetComponent<GameNetPortal>();
+            m_ClientNetPortal = m_GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
-            m_ClientNetPortal.NetworkTimeOutEvent += OnNetworkTimeout;
-            m_ClientNetPortal.onConnectFinished += OnConnectFinished;
+            m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
+            m_ClientNetPortal.ConnectFinished += OnConnectFinished;
         }
 
         public void OnHostClicked()
@@ -43,10 +44,8 @@ namespace BossRoom.Visual
                     ipAddress = k_DefaultIP;
                 }
 
-                //Set the name field in our NetPortal
-                m_netHub.PlayerName = playerName;
-
-                m_netHub.StartHost(ipAddress, k_ConnectPort);
+                m_GameNetPortal.PlayerName = playerName;
+                m_GameNetPortal.StartHost(ipAddress, k_ConnectPort);
             }, k_DefaultIP);
         }
 
@@ -60,10 +59,8 @@ namespace BossRoom.Visual
                     ipAddress = k_DefaultIP;
                 }
 
-                //Set the name field in our NetPortal
-                m_netHub.PlayerName = playerName;
-
-                BossRoom.Client.ClientGameNetPortal.StartClient(m_netHub, ipAddress, k_ConnectPort);
+                m_GameNetPortal.PlayerName = playerName;
+                Client.ClientGameNetPortal.StartClient(m_GameNetPortal, ipAddress, k_ConnectPort);
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
 
             }, k_DefaultIP);
@@ -75,7 +72,7 @@ namespace BossRoom.Visual
         /// <param name="status"></param>
         private void OnConnectFinished(ConnectStatus status)
         {
-            if (status != ConnectStatus.SUCCESS)
+            if (status != ConnectStatus.Success)
             {
 
                 m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Something went wrong", false, true);
@@ -98,8 +95,8 @@ namespace BossRoom.Visual
 
         private void OnDestroy()
         {
-            m_ClientNetPortal.NetworkTimeOutEvent -= OnNetworkTimeout;
-            m_ClientNetPortal.onConnectFinished -= OnConnectFinished;
+            m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
+            m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
         }
     }
 }

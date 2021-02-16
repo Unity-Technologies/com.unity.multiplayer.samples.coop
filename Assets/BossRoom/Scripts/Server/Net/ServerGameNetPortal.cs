@@ -22,7 +22,7 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerGameNetPortal : MonoBehaviour
     {
-        private GameNetPortal m_Hub;
+        private GameNetPortal m_Portal;
 
         /// <summary>
         /// Maps a given client guid to the data for a given client player.
@@ -39,19 +39,19 @@ namespace BossRoom.Server
 
         public void Start()
         {
-            m_Hub = GetComponent<GameNetPortal>();
-            m_Hub.networkStartEvent += NetworkStart;
+            m_Portal = GetComponent<GameNetPortal>();
+            m_Portal.NetworkStarted += NetworkStart;
             // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
-            m_Hub.NetManager.ConnectionApprovalCallback += ApprovalCheck;
-            m_Hub.NetManager.OnServerStarted += ServerStartedHandler;
+            m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
+            m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
             m_ClientData = new Dictionary<string, PlayerData>();
             m_ClientIDToGuid = new Dictionary<ulong, string>();
         }
 
-        public void NetworkStart()
+        private void NetworkStart()
         {
-            if (!m_Hub.NetManager.IsServer)
+            if (!m_Portal.NetManager.IsServer)
             {
                 enabled = false;
             }
@@ -117,30 +117,30 @@ namespace BossRoom.Server
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
 
-            string[] config_lines = payload.Split('\n');
-            var payload_config = new Dictionary<string, string>();
-            foreach (var line in config_lines)
+            string[] configLines = payload.Split('\n');
+            var payloadConfig = new Dictionary<string, string>();
+            foreach (var line in configLines)
             {
                 //key-value pair. 
                 if (line.Contains("="))
                 {
                     string[] kv = line.Split('=');
-                    payload_config.Add(kv[0], kv[1]);
+                    payloadConfig.Add(kv[0], kv[1]);
                 }
                 else if (line.Trim() != "")
                 {
                     //single token, with no value present. 
-                    payload_config.Add(line, null);
+                    payloadConfig.Add(line, null);
                 }
             }
 
             //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect. 
-            Debug.Log("host ApprovalCheck: client guid was: " + payload_config["client_guid"]);
+            Debug.Log("host ApprovalCheck: client guid was: " + payloadConfig["client_guid"]);
 
             //Populate our dictionaries with the playerData
-            m_ClientIDToGuid.Add(clientId, payload_config["client_guid"]);
+            m_ClientIDToGuid.Add(clientId, payloadConfig["client_guid"]);
 
-            m_ClientData.Add(payload_config["client_guid"], new PlayerData(payload_config["player_name"], clientId));
+            m_ClientData.Add(payloadConfig["client_guid"], new PlayerData(payloadConfig["player_name"], clientId));
 
 
             //TODO: GOMPS-79 handle different error cases. 
@@ -150,7 +150,7 @@ namespace BossRoom.Server
             //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
             //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably 
             //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection. 
-            m_Hub.S2C_ConnectResult(clientId, ConnectStatus.SUCCESS);
+            m_Portal.S2CConnectResult(clientId, ConnectStatus.Success);
         }
 
         /// <summary>
@@ -158,8 +158,8 @@ namespace BossRoom.Server
         /// </summary>
         private void ServerStartedHandler()
         {
-            m_ClientData.Add("host_guid", new PlayerData(m_Hub.PlayerName, m_Hub.NetManager.LocalClientId));
-            m_ClientIDToGuid.Add(m_Hub.NetManager.LocalClientId, "host_guid");
+            m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, m_Portal.NetManager.LocalClientId));
+            m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
         }
 
     }

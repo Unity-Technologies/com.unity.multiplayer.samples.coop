@@ -77,6 +77,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4600110157238723776, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
+      propertyPath: m_AoePrefab
+      value: 
+      objectReference: {fileID: 8447158110562487606, guid: 88beb3857541f46d9becf14ba3392b89, type: 3}
     - target: {fileID: 4600110157238723781, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_Name
       value: Player

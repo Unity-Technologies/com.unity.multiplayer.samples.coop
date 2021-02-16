@@ -1,11 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
-/// <summary>
-/// responsible for driving all the functionality of the popup panel players see when connecting to the game
-/// </summary>
-///
+
 namespace BossRoom.Visual
 {
+    /// <summary>
+    /// responsible for driving all the functionality of the popup panel players see when connecting to the game
+    /// </summary>
     public class PopupPanel : MonoBehaviour
     {
         [SerializeField]
@@ -60,7 +60,7 @@ namespace BossRoom.Visual
 
             m_TitleText.text = titleText;
             m_MainText.text = mainText;
-            m_SubText.text = "";
+            m_SubText.text = string.Empty;
             m_InputBox.GetComponent<Text>().text = inputFieldText;
             m_ConfirmFunction = confirmCallback;
 
@@ -105,11 +105,11 @@ namespace BossRoom.Visual
         private void ResetState()
         {
             m_ConfirmationText.text = k_DefaultConfirmText;
-            m_TitleText.text = "";
-            m_MainText.text = "";
-            m_SubText.text = "";
+            m_TitleText.text = string.Empty;
+            m_MainText.text = string.Empty;
+            m_SubText.text = string.Empty;
             var inputField = m_InputFieldParent.GetComponent<InputField>();
-            inputField.text = "";
+            inputField.text = string.Empty;
             m_ReconnectingImage.SetActive(false);
             m_ConfirmationButton.gameObject.SetActive(false);
             m_CancelButton.gameObject.SetActive(false);
@@ -125,6 +125,7 @@ namespace BossRoom.Visual
         /// Sets the panel to match the given specificiations to notify the player.  If display image is set to true, it will display
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
+        /// <param name="mainText"> The text just under the title- the main body of text</param>
         /// <param name="displayImage">set to true if the notifier should display the animating icon for being busy</param>
         /// <param name="displayConfirmation"> set to true if the panel expects the user to click the button to close the panel.</param>
         /// <param name="subText">optional text in the middle of the panel.  Is not meant to coincide with the displayImage</param>

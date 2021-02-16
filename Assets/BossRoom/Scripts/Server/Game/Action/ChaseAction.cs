@@ -8,8 +8,6 @@ namespace BossRoom.Server
         private NetworkedObject m_Target;
         private ServerCharacterMovement m_Movement;
 
-        private Vector3 m_CurrentTargetPos;
-
         public ChaseAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
         }
@@ -24,22 +22,25 @@ namespace BossRoom.Server
             if (!HasValidTarget())
             {
                 Debug.Log("Failed to start ChaseAction. The target entity  wasn't submitted or doesn't exist anymore");
-                return false;
+                return ActionConclusion.Stop;
             }
 
             m_Target = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
 
             m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
-            m_CurrentTargetPos = m_Target.transform.position;
+            Vector3 currentTargetPos = m_Target.transform.position;
 
             if (StopIfDone())
             {
-                m_Parent.transform.LookAt(m_CurrentTargetPos); //even if we didn't move, snap to face the target!
-                return false;
+                m_Parent.transform.LookAt(currentTargetPos); //even if we didn't move, snap to face the target!
+                return ActionConclusion.Stop;
             }
 
-            m_Movement.FollowTransform(m_Target.transform);
-            return true;
+            if (!m_Movement.IsPerformingForcedMovement())
+            {
+                m_Movement.FollowTransform(m_Target.transform);
+            }
+            return ActionConclusion.Continue;
         }
 
         /// <summary>
@@ -75,16 +76,24 @@ namespace BossRoom.Server
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
         public override bool Update()
         {
-            if (StopIfDone()) { return false; }
+            if (StopIfDone()) { return ActionConclusion.Stop; }
 
-            m_CurrentTargetPos = m_Target.transform.position;
+            // Keep re-assigning our chase target whenever possible.
+            // This way, if we get Knocked Back mid-chase, we pick right back up and continue the chase.
+            if (!m_Movement.IsPerformingForcedMovement())
+            {
+                m_Movement.FollowTransform(m_Target.transform);
+            }
 
-            return true;
+            return ActionConclusion.Continue;
         }
 
         public override void Cancel()
         {
-            m_Movement?.CancelMove();
+            if (m_Movement && !m_Movement.IsPerformingForcedMovement())
+            {
+                m_Movement.CancelMove();
+            }
         }
     }
 }
