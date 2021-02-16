@@ -1,12 +1,10 @@
 using MLAPI;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace BossRoom
 {
     public class ClientSpawnerVisualization : NetworkedBehaviour
     {
-        [FormerlySerializedAs("m_NetworkSpawnerState")]
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
 

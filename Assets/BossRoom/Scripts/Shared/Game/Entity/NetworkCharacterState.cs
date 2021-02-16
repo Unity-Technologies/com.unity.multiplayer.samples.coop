@@ -38,7 +38,11 @@ namespace BossRoom
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.
         /// </summary>
-        public NetworkedVarInt HitPoints => m_NetworkHealthState.HitPoints;
+        public int HitPoints
+        {
+            get { return m_NetworkHealthState.HitPoints.Value; }
+            set { m_NetworkHealthState.HitPoints.Value = value; }
+        }
 
         /// <summary>
         /// Current Mana. This value is populated at startup time from CharacterClass data.
@@ -101,7 +105,7 @@ namespace BossRoom
 
         public void ApplyCharacterData()
         {
-            HitPoints.Value = CharacterData.BaseHP.Value;
+            HitPoints = CharacterData.BaseHP.Value;
             Mana.Value = CharacterData.BaseMana;
         }
 
