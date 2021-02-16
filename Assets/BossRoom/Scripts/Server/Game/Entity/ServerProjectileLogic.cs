@@ -122,7 +122,7 @@ namespace BossRoom.Server
                     var targetNetObj = m_CollisionCache[i].GetComponent<NetworkedObject>();
                     if(targetNetObj != null )
                     {
-                        m_NetState.ServerBroadcastEnemyHit(targetNetObj.NetworkId);
+                        m_NetState.RecvHitEnemyClientRPC(targetNetObj.NetworkId);
 
                         //retrieve the person that created us, if he's still around. 
                         NetworkedObject spawnerNet;

@@ -1,9 +1,7 @@
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkedVar;
-using MLAPI.Serialization.Pooled;
 using System;
-using System.IO;
 using UnityEngine;
 
 
@@ -116,31 +114,21 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Client->Server RPC that sends a request to play an action.
-        /// </summary>
-        /// <param name="data">Data about which action to play an dits associated details. </param>
-        public void ClientSendActionRequest(ref ActionRequestData action)
-        {
-            RecvDoActionServerRPC(data);
-        }
-
-        /// <summary>
         /// Server->Client RPC that broadcasts this action play to all clients.
         /// </summary>
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
-        public void ServerBroadcastAction(ref ActionRequestData data)
-        {
-            RecvDoActionClientRPC(data);
-        }
-
         [ClientRpc]
-        private void RecvDoActionClientRPC(ActionRequestData data)
+        public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);
         }
 
+        /// <summary>
+        /// Client->Server RPC that sends a request to play an action.
+        /// </summary>
+        /// <param name="data">Data about which action to play and its associated details. </param>
         [ServerRpc]
-        private void RecvDoActionServerRPC(ActionRequestData data)
+        public void RecvDoActionServerRPC(ActionRequestData data)
         {
             DoActionEventServer?.Invoke(data);
         }
@@ -158,11 +146,6 @@ namespace BossRoom
         /// ActionFX directly controls animation. But some Actions can have unpredictable targets. In cases
         /// where the ActionFX can't predict who gets hit, the Action calls this to manually trigger animation.
         /// </summary>
-        public void ServerBroadcastHitReaction()
-        {
-            RecvPerformHitReactionClientRPC();
-        }
-
         [ClientRpc]
         public void RecvPerformHitReactionClientRPC()
         {

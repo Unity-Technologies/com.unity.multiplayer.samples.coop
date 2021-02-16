@@ -26,15 +26,8 @@ namespace BossRoom
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
-
-        public void ServerBroadcastEnemyHit(ulong enemyId)
-        {
-            RecvHitEnemyClientRPC(enemyId);
-        }
-
-
         [ClientRpc]
-        private void RecvHitEnemyClientRPC(ulong enemyId)
+        public void RecvHitEnemyClientRPC(ulong enemyId)
         {
             HitEnemyEvent?.Invoke(enemyId);
         }
