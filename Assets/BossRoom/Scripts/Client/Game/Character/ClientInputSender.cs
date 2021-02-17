@@ -112,9 +112,7 @@ namespace BossRoom.Client
                 var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
                 if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                 {
-                    // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
-                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point,
-                        "MLAPI_INTERNAL");
+                    m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
                     //Send our client only click request
                     OnClientClick?.Invoke(k_CachedHit[0].point);
                 }
@@ -145,7 +143,7 @@ namespace BossRoom.Client
                 {
                     if (GetActionRequestForTarget(ref k_CachedHit[networkedHitIndex], out ActionRequestData playerAction))
                     {
-                        m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
+                        m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
                     }
                 }
                 else
@@ -153,7 +151,7 @@ namespace BossRoom.Client
                     // clicked on nothing... perform a "miss" attack on the spot they clicked on
                     var data = new ActionRequestData();
                     PopulateSkillRequest(k_CachedHit[0].point, CharacterData.Skill1, ref data);
-                    m_NetworkCharacter.ClientSendActionRequest(ref data);
+                    m_NetworkCharacter.RecvDoActionServerRPC(data);
                 }
             }
             else
@@ -176,7 +174,7 @@ namespace BossRoom.Client
                 {
                     var data = new ActionRequestData();
                     data.ActionTypeEnum = uiAction;
-                    m_NetworkCharacter.ClientSendActionRequest(ref data);
+                    m_NetworkCharacter.RecvDoActionServerRPC(data);
                 }
             }
         }
@@ -278,7 +276,7 @@ namespace BossRoom.Client
                 var emoteData = new ActionRequestData();
                 emoteData.ActionTypeEnum = m_EmoteAction;
                 emoteData.CancelMovement = true;
-                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
+                m_NetworkCharacter.RecvDoActionServerRPC(emoteData);
             }
 
             if (Input.GetKeyUp("1"))

@@ -1,9 +1,7 @@
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkedVar;
-using MLAPI.Serialization.Pooled;
 using System;
-using System.IO;
 using UnityEngine;
 
 
@@ -97,7 +95,7 @@ namespace BossRoom
         /// RPC to send inputs for this character from a client to a server.
         /// </summary>
         /// <param name="movementTarget">The position which this character should move towards.</param>
-        [ServerRPC]
+        [ServerRpc]
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
             ReceivedClientInput?.Invoke(movementTarget);
@@ -116,45 +114,23 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Client->Server RPC that sends a request to play an action.
-        /// </summary>
-        /// <param name="data">Data about which action to play an dits associated details. </param>
-        public void ClientSendActionRequest(ref ActionRequestData action)
-        {
-            using (PooledBitStream stream = PooledBitStream.Get())
-            {
-                action.Write(stream);
-                InvokeServerRpcPerformance(RecvDoActionsServer, stream);
-            }
-        }
-
-        /// <summary>
         /// Server->Client RPC that broadcasts this action play to all clients.
         /// </summary>
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
-        public void ServerBroadcastAction(ref ActionRequestData data)
+        [ClientRpc]
+        public void RecvDoActionClientRPC(ActionRequestData data)
         {
-            using (PooledBitStream stream = PooledBitStream.Get())
-            {
-                data.Write(stream);
-                InvokeClientRpcOnEveryonePerformance(RecvDoActionClient, stream);
-            }
-        }
-
-        [ClientRPC]
-        private void RecvDoActionClient(ulong clientId, Stream stream)
-        {
-            var data = new ActionRequestData();
-            data.Read(stream);
             DoActionEventClient?.Invoke(data);
         }
 
-        [ServerRPC]
-        private void RecvDoActionsServer(ulong clientId, Stream stream)
+        /// <summary>
+        /// Client->Server RPC that sends a request to play an action.
+        /// </summary>
+        /// <param name="data">Data about which action to play and its associated details. </param>
+        [ServerRpc]
+        public void RecvDoActionServerRPC(ActionRequestData data)
         {
-            var action = new ActionRequestData();
-            action.Read(stream);
-            DoActionEventServer?.Invoke(action);
+            DoActionEventServer?.Invoke(data);
         }
 
         // UTILITY AND SPECIAL-PURPOSE RPCs
@@ -170,13 +146,8 @@ namespace BossRoom
         /// ActionFX directly controls animation. But some Actions can have unpredictable targets. In cases
         /// where the ActionFX can't predict who gets hit, the Action calls this to manually trigger animation.
         /// </summary>
-        public void ServerBroadcastHitReaction()
-        {
-            InvokeClientRpcOnEveryone(RecvPerformHitReactionClient);
-        }
-
-        [ClientRPC]
-        public void RecvPerformHitReactionClient()
+        [ClientRpc]
+        public void RecvPerformHitReactionClientRPC()
         {
             OnPerformHitReaction?.Invoke();
         }
