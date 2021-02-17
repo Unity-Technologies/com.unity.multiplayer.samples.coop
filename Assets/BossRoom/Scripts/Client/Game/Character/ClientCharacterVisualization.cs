@@ -67,10 +67,7 @@ namespace BossRoom.Visual
             m_NetState.CharacterAppearance.OnValueChanged += OnCharacterAppearanceChanged;
 
             // ...and visualize the current char-select value that we know about
-            if (m_CharacterSwapper)
-            {
-                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
-            }
+            OnCharacterAppearanceChanged(0, m_NetState.CharacterAppearance.Value);
 
             if (!m_NetState.IsNpc)
             {
