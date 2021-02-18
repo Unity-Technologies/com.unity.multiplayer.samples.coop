@@ -13,11 +13,11 @@ namespace BossRoom.Visual
         [SerializeField]
         private PopupPanel m_ResponsePopup;
 
-        private const string k_DefaultIP = "127.0.0.1";
+        //private const string k_DefaultIP = "127.0.0.1";
 
-        private GameNetPortal m_GameNetPortal;
+        //private GameNetPortal m_GameNetPortal;
 
-        private Client.ClientGameNetPortal m_ClientNetPortal;
+        //private Client.ClientGameNetPortal m_ClientNetPortal;
 
         /// <summary>
         /// This will get more sophisticated as we move to a true relay model.
@@ -26,8 +26,8 @@ namespace BossRoom.Visual
 
         void Start()
         {
-            m_GameNetPortal = m_GamePortalGO.GetComponent<GameNetPortal>();
-            m_ClientNetPortal = m_GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
+           //m_GameNetPortal = m_GamePortalGO.GetComponent<GameNetPortal>();
+            //m_ClientNetPortal = m_GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
             //m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             //m_ClientNetPortal.ConnectFinished += OnConnectFinished;
@@ -43,7 +43,6 @@ namespace BossRoom.Visual
         {
 
         }
-
     }
 }
 
