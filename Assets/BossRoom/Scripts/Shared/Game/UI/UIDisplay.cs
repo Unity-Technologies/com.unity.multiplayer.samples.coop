@@ -18,6 +18,8 @@ namespace BossRoom
         // spawned in world (only one instance of this)
         UIHealth m_UIHealth;
 
+        RectTransform m_UIHealthRectTransform;
+
         bool m_UIHealthActive;
 
         [SerializeField]
@@ -87,6 +89,7 @@ namespace BossRoom
             }
 
             m_UIHealth = Instantiate(m_UIHealthPrefab, m_CanvasTransform);
+            m_UIHealthRectTransform = m_UIHealth.GetComponent<RectTransform>();
             m_UIHealth.Initialize(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
             m_UIHealthActive = true;
         }
@@ -104,11 +107,11 @@ namespace BossRoom
             m_UIHealthActive = false;
         }
 
-        void FixedUpdate()
+        void LateUpdate()
         {
             if (m_UIHealthActive)
             {
-                m_UIHealth.transform.position = m_Camera.WorldToScreenPoint(m_TransformToTrack.position);
+                m_UIHealthRectTransform.position = m_Camera.WorldToScreenPoint(m_TransformToTrack.position);
             }
         }
     }

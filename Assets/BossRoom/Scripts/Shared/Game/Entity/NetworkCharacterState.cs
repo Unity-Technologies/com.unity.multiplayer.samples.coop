@@ -1,9 +1,7 @@
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkedVar;
-using MLAPI.Serialization.Pooled;
 using System;
-using System.IO;
 using UnityEngine;
 
 namespace BossRoom
@@ -30,7 +28,19 @@ namespace BossRoom
         /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
+
+        /// <summary>
+        /// The speed that the character is currently allowed to move, according to the server.
+        /// </summary>
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
+
+        /// <summary>
+        /// Used by animations. Indicates how fast the character should "look like" they're moving,
+        /// according to the server. This is a value from 0 (not moving) to 1 (moving as fast as possible).
+        /// This does not always correspond to the NetworkMovementSpeed; for instance when a player is being
+        /// "knocked back", they are moving, but they visually look like they're standing still.
+        /// </summary>
+        public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
 
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
@@ -59,6 +69,7 @@ namespace BossRoom
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
+
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
@@ -66,14 +77,21 @@ namespace BossRoom
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value];
+                return GameDataSource.Instance.CharacterDataByType[CharacterType];
             }
         }
 
         [SerializeField]
         NetworkCharacterTypeState m_NetworkCharacterTypeState;
 
-        public NetworkedVar<CharacterTypeEnum> CharacterType => m_NetworkCharacterTypeState.CharacterType;
+        /// <summary>
+        /// Current HP. This value is populated at startup time from CharacterClass data.
+        /// </summary>
+        public CharacterTypeEnum CharacterType
+        {
+            get { return m_NetworkCharacterTypeState.CharacterType.Value; }
+            set { m_NetworkCharacterTypeState.CharacterType.Value = value; }
+        }
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
@@ -85,21 +103,21 @@ namespace BossRoom
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
-        public event Action<Vector3> OnReceivedClientInput;
+        public event Action<Vector3> ReceivedClientInput;
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
         /// </summary>
         /// <param name="movementTarget">The position which this character should move towards.</param>
-        [ServerRPC]
+        [ServerRpc]
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
-            OnReceivedClientInput?.Invoke(movementTarget);
+            ReceivedClientInput?.Invoke(movementTarget);
         }
 
         public void SetPlayer(CharacterTypeEnum playerType, int playerAppearance)
         {
-            CharacterType.Value = playerType;
+            CharacterType = playerType;
             CharacterAppearance.Value = playerAppearance;
         }
 
@@ -114,53 +132,50 @@ namespace BossRoom
         /// <summary>
         /// This event is raised on the server when an action request arrives
         /// </summary>
-        public event Action<BossRoom.ActionRequestData> DoActionEventServer;
+        public event Action<ActionRequestData> DoActionEventServer;
 
         /// <summary>
         /// This event is raised on the client when an action is being played back.
         /// </summary>
-        public event Action<BossRoom.ActionRequestData> DoActionEventClient;
-
-        /// <summary>
-        /// Client->Server RPC that sends a request to play an action.
-        /// </summary>
-        /// <param name="data">Data about which action to play an dits associated details. </param>
-        public void ClientSendActionRequest(ref ActionRequestData data)
-        {
-            using (PooledBitStream stream = PooledBitStream.Get())
-            {
-                data.Write(stream);
-                InvokeServerRpcPerformance(RecvDoActionServer, stream);
-            }
-        }
+        public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
         /// Server->Client RPC that broadcasts this action play to all clients.
         /// </summary>
         /// <param name="data">The data associated with this Action, including what action type it is.</param>
-        public void ServerBroadcastAction(ref ActionRequestData data)
+        [ClientRpc]
+        public void RecvDoActionClientRPC(ActionRequestData data)
         {
-            using (PooledBitStream stream = PooledBitStream.Get())
-            {
-                data.Write(stream);
-                InvokeClientRpcOnEveryonePerformance(RecvDoActionClient, stream);
-            }
-        }
-
-        [ClientRPC]
-        private void RecvDoActionClient(ulong clientId, Stream stream)
-        {
-            var data = new ActionRequestData();
-            data.Read(stream);
             DoActionEventClient?.Invoke(data);
         }
 
-        [ServerRPC]
-        private void RecvDoActionServer(ulong clientId, Stream stream)
+        /// <summary>
+        /// Client->Server RPC that sends a request to play an action.
+        /// </summary>
+        /// <param name="data">Data about which action to play and its associated details. </param>
+        [ServerRpc]
+        public void RecvDoActionServerRPC(ActionRequestData data)
         {
-            var data = new ActionRequestData();
-            data.Read(stream);
             DoActionEventServer?.Invoke(data);
+        }
+
+        // UTILITY AND SPECIAL-PURPOSE RPCs
+
+        /// <summary>
+        /// Called when the character needs to perform a one-off "I've been hit" animation.
+        /// </summary>
+        public event Action OnPerformHitReaction;
+
+        /// <summary>
+        /// Called by Actions when this character needs to perform a one-off "ouch" reaction-animation.
+        /// Note: this is not the normal way to trigger hit-react animations! Normally the client-side
+        /// ActionFX directly controls animation. But some Actions can have unpredictable targets. In cases
+        /// where the ActionFX can't predict who gets hit, the Action calls this to manually trigger animation.
+        /// </summary>
+        [ClientRpc]
+        public void RecvPerformHitReactionClientRPC()
+        {
+            OnPerformHitReaction?.Invoke();
         }
     }
 }

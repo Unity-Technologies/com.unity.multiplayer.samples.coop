@@ -1,4 +1,5 @@
 using System;
+using MLAPI;
 using MLAPI.NetworkedVar;
 using UnityEngine;
 
@@ -7,7 +8,7 @@ namespace BossRoom
     /// <summary>
     /// MonoBehaviour containing only one NetworkedVarInt which represents this object's health.
     /// </summary>
-    public class NetworkHealthState : MonoBehaviour
+    public class NetworkHealthState : NetworkedBehaviour
     {
         [HideInInspector]
         public NetworkedVarInt HitPoints = new NetworkedVarInt(NetworkUtils.ServerWriteEveryoneReadPermission);

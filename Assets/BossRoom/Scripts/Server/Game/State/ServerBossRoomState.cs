@@ -13,9 +13,15 @@ namespace BossRoom.Server
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
         private NetworkedObject m_PlayerPrefab;
 
+        // note: this is temporary, for testing!
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
         private NetworkedObject m_EnemyPrefab;
+
+        // note: this is temporary, for testing!
+        [SerializeField]
+        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
+        private NetworkedObject m_BossPrefab;
 
         [SerializeField]
         [Tooltip("Set what sort of character class gets created for players by default.")]
@@ -76,12 +82,6 @@ namespace BossRoom.Server
             newPlayer.SpawnAsPlayerObject(clientId);
         }
 
-        private void SpawnEnemy()
-        {
-            var newEnemy = Instantiate(m_EnemyPrefab);
-            newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
-        }
-
         /// <summary>
         /// Temp code to spawn an enemy
         /// </summary>
@@ -89,7 +89,13 @@ namespace BossRoom.Server
         {
             if (Input.GetKeyDown(KeyCode.E))
             {
-                SpawnEnemy();
+                var newEnemy = Instantiate(m_EnemyPrefab);
+                newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+            }
+            if (Input.GetKeyDown(KeyCode.B))
+            {
+                var newEnemy = Instantiate(m_BossPrefab);
+                newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
             }
         }
     }

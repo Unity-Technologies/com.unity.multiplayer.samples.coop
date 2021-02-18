@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+<<<<<<< HEAD
+<<<<<<< HEAD:Assets/BossRoom/GameData/Action/General/Emote1.asset.meta
+guid: 9b53d15f3766de542bb872be2e83c506
+NativeFormatImporter:
+=======
+guid: 1cea9a73dd6704cb493ae6fbd42cdd18
+folderAsset: yes
+DefaultImporter:
+>>>>>>> develop:Assets/BossRoom/Prefabs/Actions.meta
+=======
+guid: 9b53d15f3766de542bb872be2e83c506
+NativeFormatImporter:
+>>>>>>> develop
+  externalObjects: {}
+  mainObjectFileID: 11400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
