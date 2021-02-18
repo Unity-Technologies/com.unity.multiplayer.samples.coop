@@ -134,7 +134,6 @@ namespace BossRoom.Server
                     m_Queue[0].End();
                     if (m_Queue[0].ChainIntoNewAction(ref m_PendingSynthesizedAction))
                     {
-                        Debug.Log($"Going to chain into a new Action: {m_PendingSynthesizedAction.ActionTypeEnum}");
                         m_HasPendingSynthesizedAction = true;
                     }
                 }
@@ -211,20 +210,24 @@ namespace BossRoom.Server
         /// <summary>
         /// Gives all active Actions a chance to alter a gameplay variable.
         /// </summary>
-        /// <param name="enchantmentType">Which gameplay variable is being calculated</param>
-        /// <returns>The final ("enchanted") value of the variable</returns>
-        public float GetEnchantedValue(Action.EnchantmentType enchantmentType)
+        /// <remarks>
+        /// Note that this handles both positive alterations (commonly called "buffs")
+        /// AND negative ones ("debuffs").
+        /// </remarks>
+        /// <param name="buffType">Which gameplay variable is being calculated</param>
+        /// <returns>The final ("buffed") value of the variable</returns>
+        public float GetBuffedValue(Action.BuffableValue buffType)
         {
-            float enchantedValue = Action.GetUnenchantedValue(enchantmentType);
+            float buffedValue = Action.GetUnbuffedValue(buffType);
             if (m_Queue.Count > 0)
             {
-                m_Queue[0].EnchantValue(enchantmentType, ref enchantedValue);
+                m_Queue[0].BuffValue(buffType, ref buffedValue);
             }
             foreach (var action in m_NonBlockingActions)
             {
-                action.EnchantValue(enchantmentType, ref enchantedValue);
+                action.BuffValue(buffType, ref buffedValue);
             }
-            return enchantedValue;
+            return buffedValue;
         }
 
         /// <summary>

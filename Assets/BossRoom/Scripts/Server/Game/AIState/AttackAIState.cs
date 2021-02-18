@@ -63,7 +63,7 @@ namespace BossRoom.Server
                         return;
                     }
                 }
-                else if (info.ActionTypeEnum == ActionType.Stunned)
+                else if (info.ActionTypeEnum == ActionType.Stun)
                 {
                     // we can't do anything right now. We're stunned!
                     return;

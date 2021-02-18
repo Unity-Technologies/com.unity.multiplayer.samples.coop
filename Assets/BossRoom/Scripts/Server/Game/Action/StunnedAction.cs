@@ -27,11 +27,11 @@ namespace BossRoom.Server
             return true;
         }
 
-        public override void EnchantValue(EnchantmentType enchantmentType, ref float enchantedValue)
+        public override void BuffValue(BuffableValue buffType, ref float buffedValue)
         {
-            if (enchantmentType == EnchantmentType.PercentDamageReceived)
+            if (buffType == BuffableValue.PercentDamageReceived)
             {
-                enchantedValue *= Description.Amount;
+                buffedValue *= Description.Amount;
             }
         }
 

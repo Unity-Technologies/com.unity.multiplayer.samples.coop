@@ -17,7 +17,7 @@ namespace BossRoom.Visual
         /// A list of the special particle graphics we spawned.
         /// </summary>
         /// <remarks>
-        /// Performance note: repeatedly creating&destroying GameObjects is not optimal, and on low-resource platforms
+        /// Performance note: repeatedly creating and destroying GameObjects is not optimal, and on low-resource platforms
         /// (like mobile devices), it can lead to major performance problems. On mobile platforms, visual graphics should
         /// use object-pooling (i.e. reusing the same GameObjects repeatedly). But that's outside the scope of this demo.
         /// </remarks>
@@ -46,6 +46,7 @@ namespace BossRoom.Visual
         public override bool Update()
         {
             // make sure the particles stick near us! (Even if we aren't moving on the server, our visualization could still be moving for a bit.)
+            // Note that we don't use the parent's rotation, because rotating the "charge up" particles just looks weird.
             foreach (var graphic in m_Graphics)
             {
                 graphic.transform.position = m_Parent.Parent.position;

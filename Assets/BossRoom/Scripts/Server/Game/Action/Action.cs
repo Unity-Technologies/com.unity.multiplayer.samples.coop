@@ -86,39 +86,40 @@ namespace BossRoom.Server
         /// <param name="collision"></param>
         public virtual void OnCollisionEnter(Collision collision) { }
 
-        public enum EnchantmentType
+        public enum BuffableValue
         {
-            PercentHealingReceived, // unenchanted value is 1.0. Reducing to 0 would mean "no healing". 2 would mean "double healing"
-            PercentDamageReceived,  // unenchanted value is 1.0. Reducing to 0 would mean "no damage". 2 would mean "double damage"
-            ChanceToStunTramplers,  // unenchanted value is 0. If > 0, is the chance that someone trampling this character becomes stunned
+            PercentHealingReceived, // unbuffed value is 1.0. Reducing to 0 would mean "no healing". 2 would mean "double healing"
+            PercentDamageReceived,  // unbuffed value is 1.0. Reducing to 0 would mean "no damage". 2 would mean "double damage"
+            ChanceToStunTramplers,  // unbuffed value is 0. If > 0, is the chance that someone trampling this character becomes stunned
         }
 
         /// <summary>
-        /// Called on all active Actions to give them a chance to alter the outcome of a gameplay calculation.
+        /// Called on all active Actions to give them a chance to alter the outcome of a gameplay calculation. Note
+        /// that this is used for both "buffs" (positive gameplay benefits) and "debuffs" (gameplay penalties).
         /// </summary>
         /// <remarks>
-        /// In a more complex game with lots of "buffs" and "debuffs", this function might be replaced by a separate 
-        /// EnchantmentRegistry component. This would let you add fancier features, such as defining which enchantments
-        /// "stack" with other ones, and could provide a UI that lists which enchantments are affecting each character
+        /// In a more complex game with lots of buffs and debuffs, this function might be replaced by a separate 
+        /// BuffRegistry component. This would let you add fancier features, such as defining which effects
+        /// "stack" with other ones, and could provide a UI that lists which are affecting each character
         /// and for how long.
         /// </remarks>
-        /// <param name="enchantmentType">Which gameplay variable being calculated</param>
-        /// <param name="orgValue">The original ("un-enchanted") value</param>
-        /// <param name="enchantedValue">The final ("enchanted") value</param>
-        public virtual void EnchantValue(EnchantmentType enchantmentType, ref float enchantedValue) { }
+        /// <param name="buffType">Which gameplay variable being calculated</param>
+        /// <param name="orgValue">The original ("un-buffed") value</param>
+        /// <param name="buffedValue">The final ("buffed") value</param>
+        public virtual void BuffValue(BuffableValue buffType, ref float buffedValue) { }
 
         /// <summary>
-        /// Static utility function that returns the default ("un-enchanted") value for an EnchantmentType.
+        /// Static utility function that returns the default ("un-buffed") value for a BuffableValue.
         /// (This just ensures that there's one place for all these constants.)
         /// </summary>
-        public static float GetUnenchantedValue(Action.EnchantmentType enchantmentType)
+        public static float GetUnbuffedValue(Action.BuffableValue buffType)
         {
-            switch (enchantmentType)
+            switch (buffType)
             {
-                case Action.EnchantmentType.PercentDamageReceived: return 1;
-                case Action.EnchantmentType.PercentHealingReceived: return 1;
-                case Action.EnchantmentType.ChanceToStunTramplers: return 0;
-                default: throw new System.Exception($"Unknown enchantment type {enchantmentType}");
+                case BuffableValue.PercentDamageReceived: return 1;
+                case BuffableValue.PercentHealingReceived: return 1;
+                case BuffableValue.ChanceToStunTramplers: return 0;
+                default: throw new System.Exception($"Unknown buff type {buffType}");
             }
         }
 
@@ -133,7 +134,7 @@ namespace BossRoom.Server
         /// Called on active Actions to let them know when a notable gameplay event happens.
         /// </summary>
         /// <remarks>
-        /// When a GameplayActivity of AttackedByEnemy or Healed happens, OnGameplayAction() is called BEFORE EnchantValue() is called.
+        /// When a GameplayActivity of AttackedByEnemy or Healed happens, OnGameplayAction() is called BEFORE BuffValue() is called.
         /// </remarks>
         /// <param name="actionType"></param>
         public virtual void OnGameplayActivity(GameplayActivity activityType) { }

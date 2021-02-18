@@ -13,7 +13,6 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
-            UnityEngine.Debug.Log($"Setting trigger {Description.Anim}");
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
             return true;
         }

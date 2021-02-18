@@ -122,7 +122,7 @@ namespace BossRoom.Server
             if (m_Parent.IsNpc != victim.IsNpc) 
             {
                 // first see if this victim has the special ability to stun us!
-                float chanceToStun = victim.GetEnchantedValue(EnchantmentType.ChanceToStunTramplers);
+                float chanceToStun = victim.GetBuffedValue(BuffableValue.ChanceToStunTramplers);
                 if (chanceToStun > 0 && Random.Range(0,1) < chanceToStun)
                 {
                     // we're stunned! No collision behavior for the victim. Stun ourselves and abort.
@@ -191,7 +191,7 @@ namespace BossRoom.Server
             {
                 newAction = new ActionRequestData()
                 {
-                    ActionTypeEnum = ActionType.Stunned,
+                    ActionTypeEnum = ActionType.Stun,
                     ShouldQueue = false,
                 };
                 return true;

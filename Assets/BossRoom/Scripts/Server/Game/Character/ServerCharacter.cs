@@ -147,13 +147,13 @@ namespace BossRoom.Server
             if (HP > 0)
             {
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.Healed);
-                float healingMod = m_ActionPlayer.GetEnchantedValue(Action.EnchantmentType.PercentHealingReceived);
+                float healingMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentHealingReceived);
                 HP = (int)(HP * healingMod);
             }
             else
             {
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
-                float damageMod = m_ActionPlayer.GetEnchantedValue(Action.EnchantmentType.PercentDamageReceived);
+                float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
             }
             NetState.HitPoints.Value += HP;
@@ -179,11 +179,11 @@ namespace BossRoom.Server
         /// Determines a gameplay variable for this character. The value is determined
         /// by the character's active Actions.
         /// </summary>
-        /// <param name="enchantmentType"></param>
+        /// <param name="buffType"></param>
         /// <returns></returns>
-        public float GetEnchantedValue(Action.EnchantmentType enchantmentType)
+        public float GetBuffedValue(Action.BuffableValue buffType)
         {
-            return m_ActionPlayer.GetEnchantedValue(enchantmentType);
+            return m_ActionPlayer.GetBuffedValue(buffType);
         }
 
         /// <summary>

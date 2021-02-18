@@ -73,6 +73,18 @@ namespace BossRoom.Visual
             }
         }
 
+        private void OnDestroy()
+        {
+            if (m_NetState)
+            {
+                m_NetState.DoActionEventClient -= PerformActionFX;
+                m_NetState.CancelActionEventClient -= CancelActionFX;
+                m_NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+                m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
+                m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
+            }
+        }
+
         private void OnPerformHitReaction()
         {
             m_ClientVisualsAnimator.SetTrigger("HitReact1");

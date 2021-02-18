@@ -26,7 +26,7 @@ namespace BossRoom
         TankTestability,
         TankShieldBuff,
         ImpBossTrampleAttack,
-        Stunned,
+        Stun,
     }
 
 

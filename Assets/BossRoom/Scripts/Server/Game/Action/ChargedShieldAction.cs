@@ -73,9 +73,9 @@ namespace BossRoom.Server
             return m_StoppedChargingUpTime != 0;
         }
 
-        public override void EnchantValue(EnchantmentType enchantmentType, ref float enchantedValue)
+        public override void BuffValue(BuffableValue buffType, ref float buffedValue)
         {
-            if (enchantmentType == EnchantmentType.PercentDamageReceived)
+            if (buffType == BuffableValue.PercentDamageReceived)
             {
                 float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
                 float pctChargedUp = Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);
@@ -83,19 +83,19 @@ namespace BossRoom.Server
                 // the amount of damage reduction starts at 50% (for not-charged-up), then slowly increases to 100% depending on how charged-up we got
                 float pctDamageReduction = 0.5f + ((pctChargedUp * pctChargedUp) / 2);
 
-                // Now that we know how much damage to reduce it by, we need to set enchantedValue to the inverse (because
+                // Now that we know how much damage to reduce it by, we need to set buffedValue to the inverse (because
                 // it's looking for how much damage to DO, not how much to REDUCE BY). Also note how we don't just SET
-                // enchantedValue... we multiply our enchantment in with the current value. This lets our Action "stack"
+                // buffedValue... we multiply our buff in with the current value. This lets our Action "stack"
                 // with any other Actions that also alter this variable.)
-                enchantedValue *= 1-pctDamageReduction;
+                buffedValue *= 1-pctDamageReduction;
             }
-            else if (enchantmentType == EnchantmentType.ChanceToStunTramplers)
+            else if (buffType == BuffableValue.ChanceToStunTramplers)
             {
                 // if we are at "full charge", we stun enemies that try to trample us!
                 float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
-                if (timeSpentChargingUp / Description.ExecTimeSeconds >= 1 && enchantedValue < 1)
+                if (timeSpentChargingUp / Description.ExecTimeSeconds >= 1 && buffedValue < 1)
                 {
-                    enchantedValue = 1;
+                    buffedValue = 1;
                 }
             }
         }
