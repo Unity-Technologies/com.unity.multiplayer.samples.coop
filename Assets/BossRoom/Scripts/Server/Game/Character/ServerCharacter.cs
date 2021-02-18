@@ -39,6 +39,12 @@ namespace BossRoom.Server
         private void Awake()
         {
             m_Movement = GetComponent<ServerCharacterMovement>();
+            NetState = GetComponent<NetworkCharacterState>();
+            m_ActionPlayer = new ActionPlayer(this);
+            if (IsNpc)
+            {
+                m_AIBrain = new AIBrain(this, m_ActionPlayer);
+            }
         }
 
         private void OnEnable()
@@ -58,12 +64,8 @@ namespace BossRoom.Server
 
         void Start()
         {
-            NetState = GetComponent<NetworkCharacterState>();
-            m_ActionPlayer = new ActionPlayer(this);
-            if (IsNpc)
-            {
-                m_AIBrain = new AIBrain(this, m_ActionPlayer);
-            }
+
+
         }
 
         public override void NetworkStart()

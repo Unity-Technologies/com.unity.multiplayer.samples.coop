@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BossRoom.Server
 {
     /// <summary>
-    /// Server specialization of Character Select game state. 
+    /// Server specialization of Character Select game state.
     /// </summary>
     [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
@@ -118,8 +118,10 @@ namespace BossRoom.Server
 
         private IEnumerator CoroEndLobby()
         {
-            yield return new WaitForSeconds(3);
-            MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("DungeonTest");
+            //yield return new WaitForSeconds(3);
+            SceneTransitionHandler.sceneTransitionHandler.SwitchScene("DungeonTest");
+            //MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("DungeonTest");
+            yield return null;
         }
 
         protected override void OnDestroy()
@@ -165,7 +167,7 @@ namespace BossRoom.Server
             //      "[MLAPI] ClientRPC message received for a non-existent object with id: 1. This message is lost."
             // If we wait a moment, the object will be assigned its ID (of 1) and everything will work. But there's no
             // notification to reliably tell us when the server and client are truly initialized.
-            // 
+            //
             // Add'l notes: I tried to work around this by having the newly-connected client send an "I'm ready" RPC to the
             // server, assuming that by the time the server received an RPC, it would be safe to respond. But the client
             // literally cannot send RPCs yet! If it sends one too quickly after connecting, the server gets a null-reference

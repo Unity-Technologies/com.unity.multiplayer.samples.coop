@@ -46,7 +46,11 @@ namespace BossRoom.Server
             m_CharLogic = GetComponent<ServerCharacter>();
             m_Rigidbody = GetComponent<Rigidbody>();
 
-            m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
+            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
+            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
+
+
+
         }
 
         public override void NetworkStart()
@@ -57,6 +61,11 @@ namespace BossRoom.Server
                 enabled = false;
                 return;
             }
+            var GO = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag);
+            if(GO != null)
+            {
+                m_NavigationSystem = GO.GetComponent<NavigationSystem>();
+            }
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
@@ -64,7 +73,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Sets a movement target. We will path to this position, avoiding static obstacles. 
+        /// Sets a movement target. We will path to this position, avoiding static obstacles.
         /// </summary>
         /// <param name="position">Position in world space to path to. </param>
         public void SetMovementTarget(Vector3 position)
@@ -110,7 +119,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Cancels any moves that are currently in progress. 
+        /// Cancels any moves that are currently in progress.
         /// </summary>
         public void CancelMove()
         {
@@ -142,7 +151,10 @@ namespace BossRoom.Server
 
         private void OnDestroy()
         {
-            m_NavPath.Dispose();
+            if(m_NavPath != null)
+            {
+                m_NavPath.Dispose();
+            }
         }
 
         private void PerformMovement()

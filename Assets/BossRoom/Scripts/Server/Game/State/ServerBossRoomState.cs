@@ -1,11 +1,15 @@
 using MLAPI;
+using System.IO;
 using System.Collections;
 using UnityEngine;
+using MLAPI.SceneManagement;
+using MLAPI.Messaging;
+using MLAPI.Serialization.Pooled;
 
 namespace BossRoom.Server
 {
     /// <summary>
-    /// Server specialization of core BossRoom game logic. 
+    /// Server specialization of core BossRoom game logic.
     /// </summary>
     public class ServerBossRoomState : GameStateBehaviour
     {
@@ -17,7 +21,7 @@ namespace BossRoom.Server
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
         private NetworkedObject m_EnemyPrefab;
-		
+
         // note: this is temporary, for testing!
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
@@ -34,6 +38,10 @@ namespace BossRoom.Server
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
         {
             LobbyResults.CharSelectChoice returnValue;
+            if(m_LobbyResults == null)
+            {
+                GetRelayObjectInfo();
+            }
             if (!m_LobbyResults.Choices.TryGetValue(clientId, out returnValue))
             {
                 // We don't know about this client ID! That probably means they joined the game late, after the lobby was closed.
@@ -45,52 +53,73 @@ namespace BossRoom.Server
             return returnValue;
         }
 
-        public override void NetworkStart()
+        void GetRelayObjectInfo()
         {
-            base.NetworkStart();
-            if (!IsServer)
+            if(m_LobbyResults == null)
             {
-                enabled = false;
-            }
-            else
-            {
-                // retrieve the lobby state info so that the players we're about to spawn can query it
                 var o = GameStateRelay.GetRelayObject();
                 if (o != null && o.GetType() != typeof(LobbyResults))
                     throw new System.Exception("No LobbyResults found!");
                 m_LobbyResults = (LobbyResults)o;
+            }
+        }
 
+        enum NetworkStates
+        {
+            None,
+            Started,
+            Spawned
+        }
+        NetworkStates NetworkState;
+
+        public override void NetworkStart()
+        {
+            base.NetworkStart();
+            NetworkState = NetworkStates.Started;
+            if (IsServer)
+            {
+                // retrieve the lobby state info so that the players we're about to spawn can query it
+                GetRelayObjectInfo();
                 // listen for the client-connect event. This will only happen after
                 // the ServerGNHLogic's approval-callback is done, meaning that if we get this event,
                 // the client is officially allowed to be here. (And they are joining the game post-lobby...
                 // should we do something special here?)
-                NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+                //NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
 
                 // Now create player characters for all the players
-                foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
-                {
-                    //see note in OnClientConnected for why this is a coroutine. 
-                    StartCoroutine(CoroSpawnPlayer(connection.ClientId));
-                }
+                //foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
+                //{
+                //    //see note in OnClientConnected for why this is a coroutine.
+                //    StartCoroutine(CoroSpawnPlayer(connection.ClientId));
+                //}
+                //StartCoroutine(CoroSpawnPlayer(NetworkingManager.Singleton.ServerClientId));
             }
+        }
+
+        [ServerRPC(RequireOwnership =false)]
+        void ClientReadyForTransition(ulong clientId, Stream stream )
+        {
+            SpawnPlayer(clientId);
         }
 
         private void OnClientConnected(ulong clientId)
         {
-            // FIXME: this is a work-around for an MLAPI timing problem which happens semi-reliably; 
-            // when it happens, it generates the same errors and has the same behavior as this: 
+            // FIXME: this is a work-around for an MLAPI timing problem which happens semi-reliably;
+            // when it happens, it generates the same errors and has the same behavior as this:
             //      https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/328
             // We can't use the workaround suggested there, which is to avoid using MLAPI's scene manager.
             // Instead, we wait a bit for MLAPI to get its state organized, because we can't safely create entities in OnClientConnected().
-            // (Note: on further explortation, I think this is due to some sort of scene-loading synchronization: the new client is briefly 
+            // (Note: on further explortation, I think this is due to some sort of scene-loading synchronization: the new client is briefly
             // "in" the lobby screen, but has already told the server it's in the game scene. Or something similar.)
-            StartCoroutine(CoroSpawnPlayer(clientId));
+            //StartCoroutine(CoroSpawnPlayer(clientId));
         }
 
         private IEnumerator CoroSpawnPlayer(ulong clientId)
         {
-            yield return new WaitForSeconds(k_TempSpawnDelaySeconds);
+            //yield return new WaitForSeconds(k_TempSpawnDelaySeconds);
             SpawnPlayer(clientId);
+
+            yield return null;
         }
 
         private void SpawnPlayer(ulong clientId)
@@ -110,15 +139,49 @@ namespace BossRoom.Server
         /// </summary>
         private void Update()
         {
-            if (Input.GetKeyDown(KeyCode.E))
+            switch(NetworkState)
             {
-                var newEnemy = Instantiate(m_EnemyPrefab);
-                newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+                case NetworkStates.Started:
+                {
+                    if(!IsServer)
+                    {
+                        using (PooledBitStream stream = PooledBitStream.Get())
+                        {
+                            using (PooledBitWriter writer = PooledBitWriter.Get(stream))
+                            {
+                                writer.WriteUInt32Packed((uint)NetworkingManager.Singleton.LocalClientId);
+                                InvokeServerRpcPerformance(ClientReadyForTransition,stream);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        SpawnPlayer(NetworkingManager.Singleton.ServerClientId);
+                    }
+                    NetworkState = NetworkStates.Spawned;
+                    break;
+                }
+                case NetworkStates.Spawned:
+                {
+                    if(!IsServer)
+                    {
+                        enabled = false;
+                    }
+                    break;
+                }
             }
-            if (Input.GetKeyDown(KeyCode.B))
+            if(IsServer)
             {
-                var newEnemy = Instantiate(m_BossPrefab);
-                newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    var newEnemy = Instantiate(m_EnemyPrefab);
+                    newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+                }
+                if (Input.GetKeyDown(KeyCode.B))
+                {
+                    var newEnemy = Instantiate(m_BossPrefab);
+                    newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+                }
             }
         }
     }
