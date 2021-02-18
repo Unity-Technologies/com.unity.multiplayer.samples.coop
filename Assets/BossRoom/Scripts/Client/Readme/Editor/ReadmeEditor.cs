@@ -6,6 +6,10 @@ using System.Reflection;
 
 namespace BossRoom
 {
+    /// <remarks>
+    /// Custom readme editor window based on the readme created for URP. For more context, see:
+    /// https://github.com/Unity-Technologies/Graphics/tree/master/com.unity.template-universal
+    /// </remarks>
     [CustomEditor(typeof(Readme))]
     [InitializeOnLoad]
     public class ReadmeEditor : Editor

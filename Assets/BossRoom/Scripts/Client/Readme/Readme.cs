@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace BossRoom
 {
+    /// <remarks>
+    /// Custom readme class based on the readme created for URP. For more context, see:
+    /// https://github.com/Unity-Technologies/Graphics/tree/master/com.unity.template-universal
+    /// </remarks>
     public class Readme : ScriptableObject
     {
         public Texture2D icon;
