@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &7267579448599568982
+--- !u!114 &284218924205237092
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,12 +9,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3688950541947916333}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 03ea9275e2d645a4594fa1edb9e30cb7, type: 3}
+  m_Script: {fileID: 11500000, guid: cead4253912fb1241be383143c5f3b59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_UIHealthPrefab: {fileID: 5224239475005341921, guid: ef40e983a46e6194c83cdaa6aa2462d6, type: 3}
   m_NetworkHealthState: {fileID: 848206395698055335}
   m_BaseHP: {fileID: 11400000, guid: f393c51c2bce455478a0b995b8d4e3dd, type: 2}
-  m_TransformToTrack: {fileID: 0}
+  m_TransformToTrack: {fileID: 3688950541947916327}
 --- !u!1001 &2203142923062114684
 PrefabInstance:
   m_ObjectHideFlags: 0
