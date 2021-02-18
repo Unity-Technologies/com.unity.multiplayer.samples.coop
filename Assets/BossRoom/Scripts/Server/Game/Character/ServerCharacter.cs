@@ -88,6 +88,17 @@ namespace BossRoom.Server
             }
         }
 
+        public void OnDestroy()
+        {
+            if (NetState)
+            {
+                NetState.DoActionEventServer -= OnActionPlayRequest;
+                NetState.ReceivedClientInput -= OnClientMoveRequest;
+                NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
+                NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+            }
+        }
+
         /// <summary>
         /// Play a sequence of actions!
         /// </summary>
