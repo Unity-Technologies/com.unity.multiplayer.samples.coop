@@ -33,7 +33,26 @@ namespace BossRoom.Server
         private LobbyResults m_LobbyResults;
 
         //see note in OnClientConnected
-        private const float k_TempSpawnDelaySeconds = 5;
+        //private const float k_TempSpawnDelaySeconds = 5;
+
+        //[NSS] This might be a more global value that you could reference
+        private const bool m_DeveloperMode = true;
+
+        private void Awake()
+        {
+            //[NSS] Hook into the scene transition handler's client loaded scene event.
+            SceneTransitionHandler.sceneTransitionHandler.clientLoadedScene += SceneTransitionHandler_ClientLoadedScene;
+        }
+
+        /// <summary>
+        /// SceneTransitionHandler_ClientLoadedScene
+        /// Once the scene is 100% loaded (all assets loaded), the client is notified and player spawned.
+        /// </summary>
+        /// <param name="clientId"></param>
+        private void SceneTransitionHandler_ClientLoadedScene(ulong clientId)
+        {
+            SpawnPlayer(clientId);
+        }
 
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
         {
@@ -64,22 +83,16 @@ namespace BossRoom.Server
             }
         }
 
-        enum NetworkStates
-        {
-            None,
-            Started,
-            Spawned
-        }
-        NetworkStates NetworkState;
-
         public override void NetworkStart()
         {
             base.NetworkStart();
-            NetworkState = NetworkStates.Started;
+
             if (IsServer)
             {
                 // retrieve the lobby state info so that the players we're about to spawn can query it
                 GetRelayObjectInfo();
+
+
                 // listen for the client-connect event. This will only happen after
                 // the ServerGNHLogic's approval-callback is done, meaning that if we get this event,
                 // the client is officially allowed to be here. (And they are joining the game post-lobby...
@@ -94,14 +107,19 @@ namespace BossRoom.Server
                 //}
                 //StartCoroutine(CoroSpawnPlayer(NetworkingManager.Singleton.ServerClientId));
             }
+            else
+            {
+                enabled = false;  //[NSS] with new scene transition handler approach, we can add this back
+            }
         }
 
-        [ServerRPC(RequireOwnership =false)]
-        void ClientReadyForTransition(ulong clientId, Stream stream )
-        {
-            SpawnPlayer(clientId);
-        }
-
+        /// <summary>
+        /// [NSS] This might be needed for joining players.
+        /// Note: There doesn't seem to be a way for players to select their player when they join a game in progress.
+        /// Note2: Perhaps the joining player should be placed in the lobby first, allowed to select their character, and then upon selection launch into the game in progress?
+        /// Note3: If the above (Note2) is the approach, then it is very likely this will not be needed.
+        /// </summary>
+        /// <param name="clientId"></param>
         private void OnClientConnected(ulong clientId)
         {
             // FIXME: this is a work-around for an MLAPI timing problem which happens semi-reliably;
@@ -114,6 +132,12 @@ namespace BossRoom.Server
             //StartCoroutine(CoroSpawnPlayer(clientId));
         }
 
+
+        /// <summary>
+        /// NSS: This is no longer needed and could be removed if you like
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <returns></returns>
         private IEnumerator CoroSpawnPlayer(ulong clientId)
         {
             //yield return new WaitForSeconds(k_TempSpawnDelaySeconds);
@@ -122,6 +146,11 @@ namespace BossRoom.Server
             yield return null;
         }
 
+        /// <summary>
+        /// SpawnPlayer
+        /// Spawns the player
+        /// </summary>
+        /// <param name="clientId">MLAPI client identification number to be spawned</param>
         private void SpawnPlayer(ulong clientId)
         {
             var newPlayer = Instantiate(m_PlayerPrefab);
@@ -135,42 +164,13 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Temp code to spawn an enemy
+        /// Update
+        /// This MonoBehaviour update method is used for level specific developer mode functionality
+        /// TODO: ?  Remove for final product or perhaps create a UI that can be enabled and contains all of this functionality?
         /// </summary>
         private void Update()
         {
-            switch(NetworkState)
-            {
-                case NetworkStates.Started:
-                {
-                    if(!IsServer)
-                    {
-                        using (PooledBitStream stream = PooledBitStream.Get())
-                        {
-                            using (PooledBitWriter writer = PooledBitWriter.Get(stream))
-                            {
-                                writer.WriteUInt32Packed((uint)NetworkingManager.Singleton.LocalClientId);
-                                InvokeServerRpcPerformance(ClientReadyForTransition,stream);
-                            }
-                        }
-                    }
-                    else
-                    {
-                        SpawnPlayer(NetworkingManager.Singleton.ServerClientId);
-                    }
-                    NetworkState = NetworkStates.Spawned;
-                    break;
-                }
-                case NetworkStates.Spawned:
-                {
-                    if(!IsServer)
-                    {
-                        enabled = false;
-                    }
-                    break;
-                }
-            }
-            if(IsServer)
+            if(m_DeveloperMode)
             {
                 if (Input.GetKeyDown(KeyCode.E))
                 {

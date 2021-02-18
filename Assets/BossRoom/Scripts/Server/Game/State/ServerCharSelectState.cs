@@ -100,9 +100,34 @@ namespace BossRoom.Server
             // remember our choices so the next scene can use the info
             SaveLobbyResults();
 
-            // Delay a few seconds to give the UI time to react, then switch scenes
-            StartCoroutine(CoroEndLobby());
+            // [NSS] Notes:
+            // You could remove SceneTransitionHandler and put your prefab references into this class.
+            // Spawn the players once the scene is loaded.
+            // #1 If MLAPI spawns player, then each player persists between scenes -------------------------------------------------------------------> What Albin would have done
+            //    -in this case, the the player should have states
+            //    - depending upon the player state it would enable/disable certain components (i.e. the lobby state disables all visuals etc)
+            // #2 If MLAPI does not spawn player automatically, then user manages player spawning (current implementation) ---------------------------> Albin said this too is a valid way to do this
+
+            //[NSS] Albin mentioned you could implement the scene transition stuff here as well (still using #2 approach)
+            //Example code:
+            //sceneSwitchProgress =  MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("DungeonTest");
+            //sceneSwitchProgress.OnClientLoadedScene += SceneSwitchProgress_OnClientLoadedScene;
+
+            //[NSS]: Left this class in here in the event you wanted to use it as an ancillary place to handle scene transitions.
+            //[NSS]: This version of the branch (fix) uses the SceneTransitionHandler (see ServerbossRoomState.cs for usage)
+            SceneTransitionHandler.sceneTransitionHandler.SwitchScene("DungeonTest");
+
+            //[NSS]:This is no longer needed
+            //Delay a few seconds to give the UI time to react, then switch scenes
+            //StartCoroutine(CoroEndLobby());
         }
+
+        //[NSS]: The "non-SceneTransitionHandler" companion code
+        //MLAPI.SceneManagement.SceneSwitchProgress sceneSwitchProgress;
+        //private void SceneSwitchProgress_OnClientLoadedScene(ulong clientId)
+        //{
+        //    //[NSS]: You could spawn the players here
+        //}
 
         private void SaveLobbyResults()
         {
@@ -116,13 +141,17 @@ namespace BossRoom.Server
             GameStateRelay.SetRelayObject(lobbyResults);
         }
 
-        private IEnumerator CoroEndLobby()
-        {
-            //yield return new WaitForSeconds(3);
-            SceneTransitionHandler.sceneTransitionHandler.SwitchScene("DungeonTest");
-            //MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("DungeonTest");
-            yield return null;
-        }
+
+        /// <summary>
+        /// [NSS] No longer needed
+        /// </summary>
+        /// <returns></returns>
+        //private IEnumerator CoroEndLobby()
+        //{
+        //    //yield return new WaitForSeconds(3);
+        //    //MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("DungeonTest");
+        //    yield return null;
+        //}
 
         protected override void OnDestroy()
         {
@@ -158,6 +187,7 @@ namespace BossRoom.Server
                 }
             }
         }
+
 
         private void OnClientConnected(ulong clientId)
         {
