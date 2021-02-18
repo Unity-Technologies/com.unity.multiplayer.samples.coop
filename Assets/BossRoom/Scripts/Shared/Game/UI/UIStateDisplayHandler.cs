@@ -10,7 +10,7 @@ namespace BossRoom
     /// create, & position a UIHealth prefab instance in UI-space.
     /// </summary>
     [RequireComponent(typeof(NetworkHealthState))]
-    public class UIDisplay : MonoBehaviour
+    public class UIStateDisplayHandler : MonoBehaviour
     {
         [SerializeField]
         UIHealth m_UIHealthPrefab;
