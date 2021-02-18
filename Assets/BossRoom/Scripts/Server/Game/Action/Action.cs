@@ -10,14 +10,17 @@ namespace BossRoom.Server
     /// include everything from your basic character attack, to a fancy skill like the Archer's Volley Shot, but also
     /// include more mundane things like pulling a lever.
     /// For every ActionLogic enum, there will be one specialization of this class.
-    /// There is only ever one "active" Action at a time on a character, but multiple Actions may exist at once, with subsequent Actions
-    /// pending behind the currently playing one, and possibly "non-blocking" actions running in the background. See ActionPlayer.cs
+    /// There is only ever one active Action (also called the "blocking" action) at a time on a character, but multiple
+    /// Actions may exist at once, with subsequent Actions pending behind the currently active one, and possibly
+    /// "non-blocking" actions running in the background. See ActionPlayer.cs
     ///
     /// The flow for Actions is:
     /// Initially: Start()
     /// Every frame: ShouldBecomeNonBlocking() (only if Action is blocking), then Update()
     /// On shutdown: End() or Cancel()
-    /// After shutdown: ChainIntoNewAction() (only if Action was blocking, and only if End() was called, not Cancel())
+    /// After shutdown: ChainIntoNewAction()    (only if Action was blocking, and only if End() was called, not Cancel())
+    ///
+    /// Note also that if Start() returns false, no other functions are called on the Action, not even End().
     /// </remarks>
     public abstract class Action : ActionBase
     {
