@@ -43,8 +43,6 @@ namespace BossRoom
 
         public override void NetworkStart()
         {
-            base.NetworkStart();
-
             bool isClientOnly = IsClient && !IsServer;
             if (!IsOwner && isClientOnly) // we don't want to track player ghost stats, only our own
             {
