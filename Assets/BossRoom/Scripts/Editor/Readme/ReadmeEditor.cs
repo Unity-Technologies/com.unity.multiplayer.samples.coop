@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace BossRoom
+namespace BossRoom.Scripts.Editor
 {
     /// <remarks>
     /// Custom readme editor window based on the readme created for URP. For more context, see:
@@ -12,7 +12,7 @@ namespace BossRoom
     /// </remarks>
     [CustomEditor(typeof(Readme))]
     [InitializeOnLoad]
-    public class ReadmeEditor : Editor
+    public class ReadmeEditor : UnityEditor.Editor
     {
         const string k_ShowedReadmeSessionStateName = "ReadmeEditor.showedReadme";
 
