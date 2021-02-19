@@ -76,8 +76,7 @@ namespace BossRoom.Server
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
-                NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
-                NetState.Mana.Value = NetState.CharacterData.BaseMana;
+                NetState.ApplyCharacterData();
 
                 if (m_StartingAction != ActionType.None)
                 {
@@ -100,7 +99,7 @@ namespace BossRoom.Server
                     GetComponent<ServerCharacterMovement>().CancelMove();
                 }
 
-                this.m_ActionPlayer.PlayAction(ref action);
+                m_ActionPlayer.PlayAction(ref action);
             }
         }
 
@@ -138,18 +137,18 @@ namespace BossRoom.Server
         /// <summary>
         /// Receive an HP change from somewhere. Could be healing or damage.
         /// </summary>
-        /// <param name="Inflicter">Person dishing out this damage/healing. Can be null. </param>
+        /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
 
-            NetState.HitPoints.Value += HP;
+            NetState.HitPoints += HP;
 
             //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
-            if (NetState.HitPoints.Value <= 0)
+            if (NetState.HitPoints <= 0)
             {
                 ClearActions();
 
@@ -173,7 +172,7 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Fainted)
             {
-                NetState.HitPoints.Value = HP;
+                NetState.HitPoints = HP;
                 NetState.NetworkLifeState.Value = LifeState.Alive;
             }
         }
