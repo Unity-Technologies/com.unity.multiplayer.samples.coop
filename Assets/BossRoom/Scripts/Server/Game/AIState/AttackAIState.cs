@@ -67,41 +67,13 @@ namespace BossRoom.Server
 
             // Choose whether we can attack our foe directly, or if we need to get closer first
             var attackInfo = GetCurrentAttackInfo();
-            Vector3 diff = m_Brain.GetMyServerCharacter().transform.position - m_Foe.transform.position;
-            if (diff.sqrMagnitude < attackInfo.Range * attackInfo.Range)
+            var attackData = new ActionRequestData
             {
-                // yes! We are in range
-                var attackData = new ActionRequestData
-                {
-                    ActionTypeEnum = m_CurAttackAction,
-                    Amount = attackInfo.Amount,
-                    ShouldQueue = false,
-                    TargetIds = new ulong[] { m_Foe.NetworkId }
-                };
-                m_ActionPlayer.PlayAction(ref attackData);
-            }
-            else
-            {
-                // we are not in range so we will need to chase them
-                var chaseData = new ActionRequestData
-                {
-                    ActionTypeEnum = ActionType.GeneralChase,
-                    Amount = attackInfo.Range,
-                    ShouldQueue = false,
-                    TargetIds = new ulong[] { m_Foe.NetworkId }
-                };
-                m_ActionPlayer.PlayAction(ref chaseData);
-
-                // queue up the actual attack for when we're in range
-                var attackData = new ActionRequestData
-                {
-                    ActionTypeEnum = m_CurAttackAction,
-                    Amount = attackInfo.Amount,
-                    ShouldQueue = true,
-                    TargetIds = new ulong[] { m_Foe.NetworkId }
-                };
-                m_ActionPlayer.PlayAction(ref attackData);
-            }
+                ActionTypeEnum = attackInfo.ActionTypeEnum,
+                TargetIds = new ulong[] { m_Foe.NetworkId },
+                ShouldClose = true
+            };
+            m_ActionPlayer.PlayAction(ref attackData);
         }
 
         /// <summary>
