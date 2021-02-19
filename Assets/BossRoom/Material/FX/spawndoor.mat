@@ -169,7 +169,7 @@ Material:
     - _Color: {r: 0.7490196, g: 0.7490196, b: 0.7490196, a: 1}
     - _ColorAddSubDiff: {r: -1, g: 1, b: 0, a: 0}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
-    - _EmissionColor: {r: 0, g: 5.082353, b: 5.992157, a: 1}
+    - _EmissionColor: {r: 1.5363036, g: 0.07830656, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _FrozenTint: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
