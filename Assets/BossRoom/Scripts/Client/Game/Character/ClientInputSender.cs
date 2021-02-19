@@ -46,7 +46,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
-        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value];
+        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType];
 
         public override void NetworkStart()
         {
@@ -67,7 +67,7 @@ namespace BossRoom.Client
 
             // figure out our hero type
             NetworkCharacterState netState = GetComponent<NetworkCharacterState>();
-            CharacterTypeEnum heroType = netState.CharacterType.Value;
+            CharacterTypeEnum heroType = netState.CharacterType;
             m_ActionUI.SetPlayerType(heroType);
 
             // find the emote bar to track its buttons
@@ -218,7 +218,7 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this. 
+        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this.
         /// </summary>
         /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
         /// <param name="action">The action to perform (will be stamped on the resultData)</param>
@@ -238,7 +238,7 @@ namespace BossRoom.Client
                     Vector3 offset = hitPoint - transform.position;
                     offset.y = 0;
                     resultData.Direction = offset.normalized;
-                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive. 
+                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive.
                     return;
                 case ActionLogic.RangedFXTargeted:
                     if (resultData.TargetIds == null) { resultData.Position = hitPoint; }

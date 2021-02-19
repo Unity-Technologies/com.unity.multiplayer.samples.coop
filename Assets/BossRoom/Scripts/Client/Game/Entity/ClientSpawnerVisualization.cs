@@ -6,7 +6,7 @@ namespace BossRoom
     public class ClientSpawnerVisualization : NetworkedBehaviour
     {
         [SerializeField]
-        NetworkSpawnerState m_NetworkSpawnerState;
+        NetworkHealthState m_NetworkHealthState;
 
         // TODO: Integrate visuals (GOMPS-123)
         [SerializeField]
@@ -20,26 +20,19 @@ namespace BossRoom
                 return;
             }
 
-            m_NetworkSpawnerState.Broken.OnValueChanged += BrokenStateChanged;
-            m_NetworkSpawnerState.HitPoints.OnValueChanged += HitPointsChanged;
+            m_NetworkHealthState.HitPointsDepleted += SpawnerHitPointsDepleted;
+            m_NetworkHealthState.HitPointsReplenished += SpawnerHitPointsReplenished;
+            m_NetworkHealthState.HitPoints.OnValueChanged += HitPointsChanged;
         }
 
-        void BrokenStateChanged(bool previousValue, bool newValue)
+        void SpawnerHitPointsDepleted()
         {
-            if (newValue)
-            {
-                if (previousValue == false)
-                {
-                    // spawner is newly broken
-                }
-            }
-            else
-            {
-                if (previousValue)
-                {
-                    // spawner is newly revived
-                }
-            }
+            // TODO: Integrate visuals (GOMPS-123)
+        }
+
+        void SpawnerHitPointsReplenished()
+        {
+            // TODO: Integrate visuals (GOMPS-123)
         }
 
         void HitPointsChanged(int previousValue, int newValue)

@@ -4,10 +4,8 @@ using MLAPI.NetworkedVar;
 using System;
 using UnityEngine;
 
-
 namespace BossRoom
 {
-
     public enum LifeState
     {
         Alive,
@@ -18,6 +16,7 @@ namespace BossRoom
     /// <summary>
     /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
+    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
     public class NetworkCharacterState : NetworkedBehaviour, INetMovement
     {
         /// <summary>
@@ -43,11 +42,17 @@ namespace BossRoom
         /// </summary>
         public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
 
+        [SerializeField]
+        NetworkHealthState m_NetworkHealthState;
+
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.
         /// </summary>
-        [HideInInspector]
-        public NetworkedVarInt HitPoints;
+        public int HitPoints
+        {
+            get { return m_NetworkHealthState.HitPoints.Value; }
+            set { m_NetworkHealthState.HitPoints.Value = value; }
+        }
 
         /// <summary>
         /// Current Mana. This value is populated at startup time from CharacterClass data.
@@ -72,12 +77,21 @@ namespace BossRoom
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value];
+                return GameDataSource.Instance.CharacterDataByType[CharacterType];
             }
         }
 
-        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
-        public NetworkedVar<CharacterTypeEnum> CharacterType;
+        [SerializeField]
+        NetworkCharacterTypeState m_NetworkCharacterTypeState;
+
+        /// <summary>
+        /// Current HP. This value is populated at startup time from CharacterClass data.
+        /// </summary>
+        public CharacterTypeEnum CharacterType
+        {
+            get { return m_NetworkCharacterTypeState.CharacterType.Value; }
+            set { m_NetworkCharacterTypeState.CharacterType.Value = value; }
+        }
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
@@ -99,6 +113,18 @@ namespace BossRoom
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
             ReceivedClientInput?.Invoke(movementTarget);
+        }
+
+        public void SetPlayer(CharacterTypeEnum playerType, int playerAppearance)
+        {
+            CharacterType = playerType;
+            CharacterAppearance.Value = playerAppearance;
+        }
+
+        public void ApplyCharacterData()
+        {
+            HitPoints = CharacterData.BaseHP.Value;
+            Mana.Value = CharacterData.BaseMana;
         }
 
         // ACTION SYSTEM
