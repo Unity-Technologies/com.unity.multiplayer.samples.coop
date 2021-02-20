@@ -132,7 +132,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.ArrayChangedEvent -= OnLobbyPlayerStateChanged;
             }
             if (Instance == this)
                 Instance = null;
@@ -150,7 +150,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.ArrayChangedEvent += OnLobbyPlayerStateChanged;
             }
         }
 
@@ -166,7 +166,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
-        private void OnLobbyPlayerStateChanged(NetworkedListEvent<CharSelectData.LobbyPlayerState> changeEvent)
+        private void OnLobbyPlayerStateChanged(CharSelectData.LobbyPlayerArray lobbyArray )
         {
             UpdateSeats();
 
@@ -355,7 +355,7 @@ namespace BossRoom.Client
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
         {
-            CharSelectData.InvokeServerRpc(CharSelectData.RpcChangeSeat, NetworkingManager.Singleton.LocalClientId, seatIdx, false);
+            CharSelectData.ChangeSeatServerRpc(NetworkingManager.Singleton.LocalClientId, seatIdx, false);
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            CharSelectData.InvokeServerRpc(CharSelectData.RpcChangeSeat, NetworkingManager.Singleton.LocalClientId, m_LastSeatSelected, true);
+            CharSelectData.ChangeSeatServerRpc(NetworkingManager.Singleton.LocalClientId, m_LastSeatSelected, true);
         }
 
 #if UNITY_EDITOR

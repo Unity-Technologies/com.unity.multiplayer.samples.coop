@@ -44,7 +44,7 @@ namespace BossRoom.Server
                 Data.TargetIds = new ulong[] { foe.NetworkId };
             }
 
-            m_Parent.NetState.ServerBroadcastAction(ref Data);
+            m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
