@@ -48,7 +48,7 @@ namespace BossRoom
 
         [Tooltip("Screen space vertical offset for positioning.")]
         [SerializeField]
-        float m_VerticalScreenOffset = -40f;
+        float m_VerticalScreenOffset;
 
         Vector3 m_VerticalOffset;
 
@@ -75,8 +75,6 @@ namespace BossRoom
             if (m_DisplayName)
             {
                 DisplayUIName();
-                // for testing
-                m_NetworkNameState.Name.Value = "Jared";
             }
 
             if (!m_DisplayHealth)

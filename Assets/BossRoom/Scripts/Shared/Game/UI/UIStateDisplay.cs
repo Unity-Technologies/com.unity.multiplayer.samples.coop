@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace BossRoom
 {
+    /// <summary>
+    /// Class containing references to UI children that we can display. Both are disabled by default on prefab.
+    /// </summary>
     public class UIStateDisplay : MonoBehaviour
     {
         [SerializeField]
