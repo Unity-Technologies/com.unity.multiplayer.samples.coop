@@ -9,14 +9,6 @@ namespace BossRoom.Visual
     /// </summary>
     public class HeroEmoteBar : MonoBehaviour
     {
-        // All buttons in this UI button bar
-        [SerializeField]
-        private HeroActionButton[] m_Buttons;
-
-        // This class will track clicks on eack of its buttons
-        // ButtonWasClicked will deliver each click only once
-        private bool[] m_ButtonClicked;
-
         private Client.ClientInputSender m_InputSender;
 
         public void RegisterInputSender(Client.ClientInputSender inputSender)

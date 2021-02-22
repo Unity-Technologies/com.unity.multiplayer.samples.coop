@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using MLAPI;
+using UnityEngine;
 
 namespace BossRoom.Server
 {
@@ -15,6 +13,8 @@ namespace BossRoom.Server
     {
         public TargetAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
+        private ServerCharacterMovement m_Movement;
+
         public override bool Start()
         {
             //we must always clear the existing target, even if we don't run. This is how targets get cleared--running a TargetAction
@@ -24,7 +24,9 @@ namespace BossRoom.Server
             //there can only be one TargetAction at a time!
             m_Parent.RunningActions.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
 
-            if ( Data.TargetIds == null || Data.TargetIds.Length == 0 ) { return false; }
+            if (Data.TargetIds == null || Data.TargetIds.Length == 0) { return false; }
+
+            m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
 
             m_Parent.NetState.TargetId.Value = TargetId;
 
@@ -37,7 +39,7 @@ namespace BossRoom.Server
         {
             bool isValid = ActionUtils.IsValidTarget(TargetId);
 
-            if( m_Parent.RunningActions.RunningActionCount == 1 && !m_Parent.GetComponent<ServerCharacterMovement>().IsMoving() && isValid )
+            if (m_Parent.RunningActions.RunningActionCount == 1 && !m_Movement.IsMoving() && isValid)
             {
                 //we're the only action running, and we're not moving, so let's swivel to face our target, just to be cool!
                 FaceTarget(TargetId);
@@ -48,7 +50,7 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
-            if( m_Parent.NetState.TargetId.Value == TargetId )
+            if (m_Parent.NetState.TargetId.Value == TargetId)
             {
                 m_Parent.NetState.TargetId.Value = 0;
             }
@@ -62,12 +64,12 @@ namespace BossRoom.Server
         /// <param name="targetId"></param>
         private void FaceTarget(ulong targetId)
         {
-            if( MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkedObject targetObject))
+            if (MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkedObject targetObject))
             {
                 Vector3 diff = targetObject.transform.position - m_Parent.transform.position;
 
                 diff.y = 0;
-                if(diff != Vector3.zero )
+                if (diff != Vector3.zero)
                 {
                     m_Parent.transform.forward = diff;
                 }
