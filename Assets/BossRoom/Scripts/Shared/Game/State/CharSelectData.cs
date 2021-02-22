@@ -1,7 +1,10 @@
+
 using MLAPI;
 using MLAPI.Messaging;
+using MLAPI.Serialization;
 using MLAPI.NetworkedVar;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -59,7 +62,7 @@ namespace BossRoom
         /// <summary>
         /// Describes one of players in the lobby, and their current character-select status.
         /// </summary>
-        public struct LobbyPlayerState : MLAPI.Serialization.IBitWritable
+        public struct LobbyPlayerState : INetworkSerializable
         {
             public ulong ClientId;
             public string PlayerName;
@@ -77,38 +80,143 @@ namespace BossRoom
                 SeatIdx = seatIdx;
                 LastChangeTime = lastChangeTime;
             }
-
-            public void Read(Stream stream)
+            public void NetworkSerialize(BitSerializer serializer)
             {
-                using (var reader = MLAPI.Serialization.Pooled.PooledBitReader.Get(stream))
+                serializer.Serialize(ref ClientId);
+                serializer.Serialize(ref PlayerName);
+                serializer.Serialize(ref PlayerNum);
+                serializer.Serialize(ref SeatState);
+                serializer.Serialize(ref SeatIdx);
+                serializer.Serialize(ref LastChangeTime);
+            }
+        }
+
+        /// <summary>
+        /// TEMP! This is substitute for NetworkedVarList<>. It will be replaced by a NetworkedVarList<LobbyPlayerState> when those are once again
+        /// supported. 
+        /// </summary>
+        public class LobbyPlayerArray
+        {
+            private List<LobbyPlayerState> m_LobbyPlayers;
+            private CharSelectData m_CharSelectData;
+
+            /// <summary>
+            /// Event that gets raised when the array has changed somehow. 
+            /// </summary>
+            public event Action<LobbyPlayerArray> ArrayChangedEvent;
+
+            public LobbyPlayerArray(CharSelectData data, int count )
+            {
+                m_LobbyPlayers = new List<LobbyPlayerState>();
+                m_CharSelectData = data;
+
+                if( NetworkingManager.Singleton.IsServer )
                 {
-                    ClientId = reader.ReadUInt64();
-                    PlayerName = reader.ReadString().ToString();
-                    PlayerNum = reader.ReadInt16();
-                    SeatState = (SeatState)reader.ReadInt16();
-                    SeatIdx = reader.ReadInt16();
-                    LastChangeTime = reader.ReadSingle();
+                    NetworkingManager.Singleton.OnClientConnectedCallback += (ulong clientId) =>
+                    {
+                        m_CharSelectData.StartCoroutine(CoroClientConnected(clientId));
+                    };
                 }
             }
 
-            public void Write(Stream stream)
+            private IEnumerator CoroClientConnected(ulong clientId)
             {
-                using (var writer = MLAPI.Serialization.Pooled.PooledBitWriter.Get(stream))
+                yield return new WaitForSeconds(2);
+
+                //send the new guy our initial state.
+                m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
+            }
+
+            public int Count {  get { return m_LobbyPlayers.Count; } }
+
+            public void Add(LobbyPlayerState state, bool fromSync=false)
+            {
+                m_LobbyPlayers.Add(state);
+                ArrayChangedEvent?.Invoke(this);
+
+                if(NetworkingManager.Singleton.IsServer )
                 {
-                    writer.WriteUInt64(ClientId);
-                    writer.WriteString(PlayerName);
-                    writer.WriteInt16((short)PlayerNum);
-                    writer.WriteInt16((short)SeatState);
-                    writer.WriteInt16((short)SeatIdx);
-                    writer.WriteSingle(LastChangeTime);
+                    m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
+                }
+            }
+
+            public void RemoveAt(int index)
+            {
+                m_LobbyPlayers.RemoveAt(index);
+                ArrayChangedEvent?.Invoke(this);
+
+                if (NetworkingManager.Singleton.IsServer )
+                {
+                    m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
+                }
+            }
+
+            public System.Collections.IEnumerator GetEnumerator()
+            {
+                return m_LobbyPlayers.GetEnumerator();
+            }
+
+            public LobbyPlayerState this[int i]
+            {
+                get
+                {
+                    return m_LobbyPlayers[i];
+                }
+                set
+                {
+                    if(!NetworkingManager.Singleton.IsServer )
+                    {
+                        throw new MLAPI.Exceptions.NotServerException("CharSelectData.LobbyPlayerArray can only be written to on the server!");
+                    }
+                    else
+                    {
+                        m_LobbyPlayers[i] = value;
+                        m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
+                        ArrayChangedEvent?.Invoke(this);
+                    }
+                }
+            }
+
+            /// <summary>
+            /// Updates a single element. For use only be the CharSelectData class. 
+            /// </summary>
+            public void ClientSyncUpdate(LobbyPlayerState[] playerArray )
+            {
+                if( !NetworkingManager.Singleton.IsServer )
+                {
+                    m_LobbyPlayers.Clear();
+                    m_LobbyPlayers.AddRange(playerArray);
+
+                    ArrayChangedEvent?.Invoke(this);
                 }
             }
         }
 
         /// <summary>
+        /// Receives a new array of LobbyPlayerStates and replaces the existing contents of our m_LobbyPlayerArray with them. This "maximalist approach"
+        /// is because it's tricky to send incremental array updates right now. You can't just send an initial state on client connection, and then
+        /// subsequent incremental updates, because you don't know exactly when the client's connection is going to be open for transmission. If you send
+        /// a client an incremental update while it still has its inital state message pending, it will get confused.
+        /// In any case, this system is meant to be temporary, and will be replaced when NetworkedVarList<T> is supported again. 
+        /// </summary>
+        [ClientRpc]
+        private void LobbyPlayerUpdateArrayClientRpc(LobbyPlayerState[] playerArray )
+        {
+            m_LobbyPlayers.ClientSyncUpdate(playerArray);
+        }
+
+        private LobbyPlayerArray m_LobbyPlayers;
+
+        private void Awake()
+        {
+            m_LobbyPlayers = new LobbyPlayerArray(this, 8);
+        }
+
+
+        /// <summary>
         /// Current state of all players in the lobby.
         /// </summary>
-        public MLAPI.NetworkedVar.Collections.NetworkedList<LobbyPlayerState> LobbyPlayers { get; } = new MLAPI.NetworkedVar.Collections.NetworkedList<LobbyPlayerState>();
+        public LobbyPlayerArray LobbyPlayers { get { return m_LobbyPlayers; } }
 
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
@@ -125,8 +233,8 @@ namespace BossRoom
         /// RPC to tell a client which slot in the char-gen screen they will be using.
         /// </summary>
         /// <param name="idx">Index on the UI screen, starting at 0 for the first slot</param>
-        [ClientRPC]
-        public void RpcAssignPlayerNumber(int idx)
+        [ClientRpc]
+        public void AssignPlayerNumberClientRpc(int idx)
         {
             OnAssignedPlayerNumber?.Invoke(idx);
         }
@@ -140,8 +248,8 @@ namespace BossRoom
         /// <summary>
         /// RPC to tell a client that they cannot participate in the game due to a fatal error.
         /// </summary>
-        [ClientRPC]
-        public void RpcFatalLobbyError(FatalLobbyError error)
+        [ClientRpc]
+        public void FatalLobbyErrorClientRpc(FatalLobbyError error, ClientRpcParams clientParams=default)
         {
             OnFatalLobbyError?.Invoke(error);
         }
@@ -154,8 +262,8 @@ namespace BossRoom
         /// <summary>
         /// RPC to notify the server that a client has chosen a seat.
         /// </summary>
-        [ServerRPC(RequireOwnership = false)]
-        public void RpcChangeSeat(ulong clientId, int seatIdx, bool lockedIn)
+        [ServerRpc(RequireOwnership =false)]
+        public void ChangeSeatServerRpc(ulong clientId, int seatIdx, bool lockedIn)
         {
             OnClientChangedSeat?.Invoke(clientId, seatIdx, lockedIn);
         }

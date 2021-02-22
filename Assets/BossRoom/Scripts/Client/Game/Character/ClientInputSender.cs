@@ -1,5 +1,6 @@
 using MLAPI;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
@@ -13,6 +14,10 @@ namespace BossRoom.Client
     {
         private const float k_MouseInputRaycastDistance = 100f;
 
+        private const float k_MoveSendRateSeconds = 0.5f;
+
+        private float m_LastSentMove;
+
         // Cache raycast hit array so that we can use non alloc raycasts
         private readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
 
@@ -23,30 +28,54 @@ namespace BossRoom.Client
         private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
-        /// We detect clicks in Update (because you can miss single discrete clicks in FixedUpdate). But we need to
-        /// raycast in FixedUpdate, because raycasts done in Update won't work reliably.
-        /// This nullable vector will be set to a screen coordinate when an attack click was made.
+        /// This describes how a skill was requested. Skills requested via mouse click will do raycasts to determine their target; skills requested
+        /// in other matters will use the stateful target stored in NetworkCharacterState. 
         /// </summary>
-        System.Nullable<Vector3> m_ClickRequest;
-        bool m_Skill2Request;
-        bool m_SkillActive = false;
+        public enum SkillTriggerStyle
+        {
+            None,        //no skill was triggered.
+            MouseClick,  //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
+            Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
+            KeyboardRelease, //represents a released key.
+            UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target. 
+        }
+
+        /// <summary>
+        /// This struct essentially relays the call params of RequestAction to FixedUpdate. Recall that we may need to do raycasts
+        /// as part of doing the action, and raycasts done outside of FixedUpdate can give inconsistent results (otherwise we would
+        /// just expose PerformAction as a public method, and let it be called in whatever scoped it liked. 
+        /// </summary>
+        /// <remarks>
+        /// Reference: https://answers.unity.com/questions/1141633/why-does-fixedupdate-work-when-update-doesnt.html
+        /// </remarks>
+        private struct ActionRequest
+        {
+            public SkillTriggerStyle TriggerStyle;
+            public ActionType RequestedAction;
+        }
+
+        /// <summary>
+        /// List of ActionRequests that have been received since the last FixedUpdate ran. This is a static array, to avoid allocs, and
+        /// because we don't really want to let this list grow indefinitely.
+        /// </summary>
+        private readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
+
+        /// <summary>
+        /// Number of ActionRequests that have been queued since the last FixedUpdate. 
+        /// </summary>
+        private int m_ActionRequestCount;
+
+        private BaseActionInput m_CurrentSkillInput = null;
+        private bool m_MoveRequest = false;
 
         Camera m_MainCamera;
 
-		ActionType m_EmoteAction;
-
         public event Action<Vector3> OnClientClick;
-
-        // We connect with the action bar on start for the player
-        private Visual.HeroActionBar m_ActionUI;
-
-        /// We also track the state of the Emote bar to send emotes
-        private Visual.HeroEmoteBar m_EmoteUI;
 
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
-        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value];
+        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType];
 
         public override void NetworkStart()
         {
@@ -63,16 +92,11 @@ namespace BossRoom.Client
 
             // find the hero action UI bar
             GameObject actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
-            m_ActionUI = actionUIobj.GetComponent<Visual.HeroActionBar>();
-
-            // figure out our hero type
-            NetworkCharacterState netState = GetComponent<NetworkCharacterState>();
-            CharacterTypeEnum heroType = netState.CharacterType.Value;
-            m_ActionUI.SetPlayerType(heroType);
+            actionUIobj.GetComponent<Visual.HeroActionBar>().RegisterInputSender(this);
 
             // find the emote bar to track its buttons
             GameObject emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
-            m_EmoteUI = emoteUIobj.GetComponent<Visual.HeroEmoteBar>();
+            emoteUIobj.GetComponent<Visual.HeroEmoteBar>().RegisterInputSender(this);
             // once connected to the emote bar, hide it
             emoteUIobj.SetActive(false);
         }
@@ -85,99 +109,95 @@ namespace BossRoom.Client
 
         public void FinishSkill()
         {
-            m_SkillActive = false;
+            m_CurrentSkillInput = null;
         }
 
         void FixedUpdate()
         {
-            // TODO replace with new Unity Input System [GOMPS-81]
-            // TAP TO MOVE
-            // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
-            if (m_SkillActive)
+            //play all ActionRequests, in FIFO order. 
+            for (int i = 0; i < m_ActionRequestCount; ++i)
             {
-                return;
-            }
-            if (m_Skill2Request)
-            {
-                var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
-                skill2.Initiate(m_NetworkCharacter, CharacterData.Skill2, FinishSkill);
-                m_SkillActive = true;
-                m_Skill2Request = false;
-                return;
-            }
-            // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
-            // Check IsPointerOverGameObject to make sure we dont count clicks on the UI
-            if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
-            {
-                var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
+                if( m_CurrentSkillInput != null )
                 {
-                    // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
-                    m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point,
-                        "MLAPI_INTERNAL");
-                    //Send our client only click request
-                    OnClientClick?.Invoke(k_CachedHit[0].point);
-                }
-            }
-
-            if (m_ClickRequest != null)
-            {
-                var ray = m_MainCamera.ScreenPointToRay(m_ClickRequest.Value);
-                m_ClickRequest = null;
-
-                int numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
-                if (numHits == 0)
-                {
-                    return;
-                }
-
-                int networkedHitIndex = -1;
-                for (int i = 0; i < numHits; i++)
-                {
-                    if (k_CachedHit[i].transform.GetComponent<NetworkedObject>())
+                    //actions requested while input is active are discarded, except for "Release" requests, which go through. 
+                    if (m_ActionRequests[i].TriggerStyle == SkillTriggerStyle.KeyboardRelease )
                     {
-                        networkedHitIndex = i;
-                        break;
-                    }
-                }
-
-                if (networkedHitIndex >= 0)
-                {
-                    if (GetActionRequestForTarget(ref k_CachedHit[networkedHitIndex], out ActionRequestData playerAction))
-                    {
-                        m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
+                        m_CurrentSkillInput.OnReleaseKey();
                     }
                 }
                 else
                 {
-                    // clicked on nothing... perform a "miss" attack on the spot they clicked on
-                    var data = new ActionRequestData();
-                    PopulateSkillRequest(k_CachedHit[0].point, CharacterData.Skill1, ref data);
-                    m_NetworkCharacter.ClientSendActionRequest(ref data);
+                    var actionData = GameDataSource.Instance.ActionDataByType[m_ActionRequests[i].RequestedAction];
+                    if (actionData.ActionInput != null)
+                    {
+                        var skillPlayer = Instantiate(actionData.ActionInput);
+                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, FinishSkill);
+                        m_CurrentSkillInput = skillPlayer;
+                    }
+                    else
+                    {
+                        PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle);
+                    }
                 }
+            }
+            m_ActionRequestCount = 0;
+
+
+            if( m_MoveRequest )
+            {
+                m_MoveRequest = false;
+                if ( (Time.time - m_LastSentMove) > k_MoveSendRateSeconds)
+                {
+                    m_LastSentMove = Time.time;
+                    var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
+                    {
+                    // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
+                    m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
+                        //Send our client only click request
+                        OnClientClick?.Invoke(k_CachedHit[0].point);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Perform a skill in response to some input trigger. This is the common method to which all input-driven skill plays funnel. 
+        /// </summary>
+        /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
+        /// <param name="triggerStyle">What sort of input triggered this skill?</param>
+        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle)
+        {
+            int numHits = 0;
+            if (triggerStyle == SkillTriggerStyle.MouseClick)
+            {
+                var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+                numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
+            }
+
+            int networkedHitIndex = -1;
+            for (int i = 0; i < numHits; i++)
+            {
+                if (k_CachedHit[i].transform.GetComponent<NetworkedObject>())
+                {
+                    networkedHitIndex = i;
+                    break;
+                }
+            }
+
+            Transform hitTransform = networkedHitIndex >= 0 ? k_CachedHit[networkedHitIndex].transform : null;
+            if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
+            {
+                //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
+                m_LastSentMove = Time.time;
+                m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
             }
             else
             {
-                // if we aren't processing a direct click request look for Action from UI button clicks
-                ActionType uiAction = ActionType.None;
-                if (m_ActionUI.ButtonWasClicked(0))
-                {
-                    uiAction = CharacterData.Skill1;
-                }
-                if (m_ActionUI.ButtonWasClicked(1))
-                {
-                    uiAction = CharacterData.Skill2;
-                }
-                if (m_ActionUI.ButtonWasClicked(2))
-                {
-                    uiAction = CharacterData.Skill3;
-                }
-                if (uiAction != ActionType.None)
-                {
-                    var data = new ActionRequestData();
-                    data.ActionTypeEnum = uiAction;
-                    m_NetworkCharacter.ClientSendActionRequest(ref data);
-                }
+                // clicked on nothing... perform a "miss" attack on the spot they clicked on
+                var data = new ActionRequestData();
+                PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
+                m_NetworkCharacter.RecvDoActionServerRPC(data);
             }
         }
 
@@ -185,13 +205,28 @@ namespace BossRoom.Client
         /// When you right-click on something you will want to do contextually different things. For example you might attack an enemy,
         /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED).
         /// </summary>
-        /// <param name="hit">The RaycastHit of the entity we clicked on.</param>
+        /// <param name="hit">The Transform of the entity we clicked on, or null if none.</param>
+        /// <param name="actionType">The Action to build for</param>
+        /// <param name="triggerStyle">How did this skill play get triggered? Mouse, Keyboard, UI etc.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
         /// <returns>true if we should play an action, false otherwise. </returns>
-        private bool GetActionRequestForTarget(ref RaycastHit hit, out ActionRequestData resultData)
+        private bool GetActionRequestForTarget(Transform hit, ActionType actionType, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
         {
             resultData = new ActionRequestData();
-            var targetNetState = hit.transform.GetComponent<NetworkCharacterState>();
+
+            var targetNetObj = hit != null ? hit.GetComponent<NetworkedObject>() : null;
+
+            //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState. 
+            if (!targetNetObj && actionType != ActionType.GeneralTarget)
+            {
+                ulong targetId = m_NetworkCharacter.TargetId.Value;
+                if (ActionUtils.IsValidTarget(targetId))
+                {
+                    targetNetObj = MLAPI.Spawning.SpawnManager.SpawnedObjects[targetId];
+                }
+            }
+
+            var targetNetState = targetNetObj != null ? targetNetObj.GetComponent<NetworkCharacterState>() : null;
             if (targetNetState == null)
             {
                 //Not a Character. In the future this could represent interacting with some other interactable, but for
@@ -199,28 +234,25 @@ namespace BossRoom.Client
                 return false;
             }
 
-            if (targetNetState.IsNpc)
+            //Skill1 may be contextually overridden if it was generated from a mouse-click. 
+            if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
             {
-                ActionType skill1 = CharacterData.Skill1;
-
-                // record our target in case this action uses that info (non-targeted attacks will ignore this)
-                resultData.TargetIds = new ulong[] { targetNetState.NetworkId };
-                PopulateSkillRequest(hit.point, skill1, ref resultData);
-                return true;
-            }
-            else if (targetNetState.NetworkLifeState.Value == LifeState.Fainted)
-            {
-                resultData = new ActionRequestData();
-                resultData.TargetIds = new[] { targetNetState.NetworkId };
-                PopulateSkillRequest(hit.point, ActionType.GeneralRevive, ref resultData);
-                return true;
+                if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+                {
+                    //right-clicked on a downed ally--change the skill play to Revive. 
+                    actionType = ActionType.GeneralRevive;
+                }
             }
 
-            return false;
+            // record our target in case this action uses that info (non-targeted attacks will ignore this)
+            resultData.ActionTypeEnum = actionType;
+            resultData.TargetIds = new ulong[] { targetNetState.NetworkId };
+            PopulateSkillRequest(targetNetState.transform.position, actionType, ref resultData);
+            return true;
         }
 
         /// <summary>
-        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this. 
+        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this.
         /// </summary>
         /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
         /// <param name="action">The action to perform (will be stamped on the resultData)</param>
@@ -230,7 +262,7 @@ namespace BossRoom.Client
             resultData.ActionTypeEnum = action;
             var actionInfo = GameDataSource.Instance.ActionDataByType[action];
 
-            //currently all skills but LaunchProjectile should trigger an implicit ChaseAction, so we default to true and disable in the subsequent switch-case.
+            //most skill types should implicitly close distance. The ones that don't are explicitly set to false in the following switch.
             resultData.ShouldClose = true;
 
             switch (actionInfo.Logic)
@@ -240,7 +272,13 @@ namespace BossRoom.Client
                     Vector3 offset = hitPoint - transform.position;
                     offset.y = 0;
                     resultData.Direction = offset.normalized;
-                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive. 
+                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive.
+                    return;
+                case ActionLogic.Target:
+                    resultData.ShouldClose = false;
+                    return;
+                case ActionLogic.Emote:
+                    resultData.CancelMovement = true;
                     return;
                 case ActionLogic.RangedFXTargeted:
                     if (resultData.TargetIds == null) { resultData.Position = hitPoint; }
@@ -248,42 +286,67 @@ namespace BossRoom.Client
             }
         }
 
+        /// <summary>
+        /// Request an action be performed. This will occur on the next FixedUpdate. 
+        /// </summary>
+        /// <param name="action">the action you'd like to perform. </param>
+        /// <param name="triggerStyle">What input style triggered this action.</param>
+        public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle )
+        {
+            if( m_ActionRequestCount < m_ActionRequests.Length )
+            {
+                m_ActionRequests[m_ActionRequestCount].RequestedAction = action;
+                m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
+                m_ActionRequestCount++;
+            }
+        }
+
         void Update()
         {
-            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
-            if (Input.GetMouseButtonDown(1))
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                m_ClickRequest = Input.mousePosition;
+                RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha1))
+            {
+                RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
             }
 
-            m_EmoteAction = ActionType.None;
-            if (Input.GetKeyDown(KeyCode.Alpha4) || m_EmoteUI.ButtonWasClicked(0))
+            if (Input.GetKeyDown(KeyCode.Alpha4))
             {
-                m_EmoteAction = ActionType.Emote1;
+                RequestAction(ActionType.Emote1, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha5) || m_EmoteUI.ButtonWasClicked(1))
+            if (Input.GetKeyDown(KeyCode.Alpha5))
             {
-                m_EmoteAction = ActionType.Emote2;
+                RequestAction(ActionType.Emote2, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha6) || m_EmoteUI.ButtonWasClicked(2))
+            if (Input.GetKeyDown(KeyCode.Alpha6))
             {
-                m_EmoteAction = ActionType.Emote3;
+                RequestAction(ActionType.Emote3, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha7) || m_EmoteUI.ButtonWasClicked(3))
+            if (Input.GetKeyDown(KeyCode.Alpha7))
             {
-                m_EmoteAction = ActionType.Emote4;
-            }
-            if (m_EmoteAction != ActionType.None)
-            {
-                var emoteData = new ActionRequestData();
-                emoteData.ActionTypeEnum = m_EmoteAction;
-                emoteData.CancelMovement = true;
-                m_NetworkCharacter.ClientSendActionRequest(ref emoteData);
+                RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
             }
 
-            if (Input.GetKeyUp("1"))
+            if ( !EventSystem.current.IsPointerOverGameObject())
             {
-                m_Skill2Request = true;
+                //this is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
+                //to model the button "blocking" mouse clicks from falling through and interacting with the world.
+
+                if (Input.GetMouseButtonDown(1))
+                {
+                    RequestAction(CharacterData.Skill1, SkillTriggerStyle.MouseClick);
+                }
+
+                if (Input.GetMouseButtonDown(0))
+                {
+                    RequestAction(ActionType.GeneralTarget, SkillTriggerStyle.MouseClick);
+                }
+                else if (Input.GetMouseButton(0))
+                {
+                    m_MoveRequest = true;
+                }
             }
         }
     }

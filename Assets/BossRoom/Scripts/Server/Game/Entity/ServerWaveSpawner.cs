@@ -13,10 +13,11 @@ namespace BossRoom.Server
     public class ServerWaveSpawner : NetworkedBehaviour
     {
         [SerializeField]
-        NetworkSpawnerState m_NetworkSpawnerState;
+        NetworkHealthState m_NetworkHealthState;
 
         // amount of hits it takes to break any spawner
-        const int k_MaxHealth = 3;
+        [SerializeField]
+        IntVariable m_MaxHP;
 
         // networked object that will be spawned in waves
         [SerializeField]
@@ -34,7 +35,6 @@ namespace BossRoom.Server
         // cache array of RaycastHit as it will be reused for player visibility
         RaycastHit[] m_Hit;
 
-        
         [Tooltip("Select which layers will block visibility.")]
         [SerializeField]
         LayerMask m_BlockingMask;
@@ -95,7 +95,7 @@ namespace BossRoom.Server
         {
             while (true)
             {
-                if (m_NetworkSpawnerState.Broken.Value)
+                if (m_NetworkHealthState.HitPoints.Value <= 0)
                 {
                     yield return new WaitForSeconds(m_DormantCooldown);
                     ReviveSpawner();
@@ -230,8 +230,7 @@ namespace BossRoom.Server
 
         void ReviveSpawner()
         {
-            m_NetworkSpawnerState.HitPoints.Value = k_MaxHealth;
-            m_NetworkSpawnerState.Broken.Value = false;
+            m_NetworkHealthState.HitPoints.Value = m_MaxHP.Value;
         }
 
         // TODO: David will create interface hookup for receiving hits on non-NPC/PC objects (GOMPS-ID TBD)
@@ -242,11 +241,10 @@ namespace BossRoom.Server
                 return;
             }
 
-            m_NetworkSpawnerState.HitPoints.Value += HP;
+            m_NetworkHealthState.HitPoints.Value += HP;
 
-            if (m_NetworkSpawnerState.HitPoints.Value <= 0)
+            if (m_NetworkHealthState.HitPoints.Value <= 0)
             {
-                m_NetworkSpawnerState.Broken.Value = true;
                 StopWaveSpawning();
             }
         }

@@ -1,6 +1,6 @@
 using MLAPI;
+using MLAPI.Messaging;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -32,7 +32,7 @@ namespace BossRoom.Server
             }
 
             // see if someone has already locked-in that seat! If so, too late... discard this choice
-            foreach (var playerInfo in CharSelectData.LobbyPlayers)
+            foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
                 if (playerInfo.SeatIdx == newSeatIdx && playerInfo.SeatState == CharSelectData.SeatState.LockedIn)
                 {
@@ -88,7 +88,7 @@ namespace BossRoom.Server
         /// </summary>
         private void CloseLobbyIfReady()
         {
-            foreach (var playerInfo in CharSelectData.LobbyPlayers)
+            foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
                 if (playerInfo.SeatState != CharSelectData.SeatState.LockedIn)
                     return; // nope, at least one player isn't locked in yet!
@@ -107,7 +107,7 @@ namespace BossRoom.Server
         private void SaveLobbyResults()
         {
             LobbyResults lobbyResults = new LobbyResults();
-            foreach (var playerInfo in CharSelectData.LobbyPlayers)
+            foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
                 lobbyResults.Choices[playerInfo.ClientId] = new LobbyResults.CharSelectChoice(playerInfo.PlayerNum,
                     CharSelectData.LobbySeatConfigurations[playerInfo.SeatIdx].Class,
@@ -197,7 +197,7 @@ namespace BossRoom.Server
             for (int possiblePlayerNum = 0; possiblePlayerNum < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNum)
             {
                 bool found = false;
-                foreach (var playerState in CharSelectData.LobbyPlayers)
+                foreach (CharSelectData.LobbyPlayerState playerState in CharSelectData.LobbyPlayers)
                 {
                     if (playerState.PlayerNum == possiblePlayerNum)
                     {
@@ -220,12 +220,13 @@ namespace BossRoom.Server
             if (playerNum == -1)
             {
                 // we ran out of seats... there was no room!
-                CharSelectData.InvokeClientRpcOnClient(CharSelectData.RpcFatalLobbyError, clientId, CharSelectData.FatalLobbyError.LobbyFull, "MLAPI_INTERNAL");
+                CharSelectData.FatalLobbyErrorClientRpc(CharSelectData.FatalLobbyError.LobbyFull,
+                    new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } });
                 return;
             }
 
             // this will be replaced with an auto-generated name
-            string playerName = "Player" + (playerNum+1);
+            string playerName = "Player" + (playerNum + 1);
 
             CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
         }

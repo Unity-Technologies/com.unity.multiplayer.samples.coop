@@ -22,7 +22,7 @@ namespace BossRoom.Server
 
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
             m_Parent.transform.forward = Data.Direction;
-            m_Parent.NetState.ServerBroadcastAction(ref Data);
+            m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 

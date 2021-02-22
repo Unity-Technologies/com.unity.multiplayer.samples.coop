@@ -36,6 +36,9 @@ namespace BossRoom
         [Tooltip("The primary Animation action that gets played when visualizing this Action")]
         public string Anim;
 
+        [Tooltip("The reaction anim to play in response to being hit by this skill")]
+        public string ReactAnim;
+
         [Tooltip("For Actions that can hit multiple enemies, this determines how much damage is done to non-primary targets")]
         public int SplashDamage;
 
@@ -63,12 +66,14 @@ namespace BossRoom
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;
 
-
         [Tooltip("If this action spawns GameObjects, list their prefabs here")]
         public GameObject[] Spawns;
 
         [Tooltip("If this Action spawns a projectile, how fast should that projectile move? (meters/second)")]
         public float ProjectileSpeed_m_s;
+
+        [Tooltip("If true, this action affects friendly targets, if false Unfriendly. Not all ActionLogics use this parameter.")]
+        public bool IsFriendly;
 
         [Header("In-game description info (Only used for player abilities!)")]
         [Tooltip("If this Action describes a player ability, this is the ability's iconic representation")]

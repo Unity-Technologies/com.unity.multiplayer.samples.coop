@@ -1,4 +1,5 @@
 using UnityEngine;
+using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
 namespace BossRoom.Visual
 {
@@ -8,45 +9,33 @@ namespace BossRoom.Visual
     /// </summary>
     public class HeroEmoteBar : MonoBehaviour
     {
-        // All buttons in this UI button bar
-        [SerializeField]
-        private HeroActionButton[] m_Buttons;
+        private Client.ClientInputSender m_InputSender;
 
-        // This class will track clicks on eack of its buttons
-        // ButtonWasClicked will deliver each click only once
-        private bool[] m_ButtonClicked;
-
-        void Start()
+        public void RegisterInputSender(Client.ClientInputSender inputSender)
         {
-            // clear clicked state
-            m_ButtonClicked = new bool[m_Buttons.Length];
-            for (int i = 0; i < m_Buttons.Length; i++)
+            if (m_InputSender != null)
             {
-                // initialize all button states to not clicked
-                m_ButtonClicked[i] = false;
+                Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
             }
+
+            m_InputSender = inputSender;
         }
 
         public void OnButtonClicked(int buttonIndex)
         {
-            m_ButtonClicked[buttonIndex] = true;
+            if( m_InputSender != null )
+            {
+                switch (buttonIndex)
+                {
+                    case 0: m_InputSender.RequestAction(ActionType.Emote1, SkillTriggerStyle.UI); break;
+                    case 1: m_InputSender.RequestAction(ActionType.Emote2, SkillTriggerStyle.UI); break;
+                    case 2: m_InputSender.RequestAction(ActionType.Emote3, SkillTriggerStyle.UI); break;
+                    case 3: m_InputSender.RequestAction(ActionType.Emote4, SkillTriggerStyle.UI); break;
+                }
+            }
 
             // also deactivate the emote panel
             gameObject.SetActive(false);
-        }
-
-        // return if a button was clicked since last queried - this will also clear the value until a new click is received
-        public bool ButtonWasClicked(int buttonIndex)
-        {
-            // if we are not started yet or index is above our array lengths just rethr false
-            if (m_ButtonClicked == null || buttonIndex >= m_Buttons.Length || buttonIndex >= m_ButtonClicked.Length)
-            {
-                return false;
-            }
-            bool wasClicked = m_ButtonClicked[buttonIndex];
-            // set to false so we only trigger once per button
-            m_ButtonClicked[buttonIndex] = false;
-            return wasClicked;
         }
     }
 }
