@@ -2,6 +2,7 @@ using MLAPI;
 using MLAPI.NetworkedVar;
 using MLAPI.Serialization.Pooled;
 using System.IO;
+using MLAPI.Messaging;
 
 namespace BossRoom
 {
@@ -25,29 +26,9 @@ namespace BossRoom
         public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
         public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
 
-
-        public void ServerBroadcastEnemyHit(ulong enemyId)
+        [ClientRpc]
+        public void RecvHitEnemyClientRPC(ulong enemyId)
         {
-            using (Stream stream = PooledBitStream.Get())
-            {
-                using (PooledBitWriter writer = PooledBitWriter.Get(stream))
-                {
-                    writer.WriteUInt64(enemyId);
-                }
-                InvokeClientRpcOnEveryonePerformance(RecvHitEnemyClient, stream);
-            }
-        }
-
-
-        [MLAPI.Messaging.ClientRPC]
-        private void RecvHitEnemyClient(ulong clientId, Stream stream)
-        {
-            ulong enemyId;
-            using (PooledBitReader reader = PooledBitReader.Get(stream))
-            {
-                enemyId = reader.ReadUInt64();
-            }
-
             HitEnemyEvent?.Invoke(enemyId);
         }
     }

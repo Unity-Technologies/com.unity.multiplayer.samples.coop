@@ -1,10 +1,10 @@
 using UnityEngine;
-
+using UnityEngine.Serialization;
 
 namespace BossRoom
 {
     /// <summary>
-    /// Data representation of a Character, containing such things as its starting HP and Mana, and what attacks it can do. 
+    /// Data representation of a Character, containing such things as its starting HP and Mana, and what attacks it can do.
     /// </summary>
     [CreateAssetMenu(menuName = "GameData/CharacterClass", order = 1)]
     public class CharacterClass : ScriptableObject
@@ -22,7 +22,7 @@ namespace BossRoom
         public ActionType Skill3;
 
         [Tooltip("Starting HP of this character class")]
-        public int BaseHP;
+        public IntVariable BaseHP;
 
         [Tooltip("Starting Mana of this character class")]
         public int BaseMana;

@@ -1,5 +1,6 @@
 using MLAPI.Serialization.Pooled;
 using System;
+using MLAPI.Transports;
 using UnityEngine;
 
 namespace BossRoom
@@ -144,7 +145,7 @@ namespace BossRoom
                 using (PooledBitWriter writer = PooledBitWriter.Get(stream))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, stream, "MLAPI_INTERNAL");
+                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, stream, Channel.Internal);
                 }
             }
         }

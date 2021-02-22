@@ -74,7 +74,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
-        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType.Value];
+        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType];
 
         public override void NetworkStart()
         {
@@ -149,9 +149,8 @@ namespace BossRoom.Client
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
                     if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                     {
-                        // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
-                        m_NetworkCharacter.InvokeServerRpc(m_NetworkCharacter.SendCharacterInputServerRpc, k_CachedHit[0].point,
-                            "MLAPI_INTERNAL");
+                    // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
+                    m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
                         //Send our client only click request
                         OnClientClick?.Invoke(k_CachedHit[0].point);
                     }
@@ -188,14 +187,14 @@ namespace BossRoom.Client
             {
                 //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
                 m_LastSentMove = Time.time;
-                m_NetworkCharacter.ClientSendActionRequest(ref playerAction);
+                m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
             }
             else
             {
                 // clicked on nothing... perform a "miss" attack on the spot they clicked on
                 var data = new ActionRequestData();
                 PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
-                m_NetworkCharacter.ClientSendActionRequest(ref data);
+                m_NetworkCharacter.RecvDoActionServerRPC(data);
             }
         }
 
@@ -221,6 +220,7 @@ namespace BossRoom.Client
                 if (ActionUtils.IsValidTarget(targetId))
                 {
                     targetNetObj = MLAPI.Spawning.SpawnManager.SpawnedObjects[targetId];
+                    m_NetworkCharacter.RecvDoActionServerRPC(data);
                 }
             }
 
@@ -250,7 +250,7 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this. 
+        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this.
         /// </summary>
         /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
         /// <param name="action">The action to perform (will be stamped on the resultData)</param>
@@ -270,7 +270,7 @@ namespace BossRoom.Client
                     Vector3 offset = hitPoint - transform.position;
                     offset.y = 0;
                     resultData.Direction = offset.normalized;
-                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive. 
+                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive.
                     return;
                 case ActionLogic.Target:
                     resultData.ShouldClose = false;
@@ -330,7 +330,7 @@ namespace BossRoom.Client
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    RequestAction(CharacterData.Skill1, SkillTriggerStyle.MouseClick);
+                    m_NetworkCharacter.RecvDoActionServerRPC(emoteData);
                 }
 
                 if (Input.GetMouseButtonDown(0))

@@ -33,7 +33,7 @@ namespace BossRoom.Visual
                     ShouldQueue = false,
                     TargetIds = null
                 };
-                m_PlayerOwner.ClientSendActionRequest(ref data);
+                m_PlayerOwner.RecvDoActionServerRPC(data);
                 Destroy(gameObject);
                 return;
             }

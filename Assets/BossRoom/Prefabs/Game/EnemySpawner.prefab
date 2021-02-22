@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65e25a152b731564ebb6096eb5e9f0ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkSpawnerState: {fileID: 9132488263322830174}
+  m_NetworkHealthState: {fileID: 4568824493757708093}
   m_Animator: {fileID: 0}
 --- !u!1 &6205854018081152875
 GameObject:
@@ -58,7 +58,8 @@ GameObject:
   - component: {fileID: 7323075965458333149}
   - component: {fileID: -1287160331463954971}
   - component: {fileID: 4844841199312666291}
-  - component: {fileID: 9132488263322830174}
+  - component: {fileID: 4568824493757708093}
+  - component: {fileID: 5267703716770235780}
   m_Layer: 6
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -124,8 +125,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 49b962917cae99f48a2a598485996b8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkSpawnerState: {fileID: 9132488263322830174}
-  m_NetworkedPrefab: {fileID: -7852138837387268381, guid: f520174fcd7d61441aa46a9923655dcd, type: 3}
+  m_NetworkHealthState: {fileID: 4568824493757708093}
+  m_MaxHP: {fileID: 11400000, guid: 35bb8d80ab89bf64aa87c6e1a7863370, type: 2}
+  m_NetworkedPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 1
@@ -137,7 +139,7 @@ MonoBehaviour:
   m_RestartDelay: 10
   m_ProximityDistance: 30
   m_DormantCooldown: 10
---- !u!114 &9132488263322830174
+--- !u!114 &4568824493757708093
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -146,9 +148,27 @@ MonoBehaviour:
   m_GameObject: {fileID: 6205854018081152875}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4cfeccaf46c46e1458c3f7351d6753b3, type: 3}
+  m_Script: {fileID: 11500000, guid: 6733907396f36c44891916e5c62f25a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  HitPoints:
+    InternalValue: 25
+--- !u!114 &5267703716770235780
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6205854018081152875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cead4253912fb1241be383143c5f3b59, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_UIHealthPrefab: {fileID: 5224239475005341921, guid: ef40e983a46e6194c83cdaa6aa2462d6, type: 3}
+  m_NetworkHealthState: {fileID: 4568824493757708093}
+  m_BaseHP: {fileID: 11400000, guid: 35bb8d80ab89bf64aa87c6e1a7863370, type: 2}
+  m_TransformToTrack: {fileID: 8727022540156222958}
 --- !u!1 &6882351788430859438
 GameObject:
   m_ObjectHideFlags: 0
