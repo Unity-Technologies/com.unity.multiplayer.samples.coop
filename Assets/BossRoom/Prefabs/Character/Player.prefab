@@ -32,7 +32,7 @@ MonoBehaviour:
   m_NetworkHealthState: {fileID: 7751377510591478590}
   m_BaseHP: {fileID: 0}
   m_TransformToTrack: {fileID: 6009713983291384766}
-  m_VerticalScreenOffset: -40
+  m_VerticalScreenOffset: -50
 --- !u!114 &8169487339863708723
 MonoBehaviour:
   m_ObjectHideFlags: 0

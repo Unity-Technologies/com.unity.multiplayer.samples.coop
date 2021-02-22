@@ -127,7 +127,7 @@ namespace BossRoom
             ReceivedClientInput?.Invoke(movementTarget);
         }
 
-        public void SetPlayer(CharacterTypeEnum playerType, int playerAppearance)
+        public void SetCharacterType(CharacterTypeEnum playerType, int playerAppearance)
         {
             CharacterType = playerType;
             CharacterAppearance.Value = playerAppearance;
