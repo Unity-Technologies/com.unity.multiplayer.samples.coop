@@ -74,6 +74,18 @@ namespace BossRoom
 
         [Tooltip("If true, this action affects friendly targets, if false Unfriendly. Not all ActionLogics use this parameter.")]
         public bool IsFriendly;
+		
+        [Header("In-game description info (Only used for player abilities!)")]
+        [Tooltip("If this Action describes a player ability, this is the ability's iconic representation")]
+        public Sprite Icon;
+
+        [Tooltip("If this Action describes a player ability, this is the name we show for the ability")]
+        public string DisplayedName;
+
+        [Tooltip("If this Action describes a player ability, this is the tooltip description we show for the ability")]
+        [Multiline]
+        public string Description;
+
     }
 }
 
