@@ -149,27 +149,14 @@ namespace BossRoom
         /// </summary>
         public event Action CancelActionEventClient;
 
-        /// <summary>
-        /// Server->Client RPC that broadcasts this action play to all clients.
-        /// </summary>
-        /// <param name="data">The data associated with this Action, including what action type it is.</param>
-        /// <summary>
-        /// Server->Client RPC that broadcasts that the current ActionFX should be stopped.
-        /// </summary>
-        public void ServerBroadcastCancelActions()
-        {
-            InvokeClientRpcOnEveryone(RecvCancelActionClient);
-        }
-
-
         [ClientRpc]
         public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);
         }
 
-        [ClientRPC]
-        private void RecvCancelActionClient()
+        [ClientRpc]
+        public void RecvCancelActionClientRpc()
         {
             CancelActionEventClient?.Invoke();
         }
@@ -213,29 +200,14 @@ namespace BossRoom
         /// </summary>
         public event Action OnStopChargingUpClient;
 
-        /// <summary>
-        /// Called on the server when a player's client decides the player has stopped "charging up" their attack (e.g. holding down the input key)
-        /// </summary>
-        public void ClientSendStopChargingUp()
-        {
-            InvokeServerRpc(RecvStopChargingUpServer);
-        }
-
-        /// <summary>
-        /// Called on clients when a player's current Action should visually change to indicate that it's not "charging up" anymore
-        /// </summary>
-        public void ServerBroadcastStopChargingUp()
-        {
-            InvokeClientRpcOnEveryone(RecvStopChargingUpClient);
-        }
-
-        [ServerRPC]
-        public void RecvStopChargingUpServer()
+        [ServerRpc]
+        public void RecvStopChargingUpServerRpc()
         {
             OnStopChargingUpServer?.Invoke();
         }
-        [ClientRPC]
-        public void RecvStopChargingUpClient()
+
+        [ClientRpc]
+        public void RecvStopChargingUpClientRpc()
         {
             OnStopChargingUpClient?.Invoke();
         }

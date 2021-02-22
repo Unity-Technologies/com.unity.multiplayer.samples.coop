@@ -18,7 +18,7 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            m_Parent.NetState.ServerBroadcastAction(ref Data);
+            m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 

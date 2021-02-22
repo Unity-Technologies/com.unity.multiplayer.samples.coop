@@ -23,12 +23,12 @@ namespace BossRoom.Visual
                 ShouldQueue = false,
                 TargetIds = null
             };
-            m_PlayerOwner.ClientSendActionRequest(ref data);
+            m_PlayerOwner.RecvDoActionServerRPC(data);
         }
 
         public override void OnReleaseKey()
         {
-            m_PlayerOwner.ClientSendStopChargingUp();
+            m_PlayerOwner.RecvStopChargingUpServerRpc();
             Destroy(gameObject);
         }
 

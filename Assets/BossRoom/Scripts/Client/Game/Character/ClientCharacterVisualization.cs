@@ -102,6 +102,12 @@ namespace BossRoom.Visual
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
             }
+
+            if (m_ActionViz != null)
+            {
+                //make sure we don't leave any dangling effects playing if we've been destroyed. 
+                m_ActionViz.CancelAll();
+            }
         }
 
         private void OnPerformHitReaction()
@@ -175,15 +181,6 @@ namespace BossRoom.Visual
                 ZoomCamera(scroll);
             }
 
-        }
-
-        private void OnDestroy()
-        {
-            if( m_ActionViz != null )
-            {
-                //make sure we don't leave any dangling effects playing if we've been destroyed. 
-                m_ActionViz.CancelAll();
-            }
         }
 
         public void OnAnimEvent(string id)

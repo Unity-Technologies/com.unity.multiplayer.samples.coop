@@ -49,7 +49,7 @@ namespace BossRoom.Server
                 }
             }
 
-            m_Parent.NetState.ServerBroadcastAction(ref Data);
+            m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -119,7 +119,7 @@ namespace BossRoom.Server
             if (m_StoppedChargingUpTime == 0)
             {
                 m_StoppedChargingUpTime = Time.time;
-                m_Parent.NetState.ServerBroadcastStopChargingUp();
+                m_Parent.NetState.RecvStopChargingUpClientRpc();
             }
         }
 
