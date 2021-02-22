@@ -65,7 +65,7 @@ namespace BossRoom.Server
                 }
             }
 
-            m_Parent.NetState.ServerBroadcastAction(ref Data);
+            m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -142,7 +142,7 @@ namespace BossRoom.Server
                 {
                     damage = Description.SplashDamage;
                 }
-                victim.NetState.ServerBroadcastHitReaction();
+                victim.NetState.RecvPerformHitReactionClientRPC();
                 victim.ReceiveHP(this.m_Parent, -damage);
             }
 

@@ -5,32 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
+using MLAPI;
+using MLAPI.Logging;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace LiteNetLibTransport
 {
     public class LiteNetLibTransport : Transport, INetEventListener
     {
-        private enum HostType
+        enum HostType
         {
             None,
             Server,
             Client
         }
 
-        public struct LiteChannel
+        struct LiteChannel
         {
-            public byte number;
-            public DeliveryMethod method;
-        }
-
-        public struct Event
-        {
-            public NetEventType type;
-            public ulong clientId;
-            public string channelName;
-            public NetPacketReader packetReader;
-            public DateTime dateTime;
+            public byte ChannelNumber;
+            public DeliveryMethod Method;
         }
 
         [Tooltip("The port to listen on (if server) or connect to (if client)")]
@@ -55,22 +50,19 @@ namespace LiteNetLibTransport
         [Tooltip("Simulated maximum additional latency for packets in milliseconds (0 for no simulation")]
         public int SimulateMaxLatency = 0;
 
-        private readonly Dictionary<ulong, NetPeer> peers = new Dictionary<ulong, NetPeer>();
-        private readonly Dictionary<string, LiteChannel> liteChannels = new Dictionary<string, LiteChannel>();
+        private readonly Dictionary<Channel, LiteChannel> m_LiteChannels = new Dictionary<Channel, LiteChannel>();
+        readonly Dictionary<ulong, NetPeer> m_Peers = new Dictionary<ulong, NetPeer>();
 
-        private NetManager netManager;
-        private Queue<Event> eventQueue = new Queue<Event>();
+        NetManager m_NetManager;
 
-        private byte[] messageBuffer;
-        private WeakReference temporaryBufferReference;
+        byte[] m_MessageBuffer;
 
         public override ulong ServerClientId => 0;
-        private HostType hostType;
-        private static readonly ArraySegment<byte> emptyArraySegment = new ArraySegment<byte>();
+        HostType m_HostType;
 
-        private SocketTask connectTask;
+        SocketTask m_ConnectTask;
 
-        private void OnValidate()
+        void OnValidate()
         {
             PingInterval = Math.Max(0, PingInterval);
             DisconnectTimeout = Math.Max(0, DisconnectTimeout);
@@ -82,65 +74,54 @@ namespace LiteNetLibTransport
             SimulateMaxLatency = Math.Max(SimulateMinLatency, SimulateMaxLatency);
         }
 
-        private void Update()
+        void Update()
         {
-            netManager?.PollEvents();
+            m_NetManager?.PollEvents();
         }
 
         public override bool IsSupported => Application.platform != RuntimePlatform.WebGLPlayer;
 
-        public override void Send(ulong clientId, ArraySegment<byte> data, string channelName)
+        public override void Send(ulong clientId, ArraySegment<byte> data, Channel channel)
         {
-            LiteChannel channel = liteChannels[channelName];
-
-            if (peers.ContainsKey(clientId))
+            if (m_Peers.ContainsKey(clientId))
             {
-                peers[clientId].Send(data.Array, data.Offset, data.Count, channel.method);
+                AppendChannel(ref data, channel);
+                if (m_LiteChannels.TryGetValue(channel, out LiteChannel liteChannel))
+                {
+                    m_Peers[clientId].Send(data.Array, data.Offset, data.Count, (byte)channel, liteChannel.Method);
+                }
             }
         }
 
-        public override NetEventType PollEvent(out ulong clientId, out string channelName, out ArraySegment<byte> payload, out float receiveTime)
+        private void AppendChannel(ref ArraySegment<byte> data, Channel channel)
         {
-            payload = emptyArraySegment;
-            clientId = 0;
-            channelName = null;
-            receiveTime = Time.realtimeSinceStartup;
+            Assert.IsNotNull(data.Array);
 
-            if (eventQueue.Count > 0)
+            var index = data.Offset + data.Count;
+            var size = index + 1;
+            var array = data.Array;
+
+            if (data.Array.Length < size)
             {
-                Event @event = eventQueue.Dequeue();
-
-                clientId = @event.clientId;
-                channelName = @event.channelName;
-                receiveTime = Time.realtimeSinceStartup - ((float)DateTime.UtcNow.Subtract(@event.dateTime).TotalSeconds);
-
-                if (@event.packetReader != null)
+                if (size > m_MessageBuffer.Length)
                 {
-                    int size = @event.packetReader.UserDataSize;
-                    byte[] data = messageBuffer;
-
-                    if (size > messageBuffer.Length)
-                    {
-                        if (temporaryBufferReference != null && temporaryBufferReference.IsAlive && ((byte[])temporaryBufferReference.Target).Length >= size)
-                        {
-                            data = (byte[])temporaryBufferReference.Target;
-                        }
-                        else
-                        {
-                            data = new byte[size];
-                            temporaryBufferReference = new WeakReference(data);
-                        }
-                    }
-
-                    Buffer.BlockCopy(@event.packetReader.RawData, @event.packetReader.UserDataOffset, data, 0, size);
-
-                    payload = new ArraySegment<byte>(data, 0, size);
-                    @event.packetReader.Recycle();
+                    ResizeMessageBuffer(size);
                 }
 
-                return @event.type;
+                array = m_MessageBuffer;
             }
 
+            array[index] = (byte)channel;
+
+            data = new ArraySegment<byte>(array, data.Offset, data.Count + 1);
+        }
+
+        public override NetEventType PollEvent(out ulong clientId, out Channel channel, out ArraySegment<byte> payload, out float receiveTime)
+        {
+            // transport is event based ignore this.
+            clientId = 0;
+            channel = Channel.ChannelUnused;
+            receiveTime = Time.realtimeSinceStartup;
             return NetEventType.Nothing;
         }
 
@@ -148,37 +129,37 @@ namespace LiteNetLibTransport
         {
             SocketTask task = SocketTask.Working;
 
-            if (hostType != HostType.None)
+            if (m_HostType != HostType.None)
             {
-                throw new InvalidOperationException("Already started as " + hostType);
+                throw new InvalidOperationException("Already started as " + m_HostType);
             }
 
-            hostType = HostType.Client;
+            m_HostType = HostType.Client;
 
-            netManager.Start();
+            m_NetManager.Start();
 
-            NetPeer peer = netManager.Connect(Address, Port, string.Empty);
+            NetPeer peer = m_NetManager.Connect(Address, Port, string.Empty);
 
             if (peer.Id != 0)
             {
                 throw new InvalidPacketException("Server peer did not have id 0: " + peer.Id);
             }
 
-            peers[(ulong)peer.Id] = peer;
+            m_Peers[(ulong)peer.Id] = peer;
 
             return task.AsTasks();
         }
 
         public override SocketTasks StartServer()
         {
-            if (hostType != HostType.None)
+            if (m_HostType != HostType.None)
             {
-                throw new InvalidOperationException("Already started as " + hostType);
+                throw new InvalidOperationException("Already started as " + m_HostType);
             }
 
-            hostType = HostType.Server;
+            m_HostType = HostType.Server;
 
-            bool success = netManager.Start(Port);
+            bool success = m_NetManager.Start(Port);
 
             return new SocketTask()
             {
@@ -194,53 +175,50 @@ namespace LiteNetLibTransport
 
         public override void DisconnectRemoteClient(ulong clientId)
         {
-            if (peers.ContainsKey(clientId))
+            if (m_Peers.ContainsKey(clientId))
             {
-                peers[clientId].Disconnect();
+                m_Peers[clientId].Disconnect();
             }
         }
 
         public override void DisconnectLocalClient()
         {
-            netManager.Flush();
-            netManager.DisconnectAll();
-            peers.Clear();
+            m_NetManager.Flush();
+            m_NetManager.DisconnectAll();
+            m_Peers.Clear();
         }
 
         public override ulong GetCurrentRtt(ulong clientId)
         {
-            if (!peers.ContainsKey(clientId))
+            if (!m_Peers.ContainsKey(clientId))
             {
                 return 0;
             }
 
-            return (ulong)peers[clientId].Ping * 2;
+            return (ulong)m_Peers[clientId].Ping * 2;
         }
 
         public override void Shutdown()
         {
-            netManager.Flush();
-            netManager.Stop();
-            peers.Clear();
+            m_NetManager.Flush();
+            m_NetManager.Stop();
+            m_Peers.Clear();
 
-            hostType = HostType.None;
+            m_HostType = HostType.None;
         }
 
         public override void Init()
         {
-            liteChannels.Clear();
+            m_LiteChannels.Clear();
             MapChannels(MLAPI_CHANNELS);
             MapChannels(channels);
-            AddRpcResponseChannels();
-
-            if (liteChannels.Count > 64)
+            if (m_LiteChannels.Count > 64)
             {
-                throw new InvalidOperationException("LiteNetLib supports up to 64 channels, got: " + liteChannels.Count);
+                throw new InvalidOperationException("LiteNetLib supports up to 64 channels, got: " + m_LiteChannels.Count);
             }
+            m_MessageBuffer = new byte[MessageBufferSize];
 
-            messageBuffer = new byte[MessageBufferSize];
-
-            netManager = new NetManager(this)
+            m_NetManager = new NetManager(this)
             {
                 PingInterval = SecondsToMilliseconds(PingInterval),
                 DisconnectTimeout = SecondsToMilliseconds(DisconnectTimeout),
@@ -254,35 +232,22 @@ namespace LiteNetLibTransport
             };
         }
 
-        private void MapChannels(TransportChannel[] channels)
+        void MapChannels(TransportChannel[] channels)
         {
-            byte id = (byte)liteChannels.Count;
+            byte id = (byte)m_LiteChannels.Count;
 
             for (int i = 0; i < channels.Length; i++)
             {
-                liteChannels.Add(channels[i].Name, new LiteChannel()
+                m_LiteChannels.Add(channels[i].Id, new LiteChannel()
                 {
-                    number = id++,
-                    method = ConvertChannelType(channels[i].Type)
+                    ChannelNumber = id++,
+                    Method = ConvertChannelType(channels[i].Type)
                 });
             }
         }
 
-        private void AddRpcResponseChannels()
-        {
-            byte id = (byte)liteChannels.Count;
 
-            foreach (DeliveryMethod method in Enum.GetValues(typeof(DeliveryMethod)) as DeliveryMethod[])
-            {
-                liteChannels.Add("LITENETLIB_RESPONSE_" + method.ToString(), new LiteChannel()
-                {
-                    number = id++,
-                    method = method
-                });
-            }
-        }
-
-        private DeliveryMethod ConvertChannelType(ChannelType type)
+        DeliveryMethod ConvertChannelType(ChannelType type)
         {
             switch (type)
             {
@@ -315,69 +280,75 @@ namespace LiteNetLibTransport
 
         void INetEventListener.OnPeerConnected(NetPeer peer)
         {
-            if (connectTask != null)
+            if (m_ConnectTask != null)
             {
-                connectTask.Success = true;
-                connectTask.IsDone = true;
-                connectTask = null;
+                m_ConnectTask.Success = true;
+                m_ConnectTask.IsDone = true;
+                m_ConnectTask = null;
             }
 
-            Event @event = new Event()
-            {
-                dateTime = DateTime.UtcNow,
-                type = NetEventType.Connect,
-                clientId = GetMLAPIClientId(peer)
-            };
+            var peerId = GetMlapiClientId(peer);
+            InvokeOnTransportEvent(NetEventType.Connect, peerId, Channel.DefaultMessage, default, Time.time);
 
-            peers[@event.clientId] = peer;
-
-            eventQueue.Enqueue(@event);
+            m_Peers[peerId] = peer;
         }
 
         void INetEventListener.OnPeerDisconnected(NetPeer peer, DisconnectInfo disconnectInfo)
         {
-            if (connectTask != null)
+            if (m_ConnectTask != null)
             {
-                connectTask.Success = false;
-                connectTask.IsDone = true;
-                connectTask = null;
+                m_ConnectTask.Success = false;
+                m_ConnectTask.IsDone = true;
+                m_ConnectTask = null;
             }
 
-            Event @event = new Event()
-            {
-                dateTime = DateTime.UtcNow,
-                type = NetEventType.Disconnect,
-                clientId = GetMLAPIClientId(peer)
-            };
+            var peerId = GetMlapiClientId(peer);
+            InvokeOnTransportEvent(NetEventType.Disconnect, GetMlapiClientId(peer), Channel.DefaultMessage, default, Time.time);
 
-            peers.Remove(@event.clientId);
-
-            eventQueue.Enqueue(@event);
+            m_Peers.Remove(peerId);
         }
 
         void INetEventListener.OnNetworkError(IPEndPoint endPoint, SocketError socketError)
         {
             // Ignore
-            if (connectTask != null)
+            if (m_ConnectTask != null)
             {
-                connectTask.SocketError = socketError;
-                connectTask.IsDone = true;
-                connectTask = null;
+                m_ConnectTask.SocketError = socketError;
+                m_ConnectTask.IsDone = true;
+                m_ConnectTask = null;
             }
         }
 
         void INetEventListener.OnNetworkReceive(NetPeer peer, NetPacketReader reader, DeliveryMethod deliveryMethod)
         {
-            Event @event = new Event()
-            {
-                dateTime = DateTime.UtcNow,
-                type = NetEventType.Data,
-                clientId = GetMLAPIClientId(peer),
-                packetReader = reader,
-                channelName = "LITENETLIB_RESPONSE_" + deliveryMethod.ToString()
-            };
+            int size = reader.UserDataSize;
+            byte[] data = m_MessageBuffer;
 
-            eventQueue.Enqueue(@event);
+            if (size > m_MessageBuffer.Length)
+            {
+                ResizeMessageBuffer(size);
+            }
+
+            Buffer.BlockCopy(reader.RawData, reader.UserDataOffset, data, 0, size);
+
+            // The last byte sent is used to indicate the channel so don't include it in the payload.
+            var payload = new ArraySegment<byte>(data, 0, size - 1);
+
+            Channel channel = (Channel)data[size - 1];
+
+            InvokeOnTransportEvent(NetEventType.Data, GetMlapiClientId(peer), channel, payload, Time.time);
+
+            reader.Recycle();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void ResizeMessageBuffer(int size)
+        {
+            m_MessageBuffer = new byte[size];
+            if (NetworkingManager.Singleton.LogLevel == LogLevel.Developer)
+            {
+                NetworkLog.LogWarningServer($"LiteNetLibTransport resizing messageBuffer to size of {size}.");
+            }
         }
 
         void INetEventListener.OnNetworkReceiveUnconnected(IPEndPoint remoteEndPoint, NetPacketReader reader, UnconnectedMessageType messageType)
@@ -395,11 +366,11 @@ namespace LiteNetLibTransport
             request.Accept();
         }
 
-        private ulong GetMLAPIClientId(NetPeer peer)
+        ulong GetMlapiClientId(NetPeer peer)
         {
             ulong clientId = (ulong)peer.Id;
 
-            if (hostType == HostType.Server)
+            if (m_HostType == HostType.Server)
             {
                 clientId += 1;
             }
@@ -407,7 +378,7 @@ namespace LiteNetLibTransport
             return clientId;
         }
 
-        private static int SecondsToMilliseconds(float seconds)
+        static int SecondsToMilliseconds(float seconds)
         {
             return (int)Mathf.Ceil(seconds * 1000);
         }

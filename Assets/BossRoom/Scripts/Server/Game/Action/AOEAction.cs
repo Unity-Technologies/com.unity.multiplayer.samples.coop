@@ -28,7 +28,7 @@ public class AoeAction : Action
         }
 
         // broadcasting to all players including myself. Client is authoritative on input, but not on the actual gameplay effect of that input.
-        m_Parent.NetState.ServerBroadcastAction(ref Data);
+        m_Parent.NetState.RecvDoActionClientRPC(Data);
         return ActionConclusion.Stop;
     }
 

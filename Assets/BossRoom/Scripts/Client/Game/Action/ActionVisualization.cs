@@ -82,6 +82,18 @@ namespace BossRoom.Visual
             }
             m_PlayingActions.Clear();
         }
+
+        /// <summary>
+        /// Cancels all playing ActionFX.
+        /// </summary>
+        public void CancelAll()
+        {
+            foreach( var action in m_PlayingActions )
+            {
+                action.Cancel();
+            }
+            m_PlayingActions.Clear();
+        }
     }
 }
 

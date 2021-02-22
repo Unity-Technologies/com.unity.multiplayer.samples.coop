@@ -16,6 +16,12 @@ namespace BossRoom.Server
             get { return NetState.IsNpc; }
         }
 
+        /// <summary>
+        /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
+        /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
+        /// </summary>
+        public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
+
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
         private ActionType m_StartingAction = ActionType.None;
@@ -77,8 +83,7 @@ namespace BossRoom.Server
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
-                NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
-                NetState.Mana.Value = NetState.CharacterData.BaseMana;
+                NetState.ApplyCharacterData();
 
                 if (m_StartingAction != ActionType.None)
                 {
@@ -112,7 +117,7 @@ namespace BossRoom.Server
                     GetComponent<ServerCharacterMovement>().CancelMove();
                 }
 
-                this.m_ActionPlayer.PlayAction(ref action);
+                m_ActionPlayer.PlayAction(ref action);
             }
         }
 
@@ -150,7 +155,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Receive an HP change from somewhere. Could be healing or damage.
         /// </summary>
-        /// <param name="Inflicter">Person dishing out this damage/healing. Can be null. </param>
+        /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
@@ -167,11 +172,12 @@ namespace BossRoom.Server
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
             }
-            NetState.HitPoints.Value += HP;
+
+            NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
 
             //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
-            if (NetState.HitPoints.Value <= 0)
+            if (NetState.HitPoints <= 0)
             {
                 ClearActions();
 
@@ -206,7 +212,7 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Fainted)
             {
-                NetState.HitPoints.Value = HP;
+                NetState.HitPoints = HP;
                 NetState.NetworkLifeState.Value = LifeState.Alive;
             }
         }
@@ -222,7 +228,10 @@ namespace BossRoom.Server
 
         private void OnCollisionEnter(Collision collision)
         {
-            m_ActionPlayer.OnCollisionEnter(collision);
+            if( m_ActionPlayer != null )
+            {
+                m_ActionPlayer.OnCollisionEnter(collision);
+            }
         }
 
         private void OnStoppedChargingUp()

@@ -169,6 +169,7 @@ namespace BossRoom.Server
                 case ActionLogic.Trample: return new TrampleAction(parent, ref data);
                 case ActionLogic.ChargedShield: return new ChargedShieldAction(parent, ref data);
                 case ActionLogic.Stunned: return new StunnedAction(parent, ref data);
+                case ActionLogic.Target: return new TargetAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }
