@@ -25,6 +25,8 @@ namespace BossRoom
         Emote3,
         Emote4,
         TankTestability,
+        TankShieldBuff,
+        TankShieldRush,
     }
 
 
