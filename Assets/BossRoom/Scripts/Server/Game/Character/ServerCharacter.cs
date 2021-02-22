@@ -16,6 +16,12 @@ namespace BossRoom.Server
             get { return NetState.IsNpc; }
         }
 
+        /// <summary>
+        /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
+        /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
+        /// </summary>
+        public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
+
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
         private ActionType m_StartingAction = ActionType.None;
@@ -144,7 +150,7 @@ namespace BossRoom.Server
             //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
 
-            NetState.HitPoints += HP;
+            NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
 
             //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
@@ -188,7 +194,10 @@ namespace BossRoom.Server
 
         private void OnCollisionEnter(Collision collision)
         {
-            m_ActionPlayer.OnCollisionEnter(collision);
+            if( m_ActionPlayer != null )
+            {
+                m_ActionPlayer.OnCollisionEnter(collision);
+            }
         }
     }
 }

@@ -27,6 +27,8 @@ namespace BossRoom
         TankTestability,
         TankShieldBuff,
         TankShieldRush,
+        GeneralTarget,
+        MageHeal,
     }
 
 
@@ -44,7 +46,7 @@ namespace BossRoom
         RangedFXTargeted,
         AoE,
         Trample,
-
+        Target,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 

@@ -110,6 +110,15 @@ namespace BossRoom.Server
         }
 
         /// <summary>
+        /// Returns true if the character is actively moving, false otherwise. 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsMoving()
+        {
+            return m_MovementState != MovementState.Idle;
+        }
+
+        /// <summary>
         /// Cancels any moves that are currently in progress. 
         /// </summary>
         public void CancelMove()
@@ -142,7 +151,10 @@ namespace BossRoom.Server
 
         private void OnDestroy()
         {
-            m_NavPath.Dispose();
+            if(m_NavPath != null )
+            {
+                m_NavPath.Dispose();
+            }
         }
 
         private void PerformMovement()
