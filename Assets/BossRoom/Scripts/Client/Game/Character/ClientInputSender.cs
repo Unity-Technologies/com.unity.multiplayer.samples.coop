@@ -36,6 +36,7 @@ namespace BossRoom.Client
             None,        //no skill was triggered.
             MouseClick,  //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
             Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
+            KeyboardRelease, //represents a released key.
             UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target. 
         }
 
@@ -64,8 +65,8 @@ namespace BossRoom.Client
         /// </summary>
         private int m_ActionRequestCount;
 
-        bool m_SkillActive = false;
-        bool m_MoveRequest = false;
+        private BaseActionInput m_CurrentSkillInput = null;
+        private bool m_MoveRequest = false;
 
         Camera m_MainCamera;
 
@@ -109,32 +110,35 @@ namespace BossRoom.Client
 
         public void FinishSkill()
         {
-            m_SkillActive = false;
+            m_CurrentSkillInput = null;
         }
 
         void FixedUpdate()
         {
-            // TODO replace with new Unity Input System [GOMPS-81]
-            // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
-            if (m_SkillActive)
-            {
-                m_ActionRequestCount = 0; //throw away any action requests we've received. 
-                return;
-            }
-
             //play all ActionRequests, in FIFO order. 
-            for( int i = 0; i < m_ActionRequestCount; ++i )
+            for (int i = 0; i < m_ActionRequestCount; ++i)
             {
-                var actionData = GameDataSource.Instance.ActionDataByType[m_ActionRequests[i].RequestedAction];
-                if (actionData.ActionInput != null)
+                if( m_CurrentSkillInput != null )
                 {
-                    var skillPlayer = Instantiate(actionData.ActionInput);
-                    skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, FinishSkill);
-                    m_SkillActive = true;
+                    //actions requested while input is active are discarded, except for "Release" requests, which go through. 
+                    if (m_ActionRequests[i].TriggerStyle == SkillTriggerStyle.KeyboardRelease )
+                    {
+                        m_CurrentSkillInput.OnReleaseKey();
+                    }
                 }
                 else
                 {
-                    PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle);
+                    var actionData = GameDataSource.Instance.ActionDataByType[m_ActionRequests[i].RequestedAction];
+                    if (actionData.ActionInput != null)
+                    {
+                        var skillPlayer = Instantiate(actionData.ActionInput);
+                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, FinishSkill);
+                        m_CurrentSkillInput = skillPlayer;
+                    }
+                    else
+                    {
+                        PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle);
+                    }
                 }
             }
             m_ActionRequestCount = 0;
@@ -220,7 +224,6 @@ namespace BossRoom.Client
                 if (ActionUtils.IsValidTarget(targetId))
                 {
                     targetNetObj = MLAPI.Spawning.SpawnManager.SpawnedObjects[targetId];
-                    m_NetworkCharacter.RecvDoActionServerRPC(data);
                 }
             }
 
@@ -301,9 +304,13 @@ namespace BossRoom.Client
 
         void Update()
         {
-            if (Input.GetKeyUp("1"))
+            if (Input.GetKeyDown(KeyCode.Alpha1))
             {
                 RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha1))
+            {
+                RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha4))
@@ -330,7 +337,7 @@ namespace BossRoom.Client
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    m_NetworkCharacter.RecvDoActionServerRPC(emoteData);
+                    RequestAction(CharacterData.Skill1, SkillTriggerStyle.MouseClick);
                 }
 
                 if (Input.GetMouseButtonDown(0))
