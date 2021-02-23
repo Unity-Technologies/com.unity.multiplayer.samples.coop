@@ -42,6 +42,9 @@ namespace BossRoom.Visual
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
+        /// Player characters need to report health changes and chracter info to the PartyHUD
+        private Visual.PartyHUD m_PartyHUD;
+
         private float m_SmoothedSpeed;
 
         /// <inheritdoc />
@@ -76,17 +79,39 @@ namespace BossRoom.Visual
             // ...and visualize the current char-select value that we know about
             OnCharacterAppearanceChanged(0, m_NetState.CharacterAppearance.Value);
 
-            if (!m_NetState.IsNpc)
+
+            // ...and visualize the current char-select value that we know about
+            if (m_CharacterSwapper)
             {
-                Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
-                model.SwapToModel(m_NetState.CharacterAppearance.Value);
+                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
             }
 
-            if (IsLocalPlayer)
+            if (!m_NetState.IsNpc)
             {
-                ActionRequestData data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
-                m_ActionViz.PlayAction(ref data);
-                AttachCamera();
+                // track health for heroes
+                m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
+
+                Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
+                int heroAppearance = m_NetState.CharacterAppearance.Value;
+                model.SwapToModel(heroAppearance);
+
+                // find the emote bar to track its buttons
+                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
+                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
+
+                if (IsLocalPlayer)
+                {
+                    ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
+                    m_ActionViz.PlayAction(ref data);
+                    AttachCamera();
+                    m_PartyHUD.SetHeroAppearance(heroAppearance);
+                    m_PartyHUD.SetHeroType(m_NetState.CharacterType);
+                }
+                else
+                {
+                    m_PartyHUD.SetAllyType(m_NetState.NetworkId, m_NetState.CharacterType);
+                }
+
             }
         }
 
@@ -115,6 +140,18 @@ namespace BossRoom.Visual
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
+            }
+        }
+
+        private void OnHealthChanged(int previousValue, int newValue)
+        {
+            if (IsLocalPlayer)
+            {
+                this.m_PartyHUD.SetHeroHealth(newValue);
+            }
+            else
+            {
+                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkId, newValue);
             }
         }
 
@@ -155,7 +192,7 @@ namespace BossRoom.Visual
 
         private void OnDestroy()
         {
-            if( m_ActionViz != null )
+            if (m_ActionViz != null)
             {
                 //make sure we don't leave any dangling effects playing if we've been destroyed. 
                 m_ActionViz.CancelAll();

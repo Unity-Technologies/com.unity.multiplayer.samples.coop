@@ -194,7 +194,7 @@ namespace BossRoom.Server
 
         private void OnCollisionEnter(Collision collision)
         {
-            if( m_ActionPlayer != null )
+            if (m_ActionPlayer != null)
             {
                 m_ActionPlayer.OnCollisionEnter(collision);
             }

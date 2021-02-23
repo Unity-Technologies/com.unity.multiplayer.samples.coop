@@ -1,5 +1,5 @@
-using System;
 using MLAPI.Serialization;
+using System;
 using UnityEngine;
 
 namespace BossRoom

@@ -1,9 +1,10 @@
-using System.Collections;
+
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.Serialization;
 using MLAPI.NetworkedVar;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -79,7 +80,6 @@ namespace BossRoom
                 SeatIdx = seatIdx;
                 LastChangeTime = lastChangeTime;
             }
-
             public void NetworkSerialize(BitSerializer serializer)
             {
                 serializer.Serialize(ref ClientId);

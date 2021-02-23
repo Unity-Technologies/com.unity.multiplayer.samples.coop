@@ -45,6 +45,14 @@ namespace BossRoom
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
 
+        public NetworkHealthState HealthState
+        {
+            get
+            {
+                return m_NetworkHealthState;
+            }
+        }
+
         /// <summary>
         /// The active target of this character. 
         /// </summary>
@@ -59,7 +67,6 @@ namespace BossRoom
             set { m_NetworkHealthState.HitPoints.Value = value; }
         }
 
-        /// <summary>
         /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
