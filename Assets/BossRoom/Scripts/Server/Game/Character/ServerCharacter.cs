@@ -177,12 +177,12 @@ namespace BossRoom.Server
 
                 if (IsNpc)
                 {
-                    NetState.NetworkLifeState.Value = LifeState.Dead;
-
-                    if (_killedDestroyDelaySeconds >= 0.0f)
+                    if (_killedDestroyDelaySeconds >= 0.0f && NetState.NetworkLifeState.Value != LifeState.Dead)
                     {
                         StartCoroutine(KilledDestroyProcess());
                     }
+
+                    NetState.NetworkLifeState.Value = LifeState.Dead;
                 }
                 else
                 {
