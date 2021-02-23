@@ -33,8 +33,14 @@ namespace BossRoom
         [Tooltip("How long the effect this Action leaves behind will last, in seconds")]
         public float EffectDurationSeconds;
 
-        [Tooltip("The primary Animation action that gets played when visualizing this Action")]
+        [Tooltip("The primary Animation trigger that gets raised when visualizing this Action")]
         public string Anim;
+
+        [Tooltip("The auxiliary Animation trigger for this Action (e.g. to end an animation loop)")]
+        public string Anim2;
+		
+        [Tooltip("The reaction anim to play in response to being hit by this skill")]
+        public string ReactAnim;
 
         [Tooltip("For Actions that can hit multiple enemies, this determines how much damage is done to non-primary targets")]
         public int SplashDamage;
@@ -54,11 +60,34 @@ namespace BossRoom
         [Tooltip("Prefab to spawn that will manage this action's input")]
         public BaseActionInput ActionInput;
 
+        [System.Serializable]
+        public enum BlockingModeType
+        {
+            EntireDuration,
+            OnlyDuringExecTime,
+        }
+        [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
+        public BlockingModeType BlockingMode;
+
         [Tooltip("If this action spawns GameObjects, list their prefabs here")]
         public GameObject[] Spawns;
 
         [Tooltip("If this Action spawns a projectile, how fast should that projectile move? (meters/second)")]
         public float ProjectileSpeed_m_s;
+
+        [Tooltip("If true, this action affects friendly targets, if false Unfriendly. Not all ActionLogics use this parameter.")]
+        public bool IsFriendly;
+
+        [Header("In-game description info (Only used for player abilities!)")]
+        [Tooltip("If this Action describes a player ability, this is the ability's iconic representation")]
+        public Sprite Icon;
+
+        [Tooltip("If this Action describes a player ability, this is the name we show for the ability")]
+        public string DisplayedName;
+
+        [Tooltip("If this Action describes a player ability, this is the tooltip description we show for the ability")]
+        [Multiline]
+        public string Description;
 
     }
 }

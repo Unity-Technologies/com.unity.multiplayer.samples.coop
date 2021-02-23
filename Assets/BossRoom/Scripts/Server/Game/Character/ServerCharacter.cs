@@ -16,6 +16,12 @@ namespace BossRoom.Server
             get { return NetState.IsNpc; }
         }
 
+        /// <summary>
+        /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
+        /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
+        /// </summary>
+        public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
+
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
         private ActionType m_StartingAction = ActionType.None;
@@ -73,11 +79,11 @@ namespace BossRoom.Server
             {
                 NetState = GetComponent<NetworkCharacterState>();
                 NetState.DoActionEventServer += OnActionPlayRequest;
-                NetState.OnReceivedClientInput += OnClientMoveRequest;
+                NetState.ReceivedClientInput += OnClientMoveRequest;
+                NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
-                NetState.HitPoints.Value = NetState.CharacterData.BaseHP;
-                NetState.Mana.Value = NetState.CharacterData.BaseMana;
+                NetState.ApplyCharacterData();
 
                 if (m_StartingAction != ActionType.None)
                 {
@@ -87,22 +93,31 @@ namespace BossRoom.Server
             }
         }
 
+        public void OnDestroy()
+        {
+            if (NetState)
+            {
+                NetState.DoActionEventServer -= OnActionPlayRequest;
+                NetState.ReceivedClientInput -= OnClientMoveRequest;
+                NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
+                NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+            }
+        }
+
         /// <summary>
-        /// Play an action!
+        /// Play a sequence of actions!
         /// </summary>
-        /// <param name="data">Contains all data necessary to create the action</param>
-        public void PlayAction(ref ActionRequestData data)
+        public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
             if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                if (data.CancelMovement)
+                if (action.CancelMovement)
                 {
                     GetComponent<ServerCharacterMovement>().CancelMove();
                 }
 
-                //Can't trust the client! If this was a human request, make sure the Level of the skill being played is correct.
-                m_ActionPlayer.PlayAction(ref data);
+                m_ActionPlayer.PlayAction(ref action);
             }
         }
 
@@ -132,7 +147,7 @@ namespace BossRoom.Server
             m_ActionPlayer.ClearActions();
         }
 
-        private void OnActionPlayRequest(ActionRequestData data)
+        private void OnActionPlayRequest(ActionRequestData data )
         {
             PlayAction(ref data);
         }
@@ -140,18 +155,29 @@ namespace BossRoom.Server
         /// <summary>
         /// Receive an HP change from somewhere. Could be healing or damage.
         /// </summary>
-        /// <param name="Inflicter">Person dishing out this damage/healing. Can be null. </param>
+        /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
-            //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
-            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
+            // Give our Actions a chance to alter the amount of damage (or healing) we take.
+            if (HP > 0)
+            {
+                m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.Healed);
+                float healingMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentHealingReceived);
+                HP = (int)(HP * healingMod);
+            }
+            else
+            {
+                m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
+                float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
+                HP = (int)(HP * damageMod);
+            }
 
-            NetState.HitPoints.Value += HP;
+            NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
 
             //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
-            if (NetState.HitPoints.Value <= 0)
+            if (NetState.HitPoints <= 0)
             {
                 ClearActions();
 
@@ -167,6 +193,17 @@ namespace BossRoom.Server
         }
 
         /// <summary>
+        /// Determines a gameplay variable for this character. The value is determined
+        /// by the character's active Actions.
+        /// </summary>
+        /// <param name="buffType"></param>
+        /// <returns></returns>
+        public float GetBuffedValue(Action.BuffableValue buffType)
+        {
+            return m_ActionPlayer.GetBuffedValue(buffType);
+        }
+
+        /// <summary>
         /// Receive a Life State change that brings Fainted characters back to Alive state.
         /// </summary>
         /// <param name="inflicter">Person reviving the character.</param>
@@ -175,7 +212,7 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Fainted)
             {
-                NetState.HitPoints.Value = HP;
+                NetState.HitPoints = HP;
                 NetState.NetworkLifeState.Value = LifeState.Alive;
             }
         }
@@ -191,7 +228,15 @@ namespace BossRoom.Server
 
         private void OnCollisionEnter(Collision collision)
         {
-            m_ActionPlayer.OnCollisionEnter(collision);
+            if (m_ActionPlayer != null)
+            {
+                m_ActionPlayer.OnCollisionEnter(collision);
+            }
+        }
+
+        private void OnStoppedChargingUp()
+        {
+            m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }
     }
 }

@@ -1,10 +1,10 @@
 using UnityEngine;
-
+using UnityEngine.Serialization;
 
 namespace BossRoom
 {
     /// <summary>
-    /// Data representation of a Character, containing such things as its starting HP and Mana, and what attacks it can do. 
+    /// Data representation of a Character, containing such things as its starting HP and Mana, and what attacks it can do.
     /// </summary>
     [CreateAssetMenu(menuName = "GameData/CharacterClass", order = 1)]
     public class CharacterClass : ScriptableObject
@@ -22,7 +22,7 @@ namespace BossRoom
         public ActionType Skill3;
 
         [Tooltip("Starting HP of this character class")]
-        public int BaseHP;
+        public IntVariable BaseHP;
 
         [Tooltip("Starting Mana of this character class")]
         public int BaseMana;
@@ -32,5 +32,14 @@ namespace BossRoom
 
         [Tooltip("For NPCs, this will be used as the aggro radius at which enemies wake up and attack the player")]
         public float DetectRange;
+
+        [Tooltip("For players, this is the displayed \"class name\". (Not used for monsters)")]
+        public string DisplayedName;
+
+        [Tooltip("For players, this is the class banner (when active). (Not used for monsters)")]
+        public Sprite ClassBannerLit;
+
+        [Tooltip("For players, this is the class banner (when inactive). (Not used for monsters)")]
+        public Sprite ClassBannerUnlit;
     }
 }

@@ -1,34 +1,31 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
-using BossRoom;
 
 namespace BossRoom.Server
 {
     /// <summary>
-    /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs. 
+    /// Server logic plugin for the GameNetPortal. Contains implementations for all GameNetPortal's C2S RPCs. 
     /// </summary>
     public class ServerGameNetPortal : MonoBehaviour
     {
-        private GameNetPortal m_Hub;
+        private GameNetPortal m_Portal;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage. 
         private const int k_MaxConnectPayload = 1024;
 
-        public void Start()
+        void Start()
         {
-            m_Hub = GetComponent<GameNetPortal>();
-            m_Hub.NetworkStartEvent += NetworkStart;
+            m_Portal = GetComponent<GameNetPortal>();
+            m_Portal.NetworkStarted += NetworkStart;
             // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
-            m_Hub.NetManager.ConnectionApprovalCallback += ApprovalCheck;
+            m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
         }
 
-        public void NetworkStart()
+        private void NetworkStart()
         {
-            if (!m_Hub.NetManager.IsServer)
-            { 
+            if (!m_Portal.NetManager.IsServer)
+            {
                 enabled = false;
             }
             else
@@ -54,37 +51,37 @@ namespace BossRoom.Server
         /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
         /// <param name="clientId">This is the clientId that MLAPI assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="callback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        private void ApprovalCheck( byte[] connectionData, ulong clientId, MLAPI.NetworkingManager.ConnectionApprovedDelegate callback )
+        private void ApprovalCheck(byte[] connectionData, ulong clientId, MLAPI.NetworkingManager.ConnectionApprovedDelegate callback)
         {
-            if( connectionData.Length > k_MaxConnectPayload )
+            if (connectionData.Length > k_MaxConnectPayload)
             {
-                callback(false, 0, false, null, null );
+                callback(false, 0, false, null, null);
                 return;
             }
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
 
-            string[] config_lines = payload.Split('\n');
-            var payload_config = new Dictionary<string, string>();
-            foreach( var line in config_lines )
+            string[] configLines = payload.Split('\n');
+            var payloadConfig = new Dictionary<string, string>();
+            foreach (var line in configLines)
             {
                 //key-value pair. 
-                if( line.Contains("=") )
+                if (line.Contains("="))
                 {
                     string[] kv = line.Split('=');
-                    payload_config.Add(kv[0], kv[1]);
+                    payloadConfig.Add(kv[0], kv[1]);
                 }
-                else if( line.Trim() != "" )
+                else if (line.Trim() != "")
                 {
                     //single token, with no value present. 
-                    payload_config.Add(line, null);
+                    payloadConfig.Add(line, null);
                 }
             }
 
             //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect. 
-            Debug.Log("host ApprovalCheck: client guid was: " + payload_config["client_guid"]);
+            Debug.Log("host ApprovalCheck: client guid was: " + payloadConfig["client_guid"]);
 
-            
+
             //TODO: GOMPS-79 handle different error cases. 
 
             callback(false, 0, true, null, null);
@@ -92,7 +89,7 @@ namespace BossRoom.Server
             //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
             //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably 
             //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection. 
-            m_Hub.S2C_ConnectResult(clientId, ConnectStatus.SUCCESS );
+            m_Portal.S2CConnectResult(clientId, ConnectStatus.Success);
         }
 
     }

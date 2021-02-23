@@ -58,8 +58,13 @@ namespace BossRoom.Visual
 
                 if ((m_Parent.transform.position - originalTarget.transform.position).sqrMagnitude < (padRange * padRange))
                 {
-                    ClientCharacterVisualization targetViz = originalTarget.GetComponent<Client.ClientCharacter>().ChildVizObject;
-                    targetViz.OurAnimator.SetTrigger("HitReact1");
+                    if( originalTarget.NetworkId != m_Parent.NetworkId )
+                    {
+                        string hitAnim = Description.ReactAnim;
+                        if(string.IsNullOrEmpty(hitAnim)) { hitAnim = "HitReact1";  }
+                        var targetViz = originalTarget.GetComponent<Client.ClientCharacter>().ChildVizObject;
+                        targetViz.OurAnimator.SetTrigger(hitAnim);
+                    }
                 }
             }
 
