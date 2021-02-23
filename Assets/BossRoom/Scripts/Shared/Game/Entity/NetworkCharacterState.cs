@@ -164,13 +164,20 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Server->Client RPC that broadcasts this action play to all clients.
+        /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
         /// </summary>
-        /// <param name="data">The data associated with this Action, including what action type it is.</param>
+        public event Action CancelActionEventClient;
+
         [ClientRpc]
         public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);
+        }
+
+        [ClientRpc]
+        public void RecvCancelActionClientRpc()
+        {
+            CancelActionEventClient?.Invoke();
         }
 
         /// <summary>
@@ -200,6 +207,28 @@ namespace BossRoom
         public void RecvPerformHitReactionClientRPC()
         {
             OnPerformHitReaction?.Invoke();
+        }
+
+        /// <summary>
+        /// Called on server when the character's client decides they have stopped "charging up" an attack.
+        /// </summary>
+        public event Action OnStopChargingUpServer;
+
+        /// <summary>
+        /// Called on all clients when this character has stopped "charging up" an attack.
+        /// </summary>
+        public event Action OnStopChargingUpClient;
+
+        [ServerRpc]
+        public void RecvStopChargingUpServerRpc()
+        {
+            OnStopChargingUpServer?.Invoke();
+        }
+
+        [ClientRpc]
+        public void RecvStopChargingUpClientRpc()
+        {
+            OnStopChargingUpClient?.Invoke();
         }
     }
 }

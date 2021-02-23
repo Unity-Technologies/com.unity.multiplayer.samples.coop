@@ -80,6 +80,7 @@ namespace BossRoom.Server
                 NetState = GetComponent<NetworkCharacterState>();
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.ReceivedClientInput += OnClientMoveRequest;
+                NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
 
                 NetState.ApplyCharacterData();
@@ -89,6 +90,17 @@ namespace BossRoom.Server
                     var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
                     PlayAction(ref startingAction);
                 }
+            }
+        }
+
+        public void OnDestroy()
+        {
+            if (NetState)
+            {
+                NetState.DoActionEventServer -= OnActionPlayRequest;
+                NetState.ReceivedClientInput -= OnClientMoveRequest;
+                NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
+                NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
             }
         }
 
@@ -147,8 +159,19 @@ namespace BossRoom.Server
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
-            //in a more complicated implementation, we might look up all sorts of effects from the inflicter, and compare them
-            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
+            // Give our Actions a chance to alter the amount of damage (or healing) we take.
+            if (HP > 0)
+            {
+                m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.Healed);
+                float healingMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentHealingReceived);
+                HP = (int)(HP * healingMod);
+            }
+            else
+            {
+                m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
+                float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
+                HP = (int)(HP * damageMod);
+            }
 
             NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
 
@@ -167,6 +190,17 @@ namespace BossRoom.Server
                     NetState.NetworkLifeState.Value = LifeState.Fainted;
                 }
             }
+        }
+
+        /// <summary>
+        /// Determines a gameplay variable for this character. The value is determined
+        /// by the character's active Actions.
+        /// </summary>
+        /// <param name="buffType"></param>
+        /// <returns></returns>
+        public float GetBuffedValue(Action.BuffableValue buffType)
+        {
+            return m_ActionPlayer.GetBuffedValue(buffType);
         }
 
         /// <summary>
@@ -198,6 +232,11 @@ namespace BossRoom.Server
             {
                 m_ActionPlayer.OnCollisionEnter(collision);
             }
+        }
+
+        private void OnStoppedChargingUp()
+        {
+            m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }
     }
 }
