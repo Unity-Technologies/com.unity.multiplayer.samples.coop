@@ -18,7 +18,6 @@ namespace BossRoom
         ImpBossBaseAttack,
         GeneralChase,
         GeneralRevive,
-        TankTestability,
         DriveArrow,
         Emote1,
         Emote2,
@@ -82,7 +81,7 @@ namespace BossRoom
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing.
         public ulong[] TargetIds;          //networkIds of targets, or null if untargeted.
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
-        public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately. 
+        public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately.
         public bool ShouldClose;           //if true, the server should synthesize a ChaseAction to close to within range of the target before playing the Action. Ignored for untargeted actions.
         public bool CancelMovement;        // if true, movement is cancelled before playing this action
 
@@ -103,14 +102,14 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// Returns true if the ActionRequestDatas are "functionally equivalent" (not including their Queueing or Closing properties). 
+        /// Returns true if the ActionRequestDatas are "functionally equivalent" (not including their Queueing or Closing properties).
         /// </summary>
         public bool Compare(ref ActionRequestData rhs)
         {
             bool scalarParamsEqual = (ActionTypeEnum, Position, Direction, Amount) == (rhs.ActionTypeEnum, rhs.Position, rhs.Direction, rhs.Amount);
             if (!scalarParamsEqual) { return false; }
 
-            if (TargetIds == rhs.TargetIds) { return true; } //covers case of both being null. 
+            if (TargetIds == rhs.TargetIds) { return true; } //covers case of both being null.
             if (TargetIds == null || rhs.TargetIds == null || TargetIds.Length != rhs.TargetIds.Length) { return false; }
             for (int i = 0; i < TargetIds.Length; i++)
             {

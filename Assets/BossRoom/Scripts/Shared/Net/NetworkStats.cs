@@ -85,7 +85,7 @@ namespace BossRoom
                 {
                     // We could have had a ping/pong where the ping sends the pong and the pong sends the ping. Issue with this
                     // is the higher the latency, the lower the sampling would be. We need pings to be sent at a regular interval
-                    InvokeServerRpc<int>(PingServerRPC, m_CurrentRTTPingId);
+                    PingServerRPC(m_CurrentRTTPingId);
                     m_PingHistoryStartTimes[m_CurrentRTTPingId] = Time.realtimeSinceStartup;
                     m_CurrentRTTPingId++;
                     m_LastPingTime = Time.realtimeSinceStartup;
@@ -108,14 +108,14 @@ namespace BossRoom
             }
         }
 
-        [ServerRPC]
-        public void PingServerRPC(int pingId)
+        [ServerRpc]
+        public void PingServerRPC(int pingId, ServerRpcParams serverParams=default)
         {
-            InvokeClientRpcOnOwner<int>(PongClientRPC, pingId);
+            PongClientRPC(pingId, new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new ulong[] { OwnerClientId } } });
         }
 
-        [ClientRPC]
-        public void PongClientRPC(int pingId)
+        [ClientRpc]
+        public void PongClientRPC(int pingId, ClientRpcParams clientParams=default)
         {
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);
