@@ -78,7 +78,7 @@ namespace BossRoom
 
         void FixedUpdate()
         {
-            var textToDisplay = "";
+            var textToDisplay = string.Empty;
             if (!IsServer)
             {
                 if (Time.realtimeSinceStartup - m_LastPingTime > m_PingIntervalSeconds)
