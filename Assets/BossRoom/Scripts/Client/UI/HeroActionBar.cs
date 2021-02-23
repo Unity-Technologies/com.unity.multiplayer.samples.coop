@@ -26,21 +26,20 @@ namespace BossRoom.Visual
 
         // allow icons for each class to be configured
         [SerializeField]
-        private Material[] m_TankIcons;
+        private Sprite[] m_TankIcons;
 
         [SerializeField]
-        private Material[] m_ArcherIcons;
+        private Sprite[] m_ArcherIcons;
 
         [SerializeField]
-        private Material[] m_RogueIcons;
+        private Sprite[] m_RogueIcons;
 
         [SerializeField]
-        private Material[] m_MageIcons;
+        private Sprite[] m_MageIcons;
 
-
-        public void RegisterInputSender(Client.ClientInputSender inputSender )
+        public void RegisterInputSender(Client.ClientInputSender inputSender)
         {
-            if( m_InputSender != null )
+            if (m_InputSender != null)
             {
                 Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
             }
@@ -70,18 +69,18 @@ namespace BossRoom.Visual
             }
         }
 
-        void SetButtonIcons(Material[] icons)
+        void SetButtonIcons(Sprite[] icons)
         {
             for (int i = 0; i < m_Buttons.Length; i++)
             {
                 if (i < icons.Length)
                 {
-                    m_Buttons[i].image.material = icons[i];
+                    m_Buttons[i].image.sprite = icons[i];
                 }
             }
         }
 
-        public void onButtonClicked(int buttonIndex)
+        public void OnButtonClicked(int buttonIndex)
         {
             if (buttonIndex == 3)
             {
@@ -89,13 +88,13 @@ namespace BossRoom.Visual
                 return;
             }
 
-            if(m_InputSender==null)
+            if (m_InputSender == null)
             {
                 //nothing to do past this point if we don't have an InputSender.
                 return;
             }
 
-            switch(buttonIndex)
+            switch (buttonIndex)
             {
                 case 0: m_InputSender.RequestAction(m_CharacterData.Skill1, SkillTriggerStyle.UI); break;
                 case 1: m_InputSender.RequestAction(m_CharacterData.Skill2, SkillTriggerStyle.UI); break;

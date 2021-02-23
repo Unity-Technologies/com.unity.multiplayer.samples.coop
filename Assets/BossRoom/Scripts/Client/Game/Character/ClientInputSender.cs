@@ -105,7 +105,6 @@ namespace BossRoom.Client
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
-
             m_MainCamera = Camera.main;
         }
 

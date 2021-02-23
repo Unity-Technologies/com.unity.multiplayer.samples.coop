@@ -21,7 +21,7 @@ namespace BossRoom.Visual
             m_InputSender = inputSender;
         }
 
-        public void onButtonClicked(int buttonIndex)
+        public void OnButtonClicked(int buttonIndex)
         {
             if( m_InputSender != null )
             {

@@ -66,7 +66,6 @@ namespace BossRoom.Server
                 // should we do something special here?)
                 NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
 
-                // if any other players are already connected to us (i.e. they connected while we were
                 // Now create player characters for all the players
                 foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
                 {
