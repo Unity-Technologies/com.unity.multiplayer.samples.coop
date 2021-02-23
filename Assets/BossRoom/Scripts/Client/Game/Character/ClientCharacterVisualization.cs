@@ -44,6 +44,11 @@ namespace BossRoom.Visual
 
         private float m_SmoothedSpeed;
 
+        int m_AliveStateTriggerID;
+        int m_FaintedStateTriggerID;
+        int m_DeadStateTriggerID;
+        int m_HitStateTriggerID;
+
         /// <inheritdoc />
         public override void NetworkStart()
         {
@@ -53,21 +58,34 @@ namespace BossRoom.Visual
                 return;
             }
 
+            m_AliveStateTriggerID = Animator.StringToHash("StandUp");
+            m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
+            m_DeadStateTriggerID = Animator.StringToHash("Dead");
+            m_HitStateTriggerID = Animator.StringToHash("HitReact1");
+
             m_ActionViz = new ActionVisualization(this);
 
-            m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
+            var parentTransform = transform.parent;
+
+            m_NetState = parentTransform.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
-            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
-            // we should investigate for a way to have the imps already appear as down when connecting.
-            // todo gomps-220
-            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
-            Parent = transform.parent;
-            Parent.GetComponent<Client.ClientCharacter>().ChildVizObject = this;
-            transform.parent = null;
+            Parent = parentTransform;
+            Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
+            transform.SetParent(null);
+
+            // a special scenario to account for: NPCs being dead when connecting mid-game.
+            // the NPC is synced to parent's networked position & rotation, and is sent to dead state
+            if (m_NetState.NetworkLifeState.Value == LifeState.Dead)
+            {
+                var parentMovement = Parent.GetComponent<INetMovement>();
+                transform.position = parentMovement.NetworkPosition.Value;
+                transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
+                m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryDeath"));
+            }
 
             // listen for char-select info to change (in practice, this info doesn't
             // change, but we may not have the values set yet) ...
@@ -78,13 +96,13 @@ namespace BossRoom.Visual
 
             if (!m_NetState.IsNpc)
             {
-                Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
+                var model = GetComponent<CharacterSwap>();
                 model.SwapToModel(m_NetState.CharacterAppearance.Value);
             }
 
             if (IsLocalPlayer)
             {
-                ActionRequestData data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
+                var data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
                 m_ActionViz.PlayAction(ref data);
                 AttachCamera();
             }
@@ -92,7 +110,7 @@ namespace BossRoom.Visual
 
         private void OnPerformHitReaction()
         {
-            m_ClientVisualsAnimator.SetTrigger("HitReact1");
+            m_ClientVisualsAnimator.SetTrigger(m_HitStateTriggerID);
         }
 
         private void PerformActionFX(ActionRequestData data)
@@ -105,13 +123,13 @@ namespace BossRoom.Visual
             switch (newValue)
             {
                 case LifeState.Alive:
-                    m_ClientVisualsAnimator.SetTrigger("StandUp");
+                    m_ClientVisualsAnimator.SetTrigger(m_AliveStateTriggerID);
                     break;
                 case LifeState.Fainted:
-                    m_ClientVisualsAnimator.SetTrigger("FallDown");
+                    m_ClientVisualsAnimator.SetTrigger(m_FaintedStateTriggerID);
                     break;
                 case LifeState.Dead:
-                    m_ClientVisualsAnimator.SetTrigger("Dead");
+                    m_ClientVisualsAnimator.SetTrigger(m_DeadStateTriggerID);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
@@ -157,7 +175,7 @@ namespace BossRoom.Visual
         {
             if( m_ActionViz != null )
             {
-                //make sure we don't leave any dangling effects playing if we've been destroyed. 
+                //make sure we don't leave any dangling effects playing if we've been destroyed.
                 m_ActionViz.CancelAll();
             }
         }
