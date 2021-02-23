@@ -98,6 +98,18 @@ namespace BossRoom
             set { m_NetworkCharacterTypeState.CharacterType.Value = value; }
         }
 
+        [SerializeField]
+        NetworkNameState m_NetworkNameState;
+
+        /// <summary>
+        /// Current nametag. This value is populated at startup time from CharacterClass data.
+        /// </summary>
+        public string Name
+        {
+            get { return m_NetworkNameState.Name.Value; }
+            set { m_NetworkNameState.Name.Value = value; }
+        }
+
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
         /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
@@ -120,7 +132,7 @@ namespace BossRoom
             ReceivedClientInput?.Invoke(movementTarget);
         }
 
-        public void SetPlayer(CharacterTypeEnum playerType, int playerAppearance)
+        public void SetCharacterType(CharacterTypeEnum playerType, int playerAppearance)
         {
             CharacterType = playerType;
             CharacterAppearance.Value = playerAppearance;
