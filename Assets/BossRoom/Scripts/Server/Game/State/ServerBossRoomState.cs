@@ -17,7 +17,7 @@ namespace BossRoom.Server
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
         private NetworkedObject m_EnemyPrefab;
-		
+
         // note: this is temporary, for testing!
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
@@ -70,7 +70,7 @@ namespace BossRoom.Server
                 // Now create player characters for all the players
                 foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
                 {
-                    //see note in OnClientConnected for why this is a coroutine. 
+                    //see note in OnClientConnected for why this is a coroutine.
                     StartCoroutine(CoroSpawnPlayer(connection.ClientId));
                 }
             }
@@ -101,8 +101,11 @@ namespace BossRoom.Server
 
             var lobbyResults = GetLobbyResultsForClient(clientId);
 
-            netState.CharacterType = lobbyResults.Class;
-            netState.CharacterAppearance.Value = lobbyResults.Appearance;
+            netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
+
+            // fetch player name stored in lobby data; for now use player + PlayerNumber
+            netState.Name = "Player" + lobbyResults.PlayerNumber;
+
             newPlayer.SpawnAsPlayerObject(clientId);
         }
 
