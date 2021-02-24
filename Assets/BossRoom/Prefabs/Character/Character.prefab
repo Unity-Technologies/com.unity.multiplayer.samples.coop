@@ -75,6 +75,8 @@ MonoBehaviour:
     InternalValue: 10
   CharacterType:
     InternalValue: 0
+  CharacterAppearance:
+    InternalValue: 0
 --- !u!114 &4600110157238723776
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -87,6 +89,62 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331c67f15523ad7419792662b9768f44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ClickInput:
+    m_Name: Click Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 9e33386f-5dbe-4715-825e-3a3247b41ff1
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+  m_MousePosition:
+    m_Name: Mouse Position
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 6998ee87-c2f9-4ceb-99c5-9484485587fd
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+  m_Skill2Input:
+    m_Name: Skill 2 Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: b2b09b46-c061-47a5-87a4-4855b96465a7
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+  m_Emote1Input:
+    m_Name: Emote 1 Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 67ed9d00-1f88-4971-acd2-fb00094cc9a2
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+  m_Emote2Input:
+    m_Name: Emote 2 Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 353bbed7-2d78-41c7-8538-db801278d76a
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+  m_Emote3Input:
+    m_Name: Emote 3 Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: ea259f2a-3f9f-4a05-ab75-f221cd9d7058
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+  m_Emote4Input:
+    m_Name: Emote 4 Input
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: b39c4646-85c7-4d1d-87ca-cb83186f435f
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
 --- !u!114 &4600110157238723779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,7 +222,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920a440eb254ba348915767fd046027a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DetectRange: 10
+  m_StartingAction: 0
   m_BrainEnabled: 1
 --- !u!114 &7690172137830037487
 MonoBehaviour:

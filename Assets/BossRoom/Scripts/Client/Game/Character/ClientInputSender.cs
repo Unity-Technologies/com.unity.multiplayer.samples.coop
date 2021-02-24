@@ -2,6 +2,7 @@ using MLAPI;
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 namespace BossRoom.Client
 {
@@ -11,7 +12,34 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkedBehaviour
     {
-        private const float k_MouseInputRaycastDistance = 100f;
+        const float k_MouseInputRaycastDistance = 100f;
+
+        const int k_EmoteCount = 4;
+
+        [SerializeField]
+        InputAction m_MovementInput;
+
+        [SerializeField]
+        InputAction m_CursorPosition;
+
+        [SerializeField]
+        InputAction m_Skill1Input;
+
+        [SerializeField]
+        InputAction m_Skill2Input;
+
+        // The reason we are not using an array of serialize fields here is because serialize fields for InputAction[] arent working properly at the moment.
+        [SerializeField]
+        InputAction m_Emote1Input;
+
+        [SerializeField]
+        InputAction m_Emote2Input;
+
+        [SerializeField]
+        InputAction m_Emote3Input;
+
+        [SerializeField]
+        InputAction m_Emote4Input;
 
         // Cache raycast hit array so that we can use non alloc raycasts
         private readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
@@ -84,6 +112,34 @@ namespace BossRoom.Client
             m_MainCamera = Camera.main;
         }
 
+        void OnEnable()
+        {
+            m_MovementInput.Enable();
+            m_CursorPosition.Enable();
+
+            m_Skill1Input.Enable();
+            m_Skill2Input.Enable();
+
+            m_Emote1Input.Enable();
+            m_Emote2Input.Enable();
+            m_Emote3Input.Enable();
+            m_Emote4Input.Enable();
+        }
+
+        void OnDisable()
+        {
+            m_MovementInput.Disable();
+            m_CursorPosition.Disable();
+
+            m_Skill1Input.Disable();
+            m_Skill2Input.Disable();
+
+            m_Emote1Input.Disable();
+            m_Emote2Input.Disable();
+            m_Emote3Input.Disable();
+            m_Emote4Input.Disable();
+        }
+
         public void FinishSkill()
         {
             m_SkillActive = false;
@@ -91,12 +147,48 @@ namespace BossRoom.Client
 
         void FixedUpdate()
         {
-            // TODO replace with new Unity Input System [GOMPS-81]
-            // The decision to block other inputs while a skill is active is up to debate, we can change this behaviour if needed
+            if (m_Skill1Input.triggered)
+            {
+                m_ClickRequest = m_CursorPosition.ReadValue<Vector2>();
+            }
+
+            m_EmoteAction = ActionType.None;
+
+            if (m_Emote1Input.triggered || m_EmoteUI.ButtonWasClicked(0))
+            {
+                m_EmoteAction = ActionType.Emote1;
+            }
+            if (m_Emote2Input.triggered || m_EmoteUI.ButtonWasClicked(1))
+            {
+                m_EmoteAction = ActionType.Emote2;
+            }
+            if (m_Emote3Input.triggered || m_EmoteUI.ButtonWasClicked(2))
+            {
+                m_EmoteAction = ActionType.Emote3;
+            }
+            if (m_Emote4Input.triggered || m_EmoteUI.ButtonWasClicked(3))
+            {
+                m_EmoteAction = ActionType.Emote4;
+            }
+
+            if (m_EmoteAction != ActionType.None)
+            {
+                var emoteData = new ActionRequestData();
+                emoteData.ActionTypeEnum = m_EmoteAction;
+                emoteData.CancelMovement = true;
+                m_NetworkCharacter.RecvDoActionServerRPC(emoteData);
+            }
+
+            if (m_Skill2Input.triggered)
+            {
+                m_Skill2Request = true;
+            }
+
             if (m_SkillActive)
             {
                 return;
             }
+
             if (m_Skill2Request)
             {
                 var skill2 = Instantiate(GameDataSource.Instance.ActionDataByType[CharacterData.Skill2].ActionInput);
@@ -107,9 +199,9 @@ namespace BossRoom.Client
             }
             // Is mouse button pressed (not just checking for down to allow continuous movement inputs by holding the mouse button down)
             // Check IsPointerOverGameObject to make sure we dont count clicks on the UI
-            if (Input.GetMouseButton(0) && !EventSystem.current.IsPointerOverGameObject())
+            if (m_MovementInput.ReadValue<float>() > 0 && !EventSystem.current.IsPointerOverGameObject())
             {
-                var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+                var ray = m_MainCamera.ScreenPointToRay(m_CursorPosition.ReadValue<Vector2>());
                 if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                 {
                     m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
@@ -218,7 +310,7 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this. 
+        /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this.
         /// </summary>
         /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
         /// <param name="action">The action to perform (will be stamped on the resultData)</param>
@@ -238,7 +330,7 @@ namespace BossRoom.Client
                     Vector3 offset = hitPoint - transform.position;
                     offset.y = 0;
                     resultData.Direction = offset.normalized;
-                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive. 
+                    resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive.
                     return;
                 case ActionLogic.RangedFXTargeted:
                     if (resultData.TargetIds == null) { resultData.Position = hitPoint; }
@@ -246,43 +338,5 @@ namespace BossRoom.Client
             }
         }
 
-        void Update()
-        {
-            //we do this in "Update" rather than "FixedUpdate" because discrete clicks can be missed in FixedUpdate.
-            if (Input.GetMouseButtonDown(1))
-            {
-                m_ClickRequest = Input.mousePosition;
-            }
-
-            m_EmoteAction = ActionType.None;
-            if (Input.GetKeyDown(KeyCode.Alpha4) || m_EmoteUI.ButtonWasClicked(0))
-            {
-                m_EmoteAction = ActionType.Emote1;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha5) || m_EmoteUI.ButtonWasClicked(1))
-            {
-                m_EmoteAction = ActionType.Emote2;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha6) || m_EmoteUI.ButtonWasClicked(2))
-            {
-                m_EmoteAction = ActionType.Emote3;
-            }
-            if (Input.GetKeyDown(KeyCode.Alpha7) || m_EmoteUI.ButtonWasClicked(3))
-            {
-                m_EmoteAction = ActionType.Emote4;
-            }
-            if (m_EmoteAction != ActionType.None)
-            {
-                var emoteData = new ActionRequestData();
-                emoteData.ActionTypeEnum = m_EmoteAction;
-                emoteData.CancelMovement = true;
-                m_NetworkCharacter.RecvDoActionServerRPC(emoteData);
-            }
-
-            if (Input.GetKeyUp("1"))
-            {
-                m_Skill2Request = true;
-            }
-        }
     }
 }

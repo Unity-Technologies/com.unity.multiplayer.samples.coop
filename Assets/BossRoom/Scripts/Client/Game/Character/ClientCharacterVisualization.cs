@@ -2,6 +2,7 @@ using Cinemachine;
 using MLAPI;
 using System;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace BossRoom.Visual
 {
@@ -11,6 +12,9 @@ namespace BossRoom.Visual
     public class ClientCharacterVisualization : NetworkedBehaviour
     {
         private NetworkCharacterState m_NetState;
+
+        [SerializeField]
+        InputAction m_CameraZoomInput;
 
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
@@ -33,6 +37,16 @@ namespace BossRoom.Visual
         public void Start()
         {
             m_ActionViz = new ActionVisualization(this);
+        }
+
+        void OnEnable()
+        {
+            m_CameraZoomInput.Enable();
+        }
+
+        void OnDisable()
+        {
+            m_CameraZoomInput.Disable();
         }
 
         /// <inheritdoc />
@@ -119,7 +133,7 @@ namespace BossRoom.Visual
 
             m_ActionViz.Update();
 
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            float scroll = m_CameraZoomInput.ReadValue<float>();
             if (scroll != 0 && m_MainCamera)
             {
                 ZoomCamera(scroll);
