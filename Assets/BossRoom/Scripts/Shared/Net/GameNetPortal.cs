@@ -8,10 +8,10 @@ namespace BossRoom
 {
     public enum ConnectStatus
     {
-        Success,           //client successfully connected. This may also be a successful reconnect. 
-        ServerFull,       //can't join, server is already at capacity. 
-        MatchStarted,     //can't join, match is already in progress. 
-        Unknown,          //can't join, reason unknown. 
+        Success,           //client successfully connected. This may also be a successful reconnect.
+        ServerFull,       //can't join, server is already at capacity.
+        MatchStarted,     //can't join, match is already in progress.
+        Unknown,          //can't join, reason unknown.
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ namespace BossRoom
         public void StartHost(string ipaddress, int port)
         {
             var chosenTransport = NetworkingManager.Singleton.NetworkConfig.NetworkTransport;
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport. 
+            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             switch (chosenTransport)
             {
                 case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
@@ -146,7 +146,7 @@ namespace BossRoom
         }
 
         /// <summary>
-
+        /// Responsible for the Server->Client RPC's of the connection result.
         /// </summary>
         /// <param name="netId"> id of the client to send to </param>
         /// <param name="status"> the status to pass to the client</param>

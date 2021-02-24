@@ -65,7 +65,7 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Gets the IP Address the user set in the UI, or returns 127.0.0.1 if IP is not present. 
+        /// Callback when the server sends us back a connection finished event.
         /// </summary>
         /// <param name="status"></param>
         private void OnConnectFinished(ConnectStatus status)

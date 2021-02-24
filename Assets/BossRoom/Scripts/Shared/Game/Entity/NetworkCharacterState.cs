@@ -54,7 +54,7 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// The active target of this character. 
+        /// The active target of this character.
         /// </summary>
         public NetworkedVarULong TargetId { get; } = new NetworkedVarULong();
 
@@ -77,7 +77,7 @@ namespace BossRoom
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
-       /// <summary>
+        /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
@@ -166,7 +166,6 @@ namespace BossRoom
         /// <summary>
         /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
         /// </summary>
-        /// <param name="data">Data about which action to play an dits associated details. </param>
         public event Action CancelActionEventClient;
 
         [ClientRpc]
