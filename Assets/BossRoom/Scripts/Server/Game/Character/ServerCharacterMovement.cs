@@ -46,7 +46,8 @@ namespace BossRoom.Server
             m_CharLogic = GetComponent<ServerCharacter>();
             m_Rigidbody = GetComponent<Rigidbody>();
 
-            m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
+            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
+            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
         }
 
         public override void NetworkStart()
@@ -56,6 +57,12 @@ namespace BossRoom.Server
                 // Disable server component on clients
                 enabled = false;
                 return;
+            }
+
+            var NavSystemGO = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag);
+            if (NavSystemGO != null)
+            {
+                m_NavigationSystem = NavSystemGO.GetComponent<NavigationSystem>();
             }
 
             // On the server enable navMeshAgent and initialize

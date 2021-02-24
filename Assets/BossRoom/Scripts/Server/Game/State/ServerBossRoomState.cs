@@ -28,8 +28,10 @@ namespace BossRoom.Server
 
         private LobbyResults m_LobbyResults;
 
-        //see note in OnClientConnected
-        private const float k_TempSpawnDelaySeconds = 5;
+        private GameNetPortal m_NetPortal;
+        private ServerGameNetPortal m_ServerNetPortal;
+
+        private bool m_InitialSpawnDone;
 
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
         {
@@ -54,44 +56,59 @@ namespace BossRoom.Server
             }
             else
             {
+                m_NetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
+                m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
+
+                m_NetPortal.ClientSceneChanged += OnClientSceneChanged;
+
                 // retrieve the lobby state info so that the players we're about to spawn can query it
                 var o = GameStateRelay.GetRelayObject();
                 if (o != null && o.GetType() != typeof(LobbyResults))
                     throw new System.Exception("No LobbyResults found!");
                 m_LobbyResults = (LobbyResults)o;
 
-                // listen for the client-connect event. This will only happen after
-                // the ServerGNHLogic's approval-callback is done, meaning that if we get this event,
-                // the client is officially allowed to be here. (And they are joining the game post-lobby...
-                // should we do something special here?)
-                NetworkingManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-
-                // Now create player characters for all the players
-                foreach (var connection in NetworkingManager.Singleton.ConnectedClientsList)
+                var serverPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
+                foreach( var kvp in m_LobbyResults.Choices )
                 {
-                    //see note in OnClientConnected for why this is a coroutine.
-                    StartCoroutine(CoroSpawnPlayer(connection.ClientId));
+                    if( serverPortal.IsClientInServerScene(kvp.Key))
+                    {
+                        SpawnPlayer(kvp.Key);
+                    }
                 }
             }
         }
 
-        private void OnClientConnected(ulong clientId)
+
+        private void OnClientSceneChanged(ulong clientId, int sceneIndex)
         {
-            // FIXME: this is a work-around for an MLAPI timing problem which happens semi-reliably;
-            // when it happens, it generates the same errors and has the same behavior as this:
-            //      https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/328
-            // We can't use the workaround suggested there, which is to avoid using MLAPI's scene manager.
-            // Instead, we wait a bit for MLAPI to get its state organized, because we can't safely create entities in OnClientConnected().
-            // (Note: on further explortation, I think this is due to some sort of scene-loading synchronization: the new client is briefly
-            // "in" the lobby screen, but has already told the server it's in the game scene. Or something similar.)
-            StartCoroutine(CoroSpawnPlayer(clientId));
+            int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+            if( sceneIndex == serverScene )
+            {
+                if( m_ServerNetPortal.AreAllClientsInServerScene() && !m_InitialSpawnDone )
+                {
+                    m_InitialSpawnDone = true;
+                    foreach (var kvp in m_LobbyResults.Choices)
+                    {
+                        SpawnPlayer(kvp.Key);
+                    }
+                }
+                else if( m_InitialSpawnDone && MLAPI.Spawning.SpawnManager.GetPlayerObject(clientId) == null)
+                {
+                    //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
+                    //(either because multiple people are late-joining at once, or because some dynamic entities are
+                    //getting spawned while joining. But that's not something we can fully address by changes in
+                    //ServerBossRoomState.
+                    SpawnPlayer(clientId);
+                }
+            }
         }
 
-        private IEnumerator CoroSpawnPlayer(ulong clientId)
+        protected override void OnDestroy()
         {
-            yield return new WaitForSeconds(k_TempSpawnDelaySeconds);
-            SpawnPlayer(clientId);
+            base.OnDestroy();
+            m_NetPortal.ClientSceneChanged -= OnClientSceneChanged;
         }
+
 
         private void SpawnPlayer(ulong clientId)
         {
