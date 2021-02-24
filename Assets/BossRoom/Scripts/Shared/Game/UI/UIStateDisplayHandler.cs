@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using MLAPI;
 using UnityEngine;
@@ -164,6 +165,14 @@ namespace BossRoom
             {
                 m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_TransformToTrack.position) +
                     m_VerticalOffset;
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (m_UIState)
+            {
+                Destroy(m_UIState.gameObject);
             }
         }
     }
