@@ -41,6 +41,8 @@ namespace BossRoom
         float m_MaxWindowSize => k_MaxWindowSizeSeconds / m_PingIntervalSeconds;
         Dictionary<int, float> m_PingHistoryStartTimes = new Dictionary<int, float>();
 
+        ClientRpcParams m_PongClientParams;
+
         public override void NetworkStart()
         {
             bool isClientOnly = IsClient && !IsServer;
@@ -53,6 +55,7 @@ namespace BossRoom
             {
                 CreateTextOverlay();
             }
+            m_PongClientParams = new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } };
         }
 
         // Creating our own canvas so this component is easy to add and remove from the project
@@ -108,10 +111,11 @@ namespace BossRoom
             }
         }
 
+
         [ServerRpc]
         public void PingServerRPC(int pingId, ServerRpcParams serverParams=default)
         {
-            PongClientRPC(pingId, new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new ulong[] { OwnerClientId } } });
+            PongClientRPC(pingId, m_PongClientParams);
         }
 
         [ClientRpc]
