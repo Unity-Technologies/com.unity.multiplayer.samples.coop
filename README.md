@@ -15,15 +15,13 @@ Platforms    : Windows, Mac
 ## Getting the project
 
 > __IMPORTANT__: 
-> This project uses Git Large Files Support (LFS). Downloading a zip file using the green button on Github
-> **will not work**. You must clone the project with a version of git that has LFS.
-> You can download Git LFS here: https://git-lfs.github.com/.
+> This project uses Git Large Files Support (LFS). See the [LFS site](https://git-lfs.github.com/) for installation options and commands for your local system.
 
-The project is using `git-flow` branching strategy, as such:
- - the team does active development on `develop` branch
+The project uses the `git-flow` branching strategy, as such:
+ - `develop` branch contains all active development
  - `master` branch contains release versions
 
-To get the project on your machine you need to clone the repository from Github using the following command-line command:
+To get the project on your machine you need to clone the repository from GitHub using the following command-line command:
 ```
 git clone git@github.com:Unity-Technologies/com.unity.multiplayer.samples.coop.git
 ```
@@ -39,7 +37,7 @@ Once you have downloaded the project the steps below should get you up and runni
  	- The first time you open the project Unity will import all assets, which will take longer than usual - it is normal.
  - Once the editor is ready, navigate to the _Project_ window and open the _Project/MainMenu_ scene.
 ![](Documentation/Images/ProjectWindowMainMenuScene.png)
- - From there you can hit the **Play** button and you'd be able to host a new game or join an existing game using the in-game UI.
+ - From there you can click the **Play** button. You can host a new game or join an existing game using the in-game UI.
 
 
 ## Testing multiplayer localy
