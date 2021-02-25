@@ -15,7 +15,7 @@ Platforms    : Windows, Mac
 ## Getting the project
 
 > __IMPORTANT__: 
-> This project uses Git Large Files Support (LFS). See the [LFS site](https://git-lfs.github.com/) for installation options and commands for your local system.
+> This project uses Git Large Files Support (LFS). See the [link](https://git-lfs.github.com/) for Git LFS installation options.
 
 The project uses the `git-flow` branching strategy, as such:
  - `develop` branch contains all active development
@@ -52,7 +52,7 @@ After the build has completed you can launch several instances of the built exec
 
 ## Testing multiplayer over internet
 
-Running the game over internet currently requires setting up a [Photon Transport for MLAPI](), which uses Photon relay server to facilitate communication between clients and server living on different networks.  
+Running the game over internet currently requires setting up a [Photon Transport for MLAPI](https://github.com/Unity-Technologies/mlapi-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.  
 
 ------------------------------------------
 
@@ -86,12 +86,12 @@ Code is organized into three separate assemblies: **Client**, **Shared** and **S
 ----------------------------
 ----------------------------
 ### Movement action flow
- - client clicks mouse on target destination. 
- - client->server RPC, containing target destination. 
- - anticipatory animation plays immediately on client. 
- - server path-plans. 
+ - Client clicks mouse on target destination. 
+ - Client->server RPC, containing target destination. 
+ - Anticipatory animation plays immediately on client. 
+ - Server path-plans. 
  - Once path-plan is finished, server representation of entity starts updating its NetworkedTransform at 30fps. Graphics is on a separate GO and is connected to the networked GO via a spring, to smooth out small corrections.
- - graphics GO never passes the simulation GO; if it catches up to the sim due to a network delay, the user will see a hitch. 
+ - Graphics GO never passes the simulation GO; if it catches up to the sim due to a network delay, the user will see a hitch. 
 
 ### Navigation System
 
