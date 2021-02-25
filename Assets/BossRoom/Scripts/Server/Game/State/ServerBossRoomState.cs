@@ -131,10 +131,11 @@ namespace BossRoom.Server
 
             var lobbyResults = GetLobbyResultsForClient(clientId);
 
-            netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
+            var playerData = m_NetPortal.GetComponent<ServerGameNetPortal>().GetPlayerData(clientId);
+            string playerName = playerData != null ? playerData.Value.m_PlayerName : ("Player" + lobbyResults.PlayerNumber);
 
-            // fetch player name stored in lobby data; for now use player + PlayerNumber
-            netState.Name = "Player" + lobbyResults.PlayerNumber;
+            netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
+            netState.CharacterName.Value = playerName;
 
             newPlayer.SpawnAsPlayerObject(clientId);
         }
