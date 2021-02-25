@@ -21,6 +21,9 @@ namespace BossRoom.Server
         /// </summary>
         private const int k_QueueSoftMax = 3;
 
+        private ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
+        private bool m_HasPendingSynthesizedAction;
+
         public ActionPlayer(ServerCharacter parent)
         {
             m_Parent = parent;
@@ -189,18 +192,33 @@ namespace BossRoom.Server
         {
             if (m_Queue.Count > 0)
             {
-                if (endRemoved) { m_Queue[0].End(); }
+                if (endRemoved)
+                {
+                    m_Queue[0].End();
+                    if (m_Queue[0].ChainIntoNewAction(ref m_PendingSynthesizedAction))
+                    {
+                        m_HasPendingSynthesizedAction = true;
+                    }
+                }
                 m_Queue.RemoveAt(0);
             }
 
-            StartAction();
+            // now start the new Action! ... unless we now have a pending Action that will supercede it
+            if (!m_HasPendingSynthesizedAction || m_PendingSynthesizedAction.ShouldQueue)
+            {
+                StartAction();
+            }
         }
 
         public void Update()
         {
-            if (m_Queue.Count > 0 &&
-                m_Queue[0].Description.BlockingMode == ActionDescription.BlockingModeType.OnlyDuringExecTime &&
-                Time.time - m_Queue[0].TimeStarted >= m_Queue[0].Description.ExecTimeSeconds)
+            if (m_HasPendingSynthesizedAction)
+            {
+                m_HasPendingSynthesizedAction = false;
+                PlayAction(ref m_PendingSynthesizedAction);
+            }
+
+            if (m_Queue.Count > 0 && m_Queue[0].ShouldBecomeNonBlocking())
             {
                 // the active action is no longer blocking, meaning it should be moved out of the blocking queue and into the
                 // non-blocking one. (We use this for e.g. projectile attacks, so the projectiles can keep flying, but
@@ -250,6 +268,47 @@ namespace BossRoom.Server
                 m_Queue[0].OnCollisionEnter(collision);
             }
         }
+		
+		/// <summary>
+        /// Gives all active Actions a chance to alter a gameplay variable.
+        /// </summary>
+        /// <remarks>
+        /// Note that this handles both positive alterations (commonly called "buffs")
+        /// AND negative ones ("debuffs").
+        /// </remarks>
+        /// <param name="buffType">Which gameplay variable is being calculated</param>
+        /// <returns>The final ("buffed") value of the variable</returns>
+        public float GetBuffedValue(Action.BuffableValue buffType)
+        {
+            float buffedValue = Action.GetUnbuffedValue(buffType);
+            if (m_Queue.Count > 0)
+            {
+                m_Queue[0].BuffValue(buffType, ref buffedValue);
+            }
+            foreach (var action in m_NonBlockingActions)
+            {
+                action.BuffValue(buffType, ref buffedValue);
+            }
+            return buffedValue;
+        }
+
+        /// <summary>
+        /// Tells all active Actions that a particular gameplay event happened, such as being hit,
+        /// getting healed, dying, etc. Actions can change their behavior as a result.
+        /// </summary>
+        /// <param name="activityThatOccurred">The type of event that has occurred</param>
+        public void OnGameplayActivity(Action.GameplayActivity activityThatOccurred)
+        {
+            if (m_Queue.Count > 0)
+            {
+                m_Queue[0].OnGameplayActivity(activityThatOccurred);
+            }
+            foreach (var action in m_NonBlockingActions)
+            {
+                action.OnGameplayActivity(activityThatOccurred);
+            }
+        }
+
 
         /// <summary>
         /// Cancels the first instance of the given ActionLogic that is currently running, or all instances if cancelAll is set to true.

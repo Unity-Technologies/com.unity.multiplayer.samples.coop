@@ -49,12 +49,15 @@ namespace BossRoom.Visual
                 case ActionLogic.RangedFXTargeted: return new FXProjectileTargetedActionFX(ref data, parent);
                 case ActionLogic.Trample: return new TrampleActionFX(ref data, parent);
                 case ActionLogic.AoE: return new AoeActionFX(ref data, parent);
+                case ActionLogic.ChargedShield: return new ChargedShieldActionFX(ref data, parent);
+                case ActionLogic.Stunned: return new AnimationOnlyActionFX(ref data, parent);
                 case ActionLogic.Target: return new TargetActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }
 
         public virtual void OnAnimEvent(string id) { }
+        public virtual void OnStoppedChargingUp() { }
     }
 
 }

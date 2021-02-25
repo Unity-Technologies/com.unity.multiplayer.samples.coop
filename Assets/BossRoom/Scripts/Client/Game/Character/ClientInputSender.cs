@@ -68,6 +68,7 @@ namespace BossRoom.Client
         private BaseActionInput m_CurrentSkillInput = null;
         private bool m_MoveRequest = false;
 
+
         Camera m_MainCamera;
 
         public event Action<Vector3> OnClientClick;
@@ -140,6 +141,7 @@ namespace BossRoom.Client
                     }
                 }
             }
+
             m_ActionRequestCount = 0;
 
 
