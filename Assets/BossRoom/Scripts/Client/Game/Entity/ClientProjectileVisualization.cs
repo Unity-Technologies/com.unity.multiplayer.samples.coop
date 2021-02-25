@@ -6,6 +6,7 @@ namespace BossRoom.Visual
     public class ClientProjectileVisualization : NetworkedBehaviour
     {
         [SerializeField]
+        [Tooltip("Explosion prefab used when projectile hits enemy. This should have a TimedSelfDestruct component (or some other way of cleaning itself up)")]
         private GameObject m_OnHitParticlePrefab;
 
         NetworkProjectileState m_NetState;
