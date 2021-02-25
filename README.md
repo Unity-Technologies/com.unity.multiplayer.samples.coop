@@ -69,9 +69,6 @@ Code is organized into three separate assemblies: **Client**, **Shared** and **S
 
 ### Key classes
 
-ACTUALIZE THE NAMES AND VERIFY THAT DESCRIPTIONS MATCH TO WHAT IS DONE
-ADD NEW IMPORTANT INFORMATION IF ANYTHING IS AMISS - Game Data Source and other stuff like that?
-
 **Shared**
  - `NetworkCharacterState` Contains all NetworkedVars, and both server and client RPC endpoints. The RPC endpoints only read out the call parameters and then raise events from them; they don’t do any logic internally. 
 
