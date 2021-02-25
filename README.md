@@ -1,31 +1,116 @@
-# BossRoom Co-op game made with MLAPI
+![Banner](Documentation/Images/Banner.png)
+# BossRoom - co-op multiplayer RPG built with Unity MLAPI
 
-## Installation and getting started
-- Clone the repository
-- Open the root folder of the repository in the Unity Hub.
-- The Multipie package is currently internal only. If it causes issues while trying to open the project remove it from Packages/manifest.json
-- The entry scene is the *MainMenu* scene. From there a game can be hosted or an existing game can be joined.
+BossRoom is a fully functional co-op multiplayer RPG made in Unity and MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
-## Using the Photon Transport
-- Add the PhotonRealtimeTransport component to the NetworkingManager GameObject.
-- Set the appID to: bc5b8b0d-edf3-4c61-9593-ce38da7f0c79 (for internal use only) or create your own appid on https://www.photonengine.com/
-- Set the RoomName to something which isn't an empty string like test.
-- Replace the transport variable of the NetworkingManager to the PhotonRealtimeTransport component.
-- Enter Playmode as host/clients => It should just work.
+Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. See [LICENSE.md](LICENSE.md) for more legal information.
 
-## Using the Navigation System
 
-### Building a navigation mesh
-The project is using NavMeshComponents. This means direct building from the Navigation window will not give the desired results. Instead find a NavMeshComponent in the given scene e.g. a **NavMeshSurface** and use the bake button of that script. Also make sure that there is always only one navmesh file per scene. Navmesh files are stored in a folder with the same name as the corresponding scene. You can recognize them based on their icon in the editor. They follow the naming pattern "NavMesh-\<name-of-creating-object\.asset>"
+## Prerequisites
+```
+Unity version: 2020.2.0f1
+Platforms    : Windows, Mac
+```
 
-### Dynamic Navigation Objects
+## Getting the project
+
+> __IMPORTANT__: 
+> This project uses Git Large Files Support (LFS). Downloading a zip file using the green button on Github
+> **will not work**. You must clone the project with a version of git that has LFS.
+> You can download Git LFS here: https://git-lfs.github.com/.
+
+The project is using `git-flow` branching strategy, as such:
+ - the team does active development on `develop` branch
+ - `master` branch contains release versions
+
+To get the project on your machine you need to clone the repository from Github using the following command-line command:
+```
+git clone git@github.com:Unity-Technologies/com.unity.multiplayer.samples.coop.git
+```
+Alternatively you can download a release version from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
+
+
+## Opening the project for the first time
+
+Once you have downloaded the project the steps below should get you up and running:
+ - Make sure you have installed the version of Unity that is listed above in the prerequisites section.
+ 	- Make sure to include standalone support for Windows/Mac in your installation. 
+ - Add the project in _Unity Hub_ by clicking on **Add** button and pointing it to the root folder of the downloaded project.
+ 	- The first time you open the project Unity will import all assets, which will take longer than usual - it is normal.
+ - Once the editor is ready, navigate to the _Project_ window and open the _Project/MainMenu_ scene.
+![](Documentation/Images/ProjectWindowMainMenuScene.png)
+ - From there you can hit the **Play** button and you'd be able to host a new game or join an existing game using the in-game UI.
+
+
+## Testing multiplayer localy
+
+In order to test multiplayer functionality we need to have a built executable. 
+
+To make a build in the menu bar press _File/Build Settings_ and then press **Build**.
+![](Documentation/Images/BuildProject.png)
+
+After the build has completed you can launch several instances of the built executable to be able to both host and join a game.
+
+
+## Testing multiplayer over internet
+
+Running the game over internet currently requires setting up a [Photon Transport for MLAPI](), which uses Photon relay server to facilitate communication between clients and server living on different networks.  
+
+------------------------------------------
+
+## Exploring the project
+BossRoom is an 8-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey. 
+
+One of the 8 clients acts as the host/server. That client will use a compositional approach so that its entities have both server and client components.
+
+The game is server-authoritative, with latency-masking animations. Position updates are done through NetworkTransforms. NetworkedVars and RPC endpoints are isolated in a class that is shared between the server and client specialized logic components. All gamelogic runs in FixedUpdate at 30 Hz, matching our network update rate. 
+
+Code is organized into three separate assemblies: **Client**, **Shared** and **Server** which reference each other when appropriate.
+
+### Key classes
+
+ACTUALIZE THE NAMES AND VERIFY THAT DESCRIPTIONS MATCH TO WHAT IS DONE
+ADD NEW IMPORTANT INFORMATION IF ANYTHING IS AMISS - Game Data Source and other stuff like that?
+
+**Shared**
+ - `NetworkCharacterState` Contains all NetworkedVars, and both server and client RPC endpoints. The RPC endpoints only read out the call parameters and then raise events from them; they don’t do any logic internally. 
+
+**Server**
+ - `ServerCharacterMovement` manages the movement FSM on the server (example states: IDLE, PATHPLANNING, PATHFOLLOWING, FREEMOVING). Updates the NetworkedTransform of the entity on its FixedUpdate
+ - `ServerCharacter` has the AIBrain, as well as the ActionQueue. Receives action requests (either from the AIBrain in case of NPCs, or user input in case of player characters), and executes them.
+ - `AIBrain` contains main AI FSM.  
+ - `Action` is the abstract base class for all server actions
+   - `MeleeAction`, `AoeAction`, etc. contain logic for their respective action types. 
+
+**Client**
+ - `ClientCharacterComponent` primarily is a host for the running `ActionFX` class. This component will probably be on the graphics GO, rather than the sim GO. 
+ - `CliemtInputComponent`. On a shadow entity, will suicide. Listens to inputs, interprets them, and then calls appropriate RPCs on the RPCStateComponent. 
+ - `ActionFX` is the abstract base class for all the client-side action visualizers
+   - `MeleeActionFX`, `AoeActionFX`, etc. Contain graphics information for their respective action types. 
+
+----------------------------
+----------------------------
+### Movement action flow
+ - client clicks mouse on target destination. 
+ - client->server RPC, containing target destination. 
+ - anticipatory animation plays immediately on client. 
+ - server path-plans. 
+ - Once path-plan is finished, server representation of entity starts updating its NetworkedTransform at 30fps. Graphics is on a separate GO and is connected to the networked GO via a spring, to smooth out small corrections.
+ - graphics GO never passes the simulation GO; if it catches up to the sim due to a network delay, the user will see a hitch. 
+
+### Navigation System
+
+#### Building a navigation mesh
+The project is using NavMeshComponents. This means direct building from the Navigation window will not give the desired results. Instead find a NavMeshComponent in the given scene e.g. a **NavMeshSurface** and use the **Bake** button of that script. Also make sure that there is always only one navmesh file per scene. Navmesh files are stored in a folder with the same name as the corresponding scene. You can recognize them based on their icon in the editor. They follow the naming pattern "NavMesh-\<name-of-creating-object\.asset>"
+
+#### Dynamic Navigation Objects
 A dynamic navigation object is an object which affects the state of the navigation mesh such as a door which can be openend or closed.
 To create a dynamic navigation object add a NavMeshObstacle to it and configure the shape (in most cases this should just match the corresponding collider). Then add a DynamicNavObstacle component to it.
 
-### Navigation System
+#### Navigation System
 Each scene which uses navigation or dynamic navigation objects should have a NavigationSystem component on a scene gameobject. That object also needs to have the "NavigationSystem" tag.
 
-
+---------------------------
 
 # TODOs (trimmed down version of tasks listed at: https://github.cds.internal.unity3d.com/unity/com.unity.template-starter-kit)
 
