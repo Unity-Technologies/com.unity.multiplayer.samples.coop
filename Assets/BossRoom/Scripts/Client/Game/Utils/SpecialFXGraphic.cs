@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 namespace BossRoom.Visual
 {
     /// <summary>
@@ -22,7 +26,7 @@ namespace BossRoom.Visual
     {
         [SerializeField]
         [Tooltip("Particles that should be stopped on shutdown")]
-        private List<ParticleSystem> m_ParticleSystemsToTurnOffOnShutdown;
+        public List<ParticleSystem> m_ParticleSystemsToTurnOffOnShutdown;
 
         [SerializeField]
         [Tooltip("After shutdown, how long before we self-destruct? 0 means no self destruct. -1 means self-destruct after ALL particles have disappeared")]
@@ -36,7 +40,7 @@ namespace BossRoom.Visual
             }
 
             // now, when and how do we fully destroy ourselves?
-            if (m_PostShutdownSelfDestructTime > 0)
+            if (m_PostShutdownSelfDestructTime >= 0)
             {
                 // we have a fixed-time, so just destroy ourselves after that time
                 Destroy(gameObject, m_PostShutdownSelfDestructTime);
@@ -69,4 +73,35 @@ namespace BossRoom.Visual
 
     }
 
+
+#if UNITY_EDITOR
+    /// <summary>
+    /// A custom editor that provides a button in the Inspector to auto-add all the
+    /// particle systems in a SpecialFXGraphic (so we don't have to manually maintain the list).
+    /// </summary>
+    [CustomEditor(typeof(SpecialFXGraphic))]
+    public class SpecialFXGraphicEditor : Editor
+    {
+        public override void OnInspectorGUI()
+        {
+            DrawDefaultInspector();
+            if (GUILayout.Button("Auto-Add All Particle Systems"))
+            {
+                AddAllParticleSystems((SpecialFXGraphic)target);
+            }
+        }
+
+        private void AddAllParticleSystems(SpecialFXGraphic specialFxGraphic)
+        {
+            specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown.Clear();
+            foreach (var particleSystem in specialFxGraphic.GetComponentsInChildren<ParticleSystem>())
+            {
+                specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown.Add(particleSystem);
+            }
+        }
+    }
+#endif
+
 }
+
+

@@ -5,13 +5,13 @@ using UnityEngine;
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// The visual aspect of a ChargedShieldAction.
-    /// To show particles, the ActionDescription can provide a prefab that will be instantiated during run.
-    /// The prefab should have a SpecialFXGraphic component on it, which is used to cleanly shut down the graphics.
+    /// The visual aspect of a "Charged" action, including ChargedShieldAction and ChargedLaunchProjectileAction.
+    /// To show particles, the ActionDescription's Spawns list can provide a prefab that will be instantiated during run.
+    /// The prefab must have a SpecialFXGraphic component on it, which is used to cleanly shut down the graphics.
     /// </summary>
-    public class ChargedShieldActionFX : ActionFX
+    public class ChargedActionFX : ActionFX
     {
-        public ChargedShieldActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public ChargedActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
         /// <summary>
         /// A list of the special particle graphics we spawned.
@@ -33,12 +33,15 @@ namespace BossRoom.Visual
             {
                 foreach (var prefab in Description.Spawns)
                 {
-                    var graphicsGO = GameObject.Instantiate(prefab, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
-                    var graphics = graphicsGO.GetComponent<SpecialFXGraphic>();
-                    if (!graphics)
-                        throw new System.Exception($"GameObject {prefab.name} attached to {Description.ActionTypeEnum} does not have SpecialFXGraphic component!");
-                    m_Graphics.Add(graphics);
+                    if (prefab && prefab.GetComponent<SpecialFXGraphic>()) // we skip any prefabs that aren't usable by us
+                    {
+                        var graphicsGO = GameObject.Instantiate(prefab, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
+                        var graphics = graphicsGO.GetComponent<SpecialFXGraphic>();
+                        m_Graphics.Add(graphics);
+                    }
                 }
+                if (m_Graphics.Count == 0)
+                    throw new System.Exception($"None of the {Description.Spawns.Length} Spawns attached to {Description.ActionTypeEnum} have a SpecialFXGraphic component! No charge-up particles found!");
             }
             return true;
         }

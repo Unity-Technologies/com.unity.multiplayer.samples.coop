@@ -31,6 +31,7 @@ namespace BossRoom
         TankShieldRush,
         GeneralTarget,
         MageHeal,
+        ArcherChargedShot,
     }
 
 
@@ -51,6 +52,7 @@ namespace BossRoom
         ChargedShield,
         Stunned,
         Target,
+        ChargedLaunchProjectile,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
