@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BossRoom.Client
 {
@@ -35,9 +36,18 @@ namespace BossRoom.Client
 
         private void NetworkStart()
         {
-            if (!m_Portal.NetManager.IsClient) { enabled = false; }
+            if (!m_Portal.NetManager.IsClient)
+            {
+                enabled = false;
+            }
+            else
+            {
+                SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
+                {
+                    m_Portal.C2SSceneChanged(SceneManager.GetActiveScene().buildIndex);
+                };
+            }
         }
-
 
         private void OnConnectFinished(ConnectStatus status)
         {
@@ -96,7 +106,8 @@ namespace BossRoom.Client
         public static void StartClient(GameNetPortal portal, string ipaddress, int port)
         {
             string clientGuid = GetOrCreateGuid();
-            string payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines. 
+            string payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
+                   payload+= $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}";
 
             byte[] payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
