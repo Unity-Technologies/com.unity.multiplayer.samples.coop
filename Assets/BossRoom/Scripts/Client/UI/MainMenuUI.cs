@@ -3,7 +3,7 @@ using UnityEngine;
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// Provides backing logic for all of the UI that runs in the MainMenu stage. 
+    /// Provides backing logic for all of the UI that runs in the MainMenu stage.
     /// </summary>
     public class MainMenuUI : MonoBehaviour
     {

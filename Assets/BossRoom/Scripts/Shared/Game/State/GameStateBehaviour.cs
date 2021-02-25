@@ -1,7 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using MLAPI;
+using UnityEngine;
 
 namespace BossRoom
 {
@@ -44,19 +42,19 @@ namespace BossRoom
         /// <summary>
         /// What GameState this represents. Server and client specializations of a state should always return the same enum. 
         /// </summary>
-        public abstract GameState ActiveState {get; }
+        public abstract GameState ActiveState { get; }
 
         /// <summary>
         /// This is the single active GameState object. There can be only one. 
         /// </summary>
-        private static GameObject s_activeStateGO;
+        private static GameObject s_ActiveStateGO;
 
         // Start is called before the first frame update
-        void Start()
+        protected virtual void Start()
         {
-            if( s_activeStateGO != null )
+            if (s_ActiveStateGO != null)
             {
-                if( s_activeStateGO == this.gameObject )
+                if (s_ActiveStateGO == gameObject)
                 {
                     //nothing to do here, if we're already the active state object. 
                     return;
@@ -64,29 +62,32 @@ namespace BossRoom
 
                 //on the host, this might return either the client or server version, but it doesn't matter which;
                 //we are only curious about its type, and its persist state. 
-                var prev_state = s_activeStateGO.GetComponent<GameStateBehaviour>();
+                var previousState = s_ActiveStateGO.GetComponent<GameStateBehaviour>();
 
-                if( prev_state.Persists && prev_state.ActiveState == this.ActiveState )
+                if (previousState.Persists && previousState.ActiveState == ActiveState)
                 {
                     //we need to make way for the DontDestroyOnLoad state that already exists.
-                    Object.Destroy(this.gameObject);
+                    Destroy(gameObject);
                     return;
                 }
 
                 //otherwise, the old state is going away. Either it wasn't a Persisting state, or it was, 
                 //but we're a different kind of state. In either case, we're going to be replacing it. 
-                Object.Destroy(s_activeStateGO);
+                Destroy(s_ActiveStateGO);
             }
 
-            s_activeStateGO = this.gameObject;
-            if( Persists ) { Object.DontDestroyOnLoad(this.gameObject); }
+            s_ActiveStateGO = gameObject;
+            if (Persists)
+            {
+                DontDestroyOnLoad(gameObject);
+            }
         }
 
-        private void OnDestroy()
+        protected virtual void OnDestroy()
         {
-            if( !Persists )
+            if (!Persists)
             {
-                s_activeStateGO = null;
+                s_ActiveStateGO = null;
             }
         }
     }

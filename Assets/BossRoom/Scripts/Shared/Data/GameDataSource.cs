@@ -33,6 +33,10 @@ namespace BossRoom
                     m_CharacterDataMap = new Dictionary<CharacterTypeEnum, CharacterClass>();
                     foreach (CharacterClass data in m_CharacterData)
                     {
+                        if( m_CharacterDataMap.ContainsKey(data.CharacterType))
+                        {
+                            throw new System.Exception($"Duplicate character definition detected: {data.CharacterType}");
+                        }
                         m_CharacterDataMap[data.CharacterType] = data;
                     }
                 }
@@ -52,6 +56,10 @@ namespace BossRoom
                     m_ActionDataMap = new Dictionary<ActionType, ActionDescription>();
                     foreach (ActionDescription data in m_ActionData)
                     {
+                        if (m_ActionDataMap.ContainsKey(data.ActionTypeEnum))
+                        {
+                            throw new System.Exception($"Duplicate action definition detected: {data.ActionTypeEnum}");
+                        }
                         m_ActionDataMap[data.ActionTypeEnum] = data;
                     }
                 }

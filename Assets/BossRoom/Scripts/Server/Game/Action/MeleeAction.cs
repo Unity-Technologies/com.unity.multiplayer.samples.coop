@@ -37,14 +37,15 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            ServerCharacter foe = DetectFoe();
+            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_Parent.NetState.TargetId.Value;
+            ServerCharacter foe = DetectFoe(target);
             if (foe != null)
             {
                 m_ProvisionalTarget = foe.NetworkId;
                 Data.TargetIds = new ulong[] { foe.NetworkId };
             }
 
-            m_Parent.NetState.ServerBroadcastAction(ref Data);
+            m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -73,7 +74,7 @@ namespace BossRoom.Server
             //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack.
 
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectMeleeFoe(m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description, out results);
+            int numResults = ActionUtils.DetectMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description, out results);
 
             if (numResults == 0) { return null; }
 

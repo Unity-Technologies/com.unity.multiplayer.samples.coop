@@ -2,7 +2,8 @@
     "name": "BossRoom.Shared",
     "rootNamespace": "",
     "references": [
-        "GUID:1491147abca9d7d4bb7105af628b223e"
+        "Unity.Multiplayer.MLAPI.Runtime",
+        "LiteNEt MLAPI Transport"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

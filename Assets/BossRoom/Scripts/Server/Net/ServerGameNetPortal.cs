@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI.SceneManagement;
 
 namespace BossRoom.Server
 {
@@ -37,7 +39,17 @@ namespace BossRoom.Server
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage. 
         private const int k_MaxConnectPayload = 1024;
 
-        public void Start()
+        /// <summary>
+        /// Keeps a list of what clients are in what scenes. 
+        /// </summary>
+        private Dictionary<ulong, int> m_ClientSceneMap = new Dictionary<ulong, int>();
+
+        /// <summary>
+        /// The active server scene index.
+        /// </summary>
+        public int ServerScene { get { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; } }
+
+        void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
             m_Portal.NetworkStarted += NetworkStart;
@@ -59,10 +71,49 @@ namespace BossRoom.Server
             {
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently. 
-                MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("CharSelect");
+                NetworkSceneManager.SwitchScene("CharSelect");
+
+                m_Portal.NetManager.OnClientDisconnectCallback += (ulong clientId) =>
+                {
+                    m_ClientSceneMap.Remove(clientId);
+                };
+
+                m_Portal.ClientSceneChanged += (ulong clientId, int sceneIndex) =>
+                {
+                    m_ClientSceneMap[clientId] = sceneIndex;
+                };
+
+                if( m_Portal.NetManager.IsHost)
+                {
+                    m_ClientSceneMap[m_Portal.NetManager.LocalClientId] = ServerScene;
+                }
             }
 
 
+        }
+
+        /// <summary>
+        /// </summary>
+        /// <param name="clientId"> guid of the client whose data is requested</param>
+        /// <returns>Player data struct matching the given ID</returns>
+        public bool AreAllClientsInServerScene()
+        {
+            foreach( var kvp in m_ClientSceneMap )
+            {
+                if( kvp.Value != ServerScene ) { return false; }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Returns true if the given client is currently in the server scene.
+        /// </summary>
+        /// <param name="clientId"></param>
+        /// <returns></returns>
+        public bool IsClientInServerScene(ulong clientId)
+        {
+            return m_ClientSceneMap.TryGetValue(clientId, out int clientScene) && clientScene == ServerScene;
         }
 
         /// <summary>
@@ -91,6 +142,8 @@ namespace BossRoom.Server
             }
             return null;
         }
+
+
 
 
         /// <summary>
@@ -133,6 +186,18 @@ namespace BossRoom.Server
                     payloadConfig.Add(line, null);
                 }
             }
+
+            int clientScene = -1;
+            try
+            {
+                clientScene = int.Parse(payloadConfig["client_scene"]);
+            }
+            catch(Exception e)
+            {
+                Debug.LogWarning($"Client {clientId} did not include clientScene index in login payload, or not parseable: {e}");
+            }
+
+            m_ClientSceneMap[clientId] = clientScene;
 
             //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect. 
             Debug.Log("host ApprovalCheck: client guid was: " + payloadConfig["client_guid"]);
