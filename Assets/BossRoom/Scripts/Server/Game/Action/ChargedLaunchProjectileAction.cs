@@ -1,5 +1,4 @@
 using MLAPI;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -47,6 +46,15 @@ namespace BossRoom.Server
 
 #if UNITY_EDITOR
             // when running in the editor, let's sanity-check our data a bit
+            if (Description.Projectiles.Length == 0)
+            {
+                throw new System.Exception($"Action {Data.ActionTypeEnum} has 0 projectile prefabs!");
+            }
+            if (Description.Projectiles.Length == 1)
+            {
+                // this is technically not invalid data, but is almost certainly not what was intended...
+                throw new System.Exception($"Action {Data.ActionTypeEnum} has only 1 projectile prefab. We'll use the same prefab no matter how charged-up the shot is! Weird and probably wrong!");
+            }
             foreach (var projectileInfo in Description.Projectiles)
             {
                 if (projectileInfo.ProjectilePrefab == null)
@@ -55,11 +63,6 @@ namespace BossRoom.Server
                     throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Range!");
                 if (projectileInfo.Speed_m_s <= 0)
                     throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Speed_m_s!");
-            }
-            if (Description.Projectiles.Length == 1)
-            {
-                // this is technically not invalid data, but is almost certainly not what was intended...
-                throw new System.Exception($"Action {Data.ActionTypeEnum} has only 1 projectile prefab. We'll use the same prefab no matter how charged-up the shot is! Weird and probably wrong!");
             }
 #endif
             return true;
