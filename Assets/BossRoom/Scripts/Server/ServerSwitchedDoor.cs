@@ -11,7 +11,7 @@ using UnityEngine;
 public class ServerSwitchedDoor : NetworkedBehaviour
 {
     [SerializeField]
-    private List<NetworkFloorSwitchState> m_SwitchesThatOpenThisDoor;
+    public List<NetworkFloorSwitchState> m_SwitchesThatOpenThisDoor;
 
     private NetworkDoorState m_NetworkDoorState;
 

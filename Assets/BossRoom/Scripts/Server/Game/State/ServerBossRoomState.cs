@@ -26,12 +26,21 @@ namespace BossRoom.Server
         // note: this is temporary, for testing!
         public override GameState ActiveState { get { return GameState.BossRoom; } }
 
+        /// <summary>
+        /// This event is raised when all the initial players have entered the game. It is the right time for
+        /// other systems to do things like spawn monsters. 
+        /// </summary>
+        public event System.Action InitialSpawnEvent;
+
         private LobbyResults m_LobbyResults;
 
         private GameNetPortal m_NetPortal;
         private ServerGameNetPortal m_ServerNetPortal;
 
-        private bool m_InitialSpawnDone;
+        /// <summary>
+        /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select). 
+        /// </summary>
+        public bool InitialSpawnDone { get; private set; }
 
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
         {
@@ -67,15 +76,23 @@ namespace BossRoom.Server
                     throw new System.Exception("No LobbyResults found!");
                 m_LobbyResults = (LobbyResults)o;
 
-                var serverPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
-                foreach( var kvp in m_LobbyResults.Choices )
-                {
-                    if( serverPortal.IsClientInServerScene(kvp.Key))
-                    {
-                        SpawnPlayer(kvp.Key);
-                    }
-                }
+                DoInitialSpawnIfPossible();
             }
+        }
+
+        private bool DoInitialSpawnIfPossible()
+        {
+            if (m_ServerNetPortal.AreAllClientsInServerScene() && !InitialSpawnDone && m_NetPortal.NetManager.ConnectedClientsList.Count == m_LobbyResults.Choices.Count)
+            {
+                InitialSpawnDone = true;
+                foreach (var kvp in m_LobbyResults.Choices)
+                {
+                    SpawnPlayer(kvp.Key);
+                }
+                InitialSpawnEvent?.Invoke();
+                return true;
+            }
+            return false;
         }
 
 
@@ -84,15 +101,11 @@ namespace BossRoom.Server
             int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
             if( sceneIndex == serverScene )
             {
-                if( m_ServerNetPortal.AreAllClientsInServerScene() && !m_InitialSpawnDone )
-                {
-                    m_InitialSpawnDone = true;
-                    foreach (var kvp in m_LobbyResults.Choices)
-                    {
-                        SpawnPlayer(kvp.Key);
-                    }
-                }
-                else if( m_InitialSpawnDone && MLAPI.Spawning.SpawnManager.GetPlayerObject(clientId) == null)
+                Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
+
+                bool didSpawn = DoInitialSpawnIfPossible();
+
+                if( !didSpawn && InitialSpawnDone && MLAPI.Spawning.SpawnManager.GetPlayerObject(clientId) == null)
                 {
                     //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                     //(either because multiple people are late-joining at once, or because some dynamic entities are

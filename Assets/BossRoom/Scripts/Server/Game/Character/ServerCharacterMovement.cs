@@ -45,9 +45,6 @@ namespace BossRoom.Server
             m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
             m_CharLogic = GetComponent<ServerCharacter>();
             m_Rigidbody = GetComponent<Rigidbody>();
-
-            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
-            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
         }
 
         public override void NetworkStart()
@@ -58,6 +55,9 @@ namespace BossRoom.Server
                 enabled = false;
                 return;
             }
+
+            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
+            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
 
             var NavSystemGO = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag);
             if (NavSystemGO != null)
