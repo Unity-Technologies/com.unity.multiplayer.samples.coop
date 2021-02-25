@@ -44,6 +44,24 @@ namespace BossRoom.Server
 
             // start the "charging up" ActionFX
             m_Parent.NetState.RecvDoActionClientRPC(Data);
+
+#if UNITY_EDITOR
+            // when running in the editor, let's sanity-check our data a bit
+            foreach (var projectileInfo in Description.Projectiles)
+            {
+                if (projectileInfo.ProjectilePrefab == null)
+                    throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles is missing its prefab!");
+                if (projectileInfo.Range <= 0)
+                    throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Range!");
+                if (projectileInfo.Speed_m_s <= 0)
+                    throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Speed_m_s!");
+            }
+            if (Description.Projectiles.Length == 1)
+            {
+                // this is technically not invalid data, but is almost certainly not what was intended...
+                throw new System.Exception($"Action {Data.ActionTypeEnum} has only 1 projectile prefab. We'll use the same prefab no matter how charged-up the shot is! Weird and probably wrong!");
+            }
+#endif
             return true;
         }
 
@@ -102,23 +120,8 @@ namespace BossRoom.Server
         /// <returns>the projectile that should be used</returns>
         protected override ActionDescription.ProjectileInfo GetProjectileInfo()
         {
-            var possibilities = new List<ActionDescription.ProjectileInfo>();
-            foreach (var projectileInfo in Description.Projectiles)
-            {
-                if (projectileInfo.ProjectilePrefab == null)
-                    throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles is missing its prefab!");
-                possibilities.Add(projectileInfo);
-            }
-
-            if (possibilities.Count == 0) // uh oh, this is bad data
+            if (Description.Projectiles.Length == 0) // uh oh, this is bad data
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no Projectiles!");
-
-            if (possibilities.Count == 1)
-            {
-                // this is technically not invalid data, but is almost certainly not what was intended... so warn about it
-                Debug.LogWarning($"Action {Data.ActionTypeEnum} has only 1 projectile prefab. We'll use the same prefab no matter how charged-up the shot is! Weird and probably wrong!");
-                return possibilities[0];
-            }
 
             float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
             float pctChargedUp = Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);
@@ -126,9 +129,9 @@ namespace BossRoom.Server
             // Finally, choose which prefab to use based on how charged-up we got.
             // Note how we cast the result to an int, which implicitly rounds down.
             // Thus, only a 100% maxed charge can return the most powerful prefab.
-            int projectileIdx = (int)(pctChargedUp * (possibilities.Count - 1));
+            int projectileIdx = (int)(pctChargedUp * (Description.Projectiles.Length - 1));
 
-            return possibilities[projectileIdx];
+            return Description.Projectiles[projectileIdx];
         }
 
     }
