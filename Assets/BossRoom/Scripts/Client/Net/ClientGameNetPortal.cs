@@ -45,25 +45,8 @@ namespace BossRoom.Client
                 SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
                 {
                     m_Portal.C2SSceneChanged(SceneManager.GetActiveScene().buildIndex);
-                    Debug.Log($"Loaded scene is {SceneManager.GetActiveScene().name}");
                 };
-                SceneManager.activeSceneChanged += (Scene old, Scene newscene)=>
-                {
-                    //m_Portal.C2SSceneChanged(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-                    Debug.Log($"Active scene is {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
-
-                };
-                //MLAPI.SceneManagement.NetworkSceneManager.OnSceneSwitched += () =>
-                //{
-                //    m_Portal.C2SSceneChanged(UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex);
-                //    Debug.Log($"Active scene is {UnityEngine.SceneManagement.SceneManager.GetActiveScene().name}");
-                //};
             }
-        }
-
-        private void SceneManager_activeSceneChanged(UnityEngine.SceneManagement.Scene arg0, UnityEngine.SceneManagement.Scene arg1)
-        {
-            throw new NotImplementedException();
         }
 
         private void OnConnectFinished(ConnectStatus status)

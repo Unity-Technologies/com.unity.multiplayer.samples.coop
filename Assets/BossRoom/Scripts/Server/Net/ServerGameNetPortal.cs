@@ -53,7 +53,6 @@ namespace BossRoom.Server
 
                 m_Portal.ClientSceneChanged += (ulong clientId, int sceneIndex) =>
                 {
-                    Debug.Log($"Updating client {clientId} to scene {sceneIndex} ");
                     m_ClientSceneMap[clientId] = sceneIndex;
                 };
 

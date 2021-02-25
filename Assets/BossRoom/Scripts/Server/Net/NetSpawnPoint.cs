@@ -55,8 +55,6 @@ namespace BossRoom.Server
                     {
                         var newSwitch = Instantiate(m_AuxiliarySpawns[i].SpawnedObject, m_AuxiliarySpawns[i].transform.position, m_AuxiliarySpawns[i].transform.rotation);
 
-                        //if( switchedDoor.m_SwitchesThatOpenThisDoor.Count )
-
                         switchedDoor.m_SwitchesThatOpenThisDoor.Add(newSwitch.GetComponent<NetworkFloorSwitchState>());
                         newSwitch.Spawn();
                     }
