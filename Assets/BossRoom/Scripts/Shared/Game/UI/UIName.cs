@@ -18,7 +18,7 @@ namespace BossRoom
         {
             m_NetworkedNameTag = networkedName;
 
-            NameUpdated(string.Empty, m_NetworkedNameTag.Value);
+            m_UINameText.text = networkedName.Value;
             networkedName.OnValueChanged += NameUpdated;
         }
 

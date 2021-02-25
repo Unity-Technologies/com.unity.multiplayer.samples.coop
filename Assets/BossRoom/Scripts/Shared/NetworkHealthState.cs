@@ -11,7 +11,7 @@ namespace BossRoom
     public class NetworkHealthState : NetworkedBehaviour
     {
         [HideInInspector]
-        public NetworkedVarInt HitPoints = new NetworkedVarInt(NetworkUtils.ServerWriteEveryoneReadPermission);
+        public NetworkedVarInt HitPoints = new NetworkedVarInt();
 
         // public subscribable event to be invoked when HP has been fully depleted
         public event Action HitPointsDepleted;

@@ -1,4 +1,7 @@
+using System.Collections;
 using System.Collections.Generic;
+using MLAPI;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -30,6 +33,10 @@ namespace BossRoom.Server
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
         private bool m_BrainEnabled = true;
 
+        [SerializeField]
+        [Tooltip("Setting negative value disables destroying object after it is killed.")]
+        private float _killedDestroyDelaySeconds = 3.0f;
+
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
@@ -45,6 +52,13 @@ namespace BossRoom.Server
         private void Awake()
         {
             m_Movement = GetComponent<ServerCharacterMovement>();
+
+            NetState = GetComponent<NetworkCharacterState>();
+            m_ActionPlayer = new ActionPlayer(this);
+            if (IsNpc)
+            {
+                m_AIBrain = new AIBrain(this, m_ActionPlayer);
+            }
         }
 
         private void OnEnable()
@@ -60,16 +74,6 @@ namespace BossRoom.Server
         public static List<ServerCharacter> GetAllActiveServerCharacters()
         {
             return s_ActiveServerCharacters;
-        }
-
-        void Start()
-        {
-            NetState = GetComponent<NetworkCharacterState>();
-            m_ActionPlayer = new ActionPlayer(this);
-            if (IsNpc)
-            {
-                m_AIBrain = new AIBrain(this, m_ActionPlayer);
-            }
         }
 
         public override void NetworkStart()
@@ -152,6 +156,16 @@ namespace BossRoom.Server
             PlayAction(ref data);
         }
 
+        IEnumerator KilledDestroyProcess()
+        {
+            yield return new WaitForSeconds(_killedDestroyDelaySeconds);
+
+            if (NetworkedObject != null)
+            {
+                NetworkedObject.UnSpawn(true);
+            }
+        }
+
         /// <summary>
         /// Receive an HP change from somewhere. Could be healing or damage.
         /// </summary>
@@ -183,6 +197,11 @@ namespace BossRoom.Server
 
                 if (IsNpc)
                 {
+                    if (_killedDestroyDelaySeconds >= 0.0f && NetState.NetworkLifeState.Value != LifeState.Dead)
+                    {
+                        StartCoroutine(KilledDestroyProcess());
+                    }
+
                     NetState.NetworkLifeState.Value = LifeState.Dead;
                 }
                 else

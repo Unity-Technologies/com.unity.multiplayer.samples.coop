@@ -51,6 +51,11 @@ namespace BossRoom
         /// </summary>
         public event Action<ConnectStatus> ConnectFinished;
 
+        /// <summary>
+        /// raised when a client has changed scenes. Returns the ClientID and the new scene the client has entered, by index.
+        /// </summary>
+        public event Action<ulong, int> ClientSceneChanged;
+
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
         void Start()
@@ -88,7 +93,16 @@ namespace BossRoom
 
         private void RegisterServerMessageHandlers()
         {
-            //TODO: plug in any C->S message handlers here.
+            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("C2S_SceneChanged", (senderClientId, stream) =>
+            {
+                using (PooledBitReader reader = PooledBitReader.Get(stream))
+                {
+                    int sceneIndex = reader.ReadInt32();
+
+                    ClientSceneChanged?.Invoke(senderClientId, sceneIndex);
+                }
+
+            });
         }
 
 
@@ -158,6 +172,25 @@ namespace BossRoom
                 {
                     writer.WriteInt32((int)status);
                     MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, stream, Channel.Internal);
+                }
+            }
+        }
+
+        public void C2SSceneChanged(int newScene)
+        {
+            if(NetManager.IsHost)
+            {
+                ClientSceneChanged?.Invoke(NetManager.ServerClientId, newScene);
+            }
+            else
+            {
+                using (PooledBitStream stream = PooledBitStream.Get())
+                {
+                    using (PooledBitWriter writer = PooledBitWriter.Get(stream))
+                    {
+                        writer.WriteInt32(newScene);
+                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("C2S_SceneChanged", NetManager.ServerClientId, stream, Channel.Internal);
+                    }
                 }
             }
         }
