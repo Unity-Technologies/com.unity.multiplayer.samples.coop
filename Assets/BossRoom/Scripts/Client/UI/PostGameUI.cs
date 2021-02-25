@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 namespace BossRoom.Visual
 {
@@ -7,11 +9,22 @@ namespace BossRoom.Visual
     /// </summary>
     public class PostGameUI : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject m_GamePortalGO;
+        //[SerializeField]
+        //private GameObject m_GamePortalGO;
+
+        //[SerializeField]
+        //private PopupPanel m_ResponsePopup;
 
         [SerializeField]
-        private PopupPanel m_ResponsePopup;
+        private Image m_EndMessage;
+
+        [SerializeField]
+        private Image m_Background;
+
+        [SerializeField]
+        private Sprite m_WinSprite;
+        [SerializeField]
+        private Sprite m_LoseSprite;
 
         //private const string k_DefaultIP = "127.0.0.1";
 
@@ -26,7 +39,7 @@ namespace BossRoom.Visual
 
         void Start()
         {
-           //m_GameNetPortal = m_GamePortalGO.GetComponent<GameNetPortal>();
+            //m_GameNetPortal = m_GamePortalGO.GetComponent<GameNetPortal>();
             //m_ClientNetPortal = m_GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
             //m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
@@ -35,13 +48,14 @@ namespace BossRoom.Visual
 
         public void OnPlayAgainClicked()
         {
-
-
+            // TO DO - call server call to swicth to char select
         }
 
         public void OnMainMenuClicked()
         {
-
+            // leave current network connection first
+            MLAPI.NetworkingManager.Singleton.StopClient();
+            SceneManager.LoadScene("MainMenu");
         }
     }
 }
