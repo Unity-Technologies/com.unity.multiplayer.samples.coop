@@ -54,7 +54,7 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// The active target of this character. 
+        /// The active target of this character.
         /// </summary>
         public NetworkedVarULong TargetId { get; } = new NetworkedVarULong();
 
