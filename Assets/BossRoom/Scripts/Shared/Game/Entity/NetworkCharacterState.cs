@@ -4,10 +4,8 @@ using MLAPI.NetworkedVar;
 using System;
 using UnityEngine;
 
-
 namespace BossRoom
 {
-
     public enum LifeState
     {
         Alive,
@@ -18,6 +16,7 @@ namespace BossRoom
     /// <summary>
     /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
+    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
     public class NetworkCharacterState : NetworkedBehaviour, INetMovement
     {
         /// <summary>
@@ -43,13 +42,31 @@ namespace BossRoom
         /// </summary>
         public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
 
+        [SerializeField]
+        NetworkHealthState m_NetworkHealthState;
+
+        public NetworkHealthState HealthState
+        {
+            get
+            {
+                return m_NetworkHealthState;
+            }
+        }
+
+        /// <summary>
+        /// The active target of this character. 
+        /// </summary>
+        public NetworkedVarULong TargetId { get; } = new NetworkedVarULong();
+
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.
         /// </summary>
-        [HideInInspector]
-        public NetworkedVarInt HitPoints;
+        public int HitPoints
+        {
+            get { return m_NetworkHealthState.HitPoints.Value; }
+            set { m_NetworkHealthState.HitPoints.Value = value; }
+        }
 
-        /// <summary>
         /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
@@ -72,12 +89,33 @@ namespace BossRoom
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[CharacterType.Value];
+                return GameDataSource.Instance.CharacterDataByType[CharacterType];
             }
         }
 
-        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
-        public NetworkedVar<CharacterTypeEnum> CharacterType;
+        [SerializeField]
+        NetworkCharacterTypeState m_NetworkCharacterTypeState;
+
+        /// <summary>
+        /// Current HP. This value is populated at startup time from CharacterClass data.
+        /// </summary>
+        public CharacterTypeEnum CharacterType
+        {
+            get { return m_NetworkCharacterTypeState.CharacterType.Value; }
+            set { m_NetworkCharacterTypeState.CharacterType.Value = value; }
+        }
+
+        [SerializeField]
+        NetworkNameState m_NetworkNameState;
+
+        /// <summary>
+        /// Current nametag. This value is populated at startup time from CharacterClass data.
+        /// </summary>
+        public string Name
+        {
+            get { return m_NetworkNameState.Name.Value; }
+            set { m_NetworkNameState.Name.Value = value; }
+        }
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
@@ -101,6 +139,18 @@ namespace BossRoom
             ReceivedClientInput?.Invoke(movementTarget);
         }
 
+        public void SetCharacterType(CharacterTypeEnum playerType, int playerAppearance)
+        {
+            CharacterType = playerType;
+            CharacterAppearance.Value = playerAppearance;
+        }
+
+        public void ApplyCharacterData()
+        {
+            HitPoints = CharacterData.BaseHP.Value;
+            Mana.Value = CharacterData.BaseMana;
+        }
+
         // ACTION SYSTEM
 
         /// <summary>
@@ -114,13 +164,20 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Server->Client RPC that broadcasts this action play to all clients.
+        /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
         /// </summary>
-        /// <param name="data">The data associated with this Action, including what action type it is.</param>
+        public event Action CancelActionEventClient;
+
         [ClientRpc]
         public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);
+        }
+
+        [ClientRpc]
+        public void RecvCancelActionClientRpc()
+        {
+            CancelActionEventClient?.Invoke();
         }
 
         /// <summary>
@@ -150,6 +207,28 @@ namespace BossRoom
         public void RecvPerformHitReactionClientRPC()
         {
             OnPerformHitReaction?.Invoke();
+        }
+
+        /// <summary>
+        /// Called on server when the character's client decides they have stopped "charging up" an attack.
+        /// </summary>
+        public event Action OnStopChargingUpServer;
+
+        /// <summary>
+        /// Called on all clients when this character has stopped "charging up" an attack.
+        /// </summary>
+        public event Action OnStopChargingUpClient;
+
+        [ServerRpc]
+        public void RecvStopChargingUpServerRpc()
+        {
+            OnStopChargingUpServer?.Invoke();
+        }
+
+        [ClientRpc]
+        public void RecvStopChargingUpClientRpc()
+        {
+            OnStopChargingUpClient?.Invoke();
         }
     }
 }

@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation.components": "https://github.com/Unity-Technologies/NavMeshComponents.git#package",
     "com.unity.cinemachine": "2.6.3",
     "com.unity.collab-proxy": "1.3.9",
@@ -9,7 +10,7 @@
     "com.unity.inputsystem": "1.0.2",
     "com.unity.learn.iet-framework": "1.2.1",
     "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#27263d3da3138ff7fd02db5aacf4e82d34f4a647",
-    "com.unity.multiplayer.multipie": "https://github.com/Unity-Technologies/com.unity.multiplayer.multipie.git#ec513520a8bba970366c572e88613664a2054353",
+    "com.unity.multiplayer.multipie": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.multipie.git#ec513520a8bba970366c572e88613664a2054353",
     "com.unity.postprocessing": "2.3.0",
     "com.unity.test-framework": "1.1.19",
     "com.unity.textmeshpro": "3.0.1",

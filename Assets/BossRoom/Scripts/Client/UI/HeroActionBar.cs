@@ -1,4 +1,5 @@
 using UnityEngine;
+using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
 namespace BossRoom.Visual
 {
@@ -16,97 +17,89 @@ namespace BossRoom.Visual
         [SerializeField]
         private GameObject m_EmotePanel;
 
-        // This class will track clicks on eack of its buttons
-        // ButtonWasClicked will deliver each click only once
-        private bool[] m_ButtonClicked;
+        private BossRoom.Client.ClientInputSender m_InputSender;
 
-        // Currently this class handles setting icons for the first 3 buttons based on character type
-        // Eventually this can change so it is driven by the data for each skill instead
-        // Current logic will be better for demos until skills are fully implemented with icon data
-        // SetPlayerType is currentlhy called to change this and trigger icon changes
-        private CharacterTypeEnum m_PlayerType = CharacterTypeEnum.Tank;
+        // Currently we manually configure icons from the Material arrays stored on this class, and we select which array to use
+        //from the CharacterClass inferred from the registered player GameObject. Eventually this can change so it is driven by
+        //the data for each skill instead. Current logic will be better for demos until skills are fully implemented with icon data. 
+        private CharacterClass m_CharacterData;
 
         // allow icons for each class to be configured
         [SerializeField]
-        private Material[] m_TankIcons;
+        private Sprite[] m_TankIcons;
 
         [SerializeField]
-        private Material[] m_ArcherIcons;
+        private Sprite[] m_ArcherIcons;
 
         [SerializeField]
-        private Material[] m_RogueIcons;
+        private Sprite[] m_RogueIcons;
 
         [SerializeField]
-        private Material[] m_MageIcons;
+        private Sprite[] m_MageIcons;
 
-
-        void Start()
+        public void RegisterInputSender(Client.ClientInputSender inputSender)
         {
-            // clear clicked state
-            m_ButtonClicked = new bool[m_Buttons.Length];
-            for (int i = 0; i < m_Buttons.Length; i++)
+            if (m_InputSender != null)
             {
-                // initialize all button states to not clicked
-                m_ButtonClicked[i] = false;
+                Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
             }
+
+            m_InputSender = inputSender;
+            m_CharacterData = m_InputSender.GetComponent<NetworkCharacterState>().CharacterData;
+            SetPlayerType(m_CharacterData.CharacterType);
         }
 
-        public void SetPlayerType(CharacterTypeEnum playerType)
+        private void SetPlayerType(CharacterTypeEnum playerType)
         {
-            m_PlayerType = playerType;
-            if (m_PlayerType == CharacterTypeEnum.Tank)
+            if (playerType == CharacterTypeEnum.Tank)
             {
                 SetButtonIcons(m_TankIcons);
             }
-            else if (m_PlayerType == CharacterTypeEnum.Archer)
+            else if (playerType == CharacterTypeEnum.Archer)
             {
                 SetButtonIcons(m_ArcherIcons);
             }
-            else if (m_PlayerType == CharacterTypeEnum.Mage)
+            else if (playerType == CharacterTypeEnum.Mage)
             {
                 SetButtonIcons(m_MageIcons);
             }
-            else if (m_PlayerType == CharacterTypeEnum.Rogue)
+            else if (playerType == CharacterTypeEnum.Rogue)
             {
                 SetButtonIcons(m_RogueIcons);
             }
         }
 
-        void SetButtonIcons(Material[] icons)
+        void SetButtonIcons(Sprite[] icons)
         {
             for (int i = 0; i < m_Buttons.Length; i++)
             {
                 if (i < icons.Length)
                 {
-                    m_Buttons[i].image.material = icons[i];
+                    m_Buttons[i].image.sprite = icons[i];
                 }
             }
         }
 
-        public void onButtonClicked(int buttonIndex)
+        public void OnButtonClicked(int buttonIndex)
         {
-            // handle emote panel as a special case
             if (buttonIndex == 3)
             {
                 m_EmotePanel.SetActive(!m_EmotePanel.activeSelf);
                 return;
             }
-            // otherwise remember the click for input sender to grab later
-            m_ButtonClicked[buttonIndex] = true;
-        }
 
-        // Return if a given button was clicked since last queried - this will also clear the value until a new click is received
-        public bool ButtonWasClicked(int buttonIndex)
-        {
-            // if we are not started yet or index is above our array lengths just rethr false
-            if (m_ButtonClicked == null || buttonIndex >= m_Buttons.Length || buttonIndex >= m_ButtonClicked.Length)
+            if (m_InputSender == null)
             {
-                return false;
+                //nothing to do past this point if we don't have an InputSender.
+                return;
             }
-            bool wasClicked = m_ButtonClicked[buttonIndex];
-            // set to false so we only trigger once per button
-            m_ButtonClicked[buttonIndex] = false;
-            return wasClicked;
+
+            switch (buttonIndex)
+            {
+                case 0: m_InputSender.RequestAction(m_CharacterData.Skill1, SkillTriggerStyle.UI); break;
+                case 1: m_InputSender.RequestAction(m_CharacterData.Skill2, SkillTriggerStyle.UI); break;
+                case 2: m_InputSender.RequestAction(m_CharacterData.Skill3, SkillTriggerStyle.UI); break;
+            }
         }
     }
 }

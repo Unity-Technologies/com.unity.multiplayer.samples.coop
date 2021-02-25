@@ -1,5 +1,11 @@
 {
   "dependencies": {
+    "com.unity.2d.sprite": {
+      "version": "1.0.0",
+      "depth": 0,
+      "source": "builtin",
+      "dependencies": {}
+    },
     "com.unity.ai.navigation.components": {
       "version": "https://github.com/Unity-Technologies/NavMeshComponents.git#package",
       "depth": 0,
@@ -87,7 +93,7 @@
       "hash": "27263d3da3138ff7fd02db5aacf4e82d34f4a647"
     },
     "com.unity.multiplayer.multipie": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.multipie.git#ec513520a8bba970366c572e88613664a2054353",
+      "version": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.multipie.git#ec513520a8bba970366c572e88613664a2054353",
       "depth": 0,
       "source": "git",
       "dependencies": {},

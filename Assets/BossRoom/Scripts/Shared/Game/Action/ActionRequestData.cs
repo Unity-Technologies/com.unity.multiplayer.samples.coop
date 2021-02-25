@@ -1,5 +1,5 @@
-using System;
 using MLAPI.Serialization;
+using System;
 using UnityEngine;
 
 namespace BossRoom
@@ -25,6 +25,12 @@ namespace BossRoom
         Emote3,
         Emote4,
         TankTestability,
+        TankShieldBuff,
+        ImpBossTrampleAttack,
+        Stun,
+        TankShieldRush,
+        GeneralTarget,
+        MageHeal,
     }
 
 
@@ -42,7 +48,9 @@ namespace BossRoom
         RangedFXTargeted,
         AoE,
         Trample,
-
+        ChargedShield,
+        Stunned,
+        Target,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 

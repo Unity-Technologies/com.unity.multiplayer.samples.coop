@@ -19,6 +19,8 @@ GameObject:
   - component: {fileID: 4602672899881656135}
   - component: {fileID: 7690172137830037487}
   - component: {fileID: -909640835356089789}
+  - component: {fileID: 514105321093282895}
+  - component: {fileID: 4462343263575301329}
   m_Layer: 3
   m_Name: Character
   m_TagString: Player
@@ -69,12 +71,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edb78c1621dad5149bb47b96120d3fbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HitPoints:
-    InternalValue: 250
+  m_NetworkHealthState: {fileID: 514105321093282895}
   Mana:
     InternalValue: 10
-  CharacterType:
-    InternalValue: 0
+  m_NetworkCharacterTypeState: {fileID: 4462343263575301329}
+  m_NetworkNameState: {fileID: 0}
   CharacterAppearance:
     InternalValue: 0
 --- !u!114 &4600110157238723776
@@ -89,59 +90,67 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331c67f15523ad7419792662b9768f44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ClickInput:
-    m_Name: Click Input
+  m_TargetInput:
+    m_Name: Target Input
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 9e33386f-5dbe-4715-825e-3a3247b41ff1
+    m_Id: 69283b06-d934-4f8e-8fab-ef22100983b1
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
-  m_MousePosition:
-    m_Name: Mouse Position
+  m_CursorPosition:
+    m_Name: Cursor Position
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 6998ee87-c2f9-4ceb-99c5-9484485587fd
+    m_Id: 6ea2313f-8cb0-415b-a4ae-dbb028434961
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
-  m_Skill2Input:
-    m_Name: Skill 2 Input
+  m_SkillInput1:
+    m_Name: Skill Input 1
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: b2b09b46-c061-47a5-87a4-4855b96465a7
+    m_Id: 92741263-9f1c-4ca3-8ceb-27725c2a5069
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
-  m_Emote1Input:
-    m_Name: Emote 1 Input
+  m_SkillInput2:
+    m_Name: Skill Input 2
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 67ed9d00-1f88-4971-acd2-fb00094cc9a2
+    m_Id: 92ea14f3-2e6a-4c69-9b68-c27b8955b5f7
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
-  m_Emote2Input:
-    m_Name: Emote 2 Input
+  m_EmoteInput1:
+    m_Name: Emote Input 1
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: 353bbed7-2d78-41c7-8538-db801278d76a
+    m_Id: f3d8247d-e64e-4ad3-b498-d119a3b40a4b
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
-  m_Emote3Input:
-    m_Name: Emote 3 Input
+  m_EmoteInput2:
+    m_Name: Emote Input 2
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: ea259f2a-3f9f-4a05-ab75-f221cd9d7058
+    m_Id: ed493c34-61ef-458f-be83-a754f880bab2
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
-  m_Emote4Input:
-    m_Name: Emote 4 Input
+  m_EmoteInput3:
+    m_Name: Emote Input 3
     m_Type: 0
     m_ExpectedControlType: 
-    m_Id: b39c4646-85c7-4d1d-87ca-cb83186f435f
+    m_Id: 500ed393-eea7-46e8-ba33-01e29950a8a7
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+  m_EmoteInput4:
+    m_Name: Emote Input 4
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 2d9d499b-ab10-4e85-8888-379abcd84de4
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
@@ -248,3 +257,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae9a06a3585027044ababe9f9cb7b8e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &514105321093282895
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600110157238723781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6733907396f36c44891916e5c62f25a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  HitPoints:
+    InternalValue: 0
+--- !u!114 &4462343263575301329
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600110157238723781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 082f826a48a1017479079f944dff718f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterType:
+    InternalValue: 0
