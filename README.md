@@ -15,7 +15,7 @@ Platforms    : Windows, Mac
 ## Getting the project
 
 > __IMPORTANT__: 
-> This project uses Git Large Files Support (LFS). See the [link](https://git-lfs.github.com/) for Git LFS installation options.
+> This project uses Git Large Files Support (LFS). See the [link with Git LFS installation options](https://git-lfs.github.com/).
 
 The project uses the `git-flow` branching strategy, as such:
  - `develop` branch contains all active development
