@@ -113,13 +113,13 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Convenience getter that returns the CharacterData associated with this creature. 
+        /// Convenience getter that returns the CharacterData associated with this creature.
         /// </summary>
         public CharacterClass CharacterData
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType.Value];
+                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType];
             }
         }
 

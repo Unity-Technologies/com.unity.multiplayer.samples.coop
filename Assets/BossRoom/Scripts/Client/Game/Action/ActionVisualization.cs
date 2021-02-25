@@ -38,9 +38,17 @@ namespace BossRoom.Visual
 
         public void OnAnimEvent(string id)
         {
-            foreach (var action in m_PlayingActions)
+            foreach (var actionFX in m_PlayingActions)
             {
-                action.OnAnimEvent(id);
+                actionFX.OnAnimEvent(id);
+            }
+        }
+
+        public void OnStoppedChargingUp()
+        {
+            foreach (var actionFX in m_PlayingActions)
+            {
+                actionFX.OnStoppedChargingUp();
             }
         }
 
@@ -58,12 +66,33 @@ namespace BossRoom.Visual
                     return;
             }
 
-            ActionFX action = ActionFX.MakeActionFX(ref data, Parent);
-            action.TimeStarted = Time.time;
-            if (action.Start())
+            var actionFX = ActionFX.MakeActionFX(ref data, Parent);
+            actionFX.TimeStarted = Time.time;
+            if (actionFX.Start())
             {
-                m_PlayingActions.Add(action);
+                m_PlayingActions.Add(actionFX);
             }
+        }
+
+        public void CancelActions()
+        {
+            foreach (var actionFx in m_PlayingActions)
+            {
+                actionFx.Cancel();
+            }
+            m_PlayingActions.Clear();
+        }
+
+        /// <summary>
+        /// Cancels all playing ActionFX.
+        /// </summary>
+        public void CancelAll()
+        {
+            foreach( var action in m_PlayingActions )
+            {
+                action.Cancel();
+            }
+            m_PlayingActions.Clear();
         }
     }
 }

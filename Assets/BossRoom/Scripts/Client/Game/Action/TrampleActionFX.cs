@@ -9,7 +9,8 @@ namespace BossRoom.Visual
     /// The visual part of a TrampleAction. See TrampleAction.cs for more about this action type.
     /// 
     /// TrampleActionFX can include a visual "cue" object which is placed at the attacker's feet.
-    /// If used, the object should auto-destroy itself after a fixed amount of time.
+    /// If used, the object should have a SpecialFXGraphic component on it, which is used to cleanly
+    /// shut down the graphics.
     /// 
     /// Note: unlike most ActionFX, this is NOT responsible for triggering hit-react animations on
     /// the trampled victims. The TrampleAction triggers these directly when it determines a collision.
@@ -32,7 +33,7 @@ namespace BossRoom.Visual
         /// Mobile performance note: constantly creating new GameObjects like this has bad performance on mobile and should
         /// be replaced with object-pooling (i.e. reusing the same art GameObjects repeatedly). But that's outside the scope of this demo.
         /// </remarks>
-        private List<GameObject> m_SpawnedGraphics = null;
+        private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
         public override bool Start()
         {
@@ -45,35 +46,33 @@ namespace BossRoom.Visual
             float age = Time.time - TimeStarted;
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
             {
-                m_SpawnedGraphics = new List<GameObject>();
+                m_SpawnedGraphics = new List<SpecialFXGraphic>();
                 foreach (var go in Description.Spawns)
                 {
-                    GameObject cueGraphicsGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
-                    m_SpawnedGraphics.Add(cueGraphicsGO);
+                    GameObject specialEffectsGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
+                    var specialEffects = specialEffectsGO.GetComponent<SpecialFXGraphic>();
+                    if (!specialEffects)
+                        throw new System.Exception($"{Description.ActionTypeEnum} has a spawned graphic that does not have a SpecialFXGraphic component!");
+                    m_SpawnedGraphics.Add(specialEffects);
                 }
             }
             return true;
         }
 
-        protected override void Cancel()
+        public override void Cancel()
         {
             // we've been aborted -- destroy the "cue graphics"
             if (m_SpawnedGraphics != null)
             {
-                foreach (var go in m_SpawnedGraphics)
+                foreach (var fx in m_SpawnedGraphics)
                 {
-                    if (go)
+                    if (fx)
                     {
-                        GameObject.Destroy(go);
+                        fx.Shutdown();
                     }
                 }
             }
             m_SpawnedGraphics = null;
-        }
-
-        public override void End()
-        {
-            // under normal circumstances, we allow the "cue graphics" to destroy themselves, so do nothing here
         }
     }
 }

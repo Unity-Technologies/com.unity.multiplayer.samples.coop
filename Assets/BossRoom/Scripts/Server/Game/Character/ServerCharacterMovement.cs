@@ -45,7 +45,6 @@ namespace BossRoom.Server
             m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
             m_CharLogic = GetComponent<ServerCharacter>();
             m_Rigidbody = GetComponent<Rigidbody>();
-
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
         }
 
@@ -57,6 +56,9 @@ namespace BossRoom.Server
                 enabled = false;
                 return;
             }
+
+            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
+            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
@@ -110,6 +112,15 @@ namespace BossRoom.Server
         }
 
         /// <summary>
+        /// Returns true if the character is actively moving, false otherwise. 
+        /// </summary>
+        /// <returns></returns>
+        public bool IsMoving()
+        {
+            return m_MovementState != MovementState.Idle;
+        }
+
+        /// <summary>
         /// Cancels any moves that are currently in progress. 
         /// </summary>
         public void CancelMove()
@@ -142,7 +153,10 @@ namespace BossRoom.Server
 
         private void OnDestroy()
         {
-            m_NavPath.Dispose();
+            if(m_NavPath != null )
+            {
+                m_NavPath.Dispose();
+            }
         }
 
         private void PerformMovement()
