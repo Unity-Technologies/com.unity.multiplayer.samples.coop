@@ -9,9 +9,11 @@ namespace BossRoom.Server
     /// <remarks>
     /// The player can hold down the button for this ability to "charge it up" and make it more effective. Once it's been
     /// charging for Description.ExecTimeSeconds, it reaches maximum charge. If the player is attacked by an enemy, that
-    /// also immediately stops the charge-up. Once charge-up stops, the projectile is fired.
+    /// also immediately stops the charge-up, but also cancels firing.
     ///
-    /// The projectile can have various statistics depending on how "charged up" the attack was. The ActionDescription's
+    /// Once charge-up stops, the projectile is fired (unless it was stopped due to being attacked.)
+    ///
+    /// The projectile can have various stats depending on how "charged up" the attack was. The ActionDescription's
     /// Projectiles array should contain each tier of projectile, sorted from weakest to strongest.
     /// 
     /// </remarks>
@@ -24,6 +26,11 @@ namespace BossRoom.Server
         /// - or the maximum charge was reached.
         /// </summary>
         private float m_StoppedChargingUpTime = 0;
+
+        /// <summary>
+        /// Were we attacked while charging up? (If so, we won't actually fire.)
+        /// </summary>
+        private bool m_HitByAttack = false;
 
         public ChargedLaunchProjectileAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -44,27 +51,14 @@ namespace BossRoom.Server
             // start the "charging up" ActionFX
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
-#if UNITY_EDITOR
-            // when running in the editor, let's sanity-check our data a bit
-            if (Description.Projectiles.Length == 0)
-            {
-                throw new System.Exception($"Action {Data.ActionTypeEnum} has 0 projectile prefabs!");
-            }
-            if (Description.Projectiles.Length == 1)
-            {
-                // this is technically not invalid data, but is almost certainly not what was intended...
-                throw new System.Exception($"Action {Data.ActionTypeEnum} has only 1 projectile prefab. We'll use the same prefab no matter how charged-up the shot is! Weird and probably wrong!");
-            }
+            // sanity-check our data a bit
+            Debug.Assert(Description.Projectiles.Length > 1, $"Action {Data.ActionTypeEnum} has {Description.Projectiles.Length} Projectiles. Expected at least 2!");
             foreach (var projectileInfo in Description.Projectiles)
             {
-                if (projectileInfo.ProjectilePrefab == null)
-                    throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles is missing its prefab!");
-                if (projectileInfo.Range <= 0)
-                    throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Range!");
-                if (projectileInfo.Speed_m_s <= 0)
-                    throw new System.Exception($"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Speed_m_s!");
+                Debug.Assert(projectileInfo.ProjectilePrefab, $"Action {Description.ActionTypeEnum}: one of the Projectiles is missing its prefab!");
+                Debug.Assert(projectileInfo.Range > 0, $"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Range!");
+                Debug.Assert(projectileInfo.Speed_m_s > 0, $"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Speed_m_s!");
             }
-#endif
             return true;
         }
 
@@ -85,8 +79,13 @@ namespace BossRoom.Server
 
         public override void OnGameplayActivity(GameplayActivity activityType)
         {
-            // for this particular type of Action, being attacked immediately causes you to stop charging up
-            if (activityType == GameplayActivity.AttackedByEnemy || activityType == GameplayActivity.StoppedChargingUp)
+            if (activityType == GameplayActivity.AttackedByEnemy)
+            {
+                // if we get attacked while charging up, we don't actually get to shoot!
+                m_HitByAttack = true;
+                StopChargingUp();
+            }
+            else if (activityType == GameplayActivity.StoppedChargingUp)
             {
                 StopChargingUp();
             }
@@ -108,7 +107,10 @@ namespace BossRoom.Server
             {
                 m_StoppedChargingUpTime = Time.time;
                 m_Parent.NetState.RecvStopChargingUpClientRpc();
-                LaunchProjectile();
+                if (!m_HitByAttack)
+                {
+                    LaunchProjectile();
+                }
             }
         }
 

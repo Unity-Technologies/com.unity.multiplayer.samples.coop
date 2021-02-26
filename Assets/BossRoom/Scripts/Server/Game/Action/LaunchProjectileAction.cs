@@ -58,8 +58,6 @@ namespace BossRoom.Server
                 m_Launched = true;
 
                 var projectileInfo = GetProjectileInfo();
-
-                //TODO: use object pooling for arrows.
                 GameObject projectile = Object.Instantiate(projectileInfo.ProjectilePrefab);
 
                 // point the projectile the same way we're facing
