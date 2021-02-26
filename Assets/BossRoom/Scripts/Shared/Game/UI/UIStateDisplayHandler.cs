@@ -94,7 +94,7 @@ namespace BossRoom
                 // the lines below are added in case a player wanted to display a health bar, since their max HP is
                 // dependent on their respective character class
                 m_NetworkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
-                if (m_NetworkCharacterTypeState)
+                if (m_NetworkCharacterTypeState != null)
                 {
                     m_NetworkCharacterTypeState.CharacterType.OnValueChanged += CharacterTypeChanged;
 
@@ -112,12 +112,12 @@ namespace BossRoom
                 return;
             }
 
-            if (m_NetworkCharacterTypeState)
+            if (m_NetworkCharacterTypeState != null)
             {
                 m_NetworkCharacterTypeState.CharacterType.OnValueChanged -= CharacterTypeChanged;
             }
 
-            if (m_NetworkHealthState)
+            if (m_NetworkHealthState != null)
             {
                 m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
                 m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
