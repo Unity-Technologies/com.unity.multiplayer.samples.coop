@@ -106,8 +106,7 @@ namespace BossRoom.Visual
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
                     AttachCamera();
-                    m_PartyHUD.SetHeroAppearance(heroAppearance);
-                    m_PartyHUD.SetHeroType(m_NetState.CharacterType);
+                    m_PartyHUD.SetHeroData(m_NetState);
                 }
                 else
                 {

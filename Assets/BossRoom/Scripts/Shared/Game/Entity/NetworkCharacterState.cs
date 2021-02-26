@@ -125,13 +125,6 @@ namespace BossRoom
         public NetworkedVarInt CharacterAppearance;
 
         /// <summary>
-        /// The name this player selected when joining the game
-        /// </summary>
-        ///
-        [Tooltip("The name of the character.  For players this is the name they selected when joining the game")]
-        public NetworkedVar<string> CharacterName;
-
-        /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
         public event Action<Vector3> ReceivedClientInput;

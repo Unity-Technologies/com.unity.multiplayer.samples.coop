@@ -17,6 +17,9 @@ namespace BossRoom.Visual
         private Image m_HeroClassSymbol;
 
         [SerializeField]
+        private Text m_HeroName;
+
+        [SerializeField]
         private RectTransform m_HeroHealthbar;
 
         private int m_HeroMaxHealth;
@@ -42,16 +45,19 @@ namespace BossRoom.Visual
         // and their max HP
         private int[] m_AllyMaxHP;
 
-        public void SetHeroAppearance(int appearance)
+        public void SetHeroData(NetworkCharacterState netState )
         {
-            if (appearance > m_PortraitAppearances.Length)
+            SetHeroType(netState.CharacterType);
+            m_HeroName.text = netState.Name;
+
+            int appearance = netState.CharacterAppearance.Value;
+            if( appearance < m_PortraitAppearances.Length )
             {
-                return;
+                m_HeroPortrait.sprite = m_PortraitAppearances[appearance];
             }
-            m_HeroPortrait.sprite = m_PortraitAppearances[appearance];
         }
 
-        public void SetHeroType(CharacterTypeEnum characterType)
+        private void SetHeroType(CharacterTypeEnum characterType)
         {
             // treat character type as an index into our symbol array
             int symbol = (int)characterType;
@@ -72,18 +78,16 @@ namespace BossRoom.Visual
 
         private int GetMaxHPForClass(CharacterTypeEnum characterType)
         {
-            // TO DO - make this come from character data
-            if (characterType == CharacterTypeEnum.Archer || characterType == CharacterTypeEnum.Mage)
-            {
-                return 800;
-            }
-            else if (characterType == CharacterTypeEnum.Rogue)
-            {
-                return 900;
-            }
-            // otherwise including for (characterType == CharacterTypeEnum.Tank)
-            // default to 1000
-            return 1000;
+            return GameDataSource.Instance.CharacterDataByType[characterType].BaseHP.Value;
+        }
+
+        /// <summary>
+        /// Gets Player Name from the NetworkID of his controlled Character. 
+        /// </summary>
+        private string GetPlayerName(ulong netId)
+        {
+            var netState = MLAPI.Spawning.SpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
+            return netState.Name;
         }
 
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id 
@@ -101,6 +105,29 @@ namespace BossRoom.Visual
 
             m_AllyClassSymbol[slot].sprite = m_ClassSymbols[symbol];
             m_AllyMaxHP[slot] = GetMaxHPForClass(characterType);
+
+            RecursiveFind(m_AllyPanel[slot].transform, "PlayerName").GetComponent<Text>().text = GetPlayerName(id);
+        }
+
+        /// <summary>
+        /// Recursively find a GameObject by name in a transform hierarchy.
+        /// </summary>
+        private static GameObject RecursiveFind(Transform transform, string name )
+        {
+            if( transform.gameObject.name == name )
+            {
+                return transform.gameObject;
+            }
+            else
+            {
+                for(int i=0; i < transform.childCount; i++)
+                {
+                    var go = RecursiveFind(transform.GetChild(i), name);
+                    if( go != null ) { return go; }
+                }
+            }
+
+            return null;
         }
 
         public void SetAllyHealth(ulong id, int hp)

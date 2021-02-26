@@ -135,7 +135,7 @@ namespace BossRoom.Server
             string playerName = playerData != null ? playerData.Value.m_PlayerName : ("Player" + lobbyResults.PlayerNumber);
 
             netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
-            netState.CharacterName.Value = playerName;
+            netState.Name = playerName;
 
             newPlayer.SpawnAsPlayerObject(clientId);
         }
