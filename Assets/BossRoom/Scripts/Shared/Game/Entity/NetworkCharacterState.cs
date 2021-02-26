@@ -42,6 +42,15 @@ namespace BossRoom
         /// </summary>
         public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
 
+        /// <summary>
+        /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
+        /// </summary>
+        /// <remarks>
+        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's written to the
+        /// network as a bit, but gets read out as a byte, which corrupts the whole network-var stream.
+        /// </remarks>
+        public NetworkedVarByte IsStealthy { get; } = new NetworkedVarByte(0);
+
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
 

@@ -30,6 +30,8 @@ namespace BossRoom
         TankShieldRush,
         GeneralTarget,
         MageHeal,
+        ArcherChargedShot,
+        RogueStealthMode,
     }
 
 
@@ -50,6 +52,8 @@ namespace BossRoom
         ChargedShield,
         Stunned,
         Target,
+        ChargedLaunchProjectile,
+        StealthMode,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 

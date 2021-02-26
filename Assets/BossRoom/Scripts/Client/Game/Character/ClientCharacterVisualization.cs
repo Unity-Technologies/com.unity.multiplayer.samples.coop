@@ -2,6 +2,7 @@ using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
+using System.Collections;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -64,6 +65,7 @@ namespace BossRoom.Visual
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
+            m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
             // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
             // we should investigate for a way to have the imps already appear as down when connecting.
             // todo gomps-220
@@ -83,19 +85,12 @@ namespace BossRoom.Visual
 
 
             // ...and visualize the current char-select value that we know about
-            if (m_CharacterSwapper)
-            {
-                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
-            }
+            SetAppearanceSwap();
 
             if (!m_NetState.IsNpc)
             {
                 // track health for heroes
                 m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
-
-                Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
-                int heroAppearance = m_NetState.CharacterAppearance.Value;
-                model.SwapToModel(heroAppearance);
 
                 // find the emote bar to track its buttons
                 GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
@@ -106,7 +101,7 @@ namespace BossRoom.Visual
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
                     AttachCamera();
-                    m_PartyHUD.SetHeroAppearance(heroAppearance);
+                    m_PartyHUD.SetHeroAppearance(m_NetState.CharacterAppearance.Value);
                     m_PartyHUD.SetHeroType(m_NetState.CharacterType);
                 }
                 else
@@ -126,6 +121,7 @@ namespace BossRoom.Visual
                 m_NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
+                m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
             }
 
             if (m_ActionViz != null)
@@ -187,9 +183,27 @@ namespace BossRoom.Visual
 
         private void OnCharacterAppearanceChanged(int oldValue, int newValue)
         {
+            SetAppearanceSwap();
+        }
+
+        private void OnStealthyChanged(byte oldValue, byte newValue)
+        {
+            SetAppearanceSwap();
+        }
+
+        private void SetAppearanceSwap()
+        {
             if (m_CharacterSwapper)
             {
-                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
+                if (m_NetState.IsStealthy.Value != 0 && !m_NetState.IsOwner)
+                {
+                    // this character is in "stealth mode", so other players can't see them!
+                    m_CharacterSwapper.SwapAllOff();
+                }
+                else
+                {
+                    m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
+                }
             }
         }
 

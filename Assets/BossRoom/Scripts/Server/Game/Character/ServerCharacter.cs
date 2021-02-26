@@ -129,7 +129,7 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                ClearActions();
+                ClearActions(false);
                 m_Movement.SetMovementTarget(targetPosition);
             }
         }
@@ -138,7 +138,7 @@ namespace BossRoom.Server
         {
             if (lifeState != LifeState.Alive)
             {
-                ClearActions();
+                ClearActions(true);
                 m_Movement.CancelMove();
             }
         }
@@ -146,9 +146,9 @@ namespace BossRoom.Server
         /// <summary>
         /// Clear all active Actions.
         /// </summary>
-        public void ClearActions()
+        public void ClearActions(bool alsoClearNonBlockingActions)
         {
-            m_ActionPlayer.ClearActions();
+            m_ActionPlayer.ClearActions(alsoClearNonBlockingActions);
         }
 
         private void OnActionPlayRequest(ActionRequestData data )
@@ -185,6 +185,12 @@ namespace BossRoom.Server
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
+
+                if (inflicter)
+                {
+                    // notify the inflicter that they did in fact hurt us (in case their active Actions care)
+                    inflicter.RunningActions.OnGameplayActivity(Action.GameplayActivity.DamagedEnemy);
+                }
             }
 
             NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
@@ -193,7 +199,7 @@ namespace BossRoom.Server
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
             {
-                ClearActions();
+                ClearActions(false);
 
                 if (IsNpc)
                 {
