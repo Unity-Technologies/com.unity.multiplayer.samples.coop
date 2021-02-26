@@ -3,15 +3,21 @@ using MLAPI.NetworkedVar;
 using MLAPI.Serialization.Pooled;
 using System.IO;
 using MLAPI.Messaging;
+using UnityEngine;
 
 namespace BossRoom
 {
     /// <summary>
-    /// Shared state for a Projectile. 
+    /// Shared state for a Projectile.
     /// </summary>
     public class NetworkProjectileState : NetworkedBehaviour, INetMovement
     {
         public NetworkedVar<ActionType> SourceAction;
+        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
+        {
+            NetworkPosition.Value = initPosition;
+            NetworkRotationY.Value = initRotationY;
+        }
 
         public NetworkedVarVector3 NetworkPosition { get; } = new NetworkedVarVector3();
 
