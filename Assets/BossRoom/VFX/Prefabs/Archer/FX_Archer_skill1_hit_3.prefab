@@ -29309,7 +29309,7 @@ GameObject:
   - component: {fileID: 2267207082745757116}
   - component: {fileID: 2267207082745757117}
   - component: {fileID: 2267207082745757118}
-  - component: {fileID: -692372119396176160}
+  - component: {fileID: 4562743285343113751}
   m_Layer: 0
   m_Name: FX_Archer_skill1_hit_3
   m_TagString: Untagged
@@ -34122,7 +34122,7 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
---- !u!114 &-692372119396176160
+--- !u!114 &4562743285343113751
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -34131,10 +34131,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2267207082745757119}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1323d9d7e1c5d54386c986792273ac1, type: 3}
+  m_Script: {fileID: 11500000, guid: 8e80714725b908940a76375b52b8d53b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_LifespanSeconds: 5
+  m_ParticleSystemsToTurnOffOnShutdown: []
+  m_AutoShutdownTime: 1
+  m_PostShutdownSelfDestructTime: -1
 --- !u!1 &2267207082965088739
 GameObject:
   m_ObjectHideFlags: 0

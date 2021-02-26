@@ -52,7 +52,10 @@ namespace BossRoom.Visual
             // Note that we don't use the parent's rotation, because rotating the "charge up" particles just looks weird.
             foreach (var graphic in m_Graphics)
             {
-                graphic.transform.position = m_Parent.Parent.position;
+                if (graphic)
+                {
+                    graphic.transform.position = m_Parent.Parent.position;
+                }
             }
 
             return !m_ChargeEnded;
@@ -66,7 +69,10 @@ namespace BossRoom.Visual
             {
                 foreach (var graphic in m_Graphics)
                 {
-                    graphic.Shutdown();
+                    if (graphic)
+                    {
+                        graphic.Shutdown();
+                    }
                 }
             }
         }
@@ -76,7 +82,10 @@ namespace BossRoom.Visual
             m_ChargeEnded = true;
             foreach (var graphic in m_Graphics)
             {
-                graphic.Shutdown();
+                if (graphic)
+                {
+                    graphic.Shutdown();
+                }
             }
             // the graphics will now take care of themselves and shutdown, so we can forget about 'em
             m_Graphics.Clear();

@@ -6,8 +6,8 @@ namespace BossRoom.Visual
     public class ClientProjectileVisualization : NetworkedBehaviour
     {
         [SerializeField]
-        [Tooltip("Explosion prefab used when projectile hits enemy. This should have a TimedSelfDestruct component (or some other way of cleaning itself up)")]
-        private GameObject m_OnHitParticlePrefab;
+        [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
+        private SpecialFXGraphic m_OnHitParticlePrefab;
 
         NetworkProjectileState m_NetState;
         Transform m_Parent;
@@ -52,7 +52,7 @@ namespace BossRoom.Visual
                 if (m_OnHitParticlePrefab)
                 {
                     // show an impact graphic
-                    Instantiate(m_OnHitParticlePrefab, transform.position, transform.rotation);
+                    Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
                 }
 
                 ClientCharacterVisualization charViz = targetNetObject.GetComponent<Client.ClientCharacter>().ChildVizObject;

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7463718357983197496}
   - component: {fileID: 153916515354694390}
   m_Layer: 0
-  m_Name: CharegedArrow1Graphics
+  m_Name: ChargedArrow1Graphics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -95,7 +95,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a45006257d512344ba116bae366f7757, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_OnHitParticlePrefab: {fileID: 5190091696281814281, guid: dc9de50a71cc1854586afa8a275a6a6b, type: 3}
+  m_OnHitParticlePrefab: {fileID: 8618909711417914730, guid: dc9de50a71cc1854586afa8a275a6a6b, type: 3}
 --- !u!1001 &4981226344026716285
 PrefabInstance:
   m_ObjectHideFlags: 0
