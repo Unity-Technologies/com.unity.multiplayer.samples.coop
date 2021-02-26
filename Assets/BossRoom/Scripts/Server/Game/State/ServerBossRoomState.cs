@@ -28,7 +28,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// This event is raised when all the initial players have entered the game. It is the right time for
-        /// other systems to do things like spawn monsters. 
+        /// other systems to do things like spawn monsters.
         /// </summary>
         public event System.Action InitialSpawnEvent;
 
@@ -38,9 +38,37 @@ namespace BossRoom.Server
         private ServerGameNetPortal m_ServerNetPortal;
 
         /// <summary>
-        /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select). 
+        /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select).
         /// </summary>
         public bool InitialSpawnDone { get; private set; }
+
+        string[] m_FirstNames =
+        {
+            "Happy",
+            "Excited",
+            "Jubilant",
+            "Rouge",
+            "Wizardly",
+            "Haphazard",
+            "Sneaky",
+            "Spying",
+            "Silly",
+            "Sceptical"
+
+        };
+        string[] m_LastNames =
+        {
+            "Apple",
+            "HoneyBee",
+            "JellyBean",
+            "Ranger",
+            "Warden",
+            "Scout",
+            "Wizard",
+            "Rogue",
+            "Tiger",
+            "Bear"
+        };
 
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
         {
@@ -132,8 +160,8 @@ namespace BossRoom.Server
 
             netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
 
-            // fetch player name stored in lobby data; for now use player + PlayerNumber
-            netState.Name = "Player" + lobbyResults.PlayerNumber;
+            // using hard-coded first and last names
+            netState.Name = m_FirstNames[lobbyResults.PlayerNumber] + m_LastNames[lobbyResults.PlayerNumber];
 
             newPlayer.SpawnAsPlayerObject(clientId);
         }
