@@ -335,7 +335,7 @@ GameObject:
   - component: {fileID: 867659576156548564}
   - component: {fileID: 685004893299834003}
   - component: {fileID: 3797884136236464382}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Imp_WeaponR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -383,7 +383,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4635996913583422251, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
+  - {fileID: 2100000, guid: 0b59114e5443a7444a733c2e573f2637, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1302,7 +1302,7 @@ GameObject:
   - component: {fileID: 4567069778573616912}
   - component: {fileID: 115134690160587661}
   - component: {fileID: 8832933766462139442}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Boss_WeaponR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1350,7 +1350,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2654041084733989078, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
+  - {fileID: 2100000, guid: b1c69213cc9aee34d96c07efb32c22d3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1882,7 +1882,7 @@ GameObject:
   - component: {fileID: 4203808949384892522}
   - component: {fileID: 416793613625448953}
   - component: {fileID: 2272868038725997005}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Imp_weapon_bomb
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1930,7 +1930,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 670224309865224971, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
+  - {fileID: 2100000, guid: 0b59114e5443a7444a733c2e573f2637, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -3029,7 +3029,7 @@ GameObject:
   - component: {fileID: 4782960355838056499}
   - component: {fileID: 414988302260810961}
   - component: {fileID: 6443966027159949595}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Boss_WeaponL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3077,7 +3077,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2654041084733989078, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
+  - {fileID: 2100000, guid: b1c69213cc9aee34d96c07efb32c22d3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -5977,7 +5977,7 @@ PrefabInstance:
     - target: {fileID: 513651104027861187, guid: 870b6f3cba9788341babda2ff9b0b592, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: fbe92527c02bb6043831341dd1bcf20e, type: 2}
+      objectReference: {fileID: 2100000, guid: 2a8c13481190f9744a67d67139f52502, type: 2}
     - target: {fileID: 1743154203849973970, guid: 870b6f3cba9788341babda2ff9b0b592, type: 3}
       propertyPath: m_Name
       value: Rogue_Hand_Rt_Girl
