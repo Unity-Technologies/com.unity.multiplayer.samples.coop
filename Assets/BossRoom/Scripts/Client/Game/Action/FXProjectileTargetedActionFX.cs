@@ -32,10 +32,13 @@ namespace BossRoom.Visual
                 return false;
             }
 
+            if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
+                throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
+
             // figure out how long the pretend-projectile will be flying to the target
             Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
             float initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
-            m_ProjectileDuration = initialDistance / Description.ProjectileSpeed_m_s;
+            m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed_m_s;
 
             // create the projectile. It will control itself from here on out
             m_Projectile = SpawnAndInitializeProjectile();
@@ -113,7 +116,7 @@ namespace BossRoom.Visual
 
         private FXProjectile SpawnAndInitializeProjectile()
         {
-            GameObject projectileGO = Object.Instantiate(Description.Spawns[0], m_Parent.transform.position, m_Parent.transform.rotation, null);
+            GameObject projectileGO = Object.Instantiate(Description.Projectiles[0].ProjectilePrefab, m_Parent.transform.position, m_Parent.transform.rotation, null);
 
             FXProjectile projectile = projectileGO.GetComponent<FXProjectile>();
             if (!projectile)

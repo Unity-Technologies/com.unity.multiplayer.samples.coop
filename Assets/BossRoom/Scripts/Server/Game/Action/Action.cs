@@ -170,6 +170,7 @@ namespace BossRoom.Server
                 case ActionLogic.ChargedShield: return new ChargedShieldAction(parent, ref data);
                 case ActionLogic.Stunned: return new StunnedAction(parent, ref data);
                 case ActionLogic.Target: return new TargetAction(parent, ref data);
+                case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }
