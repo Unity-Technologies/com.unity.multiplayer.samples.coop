@@ -21,6 +21,7 @@ namespace BossRoom.Server
             Windup,     // performing animations prior to actually moving
             Charging,   // running across the screen and hitting characters
             Complete,   // ending action
+            Cooldown,   // time spent after completion
         }
 
         /// <summary>
@@ -80,6 +81,10 @@ namespace BossRoom.Server
             {
                 return ActionStage.Charging;
             }
+            if (timeSoFar < Description.ExecTimeSeconds + Description.DurationSeconds + Description.CooldownSeconds)
+            {
+                return ActionStage.Cooldown;
+            }
             return ActionStage.Complete;
         }
 
@@ -119,7 +124,7 @@ namespace BossRoom.Server
             }
 
             // if we collide with allies, we don't want to hurt them (but we do knock them back, see below)
-            if (m_Parent.IsNpc != victim.IsNpc) 
+            if (m_Parent.IsNpc != victim.IsNpc)
             {
                 // first see if this victim has the special ability to stun us!
                 float chanceToStun = victim.GetBuffedValue(BuffableValue.ChanceToStunTramplers);
@@ -152,8 +157,10 @@ namespace BossRoom.Server
 
         public override void OnCollisionEnter(Collision collision)
         {
-            if (GetCurrentStage() == ActionStage.Windup)
-                return; // it's too early to deal damage to 'em, we'll detect them when we start charging
+            var actionStage = GetCurrentStage();
+            // we only detect other possible victims when we start charging
+            if (actionStage != ActionStage.Charging)
+                return;
 
             if (m_CollidedAlready.Contains(collision.collider))
                 return; // already hit them!

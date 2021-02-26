@@ -29,6 +29,9 @@ namespace BossRoom
         [Tooltip("Duration in seconds that this Action takes to play")]
         public float DurationSeconds;
 
+        [Tooltip("Duration in seconds that this Action takes to cooldown, after DurationSeconds has elapsed.")]
+        public float CooldownSeconds;
+
         [Tooltip("Time when the Action should do its \"main thing\" (e.g. when a melee attack should apply damage")]
         public float ExecTimeSeconds;
 
@@ -40,7 +43,7 @@ namespace BossRoom
 
         [Tooltip("The auxiliary Animation trigger for this Action (e.g. to end an animation loop)")]
         public string Anim2;
-		
+
         [Tooltip("The reaction anim to play in response to being hit by this skill")]
         public string ReactAnim;
 

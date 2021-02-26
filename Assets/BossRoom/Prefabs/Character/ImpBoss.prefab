@@ -19,7 +19,7 @@ MonoBehaviour:
   m_NetworkHealthState: {fileID: 848206395698055335}
   m_BaseHP: {fileID: 11400000, guid: f393c51c2bce455478a0b995b8d4e3dd, type: 2}
   m_TransformToTrack: {fileID: 3688950541947916327}
-  m_VerticalScreenOffset: 0
+  m_VerticalScreenOffset: -50
 --- !u!1001 &2203142923062114684
 PrefabInstance:
   m_ObjectHideFlags: 0
