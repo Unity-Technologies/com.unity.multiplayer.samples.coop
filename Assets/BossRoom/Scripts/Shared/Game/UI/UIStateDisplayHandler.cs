@@ -33,6 +33,8 @@ namespace BossRoom
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
 
+        NetworkCharacterTypeState m_NetworkCharacterTypeState;
+
         [SerializeField]
         IntVariable m_BaseHP;
 
@@ -91,10 +93,14 @@ namespace BossRoom
             {
                 // the lines below are added in case a player wanted to display a health bar, since their max HP is
                 // dependent on their respective character class
-                var networkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
-                if (networkCharacterTypeState)
+                m_NetworkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
+                if (m_NetworkCharacterTypeState)
                 {
-                    networkCharacterTypeState.CharacterTypeSet += CharacterTypeSet;
+                    m_NetworkCharacterTypeState.CharacterType.OnValueChanged += CharacterTypeChanged;
+
+                    // we initialize the health bar with our current character type as well
+                    CharacterTypeChanged(m_NetworkCharacterTypeState.CharacterType.Value,
+                        m_NetworkCharacterTypeState.CharacterType.Value);
                 }
             }
         }
@@ -106,10 +112,9 @@ namespace BossRoom
                 return;
             }
 
-            var networkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
-            if (networkCharacterTypeState)
+            if (m_NetworkCharacterTypeState)
             {
-                networkCharacterTypeState.CharacterTypeSet -= CharacterTypeSet;
+                m_NetworkCharacterTypeState.CharacterType.OnValueChanged -= CharacterTypeChanged;
             }
 
             if (m_NetworkHealthState)
@@ -119,9 +124,9 @@ namespace BossRoom
             }
         }
 
-        void CharacterTypeSet(CharacterTypeEnum characterType)
+        void CharacterTypeChanged(CharacterTypeEnum previousValue, CharacterTypeEnum newValue)
         {
-            var characterClass = GameDataSource.Instance.CharacterDataByType[characterType];
+            var characterClass = GameDataSource.Instance.CharacterDataByType[newValue];
             if (characterClass)
             {
                 m_BaseHP = characterClass.BaseHP;
