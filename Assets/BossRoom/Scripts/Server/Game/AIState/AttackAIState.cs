@@ -63,6 +63,11 @@ namespace BossRoom.Server
                         return;
                     }
                 }
+                else if (info.ActionTypeEnum == ActionType.Stun)
+                {
+                    // we can't do anything right now. We're stunned!
+                    return;
+                }
             }
 
             // Choose whether we can attack our foe directly, or if we need to get closer first

@@ -138,7 +138,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: b12468d7c0ad8904e98b11ba443f691d, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -146,8 +146,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 653711104564485137, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -202,7 +202,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9059929381720061998}
         m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: onButtonClicked
+        m_MethodName: OnButtonClicked
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -350,7 +350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 1d8881c562b5fab498e644449e0d96b0, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -358,8 +358,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 4629006799232479851, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -414,7 +414,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9059929381720061998}
         m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: onButtonClicked
+        m_MethodName: OnButtonClicked
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -562,7 +562,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 2c488c20b24f4ed43aac98ef8904b7b5, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -570,8 +570,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Sprite: {fileID: -2825189325306509334, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -626,7 +626,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9059929381720061998}
         m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: onButtonClicked
+        m_MethodName: OnButtonClicked
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -760,21 +760,21 @@ MonoBehaviour:
   - {fileID: 9059929381413149708}
   m_EmotePanel: {fileID: 0}
   m_TankIcons:
-  - {fileID: 2100000, guid: 5fb48cfab0cbc924cb733b3a06a6a30c, type: 2}
-  - {fileID: 2100000, guid: 0ba832c9d65592242a993dd964f5f8da, type: 2}
-  - {fileID: 2100000, guid: 45a924f06b956684c852739e90660aca, type: 2}
+  - {fileID: 1540522687219259310, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -4296359016634765864, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -2388657405067991389, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_ArcherIcons:
-  - {fileID: 2100000, guid: b98038636ab12694cbd21ead0b0c42b6, type: 2}
-  - {fileID: 2100000, guid: 166767c0fff9485499dc3d52712771c8, type: 2}
-  - {fileID: 2100000, guid: 8ffba5c247f657546928ab93bf5912f9, type: 2}
+  - {fileID: -86643989335773967, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -648594524209405482, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -648594524209405482, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_RogueIcons:
-  - {fileID: 2100000, guid: c30781aca0d6e7b46a24a5113539e01f, type: 2}
-  - {fileID: 2100000, guid: cec2bf0a7c6d1ea4c8cf15f84b3e37e7, type: 2}
-  - {fileID: 2100000, guid: bab82fceb3cb6db459c7d4889c537024, type: 2}
+  - {fileID: -5674376572046109326, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -538430575990610775, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -1472494204491392689, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_MageIcons:
-  - {fileID: 2100000, guid: 1d8881c562b5fab498e644449e0d96b0, type: 2}
-  - {fileID: 2100000, guid: 9a74682e7060a5c449015f884f1a2598, type: 2}
-  - {fileID: 2100000, guid: b12468d7c0ad8904e98b11ba443f691d, type: 2}
+  - {fileID: 4629006799232479851, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: 2812619407168195412, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: 653711104564485137, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
 --- !u!1 &9059929381734582208
 GameObject:
   m_ObjectHideFlags: 0
@@ -834,7 +834,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Material: {fileID: 2100000, guid: 9a74682e7060a5c449015f884f1a2598, type: 2}
+  m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
@@ -842,8 +842,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 0}
-  m_Type: 1
+  m_Sprite: {fileID: 2812619407168195412, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -898,7 +898,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 9059929381720061998}
         m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: onButtonClicked
+        m_MethodName: OnButtonClicked
         m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

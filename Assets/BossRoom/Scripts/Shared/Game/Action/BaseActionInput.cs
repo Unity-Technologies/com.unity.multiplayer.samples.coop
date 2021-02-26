@@ -20,5 +20,7 @@ namespace BossRoom
         {
             m_OnFinished();
         }
+
+        public virtual void OnReleaseKey() {}
     }
 }
