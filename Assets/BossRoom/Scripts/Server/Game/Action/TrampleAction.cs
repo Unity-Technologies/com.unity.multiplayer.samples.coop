@@ -158,9 +158,8 @@ namespace BossRoom.Server
         public override void OnCollisionEnter(Collision collision)
         {
             var actionStage = GetCurrentStage();
-            // it's too early to deal damage to 'em, we'll detect them when we start charging OR
-            // it's too late to deal damage, we'll rest instead
-            if (actionStage == ActionStage.Windup || actionStage == ActionStage.Cooldown)
+            // we only detect other possible victims when we start charging
+            if (actionStage != ActionStage.Charging)
                 return;
 
             if (m_CollidedAlready.Contains(collision.collider))
