@@ -1,5 +1,59 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &3591499506183471245
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5355783542964773244}
+  - component: {fileID: 6885944472713585796}
+  m_Layer: 0
+  m_Name: LiteNetLibTransport
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!4 &5355783542964773244
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3591499506183471245}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5436007408952557925}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6885944472713585796
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3591499506183471245}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: db28424c2ae12f64da25c9ecccded6b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Port: 7777
+  Address: 127.0.0.1
+  PingInterval: 1
+  DisconnectTimeout: 5
+  ReconnectDelay: 0.5
+  MaxConnectAttempts: 10
+  channels: []
+  MessageBufferSize: 5120
+  SimulatePacketLossChance: 0
+  SimulateMinLatency: 80
+  SimulateMaxLatency: 120
 --- !u!1 &5436007408952557947
 GameObject:
   m_ObjectHideFlags: 0
@@ -10,8 +64,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5436007408952557925}
   - component: {fileID: 5436007408952557924}
-  - component: {fileID: 5436007408952557927}
-  - component: {fileID: 5436007408952557926}
   m_Layer: 0
   m_Name: NetworkingManager
   m_TagString: Untagged
@@ -29,7 +81,9 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 1092014798135837016}
+  - {fileID: 5355783542964773244}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -50,7 +104,7 @@ MonoBehaviour:
   LogLevel: 1
   NetworkConfig:
     ProtocolVersion: 0
-    NetworkTransport: {fileID: 5436007408952557927}
+    NetworkTransport: {fileID: 7898291372908163337}
     RegisteredScenes:
     - MainMenu
     - CharSelect
@@ -71,11 +125,9 @@ MonoBehaviour:
       PlayerPrefab: 0
     - Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c, type: 3}
+    - Prefab: {fileID: 7788790407431586438, guid: 7c9c0bade0c78da4b9825e198685ac1e, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb, type: 3}
-      PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2, type: 3}
+    - Prefab: {fileID: 7898142965061138134, guid: 10897010648fc204783f651034c504d9, type: 3}
       PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0
@@ -110,13 +162,44 @@ MonoBehaviour:
       type: {class: NullableBoolSerializable, ns: MLAPI.Configuration, asm: Unity.Multiplayer.MLAPI.Runtime}
       data:
         Value: 1897319656204293034
---- !u!114 &5436007408952557927
+--- !u!1 &6889060209805043266
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1092014798135837016}
+  - component: {fileID: 7898291372908163337}
+  m_Layer: 0
+  m_Name: UnetTransport
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1092014798135837016
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6889060209805043266}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5436007408952557925}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7898291372908163337
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5436007408952557947}
+  m_GameObject: {fileID: 6889060209805043266}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b84c2d8dfe509a34fb59e2b81f8e1319, type: 3}
@@ -135,26 +218,3 @@ MonoBehaviour:
   MLAPIRelayAddress: 184.72.104.138
   MLAPIRelayPort: 8888
   MessageSendMode: 0
---- !u!114 &5436007408952557926
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5436007408952557947}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db28424c2ae12f64da25c9ecccded6b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Port: 7777
-  Address: 127.0.0.1
-  PingInterval: 1
-  DisconnectTimeout: 5
-  ReconnectDelay: 0.5
-  MaxConnectAttempts: 10
-  channels: []
-  MessageBufferSize: 5120
-  SimulatePacketLossChance: 0
-  SimulateMinLatency: 0
-  SimulateMaxLatency: 0

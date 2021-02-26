@@ -54,7 +54,7 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// The active target of this character. 
+        /// The active target of this character.
         /// </summary>
         public NetworkedVarULong TargetId { get; } = new NetworkedVarULong();
 
@@ -97,7 +97,7 @@ namespace BossRoom
         NetworkCharacterTypeState m_NetworkCharacterTypeState;
 
         /// <summary>
-        /// Current HP. This value is populated at startup time from CharacterClass data.
+        /// Character Type. This value is populated during character selection.
         /// </summary>
         public CharacterTypeEnum CharacterType
         {
