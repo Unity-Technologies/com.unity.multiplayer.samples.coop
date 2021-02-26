@@ -94,18 +94,39 @@ namespace BossRoom
                 var networkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
                 if (networkCharacterTypeState)
                 {
-                    var characterType = networkCharacterTypeState.CharacterType;
-                    var characterClass = GameDataSource.Instance.CharacterDataByType[characterType.Value];
-                    if (characterClass)
-                    {
-                        m_BaseHP = characterClass.BaseHP;
-                        DisplayUIHealth();
-                    }
+                    networkCharacterTypeState.CharacterTypeSet += CharacterTypeSet;
                 }
             }
+        }
 
-            m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
-            m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
+        void OnDisable()
+        {
+            if (!m_DisplayHealth)
+            {
+                return;
+            }
+
+            var networkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
+            if (networkCharacterTypeState)
+            {
+                networkCharacterTypeState.CharacterTypeSet -= CharacterTypeSet;
+            }
+
+            if (m_NetworkHealthState)
+            {
+                m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
+                m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
+            }
+        }
+
+        void CharacterTypeSet(CharacterTypeEnum characterType)
+        {
+            var characterClass = GameDataSource.Instance.CharacterDataByType[characterType];
+            if (characterClass)
+            {
+                m_BaseHP = characterClass.BaseHP;
+                DisplayUIHealth();
+            }
         }
 
         void DisplayUIName()
@@ -138,6 +159,9 @@ namespace BossRoom
 
             m_UIState.DisplayHealth(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
             m_UIStateActive = true;
+
+            m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
+            m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
         }
 
         void SpawnUIState()
