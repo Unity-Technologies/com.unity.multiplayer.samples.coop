@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BossRoom
 {
     /// <summary>
-    /// NetworkedBehaviour containing only one NetworkedVar which represents this character's health.
+    /// NetworkedBehaviour containing only one NetworkedVar which represents this character's CharacterType.
     /// </summary>
     public class NetworkCharacterTypeState : NetworkedBehaviour
     {

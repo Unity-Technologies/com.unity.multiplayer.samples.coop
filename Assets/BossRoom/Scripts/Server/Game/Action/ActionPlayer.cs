@@ -4,7 +4,7 @@ using UnityEngine;
 namespace BossRoom.Server
 {
     /// <summary>
-    /// Class responsible for playing back action inputs from user. 
+    /// Class responsible for playing back action inputs from user.
     /// </summary>
     public class ActionPlayer
     {
@@ -17,7 +17,7 @@ namespace BossRoom.Server
         /// <summary>
         /// To prevent identical actions from piling up, we start discarding actions that are identical to the last played one
         /// if the queue is deeper than this number. It's a soft cap in that longer queues are possible if they are made of different
-        /// actions--this is mainly targeted at situations like melee attacks, where many may get spammed out quickly. 
+        /// actions--this is mainly targeted at situations like melee attacks, where many may get spammed out quickly.
         /// </summary>
         private const int k_QueueSoftMax = 3;
 
@@ -73,7 +73,7 @@ namespace BossRoom.Server
         /// <summary>
         /// If an Action is active, fills out 'data' param and returns true. If no Action is active, returns false.
         /// This only refers to the blocking action! (multiple non-blocking actions can be running in the background, and
-        /// this will still return false). 
+        /// this will still return false).
         /// </summary>
         public bool GetActiveActionInfo(out ActionRequestData data)
         {
@@ -91,7 +91,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Returns how many actions are actively running. This includes all non-blocking actions,
-        /// and the one blocking action at the head of the queue (if present). 
+        /// and the one blocking action at the head of the queue (if present).
         /// </summary>
         public int RunningActionCount
         {
@@ -102,7 +102,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Starts the action at the head of the queue, if any. 
+        /// Starts the action at the head of the queue, if any.
         /// </summary>
         private void StartAction()
         {
@@ -115,7 +115,7 @@ namespace BossRoom.Server
                 bool play = m_Queue[0].Start();
                 if (!play)
                 {
-                    //actions that exited out in the "Start" method will not have their End method called, by design. 
+                    //actions that exited out in the "Start" method will not have their End method called, by design.
                     AdvanceQueue(false);
                 }
 
@@ -123,7 +123,7 @@ namespace BossRoom.Server
                     m_Queue[0].Description.BlockingMode==ActionDescription.BlockingModeType.OnlyDuringExecTime)
                 {
                     //this is a non-blocking action with no exec time. It should never be hanging out at the front of the queue (not even for a frame),
-                    //because it could get cleared if a new Action came in in that interval. 
+                    //because it could get cleared if a new Action came in in that interval.
                     m_NonBlockingActions.Add(m_Queue[0]);
                     AdvanceQueue(false);
                 }
@@ -132,7 +132,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Synthesizes a Chase Action for the action at the Head of the queue, if necessary (the base action must have a target,
-        /// and must have the ShouldClose flag set). This method must not be called when the queue is empty. 
+        /// and must have the ShouldClose flag set). This method must not be called when the queue is empty.
         /// </summary>
         /// <returns>The new index of the Action being operated on.</returns>
         private int SynthesizeChaseIfNecessary(int baseIndex)
@@ -156,7 +156,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Targeted skills should implicitly set the active target of the character, if not already set. 
+        /// Targeted skills should implicitly set the active target of the character, if not already set.
         /// </summary>
         /// <param name="baseIndex">The new index of the base action in m_Queue</param>
         /// <returns></returns>
@@ -187,7 +187,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Optionally end the currently playing action, and advance to the next Action that wants to play. 
+        /// Optionally end the currently playing action, and advance to the next Action that wants to play.
         /// </summary>
         /// <param name="endRemoved">if true we call End on the removed element.</param>
         private void AdvanceQueue(bool endRemoved)
@@ -258,8 +258,10 @@ namespace BossRoom.Server
         private bool UpdateAction(Action action)
         {
             bool keepGoing = action.Update();
-            bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite. 
-            bool timeExpired = expirable && (Time.time - action.TimeStarted) >= action.Description.DurationSeconds;
+            bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
+            var timeElapsed = Time.time - action.TimeStarted;
+            bool timeExpired = expirable &&
+                timeElapsed >= (action.Description.DurationSeconds + action.Description.CooldownSeconds);
             return keepGoing && !timeExpired;
         }
 
@@ -270,7 +272,7 @@ namespace BossRoom.Server
                 m_Queue[0].OnCollisionEnter(collision);
             }
         }
-		
+
 		/// <summary>
         /// Gives all active Actions a chance to alter a gameplay variable.
         /// </summary>

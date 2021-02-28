@@ -2,6 +2,8 @@ using UnityEngine;
 
 /// <summary>
 /// Used on short-lived graphical-effect prefabs to self-destruct after a fixed amount of time.
+/// Note: this is still safe to use, but is now superceded by SpecialFXGraphic: just set the
+/// AutoShutdownTime of that component and it will perform a timed self-destruct.
 /// </summary>
 /// <remarks>
 /// Note that if you're creating an ActionFX that has ANY chance of being prematurely cancelled
