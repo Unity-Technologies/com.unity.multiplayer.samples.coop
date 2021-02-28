@@ -131,6 +131,7 @@ namespace BossRoom.Server
             AttackedByEnemy,
             Healed,
             StoppedChargingUp,
+            DamagedEnemy,
         }
 
         /// <summary>
@@ -171,6 +172,7 @@ namespace BossRoom.Server
                 case ActionLogic.Stunned: return new StunnedAction(parent, ref data);
                 case ActionLogic.Target: return new TargetAction(parent, ref data);
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction(parent, ref data);
+                case ActionLogic.StealthMode: return new StealthModeAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

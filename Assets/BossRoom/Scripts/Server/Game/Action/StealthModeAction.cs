@@ -19,7 +19,6 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            Debug.Log("STEALTH BEGIN");
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
             // not allowed to walk while going stealthy!
@@ -48,7 +47,6 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
-            Debug.Log("STEALTH END");
             if (m_IsStealthStarted)
             {
                 m_Parent.NetState.IsStealthy.Value = 0;
