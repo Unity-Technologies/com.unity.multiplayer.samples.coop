@@ -131,7 +131,7 @@ namespace BossRoom.Server
             AttackedByEnemy,
             Healed,
             StoppedChargingUp,
-            DamagedEnemy,
+            UsingAttackAction, // called immediately before we perform the attack Action
         }
 
         /// <summary>

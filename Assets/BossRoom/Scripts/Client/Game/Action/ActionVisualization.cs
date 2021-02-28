@@ -74,13 +74,25 @@ namespace BossRoom.Visual
             }
         }
 
-        public void CancelActions()
+        public void CancelAllActions()
         {
             foreach (var actionFx in m_PlayingActions)
             {
                 actionFx.Cancel();
             }
             m_PlayingActions.Clear();
+        }
+
+        public void CancelAllActionsOfType(ActionType actionType)
+        {
+            for (int i = m_PlayingActions.Count-1; i >=0; --i)
+            {
+                if (m_PlayingActions[i].Description.ActionTypeEnum == actionType)
+                {
+                    m_PlayingActions[i].Cancel();
+                    m_PlayingActions.RemoveAt(i);
+                }
+            }
         }
 
         /// <summary>

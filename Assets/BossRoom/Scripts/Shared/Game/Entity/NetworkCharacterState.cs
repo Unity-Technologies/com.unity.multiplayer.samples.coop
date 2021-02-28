@@ -46,8 +46,8 @@ namespace BossRoom
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
         /// </summary>
         /// <remarks>
-        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's written to the
-        /// network as a bit, but gets read out as a byte, which corrupts the whole network-var stream.
+        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's serialized 
+        /// as a bit, but deserialized as a byte, which corrupts the whole network-var stream.
         /// </remarks>
         public NetworkedVarByte IsStealthy { get; } = new NetworkedVarByte(0);
 
@@ -173,9 +173,14 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
+        /// This event is raised on the client when ALL active action FXs need to be cancelled (e.g. when the character has been stunned)
         /// </summary>
-        public event Action CancelActionEventClient;
+        public event Action CancelAllActionsEventClient;
+
+        /// <summary>
+        /// This event is raised on the client when active action FXs of a certain type need to be cancelled (e.g. when the Stealth action ends)
+        /// </summary>
+        public event Action<ActionType> CancelActionsByTypeEventClient;
 
         [ClientRpc]
         public void RecvDoActionClientRPC(ActionRequestData data)
@@ -184,9 +189,15 @@ namespace BossRoom
         }
 
         [ClientRpc]
-        public void RecvCancelActionClientRpc()
+        public void RecvCancelAllActionsClientRpc()
         {
-            CancelActionEventClient?.Invoke();
+            CancelAllActionsEventClient?.Invoke();
+        }
+
+        [ClientRpc]
+        public void RecvCancelActionsByTypeClientRpc(ActionType action)
+        {
+            CancelActionsByTypeEventClient?.Invoke(action);
         }
 
         /// <summary>

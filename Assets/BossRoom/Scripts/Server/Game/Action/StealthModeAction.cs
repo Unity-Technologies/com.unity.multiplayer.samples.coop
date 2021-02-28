@@ -8,7 +8,6 @@ namespace BossRoom.Server
     /// Causes the character to become hidden to enemies and other players. Notes:
     /// - Stealth starts after the ExecTimeSeconds has elapsed. If they are attacked during the Exec time, stealth is aborted.
     /// - Stealth ends when the player attacks or is damaged.
-    /// - 
     /// </summary>
     public class StealthModeAction : Action
     {
@@ -39,6 +38,7 @@ namespace BossRoom.Server
         {
             if (TimeRunning >= Description.ExecTimeSeconds && !m_IsStealthStarted && !m_IsStealthEnded)
             {
+                // start actual stealth-mode... NOW!
                 m_IsStealthStarted = true;
                 m_Parent.NetState.IsStealthy.Value = 1;
             }
@@ -47,19 +47,33 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
-            if (m_IsStealthStarted)
-            {
-                m_Parent.NetState.IsStealthy.Value = 0;
-            }
-            m_Parent.NetState.RecvCancelActionClientRpc();
+            EndStealth();
         }
 
         public override void OnGameplayActivity(GameplayActivity activityType)
         {
-            // we break stealth after an attack. (Or after being hit, which could happen during exec time before we're stealthed, or even afterwards, such as from an AoE attack)
-            if (activityType == GameplayActivity.DamagedEnemy || activityType == GameplayActivity.AttackedByEnemy)
+            // we break stealth after using an attack. (Or after being hit, which could happen during exec time before we're stealthed, or even afterwards, such as from an AoE attack)
+            if (activityType == GameplayActivity.UsingAttackAction || activityType == GameplayActivity.AttackedByEnemy)
+            {
+                EndStealth();
+            }
+        }
+
+        private void EndStealth()
+        {
+            if (!m_IsStealthEnded)
             {
                 m_IsStealthEnded = true;
+                if (m_IsStealthStarted)
+                {
+                    m_Parent.NetState.IsStealthy.Value = 0;
+                }
+
+                // note that we cancel the ActionFX here, and NOT in Cancel(). That's to handle the case where someone
+                // presses the Stealth button twice in a row: "end this Stealth action and start a new one". If we cancelled
+                // all actions of this type in Cancel(), we'd end up cancelling both the old AND the new one, because
+                // the new one would already be in the clients' actionFX queue.
+                m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
             }
         }
 

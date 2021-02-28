@@ -118,7 +118,7 @@ namespace BossRoom.Server
             {
                 if (action.CancelMovement)
                 {
-                    GetComponent<ServerCharacterMovement>().CancelMove();
+                    m_Movement.CancelMove();
                 }
 
                 m_ActionPlayer.PlayAction(ref action);
@@ -153,6 +153,12 @@ namespace BossRoom.Server
 
         private void OnActionPlayRequest(ActionRequestData data )
         {
+            if (!GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].IsFriendly)
+            {
+                // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
+                RunningActions.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);
+            }
+
             PlayAction(ref data);
         }
 
@@ -185,12 +191,6 @@ namespace BossRoom.Server
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
-
-                if (inflicter)
-                {
-                    // notify the inflicter that they did in fact hurt us (in case their active Actions care)
-                    inflicter.RunningActions.OnGameplayActivity(Action.GameplayActivity.DamagedEnemy);
-                }
             }
 
             NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);

@@ -61,7 +61,8 @@ namespace BossRoom.Visual
 
             m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
-            m_NetState.CancelActionEventClient += CancelActionFX;
+            m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
+            m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
@@ -117,7 +118,8 @@ namespace BossRoom.Visual
             if (m_NetState)
             {
                 m_NetState.DoActionEventClient -= PerformActionFX;
-                m_NetState.CancelActionEventClient -= CancelActionFX;
+                m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
+                m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
                 m_NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
@@ -141,9 +143,14 @@ namespace BossRoom.Visual
             m_ActionViz.PlayAction(ref data);
         }
 
-        private void CancelActionFX()
+        private void CancelAllActionFXs()
         {
-            m_ActionViz.CancelActions();
+            m_ActionViz.CancelAllActions();
+        }
+
+        private void CancelActionFXByType(ActionType actionType)
+        {
+            m_ActionViz.CancelAllActionsOfType(actionType);
         }
 
         private void OnStoppedChargingUp()
