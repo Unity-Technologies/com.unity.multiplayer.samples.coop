@@ -29,7 +29,7 @@ namespace BossRoom.Client
 
         /// <summary>
         /// This describes how a skill was requested. Skills requested via mouse click will do raycasts to determine their target; skills requested
-        /// in other matters will use the stateful target stored in NetworkCharacterState. 
+        /// in other matters will use the stateful target stored in NetworkCharacterState.
         /// </summary>
         public enum SkillTriggerStyle
         {
@@ -37,13 +37,13 @@ namespace BossRoom.Client
             MouseClick,  //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
             Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
             KeyboardRelease, //represents a released key.
-            UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target. 
+            UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
         }
 
         /// <summary>
         /// This struct essentially relays the call params of RequestAction to FixedUpdate. Recall that we may need to do raycasts
         /// as part of doing the action, and raycasts done outside of FixedUpdate can give inconsistent results (otherwise we would
-        /// just expose PerformAction as a public method, and let it be called in whatever scoped it liked. 
+        /// just expose PerformAction as a public method, and let it be called in whatever scoped it liked.
         /// </summary>
         /// <remarks>
         /// Reference: https://answers.unity.com/questions/1141633/why-does-fixedupdate-work-when-update-doesnt.html
@@ -61,7 +61,7 @@ namespace BossRoom.Client
         private readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
 
         /// <summary>
-        /// Number of ActionRequests that have been queued since the last FixedUpdate. 
+        /// Number of ActionRequests that have been queued since the last FixedUpdate.
         /// </summary>
         private int m_ActionRequestCount;
 
@@ -115,12 +115,12 @@ namespace BossRoom.Client
 
         void FixedUpdate()
         {
-            //play all ActionRequests, in FIFO order. 
+            //play all ActionRequests, in FIFO order.
             for (int i = 0; i < m_ActionRequestCount; ++i)
             {
                 if( m_CurrentSkillInput != null )
                 {
-                    //actions requested while input is active are discarded, except for "Release" requests, which go through. 
+                    //actions requested while input is active are discarded, except for "Release" requests, which go through.
                     if (m_ActionRequests[i].TriggerStyle == SkillTriggerStyle.KeyboardRelease )
                     {
                         m_CurrentSkillInput.OnReleaseKey();
@@ -164,7 +164,7 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Perform a skill in response to some input trigger. This is the common method to which all input-driven skill plays funnel. 
+        /// Perform a skill in response to some input trigger. This is the common method to which all input-driven skill plays funnel.
         /// </summary>
         /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
         /// <param name="triggerStyle">What sort of input triggered this skill?</param>
@@ -218,7 +218,7 @@ namespace BossRoom.Client
 
             var targetNetObj = hit != null ? hit.GetComponent<NetworkedObject>() : null;
 
-            //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState. 
+            //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState.
             if (!targetNetObj && actionType != ActionType.GeneralTarget)
             {
                 ulong targetId = m_NetworkCharacter.TargetId.Value;
@@ -236,12 +236,12 @@ namespace BossRoom.Client
                 return false;
             }
 
-            //Skill1 may be contextually overridden if it was generated from a mouse-click. 
+            //Skill1 may be contextually overridden if it was generated from a mouse-click.
             if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
             {
                 if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
                 {
-                    //right-clicked on a downed ally--change the skill play to Revive. 
+                    //right-clicked on a downed ally--change the skill play to Revive.
                     actionType = ActionType.GeneralRevive;
                 }
             }
@@ -289,12 +289,18 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Request an action be performed. This will occur on the next FixedUpdate. 
+        /// Request an action be performed. This will occur on the next FixedUpdate.
         /// </summary>
         /// <param name="action">the action you'd like to perform. </param>
         /// <param name="triggerStyle">What input style triggered this action.</param>
         public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle )
         {
+            // do not populate an action request unless said action is valid & exists inside of action dictionary
+            if (action == ActionType.None || !GameDataSource.Instance.ActionDataByType.ContainsKey(action))
+            {
+                return;
+            }
+
             if( m_ActionRequestCount < m_ActionRequests.Length )
             {
                 m_ActionRequests[m_ActionRequestCount].RequestedAction = action;
