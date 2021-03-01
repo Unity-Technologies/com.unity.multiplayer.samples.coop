@@ -61,7 +61,7 @@ BossRoom is an 8-player co-op RPG game experience, where players collaborate to 
 
 One of the 8 clients acts as the host/server. That client will use a compositional approach so that its entities have both server and client components.
 
-The game is server-authoritative, with latency-masking animations. Position updates are done through NetworkTransforms. NetworkedVars and RPC endpoints are isolated in a class that is shared between the server and client specialized logic components. All gamelogic runs in FixedUpdate at 30 Hz, matching our network update rate. 
+The game is server-authoritative, with latency-masking animations. Position updates are done through NetworkedVars that sync position, rotation and movement speed. NetworkedVars and Remote Procedure Calls (RPC) endpoints are isolated in a class that is shared between the server and client specialized logic components. All gamelogic runs in FixedUpdate at 30 Hz, matching our network update rate. 
 
 Code is organized into three separate assemblies: **Client**, **Shared** and **Server** which reference each other when appropriate.
 
@@ -73,14 +73,14 @@ For an in-depth overview of the project's architecture please check out our [ARC
  - `NetworkCharacterState` Contains all NetworkedVars, and both server and client RPC endpoints. The RPC endpoints only read out the call parameters and then raise events from them; they don’t do any logic internally. 
 
 **Server**
- - `ServerCharacterMovement` manages the movement FSM on the server (example states: IDLE, PATHPLANNING, PATHFOLLOWING, FREEMOVING). Updates the NetworkedTransform of the entity on its FixedUpdate
+ - `ServerCharacterMovement` manages the movement Finite State Machine (FSM) on the server. Updates the NetworkedVars that synchronize position, rotation and movement speed of the entity on its FixedUpdate.
  - `ServerCharacter` has the AIBrain, as well as the ActionQueue. Receives action requests (either from the AIBrain in case of NPCs, or user input in case of player characters), and executes them.
  - `AIBrain` contains main AI FSM.  
  - `Action` is the abstract base class for all server actions
    - `MeleeAction`, `AoeAction`, etc. contain logic for their respective action types. 
 
 **Client**
- - `ClientCharacterComponent` primarily is a host for the running `ActionFX` class. This component will probably be on the graphics GO, rather than the sim GO. 
+ - `ClientCharacterComponent` primarily is a host for the running `ActionFX` class. This component will probably be on the graphics game object, rather than the sim game object. 
  - `CliemtInputComponent`. On a shadow entity, will suicide. Listens to inputs, interprets them, and then calls appropriate RPCs on the RPCStateComponent. 
  - `ActionFX` is the abstract base class for all the client-side action visualizers
    - `MeleeActionFX`, `AoeActionFX`, etc. Contain graphics information for their respective action types. 
