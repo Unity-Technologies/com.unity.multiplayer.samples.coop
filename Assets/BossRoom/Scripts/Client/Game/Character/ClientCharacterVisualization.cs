@@ -108,31 +108,13 @@ namespace BossRoom.Visual
                     AttachCamera();
                     m_PartyHUD.SetHeroAppearance(heroAppearance);
                     m_PartyHUD.SetHeroType(m_NetState.CharacterType);
-
-                    var networkNameState = m_NetState.GetComponent<NetworkNameState>();
-                    networkNameState.Name.OnValueChanged += SetHeroName;
-                    SetHeroName(string.Empty, m_NetState.Name);
                 }
                 else
                 {
                     m_PartyHUD.SetAllyType(m_NetState.NetworkId, m_NetState.CharacterType);
-                    var networkNameState = m_NetState.GetComponent<NetworkNameState>();
-                    networkNameState.Name.OnValueChanged += (value, newValue) =>
-                        SetAllyName(m_NetState.NetworkId, value, newValue);
-                    SetAllyName(m_NetState.NetworkId, string.Empty, m_NetState.Name);
                 }
 
             }
-        }
-
-        void SetHeroName(string previousValue, string newValue)
-        {
-            m_PartyHUD.SetHeroName(newValue);
-        }
-
-        void SetAllyName(ulong networkdID, string previousValue, string newValue)
-        {
-            m_PartyHUD.SetAllyName(networkdID, newValue);
         }
 
         private void OnDestroy()
@@ -148,7 +130,7 @@ namespace BossRoom.Visual
 
             if (m_ActionViz != null)
             {
-                //make sure we don't leave any dangling effects playing if we've been destroyed.
+                //make sure we don't leave any dangling effects playing if we've been destroyed. 
                 m_ActionViz.CancelAll();
             }
         }

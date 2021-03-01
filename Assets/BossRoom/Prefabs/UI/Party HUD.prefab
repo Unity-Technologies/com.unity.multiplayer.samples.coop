@@ -1880,7 +1880,6 @@ MonoBehaviour:
   m_HeroPortrait: {fileID: 5210474332450112926}
   m_HeroClassSymbol: {fileID: 5210474333996684296}
   m_HeroHealthbar: {fileID: 5210474334111348187}
-  m_HeroName: {fileID: 5210474333125494389}
   m_AllyPanel:
   - {fileID: 5210474332398139193}
   - {fileID: 5210474333491607281}
@@ -1905,14 +1904,6 @@ MonoBehaviour:
   - {fileID: 5210474333732748277}
   - {fileID: 5210474332204224105}
   - {fileID: 5210474333110502175}
-  m_AllyNames:
-  - {fileID: 5210474332408265961}
-  - {fileID: 5210474332414071368}
-  - {fileID: 5210474332895356384}
-  - {fileID: 5210474332515553310}
-  - {fileID: 5210474332312914845}
-  - {fileID: 5210474332457901141}
-  - {fileID: 5210474332177170891}
   m_PortraitAppearances:
   - {fileID: -6710387467502326305, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   - {fileID: -5935337979838524249, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}

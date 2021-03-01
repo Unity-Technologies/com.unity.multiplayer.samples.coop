@@ -19,9 +19,6 @@ namespace BossRoom.Visual
         [SerializeField]
         private RectTransform m_HeroHealthbar;
 
-        [SerializeField]
-        Text m_HeroName;
-
         private int m_HeroMaxHealth;
 
         [SerializeField]
@@ -32,9 +29,6 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private RectTransform[] m_AllyHealthbar;
-
-        [SerializeField]
-        Text[] m_AllyNames;
 
         [SerializeField]
         private Sprite[] m_PortraitAppearances;
@@ -70,11 +64,6 @@ namespace BossRoom.Visual
             m_HeroMaxHealth = GetMaxHPForClass(characterType);
         }
 
-        public void SetHeroName(string name)
-        {
-            m_HeroName.text = name;
-        }
-
         public void SetHeroHealth(int hp)
         {
             // TO DO - get real max hp
@@ -97,7 +86,7 @@ namespace BossRoom.Visual
             return 1000;
         }
 
-        // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id
+        // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id 
         public void SetAllyType(ulong id, CharacterTypeEnum characterType)
         {
             int symbol = (int)characterType;
@@ -107,7 +96,7 @@ namespace BossRoom.Visual
             }
 
             int slot = FindOrAddAlly(id);
-            // do nothing if not in a slot
+            // do nothing if not in a slot 
             if ( slot == -1 ) { return; }
 
             m_AllyClassSymbol[slot].sprite = m_ClassSymbols[symbol];
@@ -117,19 +106,10 @@ namespace BossRoom.Visual
         public void SetAllyHealth(ulong id, int hp)
         {
             int slot = FindOrAddAlly(id);
-            // do nothing if not in a slot
+            // do nothing if not in a slot 
             if (slot == -1) { return; }
 
             m_AllyHealthbar[slot].localScale = new Vector3(((float)hp) / (float)m_AllyMaxHP[slot], 1.0f, 1.0f);
-        }
-
-        public void SetAllyName(ulong id, string name)
-        {
-            int slot = FindOrAddAlly(id);
-            // do nothing if not in a slot
-            if (slot == -1) { return; }
-
-            m_AllyNames[slot].text = name;
         }
 
         // helper to initialize the Allies array - safe to call multiple times
@@ -168,7 +148,7 @@ namespace BossRoom.Visual
                 }
             }
 
-            // ally slot was not found - add one in an open slot
+            // ally slot was not found - add one in an open slot 
             if (openslot >= 0)
             {
                 m_AllyPanel[openslot].SetActive(true);
