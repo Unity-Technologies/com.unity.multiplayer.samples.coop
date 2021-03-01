@@ -123,7 +123,7 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Sets the panel to match the given specificiations to notify the player.  If display image is set to true, it will display
+        /// Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
