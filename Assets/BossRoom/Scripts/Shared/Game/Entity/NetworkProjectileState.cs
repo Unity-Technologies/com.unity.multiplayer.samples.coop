@@ -11,8 +11,6 @@ namespace BossRoom
     /// </summary>
     public class NetworkProjectileState : NetworkedBehaviour, INetMovement
     {
-        public NetworkedVar<ActionType> SourceAction;
-
         public NetworkedVarVector3 NetworkPosition { get; } = new NetworkedVarVector3();
 
         /// <summary>
