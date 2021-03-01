@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BossRoom.Client
+namespace BossRoom.Visual
 {
     /// <summary>
     /// Data storage of all the valid strings used to create a player's name.
