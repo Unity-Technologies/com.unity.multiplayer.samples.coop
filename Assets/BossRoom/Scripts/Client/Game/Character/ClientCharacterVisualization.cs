@@ -2,6 +2,7 @@ using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
+using System.ComponentModel;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -68,33 +69,26 @@ namespace BossRoom.Visual
 
             m_ActionViz = new ActionVisualization(this);
 
-            var parentTransform = transform.parent;
+            Parent = transform.parent;
 
-            m_NetState = parentTransform.gameObject.GetComponent<NetworkCharacterState>();
+            m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelActionEventClient += CancelActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
-            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
-            // we should investigate for a way to have the imps already appear as down when connecting.
-            // todo gomps-220
-            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
-            Parent = parentTransform;
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
             transform.SetParent(null);
 
-            // a special scenario to account for: NPCs being dead when connecting mid-game.
-            // the NPC is synced to parent's networked position & rotation, and is sent to dead state
-            if (m_NetState.NetworkLifeState.Value == LifeState.Dead)
-            {
-                var parentMovement = Parent.GetComponent<INetMovement>();
-                transform.position = parentMovement.NetworkPosition.Value;
-                transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
-                m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryDeath"));
-            }
+            // sync our visualization position & rotation to the most up to date version received from server
+            var parentMovement = Parent.GetComponent<INetMovement>();
+            transform.position = parentMovement.NetworkPosition.Value;
+            transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
+
+            // sync our animator to the most up to date version received from server
+            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
 
             // listen for char-select info to change (in practice, this info doesn't
             // change, but we may not have the values set yet) ...
@@ -102,7 +96,6 @@ namespace BossRoom.Visual
 
             // ...and visualize the current char-select value that we know about
             OnCharacterAppearanceChanged(0, m_NetState.CharacterAppearance.Value);
-
 
             // ...and visualize the current char-select value that we know about
             if (m_CharacterSwapper)
@@ -115,19 +108,38 @@ namespace BossRoom.Visual
                 // track health for heroes
                 m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
 
-                Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
+                var model = GetComponent<CharacterSwap>();
                 int heroAppearance = m_NetState.CharacterAppearance.Value;
                 model.SwapToModel(heroAppearance);
 
                 // find the emote bar to track its buttons
-                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
-                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
+                var partyHudGameObject = GameObject.FindGameObjectWithTag("PartyHUD");
+                m_PartyHUD = partyHudGameObject.GetComponent<PartyHUD>();
+            }
 
             if (IsLocalPlayer)
             {
-                ActionRequestData data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
+                var data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
                 m_ActionViz.PlayAction(ref data);
                 AttachCamera();
+            }
+        }
+
+        /// <summary>
+        /// The switch to certain LifeStates fires an animation on an NPC/PC. This bypasses that initial animation
+        /// and sends an NPC/PC to their eventual looping animation. This is necessary for mid-game player connections.
+        /// </summary>
+        /// <param name="lifeState"> The last LifeState received by server. </param>
+        void SyncEntryAnimation(LifeState lifeState)
+        {
+            switch (lifeState)
+            {
+                case LifeState.Dead: // ie. NPCs already dead
+                    m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryDeath"));
+                    break;
+                case LifeState.Fainted: // ie. PCs already fainted
+                    m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryFainted"));
+                    break;
             }
         }
 
