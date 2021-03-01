@@ -11,9 +11,9 @@ GameObject:
   - component: {fileID: 6923725348669878280}
   - component: {fileID: 693260371752435667}
   - component: {fileID: 5873753617113076559}
-  - component: {fileID: 4180546739471925412}
   - component: {fileID: 8072434617646181483}
   - component: {fileID: 5523564508459802527}
+  - component: {fileID: 7593517161202687830}
   m_Layer: 0
   m_Name: lava
   m_TagString: Untagged
@@ -28,9 +28,9 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2412353032341473334}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.0000014603136}
+  m_LocalRotation: {x: 0, y: 1, z: -0, w: -0.0000001872535}
   m_LocalPosition: {x: 104.262085, y: -4, z: 45.002235}
-  m_LocalScale: {x: 8.14094, y: 7.9454026, z: 10.794916}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -42,7 +42,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2412353032341473334}
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
+  m_Mesh: {fileID: 2045894193835759827, guid: db0a9d52f0048274e8dc5e5e35234608, type: 3}
 --- !u!23 &5873753617113076559
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -84,20 +84,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &4180546739471925412
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2412353032341473334}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!108 &8072434617646181483
 Light:
   m_ObjectHideFlags: 0
@@ -119,10 +105,10 @@ Light:
     m_Type: 2
     m_Resolution: 0
     m_CustomResolution: -1
-    m_Strength: 0.644
+    m_Strength: 1
     m_Bias: 0
     m_NormalBias: 0.77
-    m_NearPlane: 3.51
+    m_NearPlane: 0.1
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -172,5 +158,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b1352ed2586fb334b801adf6c79951b7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ScrollX: 0.01
-  ScrollY: 0.01
+  ScrollX: 0.02
+  ScrollY: 0.02
+--- !u!64 &7593517161202687830
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2412353032341473334}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 2045894193835759827, guid: db0a9d52f0048274e8dc5e5e35234608, type: 3}
