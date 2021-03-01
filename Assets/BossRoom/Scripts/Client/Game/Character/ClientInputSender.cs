@@ -2,6 +2,7 @@ using MLAPI;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
 namespace BossRoom.Client
@@ -295,11 +296,14 @@ namespace BossRoom.Client
         /// <param name="triggerStyle">What input style triggered this action.</param>
         public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle )
         {
-            // do not populate an action request unless said action is valid & exists inside of action dictionary
-            if (action == ActionType.None || !GameDataSource.Instance.ActionDataByType.ContainsKey(action))
+            // do not populate an action request unless said action is valid
+            if (action == ActionType.None)
             {
                 return;
             }
+
+            Assert.IsTrue(GameDataSource.Instance.ActionDataByType.ContainsKey(action),
+                $"Action {action} must be part of ActionData dictionary!");
 
             if( m_ActionRequestCount < m_ActionRequests.Length )
             {
