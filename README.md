@@ -3,7 +3,7 @@
 
 BossRoom is a fully functional co-op multiplayer RPG made in Unity and MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
-Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. See [LICENSE.md](LICENSE.md) for more legal information.
+Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 
 ## Prerequisites
@@ -23,7 +23,7 @@ The project uses the `git-flow` branching strategy, as such:
 
 To get the project on your machine you need to clone the repository from GitHub using the following command-line command:
 ```
-git clone git@github.com:Unity-Technologies/com.unity.multiplayer.samples.coop.git
+git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git
 ```
 Alternatively you can download a release version from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
 
@@ -84,4 +84,3 @@ For an in-depth overview of the project's architecture please check out our [ARC
  - `CliemtInputComponent`. On a shadow entity, will suicide. Listens to inputs, interprets them, and then calls appropriate RPCs on the RPCStateComponent. 
  - `ActionFX` is the abstract base class for all the client-side action visualizers
    - `MeleeActionFX`, `AoeActionFX`, etc. Contain graphics information for their respective action types. 
-   
