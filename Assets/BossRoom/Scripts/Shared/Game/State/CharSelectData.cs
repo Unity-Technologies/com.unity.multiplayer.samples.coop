@@ -1,9 +1,10 @@
-using System.Collections;
+
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.Serialization;
 using MLAPI.NetworkedVar;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
@@ -11,7 +12,7 @@ using UnityEngine;
 namespace BossRoom
 {
     /// <summary>
-    /// Common data and RPCs for the CharSelect stage. 
+    /// Common data and RPCs for the CharSelect stage.
     /// </summary>
     public class CharSelectData : NetworkedBehaviour
     {
@@ -79,7 +80,6 @@ namespace BossRoom
                 SeatIdx = seatIdx;
                 LastChangeTime = lastChangeTime;
             }
-
             public void NetworkSerialize(BitSerializer serializer)
             {
                 serializer.Serialize(ref ClientId);
@@ -91,9 +91,14 @@ namespace BossRoom
             }
         }
 
+        void OnDestroy()
+        {
+            m_LobbyPlayers.Cleanup();
+        }
+
         /// <summary>
         /// TEMP! This is substitute for NetworkedVarList<>. It will be replaced by a NetworkedVarList<LobbyPlayerState> when those are once again
-        /// supported. 
+        /// supported.
         /// </summary>
         public class LobbyPlayerArray
         {
@@ -101,7 +106,7 @@ namespace BossRoom
             private CharSelectData m_CharSelectData;
 
             /// <summary>
-            /// Event that gets raised when the array has changed somehow. 
+            /// Event that gets raised when the array has changed somehow.
             /// </summary>
             public event Action<LobbyPlayerArray> ArrayChangedEvent;
 
@@ -110,13 +115,15 @@ namespace BossRoom
                 m_LobbyPlayers = new List<LobbyPlayerState>();
                 m_CharSelectData = data;
 
-                if( NetworkingManager.Singleton.IsServer )
+                if (NetworkingManager.Singleton.IsServer)
                 {
-                    NetworkingManager.Singleton.OnClientConnectedCallback += (ulong clientId) =>
-                    {
-                        m_CharSelectData.StartCoroutine(CoroClientConnected(clientId));
-                    };
+                    NetworkingManager.Singleton.OnClientConnectedCallback += ClientConnected;
                 }
+            }
+
+            void ClientConnected(ulong clientId)
+            {
+                m_CharSelectData.StartCoroutine(CoroClientConnected(clientId));
             }
 
             private IEnumerator CoroClientConnected(ulong clientId)
@@ -134,7 +141,7 @@ namespace BossRoom
                 m_LobbyPlayers.Add(state);
                 ArrayChangedEvent?.Invoke(this);
 
-                if(NetworkingManager.Singleton.IsServer )
+                if (NetworkingManager.Singleton.IsServer )
                 {
                     m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
                 }
@@ -178,7 +185,7 @@ namespace BossRoom
             }
 
             /// <summary>
-            /// Updates a single element. For use only be the CharSelectData class. 
+            /// Updates a single element. For use only be the CharSelectData class.
             /// </summary>
             public void ClientSyncUpdate(LobbyPlayerState[] playerArray )
             {
@@ -190,6 +197,14 @@ namespace BossRoom
                     ArrayChangedEvent?.Invoke(this);
                 }
             }
+
+            public void Cleanup()
+            {
+                if (NetworkingManager.Singleton.IsServer)
+                {
+                    NetworkingManager.Singleton.OnClientConnectedCallback -= ClientConnected;
+                }
+            }
         }
 
         /// <summary>
@@ -197,7 +212,7 @@ namespace BossRoom
         /// is because it's tricky to send incremental array updates right now. You can't just send an initial state on client connection, and then
         /// subsequent incremental updates, because you don't know exactly when the client's connection is going to be open for transmission. If you send
         /// a client an incremental update while it still has its inital state message pending, it will get confused.
-        /// In any case, this system is meant to be temporary, and will be replaced when NetworkedVarList<T> is supported again. 
+        /// In any case, this system is meant to be temporary, and will be replaced when NetworkedVarList<T> is supported again.
         /// </summary>
         [ClientRpc]
         private void LobbyPlayerUpdateArrayClientRpc(LobbyPlayerState[] playerArray )
@@ -211,7 +226,6 @@ namespace BossRoom
         {
             m_LobbyPlayers = new LobbyPlayerArray(this, 8);
         }
-
 
         /// <summary>
         /// Current state of all players in the lobby.

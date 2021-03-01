@@ -81,7 +81,6 @@ namespace BossRoom
             {
                 return false;
             }
-
             //only Dead characters are untargetable. All others are 
             return targetNetState.NetworkLifeState.Value != LifeState.Dead;
         }

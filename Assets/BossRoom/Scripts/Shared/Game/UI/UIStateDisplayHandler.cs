@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using MLAPI;
 using UnityEngine;
@@ -6,24 +7,33 @@ using UnityEngine.Assertions;
 namespace BossRoom
 {
     /// <summary>
-    /// Class designed to only run on a client. Add this to a prefab with a NetworkHealthState attached and it will
-    /// create, & position a UIHealth prefab instance in UI-space.
+    /// Class designed to only run on a client. Add this to a world-space prefab to display health or name on UI.
     /// </summary>
-    [RequireComponent(typeof(NetworkHealthState))]
     public class UIStateDisplayHandler : MonoBehaviour
     {
         [SerializeField]
-        UIHealth m_UIHealthPrefab;
+        bool m_DisplayHealth;
+
+        [SerializeField]
+        bool m_DisplayName;
+
+        [SerializeField]
+        UIStateDisplay m_UIStatePrefab;
 
         // spawned in world (only one instance of this)
-        UIHealth m_UIHealth;
+        UIStateDisplay m_UIState;
 
-        RectTransform m_UIHealthRectTransform;
+        RectTransform m_UIStateRectTransform;
 
-        bool m_UIHealthActive;
+        bool m_UIStateActive;
+
+        [SerializeField]
+        NetworkNameState m_NetworkNameState;
 
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
+
+        NetworkCharacterTypeState m_NetworkCharacterTypeState;
 
         [SerializeField]
         IntVariable m_BaseHP;
@@ -38,6 +48,12 @@ namespace BossRoom
 
         // as soon as any HP goes to 0, we wait this long before removing health bar UI object
         const float k_DurationSeconds = 2f;
+
+        [Tooltip("Screen space vertical offset for positioning.")]
+        [SerializeField]
+        float m_VerticalScreenOffset;
+
+        Vector3 m_VerticalOffset;
 
         void OnEnable()
         {
@@ -54,44 +70,109 @@ namespace BossRoom
                 m_CanvasTransform = canvasGameObject.transform;
             }
 
+            Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
             Assert.IsTrue(m_Camera != null && m_CanvasTransform != null);
+
+            m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
+
+            if (m_DisplayName)
+            {
+                DisplayUIName();
+            }
+
+            if (!m_DisplayHealth)
+            {
+                return;
+            }
 
             if (m_BaseHP != null)
             {
-                AddUIHealth();
+                DisplayUIHealth();
             }
             else
             {
                 // the lines below are added in case a player wanted to display a health bar, since their max HP is
                 // dependent on their respective character class
-                var networkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
-                if (networkCharacterTypeState)
+                m_NetworkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
+                if (m_NetworkCharacterTypeState != null)
                 {
-                    var characterType = networkCharacterTypeState.CharacterType;
-                    var characterClass = GameDataSource.Instance.CharacterDataByType[characterType.Value];
-                    if (characterClass)
-                    {
-                        m_BaseHP = characterClass.BaseHP;
-                        AddUIHealth();
-                    }
+                    m_NetworkCharacterTypeState.CharacterType.OnValueChanged += CharacterTypeChanged;
+
+                    // we initialize the health bar with our current character type as well
+                    CharacterTypeChanged(m_NetworkCharacterTypeState.CharacterType.Value,
+                        m_NetworkCharacterTypeState.CharacterType.Value);
                 }
             }
-
-            m_NetworkHealthState.HitPointsReplenished += AddUIHealth;
-            m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
         }
 
-        void AddUIHealth()
+        void OnDisable()
         {
-            if (m_UIHealth != null)
+            if (!m_DisplayHealth)
             {
                 return;
             }
 
-            m_UIHealth = Instantiate(m_UIHealthPrefab, m_CanvasTransform);
-            m_UIHealthRectTransform = m_UIHealth.GetComponent<RectTransform>();
-            m_UIHealth.Initialize(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
-            m_UIHealthActive = true;
+            if (m_NetworkCharacterTypeState != null)
+            {
+                m_NetworkCharacterTypeState.CharacterType.OnValueChanged -= CharacterTypeChanged;
+            }
+
+            if (m_NetworkHealthState != null)
+            {
+                m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
+                m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
+            }
+        }
+
+        void CharacterTypeChanged(CharacterTypeEnum previousValue, CharacterTypeEnum newValue)
+        {
+            var characterClass = GameDataSource.Instance.CharacterDataByType[newValue];
+            if (characterClass)
+            {
+                m_BaseHP = characterClass.BaseHP;
+                DisplayUIHealth();
+            }
+        }
+
+        void DisplayUIName()
+        {
+            if (m_NetworkNameState == null)
+            {
+                return;
+            }
+
+            if (m_UIState == null)
+            {
+                SpawnUIState();
+            }
+
+            m_UIState.DisplayName(m_NetworkNameState.Name);
+            m_UIStateActive = true;
+        }
+
+        void DisplayUIHealth()
+        {
+            if (m_NetworkHealthState == null)
+            {
+                return;
+            }
+
+            if (m_UIState == null)
+            {
+                SpawnUIState();
+            }
+
+            m_UIState.DisplayHealth(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
+            m_UIStateActive = true;
+
+            m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
+            m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
+        }
+
+        void SpawnUIState()
+        {
+            m_UIState = Instantiate(m_UIStatePrefab, m_CanvasTransform);
+            m_UIStateRectTransform = m_UIState.GetComponent<RectTransform>();
         }
 
         void RemoveUIHealth()
@@ -103,15 +184,24 @@ namespace BossRoom
         {
             yield return new WaitForSeconds(k_DurationSeconds);
 
-            Destroy(m_UIHealth.gameObject);
-            m_UIHealthActive = false;
+            m_UIState.HideHealth();
+            m_UIStateActive = false;
         }
 
         void LateUpdate()
         {
-            if (m_UIHealthActive)
+            if (m_UIStateActive)
             {
-                m_UIHealthRectTransform.position = m_Camera.WorldToScreenPoint(m_TransformToTrack.position);
+                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_TransformToTrack.position) +
+                    m_VerticalOffset;
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (m_UIState)
+            {
+                Destroy(m_UIState.gameObject);
             }
         }
     }

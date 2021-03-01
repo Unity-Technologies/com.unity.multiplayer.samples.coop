@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -8,6 +9,8 @@ namespace BossRoom.Server
         private ActionPlayer m_ActionPlayer;
         private ServerCharacter m_Foe;
         private ActionType m_CurAttackAction;
+
+        List<ActionType> m_AttackActions;
 
         public AttackAIState(AIBrain brain, ActionPlayer actionPlayer)
         {
@@ -22,7 +25,22 @@ namespace BossRoom.Server
 
         public override void Initialize()
         {
-            m_CurAttackAction = m_Brain.CharacterData.Skill1;
+            m_AttackActions = new List<ActionType>();
+            if (m_Brain.CharacterData.Skill1 != ActionType.None)
+            {
+                m_AttackActions.Add(m_Brain.CharacterData.Skill1);
+            }
+            if (m_Brain.CharacterData.Skill2 != ActionType.None)
+            {
+                m_AttackActions.Add(m_Brain.CharacterData.Skill2);
+            }
+            if (m_Brain.CharacterData.Skill3 != ActionType.None)
+            {
+                m_AttackActions.Add(m_Brain.CharacterData.Skill3);
+            }
+
+            // pick a starting attack action from the possible
+            m_CurAttackAction = m_AttackActions[Random.Range(0, m_AttackActions.Count)];
 
             // clear any old foe info; we'll choose a new one in Update()
             m_Foe = null;
@@ -63,6 +81,11 @@ namespace BossRoom.Server
                         return;
                     }
                 }
+                else if (info.ActionTypeEnum == ActionType.Stun)
+                {
+                    // we can't do anything right now. We're stunned!
+                    return;
+                }
             }
 
             // Choose whether we can attack our foe directly, or if we need to get closer first
@@ -99,9 +122,10 @@ namespace BossRoom.Server
             return closestFoe;
         }
 
-
         private ActionDescription GetCurrentAttackInfo()
         {
+            m_CurAttackAction = m_AttackActions[Random.Range(0, m_AttackActions.Count)];
+
             ActionDescription result;
             bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out result);
             if (!found)

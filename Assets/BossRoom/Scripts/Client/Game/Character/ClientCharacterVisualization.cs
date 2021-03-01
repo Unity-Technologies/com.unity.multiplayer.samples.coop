@@ -42,6 +42,9 @@ namespace BossRoom.Visual
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
+        /// Player characters need to report health changes and chracter info to the PartyHUD
+        private Visual.PartyHUD m_PartyHUD;
+
         private float m_SmoothedSpeed;
 
         int m_AliveStateTriggerID;
@@ -69,8 +72,14 @@ namespace BossRoom.Visual
 
             m_NetState = parentTransform.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
+            m_NetState.CancelActionEventClient += CancelActionFX;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
+            m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
+            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
+            // we should investigate for a way to have the imps already appear as down when connecting.
+            // todo gomps-220
+            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent = parentTransform;
@@ -94,15 +103,29 @@ namespace BossRoom.Visual
             // ...and visualize the current char-select value that we know about
             OnCharacterAppearanceChanged(0, m_NetState.CharacterAppearance.Value);
 
+
+            // ...and visualize the current char-select value that we know about
+            if (m_CharacterSwapper)
+            {
+                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
+            }
+
             if (!m_NetState.IsNpc)
             {
-                var model = GetComponent<CharacterSwap>();
-                model.SwapToModel(m_NetState.CharacterAppearance.Value);
-            }
+                // track health for heroes
+                m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
+
+                Client.CharacterSwap model = GetComponent<Client.CharacterSwap>();
+                int heroAppearance = m_NetState.CharacterAppearance.Value;
+                model.SwapToModel(heroAppearance);
+
+                // find the emote bar to track its buttons
+                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
+                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
 
             if (IsLocalPlayer)
             {
-                var data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
+                ActionRequestData data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
                 m_ActionViz.PlayAction(ref data);
                 AttachCamera();
             }
@@ -116,6 +139,16 @@ namespace BossRoom.Visual
         private void PerformActionFX(ActionRequestData data)
         {
             m_ActionViz.PlayAction(ref data);
+        }
+
+        private void CancelActionFX()
+        {
+            m_ActionViz.CancelActions();
+        }
+
+        private void OnStoppedChargingUp()
+        {
+            m_ActionViz.OnStoppedChargingUp();
         }
 
         private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
@@ -133,6 +166,18 @@ namespace BossRoom.Visual
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
+            }
+        }
+
+        private void OnHealthChanged(int previousValue, int newValue)
+        {
+            if (IsLocalPlayer)
+            {
+                this.m_PartyHUD.SetHeroHealth(newValue);
+            }
+            else
+            {
+                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkId, newValue);
             }
         }
 
@@ -169,15 +214,6 @@ namespace BossRoom.Visual
                 ZoomCamera(scroll);
             }
 
-        }
-
-        private void OnDestroy()
-        {
-            if( m_ActionViz != null )
-            {
-                //make sure we don't leave any dangling effects playing if we've been destroyed.
-                m_ActionViz.CancelAll();
-            }
         }
 
         public void OnAnimEvent(string id)

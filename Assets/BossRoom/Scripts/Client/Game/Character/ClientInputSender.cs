@@ -68,6 +68,7 @@ namespace BossRoom.Client
         private BaseActionInput m_CurrentSkillInput = null;
         private bool m_MoveRequest = false;
 
+
         Camera m_MainCamera;
 
         public event Action<Vector3> OnClientClick;
@@ -104,7 +105,6 @@ namespace BossRoom.Client
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
-
             m_MainCamera = Camera.main;
         }
 
@@ -141,6 +141,7 @@ namespace BossRoom.Client
                     }
                 }
             }
+
             m_ActionRequestCount = 0;
 
 

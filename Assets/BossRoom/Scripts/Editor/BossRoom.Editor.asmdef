@@ -2,7 +2,7 @@
     "name": "BossRoom.Editor",
     "rootNamespace": "",
     "references": [
-        "GUID:1d78c7ef94888e246b441b10d1003f67"
+        "Unity.Multiplayer.MultiPie.Editor"
     ],
     "includePlatforms": [
         "Editor"

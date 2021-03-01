@@ -1,3 +1,5 @@
+using MLAPI.Serialization;
+using System;
 using UnityEngine;
 
 namespace BossRoom
@@ -21,11 +23,14 @@ namespace BossRoom
         [Tooltip("How much it costs in Mana to play this Action")]
         public int ManaCost;
 
-        [Tooltip("How how the Action performer can be from the Target, or how far the action can go (for an untargeted action like a bowshot")]
+        [Tooltip("How far the Action performer can be from the Target")]
         public float Range;
 
         [Tooltip("Duration in seconds that this Action takes to play")]
         public float DurationSeconds;
+
+        [Tooltip("Duration in seconds that this Action takes to cooldown, after DurationSeconds has elapsed.")]
+        public float CooldownSeconds;
 
         [Tooltip("Time when the Action should do its \"main thing\" (e.g. when a melee attack should apply damage")]
         public float ExecTimeSeconds;
@@ -33,8 +38,11 @@ namespace BossRoom
         [Tooltip("How long the effect this Action leaves behind will last, in seconds")]
         public float EffectDurationSeconds;
 
-        [Tooltip("The primary Animation action that gets played when visualizing this Action")]
+        [Tooltip("The primary Animation trigger that gets raised when visualizing this Action")]
         public string Anim;
+
+        [Tooltip("The auxiliary Animation trigger for this Action (e.g. to end an animation loop)")]
+        public string Anim2;
 
         [Tooltip("The reaction anim to play in response to being hit by this skill")]
         public string ReactAnim;
@@ -66,15 +74,30 @@ namespace BossRoom
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;
 
-        [Tooltip("If this action spawns GameObjects, list their prefabs here")]
-        public GameObject[] Spawns;
+        [Serializable]
+        public struct ProjectileInfo
+        {
+            [Tooltip("Prefab used for the projectile")]
+            public GameObject ProjectilePrefab;
+            [Tooltip("Projectile's speed in meters/second")]
+            public float Speed_m_s;
+            [Tooltip("Maximum range of the Projectile")]
+            public float Range;
+            [Tooltip("Damage of the Projectile on hit")]
+            public int Damage;
+            [Tooltip("Max number of enemies this projectile can hit before disappearing")]
+            public int MaxVictims;
+        }
 
-        [Tooltip("If this Action spawns a projectile, how fast should that projectile move? (meters/second)")]
-        public float ProjectileSpeed_m_s;
+        [Tooltip("If this Action spawns a projectile, describes it. (\"Charged\" projectiles can list multiple possible shots, ordered from weakest to strongest)")]
+        public ProjectileInfo[] Projectiles;
+
+        [Tooltip("If this action spawns miscellaneous GameObjects, list their prefabs here (but not projectiles -- those are separate, see above!)")]
+        public GameObject[] Spawns;
 
         [Tooltip("If true, this action affects friendly targets, if false Unfriendly. Not all ActionLogics use this parameter.")]
         public bool IsFriendly;
-		
+
         [Header("In-game description info (Only used for player abilities!)")]
         [Tooltip("If this Action describes a player ability, this is the ability's iconic representation")]
         public Sprite Icon;

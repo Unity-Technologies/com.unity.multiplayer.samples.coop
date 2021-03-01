@@ -45,8 +45,16 @@ namespace BossRoom
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
 
+        public NetworkHealthState HealthState
+        {
+            get
+            {
+                return m_NetworkHealthState;
+            }
+        }
+
         /// <summary>
-        /// The active target of this character. 
+        /// The active target of this character.
         /// </summary>
         public NetworkedVarULong TargetId { get; } = new NetworkedVarULong();
 
@@ -59,7 +67,6 @@ namespace BossRoom
             set { m_NetworkHealthState.HitPoints.Value = value; }
         }
 
-        /// <summary>
         /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
@@ -90,12 +97,24 @@ namespace BossRoom
         NetworkCharacterTypeState m_NetworkCharacterTypeState;
 
         /// <summary>
-        /// Current HP. This value is populated at startup time from CharacterClass data.
+        /// Character Type. This value is populated during character selection.
         /// </summary>
         public CharacterTypeEnum CharacterType
         {
             get { return m_NetworkCharacterTypeState.CharacterType.Value; }
             set { m_NetworkCharacterTypeState.CharacterType.Value = value; }
+        }
+
+        [SerializeField]
+        NetworkNameState m_NetworkNameState;
+
+        /// <summary>
+        /// Current nametag. This value is populated at startup time from CharacterClass data.
+        /// </summary>
+        public string Name
+        {
+            get { return m_NetworkNameState.Name.Value; }
+            set { m_NetworkNameState.Name.Value = value; }
         }
 
         /// <summary>
@@ -120,7 +139,7 @@ namespace BossRoom
             ReceivedClientInput?.Invoke(movementTarget);
         }
 
-        public void SetPlayer(CharacterTypeEnum playerType, int playerAppearance)
+        public void SetCharacterType(CharacterTypeEnum playerType, int playerAppearance)
         {
             CharacterType = playerType;
             CharacterAppearance.Value = playerAppearance;
@@ -145,13 +164,20 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Server->Client RPC that broadcasts this action play to all clients.
+        /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
         /// </summary>
-        /// <param name="data">The data associated with this Action, including what action type it is.</param>
+        public event Action CancelActionEventClient;
+
         [ClientRpc]
         public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);
+        }
+
+        [ClientRpc]
+        public void RecvCancelActionClientRpc()
+        {
+            CancelActionEventClient?.Invoke();
         }
 
         /// <summary>
@@ -181,6 +207,28 @@ namespace BossRoom
         public void RecvPerformHitReactionClientRPC()
         {
             OnPerformHitReaction?.Invoke();
+        }
+
+        /// <summary>
+        /// Called on server when the character's client decides they have stopped "charging up" an attack.
+        /// </summary>
+        public event Action OnStopChargingUpServer;
+
+        /// <summary>
+        /// Called on all clients when this character has stopped "charging up" an attack.
+        /// </summary>
+        public event Action OnStopChargingUpClient;
+
+        [ServerRpc]
+        public void RecvStopChargingUpServerRpc()
+        {
+            OnStopChargingUpServer?.Invoke();
+        }
+
+        [ClientRpc]
+        public void RecvStopChargingUpClientRpc()
+        {
+            OnStopChargingUpClient?.Invoke();
         }
     }
 }

@@ -315,7 +315,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2654041084733989078, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
+  - {fileID: 2100000, guid: 3091d04ea639b8c48bbdd46bf02f2875, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -829,7 +829,7 @@ GameObject:
   - component: {fileID: 4099936395697225189}
   - component: {fileID: 7927965616957794207}
   m_Layer: 6
-  m_Name: Boss2
+  m_Name: Boss_deprecated
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1636,7 +1636,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2654041084733989078, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
+  - {fileID: 2100000, guid: 3091d04ea639b8c48bbdd46bf02f2875, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

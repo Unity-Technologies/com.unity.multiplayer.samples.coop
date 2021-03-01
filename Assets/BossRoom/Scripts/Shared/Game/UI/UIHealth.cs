@@ -20,7 +20,7 @@ namespace BossRoom
 
             m_HitPointsSlider.minValue = 0;
             m_HitPointsSlider.maxValue = maxValue;
-            m_HitPointsSlider.value = maxValue;
+            m_HitPointsSlider.value = networkedHealth.Value;
 
             m_NetworkedHealth.OnValueChanged += HealthChanged;
         }
