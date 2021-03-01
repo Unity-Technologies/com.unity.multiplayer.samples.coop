@@ -85,13 +85,6 @@
       },
       "hash": "54393f36bfd5c2fd5d963ef5fbd8e98e8c799dc8"
     },
-    "com.unity.multiplayer.multipie": {
-      "version": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.multipie.git#ec513520a8bba970366c572e88613664a2054353",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "2e972fb8bc802a4070d6f5d282210a2bfb8e8480"
-    },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
       "depth": 0,
