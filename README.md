@@ -8,7 +8,6 @@ Our intention is that you can use everything in this project as a starting point
 
 ## Prerequisites
 ```
-Unity version: 2020.2.0f1
 Platforms    : Windows, Mac
 ```
 
@@ -16,6 +15,8 @@ Platforms    : Windows, Mac
 
 > __IMPORTANT__: 
 > This project uses Git Large Files Support (LFS). See the [link with Git LFS installation options](https://git-lfs.github.com/).
+> 
+> Downloading the project using `Download` button would not work,
 
 The project uses the `git-flow` branching strategy, as such:
  - `develop` branch contains all active development
@@ -49,6 +50,9 @@ To make a build in the menu bar press _File/Build Settings_ and then press **Bui
 
 After the build has completed you can launch several instances of the built executable to be able to both host and join a game.
 
+> Mac users:, to run multiple instances of the same app, you need to use the command line.
+> Run `open -n BossRoom.app`
+
 
 ## Testing multiplayer over internet
 
@@ -66,21 +70,3 @@ The game is server-authoritative, with latency-masking animations. Position upda
 Code is organized into three separate assemblies: **Client**, **Shared** and **Server** which reference each other when appropriate.
 
 For an in-depth overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
-
-### Key classes
-
-**Shared**
- - `NetworkCharacterState` Contains all NetworkedVars, and both server and client RPC endpoints. The RPC endpoints only read out the call parameters and then raise events from them; they don’t do any logic internally. 
-
-**Server**
- - `ServerCharacterMovement` manages the movement Finite State Machine (FSM) on the server. Updates the NetworkedVars that synchronize position, rotation and movement speed of the entity on its FixedUpdate.
- - `ServerCharacter` has the AIBrain, as well as the ActionQueue. Receives action requests (either from the AIBrain in case of NPCs, or user input in case of player characters), and executes them.
- - `AIBrain` contains main AI FSM.  
- - `Action` is the abstract base class for all server actions
-   - `MeleeAction`, `AoeAction`, etc. contain logic for their respective action types. 
-
-**Client**
- - `ClientCharacterComponent` primarily is a host for the running `ActionFX` class. This component will probably be on the graphics game object, rather than the sim game object. 
- - `CliemtInputComponent`. On a shadow entity, will suicide. Listens to inputs, interprets them, and then calls appropriate RPCs on the RPCStateComponent. 
- - `ActionFX` is the abstract base class for all the client-side action visualizers
-   - `MeleeActionFX`, `AoeActionFX`, etc. Contain graphics information for their respective action types. 

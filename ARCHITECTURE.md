@@ -21,21 +21,25 @@ For an in-depth overview of the project's architecture please check out our [ARC
 
 ### Key classes
 
+
+### Key classes
+
 **Shared**
  - `NetworkCharacterState` Contains all NetworkedVars, and both server and client RPC endpoints. The RPC endpoints only read out the call parameters and then raise events from them; they don’t do any logic internally. 
 
 **Server**
- - `ServerCharacterMovement` manages the movement FSM on the server (example states: IDLE, PATHPLANNING, PATHFOLLOWING, FREEMOVING). Updates the NetworkedTransform of the entity on its FixedUpdate
+ - `ServerCharacterMovement` manages the movement Finite State Machine (FSM) on the server. Updates the NetworkedVars that synchronize position, rotation and movement speed of the entity on its FixedUpdate.
  - `ServerCharacter` has the AIBrain, as well as the ActionQueue. Receives action requests (either from the AIBrain in case of NPCs, or user input in case of player characters), and executes them.
  - `AIBrain` contains main AI FSM.  
  - `Action` is the abstract base class for all server actions
    - `MeleeAction`, `AoeAction`, etc. contain logic for their respective action types. 
 
 **Client**
- - `ClientCharacterComponent` primarily is a host for the running `ActionFX` class. This component will probably be on the graphics GO, rather than the sim GO. 
- - `CliemtInputComponent`. On a shadow entity, will suicide. Listens to inputs, interprets them, and then calls appropriate RPCs on the RPCStateComponent. 
+ - `ClientCharacterVisualization` primarily is a host for the running `ActionFX` class.
+ - `ClientInputSender `. On a shadow entity, will self-destruct. Listens to inputs, interprets them, and then calls appropriate RPCs on the RPCStateComponent. 
  - `ActionFX` is the abstract base class for all the client-side action visualizers
    - `MeleeActionFX`, `AoeActionFX`, etc. Contain graphics information for their respective action types. 
+
    
 
 ### Movement action flow
