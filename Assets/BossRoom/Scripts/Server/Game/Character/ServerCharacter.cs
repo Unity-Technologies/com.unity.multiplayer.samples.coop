@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using MLAPI;
-using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
     [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
-    public class ServerCharacter : MLAPI.NetworkedBehaviour
+    public class ServerCharacter : NetworkedBehaviour
     {
         public NetworkCharacterState NetState { get; private set; }
 
@@ -35,7 +34,7 @@ namespace BossRoom.Server
 
         [SerializeField]
         [Tooltip("Setting negative value disables destroying object after it is killed.")]
-        private float _killedDestroyDelaySeconds = 3.0f;
+        private float m_KilledDestroyDelaySeconds = 3.0f;
 
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
@@ -158,7 +157,7 @@ namespace BossRoom.Server
 
         IEnumerator KilledDestroyProcess()
         {
-            yield return new WaitForSeconds(_killedDestroyDelaySeconds);
+            yield return new WaitForSeconds(m_KilledDestroyDelaySeconds);
 
             if (NetworkedObject != null)
             {
@@ -197,7 +196,7 @@ namespace BossRoom.Server
 
                 if (IsNpc)
                 {
-                    if (_killedDestroyDelaySeconds >= 0.0f && NetState.NetworkLifeState.Value != LifeState.Dead)
+                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.NetworkLifeState.Value != LifeState.Dead)
                     {
                         StartCoroutine(KilledDestroyProcess());
                     }
