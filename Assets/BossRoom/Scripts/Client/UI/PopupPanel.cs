@@ -32,13 +32,14 @@ namespace BossRoom.Visual
         [SerializeField]
         private GameObject m_NameDisplayGO;
 
-        private OnConfirmFunction m_ConfirmFunction;
+        /// <summary>
+        /// Confirm function invoked when confirm is hit on popup. The meaning of the arguments may vary by popup panel, but
+        /// in the initial case of the login popup, they represent the IP Address input, and the Player Name.
+        /// </summary>
+        private System.Action<string,string> m_ConfirmFunction;
 
 
         private const string k_DefaultConfirmText = "OK";
-
-
-        public delegate void OnConfirmFunction(string ipInput, string playerName);
 
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace BossRoom.Visual
         /// <param name="confirmCallback">  The delegate to invoke when the player confirms.  It sends what the player input.</param>
         /// <param name="defaultInput"> If Set, will default the input value to this string</param>
         public void SetupEnterGameDisplay(string titleText, string mainText, string inputFieldText,
-            string confirmationText, OnConfirmFunction confirmCallback, string defaultInput = "")
+            string confirmationText, System.Action<string,string> confirmCallback, string defaultInput = "")
         {
             //Clear any previous settings of the Panel first
             ResetState();

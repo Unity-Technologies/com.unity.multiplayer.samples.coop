@@ -39,7 +39,7 @@ namespace BossRoom.Visual
             m_ResponsePopup.SetupEnterGameDisplay("Host Game", "Input the IP to host on", "iphost", "Confirm", (string IPinput, string playerName) =>
             {
                 string ipAddress = IPinput;
-                if (IPinput == "")
+                if (string.IsNullOrEmpty(IPinput) )
                 {
                     ipAddress = k_DefaultIP;
                 }
@@ -54,7 +54,7 @@ namespace BossRoom.Visual
             m_ResponsePopup.SetupEnterGameDisplay("Join Game", "Input the host IP below", "iphost", "Join", (string IPinput, string playerName) =>
             {
                 string ipAddress = IPinput;
-                if (IPinput == "")
+                if (string.IsNullOrEmpty(IPinput))
                 {
                     ipAddress = k_DefaultIP;
                 }
