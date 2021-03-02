@@ -6,7 +6,6 @@ BossRoom is a fully functional co-op multiplayer RPG made in Unity and MLAPI. It
 Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 
-## Prerequisites
 ```
 Platforms : Windows, Mac
 ```
