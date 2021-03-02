@@ -57,6 +57,11 @@ namespace BossRoom
         public event Action<ulong, int> ClientSceneChanged;
 
         public MLAPI.NetworkingManager NetManager { get; private set; }
+		
+        /// <summary>
+        /// the name of the player chosen at game start
+        /// </summary>
+        public string PlayerName;
 
         void Start()
         {

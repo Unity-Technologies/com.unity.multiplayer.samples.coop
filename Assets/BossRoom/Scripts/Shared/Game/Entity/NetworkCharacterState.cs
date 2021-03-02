@@ -59,7 +59,7 @@ namespace BossRoom
         public NetworkedVarULong TargetId { get; } = new NetworkedVarULong();
 
         /// <summary>
-        /// Current HP. This value is populated at startup time from CharacterClass data.
+        /// Current HP. This value is populated at startup time from CharacterClass data. 
         /// </summary>
         public int HitPoints
         {
@@ -67,13 +67,13 @@ namespace BossRoom
             set { m_NetworkHealthState.HitPoints.Value = value; }
         }
 
-        /// Current Mana. This value is populated at startup time from CharacterClass data.
+        /// Current Mana. This value is populated at startup time from CharacterClass data. 
         /// </summary>
         [HideInInspector]
         public NetworkedVarInt Mana;
 
         /// <summary>
-        /// Current LifeState. Only Players should enter the FAINTED state.
+        /// Current LifeState. Only Players should enter the FAINTED state. 
         /// </summary>
         public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
 
@@ -97,7 +97,7 @@ namespace BossRoom
         NetworkCharacterTypeState m_NetworkCharacterTypeState;
 
         /// <summary>
-        /// Current HP. This value is populated at startup time from CharacterClass data.
+        /// Character Type. This value is populated during character selection.
         /// </summary>
         public CharacterTypeEnum CharacterType
         {
@@ -119,7 +119,7 @@ namespace BossRoom
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
-        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
+        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc). 
         /// </summary>
         [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
         public NetworkedVarInt CharacterAppearance;
@@ -159,16 +159,17 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventServer;
 
         /// <summary>
-        /// This event is raised on the client when an action is being played back.
+        /// This event is raised on the client when an action is being played back. 
         /// </summary>
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
+        /// Client->Server RPC that sends a request to play an action.
         /// </summary>
         public event Action CancelActionEventClient;
 
         [ClientRpc]
+        /// Server->Client RPC that broadcasts this action play to all clients.
         public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);

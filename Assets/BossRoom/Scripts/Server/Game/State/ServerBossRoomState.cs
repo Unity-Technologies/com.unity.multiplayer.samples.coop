@@ -71,6 +71,7 @@ namespace BossRoom.Server
         public override void NetworkStart()
         {
             base.NetworkStart();
+
             if (!IsServer)
             {
                 enabled = false;
@@ -143,10 +144,11 @@ namespace BossRoom.Server
 
             var lobbyResults = GetLobbyResultsForClient(clientId);
 
-            netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
+            var playerData = m_NetPortal.GetComponent<ServerGameNetPortal>().GetPlayerData(clientId);
+            string playerName = playerData != null ? playerData.Value.m_PlayerName : ("Player" + lobbyResults.PlayerNumber);
 
-            // fetch player name stored in lobby data; for now use player + PlayerNumber
-            netState.Name = "Player" + lobbyResults.PlayerNumber;
+            netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
+            netState.Name = playerName;
 
             // spawn players characters with destroyWithScene = true
             newPlayer.SpawnAsPlayerObject(clientId,null,true);

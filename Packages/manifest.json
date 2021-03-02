@@ -9,7 +9,6 @@
     "com.unity.ide.vscode": "1.2.3",
     "com.unity.learn.iet-framework": "1.2.1",
     "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#54393f36bfd5c2fd5d963ef5fbd8e98e8c799dc8",
-    "com.unity.multiplayer.multipie": "https://git@github.com/Unity-Technologies/com.unity.multiplayer.multipie.git#ec513520a8bba970366c572e88613664a2054353",
     "com.unity.postprocessing": "2.3.0",
     "com.unity.test-framework": "1.1.19",
     "com.unity.textmeshpro": "3.0.1",
