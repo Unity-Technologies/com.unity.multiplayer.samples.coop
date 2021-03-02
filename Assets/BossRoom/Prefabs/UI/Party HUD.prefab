@@ -1924,14 +1924,14 @@ MonoBehaviour:
   - {fileID: 5210474332457901141}
   - {fileID: 5210474332177170891}
   m_PortraitAppearances:
-  - {fileID: -5935337979838524249, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   - {fileID: -6710387467502326305, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: -5935337979838524249, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   - {fileID: 5640192408203338092, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   - {fileID: -9029998053583639580, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   - {fileID: 6346260615161199150, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   - {fileID: 4576935326401567667, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
-  - {fileID: 2069804280958334919, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   - {fileID: -4938242728237072438, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
+  - {fileID: 2069804280958334919, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   m_ClassSymbols:
   - {fileID: -720397744737086521, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
   - {fileID: 1717079544046338189, guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44, type: 3}
