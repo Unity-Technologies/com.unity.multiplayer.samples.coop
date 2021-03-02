@@ -110,7 +110,8 @@ MonoBehaviour:
     - CharSelect
     - SampleScene
     - DungeonTest
-    - 
+    - PostGame
+    - Startup
     AllowRuntimeSceneChanges: 1
     NetworkedPrefabs:
     - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
@@ -128,6 +129,8 @@ MonoBehaviour:
     - Prefab: {fileID: 7788790407431586438, guid: 7c9c0bade0c78da4b9825e198685ac1e, type: 3}
       PlayerPrefab: 0
     - Prefab: {fileID: 7898142965061138134, guid: 10897010648fc204783f651034c504d9, type: 3}
+      PlayerPrefab: 0
+    - Prefab: {fileID: 7475764267130300177, guid: 462e020e721ce4543b97867020621b15, type: 3}
       PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0

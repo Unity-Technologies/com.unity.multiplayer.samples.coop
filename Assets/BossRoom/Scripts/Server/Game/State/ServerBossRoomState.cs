@@ -189,7 +189,7 @@ namespace BossRoom.Server
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
 
-            m_ServerNetPortal.SetGameWon(gameWon);
+            GameStateRelay.SetRelayObject(gameWon);
             MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
         }
 
@@ -210,6 +210,7 @@ namespace BossRoom.Server
             }
             if (Input.GetKeyDown(KeyCode.Q))
             {
+                GameStateRelay.SetRelayObject(false);
                 MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
             }
         }

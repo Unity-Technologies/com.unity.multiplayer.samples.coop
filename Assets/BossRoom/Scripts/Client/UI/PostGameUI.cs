@@ -23,6 +23,9 @@ namespace BossRoom.Visual
         private GameObject m_WaitOnHostMsg;
 
         [SerializeField]
+        private PostGameData m_PostGameData;
+
+        [SerializeField]
         private Sprite m_WinSprite;
         [SerializeField]
         private Sprite m_LoseSprite;
@@ -44,19 +47,28 @@ namespace BossRoom.Visual
                 m_WaitOnHostMsg.SetActive(true);
             }
 
+            OnGameWonChanged(0, m_PostGameData.GameBannerState.Value );
+            m_PostGameData.GameBannerState.OnValueChanged += OnGameWonChanged;
+
+        }
+
+        //this won't actually change dynamically, but using a callback robustifies us against race
+        //conditions between the PostGameState starting up, and this UI starting up.
+        private void OnGameWonChanged(byte prevVal, byte currentVal)
+        {
             // Set end message and background color based last game outcome
-            if (netPortal.LastGameWon.Value)
+            if (m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Won )
             {
                 m_EndMessage.sprite = m_WinSprite;
                 m_Background.color = Color.white;
+                m_EndMessage.color = Color.white;
             }
-            else
+            else if( m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Lost )
             {
                 m_EndMessage.sprite = m_LoseSprite;
-                m_Background.color = new Color(1.0f, 0.5f, 0.5f); 
+                m_Background.color = new Color(1.0f, 0.5f, 0.5f);
+                m_EndMessage.color = Color.white;
             }
-            // finally set message color to white to make it visible
-            m_EndMessage.color = Color.white;
         }
 
         public void OnPlayAgainClicked()

@@ -56,11 +56,6 @@ namespace BossRoom
         /// </summary>
         public event Action<ulong, int> ClientSceneChanged;
 
-        /// <summary>
-        /// When this is true, the players have defeated the Boss and deserve a victory message
-        /// </summary>
-        public MLAPI.NetworkedVar.NetworkedVarBool LastGameWon { get; } = new MLAPI.NetworkedVar.NetworkedVarBool(false);
-
         public MLAPI.NetworkingManager NetManager { get; private set; }
 
         void Start()
