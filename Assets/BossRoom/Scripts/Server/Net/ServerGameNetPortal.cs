@@ -6,11 +6,35 @@ using MLAPI.SceneManagement;
 namespace BossRoom.Server
 {
     /// <summary>
-    /// Server logic plugin for the GameNetPortal. Contains implementations for all GameNetPortal's C2S RPCs. 
+    /// Represents a single player on the game server
+    /// </summary>
+    public struct PlayerData
+    {
+        public string m_PlayerName;  //name of the player
+        public ulong m_ClientID; //the identifying id of the client
+
+        public PlayerData(string playerName, ulong clientId)
+        {
+            m_PlayerName = playerName;
+            m_ClientID = clientId;
+        }
+    }
+    /// <summary>
+    /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs. 
     /// </summary>
     public class ServerGameNetPortal : MonoBehaviour
     {
         private GameNetPortal m_Portal;
+
+        /// <summary>
+        /// Maps a given client guid to the data for a given client player.
+        /// </summary>
+        private Dictionary<string, PlayerData> m_ClientData;
+
+        /// <summary>
+        /// Map to allow us to cheaply map from guid to player data.
+        /// </summary>
+        private Dictionary<ulong, string> m_ClientIDToGuid;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage. 
         private const int k_MaxConnectPayload = 1024;
@@ -32,6 +56,9 @@ namespace BossRoom.Server
             // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
+            m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
+            m_ClientData = new Dictionary<string, PlayerData>();
+            m_ClientIDToGuid = new Dictionary<ulong, string>();
         }
 
         private void NetworkStart()
@@ -61,11 +88,14 @@ namespace BossRoom.Server
                     m_ClientSceneMap[m_Portal.NetManager.LocalClientId] = ServerScene;
                 }
             }
+
+
         }
 
         /// <summary>
-        /// Test if all connected clients are in the server scene. 
         /// </summary>
+        /// <param name="clientId"> guid of the client whose data is requested</param>
+        /// <returns>Player data struct matching the given ID</returns>
         public bool AreAllClientsInServerScene()
         {
             foreach( var kvp in m_ClientSceneMap )
@@ -85,6 +115,35 @@ namespace BossRoom.Server
         {
             return m_ClientSceneMap.TryGetValue(clientId, out int clientScene) && clientScene == ServerScene;
         }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="clientId"> guid of the client whose data is requested</param>
+        /// <returns>Player data struct matching the given ID</returns>
+        public PlayerData? GetPlayerData(ulong clientId)
+        {
+            //First see if we have a guid matching the clientID given.
+
+            if (m_ClientIDToGuid.TryGetValue(clientId, out string clientguid))
+            {
+                if (m_ClientData.TryGetValue(clientguid, out PlayerData data))
+                {
+                    return data;
+                }
+                else
+                {
+                    Debug.Log("No PlayerData of matching guid found");
+                }
+            }
+            else
+            {
+                Debug.Log("No client guid found mapped to the given client ID");
+            }
+            return null;
+        }
+
+
 
 
         /// <summary>
@@ -143,6 +202,11 @@ namespace BossRoom.Server
             //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect. 
             Debug.Log("host ApprovalCheck: client guid was: " + payloadConfig["client_guid"]);
 
+            //Populate our dictionaries with the playerData
+            m_ClientIDToGuid.Add(clientId, payloadConfig["client_guid"]);
+
+            m_ClientData.Add(payloadConfig["client_guid"], new PlayerData(payloadConfig["player_name"], clientId));
+
 
             //TODO: GOMPS-79 handle different error cases. 
 
@@ -152,6 +216,15 @@ namespace BossRoom.Server
             //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably 
             //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection. 
             m_Portal.S2CConnectResult(clientId, ConnectStatus.Success);
+        }
+
+        /// <summary>
+        /// Called after the server is created-  This is primarily meant for the host server to clean up or handle/set state as its starting up
+        /// </summary>
+        private void ServerStartedHandler()
+        {
+            m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, m_Portal.NetManager.LocalClientId));
+            m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
         }
 
     }
