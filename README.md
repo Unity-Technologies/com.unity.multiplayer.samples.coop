@@ -8,15 +8,13 @@ Our intention is that you can use everything in this project as a starting point
 
 ## Prerequisites
 ```
-Platforms    : Windows, Mac
+Platforms : Windows, Mac
 ```
 
 ## Getting the project
 
 > __IMPORTANT__: 
 > This project uses Git Large Files Support (LFS). See the [link with Git LFS installation options](https://git-lfs.github.com/).
-> 
-> Downloading the project using `Download` button would not work,
 
 The project uses the `git-flow` branching strategy, as such:
  - `develop` branch contains all active development
@@ -26,7 +24,10 @@ To get the project on your machine you need to clone the repository from GitHub 
 ```
 git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git
 ```
-Alternatively you can download a release version from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
+
+Alternatively you can download the project:
+ - Click the green `Code` button and then choose to download zip archive. Remember, that you would download the branch that you are currently viewing in Github.
+ - A release version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
 
 
 ## Opening the project for the first time
@@ -50,13 +51,15 @@ To make a build in the menu bar press _File/Build Settings_ and then press **Bui
 
 After the build has completed you can launch several instances of the built executable to be able to both host and join a game.
 
-> Mac users:, to run multiple instances of the same app, you need to use the command line.
+> Mac users: to run multiple instances of the same app, you need to use the command line.
 > Run `open -n BossRoom.app`
 
 
 ## Testing multiplayer over internet
 
 Running the game over internet currently requires setting up a [Photon Transport for MLAPI](https://github.com/Unity-Technologies/mlapi-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.  
+
+Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. BossRoom uses `UDP` and needs a `9998` external port to be open. 
 
 ------------------------------------------
 
