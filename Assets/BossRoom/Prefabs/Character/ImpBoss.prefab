@@ -87,6 +87,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3290951984472920787, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_KilledDestroyDelaySeconds
+      value: -1
+      objectReference: {fileID: 0}
     - target: {fileID: 3429869860599894341, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: CharacterType.InternalValue
       value: 5
@@ -133,6 +137,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 3688950541947916327}
     m_Modifications:
+    - target: {fileID: 234724737205816310, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 22100000, guid: 8edd57abbb5551d47b79195d80822b16, type: 2}
     - target: {fileID: 6170428688339538316, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
       propertyPath: m_RootOrder
       value: 0
