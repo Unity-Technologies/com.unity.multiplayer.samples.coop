@@ -63,6 +63,11 @@ namespace BossRoom.Server
             }
         }
 
+        public void SetGameWon(bool playersWon)
+        {
+            m_Portal.LastGameWon.Value = playersWon;
+        }
+
         /// <summary>
         /// Test if all connected clients are in the server scene. 
         /// </summary>

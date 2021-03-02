@@ -175,6 +175,9 @@ namespace BossRoom.Visual
 
         private void OnHealthChanged(int previousValue, int newValue)
         {
+            // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
+            if (m_PartyHUD == null) { return; }
+
             if (IsLocalPlayer)
             {
                 this.m_PartyHUD.SetHeroHealth(newValue);
