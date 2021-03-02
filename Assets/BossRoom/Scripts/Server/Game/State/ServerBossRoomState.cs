@@ -131,6 +131,7 @@ namespace BossRoom.Server
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            if (m_NetPortal==null) { return; }
             m_NetPortal.ClientSceneChanged -= OnClientSceneChanged;
         }
 
