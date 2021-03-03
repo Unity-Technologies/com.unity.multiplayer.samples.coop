@@ -36,8 +36,8 @@ Once you have downloaded the project the steps below should get you up and runni
  	- Make sure to include standalone support for Windows/Mac in your installation. 
  - Add the project in _Unity Hub_ by clicking on **Add** button and pointing it to the root folder of the downloaded project.
  	- The first time you open the project Unity will import all assets, which will take longer than usual - it is normal.
- - Once the editor is ready, navigate to the _Project_ window and open the _Project/MainMenu_ scene.
-![](Documentation/Images/ProjectWindowMainMenuScene.png)
+ - Once the editor is ready, navigate to the _Project_ window and open the _Project/Startup_ scene.
+![](Documentation/Images/StartupScene.png)
  - From there you can click the **Play** button. You can host a new game or join an existing game using the in-game UI.
 
 
