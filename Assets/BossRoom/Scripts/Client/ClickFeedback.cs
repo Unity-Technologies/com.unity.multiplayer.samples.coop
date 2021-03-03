@@ -13,7 +13,7 @@ namespace BossRoom.Client
     GameObject m_FeedbackPrefab;
     GameObject m_FeedbackObj;
     ClientInputSender m_ClientSender;
-    private NetworkedObject m_NetworkedObject;
+    NetworkedObject m_NetworkedObject;
 
     private const float HOVER_HEIGHT = .1f;
 
@@ -43,7 +43,7 @@ namespace BossRoom.Client
 
     private void OnDestroy()
     {
-        if (m_NetworkedObject == null || !m_NetworkedObject.IsLocalPlayer)
+        if (m_NetworkedObject != null && m_NetworkedObject.IsLocalPlayer)
         {
             m_ClientSender.OnClientClick -= onClick;
         }
