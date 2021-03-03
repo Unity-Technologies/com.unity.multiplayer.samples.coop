@@ -161,11 +161,10 @@ namespace BossRoom.Server
             if (lifeState == LifeState.Fainted)
             {
                 // Check the life state of all players in the scene
-                GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
-                foreach (GameObject p in players)
+                foreach (var p in NetworkingManager.Singleton.ConnectedClientsList )
                 {
                     // if any player is alive just retrun
-                    var netState = p.GetComponent<NetworkCharacterState>();
+                    var netState = p.PlayerObject.GetComponent<NetworkCharacterState>();
                     if ( netState.NetworkLifeState.Value == LifeState.Alive ) { return; }
                 }
 
@@ -178,7 +177,6 @@ namespace BossRoom.Server
         // When the Boss dies, we also check to see if the game is over
         private void OnBossLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
-            // If this Hero is down, check the rest of the party also
             if (lifeState == LifeState.Dead)
             {
                 // Boss is dead - set game won to true
