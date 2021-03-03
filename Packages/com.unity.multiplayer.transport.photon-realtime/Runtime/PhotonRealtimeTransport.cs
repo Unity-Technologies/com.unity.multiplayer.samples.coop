@@ -53,8 +53,8 @@ namespace MLAPI.Transports
 
         bool m_IsHostOrServer;
 
-        readonly Dictionary<string, byte> m_ChannelNameToId = new Dictionary<string, byte>();
-        readonly Dictionary<byte, string> m_ChannelIdToName = new Dictionary<byte, string>();
+        readonly Dictionary<Channel, byte> m_ChannelToId = new Dictionary<Channel, byte>();
+        readonly Dictionary<byte, Channel> m_IdToChannel = new Dictionary<byte, Channel>();
         readonly Dictionary<ushort, RealtimeChannel> m_Channels = new Dictionary<ushort, RealtimeChannel>();
 
         /// <summary>
@@ -71,18 +71,18 @@ namespace MLAPI.Transports
         public override ulong ServerClientId => GetMlapiClientId(0, true);
 
         ///<inheritdoc/>
-        public override void Send(ulong clientId, ArraySegment<byte> data, string channelName)
+        public override void Send(ulong clientId, ArraySegment<byte> data, Channel channel)
         {
-            RealtimeChannel channel = m_Channels[m_ChannelNameToId[channelName]];
+            RealtimeChannel realtimeChannel = m_Channels[m_ChannelToId[channel]];
 
             if (m_BatchMode == BatchMode.None)
             {
-                RaisePhotonEvent(clientId, channel.SendMode.Reliability, data, channel.Id);
+                RaisePhotonEvent(clientId, realtimeChannel.SendMode.Reliability, data, realtimeChannel.Id);
                 return;
             }
 
             SendQueue queue;
-            SendTarget sendTarget = new SendTarget(clientId, channel.SendMode.Reliability);
+            SendTarget sendTarget = new SendTarget(clientId, realtimeChannel.SendMode.Reliability);
 
             if (m_BatchMode == BatchMode.SendAllReliable)
             {
@@ -95,21 +95,21 @@ namespace MLAPI.Transports
                 m_SendQueue.Add(sendTarget, queue);
             }
 
-            if (!queue.AddEvent(channel.Id, data))
+            if (!queue.AddEvent(realtimeChannel.Id, data))
             {
                 // If we are in here data exceeded remaining queue size. This should not happen under normal operation.
                 if (data.Count > queue.Size)
                 {
                     // If data is too large to be batched, flush it out immediately. This happens with large initial spawn packets from MLAPI.
-                    Debug.LogWarning($"Sent {data.Count} bytes on channel: {channelName}. Event size exceeds sendQueueBatchSize: ({m_SendQueueBatchSize}).");
-                    RaisePhotonEvent(sendTarget.ClientId, sendTarget.IsReliable, data, channel.Id);
+                    Debug.LogWarning($"Sent {data.Count} bytes on channel: {channel.ToString()}. Event size exceeds sendQueueBatchSize: ({m_SendQueueBatchSize}).");
+                    RaisePhotonEvent(sendTarget.ClientId, sendTarget.IsReliable, data, realtimeChannel.Id);
                 }
                 else
                 {
                     var sendBuffer = queue.GetData();
                     RaisePhotonEvent(sendTarget.ClientId, sendTarget.IsReliable, sendBuffer, m_BatchedTransportEventCode);
                     queue.Clear();
-                    queue.AddEvent(channel.Id, data);
+                    queue.AddEvent(realtimeChannel.Id, data);
                 }
             }
         }
@@ -141,10 +141,10 @@ namespace MLAPI.Transports
         /// <summary>
         /// Photon Realtime Transport is event based. Polling will always return nothing.
         /// </summary>
-        public override NetEventType PollEvent(out ulong clientId, out string channelName, out ArraySegment<byte> payload, out float receiveTime)
+        public override NetEventType PollEvent(out ulong clientId, out Channel channel, out ArraySegment<byte> payload, out float receiveTime)
         {
             clientId = 0;
-            channelName = null;
+            channel = default;
             receiveTime = Time.realtimeSinceStartup;
             return NetEventType.Nothing;
         }
@@ -220,12 +220,11 @@ namespace MLAPI.Transports
         {
             for (byte i = 0; i < MLAPI_CHANNELS.Length; i++)
             {
-                m_ChannelIdToName.Add((byte)(i + m_ChannelIdCodesStartRange), MLAPI_CHANNELS[i].Name);
-                m_ChannelNameToId.Add(MLAPI_CHANNELS[i].Name, (byte)(i + m_ChannelIdCodesStartRange));
+                m_IdToChannel.Add((byte)(i + m_ChannelIdCodesStartRange), MLAPI_CHANNELS[i].Id);
+                m_ChannelToId.Add(MLAPI_CHANNELS[i].Id, (byte)(i + m_ChannelIdCodesStartRange));
                 m_Channels.Add((byte)(i + m_ChannelIdCodesStartRange), new RealtimeChannel()
                 {
                     Id = (byte)(i + m_ChannelIdCodesStartRange),
-                    Name = MLAPI_CHANNELS[i].Name,
                     SendMode = MlapiChannelTypeToSendOptions(MLAPI_CHANNELS[i].Type)
                 });
             }
@@ -328,7 +327,7 @@ namespace MLAPI.Transports
 
             NetEventType netEvent = NetEventType.Nothing;
             ArraySegment<byte> payload = default;
-            string channelName = default;
+            Channel channel = default;
             var receiveTime = Time.realtimeSinceStartup;
 
             switch (eventData.Code)
@@ -378,7 +377,7 @@ namespace MLAPI.Transports
                                         int length = reader.ReadInt32Packed();
                                         byte[] dataArray = reader.ReadByteArray(null, length);
 
-                                        this.InvokeOnTransportEvent(NetEventType.Data, clientId, this.m_ChannelIdToName[channelId], new ArraySegment<byte>(dataArray, 0, dataArray.Length), receiveTime);
+                                        this.InvokeOnTransportEvent(NetEventType.Data, clientId, this.m_IdToChannel[channelId], new ArraySegment<byte>(dataArray, 0, dataArray.Length), receiveTime);
                                     }
                                 }
                             }
@@ -390,7 +389,7 @@ namespace MLAPI.Transports
                             // Event is a non-batched data event.
                             netEvent = NetEventType.Data;
                             payload = new ArraySegment<byte>(slice.Buffer, slice.Offset, slice.Count);
-                            channelName = this.m_ChannelIdToName[eventData.Code];
+                            channel = m_IdToChannel[eventData.Code];
                         }
                     }
 
@@ -398,7 +397,7 @@ namespace MLAPI.Transports
             }
 
             if (netEvent == NetEventType.Nothing) return;
-            InvokeOnTransportEvent(netEvent, clientId, channelName, payload, receiveTime);
+            InvokeOnTransportEvent(netEvent, clientId, channel, payload, receiveTime);
         }
 
         SendOptions MlapiChannelTypeToSendOptions(ChannelType type)
@@ -495,7 +494,6 @@ namespace MLAPI.Transports
         struct RealtimeChannel
         {
             public byte Id;
-            public string Name;
             public SendOptions SendMode;
         }
 
@@ -509,7 +507,7 @@ namespace MLAPI.Transports
                 ClientId = clientId;
                 IsReliable = isReliable;
             }
-            
+
             public override int GetHashCode()
             {
                 unchecked
