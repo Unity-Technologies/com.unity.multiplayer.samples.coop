@@ -80,3 +80,5 @@ To get the project on your machine you need to clone the repository from GitHub 
 ```
 git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git
 ```
+
+Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues and PRs to BossRoom!
