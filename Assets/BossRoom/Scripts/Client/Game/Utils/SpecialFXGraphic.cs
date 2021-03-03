@@ -19,11 +19,11 @@ namespace BossRoom.Visual
     ///
     /// Note that whichever mode is used, Shutdown() may be called prematurely by whoever owns this graphic
     /// in the case of aborted actions.
-    /// 
+    ///
     /// Once Shutdown() is called (one way or another), the object self-destructs after the particles end
     /// (or after a specific additional amount of time).
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// When a particle system ends, it usually needs to stick around for a little while
     /// to let the last remaining particles finish rendering. Shutdown() turns off particles,
@@ -41,14 +41,14 @@ namespace BossRoom.Visual
 
         [SerializeField]
         [Tooltip("If this graphic should automatically Shutdown after a certain time, set it here (in seconds). -1 means no auto-shutdown.")]
-        private float m_AutoShutdownTime = -1;
+        protected float m_AutoShutdownTime = -1;
 
         [SerializeField]
         [Tooltip("After Shutdown, how long before we self-destruct? 0 means no self destruct. -1 means self-destruct after ALL particles have disappeared")]
-        private float m_PostShutdownSelfDestructTime = -1;
+        protected float m_PostShutdownSelfDestructTime = -1;
 
         // track when Shutdown() is called so we don't try to do it twice
-        private bool m_IsShutdown = false;
+        protected bool m_IsShutdown = false;
 
         // we keep a reference to our self-destruction coroutine in case we need to abort it prematurely
         private Coroutine coroWaitForSelfDestruct = null;
@@ -61,13 +61,18 @@ namespace BossRoom.Visual
             }
         }
 
+        public virtual void EndCharge()
+        {
+            Shutdown();
+        }
+
         public void Shutdown()
         {
             if (!m_IsShutdown)
             {
-                foreach (var particleSystem in m_ParticleSystemsToTurnOffOnShutdown)
+                foreach (var graphicParticleSystem in m_ParticleSystemsToTurnOffOnShutdown)
                 {
-                    particleSystem.Stop();
+                    graphicParticleSystem.Stop();
                 }
 
                 // now, when and how do we fully destroy ourselves?

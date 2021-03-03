@@ -26,9 +26,11 @@ namespace BossRoom.Visual
             {
                 var action = m_PlayingActions[i];
                 bool keepGoing = action.Update();
-                bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
-                bool timeExpired = expirable && (Time.time - action.TimeStarted) >= action.Description.DurationSeconds;
-                if (!keepGoing || timeExpired)
+                bool expirable = action.Description.EffectDurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
+                var timeElapsed = Time.time - action.TimeStarted;
+                bool timeExpired = expirable &&
+                    timeElapsed >= action.Description.DurationSeconds + action.Description.EffectDurationSeconds;
+                if (!keepGoing && timeExpired)
                 {
                     action.End();
                     m_PlayingActions.RemoveAt(i);

@@ -1,3 +1,4 @@
+using System;
 using MLAPI;
 using System.Collections.Generic;
 using UnityEngine;
@@ -63,23 +64,34 @@ namespace BossRoom.Visual
 
         public override void Cancel()
         {
-            if (Description.Anim2 != "")
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
-            if (!m_ChargeEnded)
-            {
-                foreach (var graphic in m_Graphics)
-                {
-                    if (graphic)
-                    {
-                        graphic.Shutdown();
-                    }
-                }
-            }
+            ShutdownGraphics();
+            m_Graphics.Clear();
         }
 
         public override void OnStoppedChargingUp()
         {
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+            }
+
             m_ChargeEnded = true;
+            EndCharge();
+        }
+
+        void EndCharge()
+        {
+            foreach (var graphic in m_Graphics)
+            {
+                if (graphic)
+                {
+                    graphic.EndCharge();
+                }
+            }
+        }
+
+        void ShutdownGraphics()
+        {
             foreach (var graphic in m_Graphics)
             {
                 if (graphic)
@@ -87,8 +99,6 @@ namespace BossRoom.Visual
                     graphic.Shutdown();
                 }
             }
-            // the graphics will now take care of themselves and shutdown, so we can forget about 'em
-            m_Graphics.Clear();
         }
     }
 }
