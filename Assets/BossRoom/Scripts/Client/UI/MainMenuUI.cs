@@ -8,9 +8,6 @@ namespace BossRoom.Visual
     public class MainMenuUI : MonoBehaviour
     {
         [SerializeField]
-        private GameObject m_GamePortalGO;
-
-        [SerializeField]
         private PopupPanel m_ResponsePopup;
 
         private const string k_DefaultIP = "127.0.0.1";
@@ -26,8 +23,10 @@ namespace BossRoom.Visual
 
         void Start()
         {
-            m_GameNetPortal = m_GamePortalGO.GetComponent<GameNetPortal>();
-            m_ClientNetPortal = m_GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
+            // Find the game Net Portal by tag - it should have been created by Startup 
+            GameObject GamePortalGO = GameObject.FindGameObjectWithTag("GameNetPortal");
+            m_GameNetPortal = GamePortalGO.GetComponent<GameNetPortal>();
+            m_ClientNetPortal = GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
@@ -36,28 +35,30 @@ namespace BossRoom.Visual
         public void OnHostClicked()
         {
 
-            m_ResponsePopup.SetupInputDisplay("Host Game", "Input the IP to host on", "iphost", "Confirm", (string input) =>
+            m_ResponsePopup.SetupEnterGameDisplay("Host Game", "Input the IP to host on", "iphost", "Confirm", (string IPinput, string playerName) =>
             {
-                string ipAddress = input;
-                if (input == "")
+                string ipAddress = IPinput;
+                if (string.IsNullOrEmpty(IPinput) )
                 {
                     ipAddress = k_DefaultIP;
                 }
 
+                m_GameNetPortal.PlayerName = playerName;
                 m_GameNetPortal.StartHost(ipAddress, k_ConnectPort);
             }, k_DefaultIP);
         }
 
         public void OnConnectClicked()
         {
-            m_ResponsePopup.SetupInputDisplay("Join Game", "Input the host IP below", "iphost", "Join", (string input) =>
+            m_ResponsePopup.SetupEnterGameDisplay("Join Game", "Input the host IP below", "iphost", "Join", (string IPinput, string playerName) =>
             {
-                string ipAddress = input;
-                if (input == "")
+                string ipAddress = IPinput;
+                if (string.IsNullOrEmpty(IPinput))
                 {
                     ipAddress = k_DefaultIP;
                 }
 
+                m_GameNetPortal.PlayerName = playerName;
                 Client.ClientGameNetPortal.StartClient(m_GameNetPortal, ipAddress, k_ConnectPort);
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
 

@@ -108,7 +108,8 @@ namespace BossRoom.Client
         {
             var clientGuid = GetOrCreateGuid();
             var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
-                   payload+= $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}";
+                   payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
+                   payload += $"player_name={portal.PlayerName}\n"; 
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 

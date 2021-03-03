@@ -25,19 +25,27 @@ namespace BossRoom.Visual
         [SerializeField]
         private Button m_ConfirmationButton;
         [SerializeField]
+        private Text m_ConfirmationText;
+        [SerializeField]
         [Tooltip("This Button appears for popups that ask for player inputs")]
         private Button m_CancelButton;
+        [SerializeField]
+        private GameObject m_NameDisplayGO;
 
-        private OnConfirmFunction m_ConfirmFunction;
+        /// <summary>
+        /// Confirm function invoked when confirm is hit on popup. The meaning of the arguments may vary by popup panel, but
+        /// in the initial case of the login popup, they represent the IP Address input, and the Player Name.
+        /// </summary>
+        private System.Action<string,string> m_ConfirmFunction;
 
 
         private const string k_DefaultConfirmText = "OK";
 
 
-        public delegate void OnConfirmFunction(string input);
-
         /// <summary>
-        /// Setup this panel to be an input accepting panel, complete with the ability for the player to cancel their input 
+        /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
+        /// cancel their input and requests.
+        /// This also adds the player name prompt to the display
         /// </summary>
         /// <param name="titleText">The Title String at the top of the panel</param>
         /// <param name="mainText"> The text just below the title text</param>
@@ -45,8 +53,8 @@ namespace BossRoom.Visual
         /// <param name="confirmationText"> Text to display on the confirmation button</param>
         /// <param name="confirmCallback">  The delegate to invoke when the player confirms.  It sends what the player input.</param>
         /// <param name="defaultInput"> If Set, will default the input value to this string</param>
-        public void SetupInputDisplay(string titleText, string mainText, string inputFieldText,
-            string confirmationText, OnConfirmFunction confirmCallback, string defaultInput = "")
+        public void SetupEnterGameDisplay(string titleText, string mainText, string inputFieldText,
+            string confirmationText, System.Action<string,string> confirmCallback, string defaultInput = "")
         {
             //Clear any previous settings of the Panel first
             ResetState();
@@ -58,7 +66,7 @@ namespace BossRoom.Visual
             m_ConfirmFunction = confirmCallback;
 
 
-            m_ConfirmationButton.GetComponentInChildren<Text>().text = confirmationText;
+            m_ConfirmationText.text = confirmationText;
             m_ConfirmationButton.onClick.AddListener(OnConfirmClick);
             m_ConfirmationButton.gameObject.SetActive(true);
 
@@ -69,6 +77,8 @@ namespace BossRoom.Visual
             var inputField = m_InputFieldParent.GetComponent<InputField>();
             inputField.text = defaultInput;
 
+            m_NameDisplayGO.SetActive(true);
+
             gameObject.SetActive(true);
         }
 
@@ -76,7 +86,8 @@ namespace BossRoom.Visual
         private void OnConfirmClick()
         {
             var inputField = m_InputFieldParent.GetComponent<InputField>();
-            m_ConfirmFunction.Invoke(inputField.text);
+            var nameDisplay = m_NameDisplayGO.GetComponent<NameDisplay>();
+            m_ConfirmFunction.Invoke(inputField.text, nameDisplay.GetCurrentName());
 
         }
 
@@ -94,7 +105,7 @@ namespace BossRoom.Visual
         /// </summary>
         private void ResetState()
         {
-            m_ConfirmationButton.GetComponentInChildren<Text>().text = k_DefaultConfirmText;
+            m_ConfirmationText.text = k_DefaultConfirmText;
             m_TitleText.text = string.Empty;
             m_MainText.text = string.Empty;
             m_SubText.text = string.Empty;
@@ -103,6 +114,7 @@ namespace BossRoom.Visual
             m_ReconnectingImage.SetActive(false);
             m_ConfirmationButton.gameObject.SetActive(false);
             m_CancelButton.gameObject.SetActive(false);
+            m_NameDisplayGO.gameObject.SetActive(false);
 
 
             m_CancelButton.onClick.RemoveListener(OnCancelClick);
