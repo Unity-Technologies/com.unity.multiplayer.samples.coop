@@ -26,6 +26,7 @@ namespace BossRoom.Visual
             {
                 var action = m_PlayingActions[i];
                 bool keepGoing = action.Update();
+                // action fx now only expires if Description.EffectDurationSeconds is greater than 0.
                 bool expirable = action.Description.EffectDurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
                 var timeElapsed = Time.time - action.TimeStarted;
                 bool timeExpired = expirable &&

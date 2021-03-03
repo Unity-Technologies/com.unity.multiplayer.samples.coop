@@ -62,41 +62,40 @@ namespace BossRoom.Visual
             return !m_ChargeEnded;
         }
 
+        /// <summary>
+        /// When this action is cancelled, we shutdown any graphics that have been created.
+        /// </summary>
         public override void Cancel()
-        {
-            ShutdownGraphics();
-            m_Graphics.Clear();
-        }
-
-        public override void OnStoppedChargingUp()
-        {
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
-            }
-
-            m_ChargeEnded = true;
-            EndCharge();
-        }
-
-        void EndCharge()
-        {
-            foreach (var graphic in m_Graphics)
-            {
-                if (graphic)
-                {
-                    graphic.EndCharge();
-                }
-            }
-        }
-
-        void ShutdownGraphics()
         {
             foreach (var graphic in m_Graphics)
             {
                 if (graphic)
                 {
                     graphic.Shutdown();
+                }
+            }
+
+            m_Graphics.Clear();
+        }
+
+        /// <summary>
+        /// This will fire when we've received a message from our character that our charge has ended (key released,
+        /// action was interrupted, action cancelled).
+        /// </summary>
+        public override void OnStoppedChargingUp()
+        {
+            m_ChargeEnded = true;
+
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+            }
+
+            foreach (var graphic in m_Graphics)
+            {
+                if (graphic)
+                {
+                    graphic.End();
                 }
             }
         }

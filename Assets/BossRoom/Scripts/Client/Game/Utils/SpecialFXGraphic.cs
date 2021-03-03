@@ -61,7 +61,10 @@ namespace BossRoom.Visual
             }
         }
 
-        public virtual void EndCharge()
+        /// <summary>
+        /// Virtual method separate from Shutdown. We can have custom logic for when a graphic's main effect ends.
+        /// </summary>
+        public virtual void End()
         {
             Shutdown();
         }
