@@ -63,7 +63,7 @@ namespace BossRoom.Visual
                 }
             }
 
-            if (Description.Anim2 != "")
+            if (!string.IsNullOrEmpty(Description.Anim2))
             {
                 m_Parent.OurAnimator.SetTrigger(Description.Anim2);
             }
