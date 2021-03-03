@@ -41,14 +41,14 @@ namespace BossRoom.Visual
 
         [SerializeField]
         [Tooltip("If this graphic should automatically Shutdown after a certain time, set it here (in seconds). -1 means no auto-shutdown.")]
-        protected float m_AutoShutdownTime = -1;
+        float m_AutoShutdownTime = -1;
 
         [SerializeField]
         [Tooltip("After Shutdown, how long before we self-destruct? 0 means no self destruct. -1 means self-destruct after ALL particles have disappeared")]
-        protected float m_PostShutdownSelfDestructTime = -1;
+        float m_PostShutdownSelfDestructTime = -1;
 
         // track when Shutdown() is called so we don't try to do it twice
-        protected bool m_IsShutdown = false;
+        bool m_IsShutdown = false;
 
         // we keep a reference to our self-destruction coroutine in case we need to abort it prematurely
         private Coroutine coroWaitForSelfDestruct = null;
