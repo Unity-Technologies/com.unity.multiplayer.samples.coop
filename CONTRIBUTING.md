@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to BossRoom!
 
-Here are our guidlines for contributing:
+Here are our guidelines for contributing:
 
 * [Code of Conduct](#coc)
 * [Ways to Contribute](#ways)
@@ -10,7 +10,7 @@ Here are our guidlines for contributing:
 * [Feature Requests](#feature)
 * [Improving Documentation](#docs)
 * [Unity Contribution Agreement](#cla)
-* [Pull Request Submission Guidlines](#submit-pr)
+* [Pull Request Submission Guidelines](#submit-pr)
 
 ## <a name="coc"></a> Code of Conduct
 
