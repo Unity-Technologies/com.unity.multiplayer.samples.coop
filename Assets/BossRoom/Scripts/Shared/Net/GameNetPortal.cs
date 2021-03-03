@@ -187,7 +187,7 @@ namespace BossRoom
             {
                 ClientSceneChanged?.Invoke(NetManager.ServerClientId, newScene);
             }
-            else
+            else if(NetManager.IsConnectedClient)
             {
                 using (PooledBitStream stream = PooledBitStream.Get())
                 {

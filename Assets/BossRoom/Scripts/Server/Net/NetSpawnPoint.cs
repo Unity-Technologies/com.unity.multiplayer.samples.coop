@@ -23,6 +23,8 @@ namespace BossRoom.Server
 
         public bool FireOnInitialSpawn = true;
 
+        public bool IsBoss = false;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -46,7 +48,7 @@ namespace BossRoom.Server
         {
             if( SpawnedObject != null )
             {
-                var netObj = Instantiate(SpawnedObject, transform.position, transform.rotation );
+                var netObj = Instantiate(SpawnedObject, transform.position, transform.rotation);
 
                 var switchedDoor = netObj.GetComponent<ServerSwitchedDoor>();
                 if (switchedDoor != null)
@@ -56,11 +58,18 @@ namespace BossRoom.Server
                         var newSwitch = Instantiate(m_AuxiliarySpawns[i].SpawnedObject, m_AuxiliarySpawns[i].transform.position, m_AuxiliarySpawns[i].transform.rotation);
 
                         switchedDoor.m_SwitchesThatOpenThisDoor.Add(newSwitch.GetComponent<NetworkFloorSwitchState>());
-                        newSwitch.Spawn();
+                        newSwitch.Spawn(null,true);
                     }
                 }
+                // spawn objects with destroyWithScene = true so they clean up properly
+                netObj.Spawn(null, true);
 
-                netObj.Spawn();
+                // Special handling for the Boss, connect with BossRoomState to track win condition
+                if (IsBoss)
+                {
+                    var bossNetState = netObj.GetComponent<NetworkCharacterState>();
+                    BossRoomState.OnBossSpawned(bossNetState);
+                }
             }
         }
     }
