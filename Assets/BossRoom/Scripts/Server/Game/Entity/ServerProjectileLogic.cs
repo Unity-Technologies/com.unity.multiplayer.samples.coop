@@ -150,7 +150,8 @@ namespace BossRoom.Server
                         NetworkedObject spawnerNet;
                         MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
-                        targetNetObj.GetComponent<ServerCharacter>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
+
+                        targetNetObj.GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
                     }
 
                     if (m_IsDead)

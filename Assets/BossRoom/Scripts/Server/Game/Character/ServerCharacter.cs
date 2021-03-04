@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BossRoom.Server
 {
     [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
-    public class ServerCharacter : NetworkedBehaviour
+    public class ServerCharacter : NetworkedBehaviour, IDamageable
     {
         public NetworkCharacterState NetState { get; private set; }
 
