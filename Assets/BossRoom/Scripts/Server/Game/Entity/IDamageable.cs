@@ -18,12 +18,12 @@ namespace BossRoom.Server
         /// <summary>
         /// The NetworkId of this object. 
         /// </summary>
-        public ulong NetworkId { get; }
+        ulong NetworkId { get; }
 
         /// <summary>
         /// The transform of this object. 
         /// </summary>
-        public Transform transform { get; }
+        Transform transform { get; }
     }
 }
 
