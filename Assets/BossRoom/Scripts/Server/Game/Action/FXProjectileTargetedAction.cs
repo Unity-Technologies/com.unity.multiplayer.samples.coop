@@ -15,7 +15,7 @@ namespace BossRoom.Server
     {
         private bool m_ImpactedTarget;
         private float m_TimeUntilImpact;
-        private ServerCharacter m_Target;
+        private IDamageable m_Target;
 
         public FXProjectileTargetedAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -45,7 +45,7 @@ namespace BossRoom.Server
             if (!m_ImpactedTarget && m_TimeUntilImpact <= (Time.time - TimeStarted))
             {
                 m_ImpactedTarget = true;
-                if (m_Target)
+                if (m_Target != null )
                 {
                     m_Target.ReceiveHP(m_Parent, -Description.Projectiles[0].Damage);
                 }

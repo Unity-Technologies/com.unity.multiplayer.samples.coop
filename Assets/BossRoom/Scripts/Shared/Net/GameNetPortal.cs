@@ -15,6 +15,12 @@ namespace BossRoom
         Unknown,          //can't join, reason unknown.
     }
 
+    public enum OnlineMode
+    {
+        IpHost = 0, // The server is hosted directly and clients can join by ip address.
+        Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
+    }
+
     /// <summary>
     /// The GameNetPortal is the general purpose entry-point for game network messages between the client and server. It is available
     /// as soon as the initial network connection has completed, and persists across all scenes. Its purpose is to move non-GameObject-specific
@@ -56,7 +62,7 @@ namespace BossRoom
         /// raised when a client has changed scenes. Returns the ClientID and the new scene the client has entered, by index.
         /// </summary>
         public event Action<ulong, int> ClientSceneChanged;
-
+        
         public NetworkManager NetManager { get; private set; }
 
         /// <summary>
@@ -146,7 +152,9 @@ namespace BossRoom
         /// <param name="port">The port to connect to. </param>
         public void StartHost(string ipaddress, int port)
         {
-            var chosenTransport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+            
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             switch (chosenTransport)
             {
@@ -159,7 +167,24 @@ namespace BossRoom
                     unetTransport.ServerListenPort = port;
                     break;
                 default:
-                    throw new Exception($"unhandled transport {chosenTransport.GetType()}");
+                    throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
+            }
+
+            NetManager.StartHost();
+        }
+
+        public void StartRelayHost(string roomName)
+        {
+            var chosenTransport  = NetworkingManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            NetworkingManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case PhotonRealtimeTransport photonRealtimeTransport:
+                    photonRealtimeTransport.RoomName = roomName;
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
             NetManager.StartHost();

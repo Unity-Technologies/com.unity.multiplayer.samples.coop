@@ -56,8 +56,11 @@ namespace BossRoom.Visual
                     Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
                 }
 
-                ClientCharacterVisualization charViz = targetNetObject.GetComponent<Client.ClientCharacter>().ChildVizObject;
-                charViz.OurAnimator.SetTrigger("HitReact1");
+                var clientChar = targetNetObject.GetComponent<Client.ClientCharacter>();
+                if(clientChar)
+                {
+                    clientChar.ChildVizObject.OurAnimator.SetTrigger("HitReact1");
+                }
             }
         }
     }
