@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3325143161705299546}
   - component: {fileID: 445632146649864073}
   - component: {fileID: 7463718357983197496}
+  - component: {fileID: 3577683239110096990}
   m_Layer: 0
   m_Name: treasure_chest
   m_TagString: Untagged
@@ -81,3 +82,16 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &3577683239110096990
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4371491365999748502}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 3.641676, y: 3.8060122, z: 4.927659}
+  m_Center: {x: -0.013105154, y: 1.8930116, z: 0.00000023841858}
