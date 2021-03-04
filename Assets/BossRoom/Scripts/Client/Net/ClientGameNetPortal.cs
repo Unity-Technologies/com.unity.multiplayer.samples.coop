@@ -152,9 +152,10 @@ namespace BossRoom.Client
         private static void ConnectClient(GameNetPortal portal)
         {
             var clientGuid = GetOrCreateGuid();
-            var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
-            payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
-            payload += $"player_name={portal.PlayerName}\n";
+            //var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
+            //payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
+            //payload += $"player_name={portal.PlayerName}\n";
+			var payload = JsonUtility.ToJson(new ConnectionPayload() {clientGUID = clientGuid, clientScene = SceneManager.GetActiveScene().buildIndex, playerName = portal.PlayerName});
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 

@@ -13,11 +13,19 @@ namespace BossRoom
         MatchStarted,     //can't join, match is already in progress.
         Unknown,          //can't join, reason unknown.
     }
-
+	
     public enum OnlineMode
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
         Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
+    }
+
+    [Serializable]
+    public class ConnectionPayload
+    {
+        public string clientGUID;
+        public int clientScene = -1;
+        public string playerName;
     }
 
     /// <summary>
