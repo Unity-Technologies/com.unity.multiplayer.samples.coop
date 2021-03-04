@@ -19,6 +19,12 @@ namespace BossRoom
     [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
     public class NetworkCharacterState : NetworkedBehaviour, INetMovement
     {
+        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
+        {
+            NetworkPosition.Value = initPosition;
+            NetworkRotationY.Value = initRotationY;
+        }
+
         /// <summary>
         /// The networked position of this Character. This reflects the authoritative position on the server.
         /// </summary>
