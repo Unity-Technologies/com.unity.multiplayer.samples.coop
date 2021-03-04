@@ -670,9 +670,9 @@ MonoBehaviour:
   m_Value: 0
   m_Options:
     m_Options:
-    - m_Text: LAN
+    - m_Text: IP Host
       m_Image: {fileID: 0}
-    - m_Text: ONLINE
+    - m_Text: Relay Host
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1845,7 +1845,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: LAN
+  m_Text: IP Host
 --- !u!1 &8215031226330668667
 GameObject:
   m_ObjectHideFlags: 0
