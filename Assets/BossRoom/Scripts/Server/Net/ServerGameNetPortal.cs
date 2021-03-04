@@ -171,15 +171,7 @@ namespace BossRoom.Server
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
 
-            int clientScene = -1;
-            // try
-            // {
-                clientScene = connectionPayload.clientScene;
-            // }
-            // catch(Exception e)
-            // {
-            //     Debug.LogWarning($"Client {clientId} did not include clientScene index in login payload, or not parseable: {e}");
-            // }
+            int clientScene = connectionPayload.clientScene;
 
             m_ClientSceneMap[clientId] = clientScene;
 

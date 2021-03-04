@@ -18,7 +18,7 @@ namespace BossRoom
     public class ConnectionPayload
     {
         public string clientGUID;
-        public int clientScene;
+        public int clientScene = -1;
         public string playerName;
     }
 
