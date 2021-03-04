@@ -1,0 +1,1 @@
+The BossRoom repository follows the same code of conduct as the MLAPI repository. Please read the [MLAPI code of conduct](https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/blob/master/CODE_OF_CONDUCT.md), thank you!

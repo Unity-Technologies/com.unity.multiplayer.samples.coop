@@ -15,7 +15,7 @@ namespace BossRoom.Server
     {
         private bool m_ImpactedTarget;
         private float m_TimeUntilImpact;
-        private ServerCharacter m_Target;
+        private IDamageable m_Target;
 
         public FXProjectileTargetedAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -35,7 +35,7 @@ namespace BossRoom.Server
 
             // figure out how long the pretend-projectile will be flying to the target
             float distanceToTargetPos = Vector3.Distance(targetPos, m_Parent.transform.position);
-            m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.ProjectileSpeed_m_s);
+            m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed_m_s);
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
@@ -45,9 +45,9 @@ namespace BossRoom.Server
             if (!m_ImpactedTarget && m_TimeUntilImpact <= (Time.time - TimeStarted))
             {
                 m_ImpactedTarget = true;
-                if (m_Target)
+                if (m_Target != null )
                 {
-                    m_Target.ReceiveHP(this.m_Parent, -Description.Amount);
+                    m_Target.ReceiveHP(m_Parent, -Description.Projectiles[0].Damage);
                 }
             }
             return true;

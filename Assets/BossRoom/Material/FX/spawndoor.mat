@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: spawndoor
   m_Shader: {fileID: 211, guid: 0000000000000000f000000000000000, type: 0}
-  m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _EMISSION _FADING_ON
+  m_ShaderKeywords: _ALPHABLEND_ON _EMISSION _FADING_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -126,9 +126,9 @@ Material:
     - _DiffuseAmount: 0.2
     - _DistortionBlend: 1
     - _DistortionEnabled: 0
-    - _DistortionStrength: 7.9
-    - _DistortionStrengthScaled: 0.79
-    - _DstBlend: 10
+    - _DistortionStrength: 500
+    - _DistortionStrengthScaled: 50
+    - _DstBlend: 1
     - _EmissionEnabled: 1
     - _EnableExternalAlpha: 0
     - _FlipbookMode: 0
@@ -142,7 +142,7 @@ Material:
     - _InvFade: 1
     - _LightingEnabled: 0
     - _Metallic: 0
-    - _Mode: 3
+    - _Mode: 4
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _RimPower: 0.2
@@ -150,10 +150,10 @@ Material:
     - _Shininess: 0.7
     - _SmoothnessTextureChannel: 0
     - _SoftParticlesEnabled: 1
-    - _SoftParticlesFarFadeDistance: 7.07
+    - _SoftParticlesFarFadeDistance: 4.08
     - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
     - _Stencil: 0
     - _StencilComp: 8
     - _StencilOp: 0
@@ -167,14 +167,14 @@ Material:
     m_Colors:
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
     - _Color: {r: 0.7490196, g: 0.7490196, b: 0.7490196, a: 1}
-    - _ColorAddSubDiff: {r: -1, g: 1, b: 0, a: 0}
+    - _ColorAddSubDiff: {r: -1, g: 0, b: 0, a: 0}
     - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 1.5363036, g: 0.07830656, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _FrozenTint: {r: 1, g: 1, b: 1, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _RimColor: {r: 0.46, g: 0, b: 1, a: 0}
-    - _SoftParticleFadeParams: {r: 0, g: 0.14144272, b: 0, a: 0}
+    - _SoftParticleFadeParams: {r: 0, g: 0.24509804, b: 0, a: 0}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _TintColor: {r: 0.5, g: 0.5, b: 0.5, a: 0.5}
   m_BuildTextureStacks: []

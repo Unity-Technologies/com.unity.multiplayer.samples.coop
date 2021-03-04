@@ -38,7 +38,7 @@ namespace BossRoom.Server
         public override bool Start()
         {
             ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_Parent.NetState.TargetId.Value;
-            ServerCharacter foe = DetectFoe(target);
+            IDamageable foe = DetectFoe(target);
             if (foe != null)
             {
                 m_ProvisionalTarget = foe.NetworkId;
@@ -69,7 +69,7 @@ namespace BossRoom.Server
         /// Returns the ServerCharacter of the foe we hit, or null if none found.
         /// </summary>
         /// <returns></returns>
-        private ServerCharacter DetectFoe(ulong foeHint = 0)
+        private IDamageable DetectFoe(ulong foeHint = 0)
         {
             //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack.
 
@@ -79,14 +79,15 @@ namespace BossRoom.Server
             if (numResults == 0) { return null; }
 
             //everything that passes the mask should have a ServerCharacter component.
-            ServerCharacter foundFoe = results[0].collider.GetComponent<ServerCharacter>();
+            IDamageable foundFoe = results[0].collider.GetComponent<IDamageable>();
 
             //we always prefer the hinted foe. If he's still in range, he should take the damage, because he's who the client visualization
             //system will play the hit-react on (in case there's any ambiguity).
             for (int i = 0; i < numResults; i++)
             {
-                var serverChar = results[i].collider.GetComponent<ServerCharacter>();
-                if (serverChar.NetworkId == foeHint)
+                var serverChar = results[i].collider.GetComponent<IDamageable>();
+                
+                if (serverChar!=null && serverChar.NetworkId == foeHint)
                 {
                     foundFoe = serverChar;
                     break;

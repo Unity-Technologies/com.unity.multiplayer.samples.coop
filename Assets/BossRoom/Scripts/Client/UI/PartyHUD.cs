@@ -17,6 +17,9 @@ namespace BossRoom.Visual
         private Image m_HeroClassSymbol;
 
         [SerializeField]
+        private Text m_HeroName;
+
+        [SerializeField]
         private RectTransform m_HeroHealthbar;
 
         private int m_HeroMaxHealth;
@@ -31,6 +34,9 @@ namespace BossRoom.Visual
         private RectTransform[] m_AllyHealthbar;
 
         [SerializeField]
+        Text[] m_AllyNames;
+
+        [SerializeField]
         private Sprite[] m_PortraitAppearances;
 
         // set sprites for classes - order must match class enum
@@ -42,16 +48,19 @@ namespace BossRoom.Visual
         // and their max HP
         private int[] m_AllyMaxHP;
 
-        public void SetHeroAppearance(int appearance)
+        public void SetHeroData(NetworkCharacterState netState )
         {
-            if (appearance > m_PortraitAppearances.Length)
+            SetHeroType(netState.CharacterType);
+            m_HeroName.text = netState.Name;
+
+            int appearance = netState.CharacterAppearance.Value;
+            if( appearance < m_PortraitAppearances.Length )
             {
-                return;
+                m_HeroPortrait.sprite = m_PortraitAppearances[appearance];
             }
-            m_HeroPortrait.sprite = m_PortraitAppearances[appearance];
         }
 
-        public void SetHeroType(CharacterTypeEnum characterType)
+        private void SetHeroType(CharacterTypeEnum characterType)
         {
             // treat character type as an index into our symbol array
             int symbol = (int)characterType;
@@ -64,6 +73,11 @@ namespace BossRoom.Visual
             m_HeroMaxHealth = GetMaxHPForClass(characterType);
         }
 
+        public void SetHeroName(string name)
+        {
+            m_HeroName.text = name;
+        }
+
         public void SetHeroHealth(int hp)
         {
             // TO DO - get real max hp
@@ -72,21 +86,19 @@ namespace BossRoom.Visual
 
         private int GetMaxHPForClass(CharacterTypeEnum characterType)
         {
-            // TO DO - make this come from character data
-            if (characterType == CharacterTypeEnum.Archer || characterType == CharacterTypeEnum.Mage)
-            {
-                return 800;
-            }
-            else if (characterType == CharacterTypeEnum.Rogue)
-            {
-                return 900;
-            }
-            // otherwise including for (characterType == CharacterTypeEnum.Tank)
-            // default to 1000
-            return 1000;
+            return GameDataSource.Instance.CharacterDataByType[characterType].BaseHP.Value;
         }
 
-        // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id 
+        /// <summary>
+        /// Gets Player Name from the NetworkID of his controlled Character. 
+        /// </summary>
+        private string GetPlayerName(ulong netId)
+        {
+            var netState = MLAPI.Spawning.SpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
+            return netState.Name;
+        }
+
+        // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id
         public void SetAllyType(ulong id, CharacterTypeEnum characterType)
         {
             int symbol = (int)characterType;
@@ -96,20 +108,31 @@ namespace BossRoom.Visual
             }
 
             int slot = FindOrAddAlly(id);
-            // do nothing if not in a slot 
+            // do nothing if not in a slot
             if ( slot == -1 ) { return; }
 
             m_AllyClassSymbol[slot].sprite = m_ClassSymbols[symbol];
             m_AllyMaxHP[slot] = GetMaxHPForClass(characterType);
+
+            m_AllyNames[slot].text = GetPlayerName(id);
         }
 
         public void SetAllyHealth(ulong id, int hp)
         {
             int slot = FindOrAddAlly(id);
-            // do nothing if not in a slot 
+            // do nothing if not in a slot
             if (slot == -1) { return; }
 
             m_AllyHealthbar[slot].localScale = new Vector3(((float)hp) / (float)m_AllyMaxHP[slot], 1.0f, 1.0f);
+        }
+
+        public void SetAllyName(ulong id, string name)
+        {
+            int slot = FindOrAddAlly(id);
+            // do nothing if not in a slot
+            if (slot == -1) { return; }
+
+            m_AllyNames[slot].text = name;
         }
 
         // helper to initialize the Allies array - safe to call multiple times
@@ -148,7 +171,7 @@ namespace BossRoom.Visual
                 }
             }
 
-            // ally slot was not found - add one in an open slot 
+            // ally slot was not found - add one in an open slot
             if (openslot >= 0)
             {
                 m_AllyPanel[openslot].SetActive(true);

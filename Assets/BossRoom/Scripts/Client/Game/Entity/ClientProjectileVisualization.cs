@@ -5,6 +5,10 @@ namespace BossRoom.Visual
 {
     public class ClientProjectileVisualization : NetworkedBehaviour
     {
+        [SerializeField]
+        [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
+        private SpecialFXGraphic m_OnHitParticlePrefab;
+
         NetworkProjectileState m_NetState;
         Transform m_Parent;
 
@@ -40,13 +44,22 @@ namespace BossRoom.Visual
         private void OnEnemyHit(ulong enemyId)
         {
             //in the future we could do quite fancy things, like deparenting the Graphics Arrow and parenting it to the target.
-            //For the moment we just play the hitreact, however.
+            //For the moment we play some particles (optionally), and cause the target to animate a hit-react.
 
             NetworkedObject targetNetObject;
             if (MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
             {
-                ClientCharacterVisualization charViz = targetNetObject.GetComponent<Client.ClientCharacter>().ChildVizObject;
-                charViz.OurAnimator.SetTrigger("HitReact1");
+                if (m_OnHitParticlePrefab)
+                {
+                    // show an impact graphic
+                    Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
+                }
+
+                var clientChar = targetNetObject.GetComponent<Client.ClientCharacter>();
+                if(clientChar)
+                {
+                    clientChar.ChildVizObject.OurAnimator.SetTrigger("HitReact1");
+                }
             }
         }
     }

@@ -1,6 +1,6 @@
 using MLAPI;
 using MLAPI.Messaging;
-using System.Collections;
+using System.Collections; 
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -152,7 +152,13 @@ namespace BossRoom.Server
                 if (IsHost)
                 {
                     // host doesn't get an OnClientConnected()
-                    OnClientConnected(OwnerClientId);
+                    // and other clients could be connects from last game
+                    // So look for any existing connections to do intiial setup
+                    var clients = NetworkingManager.Singleton.ConnectedClientsList;
+                    foreach (var net_cl in clients)
+                    {
+                        OnClientConnected(net_cl.ClientId);
+                    }
                 }
             }
         }

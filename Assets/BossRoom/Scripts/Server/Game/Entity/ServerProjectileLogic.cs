@@ -1,4 +1,5 @@
 using MLAPI;
+using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -15,15 +16,15 @@ namespace BossRoom.Server
         [SerializeField]
         private SphereCollider m_OurCollider;
 
-        private float m_MovementSpeed;
+        /// <summary>
+        /// The character that created us. Can be 0 to signal that we were created generically by the server.
+        /// </summary>
+        private ulong m_SpawnerId;
 
         /// <summary>
-        /// The person that created us. Can be 0 to signal that we were created generically by the server.
+        /// The data for our projectile. Indicates speed, damage, etc.
         /// </summary>
-        public ulong SpawnerId { get; set; }
-
-
-        private ActionDescription m_DrivingAction;
+        private ActionDescription.ProjectileInfo m_ProjectileInfo;
 
         private const int k_MaxCollisions = 4;
         private const float k_WallLingerSec = 2f; //time in seconds that arrows linger after hitting a target.
@@ -39,7 +40,30 @@ namespace BossRoom.Server
         private int m_BlockerMask;    //physics mask for things that block the arrow's flight.
         private int m_NPCLayer;
 
-        private bool m_HitTarget;     //only do damage once. 
+        /// <summary>
+        /// List of everyone we've hit and dealt damage to.
+        /// </summary>
+        /// <remarks>
+        /// Note that it's possible for entries in this list to become null if they're Destroyed post-impact.
+        /// But that's fine by us! We use <c>m_HitTargets.Count</c> to tell us how many total enemies we've hit,
+        /// so those nulls still count as hits.
+        /// </remarks>
+        private List<GameObject> m_HitTargets = new List<GameObject>();
+
+        /// <summary>
+        /// Are we done moving?
+        /// </summary>
+        private bool m_IsDead;
+
+        /// <summary>
+        /// Set everything up based on provided projectile information.
+        /// (Note that this is called before NetworkStart(), so don't try to do any network stuff here.)
+        /// </summary>
+        public void Initialize(ulong creatorsNetworkId, in ActionDescription.ProjectileInfo projectileInfo)
+        {
+            m_SpawnerId = creatorsNetworkId;
+            m_ProjectileInfo = projectileInfo;
+        }
 
         public override void NetworkStart(Stream stream)
         {
@@ -50,15 +74,8 @@ namespace BossRoom.Server
             }
 
             m_Started = true;
-            bool actionGotten = GameDataSource.Instance.ActionDataByType.TryGetValue(m_NetState.SourceAction.Value, out m_DrivingAction);
-            if (!actionGotten)
-            {
-                enabled = false;
-                throw new System.Exception("Projectile " + name + " couldn't find action " + m_NetState.SourceAction.Value + " in data");
-            }
 
-            m_MovementSpeed = m_DrivingAction.ProjectileSpeed_m_s;
-            m_DestroyAtSec = Time.fixedTime + (m_DrivingAction.Range / m_DrivingAction.ProjectileSpeed_m_s);
+            m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
 
             m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Ground" });
             m_BlockerMask = LayerMask.GetMask(new[] { "Default", "Ground" });
@@ -71,16 +88,16 @@ namespace BossRoom.Server
         {
             if (!m_Started) { return; } //don't do anything before NetworkStart has run.
 
-            Vector3 displacement = transform.forward * (m_MovementSpeed * Time.fixedDeltaTime);
+            Vector3 displacement = transform.forward * (m_ProjectileInfo.Speed_m_s * Time.fixedDeltaTime);
             transform.position += displacement;
 
             if (m_DestroyAtSec < Time.fixedTime)
             {
-                //we've reached our range terminus.End of the road! Time to go away.
+                // Time to go away.
                 Destroy(gameObject);
             }
 
-            if (!m_HitTarget)
+            if (!m_IsDead)
             {
                 DetectCollisions();
             }
@@ -92,7 +109,7 @@ namespace BossRoom.Server
         {
             m_NetState.NetworkPosition.Value = transform.position;
             m_NetState.NetworkRotationY.Value = transform.eulerAngles.y;
-            m_NetState.NetworkMovementSpeed.Value = m_MovementSpeed;
+            m_NetState.NetworkMovementSpeed.Value = m_ProjectileInfo.Speed_m_s;
         }
 
         private void DetectCollisions()
@@ -105,34 +122,40 @@ namespace BossRoom.Server
 
                 if ((layerTest & m_BlockerMask) != 0)
                 {
-                    //hit a wall; leave it for a couple of seconds. 
-                    m_MovementSpeed = 0;
-                    m_HitTarget = true;
+                    //hit a wall; leave it for a couple of seconds.
+                    m_ProjectileInfo.Speed_m_s = 0;
+                    m_IsDead = true;
                     m_DestroyAtSec = Time.fixedTime + k_WallLingerSec;
                     return;
                 }
 
-                if (m_CollisionCache[i].gameObject.layer == m_NPCLayer)
+                if (m_CollisionCache[i].gameObject.layer == m_NPCLayer && !m_HitTargets.Contains(m_CollisionCache[i].gameObject))
                 {
-                    //hit an enemy. We don't yet have a good way of visualizing this, so we just destroy ourselves quite quickly. 
-                    m_DestroyAtSec = Time.fixedTime + k_EnemyLingerSec;
-                    m_HitTarget = true;
+                    m_HitTargets.Add(m_CollisionCache[i].gameObject);
+
+                    if (m_HitTargets.Count >= m_ProjectileInfo.MaxVictims)
+                    {
+                        // we've hit all the enemies we're allowed to! So we're done
+                        m_DestroyAtSec = Time.fixedTime + k_EnemyLingerSec;
+                        m_IsDead = true;
+                    }
 
                     //all NPC layer entities should have one of these. 
                     var targetNetObj = m_CollisionCache[i].GetComponent<NetworkedObject>();
-                    if(targetNetObj != null )
+                    if (targetNetObj)
                     {
                         m_NetState.RecvHitEnemyClientRPC(targetNetObj.NetworkId);
 
                         //retrieve the person that created us, if he's still around. 
                         NetworkedObject spawnerNet;
-                        MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(SpawnerId, out spawnerNet);
+                        MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
-                        targetNetObj.GetComponent<ServerCharacter>().ReceiveHP(spawnerObj, -m_DrivingAction.Amount);
+                        targetNetObj.GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
                     }
 
-                    return;
+                    if (m_IsDead)
+                        return; // don't keep examining collisions since we can't damage anybody else
                 }
             }
         }
