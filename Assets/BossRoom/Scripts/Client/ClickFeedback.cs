@@ -13,17 +13,16 @@ namespace BossRoom.Client
     GameObject m_FeedbackPrefab;
     GameObject m_FeedbackObj;
     ClientInputSender m_ClientSender;
-    NetworkedObject m_NetworkedObject;
 
     private const float HOVER_HEIGHT = .1f;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_NetworkedObject = GetComponent<NetworkedObject>();
-        if (m_NetworkedObject == null || !m_NetworkedObject.IsLocalPlayer)
+        var networkedObject = GetComponent<NetworkedObject>();
+        if (networkedObject == null || !networkedObject.IsLocalPlayer)
         {
-            this.enabled = false;
+            Destroy(this);
             return;
         }
 
@@ -43,7 +42,7 @@ namespace BossRoom.Client
 
     private void OnDestroy()
     {
-        if (m_NetworkedObject != null && m_NetworkedObject.IsLocalPlayer)
+        if (m_ClientSender)
         {
             m_ClientSender.OnClientClick -= onClick;
         }
