@@ -1,178 +1,205 @@
 fileFormatVersion: 2
-guid: 6e827080c734678449d9b9a2b63ed6bd
+guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44
 TextureImporter:
   internalIDToNameTable:
   - first:
       213: -5935337979838524249
-    second: avatar_tank_f_lit
+    second: Tank1_port
   - first:
       213: -1659684370060816601
-    second: avatar_tank_f_unlit
+    second: Tank1_port_gr
   - first:
       213: 2069804280958334919
-    second: avatar_rogue_f_lit
+    second: Rogue1_port
   - first:
       213: 984034368070534991
-    second: avatar_rogue_f_unlit
+    second: Rogue1_port_gr
   - first:
       213: -2165419525758704481
-    second: avatar_tank_m_lit
+    second: char_box_ovr_selected
   - first:
       213: -6960129328031278604
-    second: avatar_tank_m_unlit
+    second: char_box_glow
   - first:
       213: 1540522687219259310
-    second: avatar_rogue_m_lit
+    second: Tank_atk
   - first:
       213: -4296359016634765864
-    second: avatar_rogue_m_unlit
+    second: Tank_skill1
   - first:
       213: -2388657405067991389
-    second: avatar_mage_m_lit
+    second: Tank_skill2
   - first:
       213: -6710387467502326305
-    second: avatar_mage_m_unlit
+    second: Tank2_port
   - first:
       213: -5275321764742424220
-    second: avatar_mage_f_lit
+    second: Tank2_port_gr
   - first:
       213: -4938242728237072438
-    second: avatar_mage_f_unlit
+    second: Rogue2_port
   - first:
       213: -5707360726647070374
-    second: avatar_rogue_m_lit
+    second: Rogue2_port_gr
   - first:
       213: -86643989335773967
-    second: avatar_rogue_m_unlit
+    second: Archer_atk
   - first:
       213: -648594524209405482
-    second: avatar_rogue_f_lit
+    second: Archer_skill1
   - first:
       213: 6176100515346893140
-    second: avatar_rogue_f_unlit
+    second: Archer_skill2
   - first:
       213: -6516341320500546185
-    second: charselect_frame_outline
+    second: char_box_ovr_avail
   - first:
       213: 5771264082969932389
-    second: charselect_frame_glow
+    second: char_box_bg_selected
   - first:
       213: -5674376572046109326
-    second: charselect_frame_selected
+    second: Rogue_atk
   - first:
       213: -538430575990610775
-    second: charselect_frame_selected
+    second: Rogue_skill1
   - first:
       213: -1472494204491392689
-    second: ability_tank_1
+    second: Rogue_skill2
   - first:
       213: 6346260615161199150
-    second: ability_tank_2
+    second: Mage1_port
   - first:
       213: 4005670855087808654
-    second: ability_tank_3
+    second: Mage1_port_gr
   - first:
       213: 4576935326401567667
-    second: ability_archer_1
+    second: Mage2_port
   - first:
       213: 8624814512637038460
-    second: ability_archer_2
+    second: Mage2_port_gr
   - first:
       213: 4629006799232479851
-    second: ability_archer_3
+    second: Mage_atk
+  - first:
+      213: 2812619407168195412
+    second: Mage_skill1
   - first:
       213: 653711104564485137
-    second: ability_rogue_2
+    second: Mage_skill2
   - first:
       213: -3970085563453415241
-    second: ability_rogue_3
+    second: P1tag
   - first:
       213: 6996385395546293261
-    second: ability_mage_1
+    second: P2tag
   - first:
       213: 148639981380011081
-    second: ability_mage_2
+    second: P3tag
   - first:
       213: -8245234026199263008
-    second: ability_mage_3
-  - first:
-      213: 5640192408203338092
-    second: class_rogue_lit
-  - first:
-      213: -2825189325306509334
-    second: class_archer_unlit
+    second: Emote_Wave
   - first:
       213: 8603631976929927373
-    second: class_archer_lit
+    second: Emote_Dance
+  - first:
+      213: -2825189325306509334
+    second: Emote_btn
+  - first:
+      213: 5640192408203338092
+    second: Archer1_port
   - first:
       213: 5696742878408775525
-    second: class_rogue_unlit
+    second: Archer1_port_gr
+  - first:
+      213: -9029998053583639580
+    second: Archer2_port
   - first:
       213: 2744380354563675566
-    second: class_mage_unlit
+    second: Archer2_port_gr
   - first:
       213: 3791779539129539345
-    second: class_tank_lit
+    second: P4tag
   - first:
       213: 8196090401804752436
-    second: class_tank_unlit
+    second: P5tag
   - first:
       213: 873408284726361166
-    second: choose_your_hero
+    second: P6tag
   - first:
       213: 3560111661982681200
-    second: button_ready
+    second: Emote_Cheer
   - first:
       213: 1866683241425957968
-    second: button_ready_pressed
+    second: Emote_sit
   - first:
       213: 4516325627489672080
-    second: portrait_frame
+    second: UI_elements_atlas_43
   - first:
       213: 2911624249718332368
-    second: checkmark
+    second: P7tag
   - first:
       213: 5601394669076293956
-    second: fillbar_bkgnd
+    second: P8tag
   - first:
       213: 472853806936191814
-    second: fillbar_filled
+    second: PtagGlow
   - first:
       213: 1591338921287218558
-    second: decorative_scroll_btm
+    second: Char_info_frame
   - first:
       213: 1717079544046338189
-    second: windowframe
+    second: Archer_sym
   - first:
       213: 7073677062034491875
-    second: P1
+    second: Archer_sym_gr
   - first:
       213: 2282546892015797016
-    second: P2
+    second: Rogue_sym
   - first:
       213: -6047367336175053643
-    second: P3
+    second: Rogue_sym_gr
   - first:
       213: -1584123350094214546
-    second: P4
+    second: Tank_sym_gr
   - first:
       213: -2491859787077907965
-    second: P5
+    second: Mage_sym
   - first:
       213: -7344767057168477063
-    second: P6
+    second: Mage_sym_gr
   - first:
       213: -720397744737086521
-    second: P7
+    second: Tank_sym
   - first:
       213: 8070130267694257472
-    second: P8
+    second: char_select_title
   - first:
       213: -5838772972447684026
-    second: P_Glow
+    second: Hero_bg
   - first:
       213: -6209776649012284720
-    second: EmptySpace
+    second: checkmark
+  - first:
+      213: 5337500237541837453
+    second: READY_btn_up
+  - first:
+      213: -2500411682467835602
+    second: READY_btn_dn
+  - first:
+      213: -6230944662187124400
+    second: Healthbar_bg
+  - first:
+      213: -5774814192483064561
+    second: UI_scroll_frame
+  - first:
+      213: 3523798857041549916
+    second: Healthbar
+  - first:
+      213: -6410841438199910071
+    second: UI_elements_atlas_hud_0
+  - first:
+      213: 8879625777829338720
+    second: blank
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -219,7 +246,7 @@ TextureImporter:
   spritePivot: {x: 0.5, y: 0.5}
   spritePixelsToUnits: 100
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
-  spriteGenerateFallbackPhysicsShape: 1
+  spriteGenerateFallbackPhysicsShape: 0
   alphaUsage: 1
   alphaIsTransparency: 1
   spriteTessellationDetail: -1
@@ -262,13 +289,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: avatar_tank_f_lit
+      name: Tank1_port
       rect:
         serializedVersion: 2
-        x: 0
-        y: 2653
-        width: 328
-        height: 497
+        x: 7
+        y: 1733
+        width: 198
+        height: 307
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -283,13 +310,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_tank_f_unlit
+      name: Tank1_port_gr
       rect:
         serializedVersion: 2
-        x: 330
-        y: 2653
-        width: 328
-        height: 497
+        x: 219
+        y: 1732
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -304,13 +331,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_rogue_f_lit
+      name: Rogue1_port
       rect:
         serializedVersion: 2
-        x: 661
-        y: 2655
-        width: 330
-        height: 495
+        x: 431
+        y: 1731
+        width: 198
+        height: 305
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -325,13 +352,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_rogue_f_unlit
+      name: Rogue1_port_gr
       rect:
         serializedVersion: 2
-        x: 991
-        y: 2655
-        width: 330
-        height: 495
+        x: 643
+        y: 1732
+        width: 198
+        height: 305
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -346,13 +373,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_tank_m_lit
+      name: char_box_ovr_selected
       rect:
         serializedVersion: 2
-        x: 0
-        y: 2199
-        width: 330
-        height: 460
+        x: 870
+        y: 1664
+        width: 240
+        height: 342
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -367,13 +394,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_tank_m_unlit
+      name: char_box_glow
       rect:
         serializedVersion: 2
-        x: 332
-        y: 2198
-        width: 330
-        height: 460
+        x: 1126
+        y: 1622
+        width: 324
+        height: 422
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -388,13 +415,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_rogue_m_lit
+      name: Tank_atk
       rect:
         serializedVersion: 2
-        x: 661
-        y: 2196
-        width: 330
-        height: 460
+        x: 1486
+        y: 1866
+        width: 179
+        height: 181
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -409,13 +436,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_rogue_m_unlit
+      name: Tank_skill1
       rect:
         serializedVersion: 2
-        x: 994
-        y: 2196
-        width: 330
-        height: 460
+        x: 1671
+        y: 1866
+        width: 180
+        height: 181
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -430,13 +457,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_mage_m_lit
+      name: Tank_skill2
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1733
-        width: 330
-        height: 464
+        x: 1859
+        y: 1866
+        width: 179
+        height: 181
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -451,13 +478,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_mage_m_unlit
+      name: Tank2_port
       rect:
         serializedVersion: 2
-        x: 331
-        y: 1732
-        width: 331
-        height: 465
+        x: 7
+        y: 1426
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -472,13 +499,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_mage_f_lit
+      name: Tank2_port_gr
       rect:
         serializedVersion: 2
-        x: 662
-        y: 1733
-        width: 327
-        height: 463
+        x: 219
+        y: 1426
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -493,13 +520,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_mage_f_unlit
+      name: Rogue2_port
       rect:
         serializedVersion: 2
-        x: 991
-        y: 1730
-        width: 320
-        height: 464
+        x: 431
+        y: 1426
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -514,13 +541,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_archer_m_lit
+      name: Rogue2_port_gr
       rect:
         serializedVersion: 2
-        x: 0
-        y: 1261
-        width: 330
-        height: 460
+        x: 643
+        y: 1426
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -535,13 +562,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_archer_m_unlit
+      name: Archer_atk
       rect:
         serializedVersion: 2
-        x: 330
-        y: 1263
-        width: 330
-        height: 460
+        x: 1485
+        y: 1680
+        width: 180
+        height: 181
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -556,13 +583,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_archer_f_lit
+      name: Archer_skill1
       rect:
         serializedVersion: 2
-        x: 664
-        y: 1266
-        width: 312
-        height: 461
+        x: 1671
+        y: 1680
+        width: 180
+        height: 181
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -577,13 +604,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: avatar_archer_f_unlit
+      name: Archer_skill2
       rect:
         serializedVersion: 2
-        x: 996
-        y: 1263
-        width: 312
-        height: 461
+        x: 1859
+        y: 1680
+        width: 179
+        height: 181
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -598,13 +625,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: charselect_frame_outline
+      name: char_box_ovr_avail
       rect:
         serializedVersion: 2
-        x: 1326
-        y: 2557
-        width: 395
-        height: 534
+        x: 870
+        y: 1275
+        width: 249
+        height: 342
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -619,13 +646,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: charselect_frame_glow
+      name: char_box_bg_selected
       rect:
         serializedVersion: 2
-        x: 1736
-        y: 2509
-        width: 514
-        height: 630
+        x: 1169
+        y: 1275
+        width: 240
+        height: 342
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -640,13 +667,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: charselect_frame_bkgnd
+      name: Rogue_atk
       rect:
         serializedVersion: 2
-        x: 1336
-        y: 1955
-        width: 395
-        height: 534
+        x: 1486
+        y: 1495
+        width: 179
+        height: 180
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -661,13 +688,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: charselect_frame_selected
+      name: Rogue_skill1
       rect:
         serializedVersion: 2
-        x: 1785
-        y: 1955
-        width: 395
-        height: 534
+        x: 1671
+        y: 1495
+        width: 180
+        height: 180
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -682,13 +709,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_tank_1
+      name: Rogue_skill2
       rect:
         serializedVersion: 2
-        x: 2281
-        y: 2867
-        width: 283
-        height: 283
+        x: 1859
+        y: 1495
+        width: 179
+        height: 180
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -703,13 +730,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_tank_2
+      name: Mage1_port
       rect:
         serializedVersion: 2
-        x: 2568
-        y: 2867
-        width: 283
-        height: 283
+        x: 7
+        y: 1120
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -724,13 +751,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_tank_3
+      name: Mage1_port_gr
       rect:
         serializedVersion: 2
-        x: 2855
-        y: 2867
-        width: 283
-        height: 283
+        x: 219
+        y: 1120
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -745,13 +772,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_archer_1
+      name: Mage2_port
       rect:
         serializedVersion: 2
-        x: 2282
-        y: 2583
-        width: 283
-        height: 283
+        x: 429
+        y: 1120
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -766,13 +793,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_archer_2
+      name: Mage2_port_gr
       rect:
         serializedVersion: 2
-        x: 2569
-        y: 2582
-        width: 283
-        height: 283
+        x: 643
+        y: 1120
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -787,13 +814,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_archer_3
+      name: Mage_atk
       rect:
         serializedVersion: 2
-        x: 2853
-        y: 2582
-        width: 283
-        height: 283
+        x: 1486
+        y: 1310
+        width: 179
+        height: 180
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -808,13 +835,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_rogue_1
+      name: Mage_skill1
       rect:
         serializedVersion: 2
-        x: 2279
-        y: 2302
-        width: 283
-        height: 283
+        x: 1671
+        y: 1307
+        width: 180
+        height: 180
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -829,13 +856,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_rogue_2
+      name: Mage_skill2
       rect:
         serializedVersion: 2
-        x: 2568
-        y: 2297
-        width: 283
-        height: 283
+        x: 1859
+        y: 1310
+        width: 179
+        height: 180
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -850,13 +877,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_rogue_3
+      name: P1tag
       rect:
         serializedVersion: 2
-        x: 2859
-        y: 2297
-        width: 283
-        height: 283
+        x: 864
+        y: 1109
+        width: 129
+        height: 129
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -871,13 +898,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_mage_1
+      name: P2tag
       rect:
         serializedVersion: 2
-        x: 2280
-        y: 2015
-        width: 285
-        height: 278
+        x: 997
+        y: 1109
+        width: 128
+        height: 129
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -892,13 +919,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_mage_2
+      name: P3tag
       rect:
         serializedVersion: 2
-        x: 2567
-        y: 2013
-        width: 285
-        height: 278
+        x: 1129
+        y: 1109
+        width: 129
+        height: 129
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -913,13 +940,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: ability_mage_3
+      name: Emote_Wave
       rect:
         serializedVersion: 2
-        x: 2857
-        y: 2013
-        width: 285
-        height: 278
+        x: 1486
+        y: 1128
+        width: 179
+        height: 177
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -934,55 +961,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: class_rogue_lit
+      name: Emote_Dance
       rect:
         serializedVersion: 2
-        x: 1025
-        y: 899
-        width: 508
-        height: 351
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: c61a0dbbc1df54e40800000000000000
-      internalID: 5640192408203338092
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: class_archer_unlit
-      rect:
-        serializedVersion: 2
-        x: 517
-        y: 898
-        width: 508
-        height: 351
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: ae741e1f649eac8d0800000000000000
-      internalID: -2825189325306509334
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: class_archer_lit
-      rect:
-        serializedVersion: 2
-        x: 9
-        y: 897
-        width: 508
-        height: 349
+        x: 1671
+        y: 1128
+        width: 180
+        height: 177
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -997,13 +982,55 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: class_rogue_unlit
+      name: Emote_btn
       rect:
         serializedVersion: 2
-        x: 1534
-        y: 896
-        width: 508
-        height: 351
+        x: 1859
+        y: 1128
+        width: 179
+        height: 177
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae741e1f649eac8d0800000000000000
+      internalID: -2825189325306509334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer1_port
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 815
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c61a0dbbc1df54e40800000000000000
+      internalID: 5640192408203338092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer1_port_gr
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 815
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1018,13 +1045,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: class_mage_lit
+      name: Archer2_port
       rect:
         serializedVersion: 2
-        x: 8
-        y: 546
-        width: 508
-        height: 349
+        x: 431
+        y: 815
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1039,13 +1066,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: class_mage_unlit
+      name: Archer2_port_gr
       rect:
         serializedVersion: 2
-        x: 517
-        y: 545
-        width: 508
-        height: 349
+        x: 643
+        y: 815
+        width: 198
+        height: 304
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1060,13 +1087,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: class_tank_lit
+      name: P4tag
       rect:
         serializedVersion: 2
-        x: 1028
-        y: 545
-        width: 510
-        height: 352
+        x: 864
+        y: 969
+        width: 129
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1081,13 +1108,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: class_tank_unlit
+      name: P5tag
       rect:
         serializedVersion: 2
-        x: 1539
-        y: 547
-        width: 508
-        height: 349
+        x: 997
+        y: 969
+        width: 128
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1102,13 +1129,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: choose_your_hero
+      name: P6tag
       rect:
         serializedVersion: 2
-        x: 0
-        y: 303
-        width: 1517
-        height: 240
+        x: 1129
+        y: 969
+        width: 129
+        height: 128
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1123,13 +1150,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: button_ready
+      name: Emote_Cheer
       rect:
         serializedVersion: 2
-        x: 0
-        y: 65
-        width: 708
-        height: 241
+        x: 1486
+        y: 942
+        width: 179
+        height: 177
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1144,13 +1171,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: button_ready_pressed
+      name: Emote_sit
       rect:
         serializedVersion: 2
-        x: 704
-        y: 63
-        width: 708
-        height: 241
+        x: 1671
+        y: 942
+        width: 180
+        height: 177
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1165,13 +1192,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: portrait_frame
+      name: UI_elements_atlas_43
       rect:
         serializedVersion: 2
-        x: 1522
-        y: 247
-        width: 314
-        height: 297
+        x: 1859
+        y: 942
+        width: 179
+        height: 177
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1186,13 +1213,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: checkmark
+      name: P7tag
       rect:
         serializedVersion: 2
-        x: 1860
-        y: 249
-        width: 199
-        height: 190
+        x: 864
+        y: 827
+        width: 129
+        height: 129
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1207,13 +1234,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: fillbar_bkgnd
+      name: P8tag
       rect:
         serializedVersion: 2
-        x: 1411
-        y: 107
-        width: 647
-        height: 120
+        x: 997
+        y: 828
+        width: 128
+        height: 127
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1228,13 +1255,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: fillbar_filled
+      name: PtagGlow
       rect:
         serializedVersion: 2
-        x: 1432
-        y: 22
-        width: 560
-        height: 83
+        x: 1129
+        y: 827
+        width: 129
+        height: 129
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1249,13 +1276,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: decorative_scroll_btm
+      name: Char_info_frame
       rect:
         serializedVersion: 2
-        x: 2058
-        y: 0
-        width: 1092
-        height: 218
+        x: 1357
+        y: 146
+        width: 665
+        height: 795
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1270,13 +1297,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: windowframe
+      name: Archer_sym
       rect:
         serializedVersion: 2
-        x: 2075
-        y: 214
-        width: 1056
-        height: 1250
+        x: 8
+        y: 583
+        width: 325
+        height: 226
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1291,13 +1318,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P1
+      name: Archer_sym_gr
       rect:
         serializedVersion: 2
-        x: 1315
-        y: 1711
-        width: 198
-        height: 192
+        x: 338
+        y: 584
+        width: 325
+        height: 225
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1312,13 +1339,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P2
+      name: Rogue_sym
       rect:
         serializedVersion: 2
-        x: 1514
-        y: 1711
-        width: 198
-        height: 192
+        x: 669
+        y: 585
+        width: 325
+        height: 225
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1333,13 +1360,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P3
+      name: Rogue_sym_gr
       rect:
         serializedVersion: 2
-        x: 1712
-        y: 1711
-        width: 198
-        height: 192
+        x: 996
+        y: 587
+        width: 324
+        height: 225
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1354,13 +1381,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P4
+      name: Tank_sym_gr
       rect:
         serializedVersion: 2
-        x: 1313
-        y: 1494
-        width: 198
-        height: 192
+        x: 1003
+        y: 359
+        width: 326
+        height: 227
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1375,13 +1402,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P5
+      name: Mage_sym
       rect:
         serializedVersion: 2
-        x: 1511
-        y: 1494
-        width: 198
-        height: 192
+        x: 7
+        y: 358
+        width: 324
+        height: 226
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1396,13 +1423,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P6
+      name: Mage_sym_gr
       rect:
         serializedVersion: 2
-        x: 1710
-        y: 1494
-        width: 198
-        height: 192
+        x: 339
+        y: 358
+        width: 325
+        height: 226
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1417,13 +1444,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P7
+      name: Tank_sym
       rect:
         serializedVersion: 2
-        x: 1311
-        y: 1270
-        width: 198
-        height: 192
+        x: 670
+        y: 358
+        width: 325
+        height: 227
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1438,13 +1465,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P8
+      name: char_select_title
       rect:
         serializedVersion: 2
-        x: 1509
-        y: 1270
-        width: 198
-        height: 192
+        x: 0
+        y: 199
+        width: 983
+        height: 150
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1459,13 +1486,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: P_Glow
+      name: Hero_bg
       rect:
         serializedVersion: 2
-        x: 1707
-        y: 1270
-        width: 198
-        height: 192
+        x: 984
+        y: 162
+        width: 209
+        height: 191
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1480,13 +1507,13 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: EmptySpace
+      name: checkmark
       rect:
         serializedVersion: 2
-        x: 1931
-        y: 1426
-        width: 32
-        height: 32
+        x: 1217
+        y: 168
+        width: 107
+        height: 105
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1500,10 +1527,157 @@ TextureImporter:
       indices: 
       edges: []
       weights: []
+    - serializedVersion: 2
+      name: READY_btn_up
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 50
+        width: 451
+        height: 142
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8a8e3fcf2c921a40800000000000000
+      internalID: 5337500237541837453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: READY_btn_dn
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 47
+        width: 451
+        height: 145
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e21944292d0cc4dd0800000000000000
+      internalID: -2500411682467835602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Healthbar_bg
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 74
+        width: 413
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 059583bb7dc3789a0800000000000000
+      internalID: -6230944662187124400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_scroll_frame
+      rect:
+        serializedVersion: 2
+        x: 1339
+        y: 8
+        width: 704
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f05a925961dbbdfa0800000000000000
+      internalID: -5774814192483064561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Healthbar
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 19
+        width: 355
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5a93edf36c07e030800000000000000
+      internalID: 3523798857041549916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_elements_atlas_hud_0
+      rect:
+        serializedVersion: 2
+        x: 1231
+        y: 277
+        width: 79
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9417db49dad1807a0800000000000000
+      internalID: -6410841438199910071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blank
+      rect:
+        serializedVersion: 2
+        x: 1277
+        y: 872
+        width: 54
+        height: 57
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06e5be14994ca3b70800000000000000
+      internalID: 8879625777829338720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 40b2e4562951bae4a97843f785177e42
+    spriteID: d2822d7cf0ee1764aab14b38ed0bf3b1
     internalID: 0
     vertices: []
     indices: 
