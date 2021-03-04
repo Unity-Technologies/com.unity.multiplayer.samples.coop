@@ -1,5 +1,6 @@
 using MLAPI;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -23,12 +24,16 @@ namespace BossRoom.Server
         [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
         private NetworkedObject m_BossPrefab;
 
+        [SerializeField] [Tooltip("A collection of locations for spawning players")]
+        private Transform[] m_PlayerSpawnPoints;
+        private List<Transform> m_PlayerSpawnPointsList = null;
+
         // note: this is temporary, for testing!
         public override GameState ActiveState { get { return GameState.BossRoom; } }
 
         /// <summary>
         /// This event is raised when all the initial players have entered the game. It is the right time for
-        /// other systems to do things like spawn monsters. 
+        /// other systems to do things like spawn monsters.
         /// </summary>
         public event System.Action InitialSpawnEvent;
 
@@ -42,7 +47,7 @@ namespace BossRoom.Server
         private const float k_LoseDelay = 2.5f;
 
         /// <summary>
-        /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select). 
+        /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select).
         /// </summary>
         public bool InitialSpawnDone { get; private set; }
 
@@ -138,7 +143,23 @@ namespace BossRoom.Server
 
         private void SpawnPlayer(ulong clientId)
         {
-            var newPlayer = Instantiate(m_PlayerPrefab);
+            Transform spawnPoint = null;
+
+            if (m_PlayerSpawnPointsList == null || m_PlayerSpawnPointsList.Count == 0)
+            {
+                m_PlayerSpawnPointsList = new List<Transform>(m_PlayerSpawnPoints);
+            }
+
+            Debug.Assert(m_PlayerSpawnPointsList.Count > 1,
+                $"PlayerSpawnPoints array should have at least 2 spawn points.");
+
+            int index = Random.Range(0, m_PlayerSpawnPointsList.Count);
+                spawnPoint = m_PlayerSpawnPointsList[index];
+                m_PlayerSpawnPointsList.RemoveAt(index);
+
+            var newPlayer = spawnPoint != null ?
+                Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation) :
+                Instantiate(m_PlayerPrefab);
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
             netState.NetworkLifeState.OnValueChanged += OnHeroLifeStateChanged;
 
