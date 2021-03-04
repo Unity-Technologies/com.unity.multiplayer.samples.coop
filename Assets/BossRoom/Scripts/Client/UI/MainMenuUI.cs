@@ -1,4 +1,6 @@
+using BossRoom.Client;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Visual
 {
@@ -23,8 +25,9 @@ namespace BossRoom.Visual
 
         void Start()
         {
-            // Find the game Net Portal by tag - it should have been created by Startup 
+            // Find the game Net Portal by tag - it should have been created by Startup
             GameObject GamePortalGO = GameObject.FindGameObjectWithTag("GameNetPortal");
+            Assert.IsNotNull("No GameNetPortal found, Did you start the game from the Startup scene?");
             m_GameNetPortal = GamePortalGO.GetComponent<GameNetPortal>();
             m_ClientNetPortal = GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
@@ -34,35 +37,53 @@ namespace BossRoom.Visual
 
         public void OnHostClicked()
         {
-
-            m_ResponsePopup.SetupEnterGameDisplay("Host Game", "Input the IP to host on", "iphost", "Confirm", (string IPinput, string playerName) =>
+            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the IP to host on", "Input the room name to host on", "iphost", "Confirm",
+                (string connectInput, string playerName, OnlineMode onlineMode) =>
             {
-                string ipAddress = IPinput;
-                if (string.IsNullOrEmpty(IPinput) )
-                {
-                    ipAddress = k_DefaultIP;
-                }
-
                 m_GameNetPortal.PlayerName = playerName;
-                m_GameNetPortal.StartHost(ipAddress, k_ConnectPort);
+                switch (onlineMode)
+                {
+                    case OnlineMode.Relay:
+                        m_GameNetPortal.StartRelayHost(connectInput);
+                        break;
+
+                    case OnlineMode.IpHost:
+                        m_GameNetPortal.StartHost(PostProcessIpInput(connectInput), k_ConnectPort);
+                        break;
+                }
             }, k_DefaultIP);
         }
 
         public void OnConnectClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay("Join Game", "Input the host IP below", "iphost", "Join", (string IPinput, string playerName) =>
+            m_ResponsePopup.SetupEnterGameDisplay(false, "Join Game", "Input the host IP below", "Input the room name below", "iphost", "Join",
+                (string connectInput, string playerName, OnlineMode onlineMode) =>
             {
-                string ipAddress = IPinput;
-                if (string.IsNullOrEmpty(IPinput))
-                {
-                    ipAddress = k_DefaultIP;
-                }
-
                 m_GameNetPortal.PlayerName = playerName;
-                Client.ClientGameNetPortal.StartClient(m_GameNetPortal, ipAddress, k_ConnectPort);
-                m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
 
+                switch (onlineMode)
+                {
+                    case OnlineMode.Relay:
+                        ClientGameNetPortal.StartClientRelayMode(m_GameNetPortal, connectInput);
+                        break;
+
+                    case OnlineMode.IpHost:
+                        ClientGameNetPortal.StartClient(m_GameNetPortal, connectInput, k_ConnectPort);
+                        break;
+                }
+                m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
             }, k_DefaultIP);
+        }
+
+        private string PostProcessIpInput(string ipInput)
+        {
+            string ipAddress = ipInput;
+            if (string.IsNullOrEmpty(ipInput))
+            {
+                ipAddress = k_DefaultIP;
+            }
+
+            return ipAddress;
         }
 
         /// <summary>
@@ -73,7 +94,6 @@ namespace BossRoom.Visual
         {
             if (status != ConnectStatus.Success)
             {
-
                 m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Something went wrong", false, true);
             }
             else
@@ -99,4 +119,3 @@ namespace BossRoom.Visual
         }
     }
 }
-
