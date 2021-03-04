@@ -70,6 +70,15 @@ namespace MLAPI.Transports
         ///<inheritdoc/>
         public override ulong ServerClientId => GetMlapiClientId(0, true);
 
+        /// <summary>
+        /// The room name to use when hosting/joining with this transport.
+        /// </summary>
+        public string RoomName
+        {
+            get => m_RoomName;
+            set => m_RoomName = value;
+        }
+
         ///<inheritdoc/>
         public override void Send(ulong clientId, ArraySegment<byte> data, Channel channel)
         {
