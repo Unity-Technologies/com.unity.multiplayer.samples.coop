@@ -43,6 +43,9 @@ namespace BossRoom
 
         ClientRpcParams m_PongClientParams;
 
+        // Only the current player will be modifying this field
+        public static string Text { get; private set; }
+
         public override void NetworkStart()
         {
             bool isClientOnly = IsClient && !IsServer;
@@ -50,10 +53,6 @@ namespace BossRoom
             {
                 Destroy(this);
                 return;
-            }
-            if (IsOwner)
-            {
-                CreateTextOverlay();
             }
             m_PongClientParams = new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } };
         }
@@ -105,10 +104,7 @@ namespace BossRoom
                 textToDisplay = $"{textToDisplay}Connected players: {NetworkingManager.Singleton.ConnectedClients.Count.ToString()} ";
             }
 
-            if (m_TextStat)
-            {
-                m_TextStat.text = textToDisplay;
-            }
+            Text = textToDisplay;
         }
 
 
