@@ -1,73 +1,38 @@
+#if DEBUG
+
 using System;
 using UnityEngine;
-using MLAPI;
+using UnityEngine.UI;
 
 namespace BossRoom.Scripts.Editor
 {
     public class NetworkOverlay : MonoBehaviour
     {
-        bool m_ArtificialLatencyEnabled;
-        Color m_TextColor = Color.red;
-        GUIStyle m_TextStyle = GUIStyle.none;
-        GUIStyle m_NetworkStatsStyle = GUIStyle.none;
-        Texture2D m_BackgroundTexture;
+        public static NetworkOverlay Instance { get; private set; }
 
-        int height;
+        [SerializeField]
+        GameObject m_DebugCanvasPrefab;
+
+        Transform m_VerticalLayoutTransform;
 
         void Awake()
         {
+            Instance = this;
             DontDestroyOnLoad(this);
-
-            m_BackgroundTexture = new Texture2D(1, 1, TextureFormat.RGBA32, false);
-            m_BackgroundTexture.SetPixel(0, 0, new Color(0f, 0f, 0f, 0.7f));
-            m_BackgroundTexture.Apply();
-
-            m_TextStyle.fontSize = 24;
-            m_TextStyle.normal.background = m_BackgroundTexture;
-
-            m_NetworkStatsStyle.fontSize = 24;
         }
 
-        #if DEBUG
-        void OnGUI()
+        void Start()
         {
-            height = Screen.height - 100;
-            GUILayout.BeginArea(new Rect(50, height, 280, 400));
-            if (NetworkingManager.Singleton.IsClient || NetworkingManager.Singleton.IsServer)
-            {
-                var chosenTransport = NetworkingManager.Singleton.NetworkConfig.NetworkTransport;
-
-                switch (chosenTransport)
-                {
-                    case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
-                        m_ArtificialLatencyEnabled = liteNetLibTransport.SimulatePacketLossChance > 0 ||
-                            liteNetLibTransport.SimulateMinLatency > 0 ||
-                            liteNetLibTransport.SimulateMaxLatency > 0;
-                        break;
-                    case MLAPI.Transports.UNET.UnetTransport unetTransport:
-                        m_ArtificialLatencyEnabled = false;
-                        break;
-                    default:
-                        throw new Exception($"unhandled transport {chosenTransport.GetType()}");
-                }
-
-                m_TextStyle.normal.textColor = Color.white;
-                if (!string.IsNullOrEmpty(NetworkStats.Text))
-                {
-                    GUILayout.Label(NetworkStats.Text, m_TextStyle);
-                }
-
-                if (m_ArtificialLatencyEnabled)
-                {
-                    m_TextColor.a = Mathf.PingPong(Time.time, 1f);
-                    m_TextStyle.normal.textColor = m_TextColor;
-
-                    GUILayout.Label("Artificial Latency Enabled", m_TextStyle);
-                }
-            }
-
-            GUILayout.EndArea();
+            var canvas = Instantiate(m_DebugCanvasPrefab, transform);
+            m_VerticalLayoutTransform = canvas.GetComponentInChildren<VerticalLayoutGroup>().transform;
         }
-        #endif
+
+        public void AddToUI(RectTransform displayTransform)
+        {
+            displayTransform.sizeDelta = new Vector2(100f, 24f);
+            displayTransform.SetParent(m_VerticalLayoutTransform);
+            displayTransform.SetAsFirstSibling();
+        }
     }
 }
+#endif

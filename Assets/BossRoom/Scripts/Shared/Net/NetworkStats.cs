@@ -1,13 +1,15 @@
+#if DEBUG
+
 using System;
 using System.Collections.Generic;
 using MLAPI;
 using MLAPI.Messaging;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace BossRoom
 {
-
     /// This utility help showing Network statistics at runtime.
     ///
     /// This component attaches to any networked object.
@@ -43,9 +45,6 @@ namespace BossRoom
 
         ClientRpcParams m_PongClientParams;
 
-        // Only the current player will be modifying this field
-        public static string Text { get; private set; }
-
         public override void NetworkStart()
         {
             bool isClientOnly = IsClient && !IsServer;
@@ -54,28 +53,30 @@ namespace BossRoom
                 Destroy(this);
                 return;
             }
+            if (IsOwner)
+            {
+                CreateNetworkStatsText();
+            }
             m_PongClientParams = new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } };
         }
 
-        // Creating our own canvas so this component is easy to add and remove from the project
-        void CreateTextOverlay()
+        // Creating a UI text object and add it to NetworkOverlay canvas
+        void CreateNetworkStatsText()
         {
-            GameObject canvasGameObject = new GameObject("Debug Overlay Canvas");
-            var canvas = canvasGameObject.AddComponent<Canvas>();
-            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
-            canvas.worldCamera = Camera.current;
+            Assert.IsNotNull(Scripts.Editor.NetworkOverlay.Instance,
+                "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
-            GameObject statUI = new GameObject("UI Stat Text");
-            statUI.transform.SetParent(canvas.transform);
+            var statUI = new GameObject("UI Stat Text");
             m_TextStat = statUI.AddComponent<Text>();
             m_TextStat.text = "No Stat";
             m_TextStat.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
             m_TextStat.horizontalOverflow = HorizontalWrapMode.Overflow;
+            m_TextStat.alignment = TextAnchor.MiddleLeft;
+            m_TextStat.raycastTarget = false;
+            m_TextStat.resizeTextForBestFit = true;
 
             var rectTransform = statUI.GetComponent<RectTransform>();
-            rectTransform.anchorMin = new Vector2();
-            rectTransform.anchorMax = new Vector2();
-            rectTransform.position = new Vector3(rectTransform.rect.width / 2, 0);
+            Scripts.Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
         }
 
         void FixedUpdate()
@@ -104,7 +105,10 @@ namespace BossRoom
                 textToDisplay = $"{textToDisplay}Connected players: {NetworkingManager.Singleton.ConnectedClients.Count.ToString()} ";
             }
 
-            Text = textToDisplay;
+            if (m_TextStat)
+            {
+                m_TextStat.text = textToDisplay;
+            }
         }
 
 
@@ -140,3 +144,4 @@ namespace BossRoom
         }
     }
 }
+#endif
