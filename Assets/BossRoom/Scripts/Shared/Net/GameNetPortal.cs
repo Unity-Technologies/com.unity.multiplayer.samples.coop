@@ -14,6 +14,14 @@ namespace BossRoom
         Unknown,          //can't join, reason unknown.
     }
 
+    [Serializable]
+    public class ConnectionPayload
+    {
+        public string clientGUID;
+        public int clientScene;
+        public string playerName;
+    }
+
     /// <summary>
     /// The GameNetPortal is the general purpose entry-point for game network messages between the client and server. It is available
     /// as soon as the initial network connection has completed, and persists across all scenes. Its purpose is to move non-GameObject-specific
@@ -57,7 +65,7 @@ namespace BossRoom
         public event Action<ulong, int> ClientSceneChanged;
 
         public MLAPI.NetworkingManager NetManager { get; private set; }
-		
+
         /// <summary>
         /// the name of the player chosen at game start
         /// </summary>
