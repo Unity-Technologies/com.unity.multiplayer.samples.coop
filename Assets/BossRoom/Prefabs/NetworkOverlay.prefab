@@ -44,8 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44885087a3a0e1b42a44d4a40b44d47a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DebugCanvasPrefab: {fileID: 0}
-  m_VerticalLayoutTransform: {fileID: 0}
+  m_DebugCanvasPrefab: {fileID: 4137713723670321435, guid: 612c402e20334a243a5c5713ed29029b, type: 3}
 --- !u!114 &28657180608889446
 MonoBehaviour:
   m_ObjectHideFlags: 0
