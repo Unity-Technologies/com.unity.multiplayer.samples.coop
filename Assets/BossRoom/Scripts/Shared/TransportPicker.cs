@@ -14,24 +14,24 @@ using UnityEngine.Assertions;
 public class TransportPicker : MonoBehaviour
 {
     [SerializeField]
-    Transport m_IpHostTransport;
+    NetworkTransport m_IpHostTransport;
 
     [SerializeField]
-    Transport m_RelayTransport;
+    NetworkTransport m_RelayTransport;
 
     /// <summary>
     /// The transport used when hosting the game on an IP address.
     /// </summary>
-    public Transport IpHostTransport => m_IpHostTransport;
+    public NetworkTransport IpHostTransport => m_IpHostTransport;
 
     /// <summary>
     /// The transport used when hosting the game over a relay server.
     /// </summary>
-    public Transport RelayTransport => m_RelayTransport;
+    public NetworkTransport RelayTransport => m_RelayTransport;
 
     void OnValidate()
     {
-        Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UnetTransport || m_IpHostTransport as LiteNetLibTransport.LiteNetLibTransport),
+        Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UNetTransport || m_IpHostTransport as LiteNetLibTransport.LiteNetLibTransport),
             "IpHost transport must be either Unet or LiteNetLib transport.");
 
         Assert.IsTrue(m_RelayTransport == null || (m_RelayTransport as PhotonRealtimeTransport), "" +

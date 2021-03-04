@@ -134,8 +134,8 @@ namespace BossRoom.Client
         /// <param name="roomName">The room name of the host to connect to.</param>
         public static void StartClientRelayMode(GameNetPortal portal, string roomName)
         {
-            var chosenTransport  = NetworkingManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
-            NetworkingManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             switch (chosenTransport)
             {

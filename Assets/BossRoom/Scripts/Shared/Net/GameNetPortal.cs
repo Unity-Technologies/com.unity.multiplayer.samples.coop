@@ -62,7 +62,7 @@ namespace BossRoom
         /// raised when a client has changed scenes. Returns the ClientID and the new scene the client has entered, by index.
         /// </summary>
         public event Action<ulong, int> ClientSceneChanged;
-        
+
         public NetworkManager NetManager { get; private set; }
 
         /// <summary>
@@ -154,7 +154,7 @@ namespace BossRoom
         {
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-            
+
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             switch (chosenTransport)
             {
@@ -175,8 +175,8 @@ namespace BossRoom
 
         public void StartRelayHost(string roomName)
         {
-            var chosenTransport  = NetworkingManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
-            NetworkingManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             switch (chosenTransport)
             {
