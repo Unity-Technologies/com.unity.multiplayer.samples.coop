@@ -112,43 +112,32 @@ MonoBehaviour:
     - DungeonTest
     - PostGame
     - Startup
+    - 
     AllowRuntimeSceneChanges: 1
-    NetworkedPrefabs:
-    - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef,
-        type: 3}
+    NetworkPrefabs:
+    - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
       PlayerPrefab: 1
-    - Prefab: {fileID: 3565665953789623672, guid: 1a58a2c4657fe6d4890d9ad39f43894e,
-        type: 3}
+    - Prefab: {fileID: 3565665953789623672, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 297185343939699586, guid: 8b9c63e7d70c5ff48a03aad51e17103c,
-        type: 3}
+    - Prefab: {fileID: 297185343939699586, guid: 8b9c63e7d70c5ff48a03aad51e17103c, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded,
-        type: 3}
+    - Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7,
-        type: 3}
+    - Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a,
-        type: 3}
+    - Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 7788790407431586438, guid: 7c9c0bade0c78da4b9825e198685ac1e,
-        type: 3}
+    - Prefab: {fileID: 7788790407431586438, guid: 7c9c0bade0c78da4b9825e198685ac1e, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 7898142965061138134, guid: 10897010648fc204783f651034c504d9,
-        type: 3}
+    - Prefab: {fileID: 7898142965061138134, guid: 10897010648fc204783f651034c504d9, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c,
-        type: 3}
+    - Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb,
-        type: 3}
+    - Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2,
-        type: 3}
+    - Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2, type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 7475764267130300177, guid: 462e020e721ce4543b97867020621b15,
-        type: 3}
+    - Prefab: {fileID: 7475764267130300177, guid: 462e020e721ce4543b97867020621b15, type: 3}
       PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0
@@ -162,8 +151,8 @@ MonoBehaviour:
     SecondsHistory: 0
     EnableTimeResync: 0
     TimeResyncInterval: 30
-    EnableNetworkedVar: 1
-    EnsureNetworkedVarLengthSafety: 0
+    EnableNetworkVariable: 1
+    EnsureNetworkVariableLengthSafety: 0
     EnableSceneManagement: 1
     ForceSamePrefabs: 0
     UsePrefabSync: 0
@@ -174,9 +163,6 @@ MonoBehaviour:
     EnableMessageBuffering: 0
     MessageBufferTimeout: 20
     EnableNetworkLogs: 1
-    EnableEncryption: 0
-    SignKeyExchange: 0
-    ServerBase64PfxCertificate: 
   references:
     version: 1
     00000000:
