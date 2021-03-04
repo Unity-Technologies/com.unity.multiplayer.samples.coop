@@ -1,6 +1,7 @@
 using MLAPI;
 using System;
 using System.Collections.Generic;
+using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
@@ -11,7 +12,7 @@ namespace BossRoom.Client
     /// Captures inputs for a character on a client and sends them to the server.
     /// </summary>
     [RequireComponent(typeof(NetworkCharacterState))]
-    public class ClientInputSender : NetworkedBehaviour
+    public class ClientInputSender : NetworkBehaviour
     {
         private const float k_MouseInputRaycastDistance = 100f;
 
@@ -81,7 +82,7 @@ namespace BossRoom.Client
 
         public override void NetworkStart()
         {
-            // TODO Don't use NetworkedBehaviour for just NetworkStart [GOMPS-81]
+            // TODO Don't use NetworkBehaviour for just NetworkStart [GOMPS-81]
             if (!IsClient || !IsOwner)
             {
                 enabled = false;
@@ -181,7 +182,7 @@ namespace BossRoom.Client
             int networkedHitIndex = -1;
             for (int i = 0; i < numHits; i++)
             {
-                if (k_CachedHit[i].transform.GetComponent<NetworkedObject>())
+                if (k_CachedHit[i].transform.GetComponent<NetworkObject>())
                 {
                     networkedHitIndex = i;
                     break;
@@ -217,7 +218,7 @@ namespace BossRoom.Client
         {
             resultData = new ActionRequestData();
 
-            var targetNetObj = hit != null ? hit.GetComponent<NetworkedObject>() : null;
+            var targetNetObj = hit != null ? hit.GetComponent<NetworkObject>() : null;
 
             //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState.
             if (!targetNetObj && actionType != ActionType.GeneralTarget)
@@ -225,7 +226,7 @@ namespace BossRoom.Client
                 ulong targetId = m_NetworkCharacter.TargetId.Value;
                 if (ActionUtils.IsValidTarget(targetId))
                 {
-                    targetNetObj = MLAPI.Spawning.SpawnManager.SpawnedObjects[targetId];
+                    targetNetObj = NetworkSpawnManager.SpawnedObjects[targetId];
                 }
             }
 
@@ -249,7 +250,7 @@ namespace BossRoom.Client
 
             // record our target in case this action uses that info (non-targeted attacks will ignore this)
             resultData.ActionTypeEnum = actionType;
-            resultData.TargetIds = new ulong[] { targetNetState.NetworkId };
+            resultData.TargetIds = new ulong[] { targetNetState.NetworkObjectId };
             PopulateSkillRequest(targetNetState.transform.position, actionType, ref resultData);
             return true;
         }

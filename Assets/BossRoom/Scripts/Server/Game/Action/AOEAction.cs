@@ -23,7 +23,7 @@ public class AoeAction : Action
             if (enemy) // pots for example have the NPC layer but not the ServerCharacter component. If we want destructible pots, this component will need to be added
             {
                 enemy.ReceiveHP(m_Parent, -actionDescription.Amount);
-                m_Data.TargetIds[i] = enemy.NetworkId;
+                m_Data.TargetIds[i] = enemy.NetworkObjectId;
             }
         }
 

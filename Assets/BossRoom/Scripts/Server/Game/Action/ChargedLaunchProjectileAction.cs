@@ -1,4 +1,5 @@
 using MLAPI;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -15,7 +16,7 @@ namespace BossRoom.Server
     ///
     /// The projectile can have various stats depending on how "charged up" the attack was. The ActionDescription's
     /// Projectiles array should contain each tier of projectile, sorted from weakest to strongest.
-    /// 
+    ///
     /// </remarks>
     public class ChargedLaunchProjectileAction : LaunchProjectileAction
     {
@@ -40,7 +41,7 @@ namespace BossRoom.Server
             // (But if the player just clicked on an attack button, there won't be an explicit target, so we should stay facing however we're facing.)
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                NetworkedObject initialTarget = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                NetworkObject initialTarget = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
                 if (initialTarget)
                 {
                     // face our target

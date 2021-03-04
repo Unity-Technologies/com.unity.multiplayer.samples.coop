@@ -1,12 +1,13 @@
 using MLAPI;
 using System.Collections.Generic;
 using System.IO;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
 
-    public class ServerProjectileLogic : MLAPI.NetworkedBehaviour
+    public class ServerProjectileLogic : MLAPI.NetworkBehaviour
     {
         private bool m_Started = false;
 
@@ -28,11 +29,11 @@ namespace BossRoom.Server
 
         private const int k_MaxCollisions = 4;
         private const float k_WallLingerSec = 2f; //time in seconds that arrows linger after hitting a target.
-        private const float k_EnemyLingerSec = 0.2f; //time after hitting an enemy that we persist. 
+        private const float k_EnemyLingerSec = 0.2f; //time after hitting an enemy that we persist.
         private Collider[] m_CollisionCache = new Collider[k_MaxCollisions];
 
         /// <summary>
-        /// Time when we should destroy this arrow, in Time.time seconds. 
+        /// Time when we should destroy this arrow, in Time.time seconds.
         /// </summary>
         private float m_DestroyAtSec;
 
@@ -59,9 +60,9 @@ namespace BossRoom.Server
         /// Set everything up based on provided projectile information.
         /// (Note that this is called before NetworkStart(), so don't try to do any network stuff here.)
         /// </summary>
-        public void Initialize(ulong creatorsNetworkId, in ActionDescription.ProjectileInfo projectileInfo)
+        public void Initialize(ulong creatorsNetworkObjectId, in ActionDescription.ProjectileInfo projectileInfo)
         {
-            m_SpawnerId = creatorsNetworkId;
+            m_SpawnerId = creatorsNetworkObjectId;
             m_ProjectileInfo = projectileInfo;
         }
 
@@ -140,15 +141,15 @@ namespace BossRoom.Server
                         m_IsDead = true;
                     }
 
-                    //all NPC layer entities should have one of these. 
-                    var targetNetObj = m_CollisionCache[i].GetComponent<NetworkedObject>();
+                    //all NPC layer entities should have one of these.
+                    var targetNetObj = m_CollisionCache[i].GetComponent<NetworkObject>();
                     if (targetNetObj)
                     {
-                        m_NetState.RecvHitEnemyClientRPC(targetNetObj.NetworkId);
+                        m_NetState.RecvHitEnemyClientRPC(targetNetObj.NetworkObjectId);
 
-                        //retrieve the person that created us, if he's still around. 
-                        NetworkedObject spawnerNet;
-                        MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
+                        //retrieve the person that created us, if he's still around.
+                        NetworkObject spawnerNet;
+                        NetworkSpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
                         targetNetObj.GetComponent<ServerCharacter>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
                     }

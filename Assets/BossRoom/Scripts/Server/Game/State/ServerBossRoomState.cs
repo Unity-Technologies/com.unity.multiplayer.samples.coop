@@ -1,5 +1,6 @@
 using MLAPI;
 using System.Collections;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -10,25 +11,25 @@ namespace BossRoom.Server
     public class ServerBossRoomState : GameStateBehaviour
     {
         [SerializeField]
-        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
-        private NetworkedObject m_PlayerPrefab;
+        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
+        private NetworkObject m_PlayerPrefab;
 
         // note: this is temporary, for testing!
         [SerializeField]
-        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
-        private NetworkedObject m_EnemyPrefab;
+        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
+        private NetworkObject m_EnemyPrefab;
 
         // note: this is temporary, for testing!
         [SerializeField]
-        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
-        private NetworkedObject m_BossPrefab;
+        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
+        private NetworkObject m_BossPrefab;
 
         // note: this is temporary, for testing!
         public override GameState ActiveState { get { return GameState.BossRoom; } }
 
         /// <summary>
         /// This event is raised when all the initial players have entered the game. It is the right time for
-        /// other systems to do things like spawn monsters. 
+        /// other systems to do things like spawn monsters.
         /// </summary>
         public event System.Action InitialSpawnEvent;
 
@@ -42,7 +43,7 @@ namespace BossRoom.Server
         private const float k_LoseDelay = 2.5f;
 
         /// <summary>
-        /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select). 
+        /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select).
         /// </summary>
         public bool InitialSpawnDone { get; private set; }
 
@@ -118,7 +119,7 @@ namespace BossRoom.Server
 
                 bool didSpawn = DoInitialSpawnIfPossible();
 
-                if( !didSpawn && InitialSpawnDone && MLAPI.Spawning.SpawnManager.GetPlayerObject(clientId) == null)
+                if( !didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
                 {
                     //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                     //(either because multiple people are late-joining at once, or because some dynamic entities are
@@ -161,7 +162,7 @@ namespace BossRoom.Server
             if (lifeState == LifeState.Fainted)
             {
                 // Check the life state of all players in the scene
-                foreach (var p in NetworkingManager.Singleton.ConnectedClientsList )
+                foreach (var p in NetworkManager.Singleton.ConnectedClientsList )
                 {
                     // if any player is alive just retrun
                     var netState = p.PlayerObject.GetComponent<NetworkCharacterState>();
@@ -201,12 +202,12 @@ namespace BossRoom.Server
             if (Input.GetKeyDown(KeyCode.E))
             {
                 var newEnemy = Instantiate(m_EnemyPrefab);
-                newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId);
             }
             if (Input.GetKeyDown(KeyCode.B))
             {
                 var newEnemy = Instantiate(m_BossPrefab);
-                newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId);
             }
             if (Input.GetKeyDown(KeyCode.Q))
             {

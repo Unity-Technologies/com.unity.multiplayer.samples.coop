@@ -1,5 +1,6 @@
 using MLAPI;
 using System.Collections.Generic;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -41,7 +42,7 @@ namespace BossRoom.Server
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                NetworkedObject initialTarget = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                NetworkObject initialTarget = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
                 if (initialTarget)
                 {
                     // face our target, if we had one

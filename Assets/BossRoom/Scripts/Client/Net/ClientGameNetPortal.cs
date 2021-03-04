@@ -95,7 +95,7 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload.
+        /// Wraps the invocation of NetworkManager.StartClient, including our GUID as the payload.
         /// </summary>
         /// <remarks>
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
@@ -109,19 +109,19 @@ namespace BossRoom.Client
             var clientGuid = GetOrCreateGuid();
             var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
                    payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
-                   payload += $"player_name={portal.PlayerName}\n"; 
+                   payload += $"player_name={portal.PlayerName}\n";
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
-            var chosenTransport = NetworkingManager.Singleton.NetworkConfig.NetworkTransport;
+            var chosenTransport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             switch (chosenTransport)
             {
                 case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;
-                case UnetTransport unetTransport:
+                case UNetTransport unetTransport:
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;

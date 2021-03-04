@@ -1,20 +1,20 @@
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace BossRoom
 {
     /// <summary>
-    /// UI object that visually represents an object's name. Visuals are updated when NetworkedVar is modified.
+    /// UI object that visually represents an object's name. Visuals are updated when NetworkVariable is modified.
     /// </summary>
     public class UIName : MonoBehaviour
     {
         [SerializeField]
         Text m_UINameText;
 
-        NetworkedVarString m_NetworkedNameTag;
+        NetworkVariableString m_NetworkedNameTag;
 
-        public void Initialize(NetworkedVarString networkedName)
+        public void Initialize(NetworkVariableString networkedName)
         {
             m_NetworkedNameTag = networkedName;
 

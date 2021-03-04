@@ -57,7 +57,7 @@ namespace BossRoom
 
         void OnEnable()
         {
-            if (!NetworkingManager.Singleton.IsClient)
+            if (!NetworkManager.Singleton.IsClient)
             {
                 enabled = false;
                 return;

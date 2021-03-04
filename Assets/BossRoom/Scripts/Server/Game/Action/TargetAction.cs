@@ -1,4 +1,5 @@
 using MLAPI;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -7,7 +8,7 @@ namespace BossRoom.Server
     /// The "Target" Action is not a skill, but rather the result of a user left-clicking an enemy. This
     /// Action runs persistently, and automatically resets the NetworkCharacterState.Target property if the
     /// target becomes ineligible (dies or disappears). Note that while Actions in general can have multiple targets,
-    /// you as a player can only have a single target selected at a time (the character that your target reticule appears under). 
+    /// you as a player can only have a single target selected at a time (the character that your target reticule appears under).
     /// </summary>
     public class TargetAction : Action
     {
@@ -64,7 +65,7 @@ namespace BossRoom.Server
         /// <param name="targetId"></param>
         private void FaceTarget(ulong targetId)
         {
-            if (MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkedObject targetObject))
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject targetObject))
             {
                 Vector3 diff = targetObject.transform.position - m_Parent.transform.position;
 

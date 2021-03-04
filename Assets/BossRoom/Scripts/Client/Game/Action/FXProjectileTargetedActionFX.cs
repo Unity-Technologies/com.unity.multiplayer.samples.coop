@@ -101,8 +101,8 @@ namespace BossRoom.Visual
                 return null;
             }
 
-            NetworkedObject obj;
-            if (SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
+            NetworkObject obj;
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
             {
                 return obj.GetComponent<Client.ClientCharacter>();
             }
