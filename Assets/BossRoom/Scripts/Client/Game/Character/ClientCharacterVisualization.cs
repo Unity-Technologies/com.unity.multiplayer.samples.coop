@@ -113,15 +113,21 @@ namespace BossRoom.Visual
                 model.SwapToModel(heroAppearance);
 
                 // find the emote bar to track its buttons
-                var partyHudGameObject = GameObject.FindGameObjectWithTag("PartyHUD");
-                m_PartyHUD = partyHudGameObject.GetComponent<PartyHUD>();
-            }
+                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
+                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
 
-            if (IsLocalPlayer)
-            {
-                var data = new ActionRequestData{ActionTypeEnum=ActionType.GeneralTarget};
-                m_ActionViz.PlayAction(ref data);
-                AttachCamera();
+                if (IsLocalPlayer)
+                {
+                    ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
+                    m_ActionViz.PlayAction(ref data);
+                    AttachCamera();
+                    m_PartyHUD.SetHeroData(m_NetState);
+                }
+                else
+                {
+                    m_PartyHUD.SetAllyType(m_NetState.NetworkId, m_NetState.CharacterType);
+                }
+
             }
         }
 
@@ -183,6 +189,9 @@ namespace BossRoom.Visual
 
         private void OnHealthChanged(int previousValue, int newValue)
         {
+            // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
+            if (m_PartyHUD == null) { return; }
+
             if (IsLocalPlayer)
             {
                 this.m_PartyHUD.SetHeroHealth(newValue);
