@@ -25,8 +25,8 @@ namespace BossRoom.Server
         private NetworkedObject m_BossPrefab;
 
         [SerializeField] [Tooltip("A collection of locations for spawning players")]
-        private GameObject PlayerSpawnPoints;
-        private List<Transform> m_PlayerSpawnPoints = null;
+        private Transform[] m_PlayerSpawnPoints;
+        private List<Transform> m_PlayerSpawnPointsList = null;
 
         // note: this is temporary, for testing!
         public override GameState ActiveState { get { return GameState.BossRoom; } }
@@ -132,21 +132,17 @@ namespace BossRoom.Server
         {
             Transform spawnPoint = null;
 
-            if (m_PlayerSpawnPoints == null || m_PlayerSpawnPoints.Count == 0)
+            if (m_PlayerSpawnPointsList == null || m_PlayerSpawnPointsList.Count == 0)
             {
-                m_PlayerSpawnPoints = new List<Transform>(PlayerSpawnPoints.GetComponentsInChildren<Transform>());
+                m_PlayerSpawnPointsList = new List<Transform>(m_PlayerSpawnPoints);
             }
 
-            if (m_PlayerSpawnPoints.Count > 0)
-            {
-                int index = Random.Range(0, m_PlayerSpawnPoints.Count);
-                spawnPoint = m_PlayerSpawnPoints[index];
-                m_PlayerSpawnPoints.RemoveAt(index);
-            }
-            else
-            {
-                Debug.LogWarning($"No spawn point is found. Player character {clientId} will be spawned at (0,0,0).");
-            }
+            Debug.Assert(m_PlayerSpawnPointsList.Count > 1,
+                $"PlayerSpawnPoints array should have at least 2 spawn points.");
+
+            int index = Random.Range(0, m_PlayerSpawnPointsList.Count);
+                spawnPoint = m_PlayerSpawnPointsList[index];
+                m_PlayerSpawnPointsList.RemoveAt(index);
 
             var newPlayer = spawnPoint != null ?
                 Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation) :
