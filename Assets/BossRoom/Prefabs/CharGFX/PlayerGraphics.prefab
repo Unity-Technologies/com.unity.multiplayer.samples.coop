@@ -1445,8 +1445,8 @@ MonoBehaviour:
   m_EventsOnNodeEntry:
   - m_AnimatorNodeName: Attack1
     m_AnimatorNodeNameHash: -47317214
-    m_Prefab: {fileID: 4268371053021891542, guid: e1a27cb18e3a1d649aa3fc6420f3731b, type: 3}
-    m_PrefabSpawnDelaySeconds: 0.3
+    m_Prefab: {fileID: 2787649059963953560, guid: 5121957b2fabba043a36ec5641e54be7, type: 3}
+    m_PrefabSpawnDelaySeconds: 0.8
     m_PrefabCanBeAbortedUntilSecs: 0
     m_SoundEffect: {fileID: 8300000, guid: aafc6fae94f920546bf019c2d9cec45c, type: 3}
     m_SoundStartDelaySeconds: 0
