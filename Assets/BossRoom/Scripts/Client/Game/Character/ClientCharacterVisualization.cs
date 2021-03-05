@@ -34,8 +34,6 @@ namespace BossRoom.Visual
 
         private ActionVisualization m_ActionViz;
 
-        private CinemachineVirtualCamera m_MainCamera;
-
         public Transform Parent { get; private set; }
 
         public float MinZoomDistance = 3;
@@ -120,7 +118,7 @@ namespace BossRoom.Visual
                 {
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
-                    AttachCamera();
+                    gameObject.AddComponent<CameraController>();
                     m_PartyHUD.SetHeroData(m_NetState);
                 }
                 else
@@ -265,12 +263,7 @@ namespace BossRoom.Visual
 
             m_ActionViz.Update();
 
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (scroll != 0 && m_MainCamera)
-            {
-                ZoomCamera(scroll);
-            }
-
+            //m_MainCamera.Update()
         }
 
         public void OnAnimEvent(string id)
@@ -280,36 +273,6 @@ namespace BossRoom.Visual
             //example of where this is configured.
 
             m_ActionViz.OnAnimEvent(id);
-        }
-
-        private void AttachCamera()
-        {
-            var cameraGO = GameObject.FindGameObjectWithTag("CMCamera");
-            if (cameraGO == null) { return; }
-
-            m_MainCamera = cameraGO.GetComponent<CinemachineVirtualCamera>();
-            if (m_MainCamera)
-            {
-                m_MainCamera.Follow = transform;
-                m_MainCamera.LookAt = transform;
-            }
-        }
-
-        private void ZoomCamera(float scroll)
-        {
-            CinemachineComponentBase[] components = m_MainCamera.GetComponentPipeline();
-            foreach (CinemachineComponentBase component in components)
-            {
-                if (component is CinemachineFramingTransposer)
-                {
-                    CinemachineFramingTransposer c = (CinemachineFramingTransposer)component;
-                    c.m_CameraDistance += -scroll * ZoomSpeed;
-                    if (c.m_CameraDistance < MinZoomDistance)
-                        c.m_CameraDistance = MinZoomDistance;
-                    if (c.m_CameraDistance > MaxZoomDistance)
-                        c.m_CameraDistance = MaxZoomDistance;
-                }
-            }
         }
     }
 }
