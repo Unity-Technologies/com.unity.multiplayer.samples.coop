@@ -1375,9 +1375,9 @@ MonoBehaviour:
   m_AnimatorVariableHash: -823668238
   m_AudioSource: {fileID: -8995571906845300287}
   m_WalkFootstepAudioClip: {fileID: 8300000, guid: 6fd6fb49b9fc5324a8baf1de798388fa, type: 3}
-  m_WalkFootstepVolume: 0
+  m_WalkFootstepVolume: 0.8
   m_RunFootstepAudioClip: {fileID: 8300000, guid: 6ad4d1d63bc70494bbc9172ae70bcdd0, type: 3}
-  m_RunFootstepVolume: 0
+  m_RunFootstepVolume: 0.8
 --- !u!82 &-8995571906845300287
 AudioSource:
   m_ObjectHideFlags: 0
