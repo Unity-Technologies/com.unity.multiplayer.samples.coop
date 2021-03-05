@@ -27,5 +27,6 @@ namespace BossRoom
         /// </summary>
         public NetworkVariableFloat NetworkMovementSpeed { get; }
 
+        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY);
     }
 }

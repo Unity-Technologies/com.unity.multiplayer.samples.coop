@@ -3,6 +3,7 @@ using MLAPI.NetworkVariable;
 using MLAPI.Serialization.Pooled;
 using System.IO;
 using MLAPI.Messaging;
+using UnityEngine;
 
 namespace BossRoom
 {
@@ -11,6 +12,13 @@ namespace BossRoom
     /// </summary>
     public class NetworkProjectileState : NetworkBehaviour, INetMovement
     {
+        public NetworkVariable<ActionType> SourceAction;
+        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
+        {
+            NetworkPosition.Value = initPosition;
+            NetworkRotationY.Value = initRotationY;
+        }
+
         public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3();
 
         /// <summary>

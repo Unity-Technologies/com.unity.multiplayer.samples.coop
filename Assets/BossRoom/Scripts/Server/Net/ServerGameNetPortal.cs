@@ -169,44 +169,17 @@ namespace BossRoom.Server
             }
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
-
-            string[] configLines = payload.Split('\n');
-            var payloadConfig = new Dictionary<string, string>();
-            foreach (var line in configLines)
-            {
-                //key-value pair.
-                if (line.Contains("="))
-                {
-                    string[] kv = line.Split('=');
-                    payloadConfig.Add(kv[0], kv[1]);
-                }
-                else if (line.Trim() != "")
-                {
-                    //single token, with no value present.
-                    payloadConfig.Add(line, null);
-                }
-            }
-
-            int clientScene = -1;
-            try
-            {
-                clientScene = int.Parse(payloadConfig["client_scene"]);
-            }
-            catch(Exception e)
-            {
-                Debug.LogWarning($"Client {clientId} did not include clientScene index in login payload, or not parseable: {e}");
-            }
+            var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
+            int clientScene = connectionPayload.clientScene;
 
             m_ClientSceneMap[clientId] = clientScene;
 
             //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect.
-            Debug.Log("host ApprovalCheck: client guid was: " + payloadConfig["client_guid"]);
+            Debug.Log("host ApprovalCheck: client guid was: " + connectionPayload.clientGUID);
 
             //Populate our dictionaries with the playerData
-            m_ClientIDToGuid.Add(clientId, payloadConfig["client_guid"]);
-
-            m_ClientData.Add(payloadConfig["client_guid"], new PlayerData(payloadConfig["player_name"], clientId));
-
+            m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
+            m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
 
             //TODO: GOMPS-79 handle different error cases.
 
