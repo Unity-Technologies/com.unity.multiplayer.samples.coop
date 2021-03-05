@@ -165,7 +165,6 @@ MonoBehaviour:
     - DungeonTest
     - PostGame
     - Startup
-    - 
     AllowRuntimeSceneChanges: 1
     NetworkPrefabs:
     - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
