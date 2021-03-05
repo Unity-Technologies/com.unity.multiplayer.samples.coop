@@ -357,7 +357,7 @@ namespace BossRoom.Visual
                     if (fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeEntry[j].m_AnimatorNodeNameHash && fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash != 0)
                     {
                         ++totalErrors;
-                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeEntry refer to the same node name ({fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName})! Only the first one will be used.");
+                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeEntry refer to the same node name ({fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName})! This is probably a copy-paste error. (But if it isn't and you intend to play two effects, remove this error-check!)");
                     }
                 }
             }
@@ -369,7 +369,7 @@ namespace BossRoom.Visual
                     if (fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeExit[j].m_AnimatorNodeNameHash && fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash != 0)
                     {
                         ++totalErrors;
-                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeExit refer to the same node name ({fx.m_EventsOnNodeExit[i].m_AnimatorNodeName})! Only the first one will be used.");
+                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeExit refer to the same node name ({fx.m_EventsOnNodeExit[i].m_AnimatorNodeName})! This is probably a copy-paste error. (But if it isn't and you intend to play two effects, remove this error-check!)");
                     }
                 }
             }
