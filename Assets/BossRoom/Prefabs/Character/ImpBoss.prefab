@@ -20,6 +20,18 @@ MonoBehaviour:
   m_BaseHP: {fileID: 11400000, guid: f393c51c2bce455478a0b995b8d4e3dd, type: 2}
   m_TransformToTrack: {fileID: 3688950541947916327}
   m_VerticalScreenOffset: -50
+--- !u!114 &-7832651823435598812
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3688950541947916333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6b1447f40f499c4a82ca50d40c76051, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2203142923062114684
 PrefabInstance:
   m_ObjectHideFlags: 0
