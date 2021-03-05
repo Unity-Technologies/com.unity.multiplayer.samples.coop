@@ -64,6 +64,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5436007408952557925}
   - component: {fileID: 5436007408952557924}
+  - component: {fileID: 1359040526}
   m_Layer: 0
   m_Name: NetworkingManager
   m_TagString: Untagged
@@ -169,6 +170,20 @@ MonoBehaviour:
       type: {class: NullableBoolSerializable, ns: MLAPI.Configuration, asm: Unity.Multiplayer.MLAPI.Runtime}
       data:
         Value: 1897319656204293034
+--- !u!114 &1359040526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436007408952557947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c0e18361257a9f409d6064bac74e732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IpHostTransport: {fileID: 7898291372908163337}
+  m_RelayTransport: {fileID: 0}
 --- !u!1 &6889060209805043266
 GameObject:
   m_ObjectHideFlags: 0
