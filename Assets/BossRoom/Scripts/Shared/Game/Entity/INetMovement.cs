@@ -8,12 +8,12 @@ namespace BossRoom
     /// <summary>
     /// This is a temporary abstraction for different shared network states that all handle movement. This
     /// way a single client-side component can be used to update the local client transform. This can be dispensed with
-    /// once MLAPI handles client-side movement internally. 
+    /// once MLAPI handles client-side movement internally.
     /// </summary>
     public interface INetMovement
     {
         /// <summary>
-        /// The current transform position of this entity. 
+        /// The current transform position of this entity.
         /// </summary>
         public NetworkedVarVector3 NetworkPosition { get; }
 
@@ -27,5 +27,6 @@ namespace BossRoom
         /// </summary>
         public NetworkedVarFloat NetworkMovementSpeed { get; }
 
+        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY);
     }
 }

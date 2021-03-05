@@ -3,6 +3,7 @@ using Cinemachine;
 using MLAPI;
 using System;
 using System.Collections;
+using System.ComponentModel;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -48,6 +49,11 @@ namespace BossRoom.Visual
 
         private float m_SmoothedSpeed;
 
+        int m_AliveStateTriggerID;
+        int m_FaintedStateTriggerID;
+        int m_DeadStateTriggerID;
+        int m_HitStateTriggerID;
+
         /// <inheritdoc />
         public override void NetworkStart()
         {
@@ -57,9 +63,16 @@ namespace BossRoom.Visual
                 return;
             }
 
+            m_AliveStateTriggerID = Animator.StringToHash("StandUp");
+            m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
+            m_DeadStateTriggerID = Animator.StringToHash("Dead");
+            m_HitStateTriggerID = Animator.StringToHash("HitReact1");
+
             m_ActionViz = new ActionVisualization(this);
 
-            m_NetState = transform.parent.gameObject.GetComponent<NetworkCharacterState>();
+            Parent = transform.parent;
+
+            m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
@@ -73,9 +86,16 @@ namespace BossRoom.Visual
             OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
-            Parent = transform.parent;
-            Parent.GetComponent<Client.ClientCharacter>().ChildVizObject = this;
-            transform.parent = null;
+            Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
+            transform.SetParent(null);
+
+            // sync our visualization position & rotation to the most up to date version received from server
+            var parentMovement = Parent.GetComponent<INetMovement>();
+            transform.position = parentMovement.NetworkPosition.Value;
+            transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
+
+            // sync our animator to the most up to date version received from server
+            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
 
             // listen for char-select info to change (in practice, this info doesn't
             // change, but we may not have the values set yet) ...
@@ -83,7 +103,6 @@ namespace BossRoom.Visual
 
             // ...and visualize the current char-select value that we know about
             OnCharacterAppearanceChanged(0, m_NetState.CharacterAppearance.Value);
-
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
@@ -102,8 +121,7 @@ namespace BossRoom.Visual
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
                     AttachCamera();
-                    m_PartyHUD.SetHeroAppearance(m_NetState.CharacterAppearance.Value);
-                    m_PartyHUD.SetHeroType(m_NetState.CharacterType);
+                    m_PartyHUD.SetHeroData(m_NetState);
                 }
                 else
                 {
@@ -113,6 +131,23 @@ namespace BossRoom.Visual
             }
         }
 
+        /// <summary>
+        /// The switch to certain LifeStates fires an animation on an NPC/PC. This bypasses that initial animation
+        /// and sends an NPC/PC to their eventual looping animation. This is necessary for mid-game player connections.
+        /// </summary>
+        /// <param name="lifeState"> The last LifeState received by server. </param>
+        void SyncEntryAnimation(LifeState lifeState)
+        {
+            switch (lifeState)
+            {
+                case LifeState.Dead: // ie. NPCs already dead
+                    m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryDeath"));
+                    break;
+                case LifeState.Fainted: // ie. PCs already fainted
+                    m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryFainted"));
+                    break;
+            }
+        }
         private void OnDestroy()
         {
             if (m_NetState)
@@ -125,17 +160,11 @@ namespace BossRoom.Visual
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
             }
-
-            if (m_ActionViz != null)
-            {
-                //make sure we don't leave any dangling effects playing if we've been destroyed. 
-                m_ActionViz.CancelAll();
-            }
         }
 
         private void OnPerformHitReaction()
         {
-            m_ClientVisualsAnimator.SetTrigger("HitReact1");
+            m_ClientVisualsAnimator.SetTrigger(m_HitStateTriggerID);
         }
 
         private void PerformActionFX(ActionRequestData data)
@@ -163,13 +192,13 @@ namespace BossRoom.Visual
             switch (newValue)
             {
                 case LifeState.Alive:
-                    m_ClientVisualsAnimator.SetTrigger("StandUp");
+                    m_ClientVisualsAnimator.SetTrigger(m_AliveStateTriggerID);
                     break;
                 case LifeState.Fainted:
-                    m_ClientVisualsAnimator.SetTrigger("FallDown");
+                    m_ClientVisualsAnimator.SetTrigger(m_FaintedStateTriggerID);
                     break;
                 case LifeState.Dead:
-                    m_ClientVisualsAnimator.SetTrigger("Dead");
+                    m_ClientVisualsAnimator.SetTrigger(m_DeadStateTriggerID);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
@@ -178,6 +207,9 @@ namespace BossRoom.Visual
 
         private void OnHealthChanged(int previousValue, int newValue)
         {
+            // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
+            if (m_PartyHUD == null) { return; }
+
             if (IsLocalPlayer)
             {
                 this.m_PartyHUD.SetHeroHealth(newValue);

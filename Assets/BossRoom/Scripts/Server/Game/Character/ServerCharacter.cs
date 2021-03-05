@@ -1,13 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using MLAPI;
-using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
     [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
-    public class ServerCharacter : MLAPI.NetworkedBehaviour
+    public class ServerCharacter : NetworkedBehaviour, IDamageable
     {
         public NetworkCharacterState NetState { get; private set; }
 
@@ -26,16 +25,16 @@ namespace BossRoom.Server
         public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
 
         [SerializeField]
-        [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
-        private ActionType m_StartingAction = ActionType.None;
-
-        [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
         private bool m_BrainEnabled = true;
 
         [SerializeField]
         [Tooltip("Setting negative value disables destroying object after it is killed.")]
-        private float _killedDestroyDelaySeconds = 3.0f;
+        private float m_KilledDestroyDelaySeconds = 3.0f;
+		
+        [SerializeField]
+        [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
+        private ActionType m_StartingAction = ActionType.None;
 
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
@@ -86,6 +85,7 @@ namespace BossRoom.Server
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+
 
                 NetState.ApplyCharacterData();
 
@@ -144,14 +144,14 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Clear all active Actions.
+        /// Clear all active Actions. 
         /// </summary>
         public void ClearActions(bool alsoClearNonBlockingActions)
         {
             m_ActionPlayer.ClearActions(alsoClearNonBlockingActions);
         }
 
-        private void OnActionPlayRequest(ActionRequestData data )
+        private void OnActionPlayRequest(ActionRequestData data)
         {
             if (!GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].IsFriendly)
             {
@@ -164,7 +164,7 @@ namespace BossRoom.Server
 
         IEnumerator KilledDestroyProcess()
         {
-            yield return new WaitForSeconds(_killedDestroyDelaySeconds);
+            yield return new WaitForSeconds(m_KilledDestroyDelaySeconds);
 
             if (NetworkedObject != null)
             {
@@ -173,13 +173,13 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Receive an HP change from somewhere. Could be healing or damage.
+        /// Receive an HP change from somewhere. Could be healing or damage. 
         /// </summary>
         /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
-            // Give our Actions a chance to alter the amount of damage (or healing) we take.
+            //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
             if (HP > 0)
             {
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.Healed);
@@ -192,10 +192,10 @@ namespace BossRoom.Server
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
             }
-
+            
             NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
-
-            //we can't currently heal a dead character back to Alive state.
+            
+            //we can't currently heal a dead character back to Alive state. 
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
             {
@@ -203,7 +203,7 @@ namespace BossRoom.Server
 
                 if (IsNpc)
                 {
-                    if (_killedDestroyDelaySeconds >= 0.0f && NetState.NetworkLifeState.Value != LifeState.Dead)
+                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.NetworkLifeState.Value != LifeState.Dead)
                     {
                         StartCoroutine(KilledDestroyProcess());
                     }
