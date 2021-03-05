@@ -12,7 +12,7 @@ using UnityEngine.Serialization;
 namespace MLAPI.Transports
 {
     [DefaultExecutionOrder(-1000)]
-    public class PhotonRealtimeTransport : Transport
+    public class PhotonRealtimeTransport : NetworkTransport
     {
         [Tooltip("The nickname of the player in the photon room. This value is only relevant for other photon realtime features. Leaving it empty generates a random name.")]
         [SerializeField]
@@ -53,8 +53,8 @@ namespace MLAPI.Transports
 
         bool m_IsHostOrServer;
 
-        readonly Dictionary<Channel, byte> m_ChannelToId = new Dictionary<Channel, byte>();
-        readonly Dictionary<byte, Channel> m_IdToChannel = new Dictionary<byte, Channel>();
+        readonly Dictionary<NetworkChannel, byte> m_ChannelToId = new Dictionary<NetworkChannel, byte>();
+        readonly Dictionary<byte, NetworkChannel> m_IdToChannel = new Dictionary<byte, NetworkChannel>();
         readonly Dictionary<ushort, RealtimeChannel> m_Channels = new Dictionary<ushort, RealtimeChannel>();
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace MLAPI.Transports
         }
 
         ///<inheritdoc/>
-        public override void Send(ulong clientId, ArraySegment<byte> data, Channel channel)
+        public override void Send(ulong clientId, ArraySegment<byte> data, NetworkChannel channel)
         {
             RealtimeChannel realtimeChannel = m_Channels[m_ChannelToId[channel]];
 
@@ -150,12 +150,12 @@ namespace MLAPI.Transports
         /// <summary>
         /// Photon Realtime Transport is event based. Polling will always return nothing.
         /// </summary>
-        public override NetEventType PollEvent(out ulong clientId, out Channel channel, out ArraySegment<byte> payload, out float receiveTime)
+        public override NetworkEvent PollEvent(out ulong clientId, out NetworkChannel channel, out ArraySegment<byte> payload, out float receiveTime)
         {
             clientId = 0;
             channel = default;
             receiveTime = Time.realtimeSinceStartup;
-            return NetEventType.Nothing;
+            return NetworkEvent.Nothing;
         }
 
         ///<inheritdoc/>
@@ -229,12 +229,12 @@ namespace MLAPI.Transports
         {
             for (byte i = 0; i < MLAPI_CHANNELS.Length; i++)
             {
-                m_IdToChannel.Add((byte)(i + m_ChannelIdCodesStartRange), MLAPI_CHANNELS[i].Id);
-                m_ChannelToId.Add(MLAPI_CHANNELS[i].Id, (byte)(i + m_ChannelIdCodesStartRange));
+                m_IdToChannel.Add((byte)(i + m_ChannelIdCodesStartRange), MLAPI_CHANNELS[i].Channel);
+                m_ChannelToId.Add(MLAPI_CHANNELS[i].Channel, (byte)(i + m_ChannelIdCodesStartRange));
                 m_Channels.Add((byte)(i + m_ChannelIdCodesStartRange), new RealtimeChannel()
                 {
                     Id = (byte)(i + m_ChannelIdCodesStartRange),
-                    SendMode = MlapiChannelTypeToSendOptions(MLAPI_CHANNELS[i].Type)
+                    SendMode = MlapiChannelTypeToSendOptions(MLAPI_CHANNELS[i].Delivery)
                 });
             }
         }
@@ -334,9 +334,9 @@ namespace MLAPI.Transports
             // Clients should ignore connection events from other clients, server should ignore its own connection event.
             var isRelevantConnectionUpdateMessage = m_IsHostOrServer ^ clientId == localClientId;
 
-            NetEventType netEvent = NetEventType.Nothing;
+            NetworkEvent netEvent = NetworkEvent.Nothing;
             ArraySegment<byte> payload = default;
-            Channel channel = default;
+            NetworkChannel channel = default;
             var receiveTime = Time.realtimeSinceStartup;
 
             switch (eventData.Code)
@@ -344,7 +344,7 @@ namespace MLAPI.Transports
                 case EventCode.Leave:
                     if (isRelevantConnectionUpdateMessage)
                     {
-                        netEvent = NetEventType.Disconnect;
+                        netEvent = NetworkEvent.Disconnect;
                     }
 
                     break;
@@ -352,7 +352,7 @@ namespace MLAPI.Transports
                 case EventCode.Join:
                     if (isRelevantConnectionUpdateMessage)
                     {
-                        netEvent = NetEventType.Connect;
+                        netEvent = NetworkEvent.Connect;
                     }
 
                     break;
@@ -370,7 +370,7 @@ namespace MLAPI.Transports
 
                         if (eventData.Code == this.m_BatchedTransportEventCode)
                         {
-                            using (PooledBitStream stream = PooledBitStream.Get())
+                            using (PooledNetworkBuffer stream = PooledNetworkBuffer.Get())
                             {
                                 // moving data from one pooled wrapper to another (for MLAPI to read incoming data)
                                 stream.Position = 0;
@@ -378,7 +378,7 @@ namespace MLAPI.Transports
                                 stream.SetLength(slice.Count);
                                 stream.Position = 0;
 
-                                using (PooledBitReader reader = PooledBitReader.Get(stream))
+                                using (PooledNetworkReader reader = PooledNetworkReader.Get(stream))
                                 {
                                     while (stream.Position < stream.Length)
                                     {
@@ -386,7 +386,7 @@ namespace MLAPI.Transports
                                         int length = reader.ReadInt32Packed();
                                         byte[] dataArray = reader.ReadByteArray(null, length);
 
-                                        this.InvokeOnTransportEvent(NetEventType.Data, clientId, this.m_IdToChannel[channelId], new ArraySegment<byte>(dataArray, 0, dataArray.Length), receiveTime);
+                                        this.InvokeOnTransportEvent(NetworkEvent.Data, clientId, this.m_IdToChannel[channelId], new ArraySegment<byte>(dataArray, 0, dataArray.Length), receiveTime);
                                     }
                                 }
                             }
@@ -396,7 +396,7 @@ namespace MLAPI.Transports
                         else
                         {
                             // Event is a non-batched data event.
-                            netEvent = NetEventType.Data;
+                            netEvent = NetworkEvent.Data;
                             payload = new ArraySegment<byte>(slice.Buffer, slice.Offset, slice.Count);
                             channel = m_IdToChannel[eventData.Code];
                         }
@@ -405,15 +405,15 @@ namespace MLAPI.Transports
                     break;
             }
 
-            if (netEvent == NetEventType.Nothing) return;
+            if (netEvent == NetworkEvent.Nothing) return;
             InvokeOnTransportEvent(netEvent, clientId, channel, payload, receiveTime);
         }
 
-        SendOptions MlapiChannelTypeToSendOptions(ChannelType type)
+        SendOptions MlapiChannelTypeToSendOptions(NetworkDelivery type)
         {
             switch (type)
             {
-                case ChannelType.Unreliable:
+                case NetworkDelivery.Unreliable:
                     return SendOptions.SendUnreliable;
                 default:
                     return SendOptions.SendReliable;
@@ -473,7 +473,7 @@ namespace MLAPI.Transports
                     return false;
                 }
 
-                using (PooledBitWriter writer = PooledBitWriter.Get(m_Stream))
+                using (PooledNetworkWriter writer = PooledNetworkWriter.Get(m_Stream))
                 {
                     writer.WriteByte(channelId);
                     writer.WriteInt32Packed(data.Count);

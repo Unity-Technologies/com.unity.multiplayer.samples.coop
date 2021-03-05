@@ -9,7 +9,7 @@ using UnityEngine;
 /// </summary>
 [RequireComponent(typeof(Collider))]
 [RequireComponent(typeof(NetworkFloorSwitchState))]
-public class ServerFloorSwitch : NetworkedBehaviour
+public class ServerFloorSwitch : NetworkBehaviour
 {
     private Collider m_Collider;
     private NetworkFloorSwitchState m_FloorSwitchState;

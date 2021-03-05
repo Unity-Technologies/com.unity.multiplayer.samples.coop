@@ -19,7 +19,7 @@ namespace BossRoom.Client
     // Start is called before the first frame update
     void Start()
     {
-        var networkedObject = GetComponent<NetworkedObject>();
+        var networkedObject = GetComponent<NetworkObject>();
         if (networkedObject == null || !networkedObject.IsLocalPlayer)
         {
             Destroy(this);

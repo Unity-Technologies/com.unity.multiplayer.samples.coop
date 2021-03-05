@@ -7,7 +7,7 @@ namespace BossRoom.Client
     /// This is part of a temporary movement system that will be replaced once MLAPI can drive movement
     /// internally.
     /// </summary>
-    public class ClientGenericMovement : MLAPI.NetworkedBehaviour
+    public class ClientGenericMovement : MLAPI.NetworkBehaviour
     {
         private INetMovement m_MovementSource;
         private Rigidbody m_Rigidbody;

@@ -1,20 +1,20 @@
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace BossRoom
 {
     /// <summary>
-    /// UI object that visually represents an object's health. Visuals are updated when NetworkedVar is modified.
+    /// UI object that visually represents an object's health. Visuals are updated when NetworkVariable is modified.
     /// </summary>
     public class UIHealth : MonoBehaviour
     {
         [SerializeField]
         Slider m_HitPointsSlider;
 
-        NetworkedVarInt m_NetworkedHealth;
+        NetworkVariableInt m_NetworkedHealth;
 
-        public void Initialize(NetworkedVarInt networkedHealth, int maxValue)
+        public void Initialize(NetworkVariableInt networkedHealth, int maxValue)
         {
             m_NetworkedHealth = networkedHealth;
 

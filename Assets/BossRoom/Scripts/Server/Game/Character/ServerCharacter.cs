@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BossRoom.Server
 {
     [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
-    public class ServerCharacter : NetworkedBehaviour, IDamageable
+    public class ServerCharacter : NetworkBehaviour, IDamageable
     {
         public NetworkCharacterState NetState { get; private set; }
 
@@ -31,7 +31,7 @@ namespace BossRoom.Server
         [SerializeField]
         [Tooltip("Setting negative value disables destroying object after it is killed.")]
         private float m_KilledDestroyDelaySeconds = 3.0f;
-		
+
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
         private ActionType m_StartingAction = ActionType.None;
@@ -144,7 +144,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Clear all active Actions. 
+        /// Clear all active Actions.
         /// </summary>
         public void ClearActions()
         {
@@ -160,14 +160,14 @@ namespace BossRoom.Server
         {
             yield return new WaitForSeconds(m_KilledDestroyDelaySeconds);
 
-            if (NetworkedObject != null)
+            if (NetworkObject != null)
             {
-                NetworkedObject.UnSpawn(true);
+                NetworkObject.Despawn(true);
             }
         }
 
         /// <summary>
-        /// Receive an HP change from somewhere. Could be healing or damage. 
+        /// Receive an HP change from somewhere. Could be healing or damage.
         /// </summary>
         /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
@@ -186,10 +186,10 @@ namespace BossRoom.Server
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
             }
-            
+
             NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
-            
-            //we can't currently heal a dead character back to Alive state. 
+
+            //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
             {

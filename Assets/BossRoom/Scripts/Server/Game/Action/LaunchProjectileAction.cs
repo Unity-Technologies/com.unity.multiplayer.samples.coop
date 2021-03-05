@@ -1,3 +1,4 @@
+using MLAPI;
 using UnityEngine;
 
 
@@ -64,17 +65,17 @@ namespace BossRoom.Server
                 projectile.transform.forward = m_Parent.transform.forward;
 
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
-                //where it appears next to the player. 
+                //where it appears next to the player.
                 projectile.transform.position = m_Parent.transform.localToWorldMatrix.MultiplyPoint(projectile.transform.position);
-                projectile.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkId, in projectileInfo);
+                projectile.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkObjectId, in projectileInfo);
 
-                projectile.GetComponent<MLAPI.NetworkedObject>().Spawn();
+                projectile.GetComponent<NetworkObject>().Spawn();
             }
         }
 
         public override void End()
         {
-            //make sure this happens. 
+            //make sure this happens.
             LaunchProjectile();
         }
     }

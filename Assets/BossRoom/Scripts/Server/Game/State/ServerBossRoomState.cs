@@ -1,5 +1,6 @@
 using MLAPI;
 using System.Collections;
+using MLAPI.Spawning;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,18 +12,18 @@ namespace BossRoom.Server
     public class ServerBossRoomState : GameStateBehaviour
     {
         [SerializeField]
-        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
-        private NetworkedObject m_PlayerPrefab;
+        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
+        private NetworkObject m_PlayerPrefab;
 
         // note: this is temporary, for testing!
         [SerializeField]
-        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
-        private NetworkedObject m_EnemyPrefab;
+        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
+        private NetworkObject m_EnemyPrefab;
 
         // note: this is temporary, for testing!
         [SerializeField]
-        [Tooltip("Make sure this is included in the NetworkingManager's list of prefabs!")]
-        private NetworkedObject m_BossPrefab;
+        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
+        private NetworkObject m_BossPrefab;
 
         [SerializeField] [Tooltip("A collection of locations for spawning players")]
         private Transform[] m_PlayerSpawnPoints;
@@ -123,7 +124,7 @@ namespace BossRoom.Server
 
                 bool didSpawn = DoInitialSpawnIfPossible();
 
-                if( !didSpawn && InitialSpawnDone && MLAPI.Spawning.SpawnManager.GetPlayerObject(clientId) == null)
+                if( !didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
                 {
                     //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                     //(either because multiple people are late-joining at once, or because some dynamic entities are
@@ -182,7 +183,7 @@ namespace BossRoom.Server
             if (lifeState == LifeState.Fainted)
             {
                 // Check the life state of all players in the scene
-                foreach (var p in NetworkingManager.Singleton.ConnectedClientsList )
+                foreach (var p in NetworkManager.Singleton.ConnectedClientsList )
                 {
                     // if any player is alive just retrun
                     var netState = p.PlayerObject.GetComponent<NetworkCharacterState>();
@@ -222,12 +223,12 @@ namespace BossRoom.Server
             if (Input.GetKeyDown(KeyCode.E))
             {
                 var newEnemy = Instantiate(m_EnemyPrefab);
-                newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId);
             }
             if (Input.GetKeyDown(KeyCode.B))
             {
                 var newEnemy = Instantiate(m_BossPrefab);
-                newEnemy.SpawnWithOwnership(NetworkingManager.Singleton.LocalClientId);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId);
             }
             if (Input.GetKeyDown(KeyCode.Q))
             {

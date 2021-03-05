@@ -10,7 +10,7 @@ namespace BossRoom.Visual
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    public class ClientCharacterVisualization : NetworkedBehaviour
+    public class ClientCharacterVisualization : NetworkBehaviour
     {
         private NetworkCharacterState m_NetState;
 
@@ -125,7 +125,7 @@ namespace BossRoom.Visual
                 }
                 else
                 {
-                    m_PartyHUD.SetAllyType(m_NetState.NetworkId, m_NetState.CharacterType);
+                    m_PartyHUD.SetAllyType(m_NetState.NetworkObjectId, m_NetState.CharacterType);
                 }
 
             }
@@ -198,7 +198,7 @@ namespace BossRoom.Visual
             }
             else
             {
-                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkId, newValue);
+                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
             }
         }
 

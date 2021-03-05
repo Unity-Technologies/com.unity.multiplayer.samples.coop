@@ -13,7 +13,7 @@ using UnityEngine.Assertions;
 
 namespace LiteNetLibTransport
 {
-    public class LiteNetLibTransport : Transport, INetEventListener
+    public class LiteNetLibTransport : NetworkTransport, INetEventListener
     {
         enum HostType
         {
@@ -50,7 +50,7 @@ namespace LiteNetLibTransport
         [Tooltip("Simulated maximum additional latency for packets in milliseconds (0 for no simulation")]
         public int SimulateMaxLatency = 0;
 
-        private readonly Dictionary<Channel, LiteChannel> m_LiteChannels = new Dictionary<Channel, LiteChannel>();
+        private readonly Dictionary<NetworkChannel, LiteChannel> m_LiteChannels = new Dictionary<NetworkChannel, LiteChannel>();
         readonly Dictionary<ulong, NetPeer> m_Peers = new Dictionary<ulong, NetPeer>();
 
         NetManager m_NetManager;
@@ -81,7 +81,7 @@ namespace LiteNetLibTransport
 
         public override bool IsSupported => Application.platform != RuntimePlatform.WebGLPlayer;
 
-        public override void Send(ulong clientId, ArraySegment<byte> data, Channel channel)
+        public override void Send(ulong clientId, ArraySegment<byte> data, NetworkChannel channel)
         {
             if (m_Peers.ContainsKey(clientId))
             {
@@ -93,7 +93,7 @@ namespace LiteNetLibTransport
             }
         }
 
-        private void AppendChannel(ref ArraySegment<byte> data, Channel channel)
+        private void AppendChannel(ref ArraySegment<byte> data, NetworkChannel channel)
         {
             Assert.IsNotNull(data.Array);
 
@@ -116,13 +116,13 @@ namespace LiteNetLibTransport
             data = new ArraySegment<byte>(array, data.Offset, data.Count + 1);
         }
 
-        public override NetEventType PollEvent(out ulong clientId, out Channel channel, out ArraySegment<byte> payload, out float receiveTime)
+        public override NetworkEvent PollEvent(out ulong clientId, out NetworkChannel channel, out ArraySegment<byte> payload, out float receiveTime)
         {
             // transport is event based ignore this.
             clientId = 0;
-            channel = Channel.ChannelUnused;
+            channel = NetworkChannel.ChannelUnused;
             receiveTime = Time.realtimeSinceStartup;
-            return NetEventType.Nothing;
+            return NetworkEvent.Nothing;
         }
 
         public override SocketTasks StartClient()
@@ -238,36 +238,36 @@ namespace LiteNetLibTransport
 
             for (int i = 0; i < channels.Length; i++)
             {
-                m_LiteChannels.Add(channels[i].Id, new LiteChannel()
+                m_LiteChannels.Add(channels[i].Channel, new LiteChannel()
                 {
                     ChannelNumber = id++,
-                    Method = ConvertChannelType(channels[i].Type)
+                    Method = ConvertChannelType(channels[i].Delivery)
                 });
             }
         }
 
 
-        DeliveryMethod ConvertChannelType(ChannelType type)
+        DeliveryMethod ConvertChannelType(NetworkDelivery type)
         {
             switch (type)
             {
-                case ChannelType.Unreliable:
+                case NetworkDelivery.Unreliable:
                     {
                         return DeliveryMethod.Unreliable;
                     }
-                case ChannelType.UnreliableSequenced:
+                case NetworkDelivery.UnreliableSequenced:
                     {
                         return DeliveryMethod.Sequenced;
                     }
-                case ChannelType.Reliable:
+                case NetworkDelivery.Reliable:
                     {
                         return DeliveryMethod.ReliableUnordered;
                     }
-                case ChannelType.ReliableSequenced:
+                case NetworkDelivery.ReliableSequenced:
                     {
                         return DeliveryMethod.ReliableOrdered;
                     }
-                case ChannelType.ReliableFragmentedSequenced:
+                case NetworkDelivery.ReliableFragmentedSequenced:
                     {
                         return DeliveryMethod.ReliableOrdered;
                     }
@@ -288,7 +288,7 @@ namespace LiteNetLibTransport
             }
 
             var peerId = GetMlapiClientId(peer);
-            InvokeOnTransportEvent(NetEventType.Connect, peerId, Channel.DefaultMessage, default, Time.time);
+            InvokeOnTransportEvent(NetworkEvent.Connect, peerId, NetworkChannel.DefaultMessage, default, Time.time);
 
             m_Peers[peerId] = peer;
         }
@@ -303,7 +303,7 @@ namespace LiteNetLibTransport
             }
 
             var peerId = GetMlapiClientId(peer);
-            InvokeOnTransportEvent(NetEventType.Disconnect, GetMlapiClientId(peer), Channel.DefaultMessage, default, Time.time);
+            InvokeOnTransportEvent(NetworkEvent.Disconnect, GetMlapiClientId(peer), NetworkChannel.DefaultMessage, default, Time.time);
 
             m_Peers.Remove(peerId);
         }
@@ -334,9 +334,9 @@ namespace LiteNetLibTransport
             // The last byte sent is used to indicate the channel so don't include it in the payload.
             var payload = new ArraySegment<byte>(data, 0, size - 1);
 
-            Channel channel = (Channel)data[size - 1];
+            NetworkChannel channel = (NetworkChannel)data[size - 1];
 
-            InvokeOnTransportEvent(NetEventType.Data, GetMlapiClientId(peer), channel, payload, Time.time);
+            InvokeOnTransportEvent(NetworkEvent.Data, GetMlapiClientId(peer), channel, payload, Time.time);
 
             reader.Recycle();
         }
@@ -345,7 +345,7 @@ namespace LiteNetLibTransport
         void ResizeMessageBuffer(int size)
         {
             m_MessageBuffer = new byte[size];
-            if (NetworkingManager.Singleton.LogLevel == LogLevel.Developer)
+            if (NetworkManager.Singleton.LogLevel == LogLevel.Developer)
             {
                 NetworkLog.LogWarningServer($"LiteNetLibTransport resizing messageBuffer to size of {size}.");
             }

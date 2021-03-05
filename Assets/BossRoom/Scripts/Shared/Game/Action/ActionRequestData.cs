@@ -74,14 +74,14 @@ namespace BossRoom
     /// <summary>
     /// Comprehensive class that contains information needed to play back any action on the server. This is what gets sent client->server when
     /// the Action gets played, and also what gets sent server->client to broadcast the action event. Note that the OUTCOMES of the action effect
-    /// don't ride along with this object when it is broadcast to clients; that information is sync'd separately, usually by NetworkedVars.
+    /// don't ride along with this object when it is broadcast to clients; that information is sync'd separately, usually by NetworkVariables.
     /// </summary>
     public struct ActionRequestData : INetworkSerializable
     {
         public ActionType ActionTypeEnum;      //the action to play.
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill.
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing.
-        public ulong[] TargetIds;          //networkIds of targets, or null if untargeted.
+        public ulong[] TargetIds;          //NetworkObjectIds of targets, or null if untargeted.
         public float Amount;               //can mean different things depending on the Action. For a ChaseAction, it will be target range the ChaseAction is trying to achieve.
         public bool ShouldQueue;           //if true, this action should queue. If false, it should clear all current actions and play immediately.
         public bool ShouldClose;           //if true, the server should synthesize a ChaseAction to close to within range of the target before playing the Action. Ignored for untargeted actions.
@@ -137,7 +137,7 @@ namespace BossRoom
             return flags;
         }
 
-        public void NetworkSerialize(BitSerializer serializer)
+        public void NetworkSerialize(NetworkSerializer serializer)
         {
             PackFlags flags = PackFlags.None;
             if (!serializer.IsReading)

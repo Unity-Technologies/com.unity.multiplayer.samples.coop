@@ -10,7 +10,7 @@ namespace BossRoom.Server
     /// Component responsible for spawning prefab clones in waves on the server.
     /// </summary>
     [RequireComponent(typeof(Collider))]
-    public class ServerWaveSpawner : NetworkedBehaviour
+    public class ServerWaveSpawner : NetworkBehaviour
     {
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
@@ -21,7 +21,7 @@ namespace BossRoom.Server
 
         // networked object that will be spawned in waves
         [SerializeField]
-        NetworkedObject m_NetworkedPrefab;
+        NetworkObject m_NetworkedPrefab;
 
         // cache reference to our own transform
         Transform m_Transform;
@@ -171,7 +171,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Spawn a NetworkedObject prefab clone.
+        /// Spawn a NetworkObject prefab clone.
         /// </summary>
         void SpawnPrefab()
         {
@@ -204,7 +204,7 @@ namespace BossRoom.Server
 
             // iterate through clients and only return true if a player is in range
             // and is not occluded by a blocking collider.
-            foreach (KeyValuePair<ulong, NetworkedClient> idToClient in NetworkingManager.Singleton.ConnectedClients)
+            foreach (KeyValuePair<ulong, NetworkClient> idToClient in NetworkManager.Singleton.ConnectedClients)
             {
                 var playerPosition = idToClient.Value.PlayerObject.transform.position;
                 var direction = playerPosition - spawnerPosition;

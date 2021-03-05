@@ -5,7 +5,7 @@ using UnityEngine;
 /// Client-side representation of a floor switch.
 /// </summary>
 [RequireComponent(typeof(NetworkFloorSwitchState))]
-public class ClientFloorSwitchVisualization : NetworkedBehaviour
+public class ClientFloorSwitchVisualization : NetworkBehaviour
 {
     [SerializeField]
     private Animator m_Animator;

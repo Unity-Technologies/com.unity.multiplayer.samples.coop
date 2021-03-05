@@ -94,7 +94,7 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload.
+        /// Wraps the invocation of NetworkManager.StartClient, including our GUID as the payload.
         /// </summary>
         /// <remarks>
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
@@ -106,14 +106,14 @@ namespace BossRoom.Client
         public static void StartClient(GameNetPortal portal, string ipaddress, int port)
         {
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
-            var chosenTransport = NetworkingManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             switch (chosenTransport)
             {
                 case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;
-                case UnetTransport unetTransport:
+                case UNetTransport unetTransport:
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;
@@ -134,8 +134,8 @@ namespace BossRoom.Client
         /// <param name="roomName">The room name of the host to connect to.</param>
         public static void StartClientRelayMode(GameNetPortal portal, string roomName)
         {
-            var chosenTransport  = NetworkingManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
-            NetworkingManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             switch (chosenTransport)
             {

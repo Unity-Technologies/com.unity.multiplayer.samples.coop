@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 
 namespace BossRoom
 {
@@ -15,17 +15,17 @@ namespace BossRoom
         /// <summary>
         /// The current transform position of this entity.
         /// </summary>
-        public NetworkedVarVector3 NetworkPosition { get; }
+        public NetworkVariableVector3 NetworkPosition { get; }
 
         /// <summary>
         /// The networked rotation of this entity. This reflects the authorative rotation on the server.
         /// </summary>
-        public NetworkedVarFloat NetworkRotationY { get; }
+        public NetworkVariableFloat NetworkRotationY { get; }
 
         /// <summary>
         /// The current speed of this entity in m/s.
         /// </summary>
-        public NetworkedVarFloat NetworkMovementSpeed { get; }
+        public NetworkVariableFloat NetworkMovementSpeed { get; }
 
         public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY);
     }

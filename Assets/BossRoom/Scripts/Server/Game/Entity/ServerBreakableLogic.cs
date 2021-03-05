@@ -1,3 +1,4 @@
+using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -8,7 +9,7 @@ namespace BossRoom.Server
     /// take damage from certain enemy types, by adding some filter variable as a serialized field.
     /// </summary>
     [RequireComponent(typeof(NetworkBreakableState))]
-    public class ServerBreakableLogic : MLAPI.NetworkedBehaviour, IDamageable
+    public class ServerBreakableLogic : NetworkBehaviour, IDamageable
     {
         public override void NetworkStart()
         {
@@ -25,7 +26,7 @@ namespace BossRoom.Server
                 //any damage at all is enough to slay me.
                 GetComponent<NetworkBreakableState>().IsBroken.Value = true;
 
-                //don't let us take another blow. 
+                //don't let us take another blow.
                 GetComponent<Collider>().enabled = false;
             }
         }

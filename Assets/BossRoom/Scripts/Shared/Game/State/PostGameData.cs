@@ -1,12 +1,12 @@
 using MLAPI;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 
 namespace BossRoom
 {
     /// <summary>
-    /// The data component for the PostGame state object. 
+    /// The data component for the PostGame state object.
     /// </summary>
-    public class PostGameData : NetworkedBehaviour
+    public class PostGameData : NetworkBehaviour
     {
         /// <summary>
         /// We use a tristate for the GameWon Banner to simplify the display logic on the client. Before the
@@ -23,6 +23,6 @@ namespace BossRoom
         /// <summary>
         /// When this is true, the players have defeated the Boss and deserve a victory message
         /// </summary>
-        public NetworkedVarByte GameBannerState { get; } = new NetworkedVarByte((byte)BannerState.Unset);
+        public NetworkVariableByte GameBannerState { get; } = new NetworkVariableByte((byte)BannerState.Unset);
     }
 }
