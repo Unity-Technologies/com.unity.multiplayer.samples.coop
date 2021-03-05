@@ -8,17 +8,11 @@ namespace BossRoom.Visual
     /// </summary>
     /// 
     /// <remarks>
-    /// For this demo we're using a few looped footstep sounds, choosing between them
-    /// based on the animated speed. This is not an especially accurate way to do footsteps!
-    /// The most accurate method is to separate each footstep-sound into a single footfall and
-    /// play it when you detect the character's foot actually touch the ground (more or less; you
-    /// could also trigger the footfall based on the Y position of their knee bone, etc.).
-    /// But that's overkill for a game with a top-down camera where the feet are barely visible anyway!
-    /// 
-    /// This method can be inaccurate when the character's speed is slowed (e.g. due to a slowness debuff),
-    /// but that's a tradeoff for performance and simplicity. If your game's design features a lot of
-    /// movement-speed changes and you need more accurate footsteps, you could add more sound-loops
-    /// to this system (e.g. instead of just "walk" and "run" there could also be "jog" and "saunter").
+    /// For this project we're using a few looped footstep sounds, choosing between them
+    /// based on the animated speed. This method has good performance versus a more complicated
+    /// approach, but it does have a flaw: it becomes inaccurate when the character's speed is slowed.
+    /// e.g. if a slowness debuff makes you move at 75% speed, the footsteps will be slightly off because
+    /// we only have sound-loops for 50% and 100%. That's not a big deal in this particular game, though.
     /// </remarks>
     public class AnimatorFootstepSounds : MonoBehaviour
     {
