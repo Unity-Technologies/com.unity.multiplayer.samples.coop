@@ -21,8 +21,15 @@ namespace BossRoom
     {
         public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
         {
-            NetworkPosition.Value = initPosition;
-            NetworkRotationY.Value = initRotationY;
+            if (!NetworkManager.Singleton.IsClient)
+            {
+                NetworkPosition.Value = initPosition;
+                NetworkRotationY.Value = initRotationY;
+            }
+            else
+            {
+                Debug.LogWarning("trying to init from client");
+            }
         }
 
         /// <summary>
