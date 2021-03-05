@@ -35,17 +35,19 @@ namespace BossRoom.Visual
             [Tooltip("The prefab that should be instantiated when we enter an Animator node with this name")]
             public SpecialFXGraphic m_Prefab;
             [Tooltip("Wait this many seconds before instantiating the Prefab. (If we leave the animation node before this point, no FX are played.)")]
-            public float m_StartDelaySeconds;
+            public float m_PrefabSpawnDelaySeconds;
             [Tooltip("If we leave the AnimationNode, should we shutdown the fx or let it play out? 0 = never cancel. Any other time = we can cancel up until this amount of time has elapsed... after that, we just let it play out. So a really big value like 9999 effectively means 'always cancel'")]
-            public float m_CanBeAbortedUntilSecs;
+            public float m_PrefabCanBeAbortedUntilSecs;
 
             [Header("Sound Effect")]
             [Tooltip("If we want to use a sound effect that's not in the prefab, specify it here")]
             public AudioClip m_SoundEffect;
-            [Tooltip("Time (in seconds) before we start playing this sfx. If we leave the node before this time, no sound plays")]
+            [Tooltip("Time (in seconds) before we start playing this sound. If we leave the animation node before this time, no sound plays")]
             public float m_SoundStartDelaySeconds;
             [Tooltip("Relative volume to play at.")]
             public float m_VolumeMultiplier = 1;
+            [Tooltip("Should we loop the sound for as long as we're in the animation node?")]
+            public bool m_LoopSound = false;
         }
         [SerializeField]
         internal AnimatorNodeEntryEvent[] m_EventsOnNodeEntry;
@@ -62,7 +64,7 @@ namespace BossRoom.Visual
             [Tooltip("The prefab that should be instantiated when we exit an AnimatorNode with this name")]
             public SpecialFXGraphic m_Prefab;
             [Tooltip("Wait this many seconds before instantiating the Prefab.")]
-            public float m_StartDelaySeconds;
+            public float m_PrefabStartDelaySeconds;
 
             [Header("Sound Effect")]
             [Tooltip("If we want to use a sound effect that's not in the prefab, specify it here")]
@@ -75,8 +77,14 @@ namespace BossRoom.Visual
         [SerializeField]
         internal AnimatorNodeExitEvent[] m_EventsOnNodeExit;
 
+        /// <summary>
+        /// These are the AudioSources we'll use to play sounds. For non-looping sounds we only need one,
+        /// but to play multiple looping sounds we need additional AudioSources, since each one can only
+        /// play one looping sound at a time.
+        /// (These AudioSources are typically on the same GameObject as us, but they don't have to be.)
+        /// </summary>
         [SerializeField]
-        private AudioSource m_AudioSource;
+        internal AudioSource[] m_AudioSources;
 
         /// <summary>
         /// cached reference to our required Animator. (Animator MUST be on the same
@@ -93,7 +101,7 @@ namespace BossRoom.Visual
         {
             m_Animator = GetComponent<Animator>();
             Debug.Assert(m_Animator, "AnimatorTriggeredSpecialFX needs to be on the same GameObject as the Animator it works with!", gameObject);
-            Debug.Assert(m_AudioSource, "No AudioSource plugged into AnimatorTriggeredSpecialFX!", gameObject);
+            Debug.Assert(m_AudioSources != null && m_AudioSources.Length > 0, "No AudioSource plugged into AnimatorTriggeredSpecialFX!", gameObject);
         }
 
         public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -123,8 +131,8 @@ namespace BossRoom.Visual
         // creates and manages the graphics prefab (but not the sound effect) of an on-enter event
         private IEnumerator CoroPlayStateEnterFX(AnimatorNodeEntryEvent eventInfo)
         {
-            if (eventInfo.m_StartDelaySeconds > 0)
-                yield return new WaitForSeconds(eventInfo.m_StartDelaySeconds);
+            if (eventInfo.m_PrefabSpawnDelaySeconds > 0)
+                yield return new WaitForSeconds(eventInfo.m_PrefabSpawnDelaySeconds);
 
             if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
                 yield break;
@@ -132,9 +140,9 @@ namespace BossRoom.Visual
             var instantiatedFX = Instantiate(eventInfo.m_Prefab, m_Animator.transform);
 
             // now we just need to watch and see if we end up needing to prematurely end these new graphics
-            if (eventInfo.m_CanBeAbortedUntilSecs > 0)
+            if (eventInfo.m_PrefabCanBeAbortedUntilSecs > 0)
             {
-                float timeRemaining = eventInfo.m_CanBeAbortedUntilSecs - eventInfo.m_StartDelaySeconds;
+                float timeRemaining = eventInfo.m_PrefabCanBeAbortedUntilSecs - eventInfo.m_PrefabSpawnDelaySeconds;
                 while (timeRemaining > 0 && instantiatedFX)
                 {
                     yield return new WaitForFixedUpdate();
@@ -160,9 +168,40 @@ namespace BossRoom.Visual
             if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
                 yield break;
 
-            m_AudioSource.PlayOneShot(eventInfo.m_SoundEffect, eventInfo.m_VolumeMultiplier);
+            if (!eventInfo.m_LoopSound)
+            {
+                m_AudioSources[0].PlayOneShot(eventInfo.m_SoundEffect, eventInfo.m_VolumeMultiplier);
+            }
+            else
+            {
+                AudioSource audioSource = GetAudioSourceForLooping();
+                if (!audioSource)
+                    yield break; // we're using all our audio sources already. just give up
+                audioSource.volume = eventInfo.m_VolumeMultiplier;
+                audioSource.loop = true;
+                audioSource.clip = eventInfo.m_SoundEffect;
+                audioSource.Play();
+                while (m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash) && audioSource.isPlaying)
+                {
+                    yield return new WaitForFixedUpdate();
+                }
+                audioSource.Stop();
+            }
         }
 
+        /// <summary>
+        /// retrieves an available AudioSource that isn't currently playing a looping sound, or null if none are currently available
+        /// </summary>
+        private AudioSource GetAudioSourceForLooping()
+        {
+            foreach (var audioSource in m_AudioSources)
+            {
+                if (audioSource && !audioSource.isPlaying)
+                    return audioSource;
+            }
+            Debug.LogWarning($"{name} doesn't have enough AudioSources to loop all desired sound effects. (Have {m_AudioSources.Length}, need at least 1 more)", gameObject);
+            return null;
+        }
 
         public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
@@ -191,8 +230,8 @@ namespace BossRoom.Visual
         // creates the graphics prefab (but not the sound effect) of an on-exit event
         private IEnumerator CoroPlayStateExitFX(AnimatorNodeExitEvent eventInfo)
         {
-            if (eventInfo.m_StartDelaySeconds > 0)
-                yield return new WaitForSeconds(eventInfo.m_StartDelaySeconds);
+            if (eventInfo.m_PrefabStartDelaySeconds > 0)
+                yield return new WaitForSeconds(eventInfo.m_PrefabStartDelaySeconds);
 
             Instantiate(eventInfo.m_Prefab, m_Animator.transform);
         }
@@ -203,7 +242,7 @@ namespace BossRoom.Visual
             if (eventInfo.m_SoundStartDelaySeconds > 0)
                 yield return new WaitForSeconds(eventInfo.m_SoundStartDelaySeconds);
 
-            m_AudioSource.PlayOneShot(eventInfo.m_SoundEffect, eventInfo.m_VolumeMultiplier);
+            m_AudioSources[0].PlayOneShot(eventInfo.m_SoundEffect, eventInfo.m_VolumeMultiplier);
         }
 
 
@@ -211,6 +250,7 @@ namespace BossRoom.Visual
         /// <summary>
         /// Precomputes the hashed values for the animator-tags we care about.
         /// (This way we don't have to call Animator.StringToHash() at runtime.)
+        /// Also auto-initializes variables when possible.
         /// </summary>
         private void OnValidate()
         {
@@ -229,10 +269,8 @@ namespace BossRoom.Visual
                 }
             }
 
-            if (!m_AudioSource) // if we have one handy, plug it in
-                m_AudioSource = GetComponent<AudioSource>();
-            if (!m_AudioSource) // otherwise complain!
-                Debug.LogError("AnimatorTriggeredSpecialFX needs an AudioSource to play sound effects through!", gameObject);
+            if (m_AudioSources == null || m_AudioSources.Length == 0) // if we have AudioSources handy, plug them in automatically
+                m_AudioSources = GetComponents<AudioSource>();
         }
 #endif
 
@@ -242,21 +280,56 @@ namespace BossRoom.Visual
 #if UNITY_EDITOR
     /// <summary>
     /// This adds a button in the Inspector. Pressing it validates that all the
-    /// animator node names we reference are actually used by our Animator.
+    /// animator node names we reference are actually used by our Animator. We
+    /// can also show informational messages about problems with the configuration.
     /// </summary>
     [CustomEditor(typeof(AnimatorTriggeredSpecialFX))]
     [CanEditMultipleObjects]
     public class AnimatorTriggeredSpecialFXEditor : Editor
     {
+        private GUIStyle m_ErrorStyle = null;
         public override void OnInspectorGUI()
         {
+            // let Unity do all the normal Inspector stuff...
             DrawDefaultInspector();
+
+            // ... then we tack extra stuff on the bottom
+            var fx = (AnimatorTriggeredSpecialFX)target;
+            if (!HasAudioSource(fx))
+            {
+                GUILayout.Label("No Audio Sources Connected!", GetErrorStyle());
+            }
+
             if (GUILayout.Button("Validate Node Names"))
             {
-                ValidateNodeNames((AnimatorTriggeredSpecialFX)target);
+                ValidateNodeNames(fx);
             }
+
             // it's really hard to follow the inspector when there's a lot of these components on the same GameObject... so let's add a bit of whitespace
-            GUILayout.Space(50);
+            EditorGUILayout.Space(50);
+        }
+
+        private GUIStyle GetErrorStyle()
+        {
+            if (m_ErrorStyle == null)
+            {
+                m_ErrorStyle = new GUIStyle(EditorStyles.boldLabel);
+                m_ErrorStyle.normal.textColor = Color.red;
+                m_ErrorStyle.fontSize += 5;
+            }
+            return m_ErrorStyle;
+        }
+
+        private bool HasAudioSource(AnimatorTriggeredSpecialFX fx)
+        {
+            if (fx.m_AudioSources == null)
+                return false;
+            foreach (var audioSource in fx.m_AudioSources)
+            {
+                if (audioSource != null)
+                    return true;
+            }
+            return false;
         }
 
         private void ValidateNodeNames(AnimatorTriggeredSpecialFX fx)
@@ -343,7 +416,9 @@ namespace BossRoom.Visual
 
         /// <summary>
         /// Pulls the AnimatorController out of an Animator. Important: this technique can only work
-        /// in the editor. You can never reference an AnimatorController directly at runtime!
+        /// in the editor. You can never reference an AnimatorController directly at runtime! (It might
+        /// seem to work while you're running the game in the editor, but it won't compile when you
+        /// try to build a standalone client, because AnimatorController is in an editor-only namespace.)
         /// </summary>
         private AnimatorController GetAnimatorController(Animator animator)
         {
