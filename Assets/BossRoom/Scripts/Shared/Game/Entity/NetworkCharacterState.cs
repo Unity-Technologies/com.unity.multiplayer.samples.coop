@@ -1,6 +1,6 @@
 using MLAPI;
 using MLAPI.Messaging;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using System;
 using UnityEngine;
 
@@ -14,25 +14,31 @@ namespace BossRoom
     }
 
     /// <summary>
-    /// Contains all NetworkedVars and RPCs of a character. This component is present on both client and server objects.
+    /// Contains all NetworkVariables and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
     [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
-    public class NetworkCharacterState : NetworkedBehaviour, INetMovement
+    public class NetworkCharacterState : NetworkBehaviour, INetMovement
     {
+        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
+        {
+            NetworkPosition.Value = initPosition;
+            NetworkRotationY.Value = initRotationY;
+        }
+
         /// <summary>
         /// The networked position of this Character. This reflects the authoritative position on the server.
         /// </summary>
-        public NetworkedVarVector3 NetworkPosition { get; } = new NetworkedVarVector3();
+        public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3();
 
         /// <summary>
         /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
-        public NetworkedVarFloat NetworkRotationY { get; } = new NetworkedVarFloat();
+        public NetworkVariableFloat NetworkRotationY { get; } = new NetworkVariableFloat();
 
         /// <summary>
         /// The speed that the character is currently allowed to move, according to the server.
         /// </summary>
-        public NetworkedVarFloat NetworkMovementSpeed { get; } = new NetworkedVarFloat();
+        public NetworkVariableFloat NetworkMovementSpeed { get; } = new NetworkVariableFloat();
 
         /// <summary>
         /// Used by animations. Indicates how fast the character should "look like" they're moving,
@@ -40,7 +46,16 @@ namespace BossRoom
         /// This does not always correspond to the NetworkMovementSpeed; for instance when a player is being
         /// "knocked back", they are moving, but they visually look like they're standing still.
         /// </summary>
-        public NetworkedVarFloat VisualMovementSpeed { get; } = new NetworkedVarFloat();
+        public NetworkVariableFloat VisualMovementSpeed { get; } = new NetworkVariableFloat();
+
+        /// <summary>
+        /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
+        /// </summary>
+        /// <remarks>
+        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's serialized 
+        /// as a bit, but deserialized as a byte, which corrupts the whole network-var stream.
+        /// </remarks>
+        public NetworkVariableByte IsStealthy { get; } = new NetworkVariableByte(0);
 
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
@@ -56,10 +71,10 @@ namespace BossRoom
         /// <summary>
         /// The active target of this character.
         /// </summary>
-        public NetworkedVarULong TargetId { get; } = new NetworkedVarULong();
+        public NetworkVariableULong TargetId { get; } = new NetworkVariableULong();
 
         /// <summary>
-        /// Current HP. This value is populated at startup time from CharacterClass data. 
+        /// Current HP. This value is populated at startup time from CharacterClass data.
         /// </summary>
         public int HitPoints
         {
@@ -67,15 +82,15 @@ namespace BossRoom
             set { m_NetworkHealthState.HitPoints.Value = value; }
         }
 
-        /// Current Mana. This value is populated at startup time from CharacterClass data. 
+        /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
-        public NetworkedVarInt Mana;
+        public NetworkVariableInt Mana;
 
         /// <summary>
-        /// Current LifeState. Only Players should enter the FAINTED state. 
+        /// Current LifeState. Only Players should enter the FAINTED state.
         /// </summary>
-        public NetworkedVar<LifeState> NetworkLifeState { get; } = new NetworkedVar<LifeState>(LifeState.Alive);
+        public NetworkVariable<LifeState> NetworkLifeState { get; } = new NetworkVariable<LifeState>(LifeState.Alive);
 
         /// <summary>
         /// Returns true if this Character is an NPC.
@@ -119,10 +134,10 @@ namespace BossRoom
 
         /// <summary>
         /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
-        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc). 
+        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
         /// </summary>
         [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
-        public NetworkedVarInt CharacterAppearance;
+        public NetworkVariableInt CharacterAppearance;
 
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
@@ -159,14 +174,19 @@ namespace BossRoom
         public event Action<ActionRequestData> DoActionEventServer;
 
         /// <summary>
-        /// This event is raised on the client when an action is being played back. 
+        /// This event is raised on the client when an action is being played back.
         /// </summary>
         public event Action<ActionRequestData> DoActionEventClient;
 
         /// <summary>
-        /// Client->Server RPC that sends a request to play an action.
+        /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
         /// </summary>
-        public event Action CancelActionEventClient;
+        public event Action CancelAllActionsEventClient;
+
+        /// <summary>
+        /// This event is raised on the client when active action FXs of a certain type need to be cancelled (e.g. when the Stealth action ends)
+        /// </summary>
+        public event Action<ActionType> CancelActionsByTypeEventClient;
 
         [ClientRpc]
         /// Server->Client RPC that broadcasts this action play to all clients.
@@ -176,9 +196,15 @@ namespace BossRoom
         }
 
         [ClientRpc]
-        public void RecvCancelActionClientRpc()
+        public void RecvCancelAllActionsClientRpc()
         {
-            CancelActionEventClient?.Invoke();
+            CancelAllActionsEventClient?.Invoke();
+        }
+
+        [ClientRpc]
+        public void RecvCancelActionsByTypeClientRpc(ActionType action)
+        {
+            CancelActionsByTypeEventClient?.Invoke(action);
         }
 
         /// <summary>

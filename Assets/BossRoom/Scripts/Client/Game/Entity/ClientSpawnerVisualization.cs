@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace BossRoom
 {
-    public class ClientSpawnerVisualization : NetworkedBehaviour
+    public class ClientSpawnerVisualization : NetworkBehaviour
     {
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;

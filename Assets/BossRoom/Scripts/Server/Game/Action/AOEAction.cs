@@ -23,7 +23,7 @@ public class AoeAction : Action
             if (enemy != null)
             {
                 enemy.ReceiveHP(m_Parent, -actionDescription.Amount);
-                m_Data.TargetIds[i] = enemy.NetworkId;
+                m_Data.TargetIds[i] = enemy.NetworkObjectId;
             }
         }
 

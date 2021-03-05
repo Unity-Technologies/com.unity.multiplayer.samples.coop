@@ -1,15 +1,15 @@
 using MLAPI;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using UnityEngine;
 
 namespace BossRoom
 {
     /// <summary>
-    /// NetworkedBehaviour containing only one NetworkedVarString which represents this object's name.
+    /// NetworkBehaviour containing only one NetworkVariableString which represents this object's name.
     /// </summary>
-    public class NetworkNameState : NetworkedBehaviour
+    public class NetworkNameState : NetworkBehaviour
     {
         [HideInInspector]
-        public NetworkedVarString Name = new NetworkedVarString();
+        public NetworkVariableString Name = new NetworkVariableString();
     }
 }

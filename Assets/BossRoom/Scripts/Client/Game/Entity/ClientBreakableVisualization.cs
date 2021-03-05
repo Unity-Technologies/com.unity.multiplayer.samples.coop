@@ -1,3 +1,4 @@
+using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -6,7 +7,7 @@ namespace BossRoom.Visual
     /// Visualization class for Breakables. Breakables work by swapping a "broken" prefab at the moment of breakage. The broken prefab
     /// then handles the pesky details of actually falling apart.
     /// </summary>
-    public class ClientBreakableVisualization : MLAPI.NetworkedBehaviour
+    public class ClientBreakableVisualization : NetworkBehaviour
     {
         [SerializeField]
         private GameObject m_BrokenPrefab;
@@ -30,7 +31,7 @@ namespace BossRoom.Visual
 
                 if (netState.IsBroken.Value == true)
                 {
-                    //todo: don't dramatically break on entry to scene, if already broken. 
+                    //todo: don't dramatically break on entry to scene, if already broken.
                     PerformBreak();
                 }
 

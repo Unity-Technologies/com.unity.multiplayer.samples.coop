@@ -1,3 +1,4 @@
+using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -90,11 +91,11 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Gets Player Name from the NetworkID of his controlled Character. 
+        /// Gets Player Name from the NetworkObjectId of his controlled Character.
         /// </summary>
         private string GetPlayerName(ulong netId)
         {
-            var netState = MLAPI.Spawning.SpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
+            var netState = NetworkSpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
             return netState.Name;
         }
 

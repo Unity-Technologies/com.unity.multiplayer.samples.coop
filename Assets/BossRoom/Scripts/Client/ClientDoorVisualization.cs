@@ -8,7 +8,7 @@ using UnityEngine;
 /// and vice versa.
 /// </summary>
 [RequireComponent(typeof(NetworkDoorState))]
-public class ClientDoorVisualization : NetworkedBehaviour
+public class ClientDoorVisualization : NetworkBehaviour
 {
     [SerializeField]
     [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]

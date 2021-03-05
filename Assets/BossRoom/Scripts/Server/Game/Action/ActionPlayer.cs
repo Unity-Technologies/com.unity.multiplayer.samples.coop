@@ -38,7 +38,7 @@ namespace BossRoom.Server
         {
             if (!action.ShouldQueue)
             {
-                ClearActions();
+                ClearActions(false);
             }
 
             if (m_Queue.Count > k_QueueSoftMax && m_Queue[m_Queue.Count - 1].Data.Compare(ref action))
@@ -52,20 +52,22 @@ namespace BossRoom.Server
             if (m_Queue.Count == 1) { StartAction(); }
         }
 
-        public void ClearActions()
+        public void ClearActions(bool cancelNonBlocking)
         {
             if (m_Queue.Count > 0)
             {
                 m_Queue[0].Cancel();
             }
-
-            foreach( var action in m_NonBlockingActions )
-            {
-                action.Cancel();
-            }
-
             m_Queue.Clear();
-            m_NonBlockingActions.Clear();
+
+            if (cancelNonBlocking)
+            {
+                foreach (var action in m_NonBlockingActions)
+                {
+                    action.Cancel();
+                }
+                m_NonBlockingActions.Clear();
+            }
         }
 
         /// <summary>

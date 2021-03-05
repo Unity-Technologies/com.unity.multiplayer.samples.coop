@@ -57,7 +57,7 @@ namespace BossRoom
 
         void OnEnable()
         {
-            if (!NetworkingManager.Singleton.IsClient)
+            if (!NetworkManager.Singleton.IsClient)
             {
                 enabled = false;
                 return;
@@ -185,7 +185,6 @@ namespace BossRoom
             yield return new WaitForSeconds(k_DurationSeconds);
 
             m_UIState.HideHealth();
-            m_UIStateActive = false;
         }
 
         void LateUpdate()
@@ -199,7 +198,7 @@ namespace BossRoom
 
         void OnDestroy()
         {
-            if (m_UIState)
+            if (m_UIState != null)
             {
                 Destroy(m_UIState.gameObject);
             }

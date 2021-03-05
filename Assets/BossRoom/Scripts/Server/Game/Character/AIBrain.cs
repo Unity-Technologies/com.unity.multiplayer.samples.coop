@@ -72,7 +72,10 @@ namespace BossRoom.Server
         /// </summary>
         public bool IsAppropriateFoe(ServerCharacter potentialFoe)
         {
-            if (potentialFoe == null || potentialFoe.IsNpc || potentialFoe.NetState.NetworkLifeState.Value != LifeState.Alive)
+            if (potentialFoe == null ||
+                potentialFoe.IsNpc ||
+                potentialFoe.NetState.NetworkLifeState.Value != LifeState.Alive ||
+                potentialFoe.NetState.IsStealthy.Value != 0)
             {
                 return false;
             }
