@@ -142,7 +142,7 @@ namespace BossRoom.Server
             yield return new WaitForSeconds(3);
             bool didSpawn = DoInitialSpawnIfPossible();
 
-            if (!didSpawn && InitialSpawnDone && MLAPI.Spawning.SpawnManager.GetPlayerObject(clientId) == null)
+            if (!didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
             {
                 //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                 //(either because multiple people are late-joining at once, or because some dynamic entities are
