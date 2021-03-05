@@ -231,7 +231,7 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Fainted)
             {
-                NetState.HitPoints = HP;
+                NetState.HitPoints = NetState.CharacterData.BaseHP.Value;
                 NetState.NetworkLifeState.Value = LifeState.Alive;
             }
         }
