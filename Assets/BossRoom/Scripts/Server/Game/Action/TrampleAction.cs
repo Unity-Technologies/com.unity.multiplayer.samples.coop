@@ -134,7 +134,7 @@ namespace BossRoom.Server
                     // we're stunned! No collision behavior for the victim. Stun ourselves and abort.
                     m_WasStunned = true;
                     m_Movement.CancelMove();
-                    m_Parent.NetState.RecvCancelActionClientRpc();
+                    m_Parent.NetState.RecvCancelAllActionsClientRpc();
                     return;
                 }
 

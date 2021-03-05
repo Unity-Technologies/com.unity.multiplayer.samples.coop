@@ -121,7 +121,8 @@ namespace BossRoom.Server
             if( sceneIndex == serverScene )
             {
                 Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
-
+                //StartCoroutine(CoroTryToDoInitialSpawnAfterAWhile(clientId));
+                
                 bool didSpawn = DoInitialSpawnIfPossible();
 
                 if( !didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
@@ -132,6 +133,22 @@ namespace BossRoom.Server
                     //ServerBossRoomState.
                     SpawnPlayer(clientId);
                 }
+                
+            }
+        }
+
+        private IEnumerator CoroTryToDoInitialSpawnAfterAWhile(ulong clientId)
+        {
+            yield return new WaitForSeconds(3);
+            bool didSpawn = DoInitialSpawnIfPossible();
+
+            if (!didSpawn && InitialSpawnDone && MLAPI.Spawning.SpawnManager.GetPlayerObject(clientId) == null)
+            {
+                //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
+                //(either because multiple people are late-joining at once, or because some dynamic entities are
+                //getting spawned while joining. But that's not something we can fully address by changes in
+                //ServerBossRoomState.
+                SpawnPlayer(clientId);
             }
         }
 

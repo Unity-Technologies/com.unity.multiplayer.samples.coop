@@ -53,7 +53,7 @@ namespace BossRoom.Server
                 // time for a new foe!
                 m_Foe = ChooseFoe();
                 // whatever we used to be doing, stop that. New plan is coming!
-                m_ActionPlayer.ClearActions();
+                m_ActionPlayer.ClearActions(true);
             }
 
             // if we're out of foes, stop! IsEligible() will now return false so we'll soon switch to a new state

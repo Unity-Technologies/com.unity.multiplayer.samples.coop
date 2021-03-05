@@ -60,6 +60,18 @@ namespace BossRoom.Client
                 m_CharacterModels[i].SetFullActive(i == modelIndex);
             }
         }
+
+        /// <summary>
+        /// Used by special effects where the character should be invisible.
+        /// </summary>
+        public void SwapAllOff()
+        {
+            for (int i = 0; i < m_CharacterModels.Length; i++)
+            {
+                m_CharacterModels[i].SetFullActive(false);
+            }
+        }
+
     }
 
 }

@@ -118,7 +118,7 @@ namespace BossRoom.Server
             {
                 if (action.CancelMovement)
                 {
-                    GetComponent<ServerCharacterMovement>().CancelMove();
+                    m_Movement.CancelMove();
                 }
 
                 m_ActionPlayer.PlayAction(ref action);
@@ -129,7 +129,7 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                ClearActions();
+                ClearActions(false);
                 m_Movement.SetMovementTarget(targetPosition);
             }
         }
@@ -138,7 +138,7 @@ namespace BossRoom.Server
         {
             if (lifeState != LifeState.Alive)
             {
-                ClearActions();
+                ClearActions(true);
                 m_Movement.CancelMove();
             }
         }
@@ -146,13 +146,19 @@ namespace BossRoom.Server
         /// <summary>
         /// Clear all active Actions.
         /// </summary>
-        public void ClearActions()
+        public void ClearActions(bool alsoClearNonBlockingActions)
         {
-            m_ActionPlayer.ClearActions();
+            m_ActionPlayer.ClearActions(alsoClearNonBlockingActions);
         }
 
         private void OnActionPlayRequest(ActionRequestData data)
         {
+            if (!GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].IsFriendly)
+            {
+                // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
+                RunningActions.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);
+            }
+
             PlayAction(ref data);
         }
 
@@ -193,7 +199,7 @@ namespace BossRoom.Server
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
             {
-                ClearActions();
+                ClearActions(false);
 
                 if (IsNpc)
                 {
