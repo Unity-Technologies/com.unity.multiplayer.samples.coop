@@ -262,8 +262,6 @@ namespace BossRoom.Visual
             }
 
             m_ActionViz.Update();
-
-            //m_MainCamera.Update()
         }
 
         public void OnAnimEvent(string id)
