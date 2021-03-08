@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using BossRoom.Visual;
 using Cinemachine;
+using NUnit.Framework;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -18,7 +19,7 @@ namespace BossRoom.Visual
         {
             var visualization = GetComponent<ClientCharacterVisualization>();
 
-            Debug.Assert(visualization != null, "CameraController.Start: Couldn't find character visualization.");
+            Assert.IsNotNull(visualization, "CameraController.Start: Couldn't find character visualization.");
 
             m_MinZoomDistance = visualization.MinZoomDistance;
             m_MaxZoomDistance = visualization.MaxZoomDistance;
