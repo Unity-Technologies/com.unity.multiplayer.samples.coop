@@ -10,7 +10,7 @@ Material:
   m_Name: FX_M_rotating_sniper
   m_Shader: {fileID: 4800000, guid: 1ceafe4dae085734190c6d13802572bf, type: 3}
   m_ShaderKeywords: _SWITCH_ALPHA_ON _USE_ALPHA_ON
-  m_LightmapFlags: 4
+  m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
