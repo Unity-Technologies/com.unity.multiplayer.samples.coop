@@ -77,13 +77,8 @@ namespace BossRoom
                 return false;
             }
 
-            var targetNetState = targetChar.GetComponent<NetworkCharacterState>();
-            if (targetNetState == null)
-            {
-                return false;
-            }
-            //only Dead characters are untargetable. All others are
-            return targetNetState.NetworkLifeState.Value != LifeState.Dead;
+            var targetable = targetChar.GetComponent<ITargetable>();
+            return targetable != null && targetable.IsValidTarget;
         }
 
     }

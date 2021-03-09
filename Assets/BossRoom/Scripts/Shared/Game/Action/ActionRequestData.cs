@@ -154,6 +154,7 @@ namespace BossRoom
             {
                 ShouldQueue = (flags & PackFlags.ShouldQueue) != 0;
                 CancelMovement = (flags & PackFlags.CancelMovement) != 0;
+                ShouldClose = (flags & PackFlags.ShouldClose) != 0;
             }
 
             if ((flags & PackFlags.HasPosition) != 0)
