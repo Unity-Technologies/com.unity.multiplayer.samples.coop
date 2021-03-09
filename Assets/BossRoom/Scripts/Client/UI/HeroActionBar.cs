@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
 namespace BossRoom.Visual
@@ -11,7 +12,7 @@ namespace BossRoom.Visual
     {
         // All buttons in this action bar
         [SerializeField]
-        private HeroActionButton[] m_Buttons;
+        private Button[] m_Buttons;
 
         // The Emote panel will be enabled or disabled when clicking the last button
         [SerializeField]
