@@ -39,6 +39,8 @@ namespace BossRoom.Visual
         // track Hero's target to show when it is the Hero or an ally
         private ulong m_CurrentTarget;
 
+        private Client.ClientInputSender m_ClientSender;
+
         public void SetHeroData(NetworkCharacterState netState)
         {
             // Make sure arrays are initialized
@@ -54,6 +56,8 @@ namespace BossRoom.Visual
             }
             // plus we track their target
             netState.TargetId.OnValueChanged += OnHeroSelectionChanged;
+
+            m_ClientSender = netState.GetComponent<Client.ClientInputSender>();
         }
 
         public void SetHeroHealth(int hp)
@@ -144,14 +148,9 @@ namespace BossRoom.Visual
             }
         }
 
-        public void SelectHero()
+        public void SelectPartyMember(int slot)
         {
-
-        }
-
-        public void SelectAlly(int slot)
-        {
-
+            m_ClientSender.RequestAction(ActionType.GeneralTarget, Client.ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
         }
 
         // helper to initialize the Allies array - safe to call multiple times
