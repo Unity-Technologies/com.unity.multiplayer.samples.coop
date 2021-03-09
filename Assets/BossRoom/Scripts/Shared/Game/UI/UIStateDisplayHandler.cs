@@ -49,6 +49,10 @@ namespace BossRoom
         // as soon as any HP goes to 0, we wait this long before removing health bar UI object
         const float k_DurationSeconds = 2f;
 
+        [Tooltip("World space vertical offset for positioning.")]
+        [SerializeField]
+        float m_VerticalWorldOffset;
+
         [Tooltip("Screen space vertical offset for positioning.")]
         [SerializeField]
         float m_VerticalScreenOffset;
@@ -191,7 +195,11 @@ namespace BossRoom
         {
             if (m_UIStateActive)
             {
-                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_TransformToTrack.position) +
+                // make a copy of position with world offset added
+                Vector3 pos = new Vector3(m_TransformToTrack.position.x,
+                    m_TransformToTrack.position.y + m_VerticalWorldOffset, m_TransformToTrack.position.z );
+
+                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(pos) +
                     m_VerticalOffset;
             }
         }
