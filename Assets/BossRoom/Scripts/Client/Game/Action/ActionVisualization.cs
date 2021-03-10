@@ -52,6 +52,11 @@ namespace BossRoom.Visual
             }
         }
 
+        public void AnticipateAction(ref ActionRequestData data)
+        {
+
+        }
+
         public void PlayAction(ref ActionRequestData data)
         {
             ActionDescription actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
