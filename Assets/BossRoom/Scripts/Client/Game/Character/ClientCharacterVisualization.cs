@@ -311,5 +311,10 @@ namespace BossRoom.Visual
                 }
             }
         }
+
+        public bool IsAnimating()
+        {
+
+        }
     }
 }
