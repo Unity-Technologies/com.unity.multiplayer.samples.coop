@@ -21,15 +21,8 @@ namespace BossRoom
     {
         public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
         {
-            if (!NetworkManager.Singleton.IsClient)
-            {
-                NetworkPosition.Value = initPosition;
-                NetworkRotationY.Value = initRotationY;
-            }
-            else
-            {
-                Debug.LogWarning("trying to init from client");
-            }
+            NetworkPosition.Value = initPosition;
+            NetworkRotationY.Value = initRotationY;
         }
 
         /// <summary>
@@ -59,7 +52,7 @@ namespace BossRoom
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
         /// </summary>
         /// <remarks>
-        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's serialized 
+        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's serialized
         /// as a bit, but deserialized as a byte, which corrupts the whole network-var stream.
         /// </remarks>
         public NetworkVariableByte IsStealthy { get; } = new NetworkVariableByte(0);
