@@ -161,7 +161,6 @@ MonoBehaviour:
     RegisteredScenes:
     - MainMenu
     - CharSelect
-    - SampleScene
     - BossRoom
     - PostGame
     - Startup
