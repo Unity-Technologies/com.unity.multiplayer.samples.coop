@@ -1,9 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
-using BossRoom.Visual;
 using Cinemachine;
-using NUnit.Framework;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Visual
 {
