@@ -170,17 +170,21 @@ namespace BossRoom.Client
         /// </summary>
         /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
         /// <param name="triggerStyle">What sort of input triggered this skill?</param>
+        /// <param name="targetId">(optional) Pass in a specific networkID to target for this action</param>
         private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
-            if (actionType == ActionType.GeneralTarget && targetId != 0)
+            
+            if (targetId != 0)
             {
+                // if a targetId is given, find the object
                 NetworkObject targetNetObj;
                 NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
                 hitTransform = targetNetObj.transform;
             }
             else
             {
+                // otherwise try to find an object under the input position
                 int numHits = 0;
                 if (triggerStyle == SkillTriggerStyle.MouseClick)
                 {

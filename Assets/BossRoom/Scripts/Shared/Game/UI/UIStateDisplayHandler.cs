@@ -59,6 +59,9 @@ namespace BossRoom
 
         Vector3 m_VerticalOffset;
 
+        // used to compute corld pos based on target and offsets
+        private Vector3 m_WorldPos;
+
         void OnEnable()
         {
             if (!NetworkManager.Singleton.IsClient)
@@ -195,11 +198,11 @@ namespace BossRoom
         {
             if (m_UIStateActive)
             {
-                // make a copy of position with world offset added
-                Vector3 pos = new Vector3(m_TransformToTrack.position.x,
+                // set world position with world offset added
+                m_WorldPos.Set(m_TransformToTrack.position.x,
                     m_TransformToTrack.position.y + m_VerticalWorldOffset, m_TransformToTrack.position.z );
 
-                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(pos) +
+                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_WorldPos) +
                     m_VerticalOffset;
             }
         }
