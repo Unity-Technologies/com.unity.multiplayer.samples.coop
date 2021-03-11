@@ -51,19 +51,22 @@ namespace BossRoom.Visual
             m_ImpactPlayed = true;
 
             //Is my original target still in range? Then definitely get him!
-            if (Data.TargetIds != null && Data.TargetIds.Length > 0 && SpawnManager.SpawnedObjects.ContainsKey(Data.TargetIds[0]))
+            if (Data.TargetIds != null && Data.TargetIds.Length > 0 && NetworkSpawnManager.SpawnedObjects.ContainsKey(Data.TargetIds[0]))
             {
-                NetworkedObject originalTarget = SpawnManager.SpawnedObjects[Data.TargetIds[0]];
+                NetworkObject originalTarget = NetworkSpawnManager.SpawnedObjects[Data.TargetIds[0]];
                 float padRange = Description.Range + k_RangePadding;
 
                 if ((m_Parent.transform.position - originalTarget.transform.position).sqrMagnitude < (padRange * padRange))
                 {
-                    if( originalTarget.NetworkId != m_Parent.NetworkId )
+                    if( originalTarget.NetworkObjectId != m_Parent.NetworkObjectId )
                     {
                         string hitAnim = Description.ReactAnim;
                         if(string.IsNullOrEmpty(hitAnim)) { hitAnim = "HitReact1";  }
-                        var targetViz = originalTarget.GetComponent<Client.ClientCharacter>().ChildVizObject;
-                        targetViz.OurAnimator.SetTrigger(hitAnim);
+                        var clientChar = originalTarget.GetComponent<Client.ClientCharacter>();
+                        if (clientChar)
+                        {
+                            clientChar.ChildVizObject.OurAnimator.SetTrigger("HitReact1");
+                        }
                     }
                 }
             }

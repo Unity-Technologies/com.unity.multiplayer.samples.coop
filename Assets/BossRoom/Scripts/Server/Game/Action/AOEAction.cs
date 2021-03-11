@@ -19,11 +19,11 @@ public class AoeAction : Action
                                                         // can't set their own target ID list.
         for (var i = 0; i < colliders.Length; i++)
         {
-            var enemy = colliders[i].GetComponent<ServerCharacter>();
-            if (enemy) // pots for example have the NPC layer but not the ServerCharacter component. If we want destructible pots, this component will need to be added
+            var enemy = colliders[i].GetComponent<IDamageable>();
+            if (enemy != null)
             {
                 enemy.ReceiveHP(m_Parent, -actionDescription.Amount);
-                m_Data.TargetIds[i] = enemy.NetworkId;
+                m_Data.TargetIds[i] = enemy.NetworkObjectId;
             }
         }
 

@@ -1,5 +1,5 @@
 using MLAPI;
-using MLAPI.NetworkedVar.Collections;
+using MLAPI.NetworkVariable.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -174,7 +174,7 @@ namespace BossRoom.Client
             int localPlayerIdx = -1;
             for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
-                if (CharSelectData.LobbyPlayers[i].ClientId == NetworkingManager.Singleton.LocalClientId)
+                if (CharSelectData.LobbyPlayers[i].ClientId == NetworkManager.Singleton.LocalClientId)
                 {
                     localPlayerIdx = i;
                     break;
@@ -355,7 +355,7 @@ namespace BossRoom.Client
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
         {
-            CharSelectData.ChangeSeatServerRpc(NetworkingManager.Singleton.LocalClientId, seatIdx, false);
+            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
         }
 
         /// <summary>
@@ -363,7 +363,7 @@ namespace BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            CharSelectData.ChangeSeatServerRpc(NetworkingManager.Singleton.LocalClientId, m_LastSeatSelected, true);
+            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, true);
         }
 
 #if UNITY_EDITOR

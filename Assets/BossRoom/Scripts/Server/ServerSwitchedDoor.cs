@@ -8,7 +8,7 @@ using UnityEngine;
 /// (Assign the floor switches for this door in the editor.)
 /// </summary>
 [RequireComponent(typeof(NetworkDoorState))]
-public class ServerSwitchedDoor : NetworkedBehaviour
+public class ServerSwitchedDoor : NetworkBehaviour
 {
     [SerializeField]
     public List<NetworkFloorSwitchState> m_SwitchesThatOpenThisDoor;

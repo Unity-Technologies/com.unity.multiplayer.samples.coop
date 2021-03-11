@@ -109,6 +109,23 @@ namespace BossRoom.Client
             }
         }
 
+        /// <summary>
+        /// Used by special effects where the character should be invisible.
+        /// </summary>
+        public void SwapAllOff()
+        {
+            for (int i = 0; i < m_CharacterModels.Length; i++)
+            {
+                m_CharacterModels[i].SetFullActive(false);
+                if (m_CharacterModels[modelIndex].specialFx)
+                {
+                    m_CharacterModels[modelIndex].specialFx.enabled = false;
+                }
+            }
+        }
+
+    }
+
 #if UNITY_EDITOR
         private void OnValidate()
         {
