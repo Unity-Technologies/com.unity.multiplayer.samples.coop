@@ -142,7 +142,7 @@ namespace BossRoom.Server
             yield return new WaitForSeconds(3);
             bool didSpawn = DoInitialSpawnIfPossible();
 
-            if (!didSpawn && InitialSpawnDone && MLAPI.Spawning.SpawnManager.GetPlayerObject(clientId) == null)
+            if (!didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
             {
                 //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                 //(either because multiple people are late-joining at once, or because some dynamic entities are
@@ -168,8 +168,8 @@ namespace BossRoom.Server
                 m_PlayerSpawnPointsList = new List<Transform>(m_PlayerSpawnPoints);
             }
 
-            Debug.Assert(m_PlayerSpawnPointsList.Count > 1,
-                $"PlayerSpawnPoints array should have at least 2 spawn points.");
+            Debug.Assert(m_PlayerSpawnPointsList.Count > 0,
+                $"PlayerSpawnPoints array should have at least 1 spawn points.");
 
             int index = Random.Range(0, m_PlayerSpawnPointsList.Count);
                 spawnPoint = m_PlayerSpawnPointsList[index];
