@@ -123,9 +123,8 @@ namespace BossRoom.Visual
                 }
                 else
                 {
-                    m_PartyHUD.SetAllyType(m_NetState.NetworkObjectId, m_NetState.CharacterType);
+                    m_PartyHUD.SetAllyData(m_NetState);
                 }
-
             }
         }
 
