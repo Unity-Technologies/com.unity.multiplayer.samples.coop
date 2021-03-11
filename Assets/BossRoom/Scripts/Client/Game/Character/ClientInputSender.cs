@@ -177,10 +177,12 @@ namespace BossRoom.Client
             
             if (targetId != 0)
             {
-                // if a targetId is given, find the object
+                // if a targetId is given, try to find the object
                 NetworkObject targetNetObj;
-                NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
-                hitTransform = targetNetObj.transform;
+                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj))
+                {
+                    hitTransform = targetNetObj.transform;
+                }
             }
             else
             {
