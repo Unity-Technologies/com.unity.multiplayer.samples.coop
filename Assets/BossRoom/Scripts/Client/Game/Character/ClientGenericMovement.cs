@@ -18,8 +18,11 @@ namespace BossRoom.Client
         void Start()
         {
             m_MovementSource = GetComponent<INetMovement>();
-            m_MovementSource.InitNetworkPositionAndRotationY(transform.position, transform.rotation.eulerAngles.y);
-            
+            if (!IsClient)
+            {
+                m_MovementSource.InitNetworkPositionAndRotationY(transform.position, transform.rotation.eulerAngles.y);
+            }
+
             m_Rigidbody = GetComponent<Rigidbody>(); //this may be null.
         }
 
