@@ -1,0 +1,72 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: FX_M_Ice
+  m_Shader: {fileID: 4800000, guid: a6bfc36e57bbc80459d4fa05df336432, type: 3}
+  m_ShaderKeywords: _USEZMASK_ON
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _DissolveTexture:
+        m_Texture: {fileID: 2800000, guid: 09ff3236ed6851c44b22b13107c206f5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FX_T_Ice:
+        m_Texture: {fileID: 2800000, guid: 0b1de0bb73125e448ace918cf7bcd9c4, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _Ms_Ice_Material_BaseMap:
+        m_Texture: {fileID: 2800000, guid: 3f32cccbde31f004495ae8710935bd81, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _T_NormalMap_2:
+        m_Texture: {fileID: 2800000, guid: 321db13ba4b71c046a8e127c711e7871, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Cutoff: 0.5
+    - _Dissolve: 3
+    - _DistanceDepth: 1.32
+    - _DistancePower: 0
+    - _Distortion: 0.081
+    - _Float0: 0.48
+    - _Fresnel: 0.87
+    - _FresnelPower: 0.3
+    - _Hardness: 0.5
+    - _MaskSoft: 1.21
+    - _Opacity: 1
+    - _Power: 2.38
+    - _PowerIceTexture: 3
+    - _Smoothness: 0.708
+    - _Specular: 0.426
+    - _Tile: 6.02
+    - _TileDissolveTexture: 1
+    - _TileIceTexture: 1.16
+    - _TileNormalTexture: 0.96
+    - _UseZMask: 1
+    - __dirty: 0
+    - _add: 0.29
+    - _radius: -6.2
+    m_Colors:
+    - _Color: {r: 0.06132078, g: 1, b: 0.99031156, a: 0}
+    - _Color_1: {r: 0, g: 0.41922346, b: 0.6132076, a: 1}
+    - _Color_2: {r: 1.2735848, g: 1.6875058, b: 2, a: 0}
+    - _MaskOffset: {r: 0, g: 0, b: 0, a: 0}
+    - _TileSpeedDissolveTexture: {r: 0.4, g: 0.2, b: 0, a: 0.5}
+  m_BuildTextureStacks: []

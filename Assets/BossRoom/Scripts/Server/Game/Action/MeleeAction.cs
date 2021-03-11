@@ -41,8 +41,8 @@ namespace BossRoom.Server
             IDamageable foe = DetectFoe(target);
             if (foe != null)
             {
-                m_ProvisionalTarget = foe.NetworkId;
-                Data.TargetIds = new ulong[] { foe.NetworkId };
+                m_ProvisionalTarget = foe.NetworkObjectId;
+                Data.TargetIds = new ulong[] { foe.NetworkObjectId };
             }
 
             m_Parent.NetState.RecvDoActionClientRPC(Data);
@@ -86,8 +86,7 @@ namespace BossRoom.Server
             for (int i = 0; i < numResults; i++)
             {
                 var serverChar = results[i].collider.GetComponent<IDamageable>();
-                
-                if (serverChar!=null && serverChar.NetworkId == foeHint)
+                if (serverChar!=null && serverChar.NetworkObjectId == foeHint)
                 {
                     foundFoe = serverChar;
                     break;

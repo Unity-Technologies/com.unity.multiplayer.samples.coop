@@ -31,8 +31,21 @@ MonoBehaviour:
   m_NetworkNameState: {fileID: 8169487339863708723}
   m_NetworkHealthState: {fileID: 7751377510591478590}
   m_BaseHP: {fileID: 0}
-  m_TransformToTrack: {fileID: 6009713983291384766}
+  m_TransformToTrack: {fileID: 1327663231359497221}
   m_VerticalScreenOffset: -50
+--- !u!114 &3481187672596608374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6009713983291384756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e363085af981a41fd816ab952a0a07c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_PingIntervalSeconds: 0.1
 --- !u!114 &8169487339863708723
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47,19 +60,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name:
     InternalValue: 
---- !u!114 &3481187672596608374
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6009713983291384756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e363085af981a41fd816ab952a0a07c7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PingIntervalSeconds: 0.1
 --- !u!1001 &3097905377639811107
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -117,6 +117,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+--- !u!4 &1327663231359497221 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4076098699203836966, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+  m_PrefabInstance: {fileID: 3097905377639811107}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &7831782662127126385
 PrefabInstance:
   m_ObjectHideFlags: 0

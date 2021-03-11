@@ -1,12 +1,12 @@
 using MLAPI;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using System.Collections;
 using UnityEngine;
 
 /// <summary>
 /// Network state for a door which can be opened by pressing on a floor switch.
 /// </summary>
-public class NetworkDoorState : NetworkedBehaviour
+public class NetworkDoorState : NetworkBehaviour
 {
-    public NetworkedVarBool IsOpen { get; } = new NetworkedVarBool();
+    public NetworkVariableBool IsOpen { get; } = new NetworkVariableBool();
 }

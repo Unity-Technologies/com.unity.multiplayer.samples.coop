@@ -14,8 +14,8 @@ namespace BossRoom
     /// It'll spawn all the needed text and canvas.
     ///
     /// NOTE: This class will be removed once Unity provides support for this.
-    [RequireComponent(typeof(NetworkedObject))]
-    public class NetworkStats : NetworkedBehaviour
+    [RequireComponent(typeof(NetworkObject))]
+    public class NetworkStats : NetworkBehaviour
     {
 #if DEBUG
         // RTT
@@ -101,7 +101,7 @@ namespace BossRoom
 
             if (IsServer)
             {
-                textToDisplay = $"{textToDisplay}Connected players: {NetworkingManager.Singleton.ConnectedClients.Count.ToString()} ";
+                textToDisplay = $"{textToDisplay}Connected players: {NetworkManager.Singleton.ConnectedClients.Count.ToString()} ";
             }
 
             if (m_TextStat)

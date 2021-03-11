@@ -1,11 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using MLAPI;
+using MLAPI.Spawning;
 
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// The TargetActionFX runs persistently on the local player, and will attach target reticules to the player's active target. 
+    /// The TargetActionFX runs persistently on the local player, and will attach target reticules to the player's active target.
     /// </summary>
     public class TargetActionFX : ActionFX
     {
@@ -30,14 +32,14 @@ namespace BossRoom.Visual
             if( m_CurrentTarget != m_ParentState.TargetId.Value )
             {
                 m_CurrentTarget = m_ParentState.TargetId.Value;
-                if (MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out MLAPI.NetworkedObject targetObject ) )
+                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject ) )
                 {
                     var targetChar = targetObject.GetComponent<BossRoom.Client.ClientCharacter>();
                     if( targetChar != null )
                     {
                         ValidateReticule(targetObject);
                         m_TargetReticule.SetActive(true);
-                        m_TargetReticule.transform.parent = targetChar.ChildVizObject.transform; //attach to the GRAPHICS GameObject of the target. 
+                        m_TargetReticule.transform.parent = targetChar.ChildVizObject.transform; //attach to the GRAPHICS GameObject of the target.
                         m_TargetReticule.transform.localPosition = new Vector3(0, k_ReticuleGroundHeight, 0);
                     }
 
@@ -54,9 +56,9 @@ namespace BossRoom.Visual
 
         /// <summary>
         /// Ensures that the TargetReticule GameObject exists. This must be done prior to enabling it because it can be destroyed
-        /// "accidentally" if its parent is destroyed while it is detached. 
+        /// "accidentally" if its parent is destroyed while it is detached.
         /// </summary>
-        private void ValidateReticule(MLAPI.NetworkedObject targetObject)
+        private void ValidateReticule(NetworkObject targetObject)
         {
             if( m_TargetReticule == null )
             {

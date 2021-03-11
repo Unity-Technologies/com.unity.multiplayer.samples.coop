@@ -1,17 +1,17 @@
 using System;
 using MLAPI;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using UnityEngine;
 
 namespace BossRoom
 {
     /// <summary>
-    /// MonoBehaviour containing only one NetworkedVarInt which represents this object's health.
+    /// MonoBehaviour containing only one NetworkVariableInt which represents this object's health.
     /// </summary>
-    public class NetworkHealthState : NetworkedBehaviour
+    public class NetworkHealthState : NetworkBehaviour
     {
         [HideInInspector]
-        public NetworkedVarInt HitPoints = new NetworkedVarInt();
+        public NetworkVariableInt HitPoints = new NetworkVariableInt();
 
         // public subscribable event to be invoked when HP has been fully depleted
         public event Action HitPointsDepleted;

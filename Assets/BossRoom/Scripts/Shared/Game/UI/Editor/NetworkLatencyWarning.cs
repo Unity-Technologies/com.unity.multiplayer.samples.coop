@@ -19,9 +19,9 @@ namespace BossRoom.Scripts.Editor
 
         void Update()
         {
-            if (NetworkingManager.Singleton.IsClient || NetworkingManager.Singleton.IsServer)
+            if (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
             {
-                var chosenTransport = NetworkingManager.Singleton.NetworkConfig.NetworkTransport;
+                var chosenTransport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
 
                 switch (chosenTransport)
                 {
@@ -30,7 +30,7 @@ namespace BossRoom.Scripts.Editor
                             liteNetLibTransport.SimulateMinLatency > 0 ||
                             liteNetLibTransport.SimulateMaxLatency > 0;
                         break;
-                    case MLAPI.Transports.UNET.UnetTransport unetTransport:
+                    case MLAPI.Transports.UNET.UNetTransport unetTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
                     default:

@@ -1,5 +1,6 @@
 using MLAPI;
 using System.Collections.Generic;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -58,7 +59,7 @@ namespace BossRoom.Server
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                NetworkedObject initialTarget = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                NetworkObject initialTarget = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
                 if (initialTarget)
                 {
                     // snap to face our target! This is the direction we'll attack in
@@ -133,13 +134,13 @@ namespace BossRoom.Server
                     // we're stunned! No collision behavior for the victim. Stun ourselves and abort.
                     m_WasStunned = true;
                     m_Movement.CancelMove();
-                    m_Parent.NetState.RecvCancelActionClientRpc();
+                    m_Parent.NetState.RecvCancelAllActionsClientRpc();
                     return;
                 }
 
                 // We deal a certain amount of damage to our "initial" target and a different amount to all other victims.
                 int damage;
-                if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0 && m_Data.TargetIds[0] == victim.NetworkId)
+                if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0 && m_Data.TargetIds[0] == victim.NetworkObjectId)
                 {
                     damage = Description.Amount;
                 }
