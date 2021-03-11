@@ -117,14 +117,12 @@ namespace BossRoom.Client
             for (int i = 0; i < m_CharacterModels.Length; i++)
             {
                 m_CharacterModels[i].SetFullActive(false);
-                if (m_CharacterModels[modelIndex].specialFx)
+                if (m_CharacterModels[i].specialFx)
                 {
-                    m_CharacterModels[modelIndex].specialFx.enabled = false;
+                    m_CharacterModels[i].specialFx.enabled = false;
                 }
             }
         }
-
-    }
 
 #if UNITY_EDITOR
         private void OnValidate()
