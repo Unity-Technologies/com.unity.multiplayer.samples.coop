@@ -1,5 +1,3 @@
-#if DEBUG
-
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -25,11 +23,14 @@ namespace BossRoom.Scripts.Editor
 
                 switch (chosenTransport)
                 {
+                    // adding this preprocessor directive check since LiteNetLib only injects latency in #DEBUG
+                    #if DEBUG
                     case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
                         m_ArtificialLatencyEnabled = liteNetLibTransport.SimulatePacketLossChance > 0 ||
                             liteNetLibTransport.SimulateMinLatency > 0 ||
                             liteNetLibTransport.SimulateMaxLatency > 0;
                         break;
+                    #endif
                     case MLAPI.Transports.UNET.UNetTransport unetTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
@@ -73,4 +74,3 @@ namespace BossRoom.Scripts.Editor
         }
     }
 }
-#endif

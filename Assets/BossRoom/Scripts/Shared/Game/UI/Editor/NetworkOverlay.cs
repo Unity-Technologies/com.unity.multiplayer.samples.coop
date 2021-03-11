@@ -1,5 +1,3 @@
-#if DEBUG
-
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -21,18 +19,22 @@ namespace BossRoom.Scripts.Editor
             DontDestroyOnLoad(this);
         }
 
-        void Start()
-        {
-            var canvas = Instantiate(m_DebugCanvasPrefab, transform);
-            m_VerticalLayoutTransform = canvas.GetComponentInChildren<VerticalLayoutGroup>().transform;
-        }
-
         public void AddToUI(RectTransform displayTransform)
         {
+            if (m_VerticalLayoutTransform == null)
+            {
+                CreateDebugCanvas();
+            }
+
             displayTransform.sizeDelta = new Vector2(100f, 24f);
             displayTransform.SetParent(m_VerticalLayoutTransform);
             displayTransform.SetAsFirstSibling();
         }
+
+        void CreateDebugCanvas()
+        {
+            var canvas = Instantiate(m_DebugCanvasPrefab, transform);
+            m_VerticalLayoutTransform = canvas.GetComponentInChildren<VerticalLayoutGroup>().transform;
+        }
     }
 }
-#endif

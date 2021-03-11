@@ -17,7 +17,6 @@ namespace BossRoom
     [RequireComponent(typeof(NetworkObject))]
     public class NetworkStats : NetworkBehaviour
     {
-#if DEBUG
         // RTT
         // Client sends a ping RPC to the server and starts it's timer.
         // The server receives the ping and sends a pong response to the client.
@@ -141,6 +140,5 @@ namespace BossRoom
 
             LastRTT = rttSum / m_MaxWindowSize;
         }
-#endif
     }
 }
