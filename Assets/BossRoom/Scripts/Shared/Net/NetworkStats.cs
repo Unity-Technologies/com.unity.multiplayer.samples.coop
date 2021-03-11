@@ -1,5 +1,3 @@
-#if DEBUG
-
 using System;
 using System.Collections.Generic;
 using MLAPI;
@@ -19,6 +17,7 @@ namespace BossRoom
     [RequireComponent(typeof(NetworkedObject))]
     public class NetworkStats : NetworkedBehaviour
     {
+#if DEBUG
         // RTT
         // Client sends a ping RPC to the server and starts it's timer.
         // The server receives the ping and sends a pong response to the client.
@@ -142,6 +141,6 @@ namespace BossRoom
 
             LastRTT = rttSum / m_MaxWindowSize;
         }
+#endif
     }
 }
-#endif
