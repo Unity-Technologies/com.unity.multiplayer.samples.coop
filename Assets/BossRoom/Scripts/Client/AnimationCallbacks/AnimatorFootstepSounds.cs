@@ -48,6 +48,14 @@ namespace BossRoom.Visual
         [Tooltip("Relative volume to play the clip at")]
         private float m_RunFootstepVolume = 1;
 
+        [SerializeField]
+        [Tooltip("At what point do we switch from running sounds to walking? From 0 (stationary) to 1 (full sprint)")]
+        private float m_WalkingPoint = 0.6f;
+
+        [SerializeField]
+        [Tooltip("At what point do we switch from walking sounds to no sounds? From 0 (stationary) to 1 (full sprint)")]
+        private float m_SilentPoint = 0.3f;
+
         private void Update()
         {
             if (!m_Animator || !m_AudioSource || !m_WalkFootstepAudioClip || !m_RunFootstepAudioClip || m_AnimatorVariableHash == 0)
@@ -61,11 +69,11 @@ namespace BossRoom.Visual
             AudioClip clipToUse = null;
             float volume = 0;
             float speed = m_Animator.GetFloat(m_AnimatorVariableHash);
-            if (speed < 0.3)
+            if (speed <= m_SilentPoint)
             {
                 // we could have a "VERY slow walk" sound... but we don't, so just play nothing
             }
-            else if (speed < 0.6)
+            else if (speed <= m_WalkingPoint)
             {
                 clipToUse = m_WalkFootstepAudioClip;
                 volume = m_WalkFootstepVolume;
