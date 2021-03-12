@@ -66,7 +66,7 @@ namespace BossRoom.Visual
             m_AliveStateTriggerID = Animator.StringToHash("StandUp");
             m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
             m_DeadStateTriggerID = Animator.StringToHash("Dead");
-            m_HitStateTriggerID = Animator.StringToHash("HitReact1");
+            m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
 

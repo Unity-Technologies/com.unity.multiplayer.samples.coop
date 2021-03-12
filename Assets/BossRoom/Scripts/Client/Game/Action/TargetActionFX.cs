@@ -35,7 +35,7 @@ namespace BossRoom.Visual
 
                 if (NetworkSpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject ) )
                 {
-                    var targetEntity = targetObject?.GetComponent<ITargetable>();
+                    var targetEntity = targetObject != null ? targetObject.GetComponent<ITargetable>() : null;
                     if( targetEntity != null )
                     {
                         ValidateReticule(targetObject);

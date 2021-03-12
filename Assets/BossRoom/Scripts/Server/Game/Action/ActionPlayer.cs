@@ -16,12 +16,10 @@ namespace BossRoom.Server
         private List<Action> m_NonBlockingActions;
 
         /// <summary>
-        /// To prevent identical actions from piling up, we start discarding actions that are identical to the last played one
-        /// if the queue is deeper than this number. It's a soft cap in that longer queues are possible if they are made of different
-        /// actions--this is mainly targeted at situations like melee attacks, where many may get spammed out quickly.
+        /// To prevent the action queue from growing without bound, we cap its play time to this number of seconds. We can only ever estimate
+        /// the time-length of the queue, since actions are allowed to block indefinitely. But this is still a useful estimate that prevents
+        /// us from piling up a large number of small actions. 
         /// </summary>
-        private const int k_QueueSoftMax = 3;
-
         private const float k_MaxQueueTimeDepth = 1.6f;
 
         private ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
