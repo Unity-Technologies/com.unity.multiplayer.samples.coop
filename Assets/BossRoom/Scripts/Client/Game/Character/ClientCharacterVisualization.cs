@@ -119,9 +119,8 @@ namespace BossRoom.Visual
                 }
                 else
                 {
-                    m_PartyHUD.SetAllyType(m_NetState.NetworkObjectId, m_NetState.CharacterType);
+                    m_PartyHUD.SetAllyData(m_NetState);
                 }
-
             }
         }
 
@@ -254,7 +253,12 @@ namespace BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.VisualMovementSpeed.Value);
+                float visibleSpeed = 0;
+                if (m_NetState.NetworkLifeState.Value == LifeState.Alive)
+                {
+                    visibleSpeed = m_NetState.VisualMovementSpeed.Value;
+                }
+                m_ClientVisualsAnimator.SetFloat("Speed", visibleSpeed);
             }
 
             m_ActionViz.Update();

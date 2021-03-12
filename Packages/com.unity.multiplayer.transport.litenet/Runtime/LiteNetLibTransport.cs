@@ -88,7 +88,7 @@ namespace LiteNetLibTransport
                 AppendChannel(ref data, channel);
                 if (m_LiteChannels.TryGetValue(channel, out LiteChannel liteChannel))
                 {
-                    m_Peers[clientId].Send(data.Array, data.Offset, data.Count, (byte)channel, liteChannel.Method);
+                    m_Peers[clientId].Send(data.Array, data.Offset, data.Count, liteChannel.Method);
                 }
             }
         }
