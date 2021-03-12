@@ -34,13 +34,7 @@ namespace BossRoom.Visual
 
         private ActionVisualization m_ActionViz;
 
-        private CinemachineVirtualCamera m_MainCamera;
-
         public Transform Parent { get; private set; }
-
-        public float MinZoomDistance = 3;
-        public float MaxZoomDistance = 30;
-        public float ZoomSpeed = 3;
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
@@ -120,14 +114,13 @@ namespace BossRoom.Visual
                 {
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
-                    AttachCamera();
+                    gameObject.AddComponent<CameraController>();
                     m_PartyHUD.SetHeroData(m_NetState);
                 }
                 else
                 {
-                    m_PartyHUD.SetAllyType(m_NetState.NetworkObjectId, m_NetState.CharacterType);
+                    m_PartyHUD.SetAllyData(m_NetState);
                 }
-
             }
         }
 
@@ -260,17 +253,15 @@ namespace BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.VisualMovementSpeed.Value);
+                float visibleSpeed = 0;
+                if (m_NetState.NetworkLifeState.Value == LifeState.Alive)
+                {
+                    visibleSpeed = m_NetState.VisualMovementSpeed.Value;
+                }
+                m_ClientVisualsAnimator.SetFloat("Speed", visibleSpeed);
             }
 
             m_ActionViz.Update();
-
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (scroll != 0 && m_MainCamera)
-            {
-                ZoomCamera(scroll);
-            }
-
         }
 
         public void OnAnimEvent(string id)
@@ -280,36 +271,6 @@ namespace BossRoom.Visual
             //example of where this is configured.
 
             m_ActionViz.OnAnimEvent(id);
-        }
-
-        private void AttachCamera()
-        {
-            var cameraGO = GameObject.FindGameObjectWithTag("CMCamera");
-            if (cameraGO == null) { return; }
-
-            m_MainCamera = cameraGO.GetComponent<CinemachineVirtualCamera>();
-            if (m_MainCamera)
-            {
-                m_MainCamera.Follow = transform;
-                m_MainCamera.LookAt = transform;
-            }
-        }
-
-        private void ZoomCamera(float scroll)
-        {
-            CinemachineComponentBase[] components = m_MainCamera.GetComponentPipeline();
-            foreach (CinemachineComponentBase component in components)
-            {
-                if (component is CinemachineFramingTransposer)
-                {
-                    CinemachineFramingTransposer c = (CinemachineFramingTransposer)component;
-                    c.m_CameraDistance += -scroll * ZoomSpeed;
-                    if (c.m_CameraDistance < MinZoomDistance)
-                        c.m_CameraDistance = MinZoomDistance;
-                    if (c.m_CameraDistance > MaxZoomDistance)
-                        c.m_CameraDistance = MaxZoomDistance;
-                }
-            }
         }
     }
 }
