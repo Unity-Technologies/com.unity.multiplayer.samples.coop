@@ -179,6 +179,8 @@ namespace BossRoom
         void SpawnUIState()
         {
             m_UIState = Instantiate(m_UIStatePrefab, m_CanvasTransform);
+            // make in world UI state draw under other UI elements
+            m_UIState.transform.SetAsFirstSibling();
             m_UIStateRectTransform = m_UIState.GetComponent<RectTransform>();
         }
 

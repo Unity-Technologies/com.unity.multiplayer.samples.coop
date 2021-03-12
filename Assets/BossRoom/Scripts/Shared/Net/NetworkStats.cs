@@ -43,6 +43,8 @@ namespace BossRoom
 
         ClientRpcParams m_PongClientParams;
 
+        GameObject m_NetworkStatsText;
+
         public override void NetworkStart()
         {
             bool isClientOnly = IsClient && !IsServer;
@@ -64,8 +66,8 @@ namespace BossRoom
             Assert.IsNotNull(Scripts.Editor.NetworkOverlay.Instance,
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
-            var statUI = new GameObject("UI Stat Text");
-            m_TextStat = statUI.AddComponent<Text>();
+            m_NetworkStatsText = new GameObject("UI Stat Text");
+            m_TextStat = m_NetworkStatsText.AddComponent<Text>();
             m_TextStat.text = "No Stat";
             m_TextStat.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
             m_TextStat.horizontalOverflow = HorizontalWrapMode.Overflow;
@@ -73,7 +75,7 @@ namespace BossRoom
             m_TextStat.raycastTarget = false;
             m_TextStat.resizeTextForBestFit = true;
 
-            var rectTransform = statUI.GetComponent<RectTransform>();
+            var rectTransform = m_NetworkStatsText.GetComponent<RectTransform>();
             Scripts.Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
         }
 
@@ -139,6 +141,14 @@ namespace BossRoom
             }
 
             LastRTT = rttSum / m_MaxWindowSize;
+        }
+
+        void OnDestroy()
+        {
+            if (m_NetworkStatsText != null)
+            {
+                Destroy(m_NetworkStatsText);
+            }
         }
     }
 }
