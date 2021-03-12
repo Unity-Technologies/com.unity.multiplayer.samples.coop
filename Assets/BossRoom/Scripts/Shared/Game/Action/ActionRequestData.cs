@@ -32,6 +32,7 @@ namespace BossRoom
         MageHeal,
         ArcherChargedShot,
         RogueStealthMode,
+        ArcherVolley,
     }
 
 

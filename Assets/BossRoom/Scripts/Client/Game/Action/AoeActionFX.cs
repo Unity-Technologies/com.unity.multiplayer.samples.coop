@@ -12,9 +12,7 @@ namespace BossRoom.Visual
         public override bool Start()
         {
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
-            var actionDescription = GameDataSource.Instance.ActionDataByType[m_Data.ActionTypeEnum];
-            var vfxObject = GameObject.Instantiate(actionDescription.Spawns[0], m_Data.Position, Quaternion.identity);
-            vfxObject.transform.localScale = new Vector3(actionDescription.Radius * 2, actionDescription.Radius * 2, actionDescription.Radius * 2);
+            GameObject.Instantiate(Description.Spawns[0], m_Data.Position, Quaternion.identity);
             return ActionConclusion.Stop;
         }
 
