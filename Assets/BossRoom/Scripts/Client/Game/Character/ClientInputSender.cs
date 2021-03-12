@@ -342,6 +342,14 @@ namespace BossRoom.Client
             {
                 RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
             }
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha2))
+            {
+                RequestAction(CharacterData.Skill3, SkillTriggerStyle.KeyboardRelease);
+            }
 
             if (Input.GetKeyDown(KeyCode.Alpha4))
             {
@@ -360,9 +368,9 @@ namespace BossRoom.Client
                 RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
             }
 
-            if ( !EventSystem.current.IsPointerOverGameObject())
+            if ( !EventSystem.current.IsPointerOverGameObject() && m_CurrentSkillInput == null)
             {
-                //this is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
+                //IsPointerOverGameObject() is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
                 //to model the button "blocking" mouse clicks from falling through and interacting with the world.
 
                 if (Input.GetMouseButtonDown(1))

@@ -1,0 +1,52 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: FX_M_TargetingSphere_InRange
+  m_Shader: {fileID: 4800000, guid: 7886845fdd0f0a148b23f1e533e46533, type: 3}
+  m_ShaderKeywords: 
+  m_LightmapFlags: 0
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: 3500
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _NoiseFresnel:
+        m_Texture: {fileID: 2800000, guid: a225a619c91968049ba2bdbc44c812fb, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _T_NormalMap_2:
+        m_Texture: {fileID: 2800000, guid: 7653d661bb658e64aae075bcbd3bb8ec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _T_NormalMap_3:
+        m_Texture: {fileID: 2800000, guid: 7653d661bb658e64aae075bcbd3bb8ec, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Floats:
+    - _Distortion: 0.058
+    - _Distortion1: 0.162
+    - _Fresnel: 2
+    - _FresnelPower: 2
+    - _NoiseIntencity: 0.467
+    - _Sneak: 1
+    - _TileNormalTexture: 0.05
+    - _TileNormalTexture1: 0.01
+    - __dirty: 0
+    m_Colors:
+    - _FresnelColor: {r: 0, g: 1.4142135, b: 0.054555554, a: 0}
+    - _NoiseTileSpeed: {r: 0.05, g: 0.01, b: 0, a: 0.5}
+    - _NotmalTileSpeed: {r: 0.05, g: 0.02, b: 0, a: 0.5}
+  m_BuildTextureStacks: []
