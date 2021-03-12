@@ -8,13 +8,8 @@ namespace BossRoom.Client
     /// </summary>
     public class BossMusicStarter : MonoBehaviour
     {
-        private ClientMusicPlayer m_MusicPlayer;
-
         void Start()
         {
-            GameObject musicPlayerObj = GameObject.FindGameObjectWithTag("MusicPlayer");
-            m_MusicPlayer = musicPlayerObj.GetComponent<ClientMusicPlayer>();
-
             var netState = GetComponent<NetworkCharacterState>();
             netState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             netState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
@@ -25,7 +20,7 @@ namespace BossRoom.Client
             if (newValue!= LifeState.Alive)
             {
                 // players won! Start victory theme
-                m_MusicPlayer.PlayVictoryMusic();
+                ClientMusicPlayer.Instance.PlayVictoryMusic();
             }
         }
 
@@ -34,7 +29,7 @@ namespace BossRoom.Client
             // make sure battle music started anytime boss is hurt
             if (previousValue>newValue)
             {
-                m_MusicPlayer.PlayBossMusic();
+                ClientMusicPlayer.Instance.PlayBossMusic();
             }
         }
     }

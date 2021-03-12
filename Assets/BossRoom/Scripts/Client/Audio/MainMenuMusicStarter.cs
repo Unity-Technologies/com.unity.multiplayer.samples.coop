@@ -4,14 +4,17 @@ using UnityEngine;
 namespace BossRoom.Client
 {
     /// <summary>
-    /// Simple class to restart game theme on main menu load
+    /// Simple class to play game theme on scene load
     /// </summary>
     public class MainMenuMusicStarter : MonoBehaviour
     {
+        // set whether theme should restart if already playing
+        [SerializeField]
+        bool m_Restart;
+
         void Start()
         {
-            GameObject musicPlayerObj = GameObject.FindGameObjectWithTag("MusicPlayer");
-            musicPlayerObj.GetComponent<ClientMusicPlayer>().RestartTheme();
+            ClientMusicPlayer.Instance.PlayThemeMusic(m_Restart);
         }
     }
 }

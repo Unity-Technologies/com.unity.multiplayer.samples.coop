@@ -20,24 +20,22 @@ namespace BossRoom.Client
         [SerializeField]
         private AudioClip m_VictoryMusic;
 
+        [SerializeField]
         private AudioSource m_source;
 
+        /// <summary>
+        /// static accessor for ClientMusicPlayer
+        /// </summary>
+        public static ClientMusicPlayer Instance { get; private set; }
 
         void Start()
         {
-            DontDestroyOnLoad(gameObject);
-            m_source = GetComponent<AudioSource>();
+
         }
 
-        public void RestartTheme()
+        public void PlayThemeMusic(bool restart)
         {
-            PlayTrack(m_ThemeMusic, true, true);
-        }
-
-        public void PlayThemeMusic()
-        {
-            // This can be called while theme is alkready playing - play with restart = false
-            PlayTrack(m_ThemeMusic, true, false);
+            PlayTrack(m_ThemeMusic, true, restart);
         }
 
         public void PlayBossMusic()
@@ -63,6 +61,19 @@ namespace BossRoom.Client
             m_source.loop = looping;
             m_source.time = 0;
             m_source.Play();
+        }
+
+        private void Awake()
+        {
+            m_source = GetComponent<AudioSource>();
+
+            if (Instance != null)
+            {
+                throw new System.Exception("Multiple ClientMuscPlayers!");
+            }
+                        m_source = GetComponent<AudioSource>();
+            DontDestroyOnLoad(gameObject);
+            Instance = this;
         }
     }
 }
