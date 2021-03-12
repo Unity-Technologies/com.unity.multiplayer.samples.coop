@@ -32,7 +32,8 @@ MonoBehaviour:
   m_NetworkHealthState: {fileID: 7751377510591478590}
   m_BaseHP: {fileID: 0}
   m_TransformToTrack: {fileID: 1327663231359497221}
-  m_VerticalScreenOffset: -50
+  m_VerticalWorldOffset: 2.2
+  m_VerticalScreenOffset: 20
 --- !u!114 &3481187672596608374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +60,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name:
-    InternalValue: 
+    m_InternalValue: 
 --- !u!1001 &3097905377639811107
 PrefabInstance:
   m_ObjectHideFlags: 0
