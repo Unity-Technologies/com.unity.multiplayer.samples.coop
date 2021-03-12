@@ -8,6 +8,11 @@ namespace BossRoom.Visual
     {
         protected ClientCharacterVisualization m_Parent;
 
+        /// <summary>
+        /// The default hit react animation; several different ActionFXs make use of this.
+        /// </summary>
+        public const string k_DefaultHitReact = "HitReact1";
+
         public ActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data)
         {
             m_Parent = parent;

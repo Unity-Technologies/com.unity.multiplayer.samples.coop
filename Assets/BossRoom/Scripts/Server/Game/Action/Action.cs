@@ -1,4 +1,5 @@
 using UnityEngine;
+using BlockingMode = BossRoom.ActionDescription.BlockingModeType;
 
 namespace BossRoom.Server
 {
@@ -54,8 +55,9 @@ namespace BossRoom.Server
         /// <returns>true to become a non-blocking Action, false to remain a blocking Action</returns>
         public virtual bool ShouldBecomeNonBlocking()
         {
-            return Description.BlockingMode == ActionDescription.BlockingModeType.OnlyDuringExecTime &&
-                Time.time - TimeStarted >= Description.ExecTimeSeconds;
+            return Description.BlockingMode == BlockingMode.OnlyDuringExecTime ?  TimeRunning >= Description.ExecTimeSeconds :
+                   Description.BlockingMode == BlockingMode.ExecTimeWithCooldown ? TimeRunning >= (Description.ExecTimeSeconds + Description.CooldownSeconds) :
+                   false;
         }
 
         /// <summary>

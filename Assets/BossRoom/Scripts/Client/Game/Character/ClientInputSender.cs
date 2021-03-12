@@ -213,7 +213,7 @@ namespace BossRoom.Client
                 m_LastSentMove = Time.time;
                 m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
             }
-            else
+            else if(actionType != ActionType.GeneralTarget )
             {
                 // clicked on nothing... perform a "miss" attack on the spot they clicked on
                 var data = new ActionRequestData();
@@ -241,34 +241,33 @@ namespace BossRoom.Client
             if (!targetNetObj && actionType != ActionType.GeneralTarget)
             {
                 ulong targetId = m_NetworkCharacter.TargetId.Value;
-                if (ActionUtils.IsValidTarget(targetId))
-                {
-                    targetNetObj = NetworkSpawnManager.SpawnedObjects[targetId];
-                }
+                NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
             }
 
-            var targetNetState = targetNetObj != null ? targetNetObj.GetComponent<NetworkCharacterState>() : null;
-            if (targetNetState == null)
+            //sanity check that this is indeed a valid target. 
+            if(targetNetObj==null || !ActionUtils.IsValidTarget(targetNetObj.NetworkObjectId))
             {
-                //Not a Character. In the future this could represent interacting with some other interactable, but for
-                //now, it implies we just do nothing.
                 return false;
             }
 
-            //Skill1 may be contextually overridden if it was generated from a mouse-click.
-            if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
+            var targetNetState = targetNetObj.GetComponent<NetworkCharacterState>();
+            if (targetNetState != null)
             {
-                if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+                //Skill1 may be contextually overridden if it was generated from a mouse-click.
+                if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
-                    //right-clicked on a downed ally--change the skill play to Revive.
-                    actionType = ActionType.GeneralRevive;
+                    if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+                    {
+                        //right-clicked on a downed ally--change the skill play to Revive.
+                        actionType = ActionType.GeneralRevive;
+                    }
                 }
             }
 
             // record our target in case this action uses that info (non-targeted attacks will ignore this)
             resultData.ActionTypeEnum = actionType;
-            resultData.TargetIds = new ulong[] { targetNetState.NetworkObjectId };
-            PopulateSkillRequest(targetNetState.transform.position, actionType, ref resultData);
+            resultData.TargetIds = new ulong[] { targetNetObj.NetworkObjectId };
+            PopulateSkillRequest(targetNetObj.transform.position, actionType, ref resultData);
             return true;
         }
 
