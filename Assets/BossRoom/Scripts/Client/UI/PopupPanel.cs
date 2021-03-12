@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -133,6 +134,13 @@ namespace BossRoom.Visual
             }
             else
             {
+                if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
+                {
+                    // If there is no photon app id set tell the user they need to install
+                    SetupNotifierDisplay("Photon Realtime not Setup!", "Follow the instructions in the readme to setup Photon Realtime and use relay mode.", false, true);
+                    return;
+                }
+
                 // Relay
                 m_MainText.text = m_RelayMainText;
 

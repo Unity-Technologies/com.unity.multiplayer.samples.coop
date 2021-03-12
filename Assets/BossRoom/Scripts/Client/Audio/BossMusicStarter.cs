@@ -8,6 +8,8 @@ namespace BossRoom.Client
     /// </summary>
     public class BossMusicStarter : MonoBehaviour
     {
+        private bool m_Won = false;
+
         void Start()
         {
             var netState = GetComponent<NetworkCharacterState>();
@@ -21,11 +23,15 @@ namespace BossRoom.Client
             {
                 // players won! Start victory theme
                 ClientMusicPlayer.Instance.PlayVictoryMusic();
+                m_Won = true;
             }
         }
 
         private void OnHealthChanged(int previousValue, int newValue)
         {
+            // don't do anything if battle is over
+            if (m_Won) { return; }
+
             // make sure battle music started anytime boss is hurt
             if (previousValue>newValue)
             {
