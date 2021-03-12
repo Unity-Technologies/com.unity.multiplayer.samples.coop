@@ -32,14 +32,23 @@ namespace BossRoom.Visual
             if( m_CurrentTarget != m_ParentState.TargetId.Value )
             {
                 m_CurrentTarget = m_ParentState.TargetId.Value;
+
                 if (NetworkSpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject ) )
                 {
-                    var targetChar = targetObject.GetComponent<BossRoom.Client.ClientCharacter>();
-                    if( targetChar != null )
+                    var targetEntity = targetObject != null ? targetObject.GetComponent<ITargetable>() : null;
+                    if( targetEntity != null )
                     {
                         ValidateReticule(targetObject);
                         m_TargetReticule.SetActive(true);
-                        m_TargetReticule.transform.parent = targetChar.ChildVizObject.transform; //attach to the GRAPHICS GameObject of the target.
+
+                        var parentTransform = targetObject.transform;
+                        if( targetObject.TryGetComponent(out Client.ClientCharacter clientCharacter))
+                        {
+                            //for characters, attach the reticule to the child graphics object.
+                            parentTransform = clientCharacter.ChildVizObject.transform;
+                        }
+
+                        m_TargetReticule.transform.parent = parentTransform;
                         m_TargetReticule.transform.localPosition = new Vector3(0, k_ReticuleGroundHeight, 0);
                     }
 
@@ -65,7 +74,7 @@ namespace BossRoom.Visual
                 m_TargetReticule = Object.Instantiate(m_Parent.TargetReticule);
             }
 
-            bool target_isnpc = targetObject.GetComponent<NetworkCharacterState>().CharacterData.IsNpc;
+            bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;
             bool myself_isnpc = m_ParentState.CharacterData.IsNpc;
             bool hostile = target_isnpc != myself_isnpc;
 

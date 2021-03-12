@@ -21,7 +21,7 @@ namespace BossRoom.Visual
         private FXProjectile m_Projectile;
 
         // the enemy we're aiming at
-        private Client.ClientCharacter m_Target;
+        private NetworkObject m_Target;
 
         public override bool Start()
         {
@@ -79,10 +79,10 @@ namespace BossRoom.Visual
                 return;
             m_ImpactPlayed = true;
 
-            if (m_Target)
+            if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
             {
-                ClientCharacterVisualization targetViz = m_Target.GetComponent<Client.ClientCharacter>().ChildVizObject;
-                targetViz.OurAnimator.SetTrigger("HitReact1");
+                var hitReact = !string.IsNullOrEmpty(Description.ReactAnim) ? Description.ReactAnim : k_DefaultHitReact;
+                clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
             }
         }
 
@@ -94,7 +94,7 @@ namespace BossRoom.Visual
             return Data.TargetIds != null && Data.TargetIds.Length > 0;
         }
 
-        private Client.ClientCharacter GetTarget()
+        private NetworkObject GetTarget()
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
@@ -104,7 +104,7 @@ namespace BossRoom.Visual
             NetworkObject obj;
             if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
             {
-                return obj.GetComponent<Client.ClientCharacter>();
+                return obj;
             }
             else
             {

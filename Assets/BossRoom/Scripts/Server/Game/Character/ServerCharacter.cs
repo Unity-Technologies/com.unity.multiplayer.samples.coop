@@ -195,6 +195,12 @@ namespace BossRoom.Server
 
             NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
 
+            if( m_AIBrain != null )
+            {
+                //let the brain know about the modified amount of damage we received. 
+                m_AIBrain.ReceiveHP(inflicter, HP);
+            }
+
             //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
