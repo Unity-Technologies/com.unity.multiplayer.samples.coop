@@ -11,6 +11,7 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
+            base.Start();
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
             var actionDescription = GameDataSource.Instance.ActionDataByType[m_Data.ActionTypeEnum];
             var vfxObject = GameObject.Instantiate(actionDescription.Spawns[0], m_Data.Position, Quaternion.identity);

@@ -25,6 +25,7 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
+            base.Start();
             m_Target = GetTarget();
             if (HasTarget() && m_Target == null)
             {

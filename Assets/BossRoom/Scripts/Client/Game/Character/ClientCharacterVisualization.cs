@@ -2,8 +2,6 @@ using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
-using System.Collections;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -122,12 +120,31 @@ namespace BossRoom.Visual
                     m_ActionViz.PlayAction(ref data);
                     AttachCamera();
                     m_PartyHUD.SetHeroData(m_NetState);
+
+                    if( Parent.TryGetComponent(out ClientInputSender inputSender))
+                    {
+                        inputSender.ActionInputEvent += OnActionInput;
+                        inputSender.ClientMoveEvent += OnMoveInput;
+                    }
                 }
                 else
                 {
                     m_PartyHUD.SetAllyType(m_NetState.NetworkObjectId, m_NetState.CharacterType);
                 }
 
+            }
+        }
+
+        private void OnActionInput(ActionRequestData data)
+        {
+            m_ActionViz.AnticipateAction(ref data);
+        }
+
+        private void OnMoveInput(Vector3 position)
+        {
+            if( !IsAnimating )
+            {
+                OurAnimator.SetTrigger("AnticipateMove");
             }
         }
 
@@ -159,6 +176,12 @@ namespace BossRoom.Visual
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+
+                if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
+                {
+                    sender.ActionInputEvent -= OnActionInput;
+                    sender.ClientMoveEvent -= OnMoveInput;
+                }
             }
         }
 
@@ -312,9 +335,21 @@ namespace BossRoom.Visual
             }
         }
 
-        public bool IsAnimating()
+        public bool IsAnimating
         {
+            get
+            {
+                //layer 0 is our movement layer, and has a special base state. 
+                bool animating = !OurAnimator.GetCurrentAnimatorStateInfo(0).IsName("WalkRun") || OurAnimator.GetFloat("Speed") > 0.0;
+                if (animating) { return false; }
 
+                for (int i = 1; i < OurAnimator.layerCount; i++)
+                {
+                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsName("Nothing")) { return true; }
+                }
+
+                return false;
+            }
         }
     }
 }

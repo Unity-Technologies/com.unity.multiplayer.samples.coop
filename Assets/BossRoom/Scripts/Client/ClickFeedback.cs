@@ -27,7 +27,7 @@ namespace BossRoom.Client
         }
 
       m_ClientSender = GetComponent<ClientInputSender>();
-      m_ClientSender.OnClientClick += onClick;
+      m_ClientSender.ClientMoveEvent += onClick;
       m_FeedbackObj = Instantiate(m_FeedbackPrefab);
       m_FeedbackObj.SetActive(false);
     }
@@ -44,7 +44,7 @@ namespace BossRoom.Client
     {
         if (m_ClientSender)
         {
-            m_ClientSender.OnClientClick -= onClick;
+            m_ClientSender.ClientMoveEvent -= onClick;
         }
     }
   }

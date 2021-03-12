@@ -14,6 +14,7 @@ public class SelfDisable : MonoBehaviour
     {
         if (Time.time >= m_DisableTimestamp)
         {
+            Debug.Log($"Click Feedback disabling at {Time.time}");
             gameObject.SetActive(false);
         }
     }
@@ -21,5 +22,6 @@ public class SelfDisable : MonoBehaviour
     void OnEnable()
     {
         m_DisableTimestamp = Time.time + m_DisabledDelay;
+        Debug.Log($"Enabling Click Feedback at: {Time.time}, will disable at {m_DisableTimestamp}");
     }
 }

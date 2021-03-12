@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2d0d8ed0724e1404d9d0afcd9b8b5ee2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_FeedbackPrefab: {fileID: 9137928905311479176, guid: 5d22c1d86e0e5604cbe14004bf924827, type: 3}
+  m_FeedbackPrefab: {fileID: 9137928905311479176, guid: d526885fdb257c54091f8bdd8fcde277, type: 3}
 --- !u!114 &2576537793715222015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name:
-    InternalValue: 
+    m_InternalValue: 
 --- !u!1001 &3097905377639811107
 PrefabInstance:
   m_ObjectHideFlags: 0

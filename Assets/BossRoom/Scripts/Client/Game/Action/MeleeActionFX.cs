@@ -21,7 +21,12 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            if( !Anticipated)
+            {
+                PlayAnim();
+            }
+
+            base.Start();
             return true;
         }
 
@@ -43,6 +48,11 @@ namespace BossRoom.Visual
             //if this didn't already happen, make sure it gets a chance to run. This could have failed to run because
             //our animationclip didn't have the "impact" event properly configured (as one possibility).
             PlayHitReact();
+        }
+
+        private void PlayAnim()
+        {
+            m_Parent.OurAnimator.SetTrigger(Description.Anim);
         }
 
         private void PlayHitReact()
@@ -73,6 +83,15 @@ namespace BossRoom.Visual
 
             //in the future we may do another physics check to handle the case where a target "ran under our weapon".
             //But for now, if the original target is no longer present, then we just don't play our hit react on anything.
+        }
+
+        public override void AnticipateAction()
+        {
+            base.AnticipateAction();
+
+            //note: because the hit-react is driven from the animation, this means we can anticipatively trigger a hit-react too. That
+            //will make combat feel responsive, but of course the actual damage won't be applied until the server tells us about it.
+            PlayAnim();
         }
     }
 }
