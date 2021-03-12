@@ -1371,6 +1371,15 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
+  - m_AnimatorNodeName: Attack2
+    m_AnimatorNodeNameHash: 1680125592
+    m_Prefab: {fileID: 5031766593922921982, guid: 916fc51d2167e1f42a14e1fb9cd224a8, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 142f526f026d1c241b01ebb524d19903, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
   m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -674663276945163795}
@@ -1696,7 +1705,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c3f9e26dccb0cd45bc3a5d28abc3a39, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Animator: {fileID: 4199396739699390757, guid: 6c2070a53a468ea4e9c1885abed4fea6, type: 3}
+  m_Animator: {fileID: 4199396739699390757}
   m_AnimatorVariable: Speed
   m_AnimatorVariableHash: -823668238
   m_AudioSource: {fileID: 3410014739571049847}
@@ -1704,6 +1713,8 @@ MonoBehaviour:
   m_WalkFootstepVolume: 1
   m_RunFootstepAudioClip: {fileID: 8300000, guid: 6ad4d1d63bc70494bbc9172ae70bcdd0, type: 3}
   m_RunFootstepVolume: 1
+  m_WalkingPoint: 0.6
+  m_SilentPoint: 0.3
 --- !u!82 &3410014739571049847
 AudioSource:
   m_ObjectHideFlags: 0

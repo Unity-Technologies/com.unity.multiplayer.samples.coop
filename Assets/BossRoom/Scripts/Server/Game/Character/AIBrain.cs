@@ -52,6 +52,19 @@ namespace BossRoom.Server
             m_Logics[m_CurrentState].Update();
         }
 
+        /// <summary>
+        /// Called when we received some HP. Positive HP is healing, negative is damage. 
+        /// </summary>
+        /// <param name="inflicter">The person who hurt or healed us. May be null. </param>
+        /// <param name="amount">The amount of HP received. Negative is damage. </param>
+        public void ReceiveHP(ServerCharacter inflicter, int amount)
+        {
+            if (inflicter != null && amount < 0)
+            {
+                Hate(inflicter);
+            }
+        }
+
         private AIStateType FindBestEligibleAIState()
         {
             // for now we assume the AI states are in order of appropriateness,
