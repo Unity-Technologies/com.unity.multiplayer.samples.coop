@@ -15,14 +15,16 @@ public class RoomNameBox : MonoBehaviour
         Assert.IsNotNull(m_RoomNameText, $"{nameof(m_RoomNameText)} not assigned!");
 
         var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-        if (transport is PhotonRealtimeTransport realtimeTransport)
+
+        switch (transport)
         {
-            m_RoomNameText.text = $"Room Name: {realtimeTransport.RoomName}";
-        }
-        else
-        {
-            Destroy(gameObject); // RoomName should only be displayed when using relay.
+            case PhotonRealtimeTransport realtimeTransport:
+                m_RoomNameText.text = $"Room Name: {realtimeTransport.RoomName}";
+                break;
+            default:
+                // RoomName should only be displayed when using relay.
+                Destroy(gameObject);
+                break;
         }
     }
-
 }
