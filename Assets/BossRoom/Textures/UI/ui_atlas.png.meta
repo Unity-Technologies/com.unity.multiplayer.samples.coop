@@ -200,6 +200,9 @@ TextureImporter:
   - first:
       213: 8879625777829338720
     second: blank
+  - first:
+      213: 4245123048664881678
+    second: Randomize_btn
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -1657,10 +1660,10 @@ TextureImporter:
       name: blank
       rect:
         serializedVersion: 2
-        x: 1277
-        y: 872
-        width: 54
-        height: 57
+        x: 1330
+        y: 600
+        width: 20
+        height: 20
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -1670,6 +1673,27 @@ TextureImporter:
       bones: []
       spriteID: 06e5be14994ca3b70800000000000000
       internalID: 8879625777829338720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Randomize_btn
+      rect:
+        serializedVersion: 2
+        x: 1274
+        y: 829
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0a5e7fcbe4b9ea30800000000000000
+      internalID: 4245123048664881678
       vertices: []
       indices: 
       edges: []

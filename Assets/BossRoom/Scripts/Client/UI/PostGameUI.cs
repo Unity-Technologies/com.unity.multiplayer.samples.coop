@@ -6,7 +6,7 @@ using UnityEngine.UI;
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// Provides backing logic for all of the UI that runs in the PostGame stage. 
+    /// Provides backing logic for all of the UI that runs in the PostGame stage.
     /// </summary>
     public class PostGameUI : MonoBehaviour
     {
@@ -35,7 +35,7 @@ namespace BossRoom.Visual
             GameObject GamePortalGO = GameObject.FindGameObjectWithTag("GameNetPortal");
             var netPortal = GamePortalGO.GetComponent<GameNetPortal>();
 
-            // only hosts can restart the game, other players see a wait message 
+            // only hosts can restart the game, other players see a wait message
             if (netPortal.NetManager.IsHost)
             {
                 m_ReplayButton.SetActive(true);
@@ -82,8 +82,8 @@ namespace BossRoom.Visual
         public void OnMainMenuClicked()
         {
             // Player is leaving this group - leave current network connection first
-            MLAPI.NetworkingManager.Singleton.StopClient();
-            MLAPI.NetworkingManager.Singleton.Shutdown();
+            MLAPI.NetworkManager.Singleton.StopClient();
+            MLAPI.NetworkManager.Singleton.Shutdown();
             SceneManager.LoadScene("MainMenu");
         }
     }

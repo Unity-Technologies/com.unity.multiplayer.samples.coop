@@ -2,6 +2,7 @@ using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
+using System.Collections;
 using System.ComponentModel;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace BossRoom.Visual
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    public class ClientCharacterVisualization : NetworkedBehaviour
+    public class ClientCharacterVisualization : NetworkBehaviour
     {
         private NetworkCharacterState m_NetState;
 
@@ -33,13 +34,7 @@ namespace BossRoom.Visual
 
         private ActionVisualization m_ActionViz;
 
-        private CinemachineVirtualCamera m_MainCamera;
-
         public Transform Parent { get; private set; }
-
-        public float MinZoomDistance = 3;
-        public float MaxZoomDistance = 30;
-        public float ZoomSpeed = 3;
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
@@ -73,10 +68,16 @@ namespace BossRoom.Visual
 
             m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
             m_NetState.DoActionEventClient += PerformActionFX;
-            m_NetState.CancelActionEventClient += CancelActionFX;
+            m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
+            m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
             m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
+            m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
+            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
+            // we should investigate for a way to have the imps already appear as down when connecting.
+            // todo gomps-220
+            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
@@ -98,19 +99,12 @@ namespace BossRoom.Visual
             OnCharacterAppearanceChanged(0, m_NetState.CharacterAppearance.Value);
 
             // ...and visualize the current char-select value that we know about
-            if (m_CharacterSwapper)
-            {
-                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
-            }
+            SetAppearanceSwap();
 
             if (!m_NetState.IsNpc)
             {
                 // track health for heroes
                 m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
-
-                var model = GetComponent<CharacterSwap>();
-                int heroAppearance = m_NetState.CharacterAppearance.Value;
-                model.SwapToModel(heroAppearance);
 
                 // find the emote bar to track its buttons
                 GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
@@ -120,14 +114,13 @@ namespace BossRoom.Visual
                 {
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
-                    AttachCamera();
+                    gameObject.AddComponent<CameraController>();
                     m_PartyHUD.SetHeroData(m_NetState);
                 }
                 else
                 {
-                    m_PartyHUD.SetAllyType(m_NetState.NetworkId, m_NetState.CharacterType);
+                    m_PartyHUD.SetAllyData(m_NetState);
                 }
-
             }
         }
 
@@ -148,6 +141,19 @@ namespace BossRoom.Visual
                     break;
             }
         }
+        private void OnDestroy()
+        {
+            if (m_NetState)
+            {
+                m_NetState.DoActionEventClient -= PerformActionFX;
+                m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
+                m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
+                m_NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+                m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
+                m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
+                m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+            }
+        }
 
         private void OnPerformHitReaction()
         {
@@ -159,9 +165,14 @@ namespace BossRoom.Visual
             m_ActionViz.PlayAction(ref data);
         }
 
-        private void CancelActionFX()
+        private void CancelAllActionFXs()
         {
-            m_ActionViz.CancelActions();
+            m_ActionViz.CancelAllActions();
+        }
+
+        private void CancelActionFXByType(ActionType actionType)
+        {
+            m_ActionViz.CancelAllActionsOfType(actionType);
         }
 
         private void OnStoppedChargingUp()
@@ -198,15 +209,33 @@ namespace BossRoom.Visual
             }
             else
             {
-                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkId, newValue);
+                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
             }
         }
 
         private void OnCharacterAppearanceChanged(int oldValue, int newValue)
         {
+            SetAppearanceSwap();
+        }
+
+        private void OnStealthyChanged(byte oldValue, byte newValue)
+        {
+            SetAppearanceSwap();
+        }
+
+        private void SetAppearanceSwap()
+        {
             if (m_CharacterSwapper)
             {
-                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
+                if (m_NetState.IsStealthy.Value != 0 && !m_NetState.IsOwner)
+                {
+                    // this character is in "stealth mode", so other players can't see them!
+                    m_CharacterSwapper.SwapAllOff();
+                }
+                else
+                {
+                    m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
+                }
             }
         }
 
@@ -224,17 +253,15 @@ namespace BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat("Speed", m_NetState.VisualMovementSpeed.Value);
+                float visibleSpeed = 0;
+                if (m_NetState.NetworkLifeState.Value == LifeState.Alive)
+                {
+                    visibleSpeed = m_NetState.VisualMovementSpeed.Value;
+                }
+                m_ClientVisualsAnimator.SetFloat("Speed", visibleSpeed);
             }
 
             m_ActionViz.Update();
-
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
-            if (scroll != 0 && m_MainCamera)
-            {
-                ZoomCamera(scroll);
-            }
-
         }
 
         public void OnAnimEvent(string id)
@@ -244,36 +271,6 @@ namespace BossRoom.Visual
             //example of where this is configured.
 
             m_ActionViz.OnAnimEvent(id);
-        }
-
-        private void AttachCamera()
-        {
-            var cameraGO = GameObject.FindGameObjectWithTag("CMCamera");
-            if (cameraGO == null) { return; }
-
-            m_MainCamera = cameraGO.GetComponent<CinemachineVirtualCamera>();
-            if (m_MainCamera)
-            {
-                m_MainCamera.Follow = transform;
-                m_MainCamera.LookAt = transform;
-            }
-        }
-
-        private void ZoomCamera(float scroll)
-        {
-            CinemachineComponentBase[] components = m_MainCamera.GetComponentPipeline();
-            foreach (CinemachineComponentBase component in components)
-            {
-                if (component is CinemachineFramingTransposer)
-                {
-                    CinemachineFramingTransposer c = (CinemachineFramingTransposer)component;
-                    c.m_CameraDistance += -scroll * ZoomSpeed;
-                    if (c.m_CameraDistance < MinZoomDistance)
-                        c.m_CameraDistance = MinZoomDistance;
-                    if (c.m_CameraDistance > MaxZoomDistance)
-                        c.m_CameraDistance = MaxZoomDistance;
-                }
-            }
         }
     }
 }

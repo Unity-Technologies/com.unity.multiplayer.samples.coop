@@ -53,7 +53,7 @@ namespace BossRoom.Server
                 // time for a new foe!
                 m_Foe = ChooseFoe();
                 // whatever we used to be doing, stop that. New plan is coming!
-                m_ActionPlayer.ClearActions();
+                m_ActionPlayer.ClearActions(true);
             }
 
             // if we're out of foes, stop! IsEligible() will now return false so we'll soon switch to a new state
@@ -67,7 +67,7 @@ namespace BossRoom.Server
             {
                 if (info.ActionTypeEnum == ActionType.GeneralChase)
                 {
-                    if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkId)
+                    if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkObjectId)
                     {
                         // yep we're chasing our foe; all set! (The attack is enqueued after it)
                         return;
@@ -75,7 +75,7 @@ namespace BossRoom.Server
                 }
                 else if (info.ActionTypeEnum == m_CurAttackAction)
                 {
-                    if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkId)
+                    if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkObjectId)
                     {
                         // yep we're attacking our foe; all set!
                         return;
@@ -93,7 +93,7 @@ namespace BossRoom.Server
             var attackData = new ActionRequestData
             {
                 ActionTypeEnum = attackInfo.ActionTypeEnum,
-                TargetIds = new ulong[] { m_Foe.NetworkId },
+                TargetIds = new ulong[] { m_Foe.NetworkObjectId },
                 ShouldClose = true
             };
             m_ActionPlayer.PlayAction(ref attackData);

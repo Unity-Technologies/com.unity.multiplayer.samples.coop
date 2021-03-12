@@ -1,6 +1,7 @@
 using MLAPI;
 using System;
 using System.Collections.Generic;
+using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
@@ -11,7 +12,7 @@ namespace BossRoom.Client
     /// Captures inputs for a character on a client and sends them to the server.
     /// </summary>
     [RequireComponent(typeof(NetworkCharacterState))]
-    public class ClientInputSender : NetworkedBehaviour
+    public class ClientInputSender : NetworkBehaviour
     {
         private const float k_MouseInputRaycastDistance = 100f;
 
@@ -53,6 +54,7 @@ namespace BossRoom.Client
         {
             public SkillTriggerStyle TriggerStyle;
             public ActionType RequestedAction;
+            public ulong TargetId;
         }
 
         /// <summary>
@@ -81,7 +83,7 @@ namespace BossRoom.Client
 
         public override void NetworkStart()
         {
-            // TODO Don't use NetworkedBehaviour for just NetworkStart [GOMPS-81]
+            // TODO Don't use NetworkBehaviour for just NetworkStart [GOMPS-81]
             if (!IsClient || !IsOwner)
             {
                 enabled = false;
@@ -138,13 +140,12 @@ namespace BossRoom.Client
                     }
                     else
                     {
-                        PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle);
+                        PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle, m_ActionRequests[i].TargetId);
                     }
                 }
             }
 
             m_ActionRequestCount = 0;
-
 
             if( m_MoveRequest )
             {
@@ -169,26 +170,43 @@ namespace BossRoom.Client
         /// </summary>
         /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
         /// <param name="triggerStyle">What sort of input triggered this skill?</param>
-        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle)
+        /// <param name="targetId">(optional) Pass in a specific networkID to target for this action</param>
+        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
-            int numHits = 0;
-            if (triggerStyle == SkillTriggerStyle.MouseClick)
+            Transform hitTransform = null;
+            
+            if (targetId != 0)
             {
-                var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
-            }
-
-            int networkedHitIndex = -1;
-            for (int i = 0; i < numHits; i++)
-            {
-                if (k_CachedHit[i].transform.GetComponent<NetworkedObject>())
+                // if a targetId is given, try to find the object
+                NetworkObject targetNetObj;
+                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj))
                 {
-                    networkedHitIndex = i;
-                    break;
+                    hitTransform = targetNetObj.transform;
                 }
             }
+            else
+            {
+                // otherwise try to find an object under the input position
+                int numHits = 0;
+                if (triggerStyle == SkillTriggerStyle.MouseClick)
+                {
+                    var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+                    numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
+                }
 
-            Transform hitTransform = networkedHitIndex >= 0 ? k_CachedHit[networkedHitIndex].transform : null;
+                int networkedHitIndex = -1;
+                for (int i = 0; i < numHits; i++)
+                {
+                    if (k_CachedHit[i].transform.GetComponent<NetworkObject>())
+                    {
+                        networkedHitIndex = i;
+                        break;
+                    }
+                }
+
+                hitTransform = networkedHitIndex >= 0 ? k_CachedHit[networkedHitIndex].transform : null;
+            }
+
             if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
             {
                 //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
@@ -217,7 +235,7 @@ namespace BossRoom.Client
         {
             resultData = new ActionRequestData();
 
-            var targetNetObj = hit != null ? hit.GetComponent<NetworkedObject>() : null;
+            var targetNetObj = hit != null ? hit.GetComponent<NetworkObject>() : null;
 
             //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState.
             if (!targetNetObj && actionType != ActionType.GeneralTarget)
@@ -225,7 +243,7 @@ namespace BossRoom.Client
                 ulong targetId = m_NetworkCharacter.TargetId.Value;
                 if (ActionUtils.IsValidTarget(targetId))
                 {
-                    targetNetObj = MLAPI.Spawning.SpawnManager.SpawnedObjects[targetId];
+                    targetNetObj = NetworkSpawnManager.SpawnedObjects[targetId];
                 }
             }
 
@@ -249,7 +267,7 @@ namespace BossRoom.Client
 
             // record our target in case this action uses that info (non-targeted attacks will ignore this)
             resultData.ActionTypeEnum = actionType;
-            resultData.TargetIds = new ulong[] { targetNetState.NetworkId };
+            resultData.TargetIds = new ulong[] { targetNetState.NetworkObjectId };
             PopulateSkillRequest(targetNetState.transform.position, actionType, ref resultData);
             return true;
         }
@@ -294,7 +312,7 @@ namespace BossRoom.Client
         /// </summary>
         /// <param name="action">the action you'd like to perform. </param>
         /// <param name="triggerStyle">What input style triggered this action.</param>
-        public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle )
+        public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             // do not populate an action request unless said action is valid
             if (action == ActionType.None)
@@ -309,6 +327,7 @@ namespace BossRoom.Client
             {
                 m_ActionRequests[m_ActionRequestCount].RequestedAction = action;
                 m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
+                m_ActionRequests[m_ActionRequestCount].TargetId = targetId;
                 m_ActionRequestCount++;
             }
         }

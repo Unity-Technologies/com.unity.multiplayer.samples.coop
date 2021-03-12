@@ -1,3 +1,4 @@
+using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,27 +15,16 @@ namespace BossRoom.Visual
         private Image m_HeroPortrait;
 
         [SerializeField]
-        private Image m_HeroClassSymbol;
-
-        [SerializeField]
-        private Text m_HeroName;
-
-        [SerializeField]
-        private RectTransform m_HeroHealthbar;
-
-        private int m_HeroMaxHealth;
-
-        [SerializeField]
         private GameObject[] m_AllyPanel;
 
         [SerializeField]
-        private Image[] m_AllyClassSymbol;
+        private Text[] m_PartyNames;
 
         [SerializeField]
-        private RectTransform[] m_AllyHealthbar;
+        private Image[] m_PartyClassSymbols;
 
         [SerializeField]
-        Text[] m_AllyNames;
+        private Slider[] m_PartyHealthSliders;
 
         [SerializeField]
         private Sprite[] m_PortraitAppearances;
@@ -43,45 +33,36 @@ namespace BossRoom.Visual
         [SerializeField]
         private Sprite[] m_ClassSymbols;
 
-        // track a list of allies
-        private ulong[] m_Allies;
-        // and their max HP
-        private int[] m_AllyMaxHP;
+        // track a list of hero (slot 0) + allies 
+        private ulong[] m_PartyIds;
 
-        public void SetHeroData(NetworkCharacterState netState )
+        // track Hero's target to show when it is the Hero or an ally
+        private ulong m_CurrentTarget;
+
+        private Client.ClientInputSender m_ClientSender;
+
+        public void SetHeroData(NetworkCharacterState netState)
         {
-            SetHeroType(netState.CharacterType);
-            m_HeroName.text = netState.Name;
-
+            // Make sure arrays are initialized
+            InitPartyArrays();
+            // Hero is always our slot 0
+            m_PartyIds[0] = netState.NetworkObject.NetworkObjectId;
+            SetUIFromSlotData(0, netState);
+            // Hero also gets a protrait
             int appearance = netState.CharacterAppearance.Value;
-            if( appearance < m_PortraitAppearances.Length )
+            if (appearance < m_PortraitAppearances.Length)
             {
                 m_HeroPortrait.sprite = m_PortraitAppearances[appearance];
             }
-        }
+            // plus we track their target
+            netState.TargetId.OnValueChanged += OnHeroSelectionChanged;
 
-        private void SetHeroType(CharacterTypeEnum characterType)
-        {
-            // treat character type as an index into our symbol array
-            int symbol = (int)characterType;
-            if (symbol > m_ClassSymbols.Length)
-            {
-                return;
-            }
-
-            m_HeroClassSymbol.sprite = m_ClassSymbols[symbol];
-            m_HeroMaxHealth = GetMaxHPForClass(characterType);
-        }
-
-        public void SetHeroName(string name)
-        {
-            m_HeroName.text = name;
+            m_ClientSender = netState.GetComponent<Client.ClientInputSender>();
         }
 
         public void SetHeroHealth(int hp)
         {
-            // TO DO - get real max hp
-            m_HeroHealthbar.localScale = new Vector3(((float)hp) / (float)m_HeroMaxHealth, 1.0f, 1.0f);
+            m_PartyHealthSliders[0].value = hp;
         }
 
         private int GetMaxHPForClass(CharacterTypeEnum characterType)
@@ -90,31 +71,37 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Gets Player Name from the NetworkID of his controlled Character. 
+        /// Gets Player Name from the NetworkObjectId of his controlled Character.
         /// </summary>
         private string GetPlayerName(ulong netId)
         {
-            var netState = MLAPI.Spawning.SpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
+            var netState = NetworkSpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
             return netState.Name;
         }
 
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id
-        public void SetAllyType(ulong id, CharacterTypeEnum characterType)
+        public void SetAllyData(NetworkCharacterState netState)
         {
-            int symbol = (int)characterType;
+            ulong id = netState.NetworkObjectId;
+            int slot = FindOrAddAlly(id);
+            // do nothing if not in a slot
+            if (slot == -1) { return; }
+
+            SetUIFromSlotData(slot, netState);
+        }
+
+        private void SetUIFromSlotData(int slot, NetworkCharacterState netState)
+        {
+            m_PartyHealthSliders[slot].maxValue = GetMaxHPForClass(netState.CharacterType);
+            m_PartyHealthSliders[slot].value = netState.HitPoints;
+            m_PartyNames[slot].text = GetPlayerName(m_PartyIds[slot]);
+
+            int symbol = (int)netState.CharacterType;
             if (symbol > m_ClassSymbols.Length)
             {
                 return;
             }
-
-            int slot = FindOrAddAlly(id);
-            // do nothing if not in a slot
-            if ( slot == -1 ) { return; }
-
-            m_AllyClassSymbol[slot].sprite = m_ClassSymbols[symbol];
-            m_AllyMaxHP[slot] = GetMaxHPForClass(characterType);
-
-            m_AllyNames[slot].text = GetPlayerName(id);
+            m_PartyClassSymbols[slot].sprite = m_ClassSymbols[symbol];
         }
 
         public void SetAllyHealth(ulong id, int hp)
@@ -123,7 +110,7 @@ namespace BossRoom.Visual
             // do nothing if not in a slot
             if (slot == -1) { return; }
 
-            m_AllyHealthbar[slot].localScale = new Vector3(((float)hp) / (float)m_AllyMaxHP[slot], 1.0f, 1.0f);
+            m_PartyHealthSliders[slot].value = hp;
         }
 
         public void SetAllyName(ulong id, string name)
@@ -132,54 +119,90 @@ namespace BossRoom.Visual
             // do nothing if not in a slot
             if (slot == -1) { return; }
 
-            m_AllyNames[slot].text = name;
+            m_PartyNames[slot].text = name;
         }
 
-        // helper to initialize the Allies array - safe to call multiple times
-        private void InitAllies()
+        private void OnHeroSelectionChanged(ulong prevTarget, ulong newTarget)
         {
-            if (m_Allies == null)
-            {
-                // clear clicked state
-                m_Allies = new ulong[m_AllyHealthbar.Length];
+            SetHeroSelectFX(m_CurrentTarget, false);
+            SetHeroSelectFX(newTarget, true);
+        }
 
-                // also setup the max HP array
-                m_AllyMaxHP = new int[m_AllyHealthbar.Length];
-                for (int i = 0; i < m_AllyHealthbar.Length; i++)
+        // Helper to chaneg name appearance for selected or unselected party members
+        // also updates m_CurrentTarget
+        private void SetHeroSelectFX(ulong target, bool selected)
+        {
+            // check id against all party slots
+            int slot = FindOrAddAlly(target, true);
+            if (slot >= 0)
+            {
+                m_PartyNames[slot].color = selected ? Color.green : Color.white;
+                if (selected)
                 {
-                    // initialize all ally positions to 0 and HP to 1000
-                    m_Allies[i] = 0;
-                    m_AllyMaxHP[i] = 1000;
+                    m_CurrentTarget = target;
+                }
+                else
+                {
+                    m_CurrentTarget = 0;
                 }
             }
         }
 
-        private int FindOrAddAlly(ulong id)
+        public void SelectPartyMember(int slot)
+        {
+            m_ClientSender.RequestAction(ActionType.GeneralTarget, Client.ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
+        }
+
+        // helper to initialize the Allies array - safe to call multiple times
+        private void InitPartyArrays()
+        {
+            if (m_PartyIds == null)
+            {
+                // clear party ID array
+                m_PartyIds = new ulong[m_PartyHealthSliders.Length];
+
+                for (int i = 0; i < m_PartyHealthSliders.Length; i++)
+                {
+                    // initialize all IDs positions to 0 and HP to 1000 on sliders
+                    m_PartyIds[i] = 0;
+                    m_PartyHealthSliders[i].maxValue = 1000;
+                }
+            }
+        }
+
+        // Helper to find ally slots, returns -1 if no slot is found for the id
+        // If a slot is available one will be added for this id unless dontAdd=true
+        private int FindOrAddAlly(ulong id, bool dontAdd = false)
         {
             // make sure allies array is ready
-            InitAllies();
+            InitPartyArrays();
 
             int openslot = -1;
-            for (int i = 0; i < m_Allies.Length; i++)
+            for (int i = 0; i < m_PartyIds.Length; i++)
             {
-                // if this Ally is in the list, return the slot index
-                if (m_Allies[i] == id) { return i; }
-                // otherwise, record the first open slot
-                if (openslot == -1 && m_Allies[i] == 0)
+                // if this ID is in the list, return the slot index
+                if (m_PartyIds[i] == id) { return i; }
+                // otherwise, record the first open slot (not slot 0 thats for the Hero)
+                if (openslot == -1 && i > 0 && m_PartyIds[i] == 0)
                 {
                     openslot = i;
                 }
             }
 
-            // ally slot was not found - add one in an open slot
-            if (openslot >= 0)
+            // if we don't add, we are done nw and didnt fint the ID
+            if (dontAdd) { return -1; }
+
+            // Party slot was not found for this ID - add one in the open slot
+            if (openslot > 0)
             {
-                m_AllyPanel[openslot].SetActive(true);
-                m_Allies[openslot] = id;
+                // activeate the correct ally panel
+                m_AllyPanel[openslot - 1].SetActive(true);
+                // and save ally ID to party array
+                m_PartyIds[openslot] = id;
                 return openslot;
             }
 
-            // this should not happen unless wthere are too many players- we didnt find the ally or a slot
+            // this should not happen unless there are too many players - we didn't find the ally or a slot
             return -1;
         }
     }

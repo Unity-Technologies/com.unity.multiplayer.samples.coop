@@ -53,6 +53,7 @@ namespace BossRoom.Visual
                 case ActionLogic.Target: return new TargetActionFX(ref data, parent);
                 case ActionLogic.ChargedShield:
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedActionFX(ref data, parent);
+                case ActionLogic.StealthMode: return new StealthModeActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }
