@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using MLAPI;
+using MLAPI.Transports;
 using UnityEngine.Assertions;
 
 namespace BossRoom.Scripts.Editor
@@ -32,6 +33,7 @@ namespace BossRoom.Scripts.Editor
                         break;
                     #endif
                     case MLAPI.Transports.UNET.UNetTransport unetTransport:
+                    case PhotonRealtimeTransport photonTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
                     default:
