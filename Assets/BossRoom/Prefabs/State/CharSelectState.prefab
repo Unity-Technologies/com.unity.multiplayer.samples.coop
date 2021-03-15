@@ -59,15 +59,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_InSceneCharacter: {fileID: 0}
-  m_PlayerStateBoxes:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  m_InSceneCharacterAnimator: {fileID: 0}
+  m_AnimationTriggerOnCharSelect: BeginRevive
+  m_AnimationTriggerOnCharChosen: BeginRevive
+  m_PlayerSeats: []
   m_IdentifiersForEachPlayerNumber:
   - Indicator: {fileID: 7073677062034491875, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
     Color: {r: 1, g: 0.9607843, b: 0.03529412, a: 1}
@@ -85,19 +80,13 @@ MonoBehaviour:
     Color: {r: 0.99607843, g: 0.6745098, b: 0.03137255, a: 1}
   - Indicator: {fileID: 8070130267694257472, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
     Color: {r: 0.19215687, g: 0.03137255, b: 0.9882353, a: 1}
-  m_PlayerNumberText: {fileID: 0}
-  m_ClassNameText: {fileID: 0}
-  m_HideTheseUIElementsWhenLobbyIsLockedIn:
-  - {fileID: 0}
-  m_ShowTheseUIElementsWhenLobbyIsLockedIn:
-  - {fileID: 0}
-  m_HideTheseUIElementsOnFatalLobbyError:
-  - {fileID: 0}
-  m_ShowTheseUIElementsOnFatalLobbyError:
-  - {fileID: 0}
+  m_UIElementsForNoSeatChosen: []
+  m_UIElementsForSeatChosen: []
+  m_UIElementsForLobbyEnding: []
+  m_UIElementsForFatalError: []
+  m_ClassInfoBox: {fileID: 0}
   m_FatalLobbyErrorText: {fileID: 0}
   m_FatalErrorLobbyFullMsg: 'Error: lobby is full! You cannot play.'
-  m_WelcomeMsg: Welcome, P{0}!
 --- !u!114 &3565665953789623673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,6 +99,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b117c7cd3ae70e458a5b755a4096609, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  LobbySeatConfigurations:
+  - Class: 0
+    CharacterArtIdx: 1
+  - Class: 0
+    CharacterArtIdx: 0
+  - Class: 1
+    CharacterArtIdx: 3
+  - Class: 1
+    CharacterArtIdx: 2
+  - Class: 2
+    CharacterArtIdx: 5
+  - Class: 2
+    CharacterArtIdx: 4
+  - Class: 3
+    CharacterArtIdx: 7
+  - Class: 3
+    CharacterArtIdx: 6
 --- !u!114 &1092063945021251778
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -122,7 +128,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkedInstanceId: 0
+  NetworkInstanceId: 0
   PrefabHash: 9664049137678660408
   PrefabHashGenerator: CharSelectState
   AlwaysReplicateAsRoot: 0
