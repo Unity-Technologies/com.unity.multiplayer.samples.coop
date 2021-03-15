@@ -18,7 +18,7 @@ Platforms : Windows, Mac
 
 ## Installing Git LFS
 
-This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://git-lfs.github.com/) for Windows and Mac instructions. 
+This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. 
 
 The following Mac installation uses Homebrew and Git:
 
