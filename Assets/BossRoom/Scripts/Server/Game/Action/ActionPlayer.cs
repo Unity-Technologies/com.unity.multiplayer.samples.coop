@@ -22,8 +22,6 @@ namespace BossRoom.Server
         /// </summary>
         private const float k_MaxQueueTimeDepth = 1.6f;
 
-        private const float k_MaxQueueTimeDepth = 1.6f;
-
         private ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
         private bool m_HasPendingSynthesizedAction;
 
