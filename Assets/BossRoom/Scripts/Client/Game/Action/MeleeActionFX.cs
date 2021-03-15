@@ -71,11 +71,11 @@ namespace BossRoom.Visual
                     if( originalTarget.NetworkObjectId != m_Parent.NetworkObjectId )
                     {
                         string hitAnim = Description.ReactAnim;
-                        if(string.IsNullOrEmpty(hitAnim)) { hitAnim = "HitReact1";  }
+                        if(string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
                         var clientChar = originalTarget.GetComponent<Client.ClientCharacter>();
                         if (clientChar)
                         {
-                            clientChar.ChildVizObject.OurAnimator.SetTrigger("HitReact1");
+                            clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);
                         }
                     }
                 }

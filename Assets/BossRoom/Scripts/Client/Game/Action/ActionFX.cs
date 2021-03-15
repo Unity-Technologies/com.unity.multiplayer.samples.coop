@@ -9,6 +9,11 @@ namespace BossRoom.Visual
         protected ClientCharacterVisualization m_Parent;
 
         /// <summary>
+        /// The default hit react animation; several different ActionFXs make use of this.
+        /// </summary>
+        public const string k_DefaultHitReact = "HitReact1";
+		
+        /// <summary>
         /// True if this actionFX began running immediately, prior to getting a confirmation from the server. 
         /// </summary>
         public bool Anticipated { get; protected set; }
