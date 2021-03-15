@@ -4873,6 +4873,7 @@ GameObject:
   - component: {fileID: 9165544184399389133}
   - component: {fileID: 3526803539694862434}
   - component: {fileID: 6606059146362861306}
+  - component: {fileID: -2485308661205006069}
   m_Layer: 0
   m_Name: FX_ImpDefeat
   m_TagString: Untagged
@@ -4889,7 +4890,7 @@ Transform:
   m_GameObject: {fileID: 6991483021183243482}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
   m_Children:
   - {fileID: 9201017750025627535}
   m_Father: {fileID: 0}
@@ -9752,3 +9753,18 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &-2485308661205006069
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6991483021183243482}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e80714725b908940a76375b52b8d53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParticleSystemsToTurnOffOnShutdown: []
+  m_AutoShutdownTime: -1
+  m_PostShutdownSelfDestructTime: -1

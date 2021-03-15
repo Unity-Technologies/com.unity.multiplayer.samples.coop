@@ -1136,9 +1136,6 @@ MonoBehaviour:
   TargetReticule: {fileID: 0}
   ReticuleFriendlyMat: {fileID: 0}
   ReticuleHostileMat: {fileID: 0}
-  MinZoomDistance: 3
-  MaxZoomDistance: 30
-  ZoomSpeed: 3
 --- !u!114 &8005647249789065143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1159,6 +1156,15 @@ MonoBehaviour:
     m_PrefabSpawnDelaySeconds: 0.8
     m_PrefabCanBeAbortedUntilSecs: 0
     m_SoundEffect: {fileID: 8300000, guid: 714700a9be690ab4ab62c7cad766e9ee, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Dead
+    m_AnimatorNodeNameHash: 1293411866
+    m_Prefab: {fileID: -2485308661205006069, guid: 9537f4739c7bc2f4e8d6b2d49bfcc97e, type: 3}
+    m_PrefabSpawnDelaySeconds: 1.25
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 6519c554f1671494ca8ced6e3849ada4, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -1378,6 +1384,8 @@ MonoBehaviour:
   m_WalkFootstepVolume: 0.8
   m_RunFootstepAudioClip: {fileID: 8300000, guid: 6ad4d1d63bc70494bbc9172ae70bcdd0, type: 3}
   m_RunFootstepVolume: 0.8
+  m_WalkingPoint: 0.6
+  m_SilentPoint: 0.3
 --- !u!82 &-8995571906845300287
 AudioSource:
   m_ObjectHideFlags: 0
