@@ -69,7 +69,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Returns our intended target, or null if not found/no target.
         /// </summary>
-        private ServerCharacter GetTarget()
+        private IDamageable GetTarget()
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
@@ -79,7 +79,7 @@ namespace BossRoom.Server
             NetworkObject obj;
             if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
             {
-                return obj.GetComponent<ServerCharacter>();
+                return obj.GetComponent<IDamageable>();
             }
             else
             {

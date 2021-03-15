@@ -36,10 +36,6 @@ namespace BossRoom.Visual
 
         public Transform Parent { get; private set; }
 
-        public float MinZoomDistance = 3;
-        public float MaxZoomDistance = 30;
-        public float ZoomSpeed = 3;
-
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         /// Player characters need to report health changes and chracter info to the PartyHUD
@@ -64,7 +60,7 @@ namespace BossRoom.Visual
             m_AliveStateTriggerID = Animator.StringToHash("StandUp");
             m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
             m_DeadStateTriggerID = Animator.StringToHash("Dead");
-            m_HitStateTriggerID = Animator.StringToHash("HitReact1");
+            m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
 
