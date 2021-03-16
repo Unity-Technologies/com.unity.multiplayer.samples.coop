@@ -45,9 +45,9 @@ namespace BossRoom.Visual
         }
 
         //helper wrapper for a FindIndex call on m_PlayingActions. 
-        private int FindAction(ActionType action )
+        private int FindAction(ActionType action, bool anticipatedOnly )
         {
-            return m_PlayingActions.FindIndex(a => a.Description.ActionTypeEnum == action);
+            return m_PlayingActions.FindIndex(a => a.Description.ActionTypeEnum == action && (!anticipatedOnly || a.Anticipated));
         }
 
         public void OnAnimEvent(string id)
@@ -88,7 +88,7 @@ namespace BossRoom.Visual
 
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!Parent.IsAnimating && ActionFX.ShouldAnticipate(ref data))
+            if (!Parent.IsAnimating && ActionFX.ShouldAnticipate(this, ref data))
             {
                 var actionFX = ActionFX.MakeActionFX(ref data, Parent);
                 actionFX.TimeStarted = Time.time;
@@ -99,7 +99,7 @@ namespace BossRoom.Visual
 
         public void PlayAction(ref ActionRequestData data)
         {
-            var anticipatedActionIndex = FindAction(data.ActionTypeEnum);
+            var anticipatedActionIndex = FindAction(data.ActionTypeEnum, true);
 
             var actionFX = anticipatedActionIndex>=0 ? m_PlayingActions[anticipatedActionIndex] : ActionFX.MakeActionFX(ref data, Parent);
             actionFX.TimeStarted = Time.time;

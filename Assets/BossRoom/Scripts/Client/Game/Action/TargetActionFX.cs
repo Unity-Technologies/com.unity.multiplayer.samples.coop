@@ -49,9 +49,9 @@ namespace BossRoom.Visual
 
         public override bool Update()
         {
-            if( m_CurrentTarget != m_ParentState.TargetId.Value )
+            if( m_CurrentTarget != m_NewTarget )
             {
-                m_CurrentTarget = m_ParentState.TargetId.Value;
+                m_CurrentTarget = m_NewTarget;
 
                 if (NetworkSpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject ) )
                 {

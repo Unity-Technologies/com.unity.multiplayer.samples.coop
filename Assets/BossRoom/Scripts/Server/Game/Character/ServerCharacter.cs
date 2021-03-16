@@ -129,8 +129,8 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                //NetState.
                 ClearActions(false);
+                m_ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
                 m_Movement.SetMovementTarget(targetPosition);
             }
         }

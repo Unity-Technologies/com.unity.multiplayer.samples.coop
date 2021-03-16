@@ -85,15 +85,29 @@ namespace BossRoom.Visual
         /// <summary>
         /// Should this ActionFX be created anticipatively on the owning client? 
         /// </summary>
+        /// <param name="parent">The ActionVisualization that would be playing this ActionFX.</param>
         /// <param name="data">The request being sent to the server</param>
         /// <returns>If true ActionVisualization should pre-emptively create the ActionFX on the owning client, before hearing back from the server.</returns>
-        public static bool ShouldAnticipate(ref ActionRequestData data)
+        public static bool ShouldAnticipate(ActionVisualization parent, ref ActionRequestData data)
         {
-            var actionLogic = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].Logic;
+            var actionDescription = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
+
+            //for actions with ShouldClose set, we check our range locally. If we are out of range, we shouldn't anticipate, as we will
+            //need to execute a ChaseAction (synthesized on the server) prior to actually playing the skill. 
+            bool isTargetEligible = true;
+            if( data.ShouldClose == true )
+            {
+                ulong targetId = (data.TargetIds != null && data.TargetIds.Length > 0) ? data.TargetIds[0] : 0;
+                if( MLAPI.Spawning.NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out MLAPI.NetworkObject networkObject ) )
+                {
+                    float rangeSquared = actionDescription.Range * actionDescription.Range;
+                    isTargetEligible = (networkObject.transform.position - parent.Parent.transform.position).sqrMagnitude < rangeSquared;
+                }
+            }
 
             //at present all Actionts anticipate except for the Target action, which runs a single instance on the client and is
             //responsible for action anticipation on its own. 
-            return actionLogic != ActionLogic.Target;
+            return isTargetEligible && actionDescription.Logic != ActionLogic.Target;
         }
 
         public virtual void OnAnimEvent(string id) { }
