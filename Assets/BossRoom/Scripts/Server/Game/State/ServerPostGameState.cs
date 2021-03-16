@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -27,7 +26,7 @@ namespace BossRoom.Server
             }
         }
 
-        private IEnumerator CoroSetWinLoss(bool won)
+        IEnumerator CoroSetWinLoss(bool won)
         {
             yield return new WaitForSeconds(1);
             GetComponent<PostGameData>().GameBannerState.Value =

@@ -9,7 +9,7 @@ namespace BossRoom.Server
     /// </summary>
     public class LaunchProjectileAction : Action
     {
-        private bool m_Launched = false;
+        bool m_Launched = false;
 
         public LaunchProjectileAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 

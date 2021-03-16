@@ -1,9 +1,6 @@
 using BossRoom.Client;
-using Cinemachine;
 using MLAPI;
 using System;
-using System.Collections;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace BossRoom.Visual

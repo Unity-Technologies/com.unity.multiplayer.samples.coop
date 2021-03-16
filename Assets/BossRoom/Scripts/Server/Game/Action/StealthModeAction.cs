@@ -1,5 +1,3 @@
-using MLAPI;
-using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -11,8 +9,8 @@ namespace BossRoom.Server
     /// </summary>
     public class StealthModeAction : Action
     {
-        private bool m_IsStealthStarted = false;
-        private bool m_IsStealthEnded = false;
+        bool m_IsStealthStarted = false;
+        bool m_IsStealthEnded = false;
 
         public StealthModeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -59,7 +57,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void EndStealth()
+        void EndStealth()
         {
             if (!m_IsStealthEnded)
             {

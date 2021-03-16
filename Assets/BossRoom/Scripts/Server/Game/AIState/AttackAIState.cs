@@ -5,10 +5,10 @@ namespace BossRoom.Server
 {
     public class AttackAIState : AIState
     {
-        private AIBrain m_Brain;
-        private ActionPlayer m_ActionPlayer;
-        private ServerCharacter m_Foe;
-        private ActionType m_CurAttackAction;
+        AIBrain m_Brain;
+        ActionPlayer m_ActionPlayer;
+        ServerCharacter m_Foe;
+        ActionType m_CurAttackAction;
 
         List<ActionType> m_AttackActions;
 
@@ -104,7 +104,7 @@ namespace BossRoom.Server
         /// (Currently just chooses the foe closest to us in distance)
         /// </summary>
         /// <returns></returns>
-        private ServerCharacter ChooseFoe()
+        ServerCharacter ChooseFoe()
         {
             Vector3 myPosition = m_Brain.GetMyServerCharacter().transform.position;
 
@@ -122,7 +122,7 @@ namespace BossRoom.Server
             return closestFoe;
         }
 
-        private ActionDescription GetCurrentAttackInfo()
+        ActionDescription GetCurrentAttackInfo()
         {
             m_CurAttackAction = m_AttackActions[Random.Range(0, m_AttackActions.Count)];
 

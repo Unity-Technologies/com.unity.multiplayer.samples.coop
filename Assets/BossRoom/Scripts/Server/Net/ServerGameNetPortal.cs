@@ -24,25 +24,25 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerGameNetPortal : MonoBehaviour
     {
-        private GameNetPortal m_Portal;
+        GameNetPortal m_Portal;
 
         /// <summary>
         /// Maps a given client guid to the data for a given client player.
         /// </summary>
-        private Dictionary<string, PlayerData> m_ClientData;
+        Dictionary<string, PlayerData> m_ClientData;
 
         /// <summary>
         /// Map to allow us to cheaply map from guid to player data.
         /// </summary>
-        private Dictionary<ulong, string> m_ClientIDToGuid;
+        Dictionary<ulong, string> m_ClientIDToGuid;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
-        private const int k_MaxConnectPayload = 1024;
+        const int k_MaxConnectPayload = 1024;
 
         /// <summary>
         /// Keeps a list of what clients are in what scenes.
         /// </summary>
-        private Dictionary<ulong, int> m_ClientSceneMap = new Dictionary<ulong, int>();
+        Dictionary<ulong, int> m_ClientSceneMap = new Dictionary<ulong, int>();
 
         /// <summary>
         /// The active server scene index.
@@ -61,7 +61,7 @@ namespace BossRoom.Server
             m_ClientIDToGuid = new Dictionary<ulong, string>();
         }
 
-        private void NetworkStart()
+        void NetworkStart()
         {
             if (!m_Portal.NetManager.IsServer)
             {
@@ -160,7 +160,7 @@ namespace BossRoom.Server
         /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
         /// <param name="clientId">This is the clientId that MLAPI assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="callback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        private void ApprovalCheck(byte[] connectionData, ulong clientId, MLAPI.NetworkManager.ConnectionApprovedDelegate callback)
+        void ApprovalCheck(byte[] connectionData, ulong clientId, MLAPI.NetworkManager.ConnectionApprovedDelegate callback)
         {
             if (connectionData.Length > k_MaxConnectPayload)
             {
@@ -194,7 +194,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Called after the server is created-  This is primarily meant for the host server to clean up or handle/set state as its starting up
         /// </summary>
-        private void ServerStartedHandler()
+        void ServerStartedHandler()
         {
             m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, m_Portal.NetManager.LocalClientId));
             m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");

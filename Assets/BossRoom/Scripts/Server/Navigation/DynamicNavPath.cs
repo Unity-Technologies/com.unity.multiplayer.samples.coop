@@ -10,42 +10,42 @@ namespace BossRoom.Server
         /// <summary>
         /// The tolerance to decide whether the path needs to be recalculated when the position of a target transform changed.
         /// </summary>
-        private const float k_RepathToleranceSqr = 9f;
+        const float k_RepathToleranceSqr = 9f;
 
-        private NavMeshAgent m_Agent;
+        NavMeshAgent m_Agent;
 
-        private NavigationSystem m_NavigationSystem;
+        NavigationSystem m_NavigationSystem;
 
         /// <summary>
         /// The target position value which was used to calculate the current path.
         /// This get stored to make sure the path gets recalculated if the target 
         /// </summary>
-        private Vector3 m_CurrentPathOriginalTarget;
+        Vector3 m_CurrentPathOriginalTarget;
 
         /// <summary>
         /// This field caches a NavMesh Path so that we don't have to allocate a new one each time.
         /// </summary>
-        private NavMeshPath m_NavMeshPath;
+        NavMeshPath m_NavMeshPath;
 
         /// <summary>
         /// The remaining path points to follow to reach the target position.
         /// </summary>
-        private List<Vector3> m_Path;
+        List<Vector3> m_Path;
 
         /// <summary>
         /// The target position of this path.
         /// </summary>
-        private Vector3 m_PositionTarget;
+        Vector3 m_PositionTarget;
 
         /// <summary>
         /// A moving transform target, the path will readjust when the target moves.
         /// </summary>
-        private Transform m_TransformTarget;
+        Transform m_TransformTarget;
 
         /// <summary>
         /// If true the path tracks a moving transform target (<see cref="m_TransformTarget"/>). If false it points to a static position target (<see cref="m_PositionTarget"/>.
         /// </summary>
-        private bool m_HasTransformTarget;
+        bool m_HasTransformTarget;
 
         /// <summary>
         /// Creates a new instance of the <see cref="DynamicNavPath"./>
@@ -62,7 +62,7 @@ namespace BossRoom.Server
             navigationSystem.OnNavigationMeshChanged += OnNavMeshChanged;
         }
 
-        private Vector3 TargetPosition => m_HasTransformTarget ? m_TransformTarget.position : m_PositionTarget;
+        Vector3 TargetPosition => m_HasTransformTarget ? m_TransformTarget.position : m_PositionTarget;
 
         /// <summary>
         /// Set the target of this path to follow a moving transform.
@@ -94,7 +94,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Call this to recalculate the path when the navigation mesh or dynamic obstacles changed.
         /// </summary>
-        private void OnNavMeshChanged()
+        void OnNavMeshChanged()
         {
             RecalculatePath();
         }
@@ -149,7 +149,7 @@ namespace BossRoom.Server
             return currentPredictedPosition - m_Agent.transform.position;
         }
 
-        private void OnTargetPositionChanged(Vector3 newTarget)
+        void OnTargetPositionChanged(Vector3 newTarget)
         {
             if (m_Path.Count == 0)
             {
@@ -165,7 +165,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Recalculates the cached navigationPath
         /// </summary>
-        private void RecalculatePath()
+        void RecalculatePath()
         {
             m_CurrentPathOriginalTarget = TargetPosition;
             m_Agent.CalculatePath(TargetPosition, m_NavMeshPath);

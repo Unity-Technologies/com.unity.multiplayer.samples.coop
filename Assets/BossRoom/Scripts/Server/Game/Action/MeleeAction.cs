@@ -27,8 +27,8 @@ namespace BossRoom.Server
     /// </remarks>
     public class MeleeAction : Action
     {
-        private bool m_ExecutionFired;
-        private ulong m_ProvisionalTarget;
+        bool m_ExecutionFired;
+        ulong m_ProvisionalTarget;
 
         //cache Physics Cast hits, to minimize allocs.
         public MeleeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
@@ -69,7 +69,7 @@ namespace BossRoom.Server
         /// Returns the ServerCharacter of the foe we hit, or null if none found.
         /// </summary>
         /// <returns></returns>
-        private IDamageable DetectFoe(ulong foeHint = 0)
+        IDamageable DetectFoe(ulong foeHint = 0)
         {
             //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack.
 

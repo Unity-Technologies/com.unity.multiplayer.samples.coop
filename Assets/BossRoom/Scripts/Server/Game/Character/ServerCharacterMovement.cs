@@ -19,27 +19,27 @@ namespace BossRoom.Server
     [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent), typeof(ServerCharacter)), RequireComponent(typeof(Rigidbody))]
     public class ServerCharacterMovement : NetworkBehaviour
     {
-        private NavMeshAgent m_NavMeshAgent;
-        private Rigidbody m_Rigidbody;
-        private NetworkCharacterState m_NetworkCharacterState;
-        private NavigationSystem m_NavigationSystem;
+        NavMeshAgent m_NavMeshAgent;
+        Rigidbody m_Rigidbody;
+        NetworkCharacterState m_NetworkCharacterState;
+        NavigationSystem m_NavigationSystem;
 
-        private DynamicNavPath m_NavPath;
+        DynamicNavPath m_NavPath;
 
-        private MovementState m_MovementState;
-        private ServerCharacter m_CharLogic;
+        MovementState m_MovementState;
+        ServerCharacter m_CharLogic;
 
         [SerializeField]
-        private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition
+        float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition
 
         // when we are in charging and knockback mode, we use these additional variables
-        private float m_ForcedSpeed;
-        private float m_SpecialModeDurationRemaining;
+        float m_ForcedSpeed;
+        float m_SpecialModeDurationRemaining;
 
         // this one is specific to knockback mode
-        private Vector3 m_KnockbackVector;
+        Vector3 m_KnockbackVector;
 
-        private void Awake()
+        void Awake()
         {
             m_NavMeshAgent = GetComponent<NavMeshAgent>();
             m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
@@ -128,7 +128,7 @@ namespace BossRoom.Server
             m_MovementState = MovementState.Idle;
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             PerformMovement();
 
@@ -139,7 +139,7 @@ namespace BossRoom.Server
             m_NetworkCharacterState.VisualMovementSpeed.Value = GetVisualMovementSpeed();
         }
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
@@ -150,7 +150,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             if(m_NavPath != null )
             {
@@ -158,7 +158,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void PerformMovement()
+        void PerformMovement()
         {
             if (m_MovementState == MovementState.Idle)
                 return;
@@ -211,7 +211,7 @@ namespace BossRoom.Server
             m_Rigidbody.rotation = transform.rotation;
         }
 
-        private float GetMaxMovementSpeed()
+        float GetMaxMovementSpeed()
         {
             switch (m_MovementState)
             {
@@ -225,7 +225,7 @@ namespace BossRoom.Server
             }
         }
 
-        private float GetVisualMovementSpeed()
+        float GetVisualMovementSpeed()
         {
             if (m_MovementState == MovementState.Idle || m_MovementState == MovementState.Knockback)
                 return 0;

@@ -9,7 +9,7 @@ namespace BossRoom.Server
     /// </summary>
     public class GameStateRelay
     {
-        private static Object s_RelayObject = null;
+        static Object s_RelayObject = null;
 
         /// <summary>
         /// Retrieves the last-set relay object and clears its reference to it.

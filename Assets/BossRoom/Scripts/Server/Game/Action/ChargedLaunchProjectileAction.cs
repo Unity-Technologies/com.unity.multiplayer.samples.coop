@@ -26,12 +26,12 @@ namespace BossRoom.Server
         /// - we were attacked,
         /// - or the maximum charge was reached.
         /// </summary>
-        private float m_StoppedChargingUpTime = 0;
+        float m_StoppedChargingUpTime = 0;
 
         /// <summary>
         /// Were we attacked while charging up? (If so, we won't actually fire.)
         /// </summary>
-        private bool m_HitByAttack = false;
+        bool m_HitByAttack = false;
 
         public ChargedLaunchProjectileAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -102,7 +102,7 @@ namespace BossRoom.Server
             StopChargingUp();
         }
 
-        private void StopChargingUp()
+        void StopChargingUp()
         {
             if (m_StoppedChargingUpTime == 0)
             {

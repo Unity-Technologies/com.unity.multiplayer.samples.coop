@@ -13,21 +13,21 @@ namespace BossRoom.Server
     {
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_PlayerPrefab;
+        NetworkObject m_PlayerPrefab;
 
         // note: this is temporary, for testing!
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_EnemyPrefab;
+        NetworkObject m_EnemyPrefab;
 
         // note: this is temporary, for testing!
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_BossPrefab;
+        NetworkObject m_BossPrefab;
 
         [SerializeField] [Tooltip("A collection of locations for spawning players")]
-        private Transform[] m_PlayerSpawnPoints;
-        private List<Transform> m_PlayerSpawnPointsList = null;
+        Transform[] m_PlayerSpawnPoints;
+        List<Transform> m_PlayerSpawnPointsList = null;
 
         // note: this is temporary, for testing!
         public override GameState ActiveState { get { return GameState.BossRoom; } }
@@ -38,14 +38,14 @@ namespace BossRoom.Server
         /// </summary>
         public event System.Action InitialSpawnEvent;
 
-        private LobbyResults m_LobbyResults;
+        LobbyResults m_LobbyResults;
 
-        private GameNetPortal m_NetPortal;
-        private ServerGameNetPortal m_ServerNetPortal;
+        GameNetPortal m_NetPortal;
+        ServerGameNetPortal m_ServerNetPortal;
 
         // Wait time constants for switching to post game after the game is won or lost
-        private const float k_WinDelay = 5.0f;
-        private const float k_LoseDelay = 2.5f;
+        const float k_WinDelay = 5.0f;
+        const float k_LoseDelay = 2.5f;
 
         /// <summary>
         /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select).
@@ -99,7 +99,7 @@ namespace BossRoom.Server
             }
         }
 
-        private bool DoInitialSpawnIfPossible()
+        bool DoInitialSpawnIfPossible()
         {
             if (m_ServerNetPortal.AreAllClientsInServerScene() && !InitialSpawnDone && m_NetPortal.NetManager.ConnectedClientsList.Count == m_LobbyResults.Choices.Count)
             {
@@ -114,15 +114,14 @@ namespace BossRoom.Server
             return false;
         }
 
-
-        private void OnClientSceneChanged(ulong clientId, int sceneIndex)
+        void OnClientSceneChanged(ulong clientId, int sceneIndex)
         {
             int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
             if( sceneIndex == serverScene )
             {
                 Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
                 //StartCoroutine(CoroTryToDoInitialSpawnAfterAWhile(clientId));
-                
+
                 bool didSpawn = DoInitialSpawnIfPossible();
 
                 if( !didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
@@ -133,11 +132,11 @@ namespace BossRoom.Server
                     //ServerBossRoomState.
                     SpawnPlayer(clientId);
                 }
-                
+
             }
         }
 
-        private IEnumerator CoroTryToDoInitialSpawnAfterAWhile(ulong clientId)
+        IEnumerator CoroTryToDoInitialSpawnAfterAWhile(ulong clientId)
         {
             yield return new WaitForSeconds(3);
             bool didSpawn = DoInitialSpawnIfPossible();
@@ -159,7 +158,7 @@ namespace BossRoom.Server
             m_NetPortal.ClientSceneChanged -= OnClientSceneChanged;
         }
 
-        private void SpawnPlayer(ulong clientId)
+        void SpawnPlayer(ulong clientId)
         {
             Transform spawnPoint = null;
 
@@ -194,7 +193,7 @@ namespace BossRoom.Server
         }
 
         // Every time a player's life state changes we check to see if game is over
-        private void OnHeroLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        void OnHeroLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
             // If this Hero is down, check the rest of the party also
             if (lifeState == LifeState.Fainted)
@@ -214,7 +213,7 @@ namespace BossRoom.Server
 
 
         // When the Boss dies, we also check to see if the game is over
-        private void OnBossLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        void OnBossLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
             if (lifeState == LifeState.Dead)
             {
@@ -223,7 +222,7 @@ namespace BossRoom.Server
             }
         }
 
-        private IEnumerator CoroGameOver(float wait, bool gameWon)
+        IEnumerator CoroGameOver(float wait, bool gameWon)
         {
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
@@ -235,7 +234,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Temp code to spawn an enemy
         /// </summary>
-        private void Update()
+        void Update()
         {
             if (Input.GetKeyDown(KeyCode.E))
             {

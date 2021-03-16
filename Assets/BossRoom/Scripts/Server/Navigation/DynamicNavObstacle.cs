@@ -8,14 +8,14 @@ namespace BossRoom.Server
     [RequireComponent(typeof(NavMeshObstacle))]
     public sealed class DynamicNavObstacle : MonoBehaviour
     {
-        private NavigationSystem m_NavigationSystem;
+        NavigationSystem m_NavigationSystem;
 
-        private void Awake()
+        void Awake()
         {
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
         }
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
@@ -26,12 +26,12 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnEnable()
+        void OnEnable()
         {
             m_NavigationSystem.OnDynamicObstacleEnabled();
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
             m_NavigationSystem.OnDynamicObstacleDisabled();
         }

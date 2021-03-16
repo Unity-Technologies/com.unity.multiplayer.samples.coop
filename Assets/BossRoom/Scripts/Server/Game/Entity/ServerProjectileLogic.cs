@@ -9,37 +9,37 @@ namespace BossRoom.Server
 
     public class ServerProjectileLogic : MLAPI.NetworkBehaviour
     {
-        private bool m_Started = false;
+        bool m_Started = false;
 
         [SerializeField]
-        private NetworkProjectileState m_NetState;
+        NetworkProjectileState m_NetState;
 
         [SerializeField]
-        private SphereCollider m_OurCollider;
+        SphereCollider m_OurCollider;
 
         /// <summary>
         /// The character that created us. Can be 0 to signal that we were created generically by the server.
         /// </summary>
-        private ulong m_SpawnerId;
+        ulong m_SpawnerId;
 
         /// <summary>
         /// The data for our projectile. Indicates speed, damage, etc.
         /// </summary>
-        private ActionDescription.ProjectileInfo m_ProjectileInfo;
+        ActionDescription.ProjectileInfo m_ProjectileInfo;
 
-        private const int k_MaxCollisions = 4;
-        private const float k_WallLingerSec = 2f; //time in seconds that arrows linger after hitting a target.
-        private const float k_EnemyLingerSec = 0.2f; //time after hitting an enemy that we persist.
-        private Collider[] m_CollisionCache = new Collider[k_MaxCollisions];
+        const int k_MaxCollisions = 4;
+        const float k_WallLingerSec = 2f; //time in seconds that arrows linger after hitting a target.
+        const float k_EnemyLingerSec = 0.2f; //time after hitting an enemy that we persist.
+        Collider[] m_CollisionCache = new Collider[k_MaxCollisions];
 
         /// <summary>
         /// Time when we should destroy this arrow, in Time.time seconds.
         /// </summary>
-        private float m_DestroyAtSec;
+        float m_DestroyAtSec;
 
-        private int m_CollisionMask;  //mask containing everything we test for while moving
-        private int m_BlockerMask;    //physics mask for things that block the arrow's flight.
-        private int m_NPCLayer;
+        int m_CollisionMask;  //mask containing everything we test for while moving
+        int m_BlockerMask;    //physics mask for things that block the arrow's flight.
+        int m_NPCLayer;
 
         /// <summary>
         /// List of everyone we've hit and dealt damage to.
@@ -49,12 +49,12 @@ namespace BossRoom.Server
         /// But that's fine by us! We use <c>m_HitTargets.Count</c> to tell us how many total enemies we've hit,
         /// so those nulls still count as hits.
         /// </remarks>
-        private List<GameObject> m_HitTargets = new List<GameObject>();
+        List<GameObject> m_HitTargets = new List<GameObject>();
 
         /// <summary>
         /// Are we done moving?
         /// </summary>
-        private bool m_IsDead;
+        bool m_IsDead;
 
         /// <summary>
         /// Set everything up based on provided projectile information.
@@ -85,7 +85,7 @@ namespace BossRoom.Server
             RefreshNetworkState();
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             if (!m_Started) { return; } //don't do anything before NetworkStart has run.
 
@@ -106,14 +106,14 @@ namespace BossRoom.Server
             RefreshNetworkState();
         }
 
-        private void RefreshNetworkState()
+        void RefreshNetworkState()
         {
             m_NetState.NetworkPosition.Value = transform.position;
             m_NetState.NetworkRotationY.Value = transform.eulerAngles.y;
             m_NetState.NetworkMovementSpeed.Value = m_ProjectileInfo.Speed_m_s;
         }
 
-        private void DetectCollisions()
+        void DetectCollisions()
         {
             Vector3 position = transform.localToWorldMatrix.MultiplyPoint(m_OurCollider.center);
             int numCollisions = Physics.OverlapSphereNonAlloc(position, m_OurCollider.radius, m_CollisionCache, m_CollisionMask);

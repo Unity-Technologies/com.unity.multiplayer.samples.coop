@@ -13,9 +13,9 @@ public class ServerSwitchedDoor : NetworkBehaviour
     [SerializeField]
     public List<NetworkFloorSwitchState> m_SwitchesThatOpenThisDoor;
 
-    private NetworkDoorState m_NetworkDoorState;
+    NetworkDoorState m_NetworkDoorState;
 
-    private void Awake()
+    void Awake()
     {
         m_NetworkDoorState = GetComponent<NetworkDoorState>();
 
@@ -31,7 +31,7 @@ public class ServerSwitchedDoor : NetworkBehaviour
         enabled = IsServer;
     }
 
-    private void Update()
+    void Update()
     {
         bool isAnySwitchOn = false;
         foreach (var floorSwitch in m_SwitchesThatOpenThisDoor)

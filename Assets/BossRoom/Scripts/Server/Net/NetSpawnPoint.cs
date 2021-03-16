@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using MLAPI;
 using UnityEngine;
@@ -17,10 +16,10 @@ namespace BossRoom.Server
         public NetworkObject SpawnedObject;
 
         [SerializeField]
-        private ServerBossRoomState BossRoomState;
+        ServerBossRoomState BossRoomState;
 
         [SerializeField]
-        private List<NetSpawnPoint> m_AuxiliarySpawns;
+        List<NetSpawnPoint> m_AuxiliarySpawns;
 
         public bool FireOnInitialSpawn = true;
 
@@ -45,7 +44,7 @@ namespace BossRoom.Server
             BossRoomState.InitialSpawnEvent -= OnInitialSpawn;
         }
 
-        private void OnInitialSpawn()
+        void OnInitialSpawn()
         {
             if( SpawnedObject != null )
             {

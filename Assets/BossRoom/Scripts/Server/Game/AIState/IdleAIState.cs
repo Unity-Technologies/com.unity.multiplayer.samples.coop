@@ -4,7 +4,7 @@ namespace BossRoom.Server
 {
     public class IdleAIState : AIState
     {
-        private AIBrain m_Brain;
+        AIBrain m_Brain;
 
         public IdleAIState(AIBrain brain)
         {

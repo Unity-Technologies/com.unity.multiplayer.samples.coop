@@ -1,5 +1,4 @@
 using MLAPI;
-using System.Collections.Generic;
 using MLAPI.Spawning;
 using UnityEngine;
 
@@ -24,7 +23,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Cached reference to a component in Parent
         /// </summary>
-        private ServerCharacterMovement m_Movement;
+        ServerCharacterMovement m_Movement;
 
         /// <summary>
         /// Set once we've stopped charging up, for any reason:
@@ -32,7 +31,7 @@ namespace BossRoom.Server
         /// - we were attacked,
         /// - or the maximum charge was reached.
         /// </summary>
-        private float m_StoppedChargingUpTime = 0;
+        float m_StoppedChargingUpTime = 0;
 
         public ChargedShieldAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -115,7 +114,7 @@ namespace BossRoom.Server
             StopChargingUp();
         }
 
-        private void StopChargingUp()
+        void StopChargingUp()
         {
             if (m_StoppedChargingUpTime == 0)
             {

@@ -14,7 +14,7 @@ namespace BossRoom.Server
     {
         public TargetAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
-        private ServerCharacterMovement m_Movement;
+        ServerCharacterMovement m_Movement;
 
         public override bool Start()
         {
@@ -57,13 +57,13 @@ namespace BossRoom.Server
             }
         }
 
-        private ulong TargetId { get { return Data.TargetIds[0]; } }
+        ulong TargetId { get { return Data.TargetIds[0]; } }
 
         /// <summary>
         /// Only call this after validating the target via IsValidTarget.
         /// </summary>
         /// <param name="targetId"></param>
-        private void FaceTarget(ulong targetId)
+        void FaceTarget(ulong targetId)
         {
             if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject targetObject))
             {

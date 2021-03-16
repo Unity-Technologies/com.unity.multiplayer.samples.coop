@@ -26,29 +26,29 @@ namespace BossRoom.Server
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
-        private bool m_BrainEnabled = true;
+        bool m_BrainEnabled = true;
 
         [SerializeField]
         [Tooltip("Setting negative value disables destroying object after it is killed.")]
-        private float m_KilledDestroyDelaySeconds = 3.0f;
+        float m_KilledDestroyDelaySeconds = 3.0f;
 
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
-        private ActionType m_StartingAction = ActionType.None;
+        ActionType m_StartingAction = ActionType.None;
 
-        private ActionPlayer m_ActionPlayer;
-        private AIBrain m_AIBrain;
+        ActionPlayer m_ActionPlayer;
+        AIBrain m_AIBrain;
 
         // Cached component reference
-        private ServerCharacterMovement m_Movement;
+        ServerCharacterMovement m_Movement;
 
         /// <summary>
         /// Temp place to store all the active characters (to avoid having to
         /// perform insanely-expensive GameObject.Find operations during Update)
         /// </summary>
-        private static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
+        static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
 
-        private void Awake()
+        void Awake()
         {
             m_Movement = GetComponent<ServerCharacterMovement>();
 
@@ -60,12 +60,12 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnEnable()
+        void OnEnable()
         {
             s_ActiveServerCharacters.Add(this);
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
             s_ActiveServerCharacters.Remove(this);
         }
@@ -125,7 +125,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnClientMoveRequest(Vector3 targetPosition)
+        void OnClientMoveRequest(Vector3 targetPosition)
         {
             if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
@@ -134,7 +134,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
             if (lifeState != LifeState.Alive)
             {
@@ -151,7 +151,7 @@ namespace BossRoom.Server
             m_ActionPlayer.ClearActions(alsoClearNonBlockingActions);
         }
 
-        private void OnActionPlayRequest(ActionRequestData data)
+        void OnActionPlayRequest(ActionRequestData data)
         {
             if (!GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].IsFriendly)
             {
@@ -257,7 +257,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
+        void OnCollisionEnter(Collision collision)
         {
             if (m_ActionPlayer != null)
             {
@@ -265,7 +265,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnStoppedChargingUp()
+        void OnStoppedChargingUp()
         {
             m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }

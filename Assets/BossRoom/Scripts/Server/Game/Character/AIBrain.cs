@@ -10,18 +10,18 @@ namespace BossRoom.Server
     /// </summary>
     public class AIBrain
     {
-        private enum AIStateType
+        enum AIStateType
         {
             ATTACK,
             //WANDER,
             IDLE,
         }
 
-        private ServerCharacter m_ServerCharacter;
-        private ActionPlayer m_ActionPlayer;
-        private AIStateType m_CurrentState;
-        private Dictionary<AIStateType, AIState> m_Logics;
-        private List<ServerCharacter> m_HatedEnemies;
+        ServerCharacter m_ServerCharacter;
+        ActionPlayer m_ActionPlayer;
+        AIStateType m_CurrentState;
+        Dictionary<AIStateType, AIState> m_Logics;
+        List<ServerCharacter> m_HatedEnemies;
 
         public AIBrain(ServerCharacter me, ActionPlayer myActionPlayer)
         {
@@ -65,7 +65,7 @@ namespace BossRoom.Server
             }
         }
 
-        private AIStateType FindBestEligibleAIState()
+        AIStateType FindBestEligibleAIState()
         {
             // for now we assume the AI states are in order of appropriateness,
             // which may be nonsensical when there are more states

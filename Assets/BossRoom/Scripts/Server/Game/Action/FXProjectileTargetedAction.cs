@@ -13,9 +13,9 @@ namespace BossRoom.Server
     /// </summary>
     public class FXProjectileTargetedAction : Action
     {
-        private bool m_ImpactedTarget;
-        private float m_TimeUntilImpact;
-        private IDamageable m_Target;
+        bool m_ImpactedTarget;
+        float m_TimeUntilImpact;
+        IDamageable m_Target;
 
         public FXProjectileTargetedAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -61,7 +61,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Are we even supposed to have a target? (If not, we're representing a "missed" bolt that just hits nothing.)
         /// </summary>
-        private bool HasTarget()
+        bool HasTarget()
         {
             return Data.TargetIds != null && Data.TargetIds.Length > 0;
         }
@@ -69,7 +69,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Returns our intended target, or null if not found/no target.
         /// </summary>
-        private IDamageable GetTarget()
+        IDamageable GetTarget()
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {

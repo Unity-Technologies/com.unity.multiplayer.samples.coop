@@ -19,7 +19,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Whether all paths need to be recalculated in the next fixed update.
         /// </summary>
-        private bool m_NavMeshChanged;
+        bool m_NavMeshChanged;
 
         public void OnDynamicObstacleDisabled()
         {
@@ -31,7 +31,7 @@ namespace BossRoom.Server
             m_NavMeshChanged = true;
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             // This is done in fixed update to make sure that only one expensive global recalculation happens per fixed update.
             if (m_NavMeshChanged)
@@ -41,7 +41,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnValidate()
+        void OnValidate()
         {
             Assert.AreEqual(NavigationSystemTag, tag, $"The GameObject of the {nameof(NavigationSystem)} component has to use the {NavigationSystem.NavigationSystemTag} tag!");
         }

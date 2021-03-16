@@ -1,5 +1,4 @@
 using MLAPI;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -11,14 +10,14 @@ using UnityEngine;
 [RequireComponent(typeof(NetworkFloorSwitchState))]
 public class ServerFloorSwitch : NetworkBehaviour
 {
-    private Collider m_Collider;
-    private NetworkFloorSwitchState m_FloorSwitchState;
-    private int m_CachedPlayerLayerIdx;
-    private int m_CachedHeavyObjectLayerIdx;
+    Collider m_Collider;
+    NetworkFloorSwitchState m_FloorSwitchState;
+    int m_CachedPlayerLayerIdx;
+    int m_CachedHeavyObjectLayerIdx;
 
-    private List<Collider> m_RelevantCollidersInTrigger = new List<Collider>();
+    List<Collider> m_RelevantCollidersInTrigger = new List<Collider>();
 
-    private void Awake()
+    void Awake()
     {
         m_Collider = GetComponent<Collider>();
         m_Collider.isTrigger = true;
@@ -41,12 +40,12 @@ public class ServerFloorSwitch : NetworkBehaviour
         }
     }
 
-    private bool IsColliderAbleToTriggerSwitch(Collider collider)
+    bool IsColliderAbleToTriggerSwitch(Collider collider)
     {
         return collider.gameObject.layer == m_CachedPlayerLayerIdx || collider.gameObject.layer == m_CachedHeavyObjectLayerIdx;
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerEnter(Collider other)
     {
         if (IsColliderAbleToTriggerSwitch(other))
         {
@@ -55,13 +54,13 @@ public class ServerFloorSwitch : NetworkBehaviour
         }
     }
 
-    private void OnTriggerExit(Collider other)
+    void OnTriggerExit(Collider other)
     {
         m_RelevantCollidersInTrigger.Remove(other);
         m_FloorSwitchState.IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         // it's possible that the Colliders in our trigger have been destroyed, while still inside our trigger.
         // In this case, OnTriggerExit() won't get called for them! We can tell if a Collider was destroyed

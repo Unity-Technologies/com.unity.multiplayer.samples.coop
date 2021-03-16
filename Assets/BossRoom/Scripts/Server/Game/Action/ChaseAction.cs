@@ -6,8 +6,8 @@ namespace BossRoom.Server
 {
     public class ChaseAction : Action
     {
-        private NetworkObject m_Target;
-        private ServerCharacterMovement m_Movement;
+        NetworkObject m_Target;
+        ServerCharacterMovement m_Movement;
 
         public ChaseAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
@@ -48,7 +48,7 @@ namespace BossRoom.Server
         /// Returns true if our ActionRequestData came with a valid target. For the ChaseAction, this is pretty liberal (could be friend or foe, could be
         /// dead or alive--just needs to be present).
         /// </summary>
-        private bool HasValidTarget()
+        bool HasValidTarget()
         {
             return m_Data.TargetIds != null &&
                    m_Data.TargetIds.Length > 0 &&
@@ -58,7 +58,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Tests to see if we've reached our target. Returns true if we've reached our target, false otherwise (in which case it also stops our movement).
         /// </summary>
-        private bool StopIfDone()
+        bool StopIfDone()
         {
             float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
             if ((m_Data.Amount * m_Data.Amount) > distToTarget2)

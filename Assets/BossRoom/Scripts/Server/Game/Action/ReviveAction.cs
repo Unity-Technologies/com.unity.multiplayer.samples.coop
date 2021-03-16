@@ -5,8 +5,8 @@ namespace BossRoom.Server
 {
     public class ReviveAction : Action
     {
-        private bool m_ExecFired;
-        private ServerCharacter m_TargetCharacter;
+        bool m_ExecFired;
+        ServerCharacter m_TargetCharacter;
 
         public ReviveAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {

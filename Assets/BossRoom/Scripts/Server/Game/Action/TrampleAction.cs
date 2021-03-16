@@ -17,7 +17,7 @@ namespace BossRoom.Server
         /// <summary>
         /// This is an internal indicator of which stage of the Action we're in.
         /// </summary>
-        private enum ActionStage
+        enum ActionStage
         {
             Windup,     // performing animations prior to actually moving
             Charging,   // running across the screen and hitting characters
@@ -28,27 +28,27 @@ namespace BossRoom.Server
         /// <summary>
         /// Our ActionStage, as of last Update
         /// </summary>
-        private ActionStage m_PreviousStage;
+        ActionStage m_PreviousStage;
 
         /// <summary>
         /// Cached reference to a component in Parent
         /// </summary>
-        private ServerCharacterMovement m_Movement;
+        ServerCharacterMovement m_Movement;
 
         /// <summary>
         /// Keeps track of which Colliders we've already hit, so that our attack doesn't hit the same character twice.
         /// </summary>
-        private HashSet<Collider> m_CollidedAlready = new HashSet<Collider>();
+        HashSet<Collider> m_CollidedAlready = new HashSet<Collider>();
 
         /// <summary>
         /// When we begin our charge-attack, anyone within this range is treated as having already been touching us.
         /// </summary>
-        private const float k_PhysicalTouchDistance = 1;
+        const float k_PhysicalTouchDistance = 1;
 
         /// <summary>
         /// Set to true in the special-case scenario where we are stunned by one of the characters we tried to trample
         /// </summary>
-        private bool m_WasStunned;
+        bool m_WasStunned;
 
         public TrampleAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -71,7 +71,7 @@ namespace BossRoom.Server
             return true;
         }
 
-        private ActionStage GetCurrentStage()
+        ActionStage GetCurrentStage()
         {
             float timeSoFar = Time.time - TimeStarted;
             if (timeSoFar < Description.ExecTimeSeconds)
@@ -110,7 +110,7 @@ namespace BossRoom.Server
         /// and further collisions with other victims will also have no effect.
         /// </summary>
         /// <param name="victim">The character we've collided with</param>
-        private void CollideWithVictim(ServerCharacter victim)
+        void CollideWithVictim(ServerCharacter victim)
         {
             if (victim == m_Parent)
             {
@@ -175,7 +175,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void SimulateCollisionWithNearbyFoes()
+        void SimulateCollisionWithNearbyFoes()
         {
             // We don't get OnCollisionEnter() calls for things that are already collided with us!
             // So when we start charging across the screen, we check to see what's already touching us

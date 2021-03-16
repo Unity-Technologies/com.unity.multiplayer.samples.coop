@@ -14,12 +14,12 @@ namespace BossRoom.Server
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
 
-        private void Awake()
+        void Awake()
         {
             CharSelectData = GetComponent<CharSelectData>();
         }
 
-        private void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
+        void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
         {
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
@@ -72,7 +72,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Returns the index of a client in the master LobbyPlayer list, or -1 if not found
         /// </summary>
-        private int FindLobbyPlayerIdx(ulong clientId)
+        int FindLobbyPlayerIdx(ulong clientId)
         {
             for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
@@ -86,7 +86,7 @@ namespace BossRoom.Server
         /// Looks through all our connections and sees if everyone has locked in their choice;
         /// if so, we lock in the whole lobby, save state, and begin the transition to gameplay
         /// </summary>
-        private void CloseLobbyIfReady()
+        void CloseLobbyIfReady()
         {
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
@@ -104,7 +104,7 @@ namespace BossRoom.Server
             StartCoroutine(CoroEndLobby());
         }
 
-        private void SaveLobbyResults()
+        void SaveLobbyResults()
         {
             LobbyResults lobbyResults = new LobbyResults();
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
@@ -116,7 +116,7 @@ namespace BossRoom.Server
             GameStateRelay.SetRelayObject(lobbyResults);
         }
 
-        private IEnumerator CoroEndLobby()
+        IEnumerator CoroEndLobby()
         {
             yield return new WaitForSeconds(3);
             MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("BossRoom");
@@ -163,7 +163,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnClientConnected(ulong clientId)
+        void OnClientConnected(ulong clientId)
         {
             // FIXME: here we work around another MLAPI bug when starting up scenes with in-scene networked objects.
             // We'd like to immediately give the new client a slot in our lobby, but if we try to send an RPC to the
@@ -185,7 +185,7 @@ namespace BossRoom.Server
             //AssignNewLobbyIndex(clientId);
         }
 
-        private IEnumerator CoroWorkAroundMlapiBug(ulong clientId)
+        IEnumerator CoroWorkAroundMlapiBug(ulong clientId)
         {
             var client = NetworkManager.Singleton.ConnectedClients[clientId];
 
@@ -198,7 +198,7 @@ namespace BossRoom.Server
             SeatNewPlayer(clientId);
         }
 
-        private int GetAvailablePlayerNum()
+        int GetAvailablePlayerNum()
         {
             for (int possiblePlayerNum = 0; possiblePlayerNum < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNum)
             {
@@ -220,7 +220,7 @@ namespace BossRoom.Server
             return -1;
         }
 
-        private void SeatNewPlayer(ulong clientId)
+        void SeatNewPlayer(ulong clientId)
         {
             int playerNum = GetAvailablePlayerNum();
             if (playerNum == -1)
@@ -237,7 +237,7 @@ namespace BossRoom.Server
             CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
         }
 
-        private void OnClientDisconnectCallback(ulong clientId)
+        void OnClientDisconnectCallback(ulong clientId)
         {
             // clear this client's PlayerNumber and any associated visuals (so other players know they're gone).
             for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)

@@ -1,8 +1,6 @@
 using BossRoom;
 using BossRoom.Server;
-using MLAPI;
 using MLAPI.Spawning;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
@@ -50,7 +48,7 @@ public class AoeAction : Action
         return ActionConclusion.Continue;
     }
 
-    private void PerformAoE()
+    void PerformAoE()
     {
         // Note: could have a non alloc version of this overlap sphere where we statically store our collider array, but since this is a self
         // destroyed object, the complexity added to have a static pool of colliders that could be called by multiplayer players at the same time

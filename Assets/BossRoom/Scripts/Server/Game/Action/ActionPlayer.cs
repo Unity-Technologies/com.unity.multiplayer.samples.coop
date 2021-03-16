@@ -9,21 +9,21 @@ namespace BossRoom.Server
     /// </summary>
     public class ActionPlayer
     {
-        private ServerCharacter m_Parent;
+        ServerCharacter m_Parent;
 
-        private List<Action> m_Queue;
+        List<Action> m_Queue;
 
-        private List<Action> m_NonBlockingActions;
+        List<Action> m_NonBlockingActions;
 
         /// <summary>
         /// To prevent the action queue from growing without bound, we cap its play time to this number of seconds. We can only ever estimate
         /// the time-length of the queue, since actions are allowed to block indefinitely. But this is still a useful estimate that prevents
         /// us from piling up a large number of small actions. 
         /// </summary>
-        private const float k_MaxQueueTimeDepth = 1.6f;
+        const float k_MaxQueueTimeDepth = 1.6f;
 
-        private ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
-        private bool m_HasPendingSynthesizedAction;
+        ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
+        bool m_HasPendingSynthesizedAction;
 
         public ActionPlayer(ServerCharacter parent)
         {
@@ -105,7 +105,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Starts the action at the head of the queue, if any.
         /// </summary>
-        private void StartAction()
+        void StartAction()
         {
             if (m_Queue.Count > 0)
             {
@@ -136,7 +136,7 @@ namespace BossRoom.Server
         /// and must have the ShouldClose flag set). This method must not be called when the queue is empty.
         /// </summary>
         /// <returns>The new index of the Action being operated on.</returns>
-        private int SynthesizeChaseIfNecessary(int baseIndex)
+        int SynthesizeChaseIfNecessary(int baseIndex)
         {
             Action baseAction = m_Queue[baseIndex];
 
@@ -161,7 +161,7 @@ namespace BossRoom.Server
         /// </summary>
         /// <param name="baseIndex">The new index of the base action in m_Queue</param>
         /// <returns></returns>
-        private int SynthesizeTargetIfNecessary(int baseIndex )
+        int SynthesizeTargetIfNecessary(int baseIndex )
         {
             Action baseAction = m_Queue[baseIndex];
             var targets = baseAction.Data.TargetIds;
@@ -191,7 +191,7 @@ namespace BossRoom.Server
         /// Optionally end the currently playing action, and advance to the next Action that wants to play.
         /// </summary>
         /// <param name="endRemoved">if true we call End on the removed element.</param>
-        private void AdvanceQueue(bool endRemoved)
+        void AdvanceQueue(bool endRemoved)
         {
             if (m_Queue.Count > 0)
             {
@@ -256,7 +256,7 @@ namespace BossRoom.Server
         /// Calls a given Action's Update() and decides if the action is still alive.
         /// </summary>
         /// <returns>true if the action is still active, false if it's dead</returns>
-        private bool UpdateAction(Action action)
+        bool UpdateAction(Action action)
         {
             bool keepGoing = action.Update();
             bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
@@ -271,7 +271,7 @@ namespace BossRoom.Server
         /// which is different from each Action's duration. Note that this is an ESTIMATE. An action may block the queue indefinitely if it wishes. 
         /// </summary>
         /// <returns>The total "time depth" of the queue, or how long it would take to play in seconds, if no more actions were added. </returns>
-        private float GetQueueTimeDepth()
+        float GetQueueTimeDepth()
         {
             if(m_Queue.Count == 0 ) { return 0;  }
 
