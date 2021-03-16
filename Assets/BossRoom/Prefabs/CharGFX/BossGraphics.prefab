@@ -2002,9 +2002,6 @@ MonoBehaviour:
   TargetReticule: {fileID: 0}
   ReticuleFriendlyMat: {fileID: 0}
   ReticuleHostileMat: {fileID: 0}
-  MinZoomDistance: 3
-  MaxZoomDistance: 30
-  ZoomSpeed: 3
 --- !u!114 &4538447335436592133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2021,7 +2018,7 @@ MonoBehaviour:
   m_EventsOnNodeEntry:
   - m_AnimatorNodeName: Action - Boss Trample
     m_AnimatorNodeNameHash: -1491039896
-    m_Prefab: {fileID: 0}
+    m_Prefab: {fileID: -1433333703484781611, guid: 1333b84cd80da3e4a820009415068d44, type: 3}
     m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_SoundEffect: {fileID: 8300000, guid: a3d48c8599f0d584abc8ea603587d496, type: 3}
@@ -2046,6 +2043,24 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 1
+  - m_AnimatorNodeName: Stunned
+    m_AnimatorNodeNameHash: -449490811
+    m_Prefab: {fileID: -7841978760598146115, guid: 1fab07feb34d8c94c96944f0124d92e3, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 3d6f2e33acb1e8f4b9d829e245c62e16, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: HitReact1
+    m_AnimatorNodeNameHash: -1747783153
+    m_Prefab: {fileID: -2843690008440830094, guid: de5b665e7f32274419072e7bf4c3eff8, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 5ef809d665d13b245b559cd6170f5794, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
   m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: 6900827550167648780}
@@ -2262,6 +2277,8 @@ MonoBehaviour:
   m_WalkFootstepVolume: 1
   m_RunFootstepAudioClip: {fileID: 8300000, guid: 81079ef149d08774ab3eadab80944fa0, type: 3}
   m_RunFootstepVolume: 1
+  m_WalkingPoint: 0.6
+  m_SilentPoint: 0.3
 --- !u!82 &-2129752889114835779
 AudioSource:
   m_ObjectHideFlags: 0

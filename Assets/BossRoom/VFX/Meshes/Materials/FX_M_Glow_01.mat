@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_Glow_01
-  m_Shader: {fileID: 4800000, guid: 1ceafe4dae085734190c6d13802572bf, type: 3}
+  m_Shader: {fileID: 4800000, guid: 92acdc5c2ae81ee47b1ba8034940b7e2, type: 3}
   m_ShaderKeywords: _SWITCH_ALPHA_ON _USE_ALPHA_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
