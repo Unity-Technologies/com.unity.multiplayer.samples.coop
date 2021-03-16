@@ -7,7 +7,7 @@ namespace BossRoom.Visual
     {
         protected float m_StartTime;
 
-        private void Start()
+        void Start()
         {
             // get our particle near the right spot!
             transform.position = m_PlayerOwner.transform.position;
@@ -25,7 +25,7 @@ namespace BossRoom.Visual
             m_PlayerOwner.RecvDoActionServerRPC(data);
         }
 
-        private void Update()
+        void Update()
         {
             // FIXME: this is necessary to ensure the GameObject is destroyed, because clicking on the buttons
             // in the UI only sends one event, onClick. The buttons need to send separate "button down" and

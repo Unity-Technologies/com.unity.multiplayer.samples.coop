@@ -12,31 +12,31 @@ namespace BossRoom.Visual
     {
         // All buttons in this action bar
         [SerializeField]
-        private Button[] m_Buttons;
+        Button[] m_Buttons;
 
         // The Emote panel will be enabled or disabled when clicking the last button
         [SerializeField]
-        private GameObject m_EmotePanel;
+        GameObject m_EmotePanel;
 
-        private BossRoom.Client.ClientInputSender m_InputSender;
+        BossRoom.Client.ClientInputSender m_InputSender;
 
         // Currently we manually configure icons from the Material arrays stored on this class, and we select which array to use
         //from the CharacterClass inferred from the registered player GameObject. Eventually this can change so it is driven by
         //the data for each skill instead. Current logic will be better for demos until skills are fully implemented with icon data. 
-        private CharacterClass m_CharacterData;
+        CharacterClass m_CharacterData;
 
         // allow icons for each class to be configured
         [SerializeField]
-        private Sprite[] m_TankIcons;
+        Sprite[] m_TankIcons;
 
         [SerializeField]
-        private Sprite[] m_ArcherIcons;
+        Sprite[] m_ArcherIcons;
 
         [SerializeField]
-        private Sprite[] m_RogueIcons;
+        Sprite[] m_RogueIcons;
 
         [SerializeField]
-        private Sprite[] m_MageIcons;
+        Sprite[] m_MageIcons;
 
         public void RegisterInputSender(Client.ClientInputSender inputSender)
         {
@@ -50,7 +50,7 @@ namespace BossRoom.Visual
             SetPlayerType(m_CharacterData.CharacterType);
         }
 
-        private void SetPlayerType(CharacterTypeEnum playerType)
+        void SetPlayerType(CharacterTypeEnum playerType)
         {
             if (playerType == CharacterTypeEnum.Tank)
             {

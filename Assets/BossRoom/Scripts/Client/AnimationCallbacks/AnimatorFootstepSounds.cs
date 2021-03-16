@@ -18,45 +18,45 @@ namespace BossRoom.Visual
     {
         [SerializeField]
         [Tooltip("The Animator we'll track")]
-        private Animator m_Animator;
+        Animator m_Animator;
 
         [SerializeField]
         [Tooltip("A Float parameter on the Animator, with values between 0 (stationary) and 1 (full movement).")]
-        private string m_AnimatorVariable;
+        string m_AnimatorVariable;
 
         [SerializeField]
         [HideInInspector] // this is maintained via OnValidate() in the editor
-        private int m_AnimatorVariableHash;
+        int m_AnimatorVariableHash;
 
         [SerializeField]
         [Tooltip("The AudioSource we'll use for looped footstep sounds.")]
-        private AudioSource m_AudioSource;
+        AudioSource m_AudioSource;
 
         [SerializeField]
         [Tooltip("Loopable audio of the character's footsteps moving at walking speed")]
-        private AudioClip m_WalkFootstepAudioClip;
+        AudioClip m_WalkFootstepAudioClip;
 
         [SerializeField]
         [Tooltip("Relative volume to play the clip at")]
-        private float m_WalkFootstepVolume = 1;
+        float m_WalkFootstepVolume = 1;
 
         [SerializeField]
         [Tooltip("Loopable audio of the character's footsteps moving at running speed")]
-        private AudioClip m_RunFootstepAudioClip;
+        AudioClip m_RunFootstepAudioClip;
 
         [SerializeField]
         [Tooltip("Relative volume to play the clip at")]
-        private float m_RunFootstepVolume = 1;
+        float m_RunFootstepVolume = 1;
 
         [SerializeField]
         [Tooltip("At what point do we switch from running sounds to walking? From 0 (stationary) to 1 (full sprint)")]
-        private float m_WalkingPoint = 0.6f;
+        float m_WalkingPoint = 0.6f;
 
         [SerializeField]
         [Tooltip("At what point do we switch from walking sounds to no sounds? From 0 (stationary) to 1 (full sprint)")]
-        private float m_SilentPoint = 0.3f;
+        float m_SilentPoint = 0.3f;
 
-        private void Update()
+        void Update()
         {
             if (!m_Animator || !m_AudioSource || !m_WalkFootstepAudioClip || !m_RunFootstepAudioClip || m_AnimatorVariableHash == 0)
             {
@@ -105,7 +105,7 @@ namespace BossRoom.Visual
         /// (This way we don't have to call Animator.StringToHash() at runtime.)
         /// Also auto-initializes variables when possible.
         /// </summary>
-        private void OnValidate()
+        void OnValidate()
         {
             m_AnimatorVariableHash = Animator.StringToHash(m_AnimatorVariable);
 

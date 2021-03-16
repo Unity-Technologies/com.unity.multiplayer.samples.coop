@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BossRoom.Scripts.Editor;
 using MLAPI;
 using MLAPI.Messaging;
 using UnityEngine;
@@ -57,13 +58,13 @@ namespace BossRoom
             {
                 CreateNetworkStatsText();
             }
-            m_PongClientParams = new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } };
+            m_PongClientParams = new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { OwnerClientId } } };
         }
 
         // Creating a UI text object and add it to NetworkOverlay canvas
         void CreateNetworkStatsText()
         {
-            Assert.IsNotNull(Scripts.Editor.NetworkOverlay.Instance,
+            Assert.IsNotNull(NetworkOverlay.Instance,
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
             m_NetworkStatsText = new GameObject("UI Stat Text");
@@ -76,7 +77,7 @@ namespace BossRoom
             m_TextStat.resizeTextForBestFit = true;
 
             var rectTransform = m_NetworkStatsText.GetComponent<RectTransform>();
-            Scripts.Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
+            NetworkOverlay.Instance.AddToUI(rectTransform);
         }
 
         void FixedUpdate()

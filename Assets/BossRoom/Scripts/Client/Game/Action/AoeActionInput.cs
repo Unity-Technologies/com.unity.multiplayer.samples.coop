@@ -12,10 +12,10 @@ namespace BossRoom.Visual
     public class AoeActionInput : BaseActionInput
     {
         [SerializeField]
-        private GameObject m_InRangeVisualization;
+        GameObject m_InRangeVisualization;
 
         [SerializeField]
-        private GameObject m_OutOfRangeVisualization;
+        GameObject m_OutOfRangeVisualization;
 
         Camera m_Camera;
         int m_GroundLayerMask;

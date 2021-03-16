@@ -8,14 +8,14 @@ namespace BossRoom.Visual
     {
         [SerializeField]
         [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
-        private SpecialFXGraphic m_OnHitParticlePrefab;
+        SpecialFXGraphic m_OnHitParticlePrefab;
 
         NetworkProjectileState m_NetState;
         Transform m_Parent;
 
-        private const float k_MaxTurnRateDegreesSecond = 280;
+        const float k_MaxTurnRateDegreesSecond = 280;
 
-        private float m_SmoothedSpeed;
+        float m_SmoothedSpeed;
 
         public override void NetworkStart()
         {
@@ -42,7 +42,7 @@ namespace BossRoom.Visual
             VisualUtils.SmoothMove(transform, m_Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxTurnRateDegreesSecond);
         }
 
-        private void OnEnemyHit(ulong enemyId)
+        void OnEnemyHit(ulong enemyId)
         {
             //in the future we could do quite fancy things, like deparenting the Graphics Arrow and parenting it to the target.
             //For the moment we play some particles (optionally), and cause the target to animate a hit-react.

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,14 +8,14 @@ namespace BossRoom
     {
         [Tooltip("All CharacterClass data should be slotted in here")]
         [SerializeField]
-        private CharacterClass[] m_CharacterData;
+        CharacterClass[] m_CharacterData;
 
         [Tooltip("All ActionDescription data should be slotted in here")]
         [SerializeField]
-        private ActionDescription[] m_ActionData;
+        ActionDescription[] m_ActionData;
 
-        private Dictionary<CharacterTypeEnum, CharacterClass> m_CharacterDataMap;
-        private Dictionary<ActionType, ActionDescription> m_ActionDataMap;
+        Dictionary<CharacterTypeEnum, CharacterClass> m_CharacterDataMap;
+        Dictionary<ActionType, ActionDescription> m_ActionDataMap;
 
         /// <summary>
         /// static accessor for all GameData.
@@ -35,7 +36,7 @@ namespace BossRoom
                     {
                         if( m_CharacterDataMap.ContainsKey(data.CharacterType))
                         {
-                            throw new System.Exception($"Duplicate character definition detected: {data.CharacterType}");
+                            throw new Exception($"Duplicate character definition detected: {data.CharacterType}");
                         }
                         m_CharacterDataMap[data.CharacterType] = data;
                     }
@@ -58,7 +59,7 @@ namespace BossRoom
                     {
                         if (m_ActionDataMap.ContainsKey(data.ActionTypeEnum))
                         {
-                            throw new System.Exception($"Duplicate action definition detected: {data.ActionTypeEnum}");
+                            throw new Exception($"Duplicate action definition detected: {data.ActionTypeEnum}");
                         }
                         m_ActionDataMap[data.ActionTypeEnum] = data;
                     }
@@ -67,11 +68,11 @@ namespace BossRoom
             }
         }
 
-        private void Awake()
+        void Awake()
         {
             if (Instance != null)
             {
-                throw new System.Exception("Multiple GameDataSources defined!");
+                throw new Exception("Multiple GameDataSources defined!");
             }
 
             DontDestroyOnLoad(gameObject);

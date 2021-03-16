@@ -13,12 +13,12 @@ namespace BossRoom.Client
     [RequireComponent(typeof(GameNetPortal))]
     public class ClientGameNetPortal : MonoBehaviour
     {
-        private GameNetPortal m_Portal;
+        GameNetPortal m_Portal;
 
         /// <summary>
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
-        private const int k_TimeoutDuration = 10;
+        const int k_TimeoutDuration = 10;
 
         public event Action<ConnectStatus> ConnectFinished;
 
@@ -36,7 +36,7 @@ namespace BossRoom.Client
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
 
-        private void NetworkStart()
+        void NetworkStart()
         {
             if (!m_Portal.NetManager.IsClient)
             {
@@ -51,7 +51,7 @@ namespace BossRoom.Client
             }
         }
 
-        private void OnConnectFinished(ConnectStatus status)
+        void OnConnectFinished(ConnectStatus status)
         {
             //on success, there is nothing to do (the MLAPI scene management system will take us to the next scene).
             //on failure, we must raise an event so that the UI layer can display something.
@@ -60,7 +60,7 @@ namespace BossRoom.Client
             ConnectFinished?.Invoke(status);
         }
 
-        private void OnDisconnectOrTimeout(ulong clientID)
+        void OnDisconnectOrTimeout(ulong clientID)
         {
             //On a client disconnect we want to take them back to the main menu.
             //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
@@ -79,7 +79,7 @@ namespace BossRoom.Client
         /// Either loads a Guid string from Unity preferences, or creates one and checkpoints it, then returns it.
         /// </summary>
         /// <returns>The Guid that uniquely identifies this client install, in string form. </returns>
-        private static string GetOrCreateGuid()
+        static string GetOrCreateGuid()
         {
             if (PlayerPrefs.HasKey("client_guid"))
             {
@@ -149,7 +149,7 @@ namespace BossRoom.Client
             ConnectClient(portal);
         }
 
-        private static void ConnectClient(GameNetPortal portal)
+        static void ConnectClient(GameNetPortal portal)
         {
             var clientGuid = GetOrCreateGuid();
             //var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.

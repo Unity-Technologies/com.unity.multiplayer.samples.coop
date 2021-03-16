@@ -1,8 +1,7 @@
+using System;
 using MLAPI;
-using MLAPI.NetworkVariable;
-using MLAPI.Serialization.Pooled;
-using System.IO;
 using MLAPI.Messaging;
+using MLAPI.NetworkVariable;
 using UnityEngine;
 
 namespace BossRoom
@@ -24,7 +23,7 @@ namespace BossRoom
         /// <summary>
         /// This event is raised when the arrow hit an enemy. The argument is the NetworkObjectId of the enemy.
         /// </summary>
-        public System.Action<ulong> HitEnemyEvent;
+        public Action<ulong> HitEnemyEvent;
 
         /// <summary>
         /// The networked rotation of this Character. This reflects the authorative rotation on the server.

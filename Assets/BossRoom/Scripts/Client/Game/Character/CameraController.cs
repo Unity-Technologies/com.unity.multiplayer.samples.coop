@@ -6,14 +6,14 @@ namespace BossRoom.Visual
 {
     public class CameraController : MonoBehaviour
     {
-        private CinemachineFreeLook m_MainCamera;
+        CinemachineFreeLook m_MainCamera;
 
         void Start()
         {
             AttachCamera();
         }
 
-        private void AttachCamera()
+        void AttachCamera()
         {
             m_MainCamera = GameObject.FindObjectOfType<CinemachineFreeLook>();
             Assert.IsNotNull(m_MainCamera, "CameraController.AttachCamera: Couldn't find gameplay freelook camera");

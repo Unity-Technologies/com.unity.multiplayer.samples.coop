@@ -1,7 +1,7 @@
+using System;
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
-using System;
 using UnityEngine;
 
 namespace BossRoom

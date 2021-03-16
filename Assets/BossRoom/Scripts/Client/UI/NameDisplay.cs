@@ -11,13 +11,13 @@ namespace BossRoom.Visual
     public class NameDisplay : MonoBehaviour
     {
         [SerializeField]
-        private Text m_CurrentName;
+        Text m_CurrentName;
 
         /// <summary>
         /// This is where we pull our name data from
         /// </summary>
         [SerializeField]
-        private NameGenerationData m_NameData;
+        NameGenerationData m_NameData;
 
         public void Start()
         {

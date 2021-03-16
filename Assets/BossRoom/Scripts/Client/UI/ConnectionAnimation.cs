@@ -10,7 +10,7 @@ namespace BossRoom.Visual
     public class ConnectionAnimation : MonoBehaviour
     {
         [SerializeField]
-        private float m_RotationSpeed;
+        float m_RotationSpeed;
 
         void Update()
         {

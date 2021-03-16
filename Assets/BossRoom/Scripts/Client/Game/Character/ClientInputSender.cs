@@ -14,20 +14,20 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkBehaviour
     {
-        private const float k_MouseInputRaycastDistance = 100f;
+        const float k_MouseInputRaycastDistance = 100f;
 
-        private const float k_MoveSendRateSeconds = 0.5f;
+        const float k_MoveSendRateSeconds = 0.5f;
 
-        private float m_LastSentMove;
+        float m_LastSentMove;
 
         // Cache raycast hit array so that we can use non alloc raycasts
-        private readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
+        readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
 
         // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
-        private LayerMask k_GroundLayerMask;
-        private LayerMask k_ActionLayerMask;
+        LayerMask k_GroundLayerMask;
+        LayerMask k_ActionLayerMask;
 
-        private NetworkCharacterState m_NetworkCharacter;
+        NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
         /// This describes how a skill was requested. Skills requested via mouse click will do raycasts to determine their target; skills requested
@@ -50,7 +50,7 @@ namespace BossRoom.Client
         /// <remarks>
         /// Reference: https://answers.unity.com/questions/1141633/why-does-fixedupdate-work-when-update-doesnt.html
         /// </remarks>
-        private struct ActionRequest
+        struct ActionRequest
         {
             public SkillTriggerStyle TriggerStyle;
             public ActionType RequestedAction;
@@ -61,15 +61,15 @@ namespace BossRoom.Client
         /// List of ActionRequests that have been received since the last FixedUpdate ran. This is a static array, to avoid allocs, and
         /// because we don't really want to let this list grow indefinitely.
         /// </summary>
-        private readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
+        readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
 
         /// <summary>
         /// Number of ActionRequests that have been queued since the last FixedUpdate.
         /// </summary>
-        private int m_ActionRequestCount;
+        int m_ActionRequestCount;
 
-        private BaseActionInput m_CurrentSkillInput = null;
-        private bool m_MoveRequest = false;
+        BaseActionInput m_CurrentSkillInput = null;
+        bool m_MoveRequest = false;
 
 
         Camera m_MainCamera;
@@ -171,7 +171,7 @@ namespace BossRoom.Client
         /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
         /// <param name="triggerStyle">What sort of input triggered this skill?</param>
         /// <param name="targetId">(optional) Pass in a specific networkID to target for this action</param>
-        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
+        void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
             
@@ -231,7 +231,7 @@ namespace BossRoom.Client
         /// <param name="triggerStyle">How did this skill play get triggered? Mouse, Keyboard, UI etc.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
         /// <returns>true if we should play an action, false otherwise. </returns>
-        private bool GetActionRequestForTarget(Transform hit, ActionType actionType, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
+        bool GetActionRequestForTarget(Transform hit, ActionType actionType, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
         {
             resultData = new ActionRequestData();
 
@@ -277,7 +277,7 @@ namespace BossRoom.Client
         /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
         /// <param name="action">The action to perform (will be stamped on the resultData)</param>
         /// <param name="resultData">The ActionRequestData to be filled out with additional information.</param>
-        private void PopulateSkillRequest(Vector3 hitPoint, ActionType action, ref ActionRequestData resultData)
+        void PopulateSkillRequest(Vector3 hitPoint, ActionType action, ref ActionRequestData resultData)
         {
             resultData.ActionTypeEnum = action;
             var actionInfo = GameDataSource.Instance.ActionDataByType[action];

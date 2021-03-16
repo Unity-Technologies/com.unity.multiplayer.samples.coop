@@ -41,19 +41,19 @@ namespace BossRoom.Visual
 
         [SerializeField]
         [Tooltip("If this graphic should automatically Shutdown after a certain time, set it here (in seconds). -1 means no auto-shutdown.")]
-        private float m_AutoShutdownTime = -1;
+        float m_AutoShutdownTime = -1;
 
         [SerializeField]
         [Tooltip("After Shutdown, how long before we self-destruct? 0 means no self destruct. -1 means self-destruct after ALL particles have disappeared")]
-        private float m_PostShutdownSelfDestructTime = -1;
+        float m_PostShutdownSelfDestructTime = -1;
 
         // track when Shutdown() is called so we don't try to do it twice
-        private bool m_IsShutdown = false;
+        bool m_IsShutdown = false;
 
         // we keep a reference to our self-destruction coroutine in case we need to abort it prematurely
-        private Coroutine coroWaitForSelfDestruct = null;
+        Coroutine coroWaitForSelfDestruct = null;
 
-        private void Start()
+        void Start()
         {
             if (m_AutoShutdownTime != -1)
             {
@@ -86,7 +86,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private IEnumerator CoroWaitForParticlesToEnd()
+        IEnumerator CoroWaitForParticlesToEnd()
         {
             bool foundAliveParticles;
             do
@@ -111,7 +111,7 @@ namespace BossRoom.Visual
             yield break;
         }
 
-        private IEnumerator CoroWaitForSelfDestruct()
+        IEnumerator CoroWaitForSelfDestruct()
         {
             yield return new WaitForSeconds(m_AutoShutdownTime);
             coroWaitForSelfDestruct = null;
@@ -141,7 +141,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private void AddAllParticleSystems(SpecialFXGraphic specialFxGraphic)
+        void AddAllParticleSystems(SpecialFXGraphic specialFxGraphic)
         {
             specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown.Clear();
             foreach (var particleSystem in specialFxGraphic.GetComponentsInChildren<ParticleSystem>())

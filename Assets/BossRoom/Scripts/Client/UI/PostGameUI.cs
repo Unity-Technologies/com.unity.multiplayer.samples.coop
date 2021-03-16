@@ -11,24 +11,24 @@ namespace BossRoom.Visual
     public class PostGameUI : MonoBehaviour
     {
         [SerializeField]
-        private RawImage m_Background;
+        RawImage m_Background;
 
         [SerializeField]
-        private Image m_EndMessage;
+        Image m_EndMessage;
 
         [SerializeField]
-        private GameObject m_ReplayButton;
+        GameObject m_ReplayButton;
 
         [SerializeField]
-        private GameObject m_WaitOnHostMsg;
+        GameObject m_WaitOnHostMsg;
 
         [SerializeField]
-        private PostGameData m_PostGameData;
+        PostGameData m_PostGameData;
 
         [SerializeField]
-        private Sprite m_WinSprite;
+        Sprite m_WinSprite;
         [SerializeField]
-        private Sprite m_LoseSprite;
+        Sprite m_LoseSprite;
 
         void Start()
         {
@@ -54,7 +54,7 @@ namespace BossRoom.Visual
 
         //this won't actually change dynamically, but using a callback robustifies us against race
         //conditions between the PostGameState starting up, and this UI starting up.
-        private void OnGameWonChanged(byte prevVal, byte currentVal)
+        void OnGameWonChanged(byte prevVal, byte currentVal)
         {
             // Set end message and background color based last game outcome
             if (m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Won )

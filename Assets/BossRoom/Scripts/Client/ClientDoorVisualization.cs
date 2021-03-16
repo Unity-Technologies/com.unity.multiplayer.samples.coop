@@ -12,17 +12,17 @@ public class ClientDoorVisualization : NetworkBehaviour
 {
     [SerializeField]
     [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]
-    private GameObject m_PhysicsObject;
+    GameObject m_PhysicsObject;
 
     [SerializeField]
-    private Animator m_Animator;
+    Animator m_Animator;
 
     [SerializeField]
-    private string m_AnimatorDoorOpenBoolVarName = "IsOpen";
+    string m_AnimatorDoorOpenBoolVarName = "IsOpen";
 
-    private NetworkDoorState m_DoorState;
+    NetworkDoorState m_DoorState;
 
-    private void Awake()
+    void Awake()
     {
         m_DoorState = GetComponent<NetworkDoorState>();
     }
@@ -42,7 +42,7 @@ public class ClientDoorVisualization : NetworkBehaviour
         }
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         if (m_DoorState)
         {
@@ -50,7 +50,7 @@ public class ClientDoorVisualization : NetworkBehaviour
         }
     }
 
-    private void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
+    void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
     {
         m_PhysicsObject.SetActive(!isDoorOpen);
         m_Animator.SetBool(m_AnimatorDoorOpenBoolVarName, isDoorOpen);

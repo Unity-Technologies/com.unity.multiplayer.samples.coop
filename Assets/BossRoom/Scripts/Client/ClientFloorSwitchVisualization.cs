@@ -8,14 +8,14 @@ using UnityEngine;
 public class ClientFloorSwitchVisualization : NetworkBehaviour
 {
     [SerializeField]
-    private Animator m_Animator;
+    Animator m_Animator;
 
     [SerializeField]
-    private string m_AnimatorPressedDownBoolVarName = "IsPressed";
+    string m_AnimatorPressedDownBoolVarName = "IsPressed";
 
-    private NetworkFloorSwitchState m_FloorSwitchState;
+    NetworkFloorSwitchState m_FloorSwitchState;
 
-    private void Awake()
+    void Awake()
     {
         m_FloorSwitchState = GetComponent<NetworkFloorSwitchState>();
     }
@@ -25,7 +25,7 @@ public class ClientFloorSwitchVisualization : NetworkBehaviour
         m_FloorSwitchState.IsSwitchedOn.OnValueChanged += OnFloorSwitchStateChanged;
     }
 
-    private void OnDestroy()
+    void OnDestroy()
     {
         if (m_FloorSwitchState)
         {
@@ -33,7 +33,7 @@ public class ClientFloorSwitchVisualization : NetworkBehaviour
         }
     }
 
-    private void OnFloorSwitchStateChanged(bool wasPressed, bool isPressed)
+    void OnFloorSwitchStateChanged(bool wasPressed, bool isPressed)
     {
         m_Animator.SetBool(m_AnimatorPressedDownBoolVarName, isPressed);
     }

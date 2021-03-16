@@ -12,16 +12,16 @@ namespace BossRoom.Visual
         public FXProjectileTargetedActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
         // have we actually played an impact?
-        private bool m_ImpactPlayed;
+        bool m_ImpactPlayed;
 
         // the time the FX projectile spends in the air
-        private float m_ProjectileDuration;
+        float m_ProjectileDuration;
 
         // the currently-live projectile. (Note that the projectile will normally destroy itself! We only care in case someone calls Cancel() on us)
-        private FXProjectile m_Projectile;
+        FXProjectile m_Projectile;
 
         // the enemy we're aiming at
-        private NetworkObject m_Target;
+        NetworkObject m_Target;
 
         public override bool Start()
         {
@@ -73,7 +73,7 @@ namespace BossRoom.Visual
             PlayHitReact();
         }
 
-        private void PlayHitReact()
+        void PlayHitReact()
         {
             if (m_ImpactPlayed)
                 return;
@@ -89,12 +89,12 @@ namespace BossRoom.Visual
         /// <summary>
         /// Do we even have a target? (If false, it means player clicked on nothing, and we're rendering a "missed" fake bolt.)
         /// </summary>
-        private bool HasTarget()
+        bool HasTarget()
         {
             return Data.TargetIds != null && Data.TargetIds.Length > 0;
         }
 
-        private NetworkObject GetTarget()
+        NetworkObject GetTarget()
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
@@ -114,7 +114,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private FXProjectile SpawnAndInitializeProjectile()
+        FXProjectile SpawnAndInitializeProjectile()
         {
             GameObject projectileGO = Object.Instantiate(Description.Projectiles[0].ProjectilePrefab, m_Parent.transform.position, m_Parent.transform.rotation, null);
 

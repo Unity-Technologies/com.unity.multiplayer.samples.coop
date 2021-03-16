@@ -11,11 +11,11 @@ namespace BossRoom.Visual
     /// </summary>
     public class TargetActionFX : ActionFX
     {
-        private GameObject m_TargetReticule;
-        private ulong m_CurrentTarget;
-        private NetworkCharacterState m_ParentState;
+        GameObject m_TargetReticule;
+        ulong m_CurrentTarget;
+        NetworkCharacterState m_ParentState;
 
-        private const float k_ReticuleGroundHeight = 0.2f;
+        const float k_ReticuleGroundHeight = 0.2f;
 
         public TargetActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent)
         {
@@ -67,7 +67,7 @@ namespace BossRoom.Visual
         /// Ensures that the TargetReticule GameObject exists. This must be done prior to enabling it because it can be destroyed
         /// "accidentally" if its parent is destroyed while it is detached.
         /// </summary>
-        private void ValidateReticule(NetworkObject targetObject)
+        void ValidateReticule(NetworkObject targetObject)
         {
             if( m_TargetReticule == null )
             {

@@ -9,7 +9,7 @@ namespace BossRoom.Visual
     /// </summary>
     public class ActionVisualization
     {
-        private List<ActionFX> m_PlayingActions;
+        List<ActionFX> m_PlayingActions;
 
         public ClientCharacterVisualization Parent { get; private set; }
 

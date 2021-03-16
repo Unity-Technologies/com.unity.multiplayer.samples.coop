@@ -44,22 +44,22 @@ namespace BossRoom.Client
         }
 
         [SerializeField]
-        private CharacterModelSet[] m_CharacterModels;
+        CharacterModelSet[] m_CharacterModels;
 
         /// <summary>
         /// Reference to our shared-characters' animator.
         /// Can be null, but if so, animator overrides are not supported!
         /// </summary>
         [SerializeField]
-        private Animator m_Animator;
+        Animator m_Animator;
 
         /// <summary>
         /// Reference to the original controller in our Animator.
         /// We switch back to this whenever we don't have an Override.
         /// </summary>
-        private RuntimeAnimatorController m_OriginalController;
+        RuntimeAnimatorController m_OriginalController;
 
-        private void Awake()
+        void Awake()
         {
             if (m_Animator)
             {
@@ -125,7 +125,7 @@ namespace BossRoom.Client
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             // if an Animator is on the same GameObject as us, assume that's the one we'll be using!
             if (!m_Animator)

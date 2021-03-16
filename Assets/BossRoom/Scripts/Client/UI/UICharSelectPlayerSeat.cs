@@ -9,38 +9,38 @@ namespace BossRoom.Client
     public class UICharSelectPlayerSeat : MonoBehaviour
     {
         [SerializeField]
-        private GameObject m_InactiveStateVisuals;
+        GameObject m_InactiveStateVisuals;
         [SerializeField]
-        private GameObject m_ActiveStateVisuals;
+        GameObject m_ActiveStateVisuals;
         [SerializeField]
-        private Image m_PlayerNumberHolder;
+        Image m_PlayerNumberHolder;
         [SerializeField]
-        private Text m_PlayerNameHolder;
+        Text m_PlayerNameHolder;
         [SerializeField]
-        private Image m_Glow;
+        Image m_Glow;
         [SerializeField]
-        private Image m_Checkbox;
+        Image m_Checkbox;
         [SerializeField]
-        private Button m_Button;
+        Button m_Button;
         [SerializeField]
-        private Animator m_Animator;
+        Animator m_Animator;
         [SerializeField]
-        private string m_AnimatorTriggerWhenLockedIn = "LockedIn";
+        string m_AnimatorTriggerWhenLockedIn = "LockedIn";
 
         [SerializeField]
-        private CharacterTypeEnum m_CharacterClass;
+        CharacterTypeEnum m_CharacterClass;
 
         // just a way to designate which seat we are -- the leftmost seat on the lobby UI is index 0, the next one is index 1, etc.
-        private int m_SeatIndex;
+        int m_SeatIndex;
 
         // playerNumber of who is sitting in this seat right now. 0-based; e.g. this is 0 for Player 1, 1 for Player 2, etc. Meaningless when m_State is Inactive (and in that case it is set to -1 for clarity)
-        private int m_PlayerNumber;
+        int m_PlayerNumber;
 
         // the last SeatState we were assigned
-        private CharSelectData.SeatState m_State;
+        CharSelectData.SeatState m_State;
 
         // once this is true, we're never clickable again!
-        private bool m_IsPermanentlyDisabled;
+        bool m_IsPermanentlyDisabled;
 
         public void Initialize(int seatIndex)
         {
@@ -69,7 +69,7 @@ namespace BossRoom.Client
             m_IsPermanentlyDisabled = true;
         }
 
-        private void ConfigureStateGraphics()
+        void ConfigureStateGraphics()
         {
             if (m_State == CharSelectData.SeatState.Inactive)
             {

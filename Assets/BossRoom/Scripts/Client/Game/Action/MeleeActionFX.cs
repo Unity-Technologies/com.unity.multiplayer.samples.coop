@@ -12,12 +12,12 @@ namespace BossRoom.Visual
         public MeleeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
         //have we actually played an impact? This won't necessarily happen for all swings. Sometimes you're just swinging at space.
-        private bool m_ImpactPlayed;
+        bool m_ImpactPlayed;
 
         /// <summary>
         /// When we detect if our original target is still around, we use a bit of padding on the range check.
         /// </summary>
-        private const float k_RangePadding = 3f;
+        const float k_RangePadding = 3f;
 
         public override bool Start()
         {
@@ -45,7 +45,7 @@ namespace BossRoom.Visual
             PlayHitReact();
         }
 
-        private void PlayHitReact()
+        void PlayHitReact()
         {
             if (m_ImpactPlayed) { return; }
             m_ImpactPlayed = true;

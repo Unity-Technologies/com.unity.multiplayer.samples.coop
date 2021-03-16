@@ -19,23 +19,23 @@ namespace BossRoom.Client
     {
         [SerializeField]
         [Tooltip("The actual Tooltip that should be triggered")]
-        private UITooltipPopup m_TooltipPopup;
+        UITooltipPopup m_TooltipPopup;
 
         [SerializeField]
         [Multiline]
         [Tooltip("The text of the tooltip (this is the default text; it can also be changed in code)")]
-        private string m_TooltipText;
+        string m_TooltipText;
 
         [SerializeField]
         [Tooltip("Should the tooltip appear instantly if the player clicks this UI element?")]
-        private bool m_ActivateOnClick = true;
+        bool m_ActivateOnClick = true;
 
         // This delay-time could be a member variable, but it's annoying to have to change it on
         // every tooltip spot everywhere! So for now we just hard-code it.
-        private const float k_TooltipDelay = 0.5f;
+        const float k_TooltipDelay = 0.5f;
 
-        private float m_PointerEnterTime = 0;
-        private bool m_IsShowingTooltip;
+        float m_PointerEnterTime = 0;
+        bool m_IsShowingTooltip;
 
         public void SetText(string text)
         {
@@ -68,7 +68,7 @@ namespace BossRoom.Client
             }
         }
 
-        private void Update()
+        void Update()
         {
             if (m_PointerEnterTime != 0 && (Time.time - m_PointerEnterTime) > k_TooltipDelay)
             {
@@ -76,7 +76,7 @@ namespace BossRoom.Client
             }
         }
 
-        private void ShowTooltip()
+        void ShowTooltip()
         {
             if (!m_IsShowingTooltip)
             {
@@ -85,7 +85,7 @@ namespace BossRoom.Client
             }
         }
 
-        private void HideTooltip()
+        void HideTooltip()
         {
             if (m_IsShowingTooltip)
             {
@@ -95,7 +95,7 @@ namespace BossRoom.Client
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {

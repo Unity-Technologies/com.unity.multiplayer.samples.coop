@@ -60,7 +60,7 @@ namespace BossRoom
         Vector3 m_VerticalOffset;
 
         // used to compute corld pos based on target and offsets
-        private Vector3 m_WorldPos;
+        Vector3 m_WorldPos;
 
         void OnEnable()
         {

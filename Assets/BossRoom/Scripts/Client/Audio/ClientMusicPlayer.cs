@@ -12,16 +12,16 @@ namespace BossRoom.Client
     public class ClientMusicPlayer : MonoBehaviour
     {
         [SerializeField]
-        private AudioClip m_ThemeMusic;
+        AudioClip m_ThemeMusic;
 
         [SerializeField]
-        private AudioClip m_BossMusic;
+        AudioClip m_BossMusic;
 
         [SerializeField]
-        private AudioClip m_VictoryMusic;
+        AudioClip m_VictoryMusic;
 
         [SerializeField]
-        private AudioSource m_source;
+        AudioSource m_source;
 
         /// <summary>
         /// static accessor for ClientMusicPlayer
@@ -49,7 +49,7 @@ namespace BossRoom.Client
             PlayTrack(m_VictoryMusic, false, false);
         }
 
-        private void PlayTrack(AudioClip clip, bool looping, bool restart)
+        void PlayTrack(AudioClip clip, bool looping, bool restart)
         {
             if (m_source.isPlaying)
             {
@@ -63,7 +63,7 @@ namespace BossRoom.Client
             m_source.Play();
         }
 
-        private void Awake()
+        void Awake()
         {
             m_source = GetComponent<AudioSource>();
 

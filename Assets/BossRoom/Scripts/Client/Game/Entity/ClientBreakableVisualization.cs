@@ -10,7 +10,7 @@ namespace BossRoom.Visual
     public class ClientBreakableVisualization : NetworkBehaviour
     {
         [SerializeField]
-        private GameObject m_BrokenPrefab;
+        GameObject m_BrokenPrefab;
 
         public override void NetworkStart()
         {
@@ -38,7 +38,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private void PerformBreak()
+        void PerformBreak()
         {
             var myParent = transform.parent;
             Destroy(gameObject);

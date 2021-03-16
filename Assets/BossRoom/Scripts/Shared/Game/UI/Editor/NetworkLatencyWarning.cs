@@ -1,9 +1,10 @@
 using System;
-using UnityEngine;
-using UnityEngine.UI;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.UNET;
+using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 
 namespace BossRoom.Scripts.Editor
 {
@@ -32,7 +33,7 @@ namespace BossRoom.Scripts.Editor
                             liteNetLibTransport.SimulateMaxLatency > 0;
                         break;
                     #endif
-                    case MLAPI.Transports.UNET.UNetTransport unetTransport:
+                    case UNetTransport unetTransport:
                     case PhotonRealtimeTransport photonTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
@@ -57,7 +58,7 @@ namespace BossRoom.Scripts.Editor
         // Creating a UI text object and add it to NetworkOverlay canvas
         void CreateLatencyText()
         {
-            Assert.IsNotNull(Scripts.Editor.NetworkOverlay.Instance,
+            Assert.IsNotNull(NetworkOverlay.Instance,
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
             var statUI = new GameObject("UI Latency Warning Text");

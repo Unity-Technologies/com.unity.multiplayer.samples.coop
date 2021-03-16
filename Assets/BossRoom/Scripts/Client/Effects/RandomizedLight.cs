@@ -7,7 +7,7 @@ namespace BossRoom.Visual
     /// </summary>
     public class RandomizedLight : MonoBehaviour
     {
-        private const int k_IntensityScale = 100;
+        const int k_IntensityScale = 100;
 
         [Tooltip("External light to vary. Leave null if this script is itself attached to a Light")]
         public Light m_TargetLight;
@@ -22,9 +22,9 @@ namespace BossRoom.Visual
         [Range(1, 50)]
         public int m_Smoothing = 5;
 
-        private int[] m_RingBuffer;   //a buffer full of noise ranging from min to max. 
-        private int m_RingSum;        //the sum of all the values in the current ring buffer. 
-        private int m_RingIndex;      //the current index of the buffer. 
+        int[] m_RingBuffer;   //a buffer full of noise ranging from min to max. 
+        int m_RingSum;        //the sum of all the values in the current ring buffer. 
+        int m_RingIndex;      //the current index of the buffer. 
 
         // Start is called before the first frame update
         void Start()
@@ -41,7 +41,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private void UpdateNoiseBuffer()
+        void UpdateNoiseBuffer()
         {
             int newValue = (int)(Random.Range(m_MinIntensity, m_MaxIntensity) * k_IntensityScale);
             m_RingSum += (newValue - m_RingBuffer[m_RingIndex]);

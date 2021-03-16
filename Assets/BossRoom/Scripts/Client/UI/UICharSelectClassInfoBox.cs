@@ -17,31 +17,31 @@ namespace BossRoom.Client
     public class UICharSelectClassInfoBox : MonoBehaviour
     {
         [SerializeField]
-        private Text m_WelcomeBanner;
+        Text m_WelcomeBanner;
         [SerializeField]
-        private Text m_ClassLabel;
+        Text m_ClassLabel;
         [SerializeField]
-        private GameObject m_HideWhenNoClassSelected;
+        GameObject m_HideWhenNoClassSelected;
         [SerializeField]
-        private Image m_ClassBanner;
+        Image m_ClassBanner;
         [SerializeField]
-        private Image m_Skill1;
+        Image m_Skill1;
         [SerializeField]
-        private Image m_Skill2;
+        Image m_Skill2;
         [SerializeField]
-        private Image m_Skill3;
+        Image m_Skill3;
         [SerializeField]
-        private Button m_ReadyButton;
+        Button m_ReadyButton;
         [SerializeField]
         [Tooltip("Message shown in the char-select screen. {0} will be replaced with the player's seat number")]
         [Multiline]
-        private string m_WelcomeMsg = "Welcome, P{0}!";
+        string m_WelcomeMsg = "Welcome, P{0}!";
         [SerializeField]
         [Tooltip("Format of tooltips. {0} is skill name, {1} is skill description. Html-esque tags allowed!")]
         [Multiline]
-        private string m_TooltipFormat = "<b>{0}</b>\n\n{1}";
+        string m_TooltipFormat = "<b>{0}</b>\n\n{1}";
 
-        private bool isLockedIn = false;
+        bool isLockedIn = false;
 
         public void OnSetPlayerNumber(int playerNumber)
         {
@@ -77,7 +77,7 @@ namespace BossRoom.Client
             ConfigureSkillIcon(m_Skill3, characterClass.Skill3);
         }
 
-        private void ConfigureSkillIcon(Image iconSlot, ActionType type)
+        void ConfigureSkillIcon(Image iconSlot, ActionType type)
         {
             if (type == ActionType.None)
             {

@@ -9,7 +9,7 @@ namespace BossRoom.Visual
     /// </summary>
     public class HeroEmoteBar : MonoBehaviour
     {
-        private Client.ClientInputSender m_InputSender;
+        Client.ClientInputSender m_InputSender;
 
         public void RegisterInputSender(Client.ClientInputSender inputSender)
         {

@@ -13,13 +13,13 @@ namespace BossRoom.Visual
     /// </summary>
     public class ClientCharacterVisualization : NetworkBehaviour
     {
-        private NetworkCharacterState m_NetState;
+        NetworkCharacterState m_NetState;
 
         [SerializeField]
-        private Animator m_ClientVisualsAnimator;
+        Animator m_ClientVisualsAnimator;
 
         [SerializeField]
-        private CharacterSwap m_CharacterSwapper;
+        CharacterSwap m_CharacterSwapper;
 
         [Tooltip("Prefab for the Target Reticule used by this Character")]
         public GameObject TargetReticule;
@@ -32,16 +32,16 @@ namespace BossRoom.Visual
 
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
 
-        private ActionVisualization m_ActionViz;
+        ActionVisualization m_ActionViz;
 
         public Transform Parent { get; private set; }
 
-        private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
+        const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         /// Player characters need to report health changes and chracter info to the PartyHUD
-        private Visual.PartyHUD m_PartyHUD;
+        Visual.PartyHUD m_PartyHUD;
 
-        private float m_SmoothedSpeed;
+        float m_SmoothedSpeed;
 
         int m_AliveStateTriggerID;
         int m_FaintedStateTriggerID;
@@ -141,7 +141,8 @@ namespace BossRoom.Visual
                     break;
             }
         }
-        private void OnDestroy()
+
+        void OnDestroy()
         {
             if (m_NetState)
             {
@@ -155,32 +156,32 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnPerformHitReaction()
+        void OnPerformHitReaction()
         {
             m_ClientVisualsAnimator.SetTrigger(m_HitStateTriggerID);
         }
 
-        private void PerformActionFX(ActionRequestData data)
+        void PerformActionFX(ActionRequestData data)
         {
             m_ActionViz.PlayAction(ref data);
         }
 
-        private void CancelAllActionFXs()
+        void CancelAllActionFXs()
         {
             m_ActionViz.CancelAllActions();
         }
 
-        private void CancelActionFXByType(ActionType actionType)
+        void CancelActionFXByType(ActionType actionType)
         {
             m_ActionViz.CancelAllActionsOfType(actionType);
         }
 
-        private void OnStoppedChargingUp()
+        void OnStoppedChargingUp()
         {
             m_ActionViz.OnStoppedChargingUp();
         }
 
-        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+        void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             switch (newValue)
             {
@@ -198,7 +199,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnHealthChanged(int previousValue, int newValue)
+        void OnHealthChanged(int previousValue, int newValue)
         {
             // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
             if (m_PartyHUD == null) { return; }
@@ -213,17 +214,17 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnCharacterAppearanceChanged(int oldValue, int newValue)
+        void OnCharacterAppearanceChanged(int oldValue, int newValue)
         {
             SetAppearanceSwap();
         }
 
-        private void OnStealthyChanged(byte oldValue, byte newValue)
+        void OnStealthyChanged(byte oldValue, byte newValue)
         {
             SetAppearanceSwap();
         }
 
-        private void SetAppearanceSwap()
+        void SetAppearanceSwap()
         {
             if (m_CharacterSwapper)
             {

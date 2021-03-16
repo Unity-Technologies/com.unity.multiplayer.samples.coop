@@ -23,7 +23,7 @@ namespace BossRoom.Visual
     /// </remarks>
     public class AnimatorNodeHook : StateMachineBehaviour
     {
-        private AnimatorTriggeredSpecialFX[] m_CachedTriggerRefs;
+        AnimatorTriggeredSpecialFX[] m_CachedTriggerRefs;
         // OnStateEnter is called when a transition starts and the state machine starts to evaluate this state
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {

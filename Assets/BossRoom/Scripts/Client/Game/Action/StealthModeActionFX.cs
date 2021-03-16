@@ -21,7 +21,7 @@ namespace BossRoom.Visual
         /// (If null, means we haven't been running long enough yet, or we aren't using any graphics because we're invisible on this client)
         /// These are created from the Description.Spawns list. Each prefab in that list should have a SpecialFXGraphic component.
         /// </summary>
-        private List<SpecialFXGraphic> m_SpawnedGraphics = null;
+        List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
         public StealthModeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 

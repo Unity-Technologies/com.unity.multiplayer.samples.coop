@@ -15,41 +15,42 @@ using UnityEngine;
 public class FXProjectile : MonoBehaviour
 {
     [SerializeField]
-    private List<GameObject> m_ShowTheseWhenFiring;
+    List<GameObject> m_ShowTheseWhenFiring;
 
     [SerializeField]
-    private List<GameObject> m_HideTheseWhenFiring;
+    List<GameObject> m_HideTheseWhenFiring;
 
     [SerializeField]
-    private List<GameObject> m_ShowTheseOnTargetImpact;
+    List<GameObject> m_ShowTheseOnTargetImpact;
 
     [SerializeField]
-    private List<GameObject> m_HideTheseOnTargetImpact;
+    List<GameObject> m_HideTheseOnTargetImpact;
 
     [SerializeField]
-    private List<GameObject> m_ShowTheseOnFloorImpact;
+    List<GameObject> m_ShowTheseOnFloorImpact;
 
     [SerializeField]
-    private List<GameObject> m_HideTheseOnFloorImpact;
+    List<GameObject> m_HideTheseOnFloorImpact;
 
     [SerializeField]
     [Tooltip("If this projectile plays an impact particle, how long should we stay alive for it to keep playing?")]
-    private float m_PostImpactDurationSeconds = 1;
+    float m_PostImpactDurationSeconds = 1;
 
-    private Vector3 m_StartPoint;
-    private Transform m_TargetDestination; // null if we're a "miss" projectile (i.e. we hit nothing)
-    private Vector3 m_MissDestination; // only used if m_TargetDestination is null
-    private float m_WindupDuration;
-    private float m_FlightDuration;
-    private float m_Age;
+    Vector3 m_StartPoint;
+    Transform m_TargetDestination; // null if we're a "miss" projectile (i.e. we hit nothing)
+    Vector3 m_MissDestination; // only used if m_TargetDestination is null
+    float m_WindupDuration;
+    float m_FlightDuration;
+    float m_Age;
 
-    private enum State
+    enum State
     {
         WINDUP,
         FLYING,
         IMPACT,
     }
-    private State m_State;
+
+    State m_State;
 
     public void Initialize(Vector3 startPoint, Transform target, Vector3 missPos, float windupTime, float flightTime)
     {
@@ -67,7 +68,7 @@ public class FXProjectile : MonoBehaviour
         Object.Destroy(gameObject);
     }
 
-    private void Update()
+    void Update()
     {
         m_Age += Time.deltaTime;
         switch (m_State)
@@ -99,8 +100,7 @@ public class FXProjectile : MonoBehaviour
         }
     }
 
-
-    private void SwitchState(State newState)
+    void SwitchState(State newState)
     {
         if (newState == State.FLYING)
         {

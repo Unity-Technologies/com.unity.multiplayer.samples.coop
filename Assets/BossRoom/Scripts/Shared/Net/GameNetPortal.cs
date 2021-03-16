@@ -1,8 +1,9 @@
 using System;
-using System.Net.Sockets;
+using MLAPI;
+using MLAPI.Messaging;
 using MLAPI.Serialization.Pooled;
 using MLAPI.Transports;
-using MLAPI;
+using MLAPI.Transports.UNET;
 using UnityEngine;
 
 namespace BossRoom
@@ -89,7 +90,7 @@ namespace BossRoom
             //and OnClientConnectedCallback events.
             //FIXME_DMW could this be improved?
             NetManager.OnServerStarted += NetworkStart;
-            NetManager.OnClientConnectedCallback += (clientId) =>
+            NetManager.OnClientConnectedCallback += clientId =>
             {
                 if (clientId == NetManager.LocalClientId)
                 {
@@ -98,9 +99,9 @@ namespace BossRoom
             };
         }
 
-        private void RegisterClientMessageHandlers()
+        void RegisterClientMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("S2C_ConnectResult", (senderClientId, stream) =>
+            CustomMessagingManager.RegisterNamedMessageHandler("S2C_ConnectResult", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -111,9 +112,9 @@ namespace BossRoom
             });
         }
 
-        private void RegisterServerMessageHandlers()
+        void RegisterServerMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("C2S_SceneChanged", (senderClientId, stream) =>
+            CustomMessagingManager.RegisterNamedMessageHandler("C2S_SceneChanged", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -130,7 +131,7 @@ namespace BossRoom
         /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
         /// </summary>
-        private void NetworkStart()
+        void NetworkStart()
         {
             if (NetManager.IsClient)
             {
@@ -170,7 +171,7 @@ namespace BossRoom
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;
-                case MLAPI.Transports.UNET.UNetTransport unetTransport:
+                case UNetTransport unetTransport:
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ServerListenPort = port;
                     break;
@@ -211,7 +212,7 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, buffer, NetworkChannel.Internal);
+                    CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, buffer);
                 }
             }
         }
@@ -229,7 +230,7 @@ namespace BossRoom
                     using (var writer = PooledNetworkWriter.Get(buffer))
                     {
                         writer.WriteInt32(newScene);
-                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("C2S_SceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
+                        CustomMessagingManager.SendNamedMessage("C2S_SceneChanged", NetManager.ServerClientId, buffer);
                     }
                 }
             }

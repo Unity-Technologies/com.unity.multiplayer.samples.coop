@@ -21,9 +21,9 @@ namespace BossRoom.Visual
         /// (like mobile devices), it can lead to major performance problems. On mobile platforms, visual graphics should
         /// use object-pooling (i.e. reusing the same GameObjects repeatedly). But that's outside the scope of this demo.
         /// </remarks>
-        private List<SpecialFXGraphic> m_Graphics = new List<SpecialFXGraphic>();
+        List<SpecialFXGraphic> m_Graphics = new List<SpecialFXGraphic>();
 
-        private bool m_ChargeEnded;
+        bool m_ChargeEnded;
 
         public override bool Start()
         {

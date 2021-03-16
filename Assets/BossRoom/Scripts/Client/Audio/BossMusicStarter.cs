@@ -8,7 +8,7 @@ namespace BossRoom.Client
     /// </summary>
     public class BossMusicStarter : MonoBehaviour
     {
-        private bool m_Won = false;
+        bool m_Won = false;
 
         void Start()
         {
@@ -17,7 +17,7 @@ namespace BossRoom.Client
             netState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
         }
 
-        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+        void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             if (newValue!= LifeState.Alive)
             {
@@ -27,7 +27,7 @@ namespace BossRoom.Client
             }
         }
 
-        private void OnHealthChanged(int previousValue, int newValue)
+        void OnHealthChanged(int previousValue, int newValue)
         {
             // don't do anything if battle is over
             if (m_Won) { return; }

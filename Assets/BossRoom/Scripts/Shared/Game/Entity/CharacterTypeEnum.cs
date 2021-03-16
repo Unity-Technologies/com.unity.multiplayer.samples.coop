@@ -1,3 +1,4 @@
+
 namespace BossRoom
 {
     /// <summary>

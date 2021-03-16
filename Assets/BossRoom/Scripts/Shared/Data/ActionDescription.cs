@@ -1,4 +1,3 @@
-using MLAPI.Serialization;
 using System;
 using UnityEngine;
 
@@ -68,7 +67,7 @@ namespace BossRoom
         [Tooltip("Is this Action interruptible by other action plays. Generally, actions with short exec times should not be interruptible in this way.")]
         public bool ActionInterruptible;
 
-        [System.Serializable]
+        [Serializable]
         public enum BlockingModeType
         {
             EntireDuration,

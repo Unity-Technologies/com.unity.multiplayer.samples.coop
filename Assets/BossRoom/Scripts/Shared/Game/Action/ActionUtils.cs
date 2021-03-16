@@ -1,15 +1,15 @@
-using UnityEngine;
 using MLAPI.Spawning;
+using UnityEngine;
 
 namespace BossRoom
 {
     public static class ActionUtils
     {
         //cache Physics Cast hits, to minimize allocs.
-        private static RaycastHit[] s_Hits = new RaycastHit[4];
+        static RaycastHit[] s_Hits = new RaycastHit[4];
         // cache layer IDs (after first use). -1 is a sentinel value meaning "uninitialized"
-        private static int s_layer_PCs = -1;
-        private static int s_layer_NPCs = -1;
+        static int s_layer_PCs = -1;
+        static int s_layer_NPCs = -1;
 
         /// <summary>
         /// Does a melee foe hit detect.

@@ -9,9 +9,9 @@ namespace BossRoom.Client
     /// </summary>
     public class ClientGenericMovement : MLAPI.NetworkBehaviour
     {
-        private INetMovement m_MovementSource;
-        private Rigidbody m_Rigidbody;
-        private bool m_Initialized;
+        INetMovement m_MovementSource;
+        Rigidbody m_Rigidbody;
+        bool m_Initialized;
 
 
         // Start is called before the first frame update

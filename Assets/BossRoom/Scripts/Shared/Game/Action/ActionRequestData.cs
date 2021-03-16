@@ -1,5 +1,5 @@
-using MLAPI.Serialization;
 using System;
+using MLAPI.Serialization;
 using UnityEngine;
 
 namespace BossRoom
@@ -93,7 +93,7 @@ namespace BossRoom
         //O__O Hey, are you adding something? Be sure to update ActionLogicInfo, as well as the methods below.
 
         [Flags]
-        private enum PackFlags
+        enum PackFlags
         {
             None = 0,
             HasPosition = 1,
@@ -124,8 +124,7 @@ namespace BossRoom
             return true;
         }
 
-
-        private PackFlags GetPackFlags()
+        PackFlags GetPackFlags()
         {
             PackFlags flags = PackFlags.None;
             if (Position != Vector3.zero) { flags |= PackFlags.HasPosition; }

@@ -10,13 +10,13 @@ namespace BossRoom.Visual
         /// <summary>
         /// Minimum Smooth Speed we will set closingSpeed to in SmoothMove. 
         /// </summary>
-        private const float k_MinSmoothSpeed = 4.0f;
+        const float k_MinSmoothSpeed = 4.0f;
 
         /// <summary>
         /// In SmoothMove we set a velocity proportional to our distance, to roughly approximate a spring effect.
         /// This is the constant we use for that calculation. 
         /// </summary>
-        private const float k_TargetCatchupTime = 0.1f;
+        const float k_TargetCatchupTime = 0.1f;
 
 
         /// <summary>

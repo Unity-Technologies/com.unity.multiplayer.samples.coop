@@ -21,7 +21,7 @@ namespace BossRoom.Visual
         [SerializeField]
         [Tooltip("Unused by the game and provided only for internal dev comments; put whatever you want here")]
         [TextArea]
-        private string DevNotes; // e.g. "this is for the tank class". Documentation for the artists, because all 4 class's AnimatorTriggeredSpecialFX components are on the same GameObject. Can remove later if desired
+        string DevNotes; // e.g. "this is for the tank class". Documentation for the artists, because all 4 class's AnimatorTriggeredSpecialFX components are on the same GameObject. Can remove later if desired
 
         [Serializable]
         internal class AnimatorNodeEntryEvent
@@ -90,14 +90,14 @@ namespace BossRoom.Visual
         /// cached reference to our required Animator. (Animator MUST be on the same
         /// GameObject as us so the AnimatorNodeHook can dispatch events to us correctly.)
         /// </summary>
-        private Animator m_Animator;
+        Animator m_Animator;
 
         /// <summary>
         /// contains the shortNameHash of all the active animation nodes right now
         /// </summary>
-        private HashSet<int> m_ActiveNodes = new HashSet<int>();
+        HashSet<int> m_ActiveNodes = new HashSet<int>();
 
-        private void Awake()
+        void Awake()
         {
             m_Animator = GetComponent<Animator>();
             Debug.Assert(m_Animator, "AnimatorTriggeredSpecialFX needs to be on the same GameObject as the Animator it works with!", gameObject);
@@ -129,7 +129,7 @@ namespace BossRoom.Visual
         }
 
         // creates and manages the graphics prefab (but not the sound effect) of an on-enter event
-        private IEnumerator CoroPlayStateEnterFX(AnimatorNodeEntryEvent eventInfo)
+        IEnumerator CoroPlayStateEnterFX(AnimatorNodeEntryEvent eventInfo)
         {
             if (eventInfo.m_PrefabSpawnDelaySeconds > 0)
                 yield return new WaitForSeconds(eventInfo.m_PrefabSpawnDelaySeconds);
@@ -160,7 +160,7 @@ namespace BossRoom.Visual
         }
 
         // plays the sound effect of an on-entry event
-        private IEnumerator CoroPlayStateEnterSound(AnimatorNodeEntryEvent eventInfo)
+        IEnumerator CoroPlayStateEnterSound(AnimatorNodeEntryEvent eventInfo)
         {
             if (eventInfo.m_SoundStartDelaySeconds > 0)
                 yield return new WaitForSeconds(eventInfo.m_SoundStartDelaySeconds);
@@ -192,7 +192,7 @@ namespace BossRoom.Visual
         /// <summary>
         /// retrieves an available AudioSource that isn't currently playing a looping sound, or null if none are currently available
         /// </summary>
-        private AudioSource GetAudioSourceForLooping()
+        AudioSource GetAudioSourceForLooping()
         {
             foreach (var audioSource in m_AudioSources)
             {
@@ -228,7 +228,7 @@ namespace BossRoom.Visual
         }
 
         // creates the graphics prefab (but not the sound effect) of an on-exit event
-        private IEnumerator CoroPlayStateExitFX(AnimatorNodeExitEvent eventInfo)
+        IEnumerator CoroPlayStateExitFX(AnimatorNodeExitEvent eventInfo)
         {
             if (eventInfo.m_PrefabStartDelaySeconds > 0)
                 yield return new WaitForSeconds(eventInfo.m_PrefabStartDelaySeconds);
@@ -237,7 +237,7 @@ namespace BossRoom.Visual
         }
 
         // plays the sound effect of an on-exit event
-        private IEnumerator CoroPlayStateExitSound(AnimatorNodeExitEvent eventInfo)
+        IEnumerator CoroPlayStateExitSound(AnimatorNodeExitEvent eventInfo)
         {
             if (eventInfo.m_SoundStartDelaySeconds > 0)
                 yield return new WaitForSeconds(eventInfo.m_SoundStartDelaySeconds);
@@ -252,7 +252,7 @@ namespace BossRoom.Visual
         /// (This way we don't have to call Animator.StringToHash() at runtime.)
         /// Also auto-initializes variables when possible.
         /// </summary>
-        private void OnValidate()
+        void OnValidate()
         {
             if (m_EventsOnNodeEntry != null)
             {
@@ -287,7 +287,7 @@ namespace BossRoom.Visual
     [CanEditMultipleObjects]
     public class AnimatorTriggeredSpecialFXEditor : Editor
     {
-        private GUIStyle m_ErrorStyle = null;
+        GUIStyle m_ErrorStyle = null;
         public override void OnInspectorGUI()
         {
             // let Unity do all the normal Inspector stuff...
@@ -309,7 +309,7 @@ namespace BossRoom.Visual
             EditorGUILayout.Space(50);
         }
 
-        private GUIStyle GetErrorStyle()
+        GUIStyle GetErrorStyle()
         {
             if (m_ErrorStyle == null)
             {
@@ -320,7 +320,7 @@ namespace BossRoom.Visual
             return m_ErrorStyle;
         }
 
-        private bool HasAudioSource(AnimatorTriggeredSpecialFX fx)
+        bool HasAudioSource(AnimatorTriggeredSpecialFX fx)
         {
             if (fx.m_AudioSources == null)
                 return false;
@@ -332,7 +332,7 @@ namespace BossRoom.Visual
             return false;
         }
 
-        private void ValidateNodeNames(AnimatorTriggeredSpecialFX fx)
+        void ValidateNodeNames(AnimatorTriggeredSpecialFX fx)
         {
             Animator animator = fx.GetComponent<Animator>();
             if (!animator)
@@ -420,7 +420,7 @@ namespace BossRoom.Visual
         /// seem to work while you're running the game in the editor, but it won't compile when you
         /// try to build a standalone client, because AnimatorController is in an editor-only namespace.)
         /// </summary>
-        private AnimatorController GetAnimatorController(Animator animator)
+        AnimatorController GetAnimatorController(Animator animator)
         {
             Debug.Assert(animator); // already pre-checked
             Debug.Assert(animator.runtimeAnimatorController); // already pre-checked

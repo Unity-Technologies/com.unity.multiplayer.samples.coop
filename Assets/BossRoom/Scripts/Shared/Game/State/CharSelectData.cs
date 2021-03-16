@@ -1,12 +1,11 @@
-
-using MLAPI;
-using MLAPI.Messaging;
-using MLAPI.Serialization;
-using MLAPI.NetworkVariable;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO;
+using MLAPI;
+using MLAPI.Exceptions;
+using MLAPI.Messaging;
+using MLAPI.NetworkVariable;
+using MLAPI.Serialization;
 using UnityEngine;
 
 namespace BossRoom
@@ -45,8 +44,7 @@ namespace BossRoom
         /// Note: this must match up with the order of classes/appearances in the lobby UI elements!
         /// </summary>
         [SerializeField]
-        public LobbySeatConfiguration[] LobbySeatConfigurations = new LobbySeatConfiguration[]
-        {
+        public LobbySeatConfiguration[] LobbySeatConfigurations = {
             new LobbySeatConfiguration(CharacterTypeEnum.Tank, 0),
             new LobbySeatConfiguration(CharacterTypeEnum.Archer, 2),
             new LobbySeatConfiguration(CharacterTypeEnum.Mage, 4),
@@ -102,8 +100,8 @@ namespace BossRoom
         /// </summary>
         public class LobbyPlayerArray
         {
-            private List<LobbyPlayerState> m_LobbyPlayers;
-            private CharSelectData m_CharSelectData;
+            List<LobbyPlayerState> m_LobbyPlayers;
+            CharSelectData m_CharSelectData;
 
             /// <summary>
             /// Event that gets raised when the array has changed somehow.
@@ -126,7 +124,7 @@ namespace BossRoom
                 m_CharSelectData.StartCoroutine(CoroClientConnected(clientId));
             }
 
-            private IEnumerator CoroClientConnected(ulong clientId)
+            IEnumerator CoroClientConnected(ulong clientId)
             {
                 yield return new WaitForSeconds(2);
 
@@ -158,7 +156,7 @@ namespace BossRoom
                 }
             }
 
-            public System.Collections.IEnumerator GetEnumerator()
+            public IEnumerator GetEnumerator()
             {
                 return m_LobbyPlayers.GetEnumerator();
             }
@@ -173,14 +171,12 @@ namespace BossRoom
                 {
                     if(!NetworkManager.Singleton.IsServer )
                     {
-                        throw new MLAPI.Exceptions.NotServerException("CharSelectData.LobbyPlayerArray can only be written to on the server!");
+                        throw new NotServerException("CharSelectData.LobbyPlayerArray can only be written to on the server!");
                     }
-                    else
-                    {
-                        m_LobbyPlayers[i] = value;
-                        m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
-                        ArrayChangedEvent?.Invoke(this);
-                    }
+
+                    m_LobbyPlayers[i] = value;
+                    m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
+                    ArrayChangedEvent?.Invoke(this);
                 }
             }
 
@@ -215,14 +211,14 @@ namespace BossRoom
         /// In any case, this system is meant to be temporary, and will be replaced when NetworkVariableList<T> is supported again.
         /// </summary>
         [ClientRpc]
-        private void LobbyPlayerUpdateArrayClientRpc(LobbyPlayerState[] playerArray )
+        void LobbyPlayerUpdateArrayClientRpc(LobbyPlayerState[] playerArray )
         {
             m_LobbyPlayers.ClientSyncUpdate(playerArray);
         }
 
-        private LobbyPlayerArray m_LobbyPlayers;
+        LobbyPlayerArray m_LobbyPlayers;
 
-        private void Awake()
+        void Awake()
         {
             m_LobbyPlayers = new LobbyPlayerArray(this, 8);
         }
@@ -235,7 +231,7 @@ namespace BossRoom
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
         /// </summary>
-        public MLAPI.NetworkVariable.NetworkVariableBool IsLobbyClosed { get; } = new MLAPI.NetworkVariable.NetworkVariableBool(false);
+        public NetworkVariableBool IsLobbyClosed { get; } = new NetworkVariableBool(false);
 
         /// <summary>
         /// Client notification when the server has assigned this client a player Index (from 0 to 7);

@@ -16,14 +16,14 @@ namespace BossRoom.Client
     public class UITooltipPopup : MonoBehaviour
     {
         [SerializeField]
-        private Canvas m_Canvas;
+        Canvas m_Canvas;
         [SerializeField]
         [Tooltip("This transform is shown/hidden to show/hide the popup box")]
-        private GameObject m_WindowRoot;
+        GameObject m_WindowRoot;
         [SerializeField]
-        private Text m_TextField;
+        Text m_TextField;
         [SerializeField]
-        private Vector3 m_CursorOffset;
+        Vector3 m_CursorOffset;
 
         /// <summary>
         /// Shows a tooltip at the given mouse coordinates.
@@ -47,7 +47,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Maps screen coordinates (e.g. Input.mousePosition) to coordinates on our Canvas.
         /// </summary>
-        private Vector3 GetCanvasCoords(Vector3 screenCoords)
+        Vector3 GetCanvasCoords(Vector3 screenCoords)
         {
             Vector2 canvasCoords;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
@@ -59,7 +59,7 @@ namespace BossRoom.Client
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {

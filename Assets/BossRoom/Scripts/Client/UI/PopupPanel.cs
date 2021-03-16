@@ -13,30 +13,30 @@ namespace BossRoom.Visual
     public class PopupPanel : MonoBehaviour
     {
         [SerializeField]
-        private Text m_TitleText;
+        Text m_TitleText;
         [SerializeField]
-        private Text m_MainText;
+        Text m_MainText;
         [SerializeField]
-        private Text m_SubText;
+        Text m_SubText;
         [SerializeField]
         [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
-        private GameObject m_ReconnectingImage;
+        GameObject m_ReconnectingImage;
         [SerializeField]
         [Tooltip("The GameObject holding the Input field for the panel")]
-        private GameObject m_InputFieldParent;
+        GameObject m_InputFieldParent;
         [SerializeField]
-        private GameObject m_InputBox;
+        GameObject m_InputBox;
         [SerializeField]
-        private Button m_ConfirmationButton;
+        Button m_ConfirmationButton;
         [SerializeField]
-        private Text m_ConfirmationText;
+        Text m_ConfirmationText;
         [SerializeField]
         [Tooltip("This Button appears for popups that ask for player inputs")]
-        private Button m_CancelButton;
+        Button m_CancelButton;
         [SerializeField]
-        private GameObject m_NameDisplayGO;
+        GameObject m_NameDisplayGO;
         [SerializeField]
-        private Dropdown m_OnlineModeDropdown;
+        Dropdown m_OnlineModeDropdown;
 
         bool m_EnterAsHost;
 
@@ -49,9 +49,9 @@ namespace BossRoom.Visual
         /// Confirm function invoked when confirm is hit on popup. The meaning of the arguments may vary by popup panel, but
         /// in the initial case of the login popup, they represent the IP Address input, and the Player Name.
         /// </summary>
-        private System.Action<string, string, OnlineMode> m_ConfirmFunction;
+        System.Action<string, string, OnlineMode> m_ConfirmFunction;
 
-        private const string k_DefaultConfirmText = "OK";
+        const string k_DefaultConfirmText = "OK";
 
         /// <summary>
         /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
@@ -103,7 +103,7 @@ namespace BossRoom.Visual
             gameObject.SetActive(true);
         }
 
-        private void OnConfirmClick()
+        void OnConfirmClick()
         {
             var inputField = m_InputFieldParent.GetComponent<InputField>();
             var nameDisplay = m_NameDisplayGO.GetComponent<NameDisplay>();
@@ -114,7 +114,7 @@ namespace BossRoom.Visual
         /// Called when the user clicks on the cancel button when in a mode where the player is expecting to input something.
         /// Primary responsibility for this method is to reset the UI state.
         /// </summary>
-        private void OnCancelClick()
+        void OnCancelClick()
         {
             ResetState();
         }
@@ -122,7 +122,7 @@ namespace BossRoom.Visual
         /// <summary>
         /// Called when the user selects a different online mode from the dropdown.
         /// </summary>
-        private void OnOnlineModeDropdownChanged(int value)
+        void OnOnlineModeDropdownChanged(int value)
         {
             var inputField = m_InputFieldParent.GetComponent<InputField>();
 
@@ -159,7 +159,7 @@ namespace BossRoom.Visual
         /// Generates a random room key to use as a default value.
         /// </summary>
         /// <returns></returns>
-        private string GenerateRandomRoomKey()
+        string GenerateRandomRoomKey()
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < 6; i++)
@@ -174,7 +174,7 @@ namespace BossRoom.Visual
         /// <summary>
         /// Helper method to help us reset all state for the popup manager.
         /// </summary>
-        private void ResetState()
+        void ResetState()
         {
             m_ConfirmationText.text = k_DefaultConfirmText;
             m_TitleText.text = string.Empty;

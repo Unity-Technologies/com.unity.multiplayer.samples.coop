@@ -24,7 +24,7 @@ namespace BossRoom.Visual
         /// (A little extra delay helps ensure we have the correct orientation for the
         /// character, so the graphics are oriented in the right direction!)
         /// </summary>
-        private const float k_GraphicsSpawnDelay = 0.3f;
+        const float k_GraphicsSpawnDelay = 0.3f;
 
         /// <summary>
         /// Prior to spawning graphics, this is null. Once we spawn the graphics, this is a list of everything we spawned.
@@ -33,7 +33,7 @@ namespace BossRoom.Visual
         /// Mobile performance note: constantly creating new GameObjects like this has bad performance on mobile and should
         /// be replaced with object-pooling (i.e. reusing the same art GameObjects repeatedly). But that's outside the scope of this demo.
         /// </remarks>
-        private List<SpecialFXGraphic> m_SpawnedGraphics = null;
+        List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
         public override bool Start()
         {

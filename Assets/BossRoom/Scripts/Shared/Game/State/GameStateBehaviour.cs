@@ -48,7 +48,7 @@ namespace BossRoom
         /// <summary>
         /// This is the single active GameState object. There can be only one.
         /// </summary>
-        private static GameObject s_ActiveStateGO;
+        static GameObject s_ActiveStateGO;
 
         // Start is called before the first frame update
         protected virtual void Start()
