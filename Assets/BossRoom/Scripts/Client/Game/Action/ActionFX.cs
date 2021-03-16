@@ -12,7 +12,7 @@ namespace BossRoom.Visual
         /// The default hit react animation; several different ActionFXs make use of this.
         /// </summary>
         public const string k_DefaultHitReact = "HitReact1";
-		
+
         /// <summary>
         /// True if this actionFX began running immediately, prior to getting a confirmation from the server. 
         /// </summary>
@@ -33,6 +33,7 @@ namespace BossRoom.Visual
         public virtual bool Start()
         {
             Anticipated = false; //once you start for real you are no longer an anticipated action.
+            TimeStarted = UnityEngine.Time.time;
             return true;
         }
 
@@ -121,6 +122,7 @@ namespace BossRoom.Visual
         public virtual void AnticipateAction()
         {
             Anticipated = true;
+            TimeStarted = UnityEngine.Time.time;
         }
     }
 

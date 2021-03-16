@@ -300,9 +300,11 @@ namespace BossRoom.Visual
         {
             get
             {
-                //layer 0 is our movement layer, and has a special base state. 
-                bool animating = !OurAnimator.GetCurrentAnimatorStateInfo(0).IsName("WalkRun") || OurAnimator.GetFloat("Speed") > 0.0;
-                if (animating) { return false; }
+                //layer 0 is our movement layer, and has a special base state. We detect if we are animating solely based on the Speed parameter. 
+                if (OurAnimator.GetFloat("Speed") > 0.0 )
+                {
+                    return true;
+                }
 
                 for (int i = 1; i < OurAnimator.layerCount; i++)
                 {
