@@ -1161,10 +1161,19 @@ MonoBehaviour:
     m_LoopSound: 0
   - m_AnimatorNodeName: Dead
     m_AnimatorNodeNameHash: 1293411866
-    m_Prefab: {fileID: -2485308661205006069, guid: 9537f4739c7bc2f4e8d6b2d49bfcc97e, type: 3}
-    m_PrefabSpawnDelaySeconds: 1.25
+    m_Prefab: {fileID: -1487195197790481162, guid: 9537f4739c7bc2f4e8d6b2d49bfcc97e, type: 3}
+    m_PrefabSpawnDelaySeconds: 1.8
     m_PrefabCanBeAbortedUntilSecs: 0
-    m_SoundEffect: {fileID: 8300000, guid: 6519c554f1671494ca8ced6e3849ada4, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: 7fbc6b32425f98840b339a705b4a28cb, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: HitReact1
+    m_AnimatorNodeNameHash: -1747783153
+    m_Prefab: {fileID: -2843690008440830094, guid: de5b665e7f32274419072e7bf4c3eff8, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 5ef809d665d13b245b559cd6170f5794, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
