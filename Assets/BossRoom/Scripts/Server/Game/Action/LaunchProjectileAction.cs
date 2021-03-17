@@ -23,7 +23,7 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && !m_Launched)
+            if (TimeRunningSeconds >= Description.ExecTimeSeconds && !m_Launched)
             {
                 LaunchProjectile();
             }

@@ -42,7 +42,7 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (!m_ImpactedTarget && m_TimeUntilImpact <= (Time.time - TimeStarted))
+            if (!m_ImpactedTarget && m_TimeUntilImpact <= (Time.time - TimeStartedSeconds))
             {
                 m_ImpactedTarget = true;
                 if (m_Target != null )

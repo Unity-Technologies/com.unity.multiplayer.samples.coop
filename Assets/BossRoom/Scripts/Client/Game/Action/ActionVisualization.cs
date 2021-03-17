@@ -32,8 +32,8 @@ namespace BossRoom.Visual
                 var action = m_PlayingActions[i];
                 bool keepGoing = action.Update();
                 bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
-                bool timeExpired = expirable && action.TimeRunning >= action.Description.DurationSeconds;
-                bool timedOut = action.Anticipated && action.TimeRunning >= k_AnticipationTimeoutSeconds;
+                bool timeExpired = expirable && action.TimeRunningSeconds >= action.Description.DurationSeconds;
+                bool timedOut = action.Anticipated && action.TimeRunningSeconds >= k_AnticipationTimeoutSeconds;
                 if (!keepGoing || timeExpired || timedOut)
                 {
                     if (timedOut) { action.Cancel(); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead. 

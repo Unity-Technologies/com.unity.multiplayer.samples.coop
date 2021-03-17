@@ -68,7 +68,7 @@ namespace BossRoom.Server
             if (m_StoppedChargingUpTime == 0)
             {
                 // we haven't explicitly stopped charging up... but if we've reached max charge, that implicitly stops us
-                if (TimeRunning >= Description.ExecTimeSeconds)
+                if (TimeRunningSeconds >= Description.ExecTimeSeconds)
                 {
                     StopChargingUp();
                 }
@@ -129,7 +129,7 @@ namespace BossRoom.Server
             if (Description.Projectiles.Length == 0) // uh oh, this is bad data
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no Projectiles!");
 
-            float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
+            float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStartedSeconds;
             float pctChargedUp = Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);
 
             // Finally, choose which prefab to use based on how charged-up we got.

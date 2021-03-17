@@ -59,7 +59,7 @@ namespace BossRoom.Server
             if (m_StoppedChargingUpTime == 0)
             {
                 // we haven't explicitly stopped charging up... but if we've reached max charge, that implicitly stops us
-                if (TimeRunning >= Description.ExecTimeSeconds)
+                if (TimeRunningSeconds >= Description.ExecTimeSeconds)
                 {
                     StopChargingUp();
                 }
@@ -78,7 +78,7 @@ namespace BossRoom.Server
         {
             if (buffType == BuffableValue.PercentDamageReceived)
             {
-                float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
+                float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStartedSeconds;
                 float pctChargedUp = Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);
 
                 // the amount of damage reduction starts at 50% (for not-charged-up), then slowly increases to 100% depending on how charged-up we got
@@ -93,7 +93,7 @@ namespace BossRoom.Server
             else if (buffType == BuffableValue.ChanceToStunTramplers)
             {
                 // if we are at "full charge", we stun enemies that try to trample us!
-                float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
+                float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStartedSeconds;
                 if (timeSpentChargingUp / Description.ExecTimeSeconds >= 1 && buffedValue < 1)
                 {
                     buffedValue = 1;

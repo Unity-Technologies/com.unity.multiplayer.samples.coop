@@ -29,7 +29,7 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (!m_ExecFired && Time.time - TimeStarted >= Description.ExecTimeSeconds)
+            if (!m_ExecFired && Time.time - TimeStartedSeconds >= Description.ExecTimeSeconds)
             {
                 m_ExecFired = true;
 

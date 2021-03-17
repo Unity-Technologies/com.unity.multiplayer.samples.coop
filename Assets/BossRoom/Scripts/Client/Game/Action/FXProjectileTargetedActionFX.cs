@@ -62,7 +62,7 @@ namespace BossRoom.Visual
         public override bool Update()
         {
             // we keep going until the projectile's duration ends
-            return (Time.time - TimeStarted) <= m_ProjectileDuration + Description.ExecTimeSeconds;
+            return (Time.time - TimeStartedSeconds) <= m_ProjectileDuration + Description.ExecTimeSeconds;
         }
 
         public override void OnAnimEvent(string id)

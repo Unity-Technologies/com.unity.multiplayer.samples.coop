@@ -41,7 +41,7 @@ public class AoeAction : Action
 
     public override bool Update()
     {
-        if (TimeRunning >= Description.ExecTimeSeconds && !m_DidAoE)
+        if (TimeRunningSeconds >= Description.ExecTimeSeconds && !m_DidAoE)
         {
             // actually perform the AoE attack
             m_DidAoE = true;

@@ -34,7 +34,7 @@ namespace BossRoom.Visual
 
         public override bool Update()
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.IsOwner)
+            if (TimeRunningSeconds >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.IsOwner)
             {
                 m_SpawnedGraphics = new List<SpecialFXGraphic>();
                 foreach (var prefab in Description.Spawns)

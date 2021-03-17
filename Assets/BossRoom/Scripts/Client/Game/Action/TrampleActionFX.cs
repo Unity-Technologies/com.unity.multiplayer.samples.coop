@@ -44,7 +44,7 @@ namespace BossRoom.Visual
 
         public override bool Update()
         {
-            float age = Time.time - TimeStarted;
+            float age = Time.time - TimeStartedSeconds;
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
             {
                 m_SpawnedGraphics = new List<SpecialFXGraphic>();

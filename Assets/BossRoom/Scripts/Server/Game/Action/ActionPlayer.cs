@@ -112,7 +112,7 @@ namespace BossRoom.Server
                 int index = SynthesizeTargetIfNecessary(0);
                 SynthesizeChaseIfNecessary(index);
 
-                m_Queue[0].TimeStarted = Time.time;
+                m_Queue[0].TimeStartedSeconds = Time.time;
                 bool play = m_Queue[0].Start();
                 if (!play)
                 {
@@ -260,7 +260,7 @@ namespace BossRoom.Server
         {
             bool keepGoing = action.Update();
             bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
-            var timeElapsed = Time.time - action.TimeStarted;
+            var timeElapsed = Time.time - action.TimeStartedSeconds;
             bool timeExpired = expirable &&
                 timeElapsed >= (action.Description.DurationSeconds + action.Description.CooldownSeconds);
             return keepGoing && !timeExpired;
@@ -286,7 +286,7 @@ namespace BossRoom.Server
                 totalTime += actionTime;
             }
 
-            return totalTime - m_Queue[0].TimeRunning;
+            return totalTime - m_Queue[0].TimeRunningSeconds;
         }
 
         public void OnCollisionEnter(Collision collision)

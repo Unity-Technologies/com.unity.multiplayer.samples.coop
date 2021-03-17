@@ -31,12 +31,12 @@ namespace BossRoom.Server
 
         public override bool ShouldBecomeNonBlocking()
         {
-            return TimeRunning >= Description.ExecTimeSeconds;
+            return TimeRunningSeconds >= Description.ExecTimeSeconds;
         }
 
         public override bool Update()
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && !m_IsStealthStarted && !m_IsStealthEnded)
+            if (TimeRunningSeconds >= Description.ExecTimeSeconds && !m_IsStealthStarted && !m_IsStealthEnded)
             {
                 // start actual stealth-mode... NOW!
                 m_IsStealthStarted = true;

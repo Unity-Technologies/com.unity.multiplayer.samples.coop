@@ -33,7 +33,7 @@ namespace BossRoom.Visual
         public virtual bool Start()
         {
             Anticipated = false; //once you start for real you are no longer an anticipated action.
-            TimeStarted = UnityEngine.Time.time;
+            TimeStartedSeconds = UnityEngine.Time.time;
             return true;
         }
 
@@ -122,7 +122,7 @@ namespace BossRoom.Visual
         public virtual void AnticipateAction()
         {
             Anticipated = true;
-            TimeStarted = UnityEngine.Time.time;
+            TimeStartedSeconds = UnityEngine.Time.time;
         }
     }
 

@@ -51,7 +51,7 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (!m_ExecutionFired && (Time.time - TimeStarted) >= Description.ExecTimeSeconds)
+            if (!m_ExecutionFired && (Time.time - TimeStartedSeconds) >= Description.ExecTimeSeconds)
             {
                 m_ExecutionFired = true;
                 var foe = DetectFoe(m_ProvisionalTarget);

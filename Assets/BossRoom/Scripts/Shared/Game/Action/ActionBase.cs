@@ -12,12 +12,12 @@ namespace BossRoom
         /// <summary>
         /// Time when this Action was started (from Time.time) in seconds. Set by the ActionPlayer or ActionVisualization.
         /// </summary>
-        public float TimeStarted { get; set; }
+        public float TimeStartedSeconds { get; set; }
 
         /// <summary>
         /// How long the Action has been running (since its Start was called)--in seconds, measured via Time.time.
         /// </summary>
-        public float TimeRunning { get { return (Time.time - TimeStarted); } }
+        public float TimeRunningSeconds { get { return (Time.time - TimeStartedSeconds); } }
 
         /// <summary>
         /// RequestData we were instantiated with. Value should be treated as readonly.

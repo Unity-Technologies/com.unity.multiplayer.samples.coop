@@ -73,7 +73,7 @@ namespace BossRoom.Server
 
         private ActionStage GetCurrentStage()
         {
-            float timeSoFar = Time.time - TimeStarted;
+            float timeSoFar = TimeRunningSeconds;
             if (timeSoFar < Description.ExecTimeSeconds)
             {
                 return ActionStage.Windup;
