@@ -1110,7 +1110,7 @@ Animator:
   m_GameObject: {fileID: 6839301660383890230}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
-  m_Controller: {fileID: 9100000, guid: 81ba9d484ee6d174a8aeb3af411babc4, type: 2}
+  m_Controller: {fileID: 22100000, guid: 0406729e6e1c12e4d99fd34970073cd0, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1159,10 +1159,10 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
-  - m_AnimatorNodeName: Dead
-    m_AnimatorNodeNameHash: 1293411866
+  - m_AnimatorNodeName: Dead Loop
+    m_AnimatorNodeNameHash: -1573871441
     m_Prefab: {fileID: -1487195197790481162, guid: 9537f4739c7bc2f4e8d6b2d49bfcc97e, type: 3}
-    m_PrefabSpawnDelaySeconds: 1.8
+    m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_SoundEffect: {fileID: 8300000, guid: 7fbc6b32425f98840b339a705b4a28cb, type: 3}
     m_SoundStartDelaySeconds: 0
