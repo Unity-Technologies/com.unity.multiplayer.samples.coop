@@ -2,8 +2,6 @@ using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
-using System.Collections;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -116,11 +114,24 @@ namespace BossRoom.Visual
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
                     m_PartyHUD.SetHeroData(m_NetState);
+
+                    if( Parent.TryGetComponent(out ClientInputSender inputSender))
+                    {
+                        inputSender.ClientMoveEvent += OnMoveInput;
+                    }
                 }
                 else
                 {
                     m_PartyHUD.SetAllyData(m_NetState);
                 }
+            }
+        }
+
+        private void OnMoveInput(Vector3 position)
+        {
+            if( !IsAnimating )
+            {
+                OurAnimator.SetTrigger("AnticipateMove");
             }
         }
 
@@ -152,6 +163,11 @@ namespace BossRoom.Visual
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+
+                if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
+                {
+                    sender.ClientMoveEvent -= OnMoveInput;
+                }
             }
         }
 
@@ -271,6 +287,25 @@ namespace BossRoom.Visual
             //example of where this is configured.
 
             m_ActionViz.OnAnimEvent(id);
+        }
+
+        public bool IsAnimating
+        {
+            get
+            {
+                //layer 0 is our movement layer, and has a special base state. We detect if we are animating solely based on the Speed parameter. 
+                if (OurAnimator.GetFloat("Speed") > 0.0 )
+                {
+                    return true;
+                }
+
+                for (int i = 1; i < OurAnimator.layerCount; i++)
+                {
+                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsName("Nothing")) { return true; }
+                }
+
+                return false;
+            }
         }
     }
 }
