@@ -58,4 +58,4 @@ Always write a clear log message for your commits. One-line messages are fine fo
 ### Line Endings Guidelines
 The project is using Unix-style line endings.
 
-Please follow the instructions in [the official Git documentation page](https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration), the `Formatting and Whitespace` section to enable `autocrlf` setting on your machine.
+Follow the instructions in the official [Git Configuration](https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration) documentation, the [Formatting and Whitespace](https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration#_formatting_and_whitespace) section, to enable `autocrlf` setting on your machine.
