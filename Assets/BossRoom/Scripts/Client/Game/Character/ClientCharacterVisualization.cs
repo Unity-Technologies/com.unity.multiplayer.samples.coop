@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
@@ -29,6 +30,14 @@ namespace BossRoom.Visual
         public Material ReticuleHostileMat;
 
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
+
+        [Tooltip("These values must be set to match the values of the default node in each layer in the attached animation controller")]
+        public List<string> m_DefaultAnimationNodes = new List<string>
+        {
+            "Base.WalkRun",
+            "Attacks.Nothing",
+            "HitReacts.Nothing"
+        };
 
         private ActionVisualization m_ActionViz;
 
@@ -293,15 +302,15 @@ namespace BossRoom.Visual
         {
             get
             {
-                //layer 0 is our movement layer, and has a special base state. We detect if we are animating solely based on the Speed parameter. 
-                if (OurAnimator.GetFloat("Speed") > 0.0 )
-                {
-                    return true;
-                }
+                if( OurAnimator.GetFloat("Speed") > 0.0 ) { return true; }
 
-                for (int i = 1; i < OurAnimator.layerCount; i++)
+                for( int i = 0; i < OurAnimator.layerCount; i++ )
                 {
-                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsName("Nothing")) { return true; }
+                    if( !OurAnimator.GetCurrentAnimatorStateInfo(i).IsName(m_DefaultAnimationNodes[i]))
+                    {
+                        //we are in an active node, not the default "nothing" node.
+                        return true;
+                    }
                 }
 
                 return false;
