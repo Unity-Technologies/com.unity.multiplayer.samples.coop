@@ -1,4 +1,6 @@
 
+using System;
+
 namespace BossRoom.Visual
 {
     /// <summary>
