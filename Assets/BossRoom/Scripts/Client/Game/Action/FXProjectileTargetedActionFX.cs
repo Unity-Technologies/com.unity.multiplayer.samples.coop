@@ -1,6 +1,9 @@
+using System;
+using BossRoom.Client;
 using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace BossRoom.Visual
 {
@@ -33,7 +36,7 @@ namespace BossRoom.Visual
             }
 
             if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
-                throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
+                throw new Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
 
             // figure out how long the pretend-projectile will be flying to the target
             Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
@@ -79,7 +82,7 @@ namespace BossRoom.Visual
                 return;
             m_ImpactPlayed = true;
 
-            if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
+            if (m_Target && m_Target.TryGetComponent(out ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
             {
                 var hitReact = !string.IsNullOrEmpty(Description.ReactAnim) ? Description.ReactAnim : k_DefaultHitReact;
                 clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
@@ -121,7 +124,7 @@ namespace BossRoom.Visual
             FXProjectile projectile = projectileGO.GetComponent<FXProjectile>();
             if (!projectile)
             {
-                throw new System.Exception($"FXProjectileTargetedAction tried to spawn projectile {projectileGO.name}, as dictated for action type {Data.ActionTypeEnum}, but the object doesn't have a FXProjectile component!");
+                throw new Exception($"FXProjectileTargetedAction tried to spawn projectile {projectileGO.name}, as dictated for action type {Data.ActionTypeEnum}, but the object doesn't have a FXProjectile component!");
             }
 
             // now that we have our projectile, initialize it so it'll fly at the target appropriately

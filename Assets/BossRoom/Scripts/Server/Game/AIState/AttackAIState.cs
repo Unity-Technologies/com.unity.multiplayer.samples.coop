@@ -93,7 +93,7 @@ namespace BossRoom.Server
             var attackData = new ActionRequestData
             {
                 ActionTypeEnum = attackInfo.ActionTypeEnum,
-                TargetIds = new ulong[] { m_Foe.NetworkObjectId },
+                TargetIds = new[] { m_Foe.NetworkObjectId },
                 ShouldClose = true
             };
             m_ActionPlayer.PlayAction(ref attackData);

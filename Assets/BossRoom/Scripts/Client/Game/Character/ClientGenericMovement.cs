@@ -1,3 +1,5 @@
+using System;
+using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Client
@@ -7,7 +9,7 @@ namespace BossRoom.Client
     /// This is part of a temporary movement system that will be replaced once MLAPI can drive movement
     /// internally.
     /// </summary>
-    public class ClientGenericMovement : MLAPI.NetworkBehaviour
+    public class ClientGenericMovement : NetworkBehaviour
     {
         INetMovement m_MovementSource;
         Rigidbody m_Rigidbody;
@@ -27,7 +29,7 @@ namespace BossRoom.Client
             {
                 //this component is not needed on the host (or dedicated server), because ServerCharacterMovement will directly
                 //update the character's position.
-                this.enabled = false;
+                enabled = false;
             }
             m_Initialized = true;
         }

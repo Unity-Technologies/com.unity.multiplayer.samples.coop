@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace BossRoom.Visual
 {
@@ -34,13 +36,13 @@ namespace BossRoom.Visual
                 {
                     if (prefab && prefab.GetComponent<SpecialFXGraphic>()) // we skip any prefabs that aren't usable by us
                     {
-                        var graphicsGO = GameObject.Instantiate(prefab, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
+                        var graphicsGO = Object.Instantiate(prefab, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
                         var graphics = graphicsGO.GetComponent<SpecialFXGraphic>();
                         m_Graphics.Add(graphics);
                     }
                 }
                 if (m_Graphics.Count == 0)
-                    throw new System.Exception($"None of the {Description.Spawns.Length} Spawns attached to {Description.ActionTypeEnum} have a SpecialFXGraphic component! No charge-up particles found!");
+                    throw new Exception($"None of the {Description.Spawns.Length} Spawns attached to {Description.ActionTypeEnum} have a SpecialFXGraphic component! No charge-up particles found!");
             }
             return true;
         }

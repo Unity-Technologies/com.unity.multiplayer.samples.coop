@@ -1,4 +1,5 @@
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace BossRoom.Visual
 {
@@ -13,7 +14,7 @@ namespace BossRoom.Visual
         public Light m_TargetLight;
 
         [Tooltip("Minimum light intensity to randomize to")]
-        public float m_MinIntensity = 0f;
+        public float m_MinIntensity;
 
         [Tooltip("Maximum light intensity to randomize to")]
         public float m_MaxIntensity = 1f;

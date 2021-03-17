@@ -65,7 +65,7 @@ public class FXProjectile : MonoBehaviour
     public void Cancel()
     {
         // we could play a "poof" particle... but for now we just instantly disappear
-        Object.Destroy(gameObject);
+        Destroy(gameObject);
     }
 
     void Update()

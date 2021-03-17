@@ -15,7 +15,7 @@ namespace BossRoom.Visual
 
         void AttachCamera()
         {
-            m_MainCamera = GameObject.FindObjectOfType<CinemachineFreeLook>();
+            m_MainCamera = FindObjectOfType<CinemachineFreeLook>();
             Assert.IsNotNull(m_MainCamera, "CameraController.AttachCamera: Couldn't find gameplay freelook camera");
 
             if (m_MainCamera)

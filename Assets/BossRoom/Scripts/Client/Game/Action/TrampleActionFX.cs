@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -51,7 +52,7 @@ namespace BossRoom.Visual
                     GameObject specialEffectsGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
                     var specialEffects = specialEffectsGO.GetComponent<SpecialFXGraphic>();
                     if (!specialEffects)
-                        throw new System.Exception($"{Description.ActionTypeEnum} has a spawned graphic that does not have a SpecialFXGraphic component!");
+                        throw new Exception($"{Description.ActionTypeEnum} has a spawned graphic that does not have a SpecialFXGraphic component!");
                     m_SpawnedGraphics.Add(specialEffects);
                 }
             }

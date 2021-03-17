@@ -1,6 +1,9 @@
-using UnityEngine;
+using System;
+using BossRoom.Client;
 using MLAPI;
 using MLAPI.Spawning;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace BossRoom.Visual
 {
@@ -40,7 +43,7 @@ namespace BossRoom.Visual
                         m_TargetReticule.SetActive(true);
 
                         var parentTransform = targetObject.transform;
-                        if( targetObject.TryGetComponent(out Client.ClientCharacter clientCharacter))
+                        if( targetObject.TryGetComponent(out ClientCharacter clientCharacter))
                         {
                             //for characters, attach the reticule to the child graphics object.
                             parentTransform = clientCharacter.ChildVizObject.transform;

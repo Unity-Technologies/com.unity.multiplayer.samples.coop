@@ -1,5 +1,7 @@
-using UnityEngine.Assertions;
+using System;
+using BossRoom.Visual;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Client
 {
@@ -8,7 +10,7 @@ namespace BossRoom.Client
     /// </summary>
     public class CharacterSwap : MonoBehaviour
     {
-        [System.Serializable]
+        [Serializable]
         public class CharacterModelSet
         {
             public GameObject ears;
@@ -23,7 +25,7 @@ namespace BossRoom.Client
             public GameObject handLeft;
             public GameObject shoulderRight;
             public GameObject shoulderLeft;
-            public Visual.AnimatorTriggeredSpecialFX specialFx; // should be a component on the same GameObject as the Animator!
+            public AnimatorTriggeredSpecialFX specialFx; // should be a component on the same GameObject as the Animator!
             public AnimatorOverrideController animatorOverrides; // references a separate stand-alone object in the project
 
             public void SetFullActive(bool isActive)

@@ -1,3 +1,5 @@
+using System;
+using BossRoom.Client;
 using MLAPI;
 using MLAPI.Spawning;
 
@@ -62,7 +64,7 @@ namespace BossRoom.Visual
                     {
                         string hitAnim = Description.ReactAnim;
                         if(string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
-                        var clientChar = originalTarget.GetComponent<Client.ClientCharacter>();
+                        var clientChar = originalTarget.GetComponent<ClientCharacter>();
                         if (clientChar)
                         {
                             clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);

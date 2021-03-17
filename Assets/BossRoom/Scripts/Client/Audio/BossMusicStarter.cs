@@ -8,7 +8,7 @@ namespace BossRoom.Client
     /// </summary>
     public class BossMusicStarter : MonoBehaviour
     {
-        bool m_Won = false;
+        bool m_Won;
 
         void Start()
         {

@@ -1,6 +1,6 @@
+using System;
 using BossRoom.Client;
 using MLAPI;
-using System;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -36,7 +36,7 @@ namespace BossRoom.Visual
         const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         /// Player characters need to report health changes and chracter info to the PartyHUD
-        Visual.PartyHUD m_PartyHUD;
+        PartyHUD m_PartyHUD;
 
         float m_SmoothedSpeed;
 
@@ -105,7 +105,7 @@ namespace BossRoom.Visual
 
                 // find the emote bar to track its buttons
                 GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
-                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
+                m_PartyHUD = partyHUDobj.GetComponent<PartyHUD>();
 
                 if (IsLocalPlayer)
                 {
@@ -203,11 +203,11 @@ namespace BossRoom.Visual
 
             if (IsLocalPlayer)
             {
-                this.m_PartyHUD.SetHeroHealth(newValue);
+                m_PartyHUD.SetHeroHealth(newValue);
             }
             else
             {
-                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
+                m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
             }
         }
 

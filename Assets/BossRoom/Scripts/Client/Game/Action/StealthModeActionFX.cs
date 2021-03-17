@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace BossRoom.Visual
 {
@@ -41,7 +43,7 @@ namespace BossRoom.Visual
                     var specialEffectsGO = GameObject.Instantiate(prefab, m_Parent.transform);
                     var specialEffect = specialEffectsGO.GetComponent<SpecialFXGraphic>();
                     if (!specialEffect)
-                        throw new System.Exception($"{Description.ActionTypeEnum} has a spawned graphic that does not have a SpecialFXGraphic component!");
+                        throw new Exception($"{Description.ActionTypeEnum} has a spawned graphic that does not have a SpecialFXGraphic component!");
                     m_SpawnedGraphics.Add(specialEffect);
                 }
             }

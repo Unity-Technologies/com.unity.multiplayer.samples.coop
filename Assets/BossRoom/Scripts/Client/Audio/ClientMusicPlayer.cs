@@ -66,7 +66,7 @@ namespace BossRoom.Client
 
             if (Instance != null)
             {
-                throw new System.Exception("Multiple ClientMuscPlayers!");
+                throw new Exception("Multiple ClientMuscPlayers!");
             }
                         m_source = GetComponent<AudioSource>();
             DontDestroyOnLoad(gameObject);

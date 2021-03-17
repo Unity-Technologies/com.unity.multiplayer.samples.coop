@@ -47,7 +47,7 @@ namespace BossRoom.Visual
             [Tooltip("Relative volume to play at.")]
             public float m_VolumeMultiplier = 1;
             [Tooltip("Should we loop the sound for as long as we're in the animation node?")]
-            public bool m_LoopSound = false;
+            public bool m_LoopSound;
         }
         [SerializeField]
         internal AnimatorNodeEntryEvent[] m_EventsOnNodeEntry;
