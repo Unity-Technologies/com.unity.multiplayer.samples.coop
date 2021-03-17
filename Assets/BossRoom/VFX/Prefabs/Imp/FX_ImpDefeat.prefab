@@ -106,7 +106,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1854671042}
   serializedVersion: 7
-  lengthInSec: 2
+  lengthInSec: 4
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -181,7 +181,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.25
+      scalar: 0.5
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -4911,7 +4911,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2295760344655008312}
   serializedVersion: 7
-  lengthInSec: 2
+  lengthInSec: 4
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -4986,8 +4986,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1.8
-      minScalar: 0.5
+      scalar: 3.6
+      minScalar: 1
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -9867,7 +9867,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3253891914408356323}
   serializedVersion: 7
-  lengthInSec: 2
+  lengthInSec: 4
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -9942,7 +9942,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0.2
+      scalar: 0.4
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -14666,7 +14666,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6991483021183243482}
   serializedVersion: 7
-  lengthInSec: 2
+  lengthInSec: 4
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -14741,8 +14741,8 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 1.2
-      minScalar: 0.8
+      scalar: 2.4
+      minScalar: 1.6
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -15601,7 +15601,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 60
+        scalar: 120
         minScalar: 30
         maxCurve:
           serializedVersion: 2

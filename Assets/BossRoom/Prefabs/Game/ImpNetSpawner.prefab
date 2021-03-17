@@ -13,7 +13,7 @@ GameObject:
   m_Layer: 0
   m_Name: ImpNetSpawner
   m_TagString: Untagged
-  m_Icon: {fileID: 2800000, guid: 77aecc4e7ced8d0449b2e460de360b7f, type: 3}
+  m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -47,3 +47,4 @@ MonoBehaviour:
   BossRoomState: {fileID: 0}
   m_AuxiliarySpawns: []
   FireOnInitialSpawn: 1
+  IsBoss: 0
