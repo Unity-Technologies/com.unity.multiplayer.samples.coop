@@ -1,6 +1,6 @@
 {
   "name": "com.unity.multiplayer.samples.coop",
-  "displayName":"Small scale coop sample - Boss Room",
+  "displayName":"Boss Room",
   "version": "0.1.0-experimental",
   "type": "template",
   "host": "hub",
