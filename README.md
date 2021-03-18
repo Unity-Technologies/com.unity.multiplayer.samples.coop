@@ -84,3 +84,7 @@ git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.co
 ```
 
 Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues and PRs to BossRoom!
+
+For futher discussion points and to connect with the team, join us on the MLAPI by Unity Discord Server - Channel #dev-samples
+
+[![Discord](https://img.shields.io/discord/449263083769036810.svg?label=discord&logo=discord&color=informational)](https://discord.gg/FM8SE9E)
