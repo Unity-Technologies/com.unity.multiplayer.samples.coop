@@ -16,6 +16,8 @@ namespace BossRoom.Client
     {
         private const float k_MouseInputRaycastDistance = 100f;
 
+        //The movement input rate is capped at 50ms (or 20 fps). This provides a nice balance between responsiveness and
+        //upstream network conservation. This matters when holding down your mouse button to move. 
         private const float k_MoveSendRateSeconds = 0.05f; //20 fps.
 
         private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked). 
