@@ -40,7 +40,7 @@ namespace BossRoom.Visual
             public float m_PrefabCanBeAbortedUntilSecs;
             [Tooltip("If the particle should be parented to a specific bone, link that bone here. (If null, plays at character's feet.)")]
             public Transform m_PrefabParent;
-            [Tooltip("Prefab will be spawned with this local offset from the parent (Remember, it's a LOCAL offset, so it's affected by the parent transform's scale!)")]
+            [Tooltip("Prefab will be spawned with this local offset from the parent (Remember, it's a LOCAL offset, so it's affected by the parent transform's scale and rotation!)")]
             public Vector3 m_PrefabParentOffset;
 
             [Header("Sound Effect")]
@@ -71,7 +71,7 @@ namespace BossRoom.Visual
             public float m_PrefabStartDelaySeconds;
             [Tooltip("If the particle should be parented to a specific bone, link that bone here. (By default, plays at character's feet.)")]
             public Transform m_PrefabParent;
-            [Tooltip("Prefab will be spawned with this local offset from the parent (It's a LOCAL offset, so it's affected by the parent transform's scale!)")]
+            [Tooltip("Prefab will be spawned with this local offset from the parent (Remember, it's a LOCAL offset, so it's affected by the parent transform's scale and rotation!)")]
             public Vector3 m_PrefabParentOffset;
 
             [Header("Sound Effect")]
