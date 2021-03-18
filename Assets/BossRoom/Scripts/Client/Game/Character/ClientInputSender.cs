@@ -54,6 +54,7 @@ namespace BossRoom.Client
         {
             public SkillTriggerStyle TriggerStyle;
             public ActionType RequestedAction;
+            public ulong TargetId;
         }
 
         /// <summary>
@@ -139,13 +140,12 @@ namespace BossRoom.Client
                     }
                     else
                     {
-                        PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle);
+                        PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle, m_ActionRequests[i].TargetId);
                     }
                 }
             }
 
             m_ActionRequestCount = 0;
-
 
             if( m_MoveRequest )
             {
@@ -170,33 +170,50 @@ namespace BossRoom.Client
         /// </summary>
         /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
         /// <param name="triggerStyle">What sort of input triggered this skill?</param>
-        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle)
+        /// <param name="targetId">(optional) Pass in a specific networkID to target for this action</param>
+        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
-            int numHits = 0;
-            if (triggerStyle == SkillTriggerStyle.MouseClick)
+            Transform hitTransform = null;
+            
+            if (targetId != 0)
             {
-                var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
-            }
-
-            int networkedHitIndex = -1;
-            for (int i = 0; i < numHits; i++)
-            {
-                if (k_CachedHit[i].transform.GetComponent<NetworkObject>())
+                // if a targetId is given, try to find the object
+                NetworkObject targetNetObj;
+                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj))
                 {
-                    networkedHitIndex = i;
-                    break;
+                    hitTransform = targetNetObj.transform;
                 }
             }
+            else
+            {
+                // otherwise try to find an object under the input position
+                int numHits = 0;
+                if (triggerStyle == SkillTriggerStyle.MouseClick)
+                {
+                    var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+                    numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
+                }
 
-            Transform hitTransform = networkedHitIndex >= 0 ? k_CachedHit[networkedHitIndex].transform : null;
+                int networkedHitIndex = -1;
+                for (int i = 0; i < numHits; i++)
+                {
+                    if (k_CachedHit[i].transform.GetComponent<NetworkObject>())
+                    {
+                        networkedHitIndex = i;
+                        break;
+                    }
+                }
+
+                hitTransform = networkedHitIndex >= 0 ? k_CachedHit[networkedHitIndex].transform : null;
+            }
+
             if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
             {
                 //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
                 m_LastSentMove = Time.time;
                 m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
             }
-            else
+            else if(actionType != ActionType.GeneralTarget )
             {
                 // clicked on nothing... perform a "miss" attack on the spot they clicked on
                 var data = new ActionRequestData();
@@ -224,34 +241,33 @@ namespace BossRoom.Client
             if (!targetNetObj && actionType != ActionType.GeneralTarget)
             {
                 ulong targetId = m_NetworkCharacter.TargetId.Value;
-                if (ActionUtils.IsValidTarget(targetId))
-                {
-                    targetNetObj = NetworkSpawnManager.SpawnedObjects[targetId];
-                }
+                NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
             }
 
-            var targetNetState = targetNetObj != null ? targetNetObj.GetComponent<NetworkCharacterState>() : null;
-            if (targetNetState == null)
+            //sanity check that this is indeed a valid target. 
+            if(targetNetObj==null || !ActionUtils.IsValidTarget(targetNetObj.NetworkObjectId))
             {
-                //Not a Character. In the future this could represent interacting with some other interactable, but for
-                //now, it implies we just do nothing.
                 return false;
             }
 
-            //Skill1 may be contextually overridden if it was generated from a mouse-click.
-            if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
+            var targetNetState = targetNetObj.GetComponent<NetworkCharacterState>();
+            if (targetNetState != null)
             {
-                if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+                //Skill1 may be contextually overridden if it was generated from a mouse-click.
+                if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
-                    //right-clicked on a downed ally--change the skill play to Revive.
-                    actionType = ActionType.GeneralRevive;
+                    if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+                    {
+                        //right-clicked on a downed ally--change the skill play to Revive.
+                        actionType = ActionType.GeneralRevive;
+                    }
                 }
             }
 
             // record our target in case this action uses that info (non-targeted attacks will ignore this)
             resultData.ActionTypeEnum = actionType;
-            resultData.TargetIds = new ulong[] { targetNetState.NetworkObjectId };
-            PopulateSkillRequest(targetNetState.transform.position, actionType, ref resultData);
+            resultData.TargetIds = new ulong[] { targetNetObj.NetworkObjectId };
+            PopulateSkillRequest(targetNetObj.transform.position, actionType, ref resultData);
             return true;
         }
 
@@ -295,7 +311,7 @@ namespace BossRoom.Client
         /// </summary>
         /// <param name="action">the action you'd like to perform. </param>
         /// <param name="triggerStyle">What input style triggered this action.</param>
-        public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle )
+        public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             // do not populate an action request unless said action is valid
             if (action == ActionType.None)
@@ -310,6 +326,7 @@ namespace BossRoom.Client
             {
                 m_ActionRequests[m_ActionRequestCount].RequestedAction = action;
                 m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
+                m_ActionRequests[m_ActionRequestCount].TargetId = targetId;
                 m_ActionRequestCount++;
             }
         }
@@ -323,6 +340,14 @@ namespace BossRoom.Client
             else if (Input.GetKeyUp(KeyCode.Alpha1))
             {
                 RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha2))
+            {
+                RequestAction(CharacterData.Skill3, SkillTriggerStyle.KeyboardRelease);
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha4))
@@ -342,9 +367,9 @@ namespace BossRoom.Client
                 RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
             }
 
-            if ( !EventSystem.current.IsPointerOverGameObject())
+            if ( !EventSystem.current.IsPointerOverGameObject() && m_CurrentSkillInput == null)
             {
-                //this is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
+                //IsPointerOverGameObject() is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
                 //to model the button "blocking" mouse clicks from falling through and interacting with the world.
 
                 if (Input.GetMouseButtonDown(1))

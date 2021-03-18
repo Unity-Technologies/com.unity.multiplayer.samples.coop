@@ -5,7 +5,7 @@
 
 BossRoom is a fully functional co-op multiplayer RPG made in Unity and MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
-Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
+Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE](LICENSE) for more legal information.
 
 
 ```
@@ -19,15 +19,6 @@ Platforms : Windows, Mac
 ## Installing Git LFS
 
 This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. 
-
-The following Mac installation uses Homebrew and Git:
-
-```
-brew install git-lfs
-git lfs install
-git pull          #to be safe
-git lfs status    #to confirm
-```
 
 ## Opening the project for the first time
 

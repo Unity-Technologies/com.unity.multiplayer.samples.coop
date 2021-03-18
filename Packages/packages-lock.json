@@ -37,7 +37,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ext.nunit": {
-      "version": "1.0.5",
+      "version": "1.0.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -53,10 +53,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.5",
+      "version": "2.0.7",
       "depth": 0,
       "source": "registry",
-      "dependencies": {},
+      "dependencies": {
+        "com.unity.test-framework": "1.1.9"
+      },
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.vscode": {
@@ -83,7 +85,7 @@
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "f0ed667b78e7f94a3e7006591a5f85e590bfdfe6"
+      "hash": "1817f625fd1fd82414a65890a38678f6fbb52b6f"
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
@@ -139,11 +141,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.19",
+      "version": "1.1.22",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.ext.nunit": "1.0.5",
+        "com.unity.ext.nunit": "1.0.6",
         "com.unity.modules.imgui": "1.0.0",
         "com.unity.modules.jsonserialize": "1.0.0"
       },
@@ -159,7 +161,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.4.3",
+      "version": "1.4.6",
       "depth": 0,
       "source": "registry",
       "dependencies": {

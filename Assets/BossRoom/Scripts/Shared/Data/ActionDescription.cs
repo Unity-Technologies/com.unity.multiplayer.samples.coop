@@ -65,11 +65,15 @@ namespace BossRoom
         [Tooltip("Prefab to spawn that will manage this action's input")]
         public BaseActionInput ActionInput;
 
+        [Tooltip("Is this Action interruptible by other action plays. Generally, actions with short exec times should not be interruptible in this way.")]
+        public bool ActionInterruptible;
+
         [System.Serializable]
         public enum BlockingModeType
         {
             EntireDuration,
             OnlyDuringExecTime,
+            ExecTimeWithCooldown,
         }
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;

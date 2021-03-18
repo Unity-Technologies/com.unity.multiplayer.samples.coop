@@ -168,8 +168,8 @@ namespace BossRoom.Server
                 m_PlayerSpawnPointsList = new List<Transform>(m_PlayerSpawnPoints);
             }
 
-            Debug.Assert(m_PlayerSpawnPointsList.Count > 1,
-                $"PlayerSpawnPoints array should have at least 2 spawn points.");
+            Debug.Assert(m_PlayerSpawnPointsList.Count > 0,
+                $"PlayerSpawnPoints array should have at least 1 spawn points.");
 
             int index = Random.Range(0, m_PlayerSpawnPointsList.Count);
                 spawnPoint = m_PlayerSpawnPointsList[index];

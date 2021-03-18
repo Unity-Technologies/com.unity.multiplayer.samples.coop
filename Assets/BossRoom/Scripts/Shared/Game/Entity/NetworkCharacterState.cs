@@ -17,7 +17,7 @@ namespace BossRoom
     /// Contains all NetworkVariables and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
     [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
-    public class NetworkCharacterState : NetworkBehaviour, INetMovement
+    public class NetworkCharacterState : NetworkBehaviour, INetMovement, ITargetable
     {
         public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
         {
@@ -52,7 +52,7 @@ namespace BossRoom
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
         /// </summary>
         /// <remarks>
-        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's serialized 
+        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's serialized
         /// as a bit, but deserialized as a byte, which corrupts the whole network-var stream.
         /// </remarks>
         public NetworkVariableByte IsStealthy { get; } = new NetworkVariableByte(0);
@@ -96,6 +96,8 @@ namespace BossRoom
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
+
+        public bool IsValidTarget { get { return NetworkLifeState.Value != LifeState.Dead; } }
 
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.

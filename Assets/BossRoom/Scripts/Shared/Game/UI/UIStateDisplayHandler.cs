@@ -49,11 +49,18 @@ namespace BossRoom
         // as soon as any HP goes to 0, we wait this long before removing health bar UI object
         const float k_DurationSeconds = 2f;
 
+        [Tooltip("World space vertical offset for positioning.")]
+        [SerializeField]
+        float m_VerticalWorldOffset;
+
         [Tooltip("Screen space vertical offset for positioning.")]
         [SerializeField]
         float m_VerticalScreenOffset;
 
         Vector3 m_VerticalOffset;
+
+        // used to compute corld pos based on target and offsets
+        private Vector3 m_WorldPos;
 
         void OnEnable()
         {
@@ -172,6 +179,8 @@ namespace BossRoom
         void SpawnUIState()
         {
             m_UIState = Instantiate(m_UIStatePrefab, m_CanvasTransform);
+            // make in world UI state draw under other UI elements
+            m_UIState.transform.SetAsFirstSibling();
             m_UIStateRectTransform = m_UIState.GetComponent<RectTransform>();
         }
 
@@ -191,7 +200,11 @@ namespace BossRoom
         {
             if (m_UIStateActive)
             {
-                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_TransformToTrack.position) +
+                // set world position with world offset added
+                m_WorldPos.Set(m_TransformToTrack.position.x,
+                    m_TransformToTrack.position.y + m_VerticalWorldOffset, m_TransformToTrack.position.z );
+
+                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_WorldPos) +
                     m_VerticalOffset;
             }
         }

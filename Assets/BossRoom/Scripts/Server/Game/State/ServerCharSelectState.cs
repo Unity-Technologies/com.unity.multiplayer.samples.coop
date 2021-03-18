@@ -119,7 +119,7 @@ namespace BossRoom.Server
         private IEnumerator CoroEndLobby()
         {
             yield return new WaitForSeconds(3);
-            MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("DungeonTest");
+            MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("BossRoom");
         }
 
         protected override void OnDestroy()

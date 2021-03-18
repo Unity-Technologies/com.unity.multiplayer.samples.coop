@@ -161,8 +161,7 @@ MonoBehaviour:
     RegisteredScenes:
     - MainMenu
     - CharSelect
-    - SampleScene
-    - DungeonTest
+    - BossRoom
     - PostGame
     - Startup
     AllowRuntimeSceneChanges: 1

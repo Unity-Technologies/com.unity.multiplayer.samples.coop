@@ -57,8 +57,7 @@ namespace BossRoom.Server
                 return;
             }
 
-            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
-            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
+            m_NetworkCharacterState.InitNetworkPositionAndRotationY(transform.position, transform.rotation.eulerAngles.y);
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
