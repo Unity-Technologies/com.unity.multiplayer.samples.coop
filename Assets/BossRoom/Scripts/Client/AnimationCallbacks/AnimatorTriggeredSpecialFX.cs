@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -12,8 +13,8 @@ namespace BossRoom.Visual
 {
     /// <summary>
     /// Instantiates and maintains graphics prefabs and sound effects. They're triggered by entering
-    /// (or exiting) specific nodes in an Animator. (Each relevant Animator node must have an
-    /// AnimationNodeHook component attached.)
+    /// (or exiting) specific nodes in an Animator. (Each relevant Animator layer or node must have an
+    /// AnimatorNodeHook component attached.)
     /// </summary>
     [RequireComponent(typeof(Animator))]
     public class AnimatorTriggeredSpecialFX : MonoBehaviour
@@ -48,6 +49,16 @@ namespace BossRoom.Visual
             public float m_VolumeMultiplier = 1;
             [Tooltip("Should we loop the sound for as long as we're in the animation node?")]
             public bool m_LoopSound = false;
+
+            [Header("Camera Shake")]
+            [Tooltip("Time (in seconds) before we start shaking the camera. If we leave the animation node before this time, the camera does not shake")]
+            public float m_CameraShakeStartDelaySeconds;
+            [Tooltip("How long to shake the camera. Note that once camera shaking starts, it will continue for this duration regardless of if the animation node is left")]
+            public float m_CameraShakeDurationSeconds;
+            [Tooltip("Frequency of camera shake")]
+            public float m_CameraShakeFrequency;
+            [Tooltip("Amplitude of camera shake")]
+            public float m_CameraShakeAmplitude;
         }
         [SerializeField]
         internal AnimatorNodeEntryEvent[] m_EventsOnNodeEntry;
@@ -123,6 +134,10 @@ namespace BossRoom.Visual
                     {
                         StartCoroutine(CoroPlayStateEnterSound(info));
                     }
+                    if (info.m_CameraShakeDurationSeconds > 0)
+                    {
+                        StartCoroutine(CoroPlayStateEnterCameraShake(info));
+                    }
                     break;
                 }
             }
@@ -187,6 +202,19 @@ namespace BossRoom.Visual
                 }
                 audioSource.Stop();
             }
+        }
+
+        // activates the camera-shake of an on-entry event
+        private IEnumerator CoroPlayStateEnterCameraShake(AnimatorNodeEntryEvent eventInfo)
+        {
+            yield return new WaitForSeconds(eventInfo.m_CameraShakeStartDelaySeconds);
+
+            if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
+                yield break;
+
+            var cameraController = CameraController.Instance;
+            Assert.IsNotNull(cameraController);
+            cameraController.ShakeCamera(eventInfo.m_CameraShakeFrequency, eventInfo.m_CameraShakeAmplitude, eventInfo.m_CameraShakeDurationSeconds);
         }
 
         /// <summary>
