@@ -46,6 +46,7 @@ namespace BossRoom.Visual
         int m_FaintedStateTriggerID;
         int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
+        int m_AnticipateMoveTriggerID;
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -59,6 +60,7 @@ namespace BossRoom.Visual
             m_AliveStateTriggerID = Animator.StringToHash("StandUp");
             m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
             m_DeadStateTriggerID = Animator.StringToHash("Dead");
+            m_AnticipateMoveTriggerID = Animator.StringToHash("AnticipateMove");
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
@@ -132,7 +134,7 @@ namespace BossRoom.Visual
         {
             if( !IsAnimating )
             {
-                OurAnimator.SetTrigger("AnticipateMove");
+                OurAnimator.SetTrigger(m_AnticipateMoveTriggerID);
             }
         }
 
