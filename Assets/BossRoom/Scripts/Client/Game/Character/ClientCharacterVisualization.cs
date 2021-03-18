@@ -31,14 +31,6 @@ namespace BossRoom.Visual
 
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
 
-        [Tooltip("These values must be set to match the values of the default node in each layer in the attached animation controller")]
-        public List<string> m_DefaultAnimationNodes = new List<string>
-        {
-            "Base.WalkRun",
-            "Attacks.Nothing",
-            "HitReacts.Nothing"
-        };
-
         private ActionVisualization m_ActionViz;
 
         public Transform Parent { get; private set; }
@@ -306,7 +298,7 @@ namespace BossRoom.Visual
 
                 for( int i = 0; i < OurAnimator.layerCount; i++ )
                 {
-                    if( !OurAnimator.GetCurrentAnimatorStateInfo(i).IsName(m_DefaultAnimationNodes[i]))
+                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsTag("BaseNode"))
                     {
                         //we are in an active node, not the default "nothing" node.
                         return true;
