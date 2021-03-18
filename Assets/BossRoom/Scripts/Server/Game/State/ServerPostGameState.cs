@@ -5,7 +5,7 @@ namespace BossRoom.Server
 {
 
     /// <summary>
-    /// The ServerPostGameState contains logic for 
+    /// The ServerPostGameState contains logic for
     /// </summary>
     [RequireComponent(typeof(PostGameData))]
     public class ServerPostGameState : GameStateBehaviour

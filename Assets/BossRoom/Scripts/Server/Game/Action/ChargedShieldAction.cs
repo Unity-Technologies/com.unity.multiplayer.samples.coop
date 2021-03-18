@@ -21,24 +21,17 @@ namespace BossRoom.Server
     public class ChargedShieldAction : Action
     {
         /// <summary>
-        /// Cached reference to a component in Parent
-        /// </summary>
-        ServerCharacterMovement m_Movement;
-
-        /// <summary>
         /// Set once we've stopped charging up, for any reason:
         /// - the player has let go of the button,
         /// - we were attacked,
         /// - or the maximum charge was reached.
         /// </summary>
-        float m_StoppedChargingUpTime = 0;
+        float m_StoppedChargingUpTime;
 
         public ChargedShieldAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
         public override bool Start()
         {
-            m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
-
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
                 NetworkObject initialTarget = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];

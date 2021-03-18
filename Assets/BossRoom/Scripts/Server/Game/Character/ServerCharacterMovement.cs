@@ -229,8 +229,7 @@ namespace BossRoom.Server
         {
             if (m_MovementState == MovementState.Idle || m_MovementState == MovementState.Knockback)
                 return 0;
-            else
-                return 1;
+            return 1;
             // if we had a "movement-slow" special-effect, we could return 0.5 from this function, which would
             // make the character use the walk animation instead of the run animation
         }

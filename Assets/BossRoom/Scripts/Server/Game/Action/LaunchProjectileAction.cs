@@ -1,6 +1,7 @@
+using System;
 using MLAPI;
 using UnityEngine;
-
+using Object = UnityEngine.Object;
 
 namespace BossRoom.Server
 {
@@ -9,7 +10,7 @@ namespace BossRoom.Server
     /// </summary>
     public class LaunchProjectileAction : Action
     {
-        bool m_Launched = false;
+        bool m_Launched;
 
         public LaunchProjectileAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -43,7 +44,7 @@ namespace BossRoom.Server
                 if (projectileInfo.ProjectilePrefab && projectileInfo.ProjectilePrefab.GetComponent<NetworkProjectileState>())
                     return projectileInfo;
             }
-            throw new System.Exception($"Action {Description.ActionTypeEnum} has no usable Projectiles!");
+            throw new Exception($"Action {Description.ActionTypeEnum} has no usable Projectiles!");
         }
 
         /// <summary>

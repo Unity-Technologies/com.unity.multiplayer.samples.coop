@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using BlockingMode = BossRoom.ActionDescription.BlockingModeType;
@@ -22,7 +23,7 @@ namespace BossRoom.Server
         /// </summary>
         const float k_MaxQueueTimeDepth = 1.6f;
 
-        ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
+        ActionRequestData m_PendingSynthesizedAction;
         bool m_HasPendingSynthesizedAction;
 
         public ActionPlayer(ServerCharacter parent)
@@ -83,11 +84,9 @@ namespace BossRoom.Server
                 data = m_Queue[0].Data;
                 return true;
             }
-            else
-            {
-                data = new ActionRequestData();
-                return false;
-            }
+
+            data = new ActionRequestData();
+            return false;
         }
 
         /// <summary>
@@ -282,7 +281,7 @@ namespace BossRoom.Server
                 float actionTime =  info.BlockingMode == BlockingMode.OnlyDuringExecTime   ? info.ExecTimeSeconds :
                                     info.BlockingMode == BlockingMode.ExecTimeWithCooldown ? (info.ExecTimeSeconds+info.CooldownSeconds) :
                                     info.BlockingMode == BlockingMode.EntireDuration       ? (info.DurationSeconds + info.CooldownSeconds) :
-                                    throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
+                                    throw new Exception($"Unrecognized blocking mode: {info.BlockingMode}");
                 totalTime += actionTime;
             }
 

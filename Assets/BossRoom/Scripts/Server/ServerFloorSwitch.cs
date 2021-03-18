@@ -1,5 +1,5 @@
-using MLAPI;
 using System.Collections.Generic;
+using MLAPI;
 using UnityEngine;
 
 /// <summary>
@@ -40,9 +40,9 @@ public class ServerFloorSwitch : NetworkBehaviour
         }
     }
 
-    bool IsColliderAbleToTriggerSwitch(Collider collider)
+    bool IsColliderAbleToTriggerSwitch(Collider other)
     {
-        return collider.gameObject.layer == m_CachedPlayerLayerIdx || collider.gameObject.layer == m_CachedHeavyObjectLayerIdx;
+        return other.gameObject.layer == m_CachedPlayerLayerIdx || other.gameObject.layer == m_CachedHeavyObjectLayerIdx;
     }
 
     void OnTriggerEnter(Collider other)
@@ -65,7 +65,7 @@ public class ServerFloorSwitch : NetworkBehaviour
         // it's possible that the Colliders in our trigger have been destroyed, while still inside our trigger.
         // In this case, OnTriggerExit() won't get called for them! We can tell if a Collider was destroyed
         // because its reference will become null. So here we remove any nulls and see if we're still active.
-        m_RelevantCollidersInTrigger.RemoveAll(collider => { return collider == null; });
+        m_RelevantCollidersInTrigger.RemoveAll(col => { return col == null; });
         m_FloorSwitchState.IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
     }
 }

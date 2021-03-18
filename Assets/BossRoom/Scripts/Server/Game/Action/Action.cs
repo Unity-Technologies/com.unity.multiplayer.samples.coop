@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using BlockingMode = BossRoom.ActionDescription.BlockingModeType;
 
@@ -103,13 +104,12 @@ namespace BossRoom.Server
         /// that this is used for both "buffs" (positive gameplay benefits) and "debuffs" (gameplay penalties).
         /// </summary>
         /// <remarks>
-        /// In a more complex game with lots of buffs and debuffs, this function might be replaced by a separate 
+        /// In a more complex game with lots of buffs and debuffs, this function might be replaced by a separate
         /// BuffRegistry component. This would let you add fancier features, such as defining which effects
         /// "stack" with other ones, and could provide a UI that lists which are affecting each character
         /// and for how long.
         /// </remarks>
         /// <param name="buffType">Which gameplay variable being calculated</param>
-        /// <param name="orgValue">The original ("un-buffed") value</param>
         /// <param name="buffedValue">The final ("buffed") value</param>
         public virtual void BuffValue(BuffableValue buffType, ref float buffedValue) { }
 
@@ -117,14 +117,14 @@ namespace BossRoom.Server
         /// Static utility function that returns the default ("un-buffed") value for a BuffableValue.
         /// (This just ensures that there's one place for all these constants.)
         /// </summary>
-        public static float GetUnbuffedValue(Action.BuffableValue buffType)
+        public static float GetUnbuffedValue(BuffableValue buffType)
         {
             switch (buffType)
             {
                 case BuffableValue.PercentDamageReceived: return 1;
                 case BuffableValue.PercentHealingReceived: return 1;
                 case BuffableValue.ChanceToStunTramplers: return 0;
-                default: throw new System.Exception($"Unknown buff type {buffType}");
+                default: throw new Exception($"Unknown buff type {buffType}");
             }
         }
 
@@ -142,7 +142,7 @@ namespace BossRoom.Server
         /// <remarks>
         /// When a GameplayActivity of AttackedByEnemy or Healed happens, OnGameplayAction() is called BEFORE BuffValue() is called.
         /// </remarks>
-        /// <param name="actionType"></param>
+        /// <param name="activityType"></param>
         public virtual void OnGameplayActivity(GameplayActivity activityType) { }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace BossRoom.Server
         {
             if (!GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out var actionDesc))
             {
-                throw new System.Exception($"Trying to create Action {data.ActionTypeEnum} but it isn't defined on the GameDataSource!");
+                throw new Exception($"Trying to create Action {data.ActionTypeEnum} but it isn't defined on the GameDataSource!");
             }
 
             var logic = actionDesc.Logic;
@@ -175,7 +175,7 @@ namespace BossRoom.Server
                 case ActionLogic.Target: return new TargetAction(parent, ref data);
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction(parent, ref data);
                 case ActionLogic.StealthMode: return new StealthModeAction(parent, ref data);
-                default: throw new System.NotImplementedException();
+                default: throw new NotImplementedException();
             }
         }
 

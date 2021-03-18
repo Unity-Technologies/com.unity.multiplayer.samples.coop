@@ -9,8 +9,8 @@ namespace BossRoom.Server
     /// </summary>
     public class StealthModeAction : Action
     {
-        bool m_IsStealthStarted = false;
-        bool m_IsStealthEnded = false;
+        bool m_IsStealthStarted;
+        bool m_IsStealthEnded;
 
         public StealthModeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -23,7 +23,7 @@ namespace BossRoom.Server
             if (!movement.IsPerformingForcedMovement())
             {
                 movement.CancelMove();
-            }    
+            }
             return true;
         }
 

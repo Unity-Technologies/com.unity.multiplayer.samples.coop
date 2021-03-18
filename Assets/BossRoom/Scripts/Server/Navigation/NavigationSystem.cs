@@ -43,7 +43,7 @@ namespace BossRoom.Server
 
         void OnValidate()
         {
-            Assert.AreEqual(NavigationSystemTag, tag, $"The GameObject of the {nameof(NavigationSystem)} component has to use the {NavigationSystem.NavigationSystemTag} tag!");
+            Assert.AreEqual(NavigationSystemTag, tag, $"The GameObject of the {nameof(NavigationSystem)} component has to use the {NavigationSystemTag} tag!");
         }
     }
 }

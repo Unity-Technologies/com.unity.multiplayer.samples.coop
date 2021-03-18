@@ -91,7 +91,7 @@ namespace BossRoom.Server
 
                 if (m_StartingAction != ActionType.None)
                 {
-                    var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
+                    var startingAction = new ActionRequestData { ActionTypeEnum = m_StartingAction };
                     PlayAction(ref startingAction);
                 }
             }
@@ -197,7 +197,7 @@ namespace BossRoom.Server
 
             if( m_AIBrain != null )
             {
-                //let the brain know about the modified amount of damage we received. 
+                //let the brain know about the modified amount of damage we received.
                 m_AIBrain.ReceiveHP(inflicter, HP);
             }
 

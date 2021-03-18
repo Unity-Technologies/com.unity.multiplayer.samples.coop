@@ -1,8 +1,10 @@
-using MLAPI;
+using System;
 using System.Collections;
-using MLAPI.Spawning;
 using System.Collections.Generic;
+using MLAPI;
+using MLAPI.Spawning;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace BossRoom.Server
 {
@@ -27,7 +29,7 @@ namespace BossRoom.Server
 
         [SerializeField] [Tooltip("A collection of locations for spawning players")]
         Transform[] m_PlayerSpawnPoints;
-        List<Transform> m_PlayerSpawnPointsList = null;
+        List<Transform> m_PlayerSpawnPointsList;
 
         // note: this is temporary, for testing!
         public override GameState ActiveState { get { return GameState.BossRoom; } }
@@ -92,7 +94,7 @@ namespace BossRoom.Server
                 // retrieve the lobby state info so that the players we're about to spawn can query it
                 var o = GameStateRelay.GetRelayObject();
                 if (o != null && o.GetType() != typeof(LobbyResults))
-                    throw new System.Exception("No LobbyResults found!");
+                    throw new Exception("No LobbyResults found!");
                 m_LobbyResults = (LobbyResults)o;
 
                 DoInitialSpawnIfPossible();
@@ -160,7 +162,7 @@ namespace BossRoom.Server
 
         void SpawnPlayer(ulong clientId)
         {
-            Transform spawnPoint = null;
+            Transform spawnPoint;
 
             if (m_PlayerSpawnPointsList == null || m_PlayerSpawnPointsList.Count == 0)
             {
@@ -168,7 +170,7 @@ namespace BossRoom.Server
             }
 
             Debug.Assert(m_PlayerSpawnPointsList.Count > 0,
-                $"PlayerSpawnPoints array should have at least 1 spawn points.");
+                "PlayerSpawnPoints array should have at least 1 spawn points.");
 
             int index = Random.Range(0, m_PlayerSpawnPointsList.Count);
                 spawnPoint = m_PlayerSpawnPointsList[index];

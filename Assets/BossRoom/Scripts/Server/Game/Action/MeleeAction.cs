@@ -42,7 +42,7 @@ namespace BossRoom.Server
             if (foe != null)
             {
                 m_ProvisionalTarget = foe.NetworkObjectId;
-                Data.TargetIds = new ulong[] { foe.NetworkObjectId };
+                Data.TargetIds = new[] { foe.NetworkObjectId };
             }
 
             m_Parent.NetState.RecvDoActionClientRPC(Data);
@@ -57,7 +57,7 @@ namespace BossRoom.Server
                 var foe = DetectFoe(m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.ReceiveHP(this.m_Parent, -Description.Amount);
+                    foe.ReceiveHP(m_Parent, -Description.Amount);
                 }
             }
 

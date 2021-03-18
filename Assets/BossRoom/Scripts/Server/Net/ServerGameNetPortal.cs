@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 using MLAPI.SceneManagement;
+using UnityEngine;
 
 namespace BossRoom.Server
 {
@@ -73,12 +73,12 @@ namespace BossRoom.Server
                 //may do this differently.
                 NetworkSceneManager.SwitchScene("CharSelect");
 
-                m_Portal.NetManager.OnClientDisconnectCallback += (ulong clientId) =>
+                m_Portal.NetManager.OnClientDisconnectCallback += clientId =>
                 {
                     m_ClientSceneMap.Remove(clientId);
                 };
 
-                m_Portal.ClientSceneChanged += (ulong clientId, int sceneIndex) =>
+                m_Portal.ClientSceneChanged += (clientId, sceneIndex) =>
                 {
                     m_ClientSceneMap[clientId] = sceneIndex;
                 };
@@ -92,10 +92,6 @@ namespace BossRoom.Server
 
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="clientId"> guid of the client whose data is requested</param>
-        /// <returns>Player data struct matching the given ID</returns>
         public bool AreAllClientsInServerScene()
         {
             foreach( var kvp in m_ClientSceneMap )
@@ -131,10 +127,8 @@ namespace BossRoom.Server
                 {
                     return data;
                 }
-                else
-                {
-                    Debug.Log("No PlayerData of matching guid found");
-                }
+
+                Debug.Log("No PlayerData of matching guid found");
             }
             else
             {

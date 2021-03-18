@@ -1,7 +1,8 @@
-using MLAPI;
 using System.Collections.Generic;
+using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace BossRoom.Server
 {
@@ -149,7 +150,7 @@ namespace BossRoom.Server
                     damage = Description.SplashDamage;
                 }
                 victim.NetState.RecvPerformHitReactionClientRPC();
-                victim.ReceiveHP(this.m_Parent, -damage);
+                victim.ReceiveHP(m_Parent, -damage);
             }
 
             var victimMovement = victim.GetComponent<ServerCharacterMovement>();
@@ -197,7 +198,7 @@ namespace BossRoom.Server
         {
             if (m_WasStunned)
             {
-                newAction = new ActionRequestData()
+                newAction = new ActionRequestData
                 {
                     ActionTypeEnum = ActionType.Stun,
                     ShouldQueue = false,

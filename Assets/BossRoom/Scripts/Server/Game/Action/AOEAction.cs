@@ -2,6 +2,7 @@ using BossRoom;
 using BossRoom.Server;
 using MLAPI.Spawning;
 using UnityEngine;
+using Action = BossRoom.Server.Action;
 
 /// <summary>
 /// Area-of-effect attack Action. The attack is centered on a point provided by the client.

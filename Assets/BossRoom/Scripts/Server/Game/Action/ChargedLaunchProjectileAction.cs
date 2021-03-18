@@ -1,3 +1,4 @@
+using System;
 using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
@@ -26,12 +27,12 @@ namespace BossRoom.Server
         /// - we were attacked,
         /// - or the maximum charge was reached.
         /// </summary>
-        float m_StoppedChargingUpTime = 0;
+        float m_StoppedChargingUpTime;
 
         /// <summary>
         /// Were we attacked while charging up? (If so, we won't actually fire.)
         /// </summary>
-        bool m_HitByAttack = false;
+        bool m_HitByAttack;
 
         public ChargedLaunchProjectileAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -127,7 +128,7 @@ namespace BossRoom.Server
         protected override ActionDescription.ProjectileInfo GetProjectileInfo()
         {
             if (Description.Projectiles.Length == 0) // uh oh, this is bad data
-                throw new System.Exception($"Action {Description.ActionTypeEnum} has no Projectiles!");
+                throw new Exception($"Action {Description.ActionTypeEnum} has no Projectiles!");
 
             float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
             float pctChargedUp = Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);

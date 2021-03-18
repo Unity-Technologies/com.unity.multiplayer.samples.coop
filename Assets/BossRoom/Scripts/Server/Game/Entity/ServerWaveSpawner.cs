@@ -1,8 +1,9 @@
-using MLAPI;
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using MLAPI;
 using MLAPI.Connection;
+using UnityEngine;
 
 namespace BossRoom.Server
 {
@@ -177,7 +178,7 @@ namespace BossRoom.Server
         {
             if (m_NetworkedPrefab == null)
             {
-                throw new System.ArgumentNullException("m_NetworkedPrefab");
+                throw new ArgumentNullException("m_NetworkedPrefab");
             }
 
             // spawn clone right in front of spawner

@@ -23,7 +23,7 @@ namespace BossRoom.Server
 
         public bool FireOnInitialSpawn = true;
 
-        public bool IsBoss = false;
+        public bool IsBoss;
 
         // Start is called before the first frame update
         void Start()

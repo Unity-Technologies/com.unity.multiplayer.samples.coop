@@ -1,6 +1,7 @@
+using System;
+using System.Collections;
 using MLAPI;
 using MLAPI.Messaging;
-using System.Collections;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -23,7 +24,7 @@ namespace BossRoom.Server
         {
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
-                throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
+                throw new Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
 
             if (CharSelectData.IsLobbyClosed.Value)
             {
@@ -187,8 +188,6 @@ namespace BossRoom.Server
 
         IEnumerator CoroWorkAroundMlapiBug(ulong clientId)
         {
-            var client = NetworkManager.Singleton.ConnectedClients[clientId];
-
             // for the host-mode client, a single frame of delay seems to be enough;
             // for networked connections, it often takes longer, so we wait a second.
             if (IsHost && clientId == NetworkManager.Singleton.LocalClientId)
@@ -227,7 +226,7 @@ namespace BossRoom.Server
             {
                 // we ran out of seats... there was no room!
                 CharSelectData.FatalLobbyErrorClientRpc(CharSelectData.FatalLobbyError.LobbyFull,
-                    new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } });
+                    new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { clientId } } });
                 return;
             }
 

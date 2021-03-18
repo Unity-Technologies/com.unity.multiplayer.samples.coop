@@ -1,15 +1,15 @@
-using MLAPI;
 using System.Collections.Generic;
 using System.IO;
+using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
 
-    public class ServerProjectileLogic : MLAPI.NetworkBehaviour
+    public class ServerProjectileLogic : NetworkBehaviour
     {
-        bool m_Started = false;
+        bool m_Started;
 
         [SerializeField]
         NetworkProjectileState m_NetState;
@@ -78,8 +78,8 @@ namespace BossRoom.Server
 
             m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
 
-            m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Ground" });
-            m_BlockerMask = LayerMask.GetMask(new[] { "Default", "Ground" });
+            m_CollisionMask = LayerMask.GetMask("NPCs", "Default", "Ground");
+            m_BlockerMask = LayerMask.GetMask("Default", "Ground");
             m_NPCLayer = LayerMask.NameToLayer("NPCs");
 
             RefreshNetworkState();
