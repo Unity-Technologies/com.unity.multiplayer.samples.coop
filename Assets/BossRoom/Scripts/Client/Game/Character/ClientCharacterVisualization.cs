@@ -15,6 +15,8 @@ namespace BossRoom.Visual
     {
         private NetworkCharacterState m_NetState;
 
+        ulong m_ParentNetworkObjectID;
+
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
@@ -47,6 +49,8 @@ namespace BossRoom.Visual
         int m_FaintedStateTriggerID;
         int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
+
+        public event Action Destroyed;
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -120,6 +124,15 @@ namespace BossRoom.Visual
                 else
                 {
                     m_PartyHUD.SetAllyData(m_NetState);
+
+                    m_ParentNetworkObjectID = m_NetState.NetworkObjectId;
+                    Destroyed += () =>
+                    {
+                        if (m_PartyHUD != null)
+                        {
+                            m_PartyHUD.RemoveAlly(m_ParentNetworkObjectID);
+                        }
+                    };
                 }
             }
         }
@@ -153,6 +166,8 @@ namespace BossRoom.Visual
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
             }
+
+            Destroyed?.Invoke();
         }
 
         private void OnPerformHitReaction()

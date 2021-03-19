@@ -33,7 +33,7 @@ namespace BossRoom.Visual
         [SerializeField]
         private Sprite[] m_ClassSymbols;
 
-        // track a list of hero (slot 0) + allies 
+        // track a list of hero (slot 0) + allies
         private ulong[] m_PartyIds;
 
         // track Hero's target to show when it is the Hero or an ally
@@ -111,15 +111,6 @@ namespace BossRoom.Visual
             if (slot == -1) { return; }
 
             m_PartyHealthSliders[slot].value = hp;
-        }
-
-        public void SetAllyName(ulong id, string name)
-        {
-            int slot = FindOrAddAlly(id);
-            // do nothing if not in a slot
-            if (slot == -1) { return; }
-
-            m_PartyNames[slot].text = name;
         }
 
         private void OnHeroSelectionChanged(ulong prevTarget, ulong newTarget)
@@ -204,6 +195,21 @@ namespace BossRoom.Visual
 
             // this should not happen unless there are too many players - we didn't find the ally or a slot
             return -1;
+        }
+
+        public void RemoveAlly(ulong id)
+        {
+            for (int i = 0; i < m_PartyIds.Length; i++)
+            {
+                // if this ID is in the list, return the slot index
+                if (m_PartyIds[i] == id)
+                {
+                    m_AllyPanel[i - 1].SetActive(false);
+                    // and save ally ID to party array
+                    m_PartyIds[i] = 0;
+                    return;
+                }
+            }
         }
     }
 }
