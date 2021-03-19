@@ -1,9 +1,8 @@
+using System.Collections.Generic;
 using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
-using System.Collections;
-using System.ComponentModel;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -47,6 +46,8 @@ namespace BossRoom.Visual
         int m_FaintedStateTriggerID;
         int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
+        int m_AnticipateMoveTriggerID;
+        int m_SpeedVariableID;
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -60,6 +61,8 @@ namespace BossRoom.Visual
             m_AliveStateTriggerID = Animator.StringToHash("StandUp");
             m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
             m_DeadStateTriggerID = Animator.StringToHash("Dead");
+            m_AnticipateMoveTriggerID = Animator.StringToHash("AnticipateMove");
+            m_SpeedVariableID = Animator.StringToHash("Speed");
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
@@ -112,11 +115,24 @@ namespace BossRoom.Visual
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
                     m_PartyHUD.SetHeroData(m_NetState);
+
+                    if( Parent.TryGetComponent(out ClientInputSender inputSender))
+                    {
+                        inputSender.ClientMoveEvent += OnMoveInput;
+                    }
                 }
                 else
                 {
                     m_PartyHUD.SetAllyData(m_NetState);
                 }
+            }
+        }
+
+        private void OnMoveInput(Vector3 position)
+        {
+            if( !IsAnimating )
+            {
+                OurAnimator.SetTrigger(m_AnticipateMoveTriggerID);
             }
         }
 
@@ -148,6 +164,11 @@ namespace BossRoom.Visual
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+
+                if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
+                {
+                    sender.ClientMoveEvent -= OnMoveInput;
+                }
             }
         }
 
@@ -267,6 +288,25 @@ namespace BossRoom.Visual
             //example of where this is configured.
 
             m_ActionViz.OnAnimEvent(id);
+        }
+
+        public bool IsAnimating
+        {
+            get
+            {
+                if( OurAnimator.GetFloat(m_SpeedVariableID) > 0.0 ) { return true; }
+
+                for( int i = 0; i < OurAnimator.layerCount; i++ )
+                {
+                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsTag("BaseNode"))
+                    {
+                        //we are in an active node, not the default "nothing" node.
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 }
