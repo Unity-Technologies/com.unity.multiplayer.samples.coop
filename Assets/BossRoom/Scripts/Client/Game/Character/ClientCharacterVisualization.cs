@@ -74,10 +74,6 @@ namespace BossRoom.Visual
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
-            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
-            // we should investigate for a way to have the imps already appear as down when connecting.
-            // todo gomps-220
-            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
@@ -88,9 +84,6 @@ namespace BossRoom.Visual
             transform.position = parentMovement.NetworkPosition.Value;
             transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
 
-            // sync our animator to the most up to date version received from server
-            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
-
             // listen for char-select info to change (in practice, this info doesn't
             // change, but we may not have the values set yet) ...
             m_NetState.CharacterAppearance.OnValueChanged += OnCharacterAppearanceChanged;
@@ -100,6 +93,9 @@ namespace BossRoom.Visual
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
+
+            // sync our animator to the most up to date version received from server
+            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
 
             if (!m_NetState.IsNpc)
             {
