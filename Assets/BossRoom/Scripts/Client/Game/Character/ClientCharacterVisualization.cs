@@ -51,7 +51,7 @@ namespace BossRoom.Visual
         int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
 
-        public event Action Destroyed;
+        event Action Destroyed;
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -129,6 +129,7 @@ namespace BossRoom.Visual
                     m_ParentNetworkObjectID = m_NetState.NetworkObjectId;
 
                     // once this object is destroyed, remove this ally from the PartyHUD UI
+                    // NOTE: architecturally this will be refactored
                     Destroyed += () =>
                     {
                         if (m_PartyHUD != null)
