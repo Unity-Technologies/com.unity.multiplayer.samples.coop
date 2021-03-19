@@ -15,6 +15,7 @@ namespace BossRoom.Visual
     {
         private NetworkCharacterState m_NetState;
 
+        // caching a reference to our parent's NetworkObjectID for cleanup purposes
         ulong m_ParentNetworkObjectID;
 
         [SerializeField]
@@ -126,6 +127,8 @@ namespace BossRoom.Visual
                     m_PartyHUD.SetAllyData(m_NetState);
 
                     m_ParentNetworkObjectID = m_NetState.NetworkObjectId;
+
+                    // once this object is destroyed, remove this ally from the PartyHUD UI
                     Destroyed += () =>
                     {
                         if (m_PartyHUD != null)

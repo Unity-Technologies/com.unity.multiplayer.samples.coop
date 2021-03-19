@@ -197,6 +197,10 @@ namespace BossRoom.Visual
             return -1;
         }
 
+        /// <summary>
+        /// Remove an ally from the PartyHUD UI.
+        /// </summary>
+        /// <param name="id"> NetworkObjectID of the ally. </param>
         public void RemoveAlly(ulong id)
         {
             for (int i = 0; i < m_PartyIds.Length; i++)
