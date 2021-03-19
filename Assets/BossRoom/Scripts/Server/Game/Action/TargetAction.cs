@@ -57,7 +57,7 @@ namespace BossRoom.Server
             }
         }
 
-        ulong TargetId { get { return Data.TargetIds[0]; } }
+        ulong TargetId => Data.TargetIds[0];
 
         /// <summary>
         /// Only call this after validating the target via IsValidTarget.

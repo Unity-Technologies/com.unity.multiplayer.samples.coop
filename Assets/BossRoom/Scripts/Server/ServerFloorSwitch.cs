@@ -65,7 +65,13 @@ public class ServerFloorSwitch : NetworkBehaviour
         // it's possible that the Colliders in our trigger have been destroyed, while still inside our trigger.
         // In this case, OnTriggerExit() won't get called for them! We can tell if a Collider was destroyed
         // because its reference will become null. So here we remove any nulls and see if we're still active.
-        m_RelevantCollidersInTrigger.RemoveAll(col => { return col == null; });
+        for (int i = m_RelevantCollidersInTrigger.Count - 1; i >= 0; i--)
+        {
+            if (m_RelevantCollidersInTrigger[i] == null)
+            {
+                m_RelevantCollidersInTrigger.RemoveAt(i);
+            }
+        }
         m_FloorSwitchState.IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
     }
 }

@@ -32,7 +32,7 @@ namespace BossRoom.Server
         List<Transform> m_PlayerSpawnPointsList;
 
         // note: this is temporary, for testing!
-        public override GameState ActiveState { get { return GameState.BossRoom; } }
+        public override GameState ActiveState => GameState.BossRoom;
 
         /// <summary>
         /// This event is raised when all the initial players have entered the game. It is the right time for
@@ -64,8 +64,7 @@ namespace BossRoom.Server
 
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
         {
-            LobbyResults.CharSelectChoice returnValue;
-            if (!m_LobbyResults.Choices.TryGetValue(clientId, out returnValue))
+            if (!m_LobbyResults.Choices.TryGetValue(clientId, out LobbyResults.CharSelectChoice returnValue))
             {
                 // We don't know about this client ID! That probably means they joined the game late, after the lobby was closed.
                 // We don't yet handle this scenario well (e.g. showing them a "wait for next game" screen, maybe?),
@@ -138,21 +137,6 @@ namespace BossRoom.Server
             }
         }
 
-        IEnumerator CoroTryToDoInitialSpawnAfterAWhile(ulong clientId)
-        {
-            yield return new WaitForSeconds(3);
-            bool didSpawn = DoInitialSpawnIfPossible();
-
-            if (!didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
-            {
-                //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
-                //(either because multiple people are late-joining at once, or because some dynamic entities are
-                //getting spawned while joining. But that's not something we can fully address by changes in
-                //ServerBossRoomState.
-                SpawnPlayer(clientId);
-            }
-        }
-
         protected override void OnDestroy()
         {
             base.OnDestroy();
@@ -173,8 +157,8 @@ namespace BossRoom.Server
                 "PlayerSpawnPoints array should have at least 1 spawn points.");
 
             int index = Random.Range(0, m_PlayerSpawnPointsList.Count);
-                spawnPoint = m_PlayerSpawnPointsList[index];
-                m_PlayerSpawnPointsList.RemoveAt(index);
+            spawnPoint = m_PlayerSpawnPointsList[index];
+            m_PlayerSpawnPointsList.RemoveAt(index);
 
             var newPlayer = spawnPoint != null ?
                 Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation) :

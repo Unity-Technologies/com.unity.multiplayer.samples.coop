@@ -39,7 +39,7 @@ namespace BossRoom.Server
 
         int m_CollisionMask;  //mask containing everything we test for while moving
         int m_BlockerMask;    //physics mask for things that block the arrow's flight.
-        int m_NPCLayer;
+        int m_NpcLayer;
 
         /// <summary>
         /// List of everyone we've hit and dealt damage to.
@@ -80,7 +80,7 @@ namespace BossRoom.Server
 
             m_CollisionMask = LayerMask.GetMask("NPCs", "Default", "Ground");
             m_BlockerMask = LayerMask.GetMask("Default", "Ground");
-            m_NPCLayer = LayerMask.NameToLayer("NPCs");
+            m_NpcLayer = LayerMask.NameToLayer("NPCs");
 
             RefreshNetworkState();
         }
@@ -130,7 +130,7 @@ namespace BossRoom.Server
                     return;
                 }
 
-                if (m_CollisionCache[i].gameObject.layer == m_NPCLayer && !m_HitTargets.Contains(m_CollisionCache[i].gameObject))
+                if (m_CollisionCache[i].gameObject.layer == m_NpcLayer && !m_HitTargets.Contains(m_CollisionCache[i].gameObject))
                 {
                     m_HitTargets.Add(m_CollisionCache[i].gameObject);
 
@@ -148,8 +148,7 @@ namespace BossRoom.Server
                         m_NetState.RecvHitEnemyClientRPC(targetNetObj.NetworkObjectId);
 
                         //retrieve the person that created us, if he's still around.
-                        NetworkObject spawnerNet;
-                        NetworkSpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
+                        NetworkSpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out NetworkObject spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
                         targetNetObj.GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);

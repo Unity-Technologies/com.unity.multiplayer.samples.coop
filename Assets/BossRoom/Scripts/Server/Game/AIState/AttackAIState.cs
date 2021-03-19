@@ -128,8 +128,7 @@ namespace BossRoom.Server
         {
             m_CurAttackAction = m_AttackActions[Random.Range(0, m_AttackActions.Count)];
 
-            ActionDescription result;
-            bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out result);
+            bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out ActionDescription result);
             if (!found)
             {
                 throw new Exception($"GameObject {m_Brain.GetMyServerCharacter().gameObject.name} tried to play Action {m_CurAttackAction} but this action does not exist");

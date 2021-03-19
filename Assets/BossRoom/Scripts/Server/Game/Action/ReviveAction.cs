@@ -20,8 +20,8 @@ namespace BossRoom.Server
                 return false;
             }
 
-            var targetNeworkedObj = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
-            m_TargetCharacter = targetNeworkedObj.GetComponent<ServerCharacter>();
+            var targetNetworkObject = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+            m_TargetCharacter = targetNetworkObject.GetComponent<ServerCharacter>();
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
             return true;

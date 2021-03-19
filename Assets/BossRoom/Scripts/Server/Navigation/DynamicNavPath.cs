@@ -18,7 +18,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// The target position value which was used to calculate the current path.
-        /// This get stored to make sure the path gets recalculated if the target 
+        /// This get stored to make sure the path gets recalculated if the target
         /// </summary>
         Vector3 m_CurrentPathOriginalTarget;
 
@@ -48,7 +48,7 @@ namespace BossRoom.Server
         bool m_HasTransformTarget;
 
         /// <summary>
-        /// Creates a new instance of the <see cref="DynamicNavPath"./>
+        /// Creates a new instance of the <see cref="DynamicNavPath"/>
         /// </summary>
         /// <param name="agent">The NavMeshAgent of the object which uses this path.</param>
         /// <param name="navigationSystem">The navigation system which updates this path.</param>

@@ -19,7 +19,7 @@ namespace BossRoom.Server
         /// <summary>
         /// To prevent the action queue from growing without bound, we cap its play time to this number of seconds. We can only ever estimate
         /// the time-length of the queue, since actions are allowed to block indefinitely. But this is still a useful estimate that prevents
-        /// us from piling up a large number of small actions. 
+        /// us from piling up a large number of small actions.
         /// </summary>
         const float k_MaxQueueTimeDepth = 1.6f;
 
@@ -45,7 +45,7 @@ namespace BossRoom.Server
 
             if( GetQueueTimeDepth() >= k_MaxQueueTimeDepth )
             {
-                //the queue is too big (in execution seconds) to accommodate any more actions, so this action must be discarded. 
+                //the queue is too big (in execution seconds) to accommodate any more actions, so this action must be discarded.
                 return;
             }
 
@@ -93,13 +93,7 @@ namespace BossRoom.Server
         /// Returns how many actions are actively running. This includes all non-blocking actions,
         /// and the one blocking action at the head of the queue (if present).
         /// </summary>
-        public int RunningActionCount
-        {
-            get
-            {
-                return m_NonBlockingActions.Count + (m_Queue.Count > 0 ? 1 : 0);
-            }
-        }
+        public int RunningActionCount => m_NonBlockingActions.Count + (m_Queue.Count > 0 ? 1 : 0);
 
         /// <summary>
         /// Starts the action at the head of the queue, if any.
@@ -267,7 +261,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// How much time will it take all remaining Actions in the queue to play out? This sums up all the time each Action is blocking,
-        /// which is different from each Action's duration. Note that this is an ESTIMATE. An action may block the queue indefinitely if it wishes. 
+        /// which is different from each Action's duration. Note that this is an ESTIMATE. An action may block the queue indefinitely if it wishes.
         /// </summary>
         /// <returns>The total "time depth" of the queue, or how long it would take to play in seconds, if no more actions were added. </returns>
         float GetQueueTimeDepth()

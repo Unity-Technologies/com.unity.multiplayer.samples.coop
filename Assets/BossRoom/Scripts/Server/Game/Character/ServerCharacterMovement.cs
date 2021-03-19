@@ -27,7 +27,6 @@ namespace BossRoom.Server
         DynamicNavPath m_NavPath;
 
         MovementState m_MovementState;
-        ServerCharacter m_CharLogic;
 
         [SerializeField]
         float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition
@@ -43,7 +42,6 @@ namespace BossRoom.Server
         {
             m_NavMeshAgent = GetComponent<NavMeshAgent>();
             m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
-            m_CharLogic = GetComponent<ServerCharacter>();
             m_Rigidbody = GetComponent<Rigidbody>();
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
         }
@@ -218,8 +216,8 @@ namespace BossRoom.Server
                 case MovementState.Charging:
                 case MovementState.Knockback:
                     return m_ForcedSpeed;
-            case MovementState.Idle:
-            case MovementState.PathFollowing:
+                case MovementState.Idle:
+                case MovementState.PathFollowing:
                 default:
                     return m_MovementSpeed;
             }

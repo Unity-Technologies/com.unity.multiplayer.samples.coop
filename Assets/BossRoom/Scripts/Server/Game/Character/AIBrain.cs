@@ -12,13 +12,12 @@ namespace BossRoom.Server
     {
         enum AIStateType
         {
-            ATTACK,
-            //WANDER,
-            IDLE,
+            Attack,
+            //Wander,
+            Idle,
         }
 
         ServerCharacter m_ServerCharacter;
-        ActionPlayer m_ActionPlayer;
         AIStateType m_CurrentState;
         Dictionary<AIStateType, AIState> m_Logics;
         List<ServerCharacter> m_HatedEnemies;
@@ -26,16 +25,15 @@ namespace BossRoom.Server
         public AIBrain(ServerCharacter me, ActionPlayer myActionPlayer)
         {
             m_ServerCharacter = me;
-            m_ActionPlayer = myActionPlayer;
 
             m_Logics = new Dictionary<AIStateType, AIState>
             {
-                [AIStateType.IDLE] = new IdleAIState(this),
-                //[ AIStateType.WANDER ] = new WanderAIState(this), // not written yet
-                [AIStateType.ATTACK] = new AttackAIState(this, m_ActionPlayer),
+                [AIStateType.Idle] = new IdleAIState(this),
+                //[ AIStateType.Wander ] = new WanderAIState(this), // not written yet
+                [AIStateType.Attack] = new AttackAIState(this, myActionPlayer),
             };
             m_HatedEnemies = new List<ServerCharacter>();
-            m_CurrentState = AIStateType.IDLE;
+            m_CurrentState = AIStateType.Idle;
         }
 
         /// <summary>
@@ -53,7 +51,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Called when we received some HP. Positive HP is healing, negative is damage. 
+        /// Called when we received some HP. Positive HP is healing, negative is damage.
         /// </summary>
         /// <param name="inflicter">The person who hurt or healed us. May be null. </param>
         /// <param name="amount">The amount of HP received. Negative is damage. </param>
@@ -77,7 +75,7 @@ namespace BossRoom.Server
                 }
             }
             Debug.LogError("No AI states are valid!?!");
-            return AIStateType.IDLE;
+            return AIStateType.Idle;
         }
 
         /// <summary>
@@ -131,13 +129,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Convenience getter that returns the CharacterData associated with this creature.
         /// </summary>
-        public CharacterClass CharacterData
-        {
-            get
-            {
-                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType];
-            }
-        }
-
+        public CharacterClass CharacterData =>
+            GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType];
     }
 }

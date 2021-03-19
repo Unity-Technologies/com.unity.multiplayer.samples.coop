@@ -181,8 +181,8 @@ namespace BossRoom.Server
             // We don't get OnCollisionEnter() calls for things that are already collided with us!
             // So when we start charging across the screen, we check to see what's already touching us
             // (or close enough) and treat that like a collision.
-            RaycastHit[] results;
-            int numResults = ActionUtils.DetectNearbyEntities(true, true, m_Parent.GetComponent<Collider>(), k_PhysicalTouchDistance, out results);
+
+            int numResults = ActionUtils.DetectNearbyEntities(true, true, m_Parent.GetComponent<Collider>(), k_PhysicalTouchDistance, out RaycastHit[] results);
             for (int i = 0; i < numResults; i++)
             {
                 m_CollidedAlready.Add(results[i].collider);

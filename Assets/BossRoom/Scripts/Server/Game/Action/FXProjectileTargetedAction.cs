@@ -76,8 +76,7 @@ namespace BossRoom.Server
                 return null;
             }
 
-            NetworkObject obj;
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out NetworkObject obj) && obj != null)
             {
                 return obj.GetComponent<IDamageable>();
             }

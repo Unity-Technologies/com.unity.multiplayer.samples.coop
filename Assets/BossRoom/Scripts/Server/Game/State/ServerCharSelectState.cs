@@ -12,7 +12,7 @@ namespace BossRoom.Server
     [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.CharSelect; } }
+        public override GameState ActiveState => GameState.CharSelect;
         public CharSelectData CharSelectData { get; private set; }
 
         void Awake()
@@ -154,11 +154,11 @@ namespace BossRoom.Server
                 {
                     // host doesn't get an OnClientConnected()
                     // and other clients could be connects from last game
-                    // So look for any existing connections to do intiial setup
+                    // So look for any existing connections to do initial setup
                     var clients = NetworkManager.Singleton.ConnectedClientsList;
-                    foreach (var net_cl in clients)
+                    foreach (var networkClient in clients)
                     {
-                        OnClientConnected(net_cl.ClientId);
+                        OnClientConnected(networkClient.ClientId);
                     }
                 }
             }

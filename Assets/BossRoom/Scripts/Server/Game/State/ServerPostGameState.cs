@@ -10,7 +10,7 @@ namespace BossRoom.Server
     [RequireComponent(typeof(PostGameData))]
     public class ServerPostGameState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.PostGame; } }
+        public override GameState ActiveState => GameState.PostGame;
 
         public override void NetworkStart()
         {

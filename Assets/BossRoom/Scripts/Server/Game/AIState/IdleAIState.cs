@@ -26,7 +26,7 @@ namespace BossRoom.Server
             DetectFoes();
         }
 
-        protected void DetectFoes()
+        void DetectFoes()
         {
             float detectionRange = m_Brain.CharacterData.DetectRange;
             // we are doing this check every Update, so we'll use square-magnitude distance to avoid the expensive sqrt (that's implicit in Vector3.magnitude)

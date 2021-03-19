@@ -13,16 +13,13 @@ namespace BossRoom.Server
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNpc
-        {
-            get { return NetState.IsNpc; }
-        }
+        public bool IsNpc => NetState.IsNpc;
 
         /// <summary>
         /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
         /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
         /// </summary>
-        public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
+        public ActionPlayer RunningActions => m_ActionPlayer;
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
