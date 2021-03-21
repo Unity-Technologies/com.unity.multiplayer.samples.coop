@@ -15,9 +15,6 @@ namespace BossRoom.Visual
     {
         private NetworkCharacterState m_NetState;
 
-        // caching a reference to our parent's NetworkObjectID for cleanup purposes
-        ulong m_ParentNetworkObjectID;
-
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
@@ -126,7 +123,8 @@ namespace BossRoom.Visual
                 {
                     m_PartyHUD.SetAllyData(m_NetState);
 
-                    m_ParentNetworkObjectID = m_NetState.NetworkObjectId;
+                    // getting our parent's NetworkObjectID for PartyHUD removal on Destroy
+                    var parentNetworkObjectID = m_NetState.NetworkObjectId;
 
                     // once this object is destroyed, remove this ally from the PartyHUD UI
                     // NOTE: architecturally this will be refactored
@@ -134,7 +132,7 @@ namespace BossRoom.Visual
                     {
                         if (m_PartyHUD != null)
                         {
-                            m_PartyHUD.RemoveAlly(m_ParentNetworkObjectID);
+                            m_PartyHUD.RemoveAlly(parentNetworkObjectID);
                         }
                     };
                 }
