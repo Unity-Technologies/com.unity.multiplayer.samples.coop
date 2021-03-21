@@ -1,7 +1,7 @@
 namespace BossRoom
 {
     /// <summary>
-    /// Entities that are Targetable by Skills should have their shared NetworkState component implement this interface. 
+    /// Entities that are Targetable by Skills should have their shared NetworkState component implement this interface.
     /// </summary>
     public interface ITargetable
     {
@@ -15,6 +15,4 @@ namespace BossRoom
         /// </summary>
         bool IsValidTarget { get; }
     }
-
 }
-

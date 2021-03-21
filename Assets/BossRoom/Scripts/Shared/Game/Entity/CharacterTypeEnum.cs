@@ -1,4 +1,3 @@
-
 namespace BossRoom
 {
     /// <summary>
@@ -15,6 +14,6 @@ namespace BossRoom
 
         //monsters
         Imp,
-        ImpBoss,
+        ImpBoss
     }
 }

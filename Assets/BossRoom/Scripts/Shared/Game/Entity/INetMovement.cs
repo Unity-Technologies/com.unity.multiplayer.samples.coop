@@ -1,5 +1,5 @@
-using UnityEngine;
 using MLAPI.NetworkVariable;
+using UnityEngine;
 
 namespace BossRoom
 {
