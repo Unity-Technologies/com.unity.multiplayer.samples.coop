@@ -17,7 +17,7 @@ namespace BossRoom
         /// <summary>
         /// How long the Action has been running (since its Start was called)--in seconds, measured via Time.time.
         /// </summary>
-        public float TimeRunning { get { return (Time.time - TimeStarted); } }
+        public float TimeRunning => Time.time - TimeStarted;
 
         /// <summary>
         /// RequestData we were instantiated with. Value should be treated as readonly.
@@ -31,11 +31,10 @@ namespace BossRoom
         {
             get
             {
-                ActionDescription result;
-                var found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out result);
+                var found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out ActionDescription result);
                 Debug.AssertFormat(found, "Tried to find ActionType %s but it was missing from GameDataSource!", Data.ActionTypeEnum);
 
-                return GameDataSource.Instance.ActionDataByType[Data.ActionTypeEnum];
+                return result;
             }
         }
 
@@ -43,7 +42,5 @@ namespace BossRoom
         {
             m_Data = data;
         }
-
     }
-
 }

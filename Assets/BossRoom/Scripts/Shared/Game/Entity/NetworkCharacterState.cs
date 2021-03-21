@@ -10,7 +10,7 @@ namespace BossRoom
     {
         Alive,
         Fainted,
-        Dead,
+        Dead
     }
 
     /// <summary>
@@ -60,13 +60,7 @@ namespace BossRoom
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
 
-        public NetworkHealthState HealthState
-        {
-            get
-            {
-                return m_NetworkHealthState;
-            }
-        }
+        public NetworkHealthState HealthState => m_NetworkHealthState;
 
         /// <summary>
         /// The active target of this character.
@@ -78,10 +72,11 @@ namespace BossRoom
         /// </summary>
         public int HitPoints
         {
-            get { return m_NetworkHealthState.HitPoints.Value; }
-            set { m_NetworkHealthState.HitPoints.Value = value; }
+            get => m_NetworkHealthState.HitPoints.Value;
+            set => m_NetworkHealthState.HitPoints.Value = value;
         }
 
+        /// <summary>
         /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
@@ -95,20 +90,14 @@ namespace BossRoom
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNpc { get { return CharacterData.IsNpc; } }
+        public bool IsNpc => CharacterData.IsNpc;
 
-        public bool IsValidTarget { get { return NetworkLifeState.Value != LifeState.Dead; } }
+        public bool IsValidTarget => NetworkLifeState.Value != LifeState.Dead;
 
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
-        public CharacterClass CharacterData
-        {
-            get
-            {
-                return GameDataSource.Instance.CharacterDataByType[CharacterType];
-            }
-        }
+        public CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[CharacterType];
 
         [SerializeField]
         NetworkCharacterTypeState m_NetworkCharacterTypeState;
@@ -118,20 +107,20 @@ namespace BossRoom
         /// </summary>
         public CharacterTypeEnum CharacterType
         {
-            get { return m_NetworkCharacterTypeState.CharacterType.Value; }
-            set { m_NetworkCharacterTypeState.CharacterType.Value = value; }
+            get => m_NetworkCharacterTypeState.CharacterType.Value;
+            private set => m_NetworkCharacterTypeState.CharacterType.Value = value;
         }
 
         [SerializeField]
         NetworkNameState m_NetworkNameState;
 
         /// <summary>
-        /// Current nametag. This value is populated at startup time from CharacterClass data.
+        /// Current name. This value is populated at startup time from CharacterClass data.
         /// </summary>
         public string Name
         {
-            get { return m_NetworkNameState.Name.Value; }
-            set { m_NetworkNameState.Name.Value = value; }
+            get => m_NetworkNameState.Name.Value;
+            set => m_NetworkNameState.Name.Value = value;
         }
 
         /// <summary>
@@ -190,8 +179,11 @@ namespace BossRoom
         /// </summary>
         public event Action<ActionType> CancelActionsByTypeEventClient;
 
-        [ClientRpc]
+        /// <summary>
         /// Server->Client RPC that broadcasts this action play to all clients.
+        /// </summary>
+        /// <param name="data"> Data about which action to play and its associated details. </param>
+        [ClientRpc]
         public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);

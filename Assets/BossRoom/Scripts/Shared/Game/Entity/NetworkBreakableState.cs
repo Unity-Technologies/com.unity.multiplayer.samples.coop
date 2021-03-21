@@ -13,10 +13,8 @@ namespace BossRoom
         /// </summary>
         public NetworkVariableBool IsBroken;
 
-        public bool IsNpc { get { return true;  } }
+        public bool IsNpc => true;
 
-        public bool IsValidTarget {  get { return !IsBroken.Value; } }
+        public bool IsValidTarget => !IsBroken.Value;
     }
-
 }
-

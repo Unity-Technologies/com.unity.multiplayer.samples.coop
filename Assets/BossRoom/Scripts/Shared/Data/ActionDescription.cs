@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace BossRoom
 {
@@ -72,8 +73,9 @@ namespace BossRoom
         {
             EntireDuration,
             OnlyDuringExecTime,
-            ExecTimeWithCooldown,
+            ExecTimeWithCooldown
         }
+
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;
 
@@ -82,8 +84,9 @@ namespace BossRoom
         {
             [Tooltip("Prefab used for the projectile")]
             public GameObject ProjectilePrefab;
+            [FormerlySerializedAs("Speed_m_s")]
             [Tooltip("Projectile's speed in meters/second")]
-            public float Speed_m_s;
+            public float Speed;
             [Tooltip("Maximum range of the Projectile")]
             public float Range;
             [Tooltip("Damage of the Projectile on hit")]

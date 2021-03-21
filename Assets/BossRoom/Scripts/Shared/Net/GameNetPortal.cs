@@ -10,16 +10,16 @@ namespace BossRoom
 {
     public enum ConnectStatus
     {
-        Success,           //client successfully connected. This may also be a successful reconnect.
+        Success,          //client successfully connected. This may also be a successful reconnect.
         ServerFull,       //can't join, server is already at capacity.
         MatchStarted,     //can't join, match is already in progress.
-        Unknown,          //can't join, reason unknown.
+        Unknown           //can't join, reason unknown.
     }
-	
+
     public enum OnlineMode
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
-        Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
+        Relay = 1   // The server is hosted over a relay server and clients join by entering a room name.
     }
 
     [Serializable]
@@ -128,7 +128,7 @@ namespace BossRoom
 
 
         /// <summary>
-        /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
+        /// This method runs when NetworkManager has started up (following a successful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
         /// </summary>
         void NetworkStart()
@@ -204,9 +204,8 @@ namespace BossRoom
         /// </summary>
         /// <param name="netId"> id of the client to send to </param>
         /// <param name="status"> the status to pass to the client</param>
-        public void S2CConnectResult(ulong netId, ConnectStatus status)
+        public void ServerToClientConnectResult(ulong netId, ConnectStatus status)
         {
-
             using (var buffer = PooledNetworkBuffer.Get())
             {
                 using (var writer = PooledNetworkWriter.Get(buffer))

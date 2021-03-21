@@ -41,7 +41,7 @@ namespace BossRoom.Visual
             // figure out how long the pretend-projectile will be flying to the target
             Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
             float initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
-            m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed_m_s;
+            m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed;
 
             // create the projectile. It will control itself from here on out
             m_Projectile = SpawnAndInitializeProjectile();

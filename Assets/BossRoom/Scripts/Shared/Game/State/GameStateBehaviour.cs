@@ -50,7 +50,6 @@ namespace BossRoom
         /// </summary>
         static GameObject s_ActiveStateGO;
 
-        // Start is called before the first frame update
         protected virtual void Start()
         {
             if (s_ActiveStateGO != null)

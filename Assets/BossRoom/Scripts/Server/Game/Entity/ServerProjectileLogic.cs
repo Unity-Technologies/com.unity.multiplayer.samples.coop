@@ -76,7 +76,7 @@ namespace BossRoom.Server
 
             m_Started = true;
 
-            m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
+            m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed);
 
             m_CollisionMask = LayerMask.GetMask("NPCs", "Default", "Ground");
             m_BlockerMask = LayerMask.GetMask("Default", "Ground");
@@ -89,7 +89,7 @@ namespace BossRoom.Server
         {
             if (!m_Started) { return; } //don't do anything before NetworkStart has run.
 
-            Vector3 displacement = transform.forward * (m_ProjectileInfo.Speed_m_s * Time.fixedDeltaTime);
+            Vector3 displacement = transform.forward * (m_ProjectileInfo.Speed * Time.fixedDeltaTime);
             transform.position += displacement;
 
             if (m_DestroyAtSec < Time.fixedTime)
@@ -110,7 +110,7 @@ namespace BossRoom.Server
         {
             m_NetState.NetworkPosition.Value = transform.position;
             m_NetState.NetworkRotationY.Value = transform.eulerAngles.y;
-            m_NetState.NetworkMovementSpeed.Value = m_ProjectileInfo.Speed_m_s;
+            m_NetState.NetworkMovementSpeed.Value = m_ProjectileInfo.Speed;
         }
 
         void DetectCollisions()
@@ -124,7 +124,7 @@ namespace BossRoom.Server
                 if ((layerTest & m_BlockerMask) != 0)
                 {
                     //hit a wall; leave it for a couple of seconds.
-                    m_ProjectileInfo.Speed_m_s = 0;
+                    m_ProjectileInfo.Speed = 0;
                     m_IsDead = true;
                     m_DestroyAtSec = Time.fixedTime + k_WallLingerSec;
                     return;

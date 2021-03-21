@@ -19,12 +19,12 @@ namespace BossRoom
         {
             Inactive,
             Active,
-            LockedIn,
+            LockedIn
         }
 
         public enum FatalLobbyError
         {
-            LobbyFull,
+            LobbyFull
         }
 
         [Serializable]
@@ -52,7 +52,7 @@ namespace BossRoom
             new LobbySeatConfiguration(CharacterTypeEnum.Tank, 1),
             new LobbySeatConfiguration(CharacterTypeEnum.Archer, 3),
             new LobbySeatConfiguration(CharacterTypeEnum.Mage, 5),
-            new LobbySeatConfiguration(CharacterTypeEnum.Rogue, 7),
+            new LobbySeatConfiguration(CharacterTypeEnum.Rogue, 7)
         };
 
         public const int k_MaxLobbyPlayers = 8;
@@ -132,7 +132,7 @@ namespace BossRoom
                 m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
             }
 
-            public int Count {  get { return m_LobbyPlayers.Count; } }
+            public int Count => m_LobbyPlayers.Count;
 
             public void Add(LobbyPlayerState state, bool fromSync=false)
             {
@@ -163,10 +163,7 @@ namespace BossRoom
 
             public LobbyPlayerState this[int i]
             {
-                get
-                {
-                    return m_LobbyPlayers[i];
-                }
+                get => m_LobbyPlayers[i];
                 set
                 {
                     if(!NetworkManager.Singleton.IsServer )
@@ -207,7 +204,7 @@ namespace BossRoom
         /// Receives a new array of LobbyPlayerStates and replaces the existing contents of our m_LobbyPlayerArray with them. This "maximalist approach"
         /// is because it's tricky to send incremental array updates right now. You can't just send an initial state on client connection, and then
         /// subsequent incremental updates, because you don't know exactly when the client's connection is going to be open for transmission. If you send
-        /// a client an incremental update while it still has its inital state message pending, it will get confused.
+        /// a client an incremental update while it still has its initial state message pending, it will get confused.
         /// In any case, this system is meant to be temporary, and will be replaced when NetworkVariableList<T> is supported again.
         /// </summary>
         [ClientRpc]
@@ -226,7 +223,7 @@ namespace BossRoom
         /// <summary>
         /// Current state of all players in the lobby.
         /// </summary>
-        public LobbyPlayerArray LobbyPlayers { get { return m_LobbyPlayers; } }
+        public LobbyPlayerArray LobbyPlayers => m_LobbyPlayers;
 
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).

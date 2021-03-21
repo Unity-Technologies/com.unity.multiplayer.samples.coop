@@ -166,7 +166,7 @@ namespace BossRoom.Server
             //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
             //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably
             //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection.
-            m_Portal.S2CConnectResult(clientId, ConnectStatus.Success);
+            m_Portal.ServerToClientConnectResult(clientId, ConnectStatus.Success);
         }
 
         /// <summary>

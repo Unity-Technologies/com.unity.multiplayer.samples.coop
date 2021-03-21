@@ -16,7 +16,7 @@ namespace BossRoom
         public NetworkVariableVector3 NetworkPosition { get; }
 
         /// <summary>
-        /// The networked rotation of this entity. This reflects the authorative rotation on the server.
+        /// The networked rotation of this entity. This reflects the authoritative rotation on the server.
         /// </summary>
         public NetworkVariableFloat NetworkRotationY { get; }
 

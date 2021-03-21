@@ -26,7 +26,7 @@ namespace BossRoom
         public Action<ulong> HitEnemyEvent;
 
         /// <summary>
-        /// The networked rotation of this Character. This reflects the authorative rotation on the server.
+        /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
         public NetworkVariableFloat NetworkRotationY { get; } = new NetworkVariableFloat();
         public NetworkVariableFloat NetworkMovementSpeed { get; } = new NetworkVariableFloat();

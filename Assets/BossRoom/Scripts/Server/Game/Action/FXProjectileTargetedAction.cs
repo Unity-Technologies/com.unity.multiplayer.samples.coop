@@ -35,7 +35,7 @@ namespace BossRoom.Server
 
             // figure out how long the pretend-projectile will be flying to the target
             float distanceToTargetPos = Vector3.Distance(targetPos, m_Parent.transform.position);
-            m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed_m_s);
+            m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed);
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }

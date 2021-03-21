@@ -59,7 +59,7 @@ namespace BossRoom.Server
             {
                 Debug.Assert(projectileInfo.ProjectilePrefab, $"Action {Description.ActionTypeEnum}: one of the Projectiles is missing its prefab!");
                 Debug.Assert(projectileInfo.Range > 0, $"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Range!");
-                Debug.Assert(projectileInfo.Speed_m_s > 0, $"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Speed_m_s!");
+                Debug.Assert(projectileInfo.Speed > 0, $"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Speed_m_s!");
             }
             return true;
         }

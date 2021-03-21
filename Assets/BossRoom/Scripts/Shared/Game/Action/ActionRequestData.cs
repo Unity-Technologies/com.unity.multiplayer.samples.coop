@@ -32,7 +32,7 @@ namespace BossRoom
         MageHeal,
         ArcherChargedShot,
         RogueStealthMode,
-        ArcherVolley,
+        ArcherVolley
     }
 
 
@@ -54,7 +54,7 @@ namespace BossRoom
         Stunned,
         Target,
         ChargedLaunchProjectile,
-        StealthMode,
+        StealthMode
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
@@ -102,7 +102,7 @@ namespace BossRoom
             HasAmount = 1 << 3,
             ShouldQueue = 1 << 4,
             ShouldClose = 1 << 5,
-            CancelMovement = 1 << 6,
+            CancelMovement = 1 << 6
             //currently serialized with a byte. Change Read/Write if you add more than 8 fields.
         }
 

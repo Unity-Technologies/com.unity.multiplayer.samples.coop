@@ -9,9 +9,9 @@ namespace BossRoom
     public class PostGameData : NetworkBehaviour
     {
         /// <summary>
-        /// We use a tristate for the GameWon Banner to simplify the display logic on the client. Before the
+        /// We use states for the GameWon Banner to simplify the display logic on the client. Before the
         /// PostGameState gets its update you'd like to display no banner, rather than either won or lost. Having
-        /// a tristate lets us do that in a simple way.
+        /// a state lets us do that in a simple way.
         /// </summary>
         public enum BannerState
         {
