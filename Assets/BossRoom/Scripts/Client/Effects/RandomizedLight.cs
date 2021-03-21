@@ -4,7 +4,7 @@ using Random = UnityEngine.Random;
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// This script randomly varies a light source to create a flickering effect. 
+    /// This script randomly varies a light source to create a flickering effect.
     /// </summary>
     public class RandomizedLight : MonoBehaviour
     {
@@ -23,11 +23,10 @@ namespace BossRoom.Visual
         [Range(1, 50)]
         public int m_Smoothing = 5;
 
-        int[] m_RingBuffer;   //a buffer full of noise ranging from min to max. 
-        int m_RingSum;        //the sum of all the values in the current ring buffer. 
-        int m_RingIndex;      //the current index of the buffer. 
+        int[] m_RingBuffer;   //a buffer full of noise ranging from min to max.
+        int m_RingSum;        //the sum of all the values in the current ring buffer.
+        int m_RingIndex;      //the current index of the buffer.
 
-        // Start is called before the first frame update
         void Start()
         {
             m_RingBuffer = new int[m_Smoothing];
@@ -51,7 +50,6 @@ namespace BossRoom.Visual
             m_RingIndex = (m_RingIndex + 1) % m_RingBuffer.Length;
         }
 
-        // Update is called once per frame
         void Update()
         {
             //should be a value between 0-1

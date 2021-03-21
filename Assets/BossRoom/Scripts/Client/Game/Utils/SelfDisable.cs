@@ -9,7 +9,6 @@ public class SelfDisable : MonoBehaviour
     float m_DisabledDelay;
     float m_DisableTimestamp;
 
-    // Update is called once per frame
     void Update()
     {
         if (Time.time >= m_DisableTimestamp)

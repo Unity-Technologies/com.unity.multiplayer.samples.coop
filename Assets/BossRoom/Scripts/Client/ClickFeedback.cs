@@ -7,46 +7,44 @@ namespace BossRoom.Client
     /// Responsible for managing and creating a feedback icon where the player clicked to move
     /// </summary>
     [RequireComponent(typeof(ClientInputSender))]
-  public class ClickFeedback : MonoBehaviour
-  {
-    [SerializeField]
-    GameObject m_FeedbackPrefab;
-    GameObject m_FeedbackObj;
-    ClientInputSender m_ClientSender;
-
-    const float HOVER_HEIGHT = .1f;
-
-    // Start is called before the first frame update
-    void Start()
+    public class ClickFeedback : MonoBehaviour
     {
-        var networkedObject = GetComponent<NetworkObject>();
-        if (networkedObject == null || !networkedObject.IsLocalPlayer)
+        [SerializeField]
+        GameObject m_FeedbackPrefab;
+        GameObject m_FeedbackObj;
+        ClientInputSender m_ClientSender;
+
+        const float k_HoverHeight = .1f;
+
+        void Start()
         {
-            Destroy(this);
-            return;
+            var networkedObject = GetComponent<NetworkObject>();
+            if (networkedObject == null || !networkedObject.IsLocalPlayer)
+            {
+                Destroy(this);
+                return;
+            }
+
+            m_ClientSender = GetComponent<ClientInputSender>();
+            m_ClientSender.OnClientClick += ClientClicked;
+            m_FeedbackObj = Instantiate(m_FeedbackPrefab);
+            m_FeedbackObj.SetActive(false);
         }
 
-      m_ClientSender = GetComponent<ClientInputSender>();
-      m_ClientSender.OnClientClick += onClick;
-      m_FeedbackObj = Instantiate(m_FeedbackPrefab);
-      m_FeedbackObj.SetActive(false);
-    }
-
-    void onClick(Vector3 position)
-    {
-      position.y += HOVER_HEIGHT;
-
-      m_FeedbackObj.transform.position = position;
-      m_FeedbackObj.SetActive(true);
-    }
-
-    void OnDestroy()
-    {
-        if (m_ClientSender)
+        void ClientClicked(Vector3 position)
         {
-            m_ClientSender.OnClientClick -= onClick;
+            position.y += k_HoverHeight;
+
+            m_FeedbackObj.transform.position = position;
+            m_FeedbackObj.SetActive(true);
+        }
+
+        void OnDestroy()
+        {
+            if (m_ClientSender)
+            {
+                m_ClientSender.OnClientClick -= ClientClicked;
+            }
         }
     }
-  }
 }
-

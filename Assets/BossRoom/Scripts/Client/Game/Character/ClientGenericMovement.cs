@@ -15,8 +15,6 @@ namespace BossRoom.Client
         Rigidbody m_Rigidbody;
         bool m_Initialized;
 
-
-        // Start is called before the first frame update
         void Start()
         {
             m_MovementSource = GetComponent<INetMovement>();
@@ -34,7 +32,6 @@ namespace BossRoom.Client
             m_Initialized = true;
         }
 
-        // Update is called once per frame
         void Update()
         {
             if (!m_Initialized) { return; }
