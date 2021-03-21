@@ -255,7 +255,7 @@ namespace BossRoom.Server
             bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
             var timeElapsed = Time.time - action.TimeStarted;
             bool timeExpired = expirable &&
-                timeElapsed >= (action.Description.DurationSeconds + action.Description.CooldownSeconds);
+                timeElapsed >= action.Description.DurationSeconds + action.Description.CooldownSeconds;
             return keepGoing && !timeExpired;
         }
 
@@ -273,8 +273,8 @@ namespace BossRoom.Server
             {
                 var info = action.Description;
                 float actionTime =  info.BlockingMode == BlockingMode.OnlyDuringExecTime   ? info.ExecTimeSeconds :
-                                    info.BlockingMode == BlockingMode.ExecTimeWithCooldown ? (info.ExecTimeSeconds+info.CooldownSeconds) :
-                                    info.BlockingMode == BlockingMode.EntireDuration       ? (info.DurationSeconds + info.CooldownSeconds) :
+                                    info.BlockingMode == BlockingMode.ExecTimeWithCooldown ? info.ExecTimeSeconds + info.CooldownSeconds :
+                                    info.BlockingMode == BlockingMode.EntireDuration       ? info.DurationSeconds + info.CooldownSeconds :
                                     throw new Exception($"Unrecognized blocking mode: {info.BlockingMode}");
                 totalTime += actionTime;
             }

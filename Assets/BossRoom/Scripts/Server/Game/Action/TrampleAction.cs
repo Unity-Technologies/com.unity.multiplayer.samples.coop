@@ -23,7 +23,7 @@ namespace BossRoom.Server
             Windup,     // performing animations prior to actually moving
             Charging,   // running across the screen and hitting characters
             Complete,   // ending action
-            Cooldown,   // time spent after completion
+            Cooldown    // time spent after completion
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace BossRoom.Server
                 newAction = new ActionRequestData
                 {
                     ActionTypeEnum = ActionType.Stun,
-                    ShouldQueue = false,
+                    ShouldQueue = false
                 };
                 return true;
             }

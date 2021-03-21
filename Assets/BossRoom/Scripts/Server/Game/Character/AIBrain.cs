@@ -14,7 +14,7 @@ namespace BossRoom.Server
         {
             Attack,
             //Wander,
-            Idle,
+            Idle
         }
 
         ServerCharacter m_ServerCharacter;
@@ -30,7 +30,7 @@ namespace BossRoom.Server
             {
                 [AIStateType.Idle] = new IdleAIState(this),
                 //[ AIStateType.Wander ] = new WanderAIState(this), // not written yet
-                [AIStateType.Attack] = new AttackAIState(this, myActionPlayer),
+                [AIStateType.Attack] = new AttackAIState(this, myActionPlayer)
             };
             m_HatedEnemies = new List<ServerCharacter>();
             m_CurrentState = AIStateType.Idle;

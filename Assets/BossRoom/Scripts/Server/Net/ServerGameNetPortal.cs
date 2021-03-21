@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using MLAPI.SceneManagement;
 using UnityEngine;
@@ -10,13 +9,13 @@ namespace BossRoom.Server
     /// </summary>
     public struct PlayerData
     {
-        public string m_PlayerName;  //name of the player
-        public ulong m_ClientID; //the identifying id of the client
+        public string playerName;  //name of the player
+        public ulong clientID; //the identifying id of the client
 
         public PlayerData(string playerName, ulong clientId)
         {
-            m_PlayerName = playerName;
-            m_ClientID = clientId;
+            this.playerName = playerName;
+            clientID = clientId;
         }
     }
     /// <summary>
@@ -47,7 +46,7 @@ namespace BossRoom.Server
         /// <summary>
         /// The active server scene index.
         /// </summary>
-        public int ServerScene { get { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; } }
+        static int ServerScene => UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
 
         void Start()
         {
@@ -88,8 +87,6 @@ namespace BossRoom.Server
                     m_ClientSceneMap[m_Portal.NetManager.LocalClientId] = ServerScene;
                 }
             }
-
-
         }
 
         public bool AreAllClientsInServerScene()
@@ -100,16 +97,6 @@ namespace BossRoom.Server
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Returns true if the given client is currently in the server scene.
-        /// </summary>
-        /// <param name="clientId"></param>
-        /// <returns></returns>
-        public bool IsClientInServerScene(ulong clientId)
-        {
-            return m_ClientSceneMap.TryGetValue(clientId, out int clientScene) && clientScene == ServerScene;
         }
 
         /// <summary>
@@ -136,9 +123,6 @@ namespace BossRoom.Server
             }
             return null;
         }
-
-
-
 
         /// <summary>
         /// This logic plugs into the "ConnectionApprovalCallback" exposed by MLAPI.NetworkManager, and is run every time a client connects to us.
@@ -193,7 +177,5 @@ namespace BossRoom.Server
             m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, m_Portal.NetManager.LocalClientId));
             m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
         }
-
     }
 }
-

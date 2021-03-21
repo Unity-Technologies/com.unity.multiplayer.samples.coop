@@ -10,7 +10,7 @@ namespace BossRoom.Server
         Idle = 0,
         PathFollowing = 1,
         Charging = 2,
-        Knockback = 3,
+        Knockback = 3
     }
 
     /// <summary>

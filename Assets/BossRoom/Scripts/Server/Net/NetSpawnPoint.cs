@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using MLAPI;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace BossRoom.Server
 {
@@ -15,8 +16,9 @@ namespace BossRoom.Server
         [SerializeField]
         public NetworkObject SpawnedObject;
 
+        [FormerlySerializedAs("BossRoomState")]
         [SerializeField]
-        ServerBossRoomState BossRoomState;
+        ServerBossRoomState m_ServerBossRoomState;
 
         [SerializeField]
         List<NetSpawnPoint> m_AuxiliarySpawns;
@@ -25,14 +27,13 @@ namespace BossRoom.Server
 
         public bool IsBoss;
 
-        // Start is called before the first frame update
         void Start()
         {
             if(FireOnInitialSpawn)
             {
-                BossRoomState.InitialSpawnEvent += OnInitialSpawn;
+                m_ServerBossRoomState.InitialSpawnEvent += OnInitialSpawn;
 
-                if (BossRoomState.InitialSpawnDone)
+                if (m_ServerBossRoomState.InitialSpawnDone)
                 {
                     OnInitialSpawn();
                 }
@@ -41,7 +42,7 @@ namespace BossRoom.Server
 
         void OnDestroy()
         {
-            BossRoomState.InitialSpawnEvent -= OnInitialSpawn;
+            m_ServerBossRoomState.InitialSpawnEvent -= OnInitialSpawn;
         }
 
         void OnInitialSpawn()
@@ -68,7 +69,7 @@ namespace BossRoom.Server
                 if (IsBoss)
                 {
                     var bossNetState = netObj.GetComponent<NetworkCharacterState>();
-                    BossRoomState.OnBossSpawned(bossNetState);
+                    m_ServerBossRoomState.OnBossSpawned(bossNetState);
                 }
             }
         }

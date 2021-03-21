@@ -58,7 +58,7 @@ namespace BossRoom.Server
             }
 
             // we stop once the charge-up has ended and our effect duration has elapsed
-            return m_StoppedChargingUpTime == 0 || Time.time < (m_StoppedChargingUpTime + Description.EffectDurationSeconds);
+            return m_StoppedChargingUpTime == 0 || Time.time < m_StoppedChargingUpTime + Description.EffectDurationSeconds;
         }
 
         public override bool ShouldBecomeNonBlocking()
