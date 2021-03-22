@@ -91,6 +91,8 @@ namespace BossRoom.Visual
         /// <returns>If true ActionVisualization should pre-emptively create the ActionFX on the owning client, before hearing back from the server.</returns>
         public static bool ShouldAnticipate(ActionVisualization parent, ref ActionRequestData data)
         {
+            if( !parent.Parent.CanPerformActions ) { return false; }
+
             var actionDescription = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
 
             //for actions with ShouldClose set, we check our range locally. If we are out of range, we shouldn't anticipate, as we will

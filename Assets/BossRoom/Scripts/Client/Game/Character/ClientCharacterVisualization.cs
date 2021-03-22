@@ -46,6 +46,8 @@ namespace BossRoom.Visual
         int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
 
+        public bool CanPerformActions { get { return m_NetState.CanPerformActions;  } }
+
         /// <inheritdoc />
         public override void NetworkStart()
         {
