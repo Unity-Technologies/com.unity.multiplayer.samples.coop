@@ -67,7 +67,7 @@ namespace BossRoom.Client
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
             {
                 // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
-                // Just shut everything down all networking and switch back to main menu.
+                // Just shut down networking and switch back to main menu.
                 MLAPI.NetworkManager.Singleton.Shutdown();
                 SceneManager.LoadScene("MainMenu");
             }
