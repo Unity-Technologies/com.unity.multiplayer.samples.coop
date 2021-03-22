@@ -23,34 +23,22 @@ namespace BossRoom.Scripts.Editor
         [SerializeField]
         GUIStyle m_LinkStyle;
 
-        GUIStyle LinkStyle
-        {
-            get { return m_LinkStyle; }
-        }
+        GUIStyle LinkStyle => m_LinkStyle;
 
         [SerializeField]
         GUIStyle m_TitleStyle;
 
-        GUIStyle TitleStyle
-        {
-            get { return m_TitleStyle; }
-        }
+        GUIStyle TitleStyle => m_TitleStyle;
 
         [SerializeField]
         GUIStyle m_HeadingStyle;
 
-        GUIStyle HeadingStyle
-        {
-            get { return m_HeadingStyle; }
-        }
+        GUIStyle HeadingStyle => m_HeadingStyle;
 
         [SerializeField]
         GUIStyle m_BodyStyle;
 
-        GUIStyle BodyStyle
-        {
-            get { return m_BodyStyle; }
-        }
+        GUIStyle BodyStyle => m_BodyStyle;
 
         static ReadmeEditor()
         {
@@ -88,7 +76,7 @@ namespace BossRoom.Scripts.Editor
             {
                 var readmeObject = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GUIDToAssetPath(ids[0]));
 
-                Selection.objects = new UnityEngine.Object[] { readmeObject };
+                Selection.objects = new [] { readmeObject };
 
                 return (Readme)readmeObject;
             }
