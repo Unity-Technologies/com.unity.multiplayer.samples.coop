@@ -29,7 +29,7 @@ namespace BossRoom.Visual
 
         public Animator OurAnimator => m_ClientVisualsAnimator;
 
-        ActionVisualization m_ActionViz;
+        ActionVisualization m_ActionVisualization;
 
         public Transform Parent { get; private set; }
 
@@ -47,6 +47,8 @@ namespace BossRoom.Visual
         int m_AnticipateMoveTriggerID;
         int m_SpeedVariableID;
 
+        const string k_BaseNodeTag = "BaseNode";
+
         public override void NetworkStart()
         {
             if (!IsClient || transform.parent == null)
@@ -62,7 +64,7 @@ namespace BossRoom.Visual
             m_SpeedVariableID = Animator.StringToHash("Speed");
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
-            m_ActionViz = new ActionVisualization(this);
+            m_ActionVisualization = new ActionVisualization(this);
 
             Parent = transform.parent;
 
@@ -109,13 +111,13 @@ namespace BossRoom.Visual
                 if (IsLocalPlayer)
                 {
                     var data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
-                    m_ActionViz.PlayAction(ref data);
+                    m_ActionVisualization.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
                     m_PartyHud.SetHeroData(m_NetState);
 
                     if( Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
-                        inputSender.ClientMoveEvent += OnMoveInput;
+                        inputSender.ClientMoveRequested += OnMoveInput;
                     }
                 }
                 else
@@ -125,9 +127,9 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnMoveInput(Vector3 position)
+        void OnMoveInput(Vector3 position)
         {
-            if( !IsAnimating )
+            if (!IsAnimating)
             {
                 OurAnimator.SetTrigger(m_AnticipateMoveTriggerID);
             }
@@ -165,7 +167,7 @@ namespace BossRoom.Visual
 
                 if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
                 {
-                    sender.ClientMoveEvent -= OnMoveInput;
+                    sender.ClientMoveRequested -= OnMoveInput;
                 }
             }
         }
@@ -177,22 +179,22 @@ namespace BossRoom.Visual
 
         void PerformActionFX(ActionRequestData data)
         {
-            m_ActionViz.PlayAction(ref data);
+            m_ActionVisualization.PlayAction(ref data);
         }
 
         void CancelAllActionFXs()
         {
-            m_ActionViz.CancelAllActions();
+            m_ActionVisualization.CancelAllActions();
         }
 
         void CancelActionFXByType(ActionType actionType)
         {
-            m_ActionViz.CancelAllActionsOfType(actionType);
+            m_ActionVisualization.CancelAllActionsOfType(actionType);
         }
 
         void OnStoppedChargingUp()
         {
-            m_ActionViz.OnStoppedChargingUp();
+            m_ActionVisualization.OnStoppedChargingUp();
         }
 
         void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
@@ -273,10 +275,10 @@ namespace BossRoom.Visual
                 {
                     visibleSpeed = m_NetState.VisualMovementSpeed.Value;
                 }
-                m_ClientVisualsAnimator.SetFloat("Speed", visibleSpeed);
+                m_ClientVisualsAnimator.SetFloat(m_SpeedVariableID, visibleSpeed);
             }
 
-            m_ActionViz.Update();
+            m_ActionVisualization.Update();
         }
 
         public void OnAnimEvent(string id)
@@ -285,10 +287,10 @@ namespace BossRoom.Visual
             //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one
             //example of where this is configured.
 
-            m_ActionViz.OnAnimEvent(id);
+            m_ActionVisualization.OnAnimEvent(id);
         }
 
-        public bool IsAnimating
+        bool IsAnimating
         {
             get
             {
@@ -296,7 +298,7 @@ namespace BossRoom.Visual
 
                 for( int i = 0; i < OurAnimator.layerCount; i++ )
                 {
-                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsTag("BaseNode"))
+                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsTag(k_BaseNodeTag))
                     {
                         //we are in an active node, not the default "nothing" node.
                         return true;
