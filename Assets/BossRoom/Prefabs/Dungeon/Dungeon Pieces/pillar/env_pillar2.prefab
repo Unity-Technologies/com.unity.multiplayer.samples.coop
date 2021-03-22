@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 8184890942973508939}
   - component: {fileID: 4897062626467851486}
   - component: {fileID: 5511152601487639148}
+  - component: {fileID: 7125182719207888563}
   m_Layer: 6
-  m_Name: pillar2
+  m_Name: env_pillar2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,3 +110,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrokenPrefab: {fileID: 6418514439632820891, guid: 78436b90c00aaab49b4d522550dd9250, type: 3}
+--- !u!208 &7125182719207888563
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1899106884463111546}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 1.8830001, y: 4.144, z: 1.7550001}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 2.002, y: 4.1470003, z: -1.1520001}
+  m_TimeToStationary: 0.5

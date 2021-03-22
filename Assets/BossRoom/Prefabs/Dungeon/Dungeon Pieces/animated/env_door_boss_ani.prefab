@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 4897062626467851486}
   - component: {fileID: 8778471712971589033}
   m_Layer: 0
-  m_Name: door_boss
+  m_Name: env_door_boss_ani
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

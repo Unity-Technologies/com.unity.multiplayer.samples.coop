@@ -13,8 +13,9 @@ GameObject:
   - component: {fileID: 7463718357983197496}
   - component: {fileID: 8940407398543633114}
   - component: {fileID: 1897298181903638196}
+  - component: {fileID: -8696881659444143698}
   m_Layer: 0
-  m_Name: wall1_base_corner_1
+  m_Name: env_wall1_base_corner_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -109,3 +110,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 4.5, y: 4, z: 1}
   m_Center: {x: 1.75, y: 2, z: 4}
+--- !u!208 &-8696881659444143698
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4371491365999748502}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 2.8040001, y: 2, z: 2.8040001}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 1.1960001, y: 2, z: 2.8040001}
+  m_TimeToStationary: 0.5
