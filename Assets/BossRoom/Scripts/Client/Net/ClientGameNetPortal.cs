@@ -66,8 +66,10 @@ namespace BossRoom.Client
             //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
             {
-                //FIXME:  Currently it is not possible to safely load back to the Main Menu scene due to Persisting objects getting recreated
-                //We still don't want to invoke the network timeout event, however.
+                // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
+                // Just shut everything down all networking and switch back to main menu.
+                MLAPI.NetworkManager.Singleton.Shutdown();
+                SceneManager.LoadScene("MainMenu");
             }
             else
             {
