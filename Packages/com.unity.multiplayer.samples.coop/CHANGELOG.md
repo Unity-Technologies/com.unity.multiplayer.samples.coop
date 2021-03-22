@@ -6,4 +6,4 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [0.1.0-experimental] - 2021-04-07
 
-### This is the experimental release of *Small scale coop sample - Boss Room*.
+### This is the experimental release of *Boss Room: Small scale coop sample*.

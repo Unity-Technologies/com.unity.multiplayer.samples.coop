@@ -1,4 +1,4 @@
-Small scale coop sample - Boss Room © 2021 Unity Technologies
+Boss Room: Small scale coop sample © 2021 Unity Technologies
 
 Licensed under the Unity Companion License for Unity-dependent projects (see https://unity3d.com/legal/licenses/unity_companion_license); otherwise licensed under the Unity Package Distribution License (see https://unity3d.com/legal/licenses/Unity_Package_Distribution_License).
 
