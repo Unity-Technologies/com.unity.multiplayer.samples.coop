@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace BossRoom.Visual
+namespace BossRoom.Client
 {
     /// <summary>
     /// Provides backing logic for any UI before MainMenu stage. Mostly we just load main menu
