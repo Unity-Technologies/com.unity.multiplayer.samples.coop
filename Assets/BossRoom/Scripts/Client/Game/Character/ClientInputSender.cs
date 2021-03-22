@@ -23,8 +23,8 @@ namespace BossRoom.Client
         readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
 
         // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
-        LayerMask k_GroundLayerMask;
-        LayerMask k_ActionLayerMask;
+        LayerMask m_GroundLayerMask;
+        LayerMask m_ActionLayerMask;
 
         NetworkCharacterState m_NetworkCharacter;
 
@@ -34,11 +34,11 @@ namespace BossRoom.Client
         /// </summary>
         public enum SkillTriggerStyle
         {
-            None,        //no skill was triggered.
-            MouseClick,  //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
-            Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
-            KeyboardRelease, //represents a released key.
-            UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
+            None,               //no skill was triggered.
+            MouseClick,         //skill was triggered via mouse-click implying you should do a raycast from the mouse position to find a target.
+            Keyboard,           //skill was triggered via a Keyboard press, implying target should be taken from the active target.
+            KeyboardRelease,    //represents a released key.
+            UI                  //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
         }
 
         /// <summary>
@@ -57,8 +57,8 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// List of ActionRequests that have been received since the last FixedUpdate ran. This is a static array, to avoid allocs, and
-        /// because we don't really want to let this list grow indefinitely.
+        /// List of ActionRequests that have been received since the last FixedUpdate ran. This is a static array,
+        /// to avoid allocations, and because we don't really want to let this list grow indefinitely.
         /// </summary>
         readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
 
@@ -67,9 +67,8 @@ namespace BossRoom.Client
         /// </summary>
         int m_ActionRequestCount;
 
-        BaseActionInput m_CurrentSkillInput = null;
-        bool m_MoveRequest = false;
-
+        BaseActionInput m_CurrentSkillInput;
+        bool m_MoveRequest;
 
         Camera m_MainCamera;
 
@@ -90,15 +89,15 @@ namespace BossRoom.Client
                 return;
             }
 
-            k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
-            k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
+            m_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
+            m_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
 
             // find the hero action UI bar
-            GameObject actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
+            var actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
             actionUIobj.GetComponent<Visual.HeroActionBar>().RegisterInputSender(this);
 
             // find the emote bar to track its buttons
-            GameObject emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
+            var emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
             emoteUIobj.GetComponent<Visual.HeroEmoteBar>().RegisterInputSender(this);
             // once connected to the emote bar, hide it
             emoteUIobj.SetActive(false);
@@ -153,7 +152,7 @@ namespace BossRoom.Client
                 {
                     m_LastSentMove = Time.time;
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
+                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_GroundLayerMask) > 0)
                     {
                     // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
                     m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
@@ -173,12 +172,11 @@ namespace BossRoom.Client
         void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
-            
+
             if (targetId != 0)
             {
                 // if a targetId is given, try to find the object
-                NetworkObject targetNetObj;
-                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj))
+                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject targetNetObj))
                 {
                     hitTransform = targetNetObj.transform;
                 }
@@ -190,7 +188,7 @@ namespace BossRoom.Client
                 if (triggerStyle == SkillTriggerStyle.MouseClick)
                 {
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                    numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
+                    numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_ActionLayerMask);
                 }
 
                 int networkedHitIndex = -1;
@@ -243,7 +241,7 @@ namespace BossRoom.Client
                 NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
             }
 
-            //sanity check that this is indeed a valid target. 
+            //sanity check that this is indeed a valid target.
             if(targetNetObj==null || !ActionUtils.IsValidTarget(targetNetObj.NetworkObjectId))
             {
                 return false;
@@ -310,6 +308,7 @@ namespace BossRoom.Client
         /// </summary>
         /// <param name="action">the action you'd like to perform. </param>
         /// <param name="triggerStyle">What input style triggered this action.</param>
+        /// <param name="targetId">NetworkObject ID of target to perform action on.</param>
         public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             // do not populate an action request unless said action is valid

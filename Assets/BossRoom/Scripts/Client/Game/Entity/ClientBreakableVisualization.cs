@@ -23,13 +23,13 @@ namespace BossRoom.Visual
                 var netState = transform.parent.GetComponent<NetworkBreakableState>();
                 netState.IsBroken.OnValueChanged += (bool oldVal, bool newVal) =>
                 {
-                    if (oldVal == false && newVal == true)
+                    if (oldVal == false && newVal)
                     {
                         PerformBreak();
                     }
                 };
 
-                if (netState.IsBroken.Value == true)
+                if (netState.IsBroken.Value)
                 {
                     //todo: don't dramatically break on entry to scene, if already broken.
                     PerformBreak();
@@ -42,8 +42,7 @@ namespace BossRoom.Visual
         {
             var myParent = transform.parent;
             Destroy(gameObject);
-            var brokenPot = Instantiate(m_BrokenPrefab);
-            brokenPot.transform.parent = myParent;
+            var brokenPot = Instantiate(m_BrokenPrefab, myParent);
             brokenPot.transform.localPosition = Vector3.zero;
         }
     }

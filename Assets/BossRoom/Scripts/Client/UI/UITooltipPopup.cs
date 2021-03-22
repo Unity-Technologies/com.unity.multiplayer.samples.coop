@@ -49,12 +49,11 @@ namespace BossRoom.Client
         /// </summary>
         Vector3 GetCanvasCoords(Vector3 screenCoords)
         {
-            Vector2 canvasCoords;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
                 m_Canvas.transform as RectTransform,
                 screenCoords,
                 m_Canvas.worldCamera,
-                out canvasCoords);
+                out Vector2 canvasCoords);
             return m_Canvas.transform.TransformPoint(canvasCoords);
         }
 

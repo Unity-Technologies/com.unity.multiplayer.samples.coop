@@ -7,7 +7,7 @@ using UnityEngine;
 ///     - wind-up (while the caster is animating)
 ///     - flying through the air
 ///     - impacted the target/impacted the ground (in the case of a miss)
-/// 
+///
 /// This script should be attached to a projectile prefab. The prefab's initial state should be set up for the "windup"
 /// stage -- that is, any game objects needed for display in this state should be enabled, and game objects needed for
 /// the other stages should be disabled.
@@ -45,9 +45,9 @@ public class FXProjectile : MonoBehaviour
 
     enum State
     {
-        WINDUP,
-        FLYING,
-        IMPACT,
+        Windup,
+        Flying,
+        Impact
     }
 
     State m_State;
@@ -59,7 +59,7 @@ public class FXProjectile : MonoBehaviour
         m_MissDestination = missPos;
         m_WindupDuration = windupTime;
         m_FlightDuration = flightTime;
-        m_State = State.WINDUP;
+        m_State = State.Windup;
     }
 
     public void Cancel()
@@ -73,16 +73,16 @@ public class FXProjectile : MonoBehaviour
         m_Age += Time.deltaTime;
         switch (m_State)
         {
-            case State.WINDUP:
+            case State.Windup:
                 if (m_Age >= m_WindupDuration)
                 {
-                    SwitchState(State.FLYING);
+                    SwitchState(State.Flying);
                 }
                 break;
-            case State.FLYING:
+            case State.Flying:
                 if (m_Age >= m_WindupDuration + m_FlightDuration)
                 {
-                    SwitchState(State.IMPACT);
+                    SwitchState(State.Impact);
                 }
                 else
                 {
@@ -91,7 +91,7 @@ public class FXProjectile : MonoBehaviour
                     transform.position = Vector3.Lerp(m_StartPoint, m_TargetDestination?m_TargetDestination.position:m_MissDestination, progress);
                 }
                 break;
-            case State.IMPACT:
+            case State.Impact:
                 if (m_Age >= m_WindupDuration + m_FlightDuration + m_PostImpactDurationSeconds)
                 {
                     Destroy(gameObject);
@@ -102,40 +102,40 @@ public class FXProjectile : MonoBehaviour
 
     void SwitchState(State newState)
     {
-        if (newState == State.FLYING)
+        if (newState == State.Flying)
         {
-            foreach (var gameObject in m_HideTheseWhenFiring)
+            foreach (var gameObjectToHide in m_HideTheseWhenFiring)
             {
-                gameObject.SetActive(false);
+                gameObjectToHide.SetActive(false);
             }
-            foreach (var gameObject in m_ShowTheseWhenFiring)
+            foreach (var gameObjectToShow in m_ShowTheseWhenFiring)
             {
-                gameObject.SetActive(true);
+                gameObjectToShow.SetActive(true);
             }
         }
-        else if (newState == State.IMPACT)
+        else if (newState == State.Impact)
         {
             // is it impacting an actual enemy? We allow different graphics for the "miss" case
             if (m_TargetDestination)
             {
-                foreach (var gameObject in m_HideTheseOnTargetImpact)
+                foreach (var gameObjectToHide in m_HideTheseOnTargetImpact)
                 {
-                    gameObject.SetActive(false);
+                    gameObjectToHide.SetActive(false);
                 }
-                foreach (var gameObject in m_ShowTheseOnTargetImpact)
+                foreach (var gameObjectToShow in m_ShowTheseOnTargetImpact)
                 {
-                    gameObject.SetActive(true);
+                    gameObjectToShow.SetActive(true);
                 }
             }
             else
             {
-                foreach (var gameObject in m_HideTheseOnFloorImpact)
+                foreach (var gameObjectToHide in m_HideTheseOnFloorImpact)
                 {
-                    gameObject.SetActive(false);
+                    gameObjectToHide.SetActive(false);
                 }
-                foreach (var gameObject in m_ShowTheseOnFloorImpact)
+                foreach (var gameObjectToShow in m_ShowTheseOnFloorImpact)
                 {
-                    gameObject.SetActive(true);
+                    gameObjectToShow.SetActive(true);
                 }
             }
 

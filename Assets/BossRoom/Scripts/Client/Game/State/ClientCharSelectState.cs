@@ -16,7 +16,8 @@ namespace BossRoom.Client
         /// </summary>
         public static ClientCharSelectState Instance { get; private set; }
 
-        public override GameState ActiveState { get { return GameState.CharSelect; } }
+        public override GameState ActiveState => GameState.CharSelect;
+
         public CharSelectData CharSelectData { get; private set; }
 
         [Header("Configuration of in-Scene Character")]
@@ -47,8 +48,12 @@ namespace BossRoom.Client
             public Sprite Indicator;
             public Color Color;
         }
+
+        [SerializeField]
         [Tooltip("Representational information for each player")]
-        public ColorAndIndicator[] m_IdentifiersForEachPlayerNumber;
+        ColorAndIndicator[] m_IdentifiersForEachPlayerNumber;
+
+        public ColorAndIndicator[] IdentifiersForEachPlayerNumber => m_IdentifiersForEachPlayerNumber;
 
         [Header("UI Elements for different lobby modes")]
         [SerializeField]
@@ -73,7 +78,7 @@ namespace BossRoom.Client
         UICharSelectClassInfoBox m_ClassInfoBox;
 
         [SerializeField]
-        [Tooltip("When a permanent fatal error occurrs, this is where the error message is shown")]
+        [Tooltip("When a permanent fatal error occurs, this is where the error message is shown")]
         Text m_FatalLobbyErrorText;
 
         [SerializeField]
@@ -91,10 +96,10 @@ namespace BossRoom.Client
         /// </summary>
         enum LobbyMode
         {
-            ChooseSeat, // "Choose your seat!" stage
-            SeatChosen, // "Waiting for other players!" stage
-            LobbyEnding, // "Get ready! Game is starting!" stage
-            FatalError, // "Fatal Error" stage
+            ChooseSeat,     // "Choose your seat!" stage
+            SeatChosen,     // "Waiting for other players!" stage
+            LobbyEnding,    // "Get ready! Game is starting!" stage
+            FatalError      // "Fatal Error" stage
         }
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
@@ -108,7 +113,7 @@ namespace BossRoom.Client
                 { LobbyMode.ChooseSeat, m_UIElementsForNoSeatChosen },
                 { LobbyMode.SeatChosen, m_UIElementsForSeatChosen },
                 { LobbyMode.LobbyEnding, m_UIElementsForLobbyEnding },
-                { LobbyMode.FatalError, m_UIElementsForFatalError },
+                { LobbyMode.FatalError, m_UIElementsForFatalError }
             };
         }
 

@@ -7,11 +7,11 @@ namespace BossRoom.Visual
 
     /// <summary>
     /// The visual part of a TrampleAction. See TrampleAction.cs for more about this action type.
-    /// 
+    ///
     /// TrampleActionFX can include a visual "cue" object which is placed at the attacker's feet.
     /// If used, the object should have a SpecialFXGraphic component on it, which is used to cleanly
     /// shut down the graphics.
-    /// 
+    ///
     /// Note: unlike most ActionFX, this is NOT responsible for triggering hit-react animations on
     /// the trampled victims. The TrampleAction triggers these directly when it determines a collision.
     /// </summary>
@@ -33,7 +33,7 @@ namespace BossRoom.Visual
         /// Mobile performance note: constantly creating new GameObjects like this has bad performance on mobile and should
         /// be replaced with object-pooling (i.e. reusing the same art GameObjects repeatedly). But that's outside the scope of this demo.
         /// </remarks>
-        List<SpecialFXGraphic> m_SpawnedGraphics = null;
+        List<SpecialFXGraphic> m_SpawnedGraphics;
 
         public override bool Start()
         {
@@ -49,7 +49,7 @@ namespace BossRoom.Visual
                 m_SpawnedGraphics = new List<SpecialFXGraphic>();
                 foreach (var go in Description.Spawns)
                 {
-                    GameObject specialEffectsGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
+                    var specialEffectsGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
                     var specialEffects = specialEffectsGO.GetComponent<SpecialFXGraphic>();
                     if (!specialEffects)
                         throw new Exception($"{Description.ActionTypeEnum} has a spawned graphic that does not have a SpecialFXGraphic component!");

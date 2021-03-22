@@ -16,7 +16,7 @@ namespace BossRoom.Visual
 
         GameNetPortal m_GameNetPortal;
 
-        Client.ClientGameNetPortal m_ClientNetPortal;
+        ClientGameNetPortal m_ClientNetPortal;
 
         /// <summary>
         /// This will get more sophisticated as we move to a true relay model.
@@ -26,10 +26,10 @@ namespace BossRoom.Visual
         void Start()
         {
             // Find the game Net Portal by tag - it should have been created by Startup
-            GameObject GamePortalGO = GameObject.FindGameObjectWithTag("GameNetPortal");
+            var gameNetPortalGameObject = GameObject.FindGameObjectWithTag("GameNetPortal");
             Assert.IsNotNull("No GameNetPortal found, Did you start the game from the Startup scene?");
-            m_GameNetPortal = GamePortalGO.GetComponent<GameNetPortal>();
-            m_ClientNetPortal = GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
+            m_GameNetPortal = gameNetPortalGameObject.GetComponent<GameNetPortal>();
+            m_ClientNetPortal = gameNetPortalGameObject.GetComponent<ClientGameNetPortal>();
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;

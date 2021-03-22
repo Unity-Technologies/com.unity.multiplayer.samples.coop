@@ -49,7 +49,7 @@ namespace BossRoom.Visual
         /// Confirm function invoked when confirm is hit on popup. The meaning of the arguments may vary by popup panel, but
         /// in the initial case of the login popup, they represent the IP Address input, and the Player Name.
         /// </summary>
-        System.Action<string, string, OnlineMode> m_ConfirmFunction;
+        Action<string, string, OnlineMode> m_ConfirmFunction;
 
         const string k_DefaultConfirmText = "OK";
 
@@ -67,7 +67,7 @@ namespace BossRoom.Visual
         /// <param name="confirmCallback">  The delegate to invoke when the player confirms.  It sends what the player input.</param>
         /// <param name="defaultIpInput">The default Ip value to show in the input field.</param>
         public void SetupEnterGameDisplay(bool enterAsHost, string titleText, string ipHostMainText, string relayMainText, string inputFieldText,
-            string confirmationText, System.Action<string, string, OnlineMode> confirmCallback, string defaultIpInput = "")
+            string confirmationText, Action<string, string, OnlineMode> confirmCallback, string defaultIpInput = "")
         {
             //Clear any previous settings of the Panel first
             ResetState();

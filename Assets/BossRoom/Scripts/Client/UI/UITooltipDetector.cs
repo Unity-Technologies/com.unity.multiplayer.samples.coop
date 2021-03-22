@@ -31,7 +31,7 @@ namespace BossRoom.Client
         // every tooltip spot everywhere! So for now we just hard-code it.
         const float k_TooltipDelay = 0.5f;
 
-        float m_PointerEnterTime = 0;
+        float m_PointerEnterTime;
         bool m_IsShowingTooltip;
 
         public void SetText(string text)

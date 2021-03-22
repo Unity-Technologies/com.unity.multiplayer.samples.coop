@@ -75,9 +75,9 @@ namespace BossRoom.Visual
                 m_TargetReticule = Object.Instantiate(m_Parent.TargetReticule);
             }
 
-            bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;
-            bool myself_isnpc = m_ParentState.CharacterData.IsNpc;
-            bool hostile = target_isnpc != myself_isnpc;
+            bool isTargetNpc = targetObject.GetComponent<ITargetable>().IsNpc;
+            bool isSelfNpc = m_ParentState.CharacterData.IsNpc;
+            bool hostile = isTargetNpc != isSelfNpc;
 
             m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? m_Parent.ReticuleHostileMat : m_Parent.ReticuleFriendlyMat;
         }

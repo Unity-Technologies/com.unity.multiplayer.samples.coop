@@ -64,7 +64,7 @@ namespace BossRoom.Client
         {
             //On a client disconnect we want to take them back to the main menu.
             //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
+            if (SceneManager.GetActiveScene().name != "MainMenu")
             {
                 //FIXME:  Currently it is not possible to safely load back to the Main Menu scene due to Persisting objects getting recreated
                 //We still don't want to invoke the network timeout event, however.
@@ -86,7 +86,7 @@ namespace BossRoom.Client
                 return PlayerPrefs.GetString("client_guid");
             }
 
-            var guid = System.Guid.NewGuid();
+            var guid = Guid.NewGuid();
             var guidString = guid.ToString();
 
             PlayerPrefs.SetString("client_guid", guidString);

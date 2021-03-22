@@ -104,8 +104,7 @@ namespace BossRoom.Visual
                 return null;
             }
 
-            NetworkObject obj;
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out NetworkObject obj) && obj != null)
             {
                 return obj;
             }
@@ -128,7 +127,7 @@ namespace BossRoom.Visual
             }
 
             // now that we have our projectile, initialize it so it'll fly at the target appropriately
-            projectile.Initialize(m_Parent.transform.position, m_Target?.transform, m_Data.Position, Description.ExecTimeSeconds, m_ProjectileDuration);
+            projectile.Initialize(m_Parent.transform.position, m_Target != null ? m_Target.transform : null, m_Data.Position, Description.ExecTimeSeconds, m_ProjectileDuration);
             return projectile;
         }
     }

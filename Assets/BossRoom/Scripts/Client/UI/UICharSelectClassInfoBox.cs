@@ -38,7 +38,7 @@ namespace BossRoom.Client
         [Multiline]
         string m_TooltipFormat = "<b>{0}</b>\n\n{1}";
 
-        bool isLockedIn = false;
+        bool m_IsLockedIn;
 
         public void OnSetPlayerNumber(int playerNumber)
         {
@@ -54,13 +54,13 @@ namespace BossRoom.Client
         public void ConfigureForLockedIn()
         {
             m_ReadyButton.interactable = false;
-            isLockedIn = true;
+            m_IsLockedIn = true;
         }
 
         public void ConfigureForClass(CharacterTypeEnum characterType)
         {
             m_HideWhenNoClassSelected.SetActive(true);
-            if (!isLockedIn)
+            if (!m_IsLockedIn)
             {
                 m_ReadyButton.interactable = true;
             }

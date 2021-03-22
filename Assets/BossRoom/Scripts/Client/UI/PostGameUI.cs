@@ -32,8 +32,8 @@ namespace BossRoom.Visual
 
         void Start()
         {
-            GameObject GamePortalGO = GameObject.FindGameObjectWithTag("GameNetPortal");
-            var netPortal = GamePortalGO.GetComponent<GameNetPortal>();
+            var gameNetPortalGameObject = GameObject.FindGameObjectWithTag("GameNetPortal");
+            var netPortal = gameNetPortalGameObject.GetComponent<GameNetPortal>();
 
             // only hosts can restart the game, other players see a wait message
             if (netPortal.NetManager.IsHost)

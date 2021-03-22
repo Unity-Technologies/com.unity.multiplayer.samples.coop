@@ -27,9 +27,6 @@ namespace BossRoom.Client
         [SerializeField]
         string m_AnimatorTriggerWhenLockedIn = "LockedIn";
 
-        [SerializeField]
-        CharacterTypeEnum m_CharacterClass;
-
         // just a way to designate which seat we are -- the leftmost seat on the lobby UI is index 0, the next one is index 1, etc.
         int m_SeatIndex;
 
@@ -83,17 +80,17 @@ namespace BossRoom.Client
             else // either active or locked-in... these states are visually very similar
             {
                 m_InactiveStateVisuals.SetActive(false);
-                m_PlayerNumberHolder.sprite = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Indicator;
+                m_PlayerNumberHolder.sprite = ClientCharSelectState.Instance.IdentifiersForEachPlayerNumber[m_PlayerNumber].Indicator;
                 m_ActiveStateVisuals.SetActive(true);
                 m_Glow.gameObject.SetActive(false);
                 m_Checkbox.gameObject.SetActive(false);
                 m_PlayerNameHolder.gameObject.SetActive(true);
-                m_PlayerNameHolder.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
+                m_PlayerNameHolder.color = ClientCharSelectState.Instance.IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
                 m_Button.interactable = m_IsPermanentlyDisabled ? false : true;
 
                 if (m_State == CharSelectData.SeatState.LockedIn)
                 {
-                    m_Glow.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
+                    m_Glow.color = ClientCharSelectState.Instance.IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
                     m_Glow.gameObject.SetActive(true);
                     m_Checkbox.gameObject.SetActive(true);
                     m_Button.interactable = false;

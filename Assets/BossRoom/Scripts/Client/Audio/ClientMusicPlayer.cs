@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace BossRoom.Client
 {
@@ -18,18 +19,14 @@ namespace BossRoom.Client
         [SerializeField]
         AudioClip m_VictoryMusic;
 
+        [FormerlySerializedAs("m_source")]
         [SerializeField]
-        AudioSource m_source;
+        AudioSource m_AudioSource;
 
         /// <summary>
         /// static accessor for ClientMusicPlayer
         /// </summary>
         public static ClientMusicPlayer Instance { get; private set; }
-
-        void Start()
-        {
-
-        }
 
         public void PlayThemeMusic(bool restart)
         {
@@ -38,7 +35,7 @@ namespace BossRoom.Client
 
         public void PlayBossMusic()
         {
-            // this can be caled multiple times - play with restart = false
+            // this can be called multiple times - play with restart = false
             PlayTrack(m_BossMusic, true, false);
         }
 
@@ -49,27 +46,27 @@ namespace BossRoom.Client
 
         void PlayTrack(AudioClip clip, bool looping, bool restart)
         {
-            if (m_source.isPlaying)
+            if (m_AudioSource.isPlaying)
             {
                 // if we dont want to restart the clip, do nothing if it is playing
-                if (!restart && m_source.clip==clip) { return; }
-                m_source.Stop();
+                if (!restart && m_AudioSource.clip==clip) { return; }
+                m_AudioSource.Stop();
             }
-            m_source.clip = clip;
-            m_source.loop = looping;
-            m_source.time = 0;
-            m_source.Play();
+            m_AudioSource.clip = clip;
+            m_AudioSource.loop = looping;
+            m_AudioSource.time = 0;
+            m_AudioSource.Play();
         }
 
         void Awake()
         {
-            m_source = GetComponent<AudioSource>();
+            m_AudioSource = GetComponent<AudioSource>();
 
             if (Instance != null)
             {
-                throw new Exception("Multiple ClientMuscPlayers!");
+                throw new Exception("Multiple ClientMusicPlayer instances!");
             }
-                        m_source = GetComponent<AudioSource>();
+            m_AudioSource = GetComponent<AudioSource>();
             DontDestroyOnLoad(gameObject);
             Instance = this;
         }

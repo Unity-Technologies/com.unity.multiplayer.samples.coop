@@ -2,7 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.Serialization;
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Animations;
@@ -18,61 +18,89 @@ namespace BossRoom.Visual
     [RequireComponent(typeof(Animator))]
     public class AnimatorTriggeredSpecialFX : MonoBehaviour
     {
+        [FormerlySerializedAs("DevNotes")]
         [SerializeField]
         [Tooltip("Unused by the game and provided only for internal dev comments; put whatever you want here")]
         [TextArea]
-        string DevNotes; // e.g. "this is for the tank class". Documentation for the artists, because all 4 class's AnimatorTriggeredSpecialFX components are on the same GameObject. Can remove later if desired
+        string m_Details; // e.g. "this is for the tank class". Documentation for the artists, because all 4 class's AnimatorTriggeredSpecialFX components are on the same GameObject. Can remove later if desired
 
         [Serializable]
         internal class AnimatorNodeEntryEvent
         {
+            [FormerlySerializedAs("m_AnimatorNodeName")]
             [Tooltip("The name of a node in the Animator's state machine.")]
-            public string m_AnimatorNodeName;
-            [HideInInspector]
-            public int m_AnimatorNodeNameHash; // this is maintained via OnValidate() in the editor
+            public string animatorNodeName;
 
+            [FormerlySerializedAs("m_AnimatorNodeNameHash")]
+            [HideInInspector]
+            public int animatorNodeNameHash; // this is maintained via OnValidate() in the editor
+
+            [FormerlySerializedAs("m_Prefab")]
             [Header("Particle Prefab")]
             [Tooltip("The prefab that should be instantiated when we enter an Animator node with this name")]
-            public SpecialFXGraphic m_Prefab;
-            [Tooltip("Wait this many seconds before instantiating the Prefab. (If we leave the animation node before this point, no FX are played.)")]
-            public float m_PrefabSpawnDelaySeconds;
-            [Tooltip("If we leave the AnimationNode, should we shutdown the fx or let it play out? 0 = never cancel. Any other time = we can cancel up until this amount of time has elapsed... after that, we just let it play out. So a really big value like 9999 effectively means 'always cancel'")]
-            public float m_PrefabCanBeAbortedUntilSecs;
+            public SpecialFXGraphic prefab;
 
+            [FormerlySerializedAs("m_PrefabSpawnDelaySeconds")]
+            [Tooltip("Wait this many seconds before instantiating the Prefab. (If we leave the animation node before this point, no FX are played.)")]
+            public float prefabSpawnDelaySeconds;
+
+            [FormerlySerializedAs("m_PrefabCanBeAbortedUntilSecs")]
+            [Tooltip("If we leave the AnimationNode, should we shutdown the fx or let it play out? 0 = never cancel. Any other time = we can cancel up until this amount of time has elapsed... after that, we just let it play out. So a really big value like 9999 effectively means 'always cancel'")]
+            public float prefabCanBeAbortedUntilSecs;
+
+            [FormerlySerializedAs("m_SoundEffect")]
             [Header("Sound Effect")]
             [Tooltip("If we want to use a sound effect that's not in the prefab, specify it here")]
-            public AudioClip m_SoundEffect;
+            public AudioClip soundEffect;
+
+            [FormerlySerializedAs("m_SoundStartDelaySeconds")]
             [Tooltip("Time (in seconds) before we start playing this sound. If we leave the animation node before this time, no sound plays")]
-            public float m_SoundStartDelaySeconds;
+            public float soundStartDelaySeconds;
+
+            [FormerlySerializedAs("m_VolumeMultiplier")]
             [Tooltip("Relative volume to play at.")]
-            public float m_VolumeMultiplier = 1;
+            public float volumeMultiplier = 1;
+
+            [FormerlySerializedAs("m_LoopSound")]
             [Tooltip("Should we loop the sound for as long as we're in the animation node?")]
-            public bool m_LoopSound;
+            public bool loopSound;
         }
+
         [SerializeField]
         internal AnimatorNodeEntryEvent[] m_EventsOnNodeEntry;
 
         [Serializable]
         internal class AnimatorNodeExitEvent
         {
+            [FormerlySerializedAs("m_AnimatorNodeName")]
             [Tooltip("The name of a node in the Animator's state machine.")]
-            public string m_AnimatorNodeName;
-            [HideInInspector]
-            public int m_AnimatorNodeNameHash; // this is maintained via OnValidate() in the editor
+            public string animatorNodeName;
 
+            [FormerlySerializedAs("m_AnimatorNodeNameHash")]
+            [HideInInspector]
+            public int animatorNodeNameHash; // this is maintained via OnValidate() in the editor
+
+            [FormerlySerializedAs("m_Prefab")]
             [Header("Particle Prefab")]
             [Tooltip("The prefab that should be instantiated when we exit an AnimatorNode with this name")]
-            public SpecialFXGraphic m_Prefab;
-            [Tooltip("Wait this many seconds before instantiating the Prefab.")]
-            public float m_PrefabStartDelaySeconds;
+            public SpecialFXGraphic prefab;
 
+            [FormerlySerializedAs("m_PrefabStartDelaySeconds")]
+            [Tooltip("Wait this many seconds before instantiating the Prefab.")]
+            public float prefabStartDelaySeconds;
+
+            [FormerlySerializedAs("m_SoundEffect")]
             [Header("Sound Effect")]
             [Tooltip("If we want to use a sound effect that's not in the prefab, specify it here")]
-            public AudioClip m_SoundEffect;
+            public AudioClip soundEffect;
+
+            [FormerlySerializedAs("m_SoundStartDelaySeconds")]
             [Tooltip("Time (in seconds) before we start playing this sfx")]
-            public float m_SoundStartDelaySeconds;
+            public float soundStartDelaySeconds;
+
+            [FormerlySerializedAs("m_VolumeMultiplier")]
             [Tooltip("Relative volume to play at.")]
-            public float m_VolumeMultiplier = 1;
+            public float volumeMultiplier = 1;
         }
         [SerializeField]
         internal AnimatorNodeExitEvent[] m_EventsOnNodeExit;
@@ -113,15 +141,15 @@ namespace BossRoom.Visual
             // figure out which of our on-node-enter events (if any) should be triggered, and trigger it
             foreach (var info in m_EventsOnNodeEntry)
             {
-                if (info.m_AnimatorNodeNameHash == stateInfo.shortNameHash)
+                if (info.animatorNodeNameHash == stateInfo.shortNameHash)
                 {
-                    if (info.m_Prefab)
+                    if (info.prefab)
                     {
-                        StartCoroutine(CoroPlayStateEnterFX(info));
+                        StartCoroutine(PlayStateEnterFX(info));
                     }
-                    if (info.m_SoundEffect)
+                    if (info.soundEffect)
                     {
-                        StartCoroutine(CoroPlayStateEnterSound(info));
+                        StartCoroutine(PlayStateEnterSound(info));
                     }
                     break;
                 }
@@ -129,25 +157,25 @@ namespace BossRoom.Visual
         }
 
         // creates and manages the graphics prefab (but not the sound effect) of an on-enter event
-        IEnumerator CoroPlayStateEnterFX(AnimatorNodeEntryEvent eventInfo)
+        IEnumerator PlayStateEnterFX(AnimatorNodeEntryEvent eventInfo)
         {
-            if (eventInfo.m_PrefabSpawnDelaySeconds > 0)
-                yield return new WaitForSeconds(eventInfo.m_PrefabSpawnDelaySeconds);
+            if (eventInfo.prefabSpawnDelaySeconds > 0)
+                yield return new WaitForSeconds(eventInfo.prefabSpawnDelaySeconds);
 
-            if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
+            if (!m_ActiveNodes.Contains(eventInfo.animatorNodeNameHash))
                 yield break;
 
-            var instantiatedFX = Instantiate(eventInfo.m_Prefab, m_Animator.transform);
+            var instantiatedFX = Instantiate(eventInfo.prefab, m_Animator.transform);
 
             // now we just need to watch and see if we end up needing to prematurely end these new graphics
-            if (eventInfo.m_PrefabCanBeAbortedUntilSecs > 0)
+            if (eventInfo.prefabCanBeAbortedUntilSecs > 0)
             {
-                float timeRemaining = eventInfo.m_PrefabCanBeAbortedUntilSecs - eventInfo.m_PrefabSpawnDelaySeconds;
+                float timeRemaining = eventInfo.prefabCanBeAbortedUntilSecs - eventInfo.prefabSpawnDelaySeconds;
                 while (timeRemaining > 0 && instantiatedFX)
                 {
                     yield return new WaitForFixedUpdate();
                     timeRemaining -= Time.fixedDeltaTime;
-                    if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
+                    if (!m_ActiveNodes.Contains(eventInfo.animatorNodeNameHash))
                     {
                         // the node we were in has ended! Shut down the FX
                         if (instantiatedFX)
@@ -160,28 +188,28 @@ namespace BossRoom.Visual
         }
 
         // plays the sound effect of an on-entry event
-        IEnumerator CoroPlayStateEnterSound(AnimatorNodeEntryEvent eventInfo)
+        IEnumerator PlayStateEnterSound(AnimatorNodeEntryEvent eventInfo)
         {
-            if (eventInfo.m_SoundStartDelaySeconds > 0)
-                yield return new WaitForSeconds(eventInfo.m_SoundStartDelaySeconds);
+            if (eventInfo.soundStartDelaySeconds > 0)
+                yield return new WaitForSeconds(eventInfo.soundStartDelaySeconds);
 
-            if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
+            if (!m_ActiveNodes.Contains(eventInfo.animatorNodeNameHash))
                 yield break;
 
-            if (!eventInfo.m_LoopSound)
+            if (!eventInfo.loopSound)
             {
-                m_AudioSources[0].PlayOneShot(eventInfo.m_SoundEffect, eventInfo.m_VolumeMultiplier);
+                m_AudioSources[0].PlayOneShot(eventInfo.soundEffect, eventInfo.volumeMultiplier);
             }
             else
             {
-                AudioSource audioSource = GetAudioSourceForLooping();
+                var audioSource = GetAudioSourceForLooping();
                 if (!audioSource)
                     yield break; // we're using all our audio sources already. just give up
-                audioSource.volume = eventInfo.m_VolumeMultiplier;
+                audioSource.volume = eventInfo.volumeMultiplier;
                 audioSource.loop = true;
-                audioSource.clip = eventInfo.m_SoundEffect;
+                audioSource.clip = eventInfo.soundEffect;
                 audioSource.Play();
-                while (m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash) && audioSource.isPlaying)
+                while (m_ActiveNodes.Contains(eventInfo.animatorNodeNameHash) && audioSource.isPlaying)
                 {
                     yield return new WaitForFixedUpdate();
                 }
@@ -212,15 +240,15 @@ namespace BossRoom.Visual
             // figure out which of our on-node-exit events (if any) should be triggered, and trigger it
             foreach (var info in m_EventsOnNodeExit)
             {
-                if (info.m_AnimatorNodeNameHash == stateInfo.shortNameHash)
+                if (info.animatorNodeNameHash == stateInfo.shortNameHash)
                 {
-                    if (info.m_Prefab)
+                    if (info.prefab)
                     {
-                        StartCoroutine(CoroPlayStateExitFX(info));
+                        StartCoroutine(PlayStateExitFX(info));
                     }
-                    if (info.m_SoundEffect)
+                    if (info.soundEffect)
                     {
-                        StartCoroutine(CoroPlayStateExitSound(info));
+                        StartCoroutine(PlayStateExitSound(info));
                     }
                     break;
                 }
@@ -228,21 +256,21 @@ namespace BossRoom.Visual
         }
 
         // creates the graphics prefab (but not the sound effect) of an on-exit event
-        IEnumerator CoroPlayStateExitFX(AnimatorNodeExitEvent eventInfo)
+        IEnumerator PlayStateExitFX(AnimatorNodeExitEvent eventInfo)
         {
-            if (eventInfo.m_PrefabStartDelaySeconds > 0)
-                yield return new WaitForSeconds(eventInfo.m_PrefabStartDelaySeconds);
+            if (eventInfo.prefabStartDelaySeconds > 0)
+                yield return new WaitForSeconds(eventInfo.prefabStartDelaySeconds);
 
-            Instantiate(eventInfo.m_Prefab, m_Animator.transform);
+            Instantiate(eventInfo.prefab, m_Animator.transform);
         }
 
         // plays the sound effect of an on-exit event
-        IEnumerator CoroPlayStateExitSound(AnimatorNodeExitEvent eventInfo)
+        IEnumerator PlayStateExitSound(AnimatorNodeExitEvent eventInfo)
         {
-            if (eventInfo.m_SoundStartDelaySeconds > 0)
-                yield return new WaitForSeconds(eventInfo.m_SoundStartDelaySeconds);
+            if (eventInfo.soundStartDelaySeconds > 0)
+                yield return new WaitForSeconds(eventInfo.soundStartDelaySeconds);
 
-            m_AudioSources[0].PlayOneShot(eventInfo.m_SoundEffect, eventInfo.m_VolumeMultiplier);
+            m_AudioSources[0].PlayOneShot(eventInfo.soundEffect, eventInfo.volumeMultiplier);
         }
 
 
@@ -258,14 +286,14 @@ namespace BossRoom.Visual
             {
                 for (int i = 0; i < m_EventsOnNodeEntry.Length; ++i)
                 {
-                    m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash = Animator.StringToHash(m_EventsOnNodeEntry[i].m_AnimatorNodeName);
+                    m_EventsOnNodeEntry[i].animatorNodeNameHash = Animator.StringToHash(m_EventsOnNodeEntry[i].animatorNodeName);
                 }
             }
             if (m_EventsOnNodeExit != null)
             {
                 for (int i = 0; i < m_EventsOnNodeExit.Length; ++i)
                 {
-                    m_EventsOnNodeExit[i].m_AnimatorNodeNameHash = Animator.StringToHash(m_EventsOnNodeExit[i].m_AnimatorNodeName);
+                    m_EventsOnNodeExit[i].animatorNodeNameHash = Animator.StringToHash(m_EventsOnNodeExit[i].animatorNodeName);
                 }
             }
 
@@ -287,7 +315,8 @@ namespace BossRoom.Visual
     [CanEditMultipleObjects]
     public class AnimatorTriggeredSpecialFXEditor : Editor
     {
-        GUIStyle m_ErrorStyle = null;
+        GUIStyle m_ErrorStyle;
+
         public override void OnInspectorGUI()
         {
             // let Unity do all the normal Inspector stuff...
@@ -334,10 +363,10 @@ namespace BossRoom.Visual
 
         void ValidateNodeNames(AnimatorTriggeredSpecialFX fx)
         {
-            Animator animator = fx.GetComponent<Animator>();
+            var animator = fx.GetComponent<Animator>();
             if (!animator)
             {
-                // should be impossible because we explicitly RequireComponent the Animator 
+                // should be impossible because we explicitly RequireComponent the Animator
                 EditorUtility.DisplayDialog("Error", "No Animator found on this GameObject!?", "OK");
                 return;
             }
@@ -354,10 +383,10 @@ namespace BossRoom.Visual
             {
                 for (int j = i+1; j < fx.m_EventsOnNodeEntry.Length; ++j)
                 {
-                    if (fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeEntry[j].m_AnimatorNodeNameHash && fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash != 0)
+                    if (fx.m_EventsOnNodeEntry[i].animatorNodeNameHash == fx.m_EventsOnNodeEntry[j].animatorNodeNameHash && fx.m_EventsOnNodeEntry[i].animatorNodeNameHash != 0)
                     {
                         ++totalErrors;
-                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeEntry refer to the same node name ({fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName})! This is probably a copy-paste error. (But if it isn't and you intend to play two effects, remove this error-check!)");
+                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeEntry refer to the same node name ({fx.m_EventsOnNodeEntry[i].animatorNodeName})! This is probably a copy-paste error. (But if it isn't and you intend to play two effects, remove this error-check!)");
                     }
                 }
             }
@@ -366,10 +395,10 @@ namespace BossRoom.Visual
             {
                 for (int j = i+1; j < fx.m_EventsOnNodeExit.Length; ++j)
                 {
-                    if (fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeExit[j].m_AnimatorNodeNameHash && fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash != 0)
+                    if (fx.m_EventsOnNodeExit[i].animatorNodeNameHash == fx.m_EventsOnNodeExit[j].animatorNodeNameHash && fx.m_EventsOnNodeExit[i].animatorNodeNameHash != 0)
                     {
                         ++totalErrors;
-                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeExit refer to the same node name ({fx.m_EventsOnNodeExit[i].m_AnimatorNodeName})! This is probably a copy-paste error. (But if it isn't and you intend to play two effects, remove this error-check!)");
+                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeExit refer to the same node name ({fx.m_EventsOnNodeExit[i].animatorNodeName})! This is probably a copy-paste error. (But if it isn't and you intend to play two effects, remove this error-check!)");
                     }
                 }
             }
@@ -378,17 +407,17 @@ namespace BossRoom.Visual
             Dictionary<int, string> usedNames = new Dictionary<int, string>();
             for (int i = 0; i < fx.m_EventsOnNodeEntry.Length; ++i)
             {
-                usedNames[fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash] = $"{fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName} (EventsOnNodeEntry index {i})";
+                usedNames[fx.m_EventsOnNodeEntry[i].animatorNodeNameHash] = $"{fx.m_EventsOnNodeEntry[i].animatorNodeName} (EventsOnNodeEntry index {i})";
             }
             for (int i = 0; i < fx.m_EventsOnNodeExit.Length; ++i)
             {
-                usedNames[fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash] = $"{fx.m_EventsOnNodeExit[i].m_AnimatorNodeName} (EventsOnNodeExit index {i})";
+                usedNames[fx.m_EventsOnNodeExit[i].animatorNodeNameHash] = $"{fx.m_EventsOnNodeExit[i].animatorNodeName} (EventsOnNodeExit index {i})";
             }
 
             int totalUsedNames = usedNames.Count;
 
             // now remove all the hashes that are actually used by the controller
-            AnimatorController controller = GetAnimatorController(animator);
+            var controller = GetAnimatorController(animator);
             foreach (var layer in controller.layers)
             {
                 foreach (var state in layer.stateMachine.states)
@@ -426,10 +455,10 @@ namespace BossRoom.Visual
             Debug.Assert(animator.runtimeAnimatorController); // already pre-checked
 
             // we need the AnimatorController, but there's no direct way to retrieve it from the Animator, because
-            // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why 
+            // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why
             // AnimatorController is in the UnityEditor namespace.) But this *isn't* runtime, so when we retrieve the
             // runtime controller, it will actually be a reference to our real AnimatorController.
-            AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;
+            var controller = animator.runtimeAnimatorController as AnimatorController;
             if (controller == null)
             {
                 // if it's not an AnimatorController, it must be an AnimatorOverrideController (because those are currently the only two on-disk representations)
@@ -444,7 +473,7 @@ namespace BossRoom.Visual
             {
                 // It's neither of the two standard disk representations! ... it must be a new Unity feature or a custom variation
                 // Either way, we don't know how to get the real AnimatorController out of it, so we have to stop
-                throw new System.Exception($"Unrecognized class derived from RuntimeAnimatorController! {animator.runtimeAnimatorController.GetType().FullName}");
+                throw new Exception($"Unrecognized class derived from RuntimeAnimatorController! {animator.runtimeAnimatorController.GetType().FullName}");
             }
             return controller;
         }

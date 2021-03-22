@@ -10,18 +10,22 @@ namespace BossRoom.Visual
     {
         const int k_IntensityScale = 100;
 
+        [SerializeField]
         [Tooltip("External light to vary. Leave null if this script is itself attached to a Light")]
-        public Light m_TargetLight;
+        Light m_TargetLight;
 
+        [SerializeField]
         [Tooltip("Minimum light intensity to randomize to")]
-        public float m_MinIntensity;
+        float m_MinIntensity;
 
+        [SerializeField]
         [Tooltip("Maximum light intensity to randomize to")]
-        public float m_MaxIntensity = 1f;
+        float m_MaxIntensity = 1f;
 
+        [SerializeField]
         [Tooltip("How much smoothing to apply to the signal. Lower values will be less smoothed.")]
         [Range(1, 50)]
-        public int m_Smoothing = 5;
+        int m_Smoothing = 5;
 
         int[] m_RingBuffer;   //a buffer full of noise ranging from min to max.
         int m_RingSum;        //the sum of all the values in the current ring buffer.

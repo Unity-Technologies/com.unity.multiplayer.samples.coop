@@ -6,7 +6,7 @@ namespace BossRoom.Visual
     /// Plays one of a few sound effects, on a loop, based on a variable in an Animator.
     /// We use this to play footstep sounds.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// For this project we're using a few looped footstep sounds, choosing between them
     /// based on the animated speed. This method has good performance versus a more complicated
@@ -68,7 +68,7 @@ namespace BossRoom.Visual
             // choose which sound effect to use based on how fast we're walking
             AudioClip clipToUse = null;
             float volume = 0;
-            float speed = m_Animator.GetFloat(m_AnimatorVariableHash);
+            var speed = m_Animator.GetFloat(m_AnimatorVariableHash);
             if (speed <= m_SilentPoint)
             {
                 // we could have a "VERY slow walk" sound... but we don't, so just play nothing

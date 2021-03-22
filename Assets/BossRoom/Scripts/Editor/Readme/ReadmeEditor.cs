@@ -3,6 +3,7 @@ using UnityEditor;
 using System;
 using System.IO;
 using System.Reflection;
+using Object = System.Object;
 
 namespace BossRoom.Scripts.Editor
 {
@@ -76,7 +77,7 @@ namespace BossRoom.Scripts.Editor
             {
                 var readmeObject = AssetDatabase.LoadMainAssetAtPath(AssetDatabase.GUIDToAssetPath(ids[0]));
 
-                Selection.objects = new [] { readmeObject };
+                Selection.objects = new UnityEngine.Object[] { readmeObject };
 
                 return (Readme)readmeObject;
             }

@@ -18,11 +18,11 @@ namespace BossRoom.Visual
         [SerializeField]
         GameObject m_EmotePanel;
 
-        BossRoom.Client.ClientInputSender m_InputSender;
+        Client.ClientInputSender m_InputSender;
 
         // Currently we manually configure icons from the Material arrays stored on this class, and we select which array to use
         //from the CharacterClass inferred from the registered player GameObject. Eventually this can change so it is driven by
-        //the data for each skill instead. Current logic will be better for demos until skills are fully implemented with icon data. 
+        //the data for each skill instead. Current logic will be better for demos until skills are fully implemented with icon data.
         CharacterClass m_CharacterData;
 
         // allow icons for each class to be configured

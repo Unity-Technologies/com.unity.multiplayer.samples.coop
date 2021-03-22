@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace BossRoom.Visual
 {
@@ -9,7 +8,7 @@ namespace BossRoom.Visual
     /// Graphics for the rogue's StealthModeAction. Note that this is only part of the visual-effects for this action!
     /// The ClientCharacterVisualization is also involved: it hides the actual character model from other players.
     /// That means our job here is just to:
-    /// 
+    ///
     /// - play animations
     /// - show a particle effect, but only for the player that owns this character! (Because the other players can't see
     ///   the character, and showing a particle effect where they're standing would be a dead giveaway.)
@@ -23,7 +22,7 @@ namespace BossRoom.Visual
         /// (If null, means we haven't been running long enough yet, or we aren't using any graphics because we're invisible on this client)
         /// These are created from the Description.Spawns list. Each prefab in that list should have a SpecialFXGraphic component.
         /// </summary>
-        List<SpecialFXGraphic> m_SpawnedGraphics = null;
+        List<SpecialFXGraphic> m_SpawnedGraphics;
 
         public StealthModeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 

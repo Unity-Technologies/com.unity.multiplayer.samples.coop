@@ -27,7 +27,7 @@ namespace BossRoom.Visual
         [Tooltip("Material to use when displaying a hostile target reticule (e.g. red color)")]
         public Material ReticuleHostileMat;
 
-        public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
+        public Animator OurAnimator => m_ClientVisualsAnimator;
 
         ActionVisualization m_ActionViz;
 
@@ -35,8 +35,8 @@ namespace BossRoom.Visual
 
         const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
-        /// Player characters need to report health changes and chracter info to the PartyHUD
-        PartyHUD m_PartyHUD;
+        /// Player characters need to report health changes and character info to the PartyHUD
+        PartyHUD m_PartyHud;
 
         float m_SmoothedSpeed;
 
@@ -45,7 +45,6 @@ namespace BossRoom.Visual
         int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
 
-        /// <inheritdoc />
         public override void NetworkStart()
         {
             if (!IsClient || transform.parent == null)
@@ -104,19 +103,19 @@ namespace BossRoom.Visual
                 m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
 
                 // find the emote bar to track its buttons
-                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
-                m_PartyHUD = partyHUDobj.GetComponent<PartyHUD>();
+                var partyHudGameObject = GameObject.FindGameObjectWithTag("PartyHUD");
+                m_PartyHud = partyHudGameObject.GetComponent<PartyHUD>();
 
                 if (IsLocalPlayer)
                 {
-                    ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
+                    var data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
-                    m_PartyHUD.SetHeroData(m_NetState);
+                    m_PartyHud.SetHeroData(m_NetState);
                 }
                 else
                 {
-                    m_PartyHUD.SetAllyData(m_NetState);
+                    m_PartyHud.SetAllyData(m_NetState);
                 }
             }
         }
@@ -199,15 +198,15 @@ namespace BossRoom.Visual
         void OnHealthChanged(int previousValue, int newValue)
         {
             // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
-            if (m_PartyHUD == null) { return; }
+            if (m_PartyHud == null) { return; }
 
             if (IsLocalPlayer)
             {
-                m_PartyHUD.SetHeroHealth(newValue);
+                m_PartyHud.SetHeroHealth(newValue);
             }
             else
             {
-                m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
+                m_PartyHud.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
             }
         }
 

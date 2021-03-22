@@ -62,7 +62,6 @@ namespace BossRoom.Visual
                     m_PlayerOwner.RecvDoActionServerRPC(data);
                 }
                 Destroy(gameObject);
-                return;
             }
         }
     }

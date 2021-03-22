@@ -33,7 +33,7 @@ namespace BossRoom.Visual
         [SerializeField]
         Sprite[] m_ClassSymbols;
 
-        // track a list of hero (slot 0) + allies 
+        // track a list of hero (slot 0) + allies
         ulong[] m_PartyIds;
 
         // track Hero's target to show when it is the Hero or an ally
@@ -48,7 +48,7 @@ namespace BossRoom.Visual
             // Hero is always our slot 0
             m_PartyIds[0] = netState.NetworkObject.NetworkObjectId;
             SetUIFromSlotData(0, netState);
-            // Hero also gets a protrait
+            // Hero also gets a portrait
             int appearance = netState.CharacterAppearance.Value;
             if (appearance < m_PortraitAppearances.Length)
             {
@@ -128,7 +128,7 @@ namespace BossRoom.Visual
             SetHeroSelectFX(newTarget, true);
         }
 
-        // Helper to chaneg name appearance for selected or unselected party members
+        // Helper to change name appearance for selected or unselected party members
         // also updates m_CurrentTarget
         void SetHeroSelectFX(ulong target, bool selected)
         {
@@ -177,29 +177,29 @@ namespace BossRoom.Visual
             // make sure allies array is ready
             InitPartyArrays();
 
-            int openslot = -1;
+            int openSlot = -1;
             for (int i = 0; i < m_PartyIds.Length; i++)
             {
                 // if this ID is in the list, return the slot index
                 if (m_PartyIds[i] == id) { return i; }
-                // otherwise, record the first open slot (not slot 0 thats for the Hero)
-                if (openslot == -1 && i > 0 && m_PartyIds[i] == 0)
+                // otherwise, record the first open slot (not slot 0, that is for the Hero)
+                if (openSlot == -1 && i > 0 && m_PartyIds[i] == 0)
                 {
-                    openslot = i;
+                    openSlot = i;
                 }
             }
 
-            // if we don't add, we are done nw and didnt fint the ID
+            // if we don't add, we are done nw and didnt find the ID
             if (dontAdd) { return -1; }
 
             // Party slot was not found for this ID - add one in the open slot
-            if (openslot > 0)
+            if (openSlot > 0)
             {
-                // activeate the correct ally panel
-                m_AllyPanel[openslot - 1].SetActive(true);
+                // activate the correct ally panel
+                m_AllyPanel[openSlot - 1].SetActive(true);
                 // and save ally ID to party array
-                m_PartyIds[openslot] = id;
-                return openslot;
+                m_PartyIds[openSlot] = id;
+                return openSlot;
             }
 
             // this should not happen unless there are too many players - we didn't find the ally or a slot

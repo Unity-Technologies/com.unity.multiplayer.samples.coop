@@ -19,11 +19,11 @@ namespace BossRoom.Visual
     ///
     /// Note that whichever mode is used, Shutdown() may be called prematurely by whoever owns this graphic
     /// in the case of aborted actions.
-    /// 
+    ///
     /// Once Shutdown() is called (one way or another), the object self-destructs after the particles end
     /// (or after a specific additional amount of time).
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// When a particle system ends, it usually needs to stick around for a little while
     /// to let the last remaining particles finish rendering. Shutdown() turns off particles,
@@ -37,7 +37,7 @@ namespace BossRoom.Visual
     {
         [SerializeField]
         [Tooltip("Particles that should be stopped on Shutdown")]
-        public List<ParticleSystem> m_ParticleSystemsToTurnOffOnShutdown;
+        List<ParticleSystem> m_ParticleSystemsToTurnOffOnShutdown;
 
         [SerializeField]
         [Tooltip("If this graphic should automatically Shutdown after a certain time, set it here (in seconds). -1 means no auto-shutdown.")]
@@ -48,16 +48,16 @@ namespace BossRoom.Visual
         float m_PostShutdownSelfDestructTime = -1;
 
         // track when Shutdown() is called so we don't try to do it twice
-        bool m_IsShutdown = false;
+        bool m_IsShutdown;
 
         // we keep a reference to our self-destruction coroutine in case we need to abort it prematurely
-        Coroutine coroWaitForSelfDestruct = null;
+        Coroutine m_WaitForSelfDestruct;
 
         void Start()
         {
             if (m_AutoShutdownTime != -1)
             {
-                coroWaitForSelfDestruct = StartCoroutine(CoroWaitForSelfDestruct());
+                m_WaitForSelfDestruct = StartCoroutine(WaitForSelfDestruct());
             }
         }
 
@@ -65,9 +65,9 @@ namespace BossRoom.Visual
         {
             if (!m_IsShutdown)
             {
-                foreach (var particleSystem in m_ParticleSystemsToTurnOffOnShutdown)
+                foreach (var particleSystemToStop in m_ParticleSystemsToTurnOffOnShutdown)
                 {
-                    particleSystem.Stop();
+                    particleSystemToStop.Stop();
                 }
 
                 // now, when and how do we fully destroy ourselves?
@@ -79,48 +79,58 @@ namespace BossRoom.Visual
                 else if (m_PostShutdownSelfDestructTime == -1)
                 {
                     // special case! It means "keep checking the particles and self-destruct when they're all fully done"
-                    StartCoroutine(CoroWaitForParticlesToEnd());
+                    StartCoroutine(WaitForParticlesToEnd());
                 }
 
                 m_IsShutdown = true;
             }
         }
 
-        IEnumerator CoroWaitForParticlesToEnd()
+        IEnumerator WaitForParticlesToEnd()
         {
             bool foundAliveParticles;
             do
             {
                 yield return new WaitForEndOfFrame();
                 foundAliveParticles = false;
-                foreach (var particleSystem in m_ParticleSystemsToTurnOffOnShutdown)
+                foreach (var particleSystemToStop in m_ParticleSystemsToTurnOffOnShutdown)
                 {
-                    if (particleSystem.IsAlive())
+                    if (particleSystemToStop.IsAlive())
                     {
                         foundAliveParticles = true;
                     }
                 }
             } while (foundAliveParticles);
 
-            if (coroWaitForSelfDestruct != null)
+            if (m_WaitForSelfDestruct != null)
             {
-                StopCoroutine(coroWaitForSelfDestruct);
+                StopCoroutine(m_WaitForSelfDestruct);
             }
 
             Destroy(gameObject);
             yield break;
         }
 
-        IEnumerator CoroWaitForSelfDestruct()
+        IEnumerator WaitForSelfDestruct()
         {
             yield return new WaitForSeconds(m_AutoShutdownTime);
-            coroWaitForSelfDestruct = null;
+            m_WaitForSelfDestruct = null;
             if (!m_IsShutdown)
             {
                 Shutdown();
             }
         }
 
+        #if UNITY_EDITOR
+        public void AddParticleSystems()
+        {
+            m_ParticleSystemsToTurnOffOnShutdown.Clear();
+            foreach (var childParticleSystem in GetComponentsInChildren<ParticleSystem>())
+            {
+                m_ParticleSystemsToTurnOffOnShutdown.Add(childParticleSystem);
+            }
+        }
+        #endif
     }
 
 
@@ -143,11 +153,7 @@ namespace BossRoom.Visual
 
         void AddAllParticleSystems(SpecialFXGraphic specialFxGraphic)
         {
-            specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown.Clear();
-            foreach (var particleSystem in specialFxGraphic.GetComponentsInChildren<ParticleSystem>())
-            {
-                specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown.Add(particleSystem);
-            }
+            specialFxGraphic.AddParticleSystems();
         }
     }
 #endif
