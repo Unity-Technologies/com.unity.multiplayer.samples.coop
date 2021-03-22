@@ -26,12 +26,12 @@ namespace BossRoom.Client
             }
 
             m_ClientSender = GetComponent<ClientInputSender>();
-            m_ClientSender.OnClientClick += ClientClicked;
+            m_ClientSender.ClientMoveEvent += onClientMove;
             m_FeedbackObj = Instantiate(m_FeedbackPrefab);
             m_FeedbackObj.SetActive(false);
         }
 
-        void ClientClicked(Vector3 position)
+        void onClientMove(Vector3 position)
         {
             position.y += k_HoverHeight;
 
@@ -43,7 +43,7 @@ namespace BossRoom.Client
         {
             if (m_ClientSender)
             {
-                m_ClientSender.OnClientClick -= ClientClicked;
+                m_ClientSender.ClientMoveEvent -= onClientMove;
             }
         }
     }

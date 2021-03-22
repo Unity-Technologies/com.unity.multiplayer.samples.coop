@@ -44,6 +44,8 @@ namespace BossRoom.Visual
         int m_FaintedStateTriggerID;
         int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
+        int m_AnticipateMoveTriggerID;
+        int m_SpeedVariableID;
 
         public override void NetworkStart()
         {
@@ -56,6 +58,8 @@ namespace BossRoom.Visual
             m_AliveStateTriggerID = Animator.StringToHash("StandUp");
             m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
             m_DeadStateTriggerID = Animator.StringToHash("Dead");
+            m_AnticipateMoveTriggerID = Animator.StringToHash("AnticipateMove");
+            m_SpeedVariableID = Animator.StringToHash("Speed");
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
@@ -70,10 +74,6 @@ namespace BossRoom.Visual
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
-            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
-            // we should investigate for a way to have the imps already appear as down when connecting.
-            // todo gomps-220
-            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
@@ -84,9 +84,6 @@ namespace BossRoom.Visual
             transform.position = parentMovement.NetworkPosition.Value;
             transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
 
-            // sync our animator to the most up to date version received from server
-            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
-
             // listen for char-select info to change (in practice, this info doesn't
             // change, but we may not have the values set yet) ...
             m_NetState.CharacterAppearance.OnValueChanged += OnCharacterAppearanceChanged;
@@ -96,6 +93,9 @@ namespace BossRoom.Visual
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
+
+            // sync our animator to the most up to date version received from server
+            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
 
             if (!m_NetState.IsNpc)
             {
@@ -112,11 +112,24 @@ namespace BossRoom.Visual
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
                     m_PartyHud.SetHeroData(m_NetState);
+
+                    if( Parent.TryGetComponent(out ClientInputSender inputSender))
+                    {
+                        inputSender.ClientMoveEvent += OnMoveInput;
+                    }
                 }
                 else
                 {
                     m_PartyHud.SetAllyData(m_NetState);
                 }
+            }
+        }
+
+        private void OnMoveInput(Vector3 position)
+        {
+            if( !IsAnimating )
+            {
+                OurAnimator.SetTrigger(m_AnticipateMoveTriggerID);
             }
         }
 
@@ -149,6 +162,11 @@ namespace BossRoom.Visual
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+
+                if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
+                {
+                    sender.ClientMoveEvent -= OnMoveInput;
+                }
             }
         }
 
@@ -268,6 +286,25 @@ namespace BossRoom.Visual
             //example of where this is configured.
 
             m_ActionViz.OnAnimEvent(id);
+        }
+
+        public bool IsAnimating
+        {
+            get
+            {
+                if( OurAnimator.GetFloat(m_SpeedVariableID) > 0.0 ) { return true; }
+
+                for( int i = 0; i < OurAnimator.layerCount; i++ )
+                {
+                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsTag("BaseNode"))
+                    {
+                        //we are in an active node, not the default "nothing" node.
+                        return true;
+                    }
+                }
+
+                return false;
+            }
         }
     }
 }
