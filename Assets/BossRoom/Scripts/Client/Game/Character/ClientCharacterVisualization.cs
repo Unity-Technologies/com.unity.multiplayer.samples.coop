@@ -49,6 +49,8 @@ namespace BossRoom.Visual
         int m_AnticipateMoveTriggerID;
         int m_SpeedVariableID;
 
+        event Action Destroyed;
+
         /// <inheritdoc />
         public override void NetworkStart()
         {
@@ -124,6 +126,19 @@ namespace BossRoom.Visual
                 else
                 {
                     m_PartyHUD.SetAllyData(m_NetState);
+
+                    // getting our parent's NetworkObjectID for PartyHUD removal on Destroy
+                    var parentNetworkObjectID = m_NetState.NetworkObjectId;
+
+                    // once this object is destroyed, remove this ally from the PartyHUD UI
+                    // NOTE: architecturally this will be refactored
+                    Destroyed += () =>
+                    {
+                        if (m_PartyHUD != null)
+                        {
+                            m_PartyHUD.RemoveAlly(parentNetworkObjectID);
+                        }
+                    };
                 }
             }
         }
@@ -170,6 +185,8 @@ namespace BossRoom.Visual
                     sender.ClientMoveEvent -= OnMoveInput;
                 }
             }
+
+            Destroyed?.Invoke();
         }
 
         private void OnPerformHitReaction()
