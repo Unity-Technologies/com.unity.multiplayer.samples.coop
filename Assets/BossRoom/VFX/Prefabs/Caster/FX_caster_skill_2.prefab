@@ -9897,7 +9897,7 @@ GameObject:
   - component: {fileID: 7429425477901378396}
   - component: {fileID: 7429425477901378369}
   m_Layer: 0
-  m_Name: FX_caster_skill_2
+  m_Name: FX_Caster_skill_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
