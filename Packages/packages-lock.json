@@ -1,5 +1,14 @@
 {
   "dependencies": {
+    "com.mlapi.contrib.transport.litenetlib": {
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
+      },
+      "hash": "e5a2ce50ccdb9a90fc13d7a375836ba52a29e3b2"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -101,14 +110,6 @@
         "com.unity.modules.physics": "1.0.0",
         "com.unity.modules.physics2d": "1.0.0",
         "com.unity.modules.ui": "1.0.0"
-      }
-    },
-    "com.unity.multiplayer.transport.litenet": {
-      "version": "file:com.unity.multiplayer.transport.litenet",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
       }
     },
     "com.unity.multiplayer.transport.photon-realtime": {
