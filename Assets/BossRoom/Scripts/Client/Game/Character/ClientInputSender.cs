@@ -16,7 +16,11 @@ namespace BossRoom.Client
     {
         private const float k_MouseInputRaycastDistance = 100f;
 
-        private const float k_MoveSendRateSeconds = 0.5f;
+        //The movement input rate is capped at 50ms (or 20 fps). This provides a nice balance between responsiveness and
+        //upstream network conservation. This matters when holding down your mouse button to move. 
+        private const float k_MoveSendRateSeconds = 0.05f; //20 fps.
+
+        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked). 
 
         private float m_LastSentMove;
 
@@ -74,7 +78,7 @@ namespace BossRoom.Client
 
         Camera m_MainCamera;
 
-        public event Action<Vector3> OnClientClick;
+        public event Action<Vector3> ClientMoveEvent;
 
         /// <summary>
         /// Convenience getter that returns our CharacterData
@@ -156,10 +160,10 @@ namespace BossRoom.Client
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
                     if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                     {
-                    // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
-                    m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
+                        m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
+
                         //Send our client only click request
-                        OnClientClick?.Invoke(k_CachedHit[0].point);
+                        ClientMoveEvent?.Invoke(k_CachedHit[0].point);
                     }
                 }
             }
@@ -210,7 +214,8 @@ namespace BossRoom.Client
             if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
             {
                 //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
-                m_LastSentMove = Time.time;
+                m_LastSentMove = Time.time + k_TargetMoveTimeout;
+
                 m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
             }
             else if(actionType != ActionType.GeneralTarget )

@@ -16,6 +16,9 @@ Platforms : Windows, Mac
  - A release version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
  - Alternatively: click the green `Code` button and then choose to download the zip archive. Remember, that you would download the branch that you are currently viewing in Github.
 
+## Installing Git LFS
+
+This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. 
 
 ## Opening the project for the first time
 
@@ -27,7 +30,6 @@ Once you have downloaded the project the steps below should get you up and runni
  - Once the editor is ready, navigate to the _Project_ window and open the _Project/Startup_ scene.
 ![](Documentation/Images/StartupScene.png)
  - From there you can click the **Play** button. You can host a new game or join an existing game using the in-game UI.
-
 
 ## Testing multiplayer
 
@@ -68,11 +70,7 @@ Code is organized into three separate assemblies: **Client**, **Shared** and **S
 
 For an in-depth overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
 
-
 ## Contributing
-
-> __IMPORTANT__: 
-> This project uses Git Large Files Support (LFS). See the [link with Git LFS installation options](https://git-lfs.github.com/).
 
 The project uses the `git-flow` branching strategy, as such:
  - `develop` branch contains all active development
@@ -83,4 +81,11 @@ To get the project on your machine you need to clone the repository from GitHub 
 git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git
 ```
 
+> __IMPORTANT__: 
+> You should have [Git LFS](https://git-lfs.github.com/) installed on your local machine.
+
 Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues and PRs to BossRoom!
+
+For futher discussion points and to connect with the team, join us on the MLAPI by Unity Discord Server - Channel #dev-samples
+
+[![Discord](https://img.shields.io/discord/449263083769036810.svg?label=discord&logo=discord&color=informational)](https://discord.gg/FM8SE9E)

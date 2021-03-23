@@ -85,7 +85,7 @@
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "1817f625fd1fd82414a65890a38678f6fbb52b6f"
+      "hash": "56a02e6acd970cf8555e436b1fb6be08d4f27c41"
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",

@@ -78,6 +78,10 @@ namespace BossRoom
             }
 
             Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
+            if (m_DisplayHealth)
+                Assert.IsNotNull(m_NetworkHealthState, "A NetworkHealthState component needs to be attached!");
+            if (m_DisplayName)
+                Assert.IsNotNull(m_NetworkNameState, "A NetworkNameState component needs to be attached!");
             Assert.IsTrue(m_Camera != null && m_CanvasTransform != null);
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
@@ -109,6 +113,12 @@ namespace BossRoom
                     CharacterTypeChanged(m_NetworkCharacterTypeState.CharacterType.Value,
                         m_NetworkCharacterTypeState.CharacterType.Value);
                 }
+
+                if (m_NetworkHealthState != null)
+                {
+                    m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
+                    m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
+                }
             }
         }
 
@@ -137,7 +147,11 @@ namespace BossRoom
             if (characterClass)
             {
                 m_BaseHP = characterClass.BaseHP;
-                DisplayUIHealth();
+
+                if (m_NetworkHealthState != null && m_NetworkHealthState.HitPoints.Value > 0)
+                {
+                    DisplayUIHealth();
+                }
             }
         }
 
@@ -171,9 +185,6 @@ namespace BossRoom
 
             m_UIState.DisplayHealth(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
             m_UIStateActive = true;
-
-            m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
-            m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
         }
 
         void SpawnUIState()
