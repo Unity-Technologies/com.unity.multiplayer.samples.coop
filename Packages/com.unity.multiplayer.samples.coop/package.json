@@ -1,11 +1,11 @@
 {
   "name": "com.unity.multiplayer.samples.coop",
-  "displayName":"Co-op RPG",
+  "displayName":"Boss Room",
   "version": "0.1.0-experimental",
   "type": "template",
   "host": "hub",
-  "unity": "2019.4",
-  "description": "Replace this string with your own description of the package. This description appears in the Package Manager window when the user selects this package from the list. \n\nFor best results, use this text to summarize: \n\u25AA What the package does \n\u25AA How it can benefit the user \n\nNote: Special formatting characters are supported, including line breaks ('\\n') and bullets ('\\u25AA').",
+  "unity": "2020.3",
+  "description": "Boss Room is a small scale cooperative game sample project built on top of the new Unity Networking Core library, designed to help you explore the concepts and patterns behind a multiplayer game flow. \n\nBoss Room features character abilities, casting animations to hide latency, replicated objects, RPCs, and integration with a relay service.",
   "dependencies": {
     "com.unity.learn.iet-framework": "1.2.1",
     "com.unity.multiplayer.mlapi": "0.0.1-preview.1",
