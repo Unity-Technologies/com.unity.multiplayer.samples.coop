@@ -108,6 +108,8 @@ namespace BossRoom.Client
         {
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
             switch (chosenTransport)
             {
                 case LiteNetLibTransport liteNetLibTransport:
