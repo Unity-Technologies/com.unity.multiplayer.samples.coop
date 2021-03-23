@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.UNET;
 
 namespace BossRoom.Client
@@ -109,7 +110,7 @@ namespace BossRoom.Client
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             switch (chosenTransport)
             {
-                case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                case LiteNetLibTransport liteNetLibTransport:
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;
