@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -24,6 +25,14 @@ namespace BossRoom.Server
         /// The transform of this object.
         /// </summary>
         Transform transform { get; }
+
+        [Flags]
+        public enum SpecialDamageFlags
+        {
+            None                = 0,
+            StunBossOnImpact    = 1 << 0,
+        }
+        SpecialDamageFlags GetSpecialDamageFlags();
     }
 }
 

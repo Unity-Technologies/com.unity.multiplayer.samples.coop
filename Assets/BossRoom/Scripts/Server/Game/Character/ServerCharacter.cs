@@ -269,5 +269,10 @@ namespace BossRoom.Server
         {
             m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }
+
+        public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()
+        {
+            return IDamageable.SpecialDamageFlags.None;
+        }
     }
 }

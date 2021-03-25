@@ -11,6 +11,10 @@ namespace BossRoom.Server
     [RequireComponent(typeof(NetworkBreakableState))]
     public class ServerBreakableLogic : NetworkBehaviour, IDamageable
     {
+        [SerializeField]
+        [Tooltip("Indicate which special interaction behaviors are needed for this breakable")]
+        IDamageable.SpecialDamageFlags m_SpecialDamageFlags;
+
         public override void NetworkStart()
         {
             if (!IsServer)
@@ -31,6 +35,10 @@ namespace BossRoom.Server
             }
         }
 
+        public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()
+        {
+            return m_SpecialDamageFlags;
+        }
     }
 
 
