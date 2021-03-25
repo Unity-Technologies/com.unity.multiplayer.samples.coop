@@ -4,7 +4,8 @@
     "references": [
         "Unity.Multiplayer.MLAPI.Runtime",
         "LiteNEt MLAPI Transport",
-        "Photon Realtime MLAPI Transport"
+        "Photon Realtime MLAPI Transport",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

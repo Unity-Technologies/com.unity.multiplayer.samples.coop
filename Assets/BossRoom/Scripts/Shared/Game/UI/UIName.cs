@@ -1,6 +1,6 @@
 using MLAPI.NetworkVariable;
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 namespace BossRoom
 {
@@ -10,7 +10,7 @@ namespace BossRoom
     public class UIName : MonoBehaviour
     {
         [SerializeField]
-        Text m_UINameText;
+        TextMeshProUGUI m_UINameText;
 
         NetworkVariableString m_NetworkedNameTag;
 
@@ -19,6 +19,8 @@ namespace BossRoom
             m_NetworkedNameTag = networkedName;
 
             m_UINameText.text = networkedName.Value;
+            // set an outline on the font material
+            m_UINameText.outlineWidth = 0.9f;
             networkedName.OnValueChanged += NameUpdated;
         }
 

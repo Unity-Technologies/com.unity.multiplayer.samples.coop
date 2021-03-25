@@ -6,7 +6,8 @@
         "BossRoom.Shared",
         "Cinemachine",
         "LiteNEt MLAPI Transport",
-        "Photon Realtime MLAPI Transport"
+        "Photon Realtime MLAPI Transport",
+        "Unity.TextMeshPro"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

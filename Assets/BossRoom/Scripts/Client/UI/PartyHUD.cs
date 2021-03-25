@@ -1,6 +1,7 @@
 using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -18,7 +19,7 @@ namespace BossRoom.Visual
         private GameObject[] m_AllyPanel;
 
         [SerializeField]
-        private Text[] m_PartyNames;
+        private TextMeshProUGUI[] m_PartyNames;
 
         [SerializeField]
         private Image[] m_PartyClassSymbols;
@@ -95,6 +96,8 @@ namespace BossRoom.Visual
             m_PartyHealthSliders[slot].maxValue = GetMaxHPForClass(netState.CharacterType);
             m_PartyHealthSliders[slot].value = netState.HitPoints;
             m_PartyNames[slot].text = GetPlayerName(m_PartyIds[slot]);
+            // also make the outline thinker on HUD text
+            m_PartyNames[slot].outlineWidth = 0.9f;
 
             int symbol = (int)netState.CharacterType;
             if (symbol > m_ClassSymbols.Length)
