@@ -149,17 +149,7 @@ namespace BossRoom.Scripts.Editor
                 }
 
                 // User pressed stop -- reload previous scene.
-
-                for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
-                {
-                    if (EditorBuildSettings.scenes[i].path == PreviousScene)
-                    {
-                        EditorSceneManager.OpenScene(PreviousScene);
-                        return;
-                    }
-                }
-
-                Debug.LogError($"Error: scene not found: {PreviousScene}");
+                EditorSceneManager.OpenScene(PreviousScene);
             }
         }
     }
