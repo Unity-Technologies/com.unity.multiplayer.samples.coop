@@ -49,6 +49,9 @@ namespace BossRoom.Visual
 
         const string k_BaseNodeTag = "BaseNode";
 
+        event Action Destroyed;
+
+        /// <inheritdoc />
         public override void NetworkStart()
         {
             if (!IsClient || transform.parent == null)
@@ -123,6 +126,19 @@ namespace BossRoom.Visual
                 else
                 {
                     m_PartyHud.SetAllyData(m_NetState);
+
+                    // getting our parent's NetworkObjectID for PartyHUD removal on Destroy
+                    var parentNetworkObjectID = m_NetState.NetworkObjectId;
+
+                    // once this object is destroyed, remove this ally from the PartyHUD UI
+                    // NOTE: architecturally this will be refactored
+                    Destroyed += () =>
+                    {
+                        if (m_PartyHud != null)
+                        {
+                            m_PartyHud.RemoveAlly(parentNetworkObjectID);
+                        }
+                    };
                 }
             }
         }
@@ -170,6 +186,8 @@ namespace BossRoom.Visual
                     sender.ClientMoveRequested -= OnMoveInput;
                 }
             }
+
+            Destroyed?.Invoke();
         }
 
         void OnPerformHitReaction()

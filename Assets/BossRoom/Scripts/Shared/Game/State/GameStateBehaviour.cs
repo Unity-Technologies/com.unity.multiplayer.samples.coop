@@ -90,6 +90,26 @@ namespace BossRoom
                 s_ActiveStateGO = null;
             }
         }
+
+        protected virtual void OnApplicationQuit()
+        {
+            if (!isActiveAndEnabled)
+                return;
+
+            if (IsHost)
+            {
+                NetworkManager.Singleton.StopHost();
+            }
+            else if (IsClient)
+            {
+                NetworkManager.Singleton.StopClient();
+            }
+            else if (IsServer)
+            {
+                NetworkManager.Singleton.StopServer();
+            }
+        }
+
     }
 
 }

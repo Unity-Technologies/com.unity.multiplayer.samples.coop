@@ -1,5 +1,6 @@
-using MLAPI;
 using System.Collections.Generic;
+using MLAPI;
+using MLAPI.NetworkVariable.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -137,7 +138,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.ArrayChangedEvent -= OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
             }
             if (Instance == this)
                 Instance = null;
@@ -155,7 +156,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.ArrayChangedEvent += OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
             }
         }
 
@@ -163,7 +164,7 @@ namespace BossRoom.Client
         /// Called when our PlayerNumber (e.g. P1, P2, etc.) has been assigned by the server
         /// </summary>
         /// <param name="playerNum"></param>
-        void OnAssignedPlayerNumber(int playerNum)
+        private void OnAssignedPlayerNumber(int playerNum)
         {
             m_ClassInfoBox.OnSetPlayerNumber(playerNum);
         }
@@ -171,7 +172,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
-        void OnLobbyPlayerStateChanged(CharSelectData.LobbyPlayerArray lobbyArray )
+        void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> lobbyArray )
         {
             UpdateSeats();
 

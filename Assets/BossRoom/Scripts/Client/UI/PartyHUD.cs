@@ -113,15 +113,6 @@ namespace BossRoom.Visual
             m_PartyHealthSliders[slot].value = hp;
         }
 
-        public void SetAllyName(ulong id, string name)
-        {
-            int slot = FindOrAddAlly(id);
-            // do nothing if not in a slot
-            if (slot == -1) { return; }
-
-            m_PartyNames[slot].text = name;
-        }
-
         void OnHeroSelectionChanged(ulong prevTarget, ulong newTarget)
         {
             SetHeroSelectFX(m_CurrentTarget, false);
@@ -204,6 +195,25 @@ namespace BossRoom.Visual
 
             // this should not happen unless there are too many players - we didn't find the ally or a slot
             return -1;
+        }
+
+        /// <summary>
+        /// Remove an ally from the PartyHUD UI.
+        /// </summary>
+        /// <param name="id"> NetworkObjectID of the ally. </param>
+        public void RemoveAlly(ulong id)
+        {
+            for (int i = 0; i < m_PartyIds.Length; i++)
+            {
+                // if this ID is in the list, return the slot index
+                if (m_PartyIds[i] == id)
+                {
+                    m_AllyPanel[i - 1].SetActive(false);
+                    // and save ally ID to party array
+                    m_PartyIds[i] = 0;
+                    return;
+                }
+            }
         }
     }
 }

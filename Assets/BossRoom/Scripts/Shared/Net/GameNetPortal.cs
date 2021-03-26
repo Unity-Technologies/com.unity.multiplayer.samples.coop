@@ -2,8 +2,8 @@ using System;
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.Serialization.Pooled;
-using MLAPI.Transports;
 using MLAPI.Transports.UNET;
+using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
 
 namespace BossRoom
@@ -90,7 +90,7 @@ namespace BossRoom
             //and OnClientConnectedCallback events.
             //FIXME_DMW could this be improved?
             NetManager.OnServerStarted += NetworkStart;
-            NetManager.OnClientConnectedCallback += clientId =>
+            NetManager.OnClientConnectedCallback += (clientId) =>
             {
                 if (clientId == NetManager.LocalClientId)
                 {

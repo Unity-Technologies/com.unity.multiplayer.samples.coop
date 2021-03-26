@@ -26,7 +26,7 @@ public class AoeAction : Action
         float distanceAway = Vector3.Distance(m_Parent.transform.position, Data.Position);
         if (distanceAway > Description.Range+k_MaxDistanceDivergence)
         {
-            Debug.LogError($"Hacking detected?! (Object ID {m_Parent.NetworkObjectId}) {Description.ActionTypeEnum}'s AoE range is {Description.Range} but we were given a point that's {distanceAway} away from us. Canceling AoE");
+            // Due to latency, it's possible for the client side click check to be out of date with the server driven position. Doing a final check server side to make sure.
             return ActionConclusion.Stop;
         }
 

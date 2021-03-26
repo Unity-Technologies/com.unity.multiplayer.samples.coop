@@ -66,9 +66,14 @@ namespace BossRoom.Client
             {
                 throw new Exception("Multiple ClientMusicPlayer instances!");
             }
-            m_AudioSource = GetComponent<AudioSource>();
             DontDestroyOnLoad(gameObject);
             Instance = this;
+            m_AudioSource.volume = ClientPrefs.GetMusicVolume();
+        }
+
+        public void SetMusicVolume(float volume)
+        {
+            m_AudioSource.volume = volume;
         }
     }
 }

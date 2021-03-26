@@ -46,11 +46,12 @@ MonoBehaviour:
   m_NickName: 
   m_RoomName: 
   m_MaxPlayers: 16
-  m_ChannelIdCodesStartRange: 130
+  m_ChannelIdCodesStartRange: 0
   m_AttachSupportLogger: 0
   m_BatchMode: 1
   m_SendQueueBatchSize: 4096
   m_BatchedTransportEventCode: 129
+  m_KickEventCode: 130
 --- !u!1 &3591499506183471245
 GameObject:
   m_ObjectHideFlags: 0
@@ -198,12 +199,12 @@ MonoBehaviour:
       id: 0
     CreatePlayerPrefab: 0
     ReceiveTickrate: 0
+    NetworkTickIntervalSec: 0.05
     MaxReceiveEventsPerTickRate: 1000
     EventTickrate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
     ConnectionData: 
-    SecondsHistory: 0
     EnableTimeResync: 0
     TimeResyncInterval: 30
     EnableNetworkVariable: 1

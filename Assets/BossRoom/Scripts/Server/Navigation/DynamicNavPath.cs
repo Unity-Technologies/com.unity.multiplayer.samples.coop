@@ -38,14 +38,9 @@ namespace BossRoom.Server
         Vector3 m_PositionTarget;
 
         /// <summary>
-        /// A moving transform target, the path will readjust when the target moves.
+        /// A moving transform target, the path will readjust when the target moves. If this is non-null, it takes precedence over m_PositionTarget.
         /// </summary>
         Transform m_TransformTarget;
-
-        /// <summary>
-        /// If true the path tracks a moving transform target (<see cref="m_TransformTarget"/>). If false it points to a static position target (<see cref="m_PositionTarget"/>.
-        /// </summary>
-        bool m_HasTransformTarget;
 
         /// <summary>
         /// Creates a new instance of the <see cref="DynamicNavPath"/>
@@ -62,7 +57,7 @@ namespace BossRoom.Server
             navigationSystem.OnNavigationMeshChanged += OnNavMeshChanged;
         }
 
-        Vector3 TargetPosition => m_HasTransformTarget ? m_TransformTarget.position : m_PositionTarget;
+        Vector3 TargetPosition => m_TransformTarget != null  ? m_TransformTarget.position : m_PositionTarget;
 
         /// <summary>
         /// Set the target of this path to follow a moving transform.
@@ -71,7 +66,6 @@ namespace BossRoom.Server
         public void FollowTransform(Transform target)
         {
             m_TransformTarget = target;
-            m_HasTransformTarget = true;
         }
 
         /// <summary>
@@ -87,7 +81,7 @@ namespace BossRoom.Server
             }
 
             m_PositionTarget = target;
-            m_HasTransformTarget = false;
+            m_TransformTarget = null;
             RecalculatePath();
         }
 
@@ -114,7 +108,7 @@ namespace BossRoom.Server
         /// <returns>Returns the movement vector.</returns>
         public Vector3 MoveAlongPath(float distance)
         {
-            if (m_HasTransformTarget)
+            if (m_TransformTarget != null)
             {
                 OnTargetPositionChanged(TargetPosition);
             }
