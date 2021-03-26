@@ -9,7 +9,7 @@
     "com.unity.ide.visualstudio": "2.0.7",
     "com.unity.ide.vscode": "1.2.3",
     "com.unity.learn.iet-framework": "1.2.1",
-    "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#master",
+    "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#0.1.0",
     "com.unity.postprocessing": "2.3.0",
     "com.unity.test-framework": "1.1.22",
     "com.unity.textmeshpro": "3.0.1",
