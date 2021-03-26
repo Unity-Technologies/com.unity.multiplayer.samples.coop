@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
 
 namespace BossRoom.Client

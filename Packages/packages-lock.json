@@ -1,5 +1,12 @@
 {
   "dependencies": {
+    "com.mlapi.contrib.transport.photon-realtime": {
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#feature/photon-realtime-transport",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "2a73fd428a44481b24fc16abbb946d01d1a582e2"
+    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
@@ -107,14 +114,6 @@
     },
     "com.unity.multiplayer.transport.litenet": {
       "version": "file:com.unity.multiplayer.transport.litenet",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
-      }
-    },
-    "com.unity.multiplayer.transport.photon-realtime": {
-      "version": "file:com.unity.multiplayer.transport.photon-realtime",
       "depth": 0,
       "source": "embedded",
       "dependencies": {

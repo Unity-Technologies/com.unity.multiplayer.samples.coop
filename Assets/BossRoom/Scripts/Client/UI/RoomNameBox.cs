@@ -1,5 +1,6 @@
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;

@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using MLAPI.Serialization.Pooled;
 using MLAPI.Transports;
 using MLAPI;
+using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
 
 namespace BossRoom
@@ -14,7 +15,7 @@ namespace BossRoom
         MatchStarted,     //can't join, match is already in progress.
         Unknown,          //can't join, reason unknown.
     }
-	
+
     public enum OnlineMode
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
