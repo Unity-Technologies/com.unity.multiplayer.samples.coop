@@ -1110,7 +1110,7 @@ Animator:
   m_GameObject: {fileID: 6839301660383890230}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
-  m_Controller: {fileID: 9100000, guid: 81ba9d484ee6d174a8aeb3af411babc4, type: 2}
+  m_Controller: {fileID: 22100000, guid: 0406729e6e1c12e4d99fd34970073cd0, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -1136,9 +1136,6 @@ MonoBehaviour:
   TargetReticule: {fileID: 0}
   ReticuleFriendlyMat: {fileID: 0}
   ReticuleHostileMat: {fileID: 0}
-  MinZoomDistance: 3
-  MaxZoomDistance: 30
-  ZoomSpeed: 3
 --- !u!114 &8005647249789065143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1159,6 +1156,33 @@ MonoBehaviour:
     m_PrefabSpawnDelaySeconds: 0.8
     m_PrefabCanBeAbortedUntilSecs: 0
     m_SoundEffect: {fileID: 8300000, guid: 714700a9be690ab4ab62c7cad766e9ee, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Dead Loop
+    m_AnimatorNodeNameHash: -1573871441
+    m_Prefab: {fileID: -1487195197790481162, guid: 9537f4739c7bc2f4e8d6b2d49bfcc97e, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 7fbc6b32425f98840b339a705b4a28cb, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: HitReact1
+    m_AnimatorNodeNameHash: -1747783153
+    m_Prefab: {fileID: -2843690008440830094, guid: de5b665e7f32274419072e7bf4c3eff8, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 5ef809d665d13b245b559cd6170f5794, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: WalkRun
+    m_AnimatorNodeNameHash: -1624701500
+    m_Prefab: {fileID: -8608552164340512473, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 0}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -1378,6 +1402,8 @@ MonoBehaviour:
   m_WalkFootstepVolume: 0.8
   m_RunFootstepAudioClip: {fileID: 8300000, guid: 6ad4d1d63bc70494bbc9172ae70bcdd0, type: 3}
   m_RunFootstepVolume: 0.8
+  m_WalkingPoint: 0.6
+  m_SilentPoint: 0.3
 --- !u!82 &-8995571906845300287
 AudioSource:
   m_ObjectHideFlags: 0
