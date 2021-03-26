@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.PhotonRealtime;
 using UnityEngine.Assertions;
 
 namespace BossRoom.Scripts.Editor

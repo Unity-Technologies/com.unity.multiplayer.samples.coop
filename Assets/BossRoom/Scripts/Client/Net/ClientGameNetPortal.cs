@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
 
 namespace BossRoom.Client
@@ -66,31 +67,15 @@ namespace BossRoom.Client
             //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
             {
-                //FIXME:  Currently it is not possible to safely load back to the Main Menu scene due to Persisting objects getting recreated
-                //We still don't want to invoke the network timeout event, however.
+                // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
+                // Just shut down networking and switch back to main menu.
+                MLAPI.NetworkManager.Singleton.Shutdown();
+                SceneManager.LoadScene("MainMenu");
             }
             else
             {
                 NetworkTimedOut?.Invoke();
             }
-        }
-
-        /// <summary>
-        /// Either loads a Guid string from Unity preferences, or creates one and checkpoints it, then returns it.
-        /// </summary>
-        /// <returns>The Guid that uniquely identifies this client install, in string form. </returns>
-        private static string GetOrCreateGuid()
-        {
-            if (PlayerPrefs.HasKey("client_guid"))
-            {
-                return PlayerPrefs.GetString("client_guid");
-            }
-
-            var guid = System.Guid.NewGuid();
-            var guidString = guid.ToString();
-
-            PlayerPrefs.SetString("client_guid", guidString);
-            return guidString;
         }
 
         /// <summary>
@@ -151,7 +136,7 @@ namespace BossRoom.Client
 
         private static void ConnectClient(GameNetPortal portal)
         {
-            var clientGuid = GetOrCreateGuid();
+            var clientGuid = ClientPrefs.GetGuid();
             //var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
             //payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
             //payload += $"player_name={portal.PlayerName}\n";
