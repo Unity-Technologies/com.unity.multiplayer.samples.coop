@@ -200,7 +200,7 @@ namespace BossRoom
 
             public void Cleanup()
             {
-                if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+                if (NetworkManager.Singleton && NetworkManager.Singleton.IsServer)
                 {
                     NetworkManager.Singleton.OnClientConnectedCallback -= ClientConnected;
                 }
