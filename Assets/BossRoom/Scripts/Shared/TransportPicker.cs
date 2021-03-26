@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using BossRoom;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
 using UnityEngine;
 using UnityEngine.Assertions;
