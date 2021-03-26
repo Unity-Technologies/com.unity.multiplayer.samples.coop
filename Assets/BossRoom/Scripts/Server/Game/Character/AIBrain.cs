@@ -17,7 +17,7 @@ namespace BossRoom.Server
             IDLE,
         }
 
-        static readonly AIStateType[] k_AIStates = { AIStateType.ATTACK , AIStateType.IDLE};
+        static readonly AIStateType[] k_AIStates = (AIStateType[])Enum.GetValues(typeof(AIStateType));
 
         private ServerCharacter m_ServerCharacter;
         private ActionPlayer m_ActionPlayer;
@@ -71,12 +71,11 @@ namespace BossRoom.Server
         {
             // for now we assume the AI states are in order of appropriateness,
             // which may be nonsensical when there are more states
-            for (int i = 0; i < k_AIStates.Length; i++)
+            foreach (AIStateType aiStateType in k_AIStates)
             {
-                var aiState = k_AIStates[i];
-                if (m_Logics[aiState].IsEligible())
+                if (m_Logics[aiStateType].IsEligible())
                 {
-                    return aiState;
+                    return aiStateType;
                 }
             }
 
