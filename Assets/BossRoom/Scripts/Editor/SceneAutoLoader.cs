@@ -11,6 +11,8 @@ namespace BossRoom.Scripts.Editor
     /// Scene auto-loading is enabled by default and can be toggled off & back on through
     /// Boss Room/Scene Autoload/Don't Load Master On Play & similarly Boss Room/Scene Autoload/Load Master On Play.
     /// </summary>
+    /// <remarks> This is based off the implementation here: http://wiki.unity3d.com/index.php/SceneAutoLoader
+    /// License can also be found here: https://creativecommons.org/licenses/by-sa/3.0/ </remarks>
     [InitializeOnLoad]
     static class SceneAutoLoader
     {
@@ -118,14 +120,13 @@ namespace BossRoom.Scripts.Editor
                     }
 
                     // If master scene exist, opens that scene
-                    for (int i = 0; i < EditorBuildSettings.scenes.Length; i++)
+                    var masterScene = System.Array.Find(EditorBuildSettings.scenes,
+                        scene => scene.path == MasterScene);
+
+                    if (masterScene != null)
                     {
-                        var scene = EditorBuildSettings.scenes[i];
-                        if (scene.path == MasterScene)
-                        {
-                            EditorSceneManager.OpenScene(MasterScene);
-                            return;
-                        }
+                        EditorSceneManager.OpenScene(MasterScene);
+                        return;
                     }
 
                     // else cancel play and throw error
