@@ -92,11 +92,6 @@ namespace BossRoom
             }
         }
 
-        void OnDestroy()
-        {
-            m_LobbyPlayers.Clear();
-        }
-
         private NetworkList<LobbyPlayerState> m_LobbyPlayers;
 
         private void Awake()
