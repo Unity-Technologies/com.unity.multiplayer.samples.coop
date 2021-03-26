@@ -76,24 +76,6 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// Either loads a Guid string from Unity preferences, or creates one and checkpoints it, then returns it.
-        /// </summary>
-        /// <returns>The Guid that uniquely identifies this client install, in string form. </returns>
-        private static string GetOrCreateGuid()
-        {
-            if (PlayerPrefs.HasKey("client_guid"))
-            {
-                return PlayerPrefs.GetString("client_guid");
-            }
-
-            var guid = System.Guid.NewGuid();
-            var guidString = guid.ToString();
-
-            PlayerPrefs.SetString("client_guid", guidString);
-            return guidString;
-        }
-
-        /// <summary>
         /// Wraps the invocation of NetworkManager.StartClient, including our GUID as the payload.
         /// </summary>
         /// <remarks>
@@ -151,7 +133,7 @@ namespace BossRoom.Client
 
         private static void ConnectClient(GameNetPortal portal)
         {
-            var clientGuid = GetOrCreateGuid();
+            var clientGuid = ClientPrefs.GetGuid();
             //var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
             //payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
             //payload += $"player_name={portal.PlayerName}\n";
