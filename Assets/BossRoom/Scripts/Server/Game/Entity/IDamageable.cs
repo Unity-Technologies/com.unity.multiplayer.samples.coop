@@ -31,7 +31,7 @@ namespace BossRoom.Server
         {
             None                = 0,
             StunBossOnImpact    = 1 << 0,
-            // Adding another flag? Uncomment the [Flags] field! (It's commented out because
+            // Adding another flag? Uncomment the [Flags] attribute! (It's commented out because
             // the Unity editor doesn't behave well when a [Flags] enum has only one flag: it
             // assumes that if you turn the flag on, you want ALL flags on, and stores the
             // enum as -1. This means your prefabs would magically have any NEW flags you
