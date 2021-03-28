@@ -28,8 +28,8 @@ namespace BossRoom.Client
 
         /// <summary>
         /// The audio sliders use a value between 0.0001 and 1, but the mixer works in decibels -- by default, -80 to 0.
-        /// To convert, we use log10(slider) multiplied by this value. Why 20? because log10(.0001)*20=-80, which is the
-        /// bottom range for our mixer, meaning its disabled. 
+        /// To convert, we use log10(slider) multiplied by 20. Why 20? because log10(.0001)*20=-80, which is the
+        /// bottom range for our mixer, meaning it's disabled. 
         /// </summary>
         private const float k_VolumeLog10Multiplier = 20;
 
@@ -46,8 +46,15 @@ namespace BossRoom.Client
 
         public void Configure()
         {
-            m_Mixer.SetFloat(m_MixerVarMainVolume, Mathf.Log10(ClientPrefs.GetMasterVolume()) * k_VolumeLog10Multiplier);
-            m_Mixer.SetFloat(m_MixerVarMusicVolume, Mathf.Log10(ClientPrefs.GetMusicVolume()) * k_VolumeLog10Multiplier);
+            m_Mixer.SetFloat(m_MixerVarMainVolume, GetAsDb(ClientPrefs.GetMasterVolume()));
+            m_Mixer.SetFloat(m_MixerVarMusicVolume, GetAsDb(ClientPrefs.GetMusicVolume()));
+        }
+
+        private float GetAsDb(float volume)
+        {
+            if (volume <= 0) // sanity-check in case we have bad prefs data
+                volume = 0.0001f;
+            return Mathf.Log10(volume) * k_VolumeLog10Multiplier;
         }
     }
 }
