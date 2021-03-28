@@ -55,7 +55,7 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
-            // TODO: somehow tell the corresponding FX to abort!
+            m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
         }
 
         /// <summary>
