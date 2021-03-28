@@ -12,19 +12,12 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerWaveSpawner : NetworkBehaviour
     {
-        [SerializeField]
-        NetworkHealthState m_NetworkHealthState;
-
-        // amount of hits it takes to break any spawner
-        [SerializeField]
-        IntVariable m_MaxHP;
-
         // networked object that will be spawned in waves
         [SerializeField]
         NetworkObject m_NetworkedPrefab;
 
         [SerializeField]
-        [Tooltip("Each spawned enemy appears at a point randomly chosen from this list")]
+        [Tooltip("Each spawned enemy appears at one of the points in this list")]
         List<Transform> m_SpawnPositions;
 
         // cache reference to our own transform
@@ -75,6 +68,9 @@ namespace BossRoom.Server
 
         // are we currently spawning stuff?
         bool m_IsSpawnerEnabled;
+
+        // a running tally of spawned entities, used in determining which spawn-point to use next
+        int m_SpawnedCount;
 
         void Awake()
         {
@@ -202,7 +198,7 @@ namespace BossRoom.Server
                 throw new System.ArgumentNullException("m_NetworkedPrefab");
             }
 
-            int posIdx = Random.Range(0, m_SpawnPositions.Count);
+            int posIdx = m_SpawnedCount++ % m_SpawnPositions.Count;
             var clone = Instantiate(m_NetworkedPrefab, m_SpawnPositions[posIdx].position, m_SpawnPositions[posIdx].rotation);
             if (!clone.IsSpawned)
             {
