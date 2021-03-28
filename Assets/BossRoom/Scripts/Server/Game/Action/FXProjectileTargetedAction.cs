@@ -42,7 +42,7 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (!m_ImpactedTarget && m_TimeUntilImpact <= (Time.time - TimeStarted))
+            if (!m_ImpactedTarget && m_TimeUntilImpact <= TimeRunning)
             {
                 m_ImpactedTarget = true;
                 if (m_Target != null )
@@ -55,7 +55,10 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
-            m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+            if (TimeRunning < Description.ExecTimeSeconds)
+            {
+                m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+            }
         }
 
         /// <summary>
