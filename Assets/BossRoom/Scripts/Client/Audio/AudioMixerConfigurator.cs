@@ -18,12 +18,6 @@ namespace BossRoom.Client
         [SerializeField]
         private string m_MixerVarMusicVolume = "MusicVolume";
 
-        [SerializeField]
-        private string m_MixerVarSfxVolume = "SfxVolume";
-
-        [SerializeField]
-        private string m_MixerVarFootstepsVolume = "FootstepsVolume";
-
         public static AudioMixerConfigurator Instance { get; private set; }
 
         /// <summary>
