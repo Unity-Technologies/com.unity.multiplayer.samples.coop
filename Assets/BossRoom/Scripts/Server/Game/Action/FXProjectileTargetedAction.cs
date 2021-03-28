@@ -55,10 +55,8 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
-            if (TimeRunning < Description.ExecTimeSeconds)
-            {
+            if (!m_ImpactedTarget)
                 m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
-            }
         }
 
         /// <summary>
