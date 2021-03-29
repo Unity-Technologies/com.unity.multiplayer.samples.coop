@@ -21,24 +21,17 @@
 7. Click on Next, then Done, you should be all setup now!
 8. You can safely quit the Photon Wizard now!
 
-## Preparing Boss Room to be built
-
-Follow these steps in order to prepare Boss Room to be packaged and distributed to your audience:
-
----
-
-1. Find PhotonAppSettings asset in your project
-2. The App Id you've set during the setup, should be shared with your friends in case they want to use the Unity Editor, instead of a packaged built, as each developer might a different App Id/region set in its PhotonAppSettings asset
-    - NOTE! We suggest considering Playing in Editor with your friends only for iteration purposes - when they have access to your project - as we encourage you to distribute your packaged builds to your friends, because sometimes they might have some local changes that would cause different issues which might be hard to debug.
-3. Now, you should be able to build Boss Room and distribute it to your friends/users.
-
 ## Playing Boss Room with friends
 
-Once the setup is done, there are two ways you can actually test out is working, one way is to launch the Boss Room project via a packaged build or to use the Unity Editor, but do that with caution! (see more info above). With that being said, both ways are almost the same in terms of how you host/join a session.
+Once the setup is done, there are two ways you can actually test out is working, one way is to launch the Boss Room project via a packaged build or to use the Unity Editor, but do that with caution!. With that being said, both ways are almost the same in terms of how you host/join a session.
+
+```
+ `IMPORTANT`  There is a bug in MLAPI at the moment that could prevent users from connecting to each other through editor!
+```
 
 ---
 
-NOTE! Just to reiterate, it is very important that all the Unity Editor users should have the exact same version of the project with no changes locally and their PhotonAppSettings should match with the Host's one.
+NOTE! Just to reiterate, it is very important that all Unity Editor users should have the exact same version of the project with no changes locally and their PhotonAppSettings should match with the Host's one.
 
 ---
 
