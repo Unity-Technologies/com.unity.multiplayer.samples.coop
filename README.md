@@ -53,7 +53,11 @@ After the build has completed you can launch several instances of the built exec
 
 In contrast to running a local setup, when playing over internet we don't neccessarily need a built executable. We can just run the game in editor. 
 
-Running the game over internet currently requires setting up a [Photon Transport for MLAPI](https://github.com/Unity-Technologies/mlapi-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.  
+Running the game over internet currently requires setting up a [Photon Transport for MLAPI](https://github.com/Unity-Technologies/mlapi-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks. \
+
+> Checkout our Photon-Realtime setup guide, here:
+> ![here](Documentation/Photon-Realtime/Readme.md)
+
 
 Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. BossRoom uses `UDP` and needs a `9998` external port to be open. 
 
