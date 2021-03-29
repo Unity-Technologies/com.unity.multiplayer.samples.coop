@@ -147,16 +147,20 @@ namespace BossRoom.Visual
             {
                 if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
                 {
-#if UNITY_EDITOR
-                    // If there is no photon app id set tell the user they need to install
-                    SetupNotifierDisplay(
-                        "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
-                        "to setup Photon Realtime and use relay mode.", false, true);
-#else
-                    // If there is no photon app id set tell the user they need to install
-                    SetupNotifierDisplay(
-                        "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
-#endif
+                    if (Application.isEditor)
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
+                            "to setup Photon Realtime and use relay mode.", false, true);
+                    }
+                    else
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project " +
+                            "by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
+                    }
                     return;
                 }
 
