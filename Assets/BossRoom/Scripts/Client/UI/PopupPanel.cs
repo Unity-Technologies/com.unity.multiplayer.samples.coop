@@ -18,7 +18,7 @@ namespace BossRoom.Visual
         [SerializeField]
         private TextMeshProUGUI m_MainText;
         [SerializeField]
-        private Text m_SubText;
+        private TextMeshProUGUI m_SubText;
         [SerializeField]
         [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
         private GameObject m_ReconnectingImage;
