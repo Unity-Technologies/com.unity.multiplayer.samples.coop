@@ -65,9 +65,9 @@ If you want to host a session then:
 ---
 
 If you want to Join a session then:
-1. Click the Join Button and select `Relay Host` from the dropdown on the left
+1. Click the Join Button and select `Relay Host` from the dropdown on the left.
    ![Images/Boss-Room-Join-Dropdown.png](Images/Boss-Room-Join-Dropdown.png)
-2. You should be asked to input the room name below
+2. You should be asked to input the room name below.
    ![Images/Boss-Room-Join.png](Images/Boss-Room-Join.png)
 
 3. In this example, the room name is: `YQWOWS`
