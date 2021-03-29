@@ -191,6 +191,8 @@ namespace BossRoom.Client
             {
                 // we haven't chosen a seat yet (or were kicked out of our seat by someone else)
                 UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
+                // make sure our player num is properly set in Lobby UI
+                OnAssignedPlayerNumber(CharSelectData.LobbyPlayers[localPlayerIdx].PlayerNum);
             }
             else
             {

@@ -59,7 +59,6 @@ namespace BossRoom.Visual
             {
                 m_Background.color = Color.white;
                 m_WinEndMessage.gameObject.SetActive(true);
-                m_WinEndMessage.outlineWidth = 0.5f;
                 m_LoseGameMessage.gameObject.SetActive(false);
             }
             else if( m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Lost )
@@ -67,7 +66,6 @@ namespace BossRoom.Visual
                 m_Background.color = new Color(1.0f, 0.5f, 0.5f);
                 m_WinEndMessage.gameObject.SetActive(false);
                 m_LoseGameMessage.gameObject.SetActive(true);
-                m_LoseGameMessage.outlineWidth = 0.5f;
             }
         }
 
