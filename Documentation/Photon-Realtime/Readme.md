@@ -23,7 +23,12 @@
 
 ## Playing Boss Room with friends
 
-Once the setup is done, there are two ways you can actually test out is working, one way is to launch the Boss Room project via a packaged build or to use the Unity Editor, but do that with caution!. With that being said, both ways are almost the same in terms of how you host/join a session.
+Once the setup is done, there are two ways you can actually test out is working:
+
+* Launch the Boss Room project using a packaged build.
+* Use the Unity Editor, but do that with caution!
+
+With that being said, both ways are almost the same in terms of how you host or join a session.
 
 ```
  IMPORTANT! There is a bug in MLAPI at the moment that could prevent users from connecting to each other through editor!
