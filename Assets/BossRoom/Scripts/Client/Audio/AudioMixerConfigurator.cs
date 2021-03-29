@@ -48,7 +48,9 @@ namespace BossRoom.Client
         private float GetAsDb(float volume)
         {
             if (volume <= 0) // sanity-check in case we have bad prefs data
+            {
                 volume = 0.0001f;
+            }
             return Mathf.Log10(volume) * k_VolumeLog10Multiplier;
         }
     }
