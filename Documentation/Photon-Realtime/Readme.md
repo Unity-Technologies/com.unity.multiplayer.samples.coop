@@ -4,8 +4,8 @@
 
 1. Access Wizard from Window → Photon Realtime → Wizard
 2. Click next until you get to the Photon Cloud Setup Part
-3. If you don't already have an account or e-mail, click on the Visit Dashboard button in order to create one	
-    1.  If you just created an account  for the first time you need to also create a New Application from Photon's Dashboard
+3. If you don't already have an account or an App Id, click on the Visit Dashboard button in order to create one	
+    1.  If you just created an account for the first time you need to also create a New Application from Photon's Dashboard
     2. NOTE! The Photon Type for Boss Room is: `Photon Realtime`
        
    ![Images/Photon-App.png](Images/Photon-App.png)
@@ -34,7 +34,7 @@ Follow these steps in order to prepare Boss Room to be packaged and distributed 
 
 ## Playing Boss Room with friends
 
-Once the setup is done, there are two ways you can actually test out is working, one way is to launch the Boss Room project via a packaged build or to use the Unity Editor, but do that with caution! (see more info above). With that being said, both ways almost the same in terms of how you host/join a session.
+Once the setup is done, there are two ways you can actually test out is working, one way is to launch the Boss Room project via a packaged build or to use the Unity Editor, but do that with caution! (see more info above). With that being said, both ways are almost the same in terms of how you host/join a session.
 
 ---
 
