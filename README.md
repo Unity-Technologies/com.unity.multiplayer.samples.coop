@@ -1,7 +1,9 @@
 ![Banner](Documentation/Images/Banner.png)
 # BossRoom - co-op multiplayer RPG built with Unity MLAPI
 
->**IMPORTANT**: This project is currently experimental.
+| 🛑  IMPORTANT - Early Access 🛑  | 
+| -- |
+| Package is on the road to a fully supported solution and we have solutions architects ready on discord and forums to help you work through issues you encounter. |
 
 BossRoom is a fully functional co-op multiplayer RPG made in Unity and MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
