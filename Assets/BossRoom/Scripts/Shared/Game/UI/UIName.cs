@@ -19,8 +19,6 @@ namespace BossRoom
             m_NetworkedNameTag = networkedName;
 
             m_UINameText.text = networkedName.Value;
-            // set an outline on the font material
-            m_UINameText.outlineWidth = 0.9f;
             networkedName.OnValueChanged += NameUpdated;
         }
 
