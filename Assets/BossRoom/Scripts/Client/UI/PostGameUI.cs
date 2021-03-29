@@ -2,6 +2,7 @@ using MLAPI.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -14,7 +15,10 @@ namespace BossRoom.Visual
         private RawImage m_Background;
 
         [SerializeField]
-        private Image m_EndMessage;
+        private TextMeshProUGUI m_WinEndMessage;
+
+        [SerializeField]
+        private TextMeshProUGUI m_LoseGameMessage;
 
         [SerializeField]
         private GameObject m_ReplayButton;
@@ -24,11 +28,6 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private PostGameData m_PostGameData;
-
-        [SerializeField]
-        private Sprite m_WinSprite;
-        [SerializeField]
-        private Sprite m_LoseSprite;
 
         void Start()
         {
@@ -49,7 +48,6 @@ namespace BossRoom.Visual
 
             OnGameWonChanged(0, m_PostGameData.GameBannerState.Value );
             m_PostGameData.GameBannerState.OnValueChanged += OnGameWonChanged;
-
         }
 
         //this won't actually change dynamically, but using a callback robustifies us against race
@@ -59,15 +57,15 @@ namespace BossRoom.Visual
             // Set end message and background color based last game outcome
             if (m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Won )
             {
-                m_EndMessage.sprite = m_WinSprite;
                 m_Background.color = Color.white;
-                m_EndMessage.color = Color.white;
+                m_WinEndMessage.gameObject.SetActive(true);
+                m_LoseGameMessage.gameObject.SetActive(false);
             }
             else if( m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Lost )
             {
-                m_EndMessage.sprite = m_LoseSprite;
                 m_Background.color = new Color(1.0f, 0.5f, 0.5f);
-                m_EndMessage.color = Color.white;
+                m_WinEndMessage.gameObject.SetActive(false);
+                m_LoseGameMessage.gameObject.SetActive(true);
             }
         }
 
