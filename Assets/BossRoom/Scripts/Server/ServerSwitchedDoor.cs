@@ -2,47 +2,50 @@ using System.Collections.Generic;
 using MLAPI;
 using UnityEngine;
 
-/// <summary>
-/// Server-side logic for a door. This particular type of door
-/// is opened when a player stands on a floor switch.
-/// (Assign the floor switches for this door in the editor.)
-/// </summary>
-[RequireComponent(typeof(NetworkDoorState))]
-public class ServerSwitchedDoor : NetworkBehaviour
+namespace BossRoom.Server
 {
-    [SerializeField]
-    public List<NetworkFloorSwitchState> m_SwitchesThatOpenThisDoor;
-
-    NetworkDoorState m_NetworkDoorState;
-
-    void Awake()
+    /// <summary>
+    /// Server-side logic for a door. This particular type of door
+    /// is opened when a player stands on a floor switch.
+    /// (Assign the floor switches for this door in the editor.)
+    /// </summary>
+    [RequireComponent(typeof(NetworkDoorState))]
+    public class ServerSwitchedDoor : NetworkBehaviour
     {
-        m_NetworkDoorState = GetComponent<NetworkDoorState>();
+        [SerializeField]
+        public List<NetworkFloorSwitchState> m_SwitchesThatOpenThisDoor;
 
-        // don't let Update() run until after NetworkStart()
-        enabled = false;
+        NetworkDoorState m_NetworkDoorState;
 
-        if (m_SwitchesThatOpenThisDoor.Count == 0)
-            Debug.LogError("Door has no switches and can never be opened!", gameObject);
-    }
-
-    public override void NetworkStart()
-    {
-        enabled = IsServer;
-    }
-
-    void Update()
-    {
-        bool isAnySwitchOn = false;
-        foreach (var floorSwitch in m_SwitchesThatOpenThisDoor)
+        void Awake()
         {
-            if (floorSwitch && floorSwitch.IsSwitchedOn.Value)
-            {
-                isAnySwitchOn = true;
-                break;
-            }
-        }
-        m_NetworkDoorState.IsOpen.Value = isAnySwitchOn;
-    }
+            m_NetworkDoorState = GetComponent<NetworkDoorState>();
 
+            // don't let Update() run until after NetworkStart()
+            enabled = false;
+
+            if (m_SwitchesThatOpenThisDoor.Count == 0)
+                Debug.LogError("Door has no switches and can never be opened!", gameObject);
+        }
+
+        public override void NetworkStart()
+        {
+            enabled = IsServer;
+        }
+
+        void Update()
+        {
+            bool isAnySwitchOn = false;
+            foreach (var floorSwitch in m_SwitchesThatOpenThisDoor)
+            {
+                if (floorSwitch && floorSwitch.IsSwitchedOn.Value)
+                {
+                    isAnySwitchOn = true;
+                    break;
+                }
+            }
+
+            m_NetworkDoorState.IsOpen.Value = isAnySwitchOn;
+        }
+    }
 }

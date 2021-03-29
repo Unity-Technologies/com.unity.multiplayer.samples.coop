@@ -1,4 +1,3 @@
-
 using System;
 
 namespace BossRoom.Visual
@@ -68,7 +67,4 @@ namespace BossRoom.Visual
         public virtual void OnAnimEvent(string id) { }
         public virtual void OnStoppedChargingUp() { }
     }
-
 }
-
-

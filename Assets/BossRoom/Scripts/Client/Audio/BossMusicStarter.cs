@@ -1,6 +1,5 @@
 using UnityEngine;
 
-
 namespace BossRoom.Client
 {
     /// <summary>

@@ -1,41 +1,43 @@
 using MLAPI;
 using UnityEngine;
 
-/// <summary>
-/// Client-side representation of a floor switch.
-/// </summary>
-[RequireComponent(typeof(NetworkFloorSwitchState))]
-public class ClientFloorSwitchVisualization : NetworkBehaviour
+namespace BossRoom.Visual
 {
-    [SerializeField]
-    Animator m_Animator;
-
-    [SerializeField]
-    string m_AnimatorPressedDownBoolVarName = "IsPressed";
-
-    NetworkFloorSwitchState m_FloorSwitchState;
-
-    void Awake()
+    /// <summary>
+    /// Client-side representation of a floor switch.
+    /// </summary>
+    [RequireComponent(typeof(NetworkFloorSwitchState))]
+    public class ClientFloorSwitchVisualization : NetworkBehaviour
     {
-        m_FloorSwitchState = GetComponent<NetworkFloorSwitchState>();
-    }
+        [SerializeField]
+        Animator m_Animator;
 
-    public override void NetworkStart()
-    {
-        m_FloorSwitchState.IsSwitchedOn.OnValueChanged += OnFloorSwitchStateChanged;
-    }
+        [SerializeField]
+        string m_AnimatorPressedDownBoolVarName = "IsPressed";
 
-    void OnDestroy()
-    {
-        if (m_FloorSwitchState)
+        NetworkFloorSwitchState m_FloorSwitchState;
+
+        void Awake()
         {
-            m_FloorSwitchState.IsSwitchedOn.OnValueChanged -= OnFloorSwitchStateChanged;
+            m_FloorSwitchState = GetComponent<NetworkFloorSwitchState>();
+        }
+
+        public override void NetworkStart()
+        {
+            m_FloorSwitchState.IsSwitchedOn.OnValueChanged += OnFloorSwitchStateChanged;
+        }
+
+        void OnDestroy()
+        {
+            if (m_FloorSwitchState)
+            {
+                m_FloorSwitchState.IsSwitchedOn.OnValueChanged -= OnFloorSwitchStateChanged;
+            }
+        }
+
+        void OnFloorSwitchStateChanged(bool wasPressed, bool isPressed)
+        {
+            m_Animator.SetBool(m_AnimatorPressedDownBoolVarName, isPressed);
         }
     }
-
-    void OnFloorSwitchStateChanged(bool wasPressed, bool isPressed)
-    {
-        m_Animator.SetBool(m_AnimatorPressedDownBoolVarName, isPressed);
-    }
-
 }

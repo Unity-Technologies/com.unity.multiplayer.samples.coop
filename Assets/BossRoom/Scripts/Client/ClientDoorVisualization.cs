@@ -1,59 +1,61 @@
 using MLAPI;
 using UnityEngine;
 
-/// <summary>
-/// Represents a door in the client. The visuals of the door animate as
-/// "opening" and "closing", but for physics purposes this is an illusion:
-/// whenever the door is open on the server, the door's physics are disabled,
-/// and vice versa.
-/// </summary>
-[RequireComponent(typeof(NetworkDoorState))]
-public class ClientDoorVisualization : NetworkBehaviour
+namespace BossRoom.Visual
 {
-    [SerializeField]
-    [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]
-    GameObject m_PhysicsObject;
-
-    [SerializeField]
-    Animator m_Animator;
-
-    [SerializeField]
-    string m_AnimatorDoorOpenBoolVarName = "IsOpen";
-
-    NetworkDoorState m_DoorState;
-
-    void Awake()
+    /// <summary>
+    /// Represents a door in the client. The visuals of the door animate as
+    /// "opening" and "closing", but for physics purposes this is an illusion:
+    /// whenever the door is open on the server, the door's physics are disabled,
+    /// and vice versa.
+    /// </summary>
+    [RequireComponent(typeof(NetworkDoorState))]
+    public class ClientDoorVisualization : NetworkBehaviour
     {
-        m_DoorState = GetComponent<NetworkDoorState>();
-    }
+        [SerializeField]
+        [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]
+        GameObject m_PhysicsObject;
 
-    public override void NetworkStart()
-    {
-        if (!IsClient)
+        [SerializeField]
+        Animator m_Animator;
+
+        [SerializeField]
+        string m_AnimatorDoorOpenBoolVarName = "IsOpen";
+
+        NetworkDoorState m_DoorState;
+
+        void Awake()
         {
-            enabled = false;
+            m_DoorState = GetComponent<NetworkDoorState>();
         }
-        else
+
+        public override void NetworkStart()
         {
-            m_DoorState.IsOpen.OnValueChanged += OnDoorStateChanged;
+            if (!IsClient)
+            {
+                enabled = false;
+            }
+            else
+            {
+                m_DoorState.IsOpen.OnValueChanged += OnDoorStateChanged;
 
-            // sanity-check that the physics object is active in the scene (because we default to "closed")
-            m_PhysicsObject.SetActive(true);
+                // sanity-check that the physics object is active in the scene (because we default to "closed")
+                m_PhysicsObject.SetActive(true);
+            }
         }
-    }
 
-    void OnDestroy()
-    {
-        if (m_DoorState)
+        void OnDestroy()
         {
-            m_DoorState.IsOpen.OnValueChanged -= OnDoorStateChanged;
+            if (m_DoorState)
+            {
+                m_DoorState.IsOpen.OnValueChanged -= OnDoorStateChanged;
+            }
+        }
+
+        void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
+        {
+            m_PhysicsObject.SetActive(!isDoorOpen);
+            m_Animator.SetBool(m_AnimatorDoorOpenBoolVarName, isDoorOpen);
         }
     }
-
-    void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
-    {
-        m_PhysicsObject.SetActive(!isDoorOpen);
-        m_Animator.SetBool(m_AnimatorDoorOpenBoolVarName, isDoorOpen);
-    }
-
 }

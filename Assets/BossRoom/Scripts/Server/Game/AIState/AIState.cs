@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace BossRoom.Server
 {
-
     /// <summary>
     /// Base class for all AIStates
     /// </summary>
@@ -25,6 +24,5 @@ namespace BossRoom.Server
         /// already been called prior to Update() being called
         /// </summary>
         public abstract void Update();
-
     }
 }
