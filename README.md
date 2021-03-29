@@ -68,7 +68,11 @@ The game is server-authoritative, with latency-masking animations. Position upda
 
 Code is organized into three separate assemblies: **Client**, **Shared** and **Server** which reference each other when appropriate.
 
-For an in-depth overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
+For an overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
+
+---------------
+
+For a deep dive in MLAPI and Boss Room, visit our [doc](https://docs-multiplayer.unity3d.com/) and [Learn](https://docs-multiplayer.unity3d.com/docs/learn/introduction) sections.
 
 ## Contributing
 
