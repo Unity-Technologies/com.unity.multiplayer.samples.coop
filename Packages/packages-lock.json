@@ -4,17 +4,15 @@
       "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib",
       "depth": 0,
       "source": "git",
-      "dependencies": {
-        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
-      },
-      "hash": "e5a2ce50ccdb9a90fc13d7a375836ba52a29e3b2"
+      "dependencies": {},
+      "hash": "398432637744f5101f79dd50f4f45d2fea8de8c0"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
       "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#feature/photon-realtime-transport",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "2a73fd428a44481b24fc16abbb946d01d1a582e2"
+      "hash": "49fe3c77fae1e3d326cb6dc0a175a7342ec39600"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -29,7 +27,7 @@
       "dependencies": {
         "com.unity.modules.ai": "1.0.0"
       },
-      "hash": "49d0b3b11730c51c48ce0bcc5d6cc718d061045d"
+      "hash": "0fc6f532e4f47d66d173314efcb906bc7cf0d00f"
     },
     "com.unity.cinemachine": {
       "version": "2.6.3",
