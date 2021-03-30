@@ -8,26 +8,26 @@ namespace BossRoom.Server
 {
     /// <summary>
     /// Component responsible for spawning prefab clones in waves on the server.
+    /// <see cref="ServerEnemyPortal"/> calls our SetSpawnerEnabled() to turn on/off spawning.
     /// </summary>
-    [RequireComponent(typeof(Collider))]
     public class ServerWaveSpawner : NetworkBehaviour
     {
-        [SerializeField]
-        NetworkHealthState m_NetworkHealthState;
-
-        // amount of hits it takes to break any spawner
-        [SerializeField]
-        IntVariable m_MaxHP;
-
         // networked object that will be spawned in waves
         [SerializeField]
         NetworkObject m_NetworkedPrefab;
+
+        [SerializeField]
+        [Tooltip("Each spawned enemy appears at one of the points in this list")]
+        List<Transform> m_SpawnPositions;
 
         // cache reference to our own transform
         Transform m_Transform;
 
         // track wave index and reset once all waves are complete
         int m_WaveIndex;
+
+        // keep reference to our current watch-for-players coroutine
+        Coroutine m_WatchForPlayers;
 
         // keep reference to our wave spawning coroutine
         Coroutine m_WaveSpawning;
@@ -59,12 +59,24 @@ namespace BossRoom.Server
         [Tooltip("Once last wave is spawned, the spawner waits this long to restart wave spawns, in seconds.")]
         [SerializeField]
         float m_RestartDelay;
-        [Tooltip("A player must be withing this distance to commence first wave spawn.")]
+        [Tooltip("A player must be within this distance to commence first wave spawn.")]
         [SerializeField]
         float m_ProximityDistance;
-        [Tooltip("After being broken, the spawner waits this long to restart wave spawns, in seconds.")]
         [SerializeField]
-        float m_DormantCooldown;
+        [Tooltip("The spawner won't create more than this many entities at a time. 0 = don't track spawn count")]
+        int m_MaxActiveSpawns;
+
+        // indicates whether NetworkStart() has been called on us yet
+        bool m_IsStarted;
+
+        // are we currently spawning stuff?
+        bool m_IsSpawnerEnabled;
+
+        // a running tally of spawned entities, used in determining which spawn-point to use next
+        int m_SpawnedCount;
+
+        // the currently-spawned entities. We only bother to track these if m_MaxActiveSpawns is non-zero
+        List<NetworkObject> m_ActiveSpawns = new List<NetworkObject>();
 
         void Awake()
         {
@@ -80,48 +92,34 @@ namespace BossRoom.Server
                 enabled = false;
                 return;
             }
-
-            ReviveSpawner();
             m_Hit = new RaycastHit[1];
-            StartCoroutine(ValidatePlayersProximity(StartWaveSpawning));
+            m_IsStarted = true;
+            if (m_IsSpawnerEnabled)
+            {
+                StartWaveSpawning();
+            }
         }
 
-        /// <summary>
-        /// Coroutine for continually validating proximity to players and invoking an action when any is near.
-        /// </summary>
-        /// <param name="validationAction"></param>
-        /// <returns></returns>
-        IEnumerator ValidatePlayersProximity(System.Action validationAction)
+        public void SetSpawnerEnabled(bool isEnabledNow)
         {
-            while (true)
+            if (m_IsStarted && m_IsSpawnerEnabled != isEnabledNow)
             {
-                if (m_NetworkHealthState.HitPoints.Value <= 0)
+                if (!isEnabledNow)
                 {
-                    yield return new WaitForSeconds(m_DormantCooldown);
-                    ReviveSpawner();
-                }
-
-                if (m_WaveSpawning == null)
-                {
-                    if (IsAnyPlayerNearbyAndVisible())
-                    {
-                        validationAction();
-                    }
+                    StopWaveSpawning();
                 }
                 else
                 {
-                    // do nothing, a wave spawning routine is currently underway
+                    StartWaveSpawning();
                 }
-
-                yield return new WaitForSeconds(m_PlayerProximityValidationTimestep);
             }
+            m_IsSpawnerEnabled = isEnabledNow;
         }
 
         void StartWaveSpawning()
         {
             StopWaveSpawning();
-
-            m_WaveSpawning = StartCoroutine(SpawnWaves());
+            m_WatchForPlayers = StartCoroutine(TriggerSpawnWhenPlayersNear());
         }
 
         void StopWaveSpawning()
@@ -131,6 +129,32 @@ namespace BossRoom.Server
                 StopCoroutine(m_WaveSpawning);
             }
             m_WaveSpawning = null;
+            if (m_WatchForPlayers != null)
+            {
+                StopCoroutine(m_WatchForPlayers);
+            }
+            m_WatchForPlayers = null;
+        }
+
+        void OnDestroy()
+        {
+            StopWaveSpawning();
+        }
+
+        /// <summary>
+        /// Coroutine for continually validating proximity to players and starting a wave of enemies in response.
+        /// </summary>
+        IEnumerator TriggerSpawnWhenPlayersNear()
+        {
+            while (true)
+            {
+                if (m_WaveSpawning == null && IsAnyPlayerNearbyAndVisible())
+                {
+                    m_WaveSpawning = StartCoroutine(SpawnWaves());
+                }
+
+                yield return new WaitForSeconds(m_PlayerProximityValidationTimestep);
+            }
         }
 
         /// <summary>
@@ -162,7 +186,14 @@ namespace BossRoom.Server
         {
             for (int i = 0; i < m_SpawnsPerWave; i++)
             {
-                SpawnPrefab();
+                if (IsRoomAvailableForAnotherSpawn())
+                {
+                    var newSpawn = SpawnPrefab();
+                    if (m_MaxActiveSpawns > 0) // 0 = no limit on spawns, so we don't bother tracking 'em
+                    {
+                        m_ActiveSpawns.Add(newSpawn);
+                    }
+                }
 
                 yield return new WaitForSeconds(m_TimeBetweenSpawns);
             }
@@ -173,20 +204,33 @@ namespace BossRoom.Server
         /// <summary>
         /// Spawn a NetworkObject prefab clone.
         /// </summary>
-        void SpawnPrefab()
+        NetworkObject SpawnPrefab()
         {
             if (m_NetworkedPrefab == null)
             {
                 throw new System.ArgumentNullException("m_NetworkedPrefab");
             }
 
-            // spawn clone right in front of spawner
-            var spawnPosition = m_Transform.position + m_Transform.forward;
-            var clone = Instantiate(m_NetworkedPrefab, spawnPosition, Quaternion.identity);
+            int posIdx = m_SpawnedCount++ % m_SpawnPositions.Count;
+            var clone = Instantiate(m_NetworkedPrefab, m_SpawnPositions[posIdx].position, m_SpawnPositions[posIdx].rotation);
             if (!clone.IsSpawned)
             {
                 clone.Spawn();
             }
+            return clone;
+        }
+
+        bool IsRoomAvailableForAnotherSpawn()
+        {
+            if (m_MaxActiveSpawns <= 0)
+            {
+                // no max-spawn limit
+                return true;
+            }
+            // references to spawned components that no longer exist will become null,
+            // so clear those out. Then we know how many we have left
+            m_ActiveSpawns.RemoveAll(spawnedNetworkObject => { return spawnedNetworkObject == null; });
+            return m_ActiveSpawns.Count < m_MaxActiveSpawns;
         }
 
         /// <summary>
@@ -206,6 +250,12 @@ namespace BossRoom.Server
             // and is not occluded by a blocking collider.
             foreach (KeyValuePair<ulong, NetworkClient> idToClient in NetworkManager.Singleton.ConnectedClients)
             {
+                if (idToClient.Value.PlayerObject == null)
+                {
+                    // skip over any connection that doesn't have a PlayerObject yet
+                    continue;
+                }
+
                 var playerPosition = idToClient.Value.PlayerObject.transform.position;
                 var direction = playerPosition - spawnerPosition;
 
@@ -226,27 +276,6 @@ namespace BossRoom.Server
             }
 
             return false;
-        }
-
-        void ReviveSpawner()
-        {
-            m_NetworkHealthState.HitPoints.Value = m_MaxHP.Value;
-        }
-
-        // TODO: David will create interface hookup for receiving hits on non-NPC/PC objects (GOMPS-ID TBD)
-        void ReceiveHP(ServerCharacter inflicter, int HP)
-        {
-            if (!IsServer)
-            {
-                return;
-            }
-
-            m_NetworkHealthState.HitPoints.Value += HP;
-
-            if (m_NetworkHealthState.HitPoints.Value <= 0)
-            {
-                StopWaveSpawning();
-            }
         }
     }
 }
