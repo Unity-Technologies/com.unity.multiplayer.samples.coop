@@ -1,6 +1,7 @@
 using MLAPI;
 using MLAPI.Transports;
 using MLAPI.Transports.PhotonRealtime;
+using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
@@ -11,6 +12,8 @@ public class RoomNameBox : MonoBehaviour
     [SerializeField]
     Text m_RoomNameText;
 
+    bool m_ConnectionFinished = false;
+
     void Awake()
     {
         Assert.IsNotNull(m_RoomNameText, $"{nameof(m_RoomNameText)} not assigned!");
@@ -20,12 +23,29 @@ public class RoomNameBox : MonoBehaviour
         switch (transport)
         {
             case PhotonRealtimeTransport realtimeTransport:
-                m_RoomNameText.text = $"Room Name: {realtimeTransport.RoomName}";
+                m_RoomNameText.text = $"Loading room key...";
                 break;
             default:
                 // RoomName should only be displayed when using relay.
                 Destroy(gameObject);
                 break;
         }
+    }
+
+    void Update()
+    {
+        if (m_ConnectionFinished == false)
+        {
+            var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+
+            if (transport is PhotonRealtimeTransport realtimeTransport && string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
+            {
+                string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
+                m_RoomNameText.text = $"Room Name: {roomName}";
+                m_ConnectionFinished = true;
+            }
+        }
+
+
     }
 }
