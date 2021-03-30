@@ -37,7 +37,7 @@ namespace BossRoom.Visual
 
         public void OnHostClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the IP to host on", "Input the room name to host on", "iphost", "Confirm",
+            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the IP to host on", "", "iphost", "Confirm",
                 (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
             {
                 m_GameNetPortal.PlayerName = playerName;
@@ -64,7 +64,11 @@ namespace BossRoom.Visual
                 switch (onlineMode)
                 {
                     case OnlineMode.Relay:
-                        ClientGameNetPortal.StartClientRelayMode(m_GameNetPortal, connectInput);
+                        if (ClientGameNetPortal.StartClientRelayMode(m_GameNetPortal, connectInput, out string failMessage) == false)
+                        {
+                            m_ResponsePopup.SetupNotifierDisplay("Connection Failed", failMessage, false, true);
+                            return;
+                        }
                         break;
 
                     case OnlineMode.IpHost:

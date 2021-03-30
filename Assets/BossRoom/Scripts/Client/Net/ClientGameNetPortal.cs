@@ -5,6 +5,7 @@ using MLAPI;
 using MLAPI.Transports;
 using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
+using Photon.Realtime;
 
 namespace BossRoom.Client
 {
@@ -119,9 +120,21 @@ namespace BossRoom.Client
         /// Relay version of <see cref="StartClient"/>, see start client remarks for more information.
         /// </remarks>
         /// <param name="portal"> </param>
-        /// <param name="roomName">The room name of the host to connect to.</param>
-        public static void StartClientRelayMode(GameNetPortal portal, string roomName)
+        /// <param name="roomKey">The room name of the host to connect to.</param>
+        public static bool StartClientRelayMode(GameNetPortal portal, string roomKey, out string failMessage)
         {
+            var splits = roomKey.Split('_');
+
+            if (splits.Length != 2)
+            {
+                failMessage = "Malformatted Room Key!";
+                return false;
+            }
+
+            var region = splits[0];
+            var roomName = splits[1];
+
+
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -129,12 +142,16 @@ namespace BossRoom.Client
             {
                 case PhotonRealtimeTransport photonRealtimeTransport:
                     photonRealtimeTransport.RoomName = roomName;
+                    PhotonAppSettings.Instance.AppSettings.FixedRegion = region;
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
             ConnectClient(portal);
+
+            failMessage = String.Empty;
+            return true;
         }
 
         private static void ConnectClient(GameNetPortal portal)
