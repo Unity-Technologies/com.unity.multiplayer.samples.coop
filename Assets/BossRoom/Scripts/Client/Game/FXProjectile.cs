@@ -35,9 +35,9 @@ public class FXProjectile : MonoBehaviour
         m_HasImpacted = false;
 
         // the projectile graphics are actually already enabled in the prefab, but just in case, turn them on
-        foreach (var gameObject in m_ProjectileGraphics)
+        foreach (var projectileGO in m_ProjectileGraphics)
         {
-            gameObject.SetActive(true);
+            projectileGO.SetActive(true);
         }
     }
 
@@ -74,24 +74,24 @@ public class FXProjectile : MonoBehaviour
     {
         m_HasImpacted = true;
 
-        foreach (var gameObject in m_ProjectileGraphics)
+        foreach (var projectileGO in m_ProjectileGraphics)
         {
-            gameObject.SetActive(false);
+            projectileGO.SetActive(false);
         }
 
         // is it impacting an actual enemy? We allow different graphics for the "miss" case
         if (m_TargetDestination)
         {
-            foreach (var gameObject in m_TargetHitGraphics)
+            foreach (var hitGraphicGO in m_TargetHitGraphics)
             {
-                gameObject.SetActive(true);
+                hitGraphicGO.SetActive(true);
             }
         }
         else
         {
-            foreach (var gameObject in m_TargetMissedGraphics)
+            foreach (var missGraphicGO in m_TargetMissedGraphics)
             {
-                gameObject.SetActive(true);
+                missGraphicGO.SetActive(true);
             }
         }
     }
