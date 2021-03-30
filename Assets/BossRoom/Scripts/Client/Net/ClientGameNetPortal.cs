@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
 
@@ -95,9 +96,11 @@ namespace BossRoom.Client
         {
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
             switch (chosenTransport)
             {
-                case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                case LiteNetLibTransport liteNetLibTransport:
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;

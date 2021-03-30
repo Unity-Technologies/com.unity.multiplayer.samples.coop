@@ -46,12 +46,11 @@ MonoBehaviour:
   m_NickName: 
   m_RoomName: 
   m_MaxPlayers: 16
-  m_ChannelIdCodesStartRange: 0
+  m_ChannelIdCodesStartRange: 130
   m_AttachSupportLogger: 0
   m_BatchMode: 1
   m_SendQueueBatchSize: 4096
   m_BatchedTransportEventCode: 129
-  m_KickEventCode: 130
 --- !u!1 &3591499506183471245
 GameObject:
   m_ObjectHideFlags: 0
@@ -68,7 +67,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5355783542964773244
 Transform:
   m_ObjectHideFlags: 0
@@ -115,8 +114,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5436007408952557925}
-  - component: {fileID: 5436007408952557924}
   - component: {fileID: 1359040526}
+  - component: {fileID: 5436007408952557924}
   m_Layer: 0
   m_Name: NetworkingManager
   m_TagString: Untagged
@@ -141,6 +140,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1359040526
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5436007408952557947}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c0e18361257a9f409d6064bac74e732, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_IpHostTransport: {fileID: 7898291372908163337}
+  m_RelayTransport: {fileID: 409269882}
 --- !u!114 &5436007408952557924
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -225,20 +238,6 @@ MonoBehaviour:
       type: {class: NullableBoolSerializable, ns: MLAPI.Configuration, asm: Unity.Multiplayer.MLAPI.Runtime}
       data:
         Value: 1897319656204293034
---- !u!114 &1359040526
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5436007408952557947}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0c0e18361257a9f409d6064bac74e732, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_IpHostTransport: {fileID: 7898291372908163337}
-  m_RelayTransport: {fileID: 409269882}
 --- !u!1 &6889060209805043266
 GameObject:
   m_ObjectHideFlags: 0
