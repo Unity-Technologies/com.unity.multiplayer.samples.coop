@@ -41,11 +41,11 @@ namespace BossRoom.Client
 
         public void Configure()
         {
-            m_Mixer.SetFloat(m_MixerVarMainVolume, GetAsDb(ClientPrefs.GetMasterVolume()));
-            m_Mixer.SetFloat(m_MixerVarMusicVolume, GetAsDb(ClientPrefs.GetMusicVolume()));
+            m_Mixer.SetFloat(m_MixerVarMainVolume, GetVolumeInDecibels(ClientPrefs.GetMasterVolume()));
+            m_Mixer.SetFloat(m_MixerVarMusicVolume, GetVolumeInDecibels(ClientPrefs.GetMusicVolume()));
         }
 
-        private float GetAsDb(float volume)
+        private float GetVolumeInDecibels(float volume)
         {
             if (volume <= 0) // sanity-check in case we have bad prefs data
                 volume = 0.0001f;
