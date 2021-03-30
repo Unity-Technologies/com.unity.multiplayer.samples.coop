@@ -1,4 +1,5 @@
 using UnityEngine;
+using BlockingMode = BossRoom.ActionDescription.BlockingModeType;
 
 namespace BossRoom.Server
 {
@@ -54,8 +55,9 @@ namespace BossRoom.Server
         /// <returns>true to become a non-blocking Action, false to remain a blocking Action</returns>
         public virtual bool ShouldBecomeNonBlocking()
         {
-            return Description.BlockingMode == ActionDescription.BlockingModeType.OnlyDuringExecTime &&
-                Time.time - TimeStarted >= Description.ExecTimeSeconds;
+            return Description.BlockingMode == BlockingMode.OnlyDuringExecTime ?  TimeRunning >= Description.ExecTimeSeconds :
+                   Description.BlockingMode == BlockingMode.ExecTimeWithCooldown ? TimeRunning >= (Description.ExecTimeSeconds + Description.CooldownSeconds) :
+                   false;
         }
 
         /// <summary>
@@ -131,6 +133,7 @@ namespace BossRoom.Server
             AttackedByEnemy,
             Healed,
             StoppedChargingUp,
+            UsingAttackAction, // called immediately before we perform the attack Action
         }
 
         /// <summary>
@@ -171,6 +174,7 @@ namespace BossRoom.Server
                 case ActionLogic.Stunned: return new StunnedAction(parent, ref data);
                 case ActionLogic.Target: return new TargetAction(parent, ref data);
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction(parent, ref data);
+                case ActionLogic.StealthMode: return new StealthModeAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

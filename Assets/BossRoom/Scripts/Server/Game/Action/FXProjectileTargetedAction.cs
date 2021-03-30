@@ -15,7 +15,7 @@ namespace BossRoom.Server
     {
         private bool m_ImpactedTarget;
         private float m_TimeUntilImpact;
-        private ServerCharacter m_Target;
+        private IDamageable m_Target;
 
         public FXProjectileTargetedAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
@@ -45,7 +45,7 @@ namespace BossRoom.Server
             if (!m_ImpactedTarget && m_TimeUntilImpact <= (Time.time - TimeStarted))
             {
                 m_ImpactedTarget = true;
-                if (m_Target)
+                if (m_Target != null )
                 {
                     m_Target.ReceiveHP(m_Parent, -Description.Projectiles[0].Damage);
                 }
@@ -69,17 +69,17 @@ namespace BossRoom.Server
         /// <summary>
         /// Returns our intended target, or null if not found/no target.
         /// </summary>
-        private ServerCharacter GetTarget()
+        private IDamageable GetTarget()
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
                 return null;
             }
 
-            NetworkedObject obj;
-            if (SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
+            NetworkObject obj;
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
             {
-                return obj.GetComponent<ServerCharacter>();
+                return obj.GetComponent<IDamageable>();
             }
             else
             {

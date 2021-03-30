@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using BlockingMode = BossRoom.ActionDescription.BlockingModeType;
 
 namespace BossRoom.Server
 {
@@ -15,11 +16,11 @@ namespace BossRoom.Server
         private List<Action> m_NonBlockingActions;
 
         /// <summary>
-        /// To prevent identical actions from piling up, we start discarding actions that are identical to the last played one
-        /// if the queue is deeper than this number. It's a soft cap in that longer queues are possible if they are made of different
-        /// actions--this is mainly targeted at situations like melee attacks, where many may get spammed out quickly.
+        /// To prevent the action queue from growing without bound, we cap its play time to this number of seconds. We can only ever estimate
+        /// the time-length of the queue, since actions are allowed to block indefinitely. But this is still a useful estimate that prevents
+        /// us from piling up a large number of small actions. 
         /// </summary>
-        private const int k_QueueSoftMax = 3;
+        private const float k_MaxQueueTimeDepth = 1.6f;
 
         private ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
         private bool m_HasPendingSynthesizedAction;
@@ -36,14 +37,14 @@ namespace BossRoom.Server
         /// </summary>
         public void PlayAction(ref ActionRequestData action)
         {
-            if (!action.ShouldQueue)
+            if (!action.ShouldQueue && m_Queue.Count > 0 && m_Queue[0].Description.ActionInterruptible )
             {
-                ClearActions();
+                ClearActions(false);
             }
 
-            if (m_Queue.Count > k_QueueSoftMax && m_Queue[m_Queue.Count - 1].Data.Compare(ref action))
+            if( GetQueueTimeDepth() >= k_MaxQueueTimeDepth )
             {
-                //this action is redundant with the last action performed. We simply discard it.
+                //the queue is too big (in execution seconds) to accommodate any more actions, so this action must be discarded. 
                 return;
             }
 
@@ -52,20 +53,22 @@ namespace BossRoom.Server
             if (m_Queue.Count == 1) { StartAction(); }
         }
 
-        public void ClearActions()
+        public void ClearActions(bool cancelNonBlocking)
         {
             if (m_Queue.Count > 0)
             {
                 m_Queue[0].Cancel();
             }
-
-            foreach( var action in m_NonBlockingActions )
-            {
-                action.Cancel();
-            }
-
             m_Queue.Clear();
-            m_NonBlockingActions.Clear();
+
+            if (cancelNonBlocking)
+            {
+                foreach (var action in m_NonBlockingActions)
+                {
+                    action.Cancel();
+                }
+                m_NonBlockingActions.Clear();
+            }
         }
 
         /// <summary>
@@ -263,6 +266,29 @@ namespace BossRoom.Server
             return keepGoing && !timeExpired;
         }
 
+        /// <summary>
+        /// How much time will it take all remaining Actions in the queue to play out? This sums up all the time each Action is blocking,
+        /// which is different from each Action's duration. Note that this is an ESTIMATE. An action may block the queue indefinitely if it wishes. 
+        /// </summary>
+        /// <returns>The total "time depth" of the queue, or how long it would take to play in seconds, if no more actions were added. </returns>
+        private float GetQueueTimeDepth()
+        {
+            if(m_Queue.Count == 0 ) { return 0;  }
+
+            float totalTime = 0;
+            foreach( var action in m_Queue )
+            {
+                var info = action.Description;
+                float actionTime =  info.BlockingMode == BlockingMode.OnlyDuringExecTime   ? info.ExecTimeSeconds :
+                                    info.BlockingMode == BlockingMode.ExecTimeWithCooldown ? (info.ExecTimeSeconds+info.CooldownSeconds) :
+                                    info.BlockingMode == BlockingMode.EntireDuration       ? (info.DurationSeconds + info.CooldownSeconds) :
+                                    throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
+                totalTime += actionTime;
+            }
+
+            return totalTime - m_Queue[0].TimeRunning;
+        }
+
         public void OnCollisionEnter(Collision collision)
         {
             if (m_Queue.Count > 0)
@@ -271,7 +297,7 @@ namespace BossRoom.Server
             }
         }
 
-		/// <summary>
+        /// <summary>
         /// Gives all active Actions a chance to alter a gameplay variable.
         /// </summary>
         /// <remarks>

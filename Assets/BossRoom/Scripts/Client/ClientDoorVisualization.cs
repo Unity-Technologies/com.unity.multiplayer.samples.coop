@@ -8,7 +8,7 @@ using UnityEngine;
 /// and vice versa.
 /// </summary>
 [RequireComponent(typeof(NetworkDoorState))]
-public class ClientDoorVisualization : NetworkedBehaviour
+public class ClientDoorVisualization : NetworkBehaviour
 {
     [SerializeField]
     [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]
@@ -37,8 +37,8 @@ public class ClientDoorVisualization : NetworkedBehaviour
         {
             m_DoorState.IsOpen.OnValueChanged += OnDoorStateChanged;
 
-            // sanity-check that the physics object is active in the scene (because we default to "closed")
-            m_PhysicsObject.SetActive(true);
+            // initialize visuals based on current server state (or else we default to "closed")
+            OnDoorStateChanged(false, m_DoorState.IsOpen.Value);
         }
     }
 

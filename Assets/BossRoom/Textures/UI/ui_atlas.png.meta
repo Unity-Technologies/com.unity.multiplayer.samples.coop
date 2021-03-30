@@ -1,0 +1,1716 @@
+fileFormatVersion: 2
+guid: 1b8d595a2eaea6a41b33c3eb5d3d6a44
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: -5935337979838524249
+    second: Tank1_port
+  - first:
+      213: -1659684370060816601
+    second: Tank1_port_gr
+  - first:
+      213: 2069804280958334919
+    second: Rogue1_port
+  - first:
+      213: 984034368070534991
+    second: Rogue1_port_gr
+  - first:
+      213: -2165419525758704481
+    second: char_box_ovr_selected
+  - first:
+      213: -6960129328031278604
+    second: char_box_glow
+  - first:
+      213: 1540522687219259310
+    second: Tank_atk
+  - first:
+      213: -4296359016634765864
+    second: Tank_skill1
+  - first:
+      213: -2388657405067991389
+    second: Tank_skill2
+  - first:
+      213: -6710387467502326305
+    second: Tank2_port
+  - first:
+      213: -5275321764742424220
+    second: Tank2_port_gr
+  - first:
+      213: -4938242728237072438
+    second: Rogue2_port
+  - first:
+      213: -5707360726647070374
+    second: Rogue2_port_gr
+  - first:
+      213: -86643989335773967
+    second: Archer_atk
+  - first:
+      213: -648594524209405482
+    second: Archer_skill1
+  - first:
+      213: 6176100515346893140
+    second: Archer_skill2
+  - first:
+      213: -6516341320500546185
+    second: char_box_ovr_avail
+  - first:
+      213: 5771264082969932389
+    second: char_box_bg_selected
+  - first:
+      213: -5674376572046109326
+    second: Rogue_atk
+  - first:
+      213: -538430575990610775
+    second: Rogue_skill1
+  - first:
+      213: -1472494204491392689
+    second: Rogue_skill2
+  - first:
+      213: 6346260615161199150
+    second: Mage1_port
+  - first:
+      213: 4005670855087808654
+    second: Mage1_port_gr
+  - first:
+      213: 4576935326401567667
+    second: Mage2_port
+  - first:
+      213: 8624814512637038460
+    second: Mage2_port_gr
+  - first:
+      213: 4629006799232479851
+    second: Mage_atk
+  - first:
+      213: 2812619407168195412
+    second: Mage_skill1
+  - first:
+      213: 653711104564485137
+    second: Mage_skill2
+  - first:
+      213: -3970085563453415241
+    second: P1tag
+  - first:
+      213: 6996385395546293261
+    second: P2tag
+  - first:
+      213: 148639981380011081
+    second: P3tag
+  - first:
+      213: -8245234026199263008
+    second: Emote_Wave
+  - first:
+      213: 8603631976929927373
+    second: Emote_Dance
+  - first:
+      213: -2825189325306509334
+    second: Emote_btn
+  - first:
+      213: 5640192408203338092
+    second: Archer1_port
+  - first:
+      213: 5696742878408775525
+    second: Archer1_port_gr
+  - first:
+      213: -9029998053583639580
+    second: Archer2_port
+  - first:
+      213: 2744380354563675566
+    second: Archer2_port_gr
+  - first:
+      213: 3791779539129539345
+    second: P4tag
+  - first:
+      213: 8196090401804752436
+    second: P5tag
+  - first:
+      213: 873408284726361166
+    second: P6tag
+  - first:
+      213: 3560111661982681200
+    second: Emote_Cheer
+  - first:
+      213: 1866683241425957968
+    second: Emote_sit
+  - first:
+      213: 4516325627489672080
+    second: UI_elements_atlas_43
+  - first:
+      213: 2911624249718332368
+    second: P7tag
+  - first:
+      213: 5601394669076293956
+    second: P8tag
+  - first:
+      213: 472853806936191814
+    second: PtagGlow
+  - first:
+      213: 1591338921287218558
+    second: Char_info_frame
+  - first:
+      213: 1717079544046338189
+    second: Archer_sym
+  - first:
+      213: 7073677062034491875
+    second: Archer_sym_gr
+  - first:
+      213: 2282546892015797016
+    second: Rogue_sym
+  - first:
+      213: -6047367336175053643
+    second: Rogue_sym_gr
+  - first:
+      213: -1584123350094214546
+    second: Tank_sym_gr
+  - first:
+      213: -2491859787077907965
+    second: Mage_sym
+  - first:
+      213: -7344767057168477063
+    second: Mage_sym_gr
+  - first:
+      213: -720397744737086521
+    second: Tank_sym
+  - first:
+      213: 8070130267694257472
+    second: char_select_title
+  - first:
+      213: -5838772972447684026
+    second: Hero_bg
+  - first:
+      213: -6209776649012284720
+    second: checkmark
+  - first:
+      213: 5337500237541837453
+    second: READY_btn_up
+  - first:
+      213: -2500411682467835602
+    second: READY_btn_dn
+  - first:
+      213: -6230944662187124400
+    second: Healthbar_bg
+  - first:
+      213: -5774814192483064561
+    second: UI_scroll_frame
+  - first:
+      213: 3523798857041549916
+    second: Healthbar
+  - first:
+      213: -6410841438199910071
+    second: UI_elements_atlas_hud_0
+  - first:
+      213: 8879625777829338720
+    second: blank
+  - first:
+      213: 4245123048664881678
+    second: Randomize_btn
+  externalObjects: {}
+  serializedVersion: 11
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: -1
+    aniso: -1
+    mipBias: -100
+    wrapU: 1
+    wrapV: 1
+    wrapW: -1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 0
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  platformSettings:
+  - serializedVersion: 3
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 3
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: Tank1_port
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 1733
+        width: 198
+        height: 307
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7a417d9dd8171ada0800000000000000
+      internalID: -5935337979838524249
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tank1_port_gr
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 1732
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 72fc14bdbdd97f8e0800000000000000
+      internalID: -1659684370060816601
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue1_port
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 1731
+        width: 198
+        height: 305
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c7ba19f60c69bc10800000000000000
+      internalID: 2069804280958334919
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue1_port_gr
+      rect:
+        serializedVersion: 2
+        x: 643
+        y: 1732
+        width: 198
+        height: 305
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f47ce9b4b0ef7ad00800000000000000
+      internalID: 984034368070534991
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: char_box_ovr_selected
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1664
+        width: 240
+        height: 342
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f9425790a62e2f1e0800000000000000
+      internalID: -2165419525758704481
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: char_box_glow
+      rect:
+        serializedVersion: 2
+        x: 1126
+        y: 1622
+        width: 324
+        height: 422
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4f9dae3a047a86f90800000000000000
+      internalID: -6960129328031278604
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tank_atk
+      rect:
+        serializedVersion: 2
+        x: 1486
+        y: 1866
+        width: 179
+        height: 181
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea75224d839016510800000000000000
+      internalID: 1540522687219259310
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tank_skill1
+      rect:
+        serializedVersion: 2
+        x: 1671
+        y: 1866
+        width: 180
+        height: 181
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8dd20f9cc344064c0800000000000000
+      internalID: -4296359016634765864
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tank_skill2
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 1866
+        width: 179
+        height: 181
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3a6e0d8eeb8c9ded0800000000000000
+      internalID: -2388657405067991389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tank2_port
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 1426
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: fdd6a46c62aefd2a0800000000000000
+      internalID: -6710387467502326305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tank2_port_gr
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 1426
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46914a80eca4ac6b0800000000000000
+      internalID: -5275321764742424220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue2_port
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 1426
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: acff5c01766d77bb0800000000000000
+      internalID: -4938242728237072438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue2_port_gr
+      rect:
+        serializedVersion: 2
+        x: 643
+        y: 1426
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: a51af2378a16bc0b0800000000000000
+      internalID: -5707360726647070374
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer_atk
+      rect:
+        serializedVersion: 2
+        x: 1485
+        y: 1680
+        width: 180
+        height: 181
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1fce7b130cd2ccef0800000000000000
+      internalID: -86643989335773967
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer_skill1
+      rect:
+        serializedVersion: 2
+        x: 1671
+        y: 1680
+        width: 180
+        height: 181
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6d12c3577babff6f0800000000000000
+      internalID: -648594524209405482
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer_skill2
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 1680
+        width: 179
+        height: 181
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 459cb5242bae5b550800000000000000
+      internalID: 6176100515346893140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: char_box_ovr_avail
+      rect:
+        serializedVersion: 2
+        x: 870
+        y: 1275
+        width: 249
+        height: 342
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7757d54181e4195a0800000000000000
+      internalID: -6516341320500546185
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: char_box_bg_selected
+      rect:
+        serializedVersion: 2
+        x: 1169
+        y: 1275
+        width: 240
+        height: 342
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 562b4622b16a71050800000000000000
+      internalID: 5771264082969932389
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue_atk
+      rect:
+        serializedVersion: 2
+        x: 1486
+        y: 1495
+        width: 179
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 275946562909041b0800000000000000
+      internalID: -5674376572046109326
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue_skill1
+      rect:
+        serializedVersion: 2
+        x: 1671
+        y: 1495
+        width: 180
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9a4eedd6e3c1788f0800000000000000
+      internalID: -538430575990610775
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue_skill2
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 1495
+        width: 179
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f4918779256a09be0800000000000000
+      internalID: -1472494204491392689
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage1_port
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 1120
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e2a3cb2d762721850800000000000000
+      internalID: 6346260615161199150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage1_port_gr
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 1120
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e80e4a47b60079730800000000000000
+      internalID: 4005670855087808654
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage2_port
+      rect:
+        serializedVersion: 2
+        x: 429
+        y: 1120
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3bb1a120e6a848f30800000000000000
+      internalID: 4576935326401567667
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage2_port_gr
+      rect:
+        serializedVersion: 2
+        x: 643
+        y: 1120
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c7f4d5f5a1f71b770800000000000000
+      internalID: 8624814512637038460
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage_atk
+      rect:
+        serializedVersion: 2
+        x: 1486
+        y: 1310
+        width: 179
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b62be1b88298d3040800000000000000
+      internalID: 4629006799232479851
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage_skill1
+      rect:
+        serializedVersion: 2
+        x: 1671
+        y: 1307
+        width: 180
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 45b41ace27e680720800000000000000
+      internalID: 2812619407168195412
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage_skill2
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 1310
+        width: 179
+        height: 180
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11c5b4d39c2721900800000000000000
+      internalID: 653711104564485137
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: P1tag
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 1109
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b0e376e63c67e8c0800000000000000
+      internalID: -3970085563453415241
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: P2tag
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 1109
+        width: 128
+        height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d048445e277281160800000000000000
+      internalID: 6996385395546293261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: P3tag
+      rect:
+        serializedVersion: 2
+        x: 1129
+        y: 1109
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 94483998643101200800000000000000
+      internalID: 148639981380011081
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emote_Wave
+      rect:
+        serializedVersion: 2
+        x: 1486
+        y: 1128
+        width: 179
+        height: 177
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0e8dd6a965b039d80800000000000000
+      internalID: -8245234026199263008
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emote_Dance
+      rect:
+        serializedVersion: 2
+        x: 1671
+        y: 1128
+        width: 180
+        height: 177
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc0a913f2bd366770800000000000000
+      internalID: 8603631976929927373
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emote_btn
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 1128
+        width: 179
+        height: 177
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ae741e1f649eac8d0800000000000000
+      internalID: -2825189325306509334
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer1_port
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 815
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c61a0dbbc1df54e40800000000000000
+      internalID: 5640192408203338092
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer1_port_gr
+      rect:
+        serializedVersion: 2
+        x: 219
+        y: 815
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5679a4c1775ee0f40800000000000000
+      internalID: 5696742878408775525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer2_port
+      rect:
+        serializedVersion: 2
+        x: 431
+        y: 815
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4ebadadfc900fa280800000000000000
+      internalID: -9029998053583639580
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer2_port_gr
+      rect:
+        serializedVersion: 2
+        x: 643
+        y: 815
+        width: 198
+        height: 304
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ea51452646ff51620800000000000000
+      internalID: 2744380354563675566
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: P4tag
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 969
+        width: 129
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 11b1960b66b1f9430800000000000000
+      internalID: 3791779539129539345
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: P5tag
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 969
+        width: 128
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4369f82bbcc5eb170800000000000000
+      internalID: 8196090401804752436
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: P6tag
+      rect:
+        serializedVersion: 2
+        x: 1129
+        y: 969
+        width: 129
+        height: 128
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4c7ffa1538fe1c00800000000000000
+      internalID: 873408284726361166
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emote_Cheer
+      rect:
+        serializedVersion: 2
+        x: 1486
+        y: 942
+        width: 179
+        height: 177
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 078043db1be086130800000000000000
+      internalID: 3560111661982681200
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Emote_sit
+      rect:
+        serializedVersion: 2
+        x: 1671
+        y: 942
+        width: 180
+        height: 177
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0547e59948ac7e910800000000000000
+      internalID: 1866683241425957968
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_elements_atlas_43
+      rect:
+        serializedVersion: 2
+        x: 1859
+        y: 942
+        width: 179
+        height: 177
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 09bd38cca363dae30800000000000000
+      internalID: 4516325627489672080
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: P7tag
+      rect:
+        serializedVersion: 2
+        x: 864
+        y: 827
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0dbdfd324da286820800000000000000
+      internalID: 2911624249718332368
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: P8tag
+      rect:
+        serializedVersion: 2
+        x: 997
+        y: 828
+        width: 128
+        height: 127
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4492f0926c62cbd40800000000000000
+      internalID: 5601394669076293956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: PtagGlow
+      rect:
+        serializedVersion: 2
+        x: 1129
+        y: 827
+        width: 129
+        height: 129
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6437f19380aef8600800000000000000
+      internalID: 472853806936191814
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Char_info_frame
+      rect:
+        serializedVersion: 2
+        x: 1357
+        y: 146
+        width: 665
+        height: 795
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e75f3905152951610800000000000000
+      internalID: 1591338921287218558
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer_sym
+      rect:
+        serializedVersion: 2
+        x: 8
+        y: 583
+        width: 325
+        height: 226
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d80c8f17fba44d710800000000000000
+      internalID: 1717079544046338189
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Archer_sym_gr
+      rect:
+        serializedVersion: 2
+        x: 338
+        y: 584
+        width: 325
+        height: 225
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3e9056a5fcfba2260800000000000000
+      internalID: 7073677062034491875
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue_sym
+      rect:
+        serializedVersion: 2
+        x: 669
+        y: 585
+        width: 325
+        height: 225
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 81306c90e4c3daf10800000000000000
+      internalID: 2282546892015797016
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Rogue_sym_gr
+      rect:
+        serializedVersion: 2
+        x: 996
+        y: 587
+        width: 324
+        height: 225
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5b45cf4b27f631ca0800000000000000
+      internalID: -6047367336175053643
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tank_sym_gr
+      rect:
+        serializedVersion: 2
+        x: 1003
+        y: 359
+        width: 326
+        height: 227
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e6a8b35c430140ae0800000000000000
+      internalID: -1584123350094214546
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage_sym
+      rect:
+        serializedVersion: 2
+        x: 7
+        y: 358
+        width: 324
+        height: 226
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 30a0421e9b22b6dd0800000000000000
+      internalID: -2491859787077907965
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Mage_sym_gr
+      rect:
+        serializedVersion: 2
+        x: 339
+        y: 358
+        width: 325
+        height: 226
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9745b779645221a90800000000000000
+      internalID: -7344767057168477063
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Tank_sym
+      rect:
+        serializedVersion: 2
+        x: 670
+        y: 358
+        width: 325
+        height: 227
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c314f76112a006f0800000000000000
+      internalID: -720397744737086521
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: char_select_title
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 199
+        width: 983
+        height: 150
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0455b0998bcdeff60800000000000000
+      internalID: 8070130267694257472
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Hero_bg
+      rect:
+        serializedVersion: 2
+        x: 984
+        y: 162
+        width: 209
+        height: 191
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 64aaa1daae288fea0800000000000000
+      internalID: -5838772972447684026
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: checkmark
+      rect:
+        serializedVersion: 2
+        x: 1217
+        y: 168
+        width: 107
+        height: 105
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0d27b1dd90172d9a0800000000000000
+      internalID: -6209776649012284720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: READY_btn_up
+      rect:
+        serializedVersion: 2
+        x: 5
+        y: 50
+        width: 451
+        height: 142
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d8a8e3fcf2c921a40800000000000000
+      internalID: 5337500237541837453
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: READY_btn_dn
+      rect:
+        serializedVersion: 2
+        x: 464
+        y: 47
+        width: 451
+        height: 145
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e21944292d0cc4dd0800000000000000
+      internalID: -2500411682467835602
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Healthbar_bg
+      rect:
+        serializedVersion: 2
+        x: 920
+        y: 74
+        width: 413
+        height: 69
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 059583bb7dc3789a0800000000000000
+      internalID: -6230944662187124400
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_scroll_frame
+      rect:
+        serializedVersion: 2
+        x: 1339
+        y: 8
+        width: 704
+        height: 130
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f05a925961dbbdfa0800000000000000
+      internalID: -5774814192483064561
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Healthbar
+      rect:
+        serializedVersion: 2
+        x: 938
+        y: 19
+        width: 355
+        height: 48
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c5a93edf36c07e030800000000000000
+      internalID: 3523798857041549916
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: UI_elements_atlas_hud_0
+      rect:
+        serializedVersion: 2
+        x: 1231
+        y: 277
+        width: 79
+        height: 79
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9417db49dad1807a0800000000000000
+      internalID: -6410841438199910071
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: blank
+      rect:
+        serializedVersion: 2
+        x: 1330
+        y: 600
+        width: 20
+        height: 20
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 06e5be14994ca3b70800000000000000
+      internalID: 8879625777829338720
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Randomize_btn
+      rect:
+        serializedVersion: 2
+        x: 1274
+        y: 829
+        width: 76
+        height: 76
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e0a5e7fcbe4b9ea30800000000000000
+      internalID: 4245123048664881678
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    physicsShape: []
+    bones: []
+    spriteID: d2822d7cf0ee1764aab14b38ed0bf3b1
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+  spritePackingTag: 
+  pSDRemoveMatte: 0
+  pSDShowRemoveMatteOption: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

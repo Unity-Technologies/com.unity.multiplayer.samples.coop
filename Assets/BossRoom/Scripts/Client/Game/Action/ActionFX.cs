@@ -8,6 +8,11 @@ namespace BossRoom.Visual
     {
         protected ClientCharacterVisualization m_Parent;
 
+        /// <summary>
+        /// The default hit react animation; several different ActionFXs make use of this.
+        /// </summary>
+        public const string k_DefaultHitReact = "HitReact1";
+
         public ActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data)
         {
             m_Parent = parent;
@@ -53,6 +58,7 @@ namespace BossRoom.Visual
                 case ActionLogic.Target: return new TargetActionFX(ref data, parent);
                 case ActionLogic.ChargedShield:
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedActionFX(ref data, parent);
+                case ActionLogic.StealthMode: return new StealthModeActionFX(ref data, parent);
                 default: throw new System.NotImplementedException();
             }
         }

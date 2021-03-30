@@ -2,7 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI;
+using MLAPI.Transports;
+using MLAPI.Transports.LiteNetLib;
+using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
+
 namespace BossRoom.Client
 {
     /// <summary>
@@ -25,7 +29,6 @@ namespace BossRoom.Client
         /// time from the host.
         /// </summary>
         public event Action NetworkTimedOut;
-
 
         void Start()
         {
@@ -61,41 +64,26 @@ namespace BossRoom.Client
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
-
-            //On a client disconnect we want to take them back to the main menu.
-            //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
+            if(clientID == MLAPI.NetworkManager.Singleton.LocalClientId )
             {
-                //FIXME:  Currently it is not possible to safely load back to the Main Menu scene due to Persisting objects getting recreated
-                //We still don't want to invoke the network timeout event, however.
-            }
-            else
-            {
-                NetworkTimedOut?.Invoke();
+                //On a client disconnect we want to take them back to the main menu.
+                //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
+                if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
+                {
+                    // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
+                    // Just shut down networking and switch back to main menu.
+                    MLAPI.NetworkManager.Singleton.Shutdown();
+                    SceneManager.LoadScene("MainMenu");
+                }
+                else
+                {
+                    NetworkTimedOut?.Invoke();
+                }
             }
         }
 
-
         /// <summary>
-        /// Either loads a Guid string from Unity preferences, or creates one and checkpoints it, then returns it.
-        /// </summary>
-        /// <returns>The Guid that uniquely identifies this client install, in string form. </returns>
-        private static string GetOrCreateGuid()
-        {
-            if (PlayerPrefs.HasKey("client_guid"))
-            {
-                return PlayerPrefs.GetString("client_guid");
-            }
-
-            var guid = System.Guid.NewGuid();
-            var guidString = guid.ToString();
-
-            PlayerPrefs.SetString("client_guid", guidString);
-            return guidString;
-        }
-
-        /// <summary>
-        /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload.
+        /// Wraps the invocation of NetworkManager.StartClient, including our GUID as the payload.
         /// </summary>
         /// <remarks>
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
@@ -106,28 +94,61 @@ namespace BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public static void StartClient(GameNetPortal portal, string ipaddress, int port)
         {
-            var clientGuid = GetOrCreateGuid();
-            var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
-                   payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
-                   payload += $"player_name={portal.PlayerName}\n"; 
-
-            var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
-
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
-            var chosenTransport = NetworkingManager.Singleton.NetworkConfig.NetworkTransport;
+            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
             switch (chosenTransport)
             {
-                case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                case LiteNetLibTransport liteNetLibTransport:
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;
-                case UnetTransport unetTransport:
+                case UNetTransport unetTransport:
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
             }
+
+            ConnectClient(portal);
+        }
+
+        /// <summary>
+        /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload.
+        /// </summary>
+        /// <remarks>
+        /// Relay version of <see cref="StartClient"/>, see start client remarks for more information.
+        /// </remarks>
+        /// <param name="portal"> </param>
+        /// <param name="roomName">The room name of the host to connect to.</param>
+        public static void StartClientRelayMode(GameNetPortal portal, string roomName)
+        {
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case PhotonRealtimeTransport photonRealtimeTransport:
+                    photonRealtimeTransport.RoomName = roomName;
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+            }
+
+            ConnectClient(portal);
+        }
+
+        private static void ConnectClient(GameNetPortal portal)
+        {
+            var clientGuid = ClientPrefs.GetGuid();
+            //var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
+            //payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
+            //payload += $"player_name={portal.PlayerName}\n";
+			var payload = JsonUtility.ToJson(new ConnectionPayload() {clientGUID = clientGuid, clientScene = SceneManager.GetActiveScene().buildIndex, playerName = portal.PlayerName});
+
+            var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
             portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
             portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
@@ -137,6 +158,5 @@ namespace BossRoom.Client
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
         }
-
     }
 }

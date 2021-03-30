@@ -2,11 +2,12 @@
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.Serialization;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using MLAPI.NetworkVariable.Collections;
 using UnityEngine;
 
 namespace BossRoom
@@ -14,7 +15,7 @@ namespace BossRoom
     /// <summary>
     /// Common data and RPCs for the CharSelect stage.
     /// </summary>
-    public class CharSelectData : NetworkedBehaviour
+    public class CharSelectData : NetworkBehaviour
     {
         public enum SeatState
         {
@@ -80,7 +81,7 @@ namespace BossRoom
                 SeatIdx = seatIdx;
                 LastChangeTime = lastChangeTime;
             }
-            public void NetworkSerialize(BitSerializer serializer)
+            public void NetworkSerialize(NetworkSerializer serializer)
             {
                 serializer.Serialize(ref ClientId);
                 serializer.Serialize(ref PlayerName);
@@ -91,151 +92,22 @@ namespace BossRoom
             }
         }
 
-        void OnDestroy()
-        {
-            m_LobbyPlayers.Cleanup();
-        }
-
-        /// <summary>
-        /// TEMP! This is substitute for NetworkedVarList<>. It will be replaced by a NetworkedVarList<LobbyPlayerState> when those are once again
-        /// supported.
-        /// </summary>
-        public class LobbyPlayerArray
-        {
-            private List<LobbyPlayerState> m_LobbyPlayers;
-            private CharSelectData m_CharSelectData;
-
-            /// <summary>
-            /// Event that gets raised when the array has changed somehow.
-            /// </summary>
-            public event Action<LobbyPlayerArray> ArrayChangedEvent;
-
-            public LobbyPlayerArray(CharSelectData data, int count )
-            {
-                m_LobbyPlayers = new List<LobbyPlayerState>();
-                m_CharSelectData = data;
-
-                if (NetworkingManager.Singleton.IsServer)
-                {
-                    NetworkingManager.Singleton.OnClientConnectedCallback += ClientConnected;
-                }
-            }
-
-            void ClientConnected(ulong clientId)
-            {
-                m_CharSelectData.StartCoroutine(CoroClientConnected(clientId));
-            }
-
-            private IEnumerator CoroClientConnected(ulong clientId)
-            {
-                yield return new WaitForSeconds(2);
-
-                //send the new guy our initial state.
-                m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
-            }
-
-            public int Count {  get { return m_LobbyPlayers.Count; } }
-
-            public void Add(LobbyPlayerState state, bool fromSync=false)
-            {
-                m_LobbyPlayers.Add(state);
-                ArrayChangedEvent?.Invoke(this);
-
-                if (NetworkingManager.Singleton.IsServer )
-                {
-                    m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
-                }
-            }
-
-            public void RemoveAt(int index)
-            {
-                m_LobbyPlayers.RemoveAt(index);
-                ArrayChangedEvent?.Invoke(this);
-
-                if (NetworkingManager.Singleton.IsServer )
-                {
-                    m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
-                }
-            }
-
-            public System.Collections.IEnumerator GetEnumerator()
-            {
-                return m_LobbyPlayers.GetEnumerator();
-            }
-
-            public LobbyPlayerState this[int i]
-            {
-                get
-                {
-                    return m_LobbyPlayers[i];
-                }
-                set
-                {
-                    if(!NetworkingManager.Singleton.IsServer )
-                    {
-                        throw new MLAPI.Exceptions.NotServerException("CharSelectData.LobbyPlayerArray can only be written to on the server!");
-                    }
-                    else
-                    {
-                        m_LobbyPlayers[i] = value;
-                        m_CharSelectData.LobbyPlayerUpdateArrayClientRpc(m_LobbyPlayers.ToArray());
-                        ArrayChangedEvent?.Invoke(this);
-                    }
-                }
-            }
-
-            /// <summary>
-            /// Updates a single element. For use only be the CharSelectData class.
-            /// </summary>
-            public void ClientSyncUpdate(LobbyPlayerState[] playerArray )
-            {
-                if( !NetworkingManager.Singleton.IsServer )
-                {
-                    m_LobbyPlayers.Clear();
-                    m_LobbyPlayers.AddRange(playerArray);
-
-                    ArrayChangedEvent?.Invoke(this);
-                }
-            }
-
-            public void Cleanup()
-            {
-                if (NetworkingManager.Singleton.IsServer)
-                {
-                    NetworkingManager.Singleton.OnClientConnectedCallback -= ClientConnected;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Receives a new array of LobbyPlayerStates and replaces the existing contents of our m_LobbyPlayerArray with them. This "maximalist approach"
-        /// is because it's tricky to send incremental array updates right now. You can't just send an initial state on client connection, and then
-        /// subsequent incremental updates, because you don't know exactly when the client's connection is going to be open for transmission. If you send
-        /// a client an incremental update while it still has its inital state message pending, it will get confused.
-        /// In any case, this system is meant to be temporary, and will be replaced when NetworkedVarList<T> is supported again.
-        /// </summary>
-        [ClientRpc]
-        private void LobbyPlayerUpdateArrayClientRpc(LobbyPlayerState[] playerArray )
-        {
-            m_LobbyPlayers.ClientSyncUpdate(playerArray);
-        }
-
-        private LobbyPlayerArray m_LobbyPlayers;
+        private NetworkList<LobbyPlayerState> m_LobbyPlayers;
 
         private void Awake()
         {
-            m_LobbyPlayers = new LobbyPlayerArray(this, 8);
+            m_LobbyPlayers = new NetworkList<LobbyPlayerState>();
         }
 
         /// <summary>
         /// Current state of all players in the lobby.
         /// </summary>
-        public LobbyPlayerArray LobbyPlayers { get { return m_LobbyPlayers; } }
+        public NetworkList<LobbyPlayerState> LobbyPlayers { get { return m_LobbyPlayers; } }
 
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
         /// </summary>
-        public MLAPI.NetworkedVar.NetworkedVarBool IsLobbyClosed { get; } = new MLAPI.NetworkedVar.NetworkedVarBool(false);
+        public MLAPI.NetworkVariable.NetworkVariableBool IsLobbyClosed { get; } = new MLAPI.NetworkVariable.NetworkVariableBool(false);
 
         /// <summary>
         /// Client notification when the server has assigned this client a player Index (from 0 to 7);

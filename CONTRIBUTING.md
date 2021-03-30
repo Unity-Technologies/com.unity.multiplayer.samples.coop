@@ -54,3 +54,8 @@ Always write a clear log message for your commits. One-line messages are fine fo
     $ git commit -m "A brief summary of the commit
     > 
     > A paragraph describing what changed and its impact."
+
+### Line Endings Guidelines
+The project is using Unix-style line endings.
+
+Follow the instructions in the official [Git Configuration](https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration) documentation, the [Formatting and Whitespace](https://git-scm.com/book/en/v2/Customizing-Git-Git-Configuration#_formatting_and_whitespace) section, to enable `autocrlf` setting on your machine.

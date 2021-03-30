@@ -1,11 +1,12 @@
 using MLAPI;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
     public class ChaseAction : Action
     {
-        private NetworkedObject m_Target;
+        private NetworkObject m_Target;
         private ServerCharacterMovement m_Movement;
 
         public ChaseAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
@@ -25,7 +26,7 @@ namespace BossRoom.Server
                 return ActionConclusion.Stop;
             }
 
-            m_Target = MLAPI.Spawning.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+            m_Target = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
 
             m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
             Vector3 currentTargetPos = m_Target.transform.position;
@@ -51,7 +52,7 @@ namespace BossRoom.Server
         {
             return m_Data.TargetIds != null &&
                    m_Data.TargetIds.Length > 0 &&
-                   MLAPI.Spawning.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
+                   NetworkSpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
         }
 
         /// <summary>
@@ -59,6 +60,13 @@ namespace BossRoom.Server
         /// </summary>
         private bool StopIfDone()
         {
+            if(m_Target == null )
+            {
+                //if the target disappeared on us, then just stop.
+                Cancel();
+                return true;
+            }
+
             float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
             if ((m_Data.Amount * m_Data.Amount) > distToTarget2)
             {

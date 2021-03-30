@@ -2,6 +2,8 @@ using System;
 using MLAPI.Serialization.Pooled;
 using MLAPI.Transports;
 using MLAPI;
+using MLAPI.Transports.LiteNetLib;
+using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
 
 namespace BossRoom
@@ -12,6 +14,20 @@ namespace BossRoom
         ServerFull,       //can't join, server is already at capacity.
         MatchStarted,     //can't join, match is already in progress.
         Unknown,          //can't join, reason unknown.
+    }
+
+    public enum OnlineMode
+    {
+        IpHost = 0, // The server is hosted directly and clients can join by ip address.
+        Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
+    }
+
+    [Serializable]
+    public class ConnectionPayload
+    {
+        public string clientGUID;
+        public int clientScene = -1;
+        public string playerName;
     }
 
     /// <summary>
@@ -37,11 +53,11 @@ namespace BossRoom
     ///
     public class GameNetPortal : MonoBehaviour
     {
-        public GameObject NetworkingManagerGO;
+        public GameObject NetworkManagerGO;
 
         /// <summary>
         /// This synthesizes a general NetworkStart event out of other events provided by MLAPI. This can be removed
-        /// when the NetworkingManager starts publishing this event directly.
+        /// when the NetworkManager starts publishing this event directly.
         /// </summary>
         public event Action NetworkStarted;
 
@@ -56,8 +72,8 @@ namespace BossRoom
         /// </summary>
         public event Action<ulong, int> ClientSceneChanged;
 
-        public MLAPI.NetworkingManager NetManager { get; private set; }
-		
+        public NetworkManager NetManager { get; private set; }
+
         /// <summary>
         /// the name of the player chosen at game start
         /// </summary>
@@ -67,10 +83,10 @@ namespace BossRoom
         {
             DontDestroyOnLoad(gameObject);
 
-            NetManager = NetworkingManagerGO.GetComponent<MLAPI.NetworkingManager>();
+            NetManager = NetworkManagerGO.GetComponent<NetworkManager>();
 
             //because we are not a true NetworkedBehavior, we don't get NetworkStart messages. But we still need to run at that point
-            //where we know if we're a host or client. So we fake a "NetworkingManager.OnNetworkStarted" event out of the existing OnServerStarted
+            //where we know if we're a host or client. So we fake a "NetworkManager.OnNetworkStarted" event out of the existing OnServerStarted
             //and OnClientConnectedCallback events.
             //FIXME_DMW could this be improved?
             NetManager.OnServerStarted += NetworkStart;
@@ -87,7 +103,7 @@ namespace BossRoom
         {
             MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("S2C_ConnectResult", (senderClientId, stream) =>
             {
-                using (PooledBitReader reader = PooledBitReader.Get(stream))
+                using (var reader = PooledNetworkReader.Get(stream))
                 {
                     ConnectStatus status = (ConnectStatus)reader.ReadInt32();
 
@@ -100,7 +116,7 @@ namespace BossRoom
         {
             MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("C2S_SceneChanged", (senderClientId, stream) =>
             {
-                using (PooledBitReader reader = PooledBitReader.Get(stream))
+                using (var reader = PooledNetworkReader.Get(stream))
                 {
                     int sceneIndex = reader.ReadInt32();
 
@@ -112,8 +128,8 @@ namespace BossRoom
 
 
         /// <summary>
-        /// This method runs when NetworkingManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
-        /// on the host). It is named to match NetworkedBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkedBehaviour.
+        /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
+        /// on the host). It is named to match NetworkBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
         /// </summary>
         private void NetworkStart()
         {
@@ -145,20 +161,39 @@ namespace BossRoom
         /// <param name="port">The port to connect to. </param>
         public void StartHost(string ipaddress, int port)
         {
-            var chosenTransport = NetworkingManager.Singleton.NetworkConfig.NetworkTransport;
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             switch (chosenTransport)
             {
-                case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                case LiteNetLibTransport liteNetLibTransport:
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;
-                case MLAPI.Transports.UNET.UnetTransport unetTransport:
+                case MLAPI.Transports.UNET.UNetTransport unetTransport:
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ServerListenPort = port;
                     break;
                 default:
-                    throw new Exception($"unhandled transport {chosenTransport.GetType()}");
+                    throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
+            }
+
+            NetManager.StartHost();
+        }
+
+        public void StartRelayHost(string roomName)
+        {
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case PhotonRealtimeTransport photonRealtimeTransport:
+                    photonRealtimeTransport.RoomName = roomName;
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
             NetManager.StartHost();
@@ -171,12 +206,13 @@ namespace BossRoom
         /// <param name="status"> the status to pass to the client</param>
         public void S2CConnectResult(ulong netId, ConnectStatus status)
         {
-            using (PooledBitStream stream = PooledBitStream.Get())
+
+            using (var buffer = PooledNetworkBuffer.Get())
             {
-                using (PooledBitWriter writer = PooledBitWriter.Get(stream))
+                using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, stream, Channel.Internal);
+                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, buffer, NetworkChannel.Internal);
                 }
             }
         }
@@ -189,12 +225,12 @@ namespace BossRoom
             }
             else if(NetManager.IsConnectedClient)
             {
-                using (PooledBitStream stream = PooledBitStream.Get())
+                using (var buffer = PooledNetworkBuffer.Get())
                 {
-                    using (PooledBitWriter writer = PooledBitWriter.Get(stream))
+                    using (var writer = PooledNetworkWriter.Get(buffer))
                     {
                         writer.WriteInt32(newScene);
-                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("C2S_SceneChanged", NetManager.ServerClientId, stream, Channel.Internal);
+                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("C2S_SceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
                     }
                 }
             }

@@ -17,7 +17,7 @@ namespace BossRoom.Server
     /// Component responsible for moving a character on the server side based on inputs.
     /// </summary>
     [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent), typeof(ServerCharacter)), RequireComponent(typeof(Rigidbody))]
-    public class ServerCharacterMovement : NetworkedBehaviour
+    public class ServerCharacterMovement : NetworkBehaviour
     {
         private NavMeshAgent m_NavMeshAgent;
         private Rigidbody m_Rigidbody;
@@ -57,8 +57,7 @@ namespace BossRoom.Server
                 return;
             }
 
-            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
-            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
+            m_NetworkCharacterState.InitNetworkPositionAndRotationY(transform.position, transform.rotation.eulerAngles.y);
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
@@ -66,7 +65,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Sets a movement target. We will path to this position, avoiding static obstacles. 
+        /// Sets a movement target. We will path to this position, avoiding static obstacles.
         /// </summary>
         /// <param name="position">Position in world space to path to. </param>
         public void SetMovementTarget(Vector3 position)
@@ -112,7 +111,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Returns true if the character is actively moving, false otherwise. 
+        /// Returns true if the character is actively moving, false otherwise.
         /// </summary>
         /// <returns></returns>
         public bool IsMoving()
@@ -121,7 +120,7 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Cancels any moves that are currently in progress. 
+        /// Cancels any moves that are currently in progress.
         /// </summary>
         public void CancelMove()
         {

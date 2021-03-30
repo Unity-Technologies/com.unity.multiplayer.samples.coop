@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
 namespace BossRoom.Visual
@@ -11,7 +12,7 @@ namespace BossRoom.Visual
     {
         // All buttons in this action bar
         [SerializeField]
-        private HeroActionButton[] m_Buttons;
+        private Button[] m_Buttons;
 
         // The Emote panel will be enabled or disabled when clicking the last button
         [SerializeField]
@@ -19,23 +20,8 @@ namespace BossRoom.Visual
 
         private BossRoom.Client.ClientInputSender m_InputSender;
 
-        // Currently we manually configure icons from the Material arrays stored on this class, and we select which array to use
-        //from the CharacterClass inferred from the registered player GameObject. Eventually this can change so it is driven by
-        //the data for each skill instead. Current logic will be better for demos until skills are fully implemented with icon data. 
+        // We find the Sprites to use by checking the Skill1, Skill2, and Skill3 members of our chosen CharacterClass
         private CharacterClass m_CharacterData;
-
-        // allow icons for each class to be configured
-        [SerializeField]
-        private Sprite[] m_TankIcons;
-
-        [SerializeField]
-        private Sprite[] m_ArcherIcons;
-
-        [SerializeField]
-        private Sprite[] m_RogueIcons;
-
-        [SerializeField]
-        private Sprite[] m_MageIcons;
 
         public void RegisterInputSender(Client.ClientInputSender inputSender)
         {
@@ -46,27 +32,31 @@ namespace BossRoom.Visual
 
             m_InputSender = inputSender;
             m_CharacterData = m_InputSender.GetComponent<NetworkCharacterState>().CharacterData;
-            SetPlayerType(m_CharacterData.CharacterType);
+            SetPlayerType(m_CharacterData);
         }
 
-        private void SetPlayerType(CharacterTypeEnum playerType)
+        private void SetPlayerType(CharacterClass characterData)
         {
-            if (playerType == CharacterTypeEnum.Tank)
+            var sprites = new Sprite[]
             {
-                SetButtonIcons(m_TankIcons);
-            }
-            else if (playerType == CharacterTypeEnum.Archer)
-            {
-                SetButtonIcons(m_ArcherIcons);
-            }
-            else if (playerType == CharacterTypeEnum.Mage)
-            {
-                SetButtonIcons(m_MageIcons);
-            }
-            else if (playerType == CharacterTypeEnum.Rogue)
-            {
-                SetButtonIcons(m_RogueIcons);
-            }
+                GetSpriteForAction(characterData.Skill1),
+                GetSpriteForAction(characterData.Skill2),
+                GetSpriteForAction(characterData.Skill3),
+            };
+            SetButtonIcons(sprites);
+        }
+
+        /// <summary>
+        /// Returns the Sprite for an Action, or null if no sprite is available
+        /// </summary>
+        private Sprite GetSpriteForAction(ActionType actionType)
+        {
+            if (actionType == ActionType.None)
+                return null;
+            var desc = GameDataSource.Instance.ActionDataByType[actionType];
+            if (desc != null)
+                return desc.Icon;
+            return null;
         }
 
         void SetButtonIcons(Sprite[] icons)
@@ -76,6 +66,7 @@ namespace BossRoom.Visual
                 if (i < icons.Length)
                 {
                     m_Buttons[i].image.sprite = icons[i];
+                    m_Buttons[i].gameObject.SetActive(icons[i] != null);
                 }
             }
         }

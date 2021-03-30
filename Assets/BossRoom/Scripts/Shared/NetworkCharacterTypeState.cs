@@ -1,16 +1,16 @@
 using System;
 using MLAPI;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using UnityEngine;
 
 namespace BossRoom
 {
     /// <summary>
-    /// NetworkedBehaviour containing only one NetworkedVar which represents this character's CharacterType.
+    /// NetworkBehaviour containing only one NetworkVariable which represents this character's CharacterType.
     /// </summary>
-    public class NetworkCharacterTypeState : NetworkedBehaviour
+    public class NetworkCharacterTypeState : NetworkBehaviour
     {
         [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
-        public NetworkedVar<CharacterTypeEnum> CharacterType = new NetworkedVar<CharacterTypeEnum>();
+        public NetworkVariable<CharacterTypeEnum> CharacterType = new NetworkVariable<CharacterTypeEnum>();
     }
 }

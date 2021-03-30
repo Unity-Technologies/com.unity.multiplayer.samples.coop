@@ -17,6 +17,8 @@ namespace BossRoom.Server
             IDLE,
         }
 
+        static readonly AIStateType[] k_AIStates = (AIStateType[])Enum.GetValues(typeof(AIStateType));
+
         private ServerCharacter m_ServerCharacter;
         private ActionPlayer m_ActionPlayer;
         private AIStateType m_CurrentState;
@@ -52,17 +54,31 @@ namespace BossRoom.Server
             m_Logics[m_CurrentState].Update();
         }
 
+        /// <summary>
+        /// Called when we received some HP. Positive HP is healing, negative is damage.
+        /// </summary>
+        /// <param name="inflicter">The person who hurt or healed us. May be null. </param>
+        /// <param name="amount">The amount of HP received. Negative is damage. </param>
+        public void ReceiveHP(ServerCharacter inflicter, int amount)
+        {
+            if (inflicter != null && amount < 0)
+            {
+                Hate(inflicter);
+            }
+        }
+
         private AIStateType FindBestEligibleAIState()
         {
             // for now we assume the AI states are in order of appropriateness,
             // which may be nonsensical when there are more states
-            foreach (AIStateType type in Enum.GetValues(typeof(AIStateType)))
+            foreach (AIStateType aiStateType in k_AIStates)
             {
-                if (m_Logics[type].IsEligible())
+                if (m_Logics[aiStateType].IsEligible())
                 {
-                    return type;
+                    return aiStateType;
                 }
             }
+
             Debug.LogError("No AI states are valid!?!");
             return AIStateType.IDLE;
         }
@@ -72,7 +88,10 @@ namespace BossRoom.Server
         /// </summary>
         public bool IsAppropriateFoe(ServerCharacter potentialFoe)
         {
-            if (potentialFoe == null || potentialFoe.IsNpc || potentialFoe.NetState.NetworkLifeState.Value != LifeState.Alive)
+            if (potentialFoe == null ||
+                potentialFoe.IsNpc ||
+                potentialFoe.NetState.NetworkLifeState.Value != LifeState.Alive ||
+                potentialFoe.NetState.IsStealthy.Value != 0)
             {
                 return false;
             }
@@ -99,7 +118,13 @@ namespace BossRoom.Server
         public List<ServerCharacter> GetHatedEnemies()
         {
             // first we clean the list -- remove any enemies that have disappeared (became null), are dead, etc.
-            m_HatedEnemies.RemoveAll(enemy => !IsAppropriateFoe(enemy));
+            for (int i = m_HatedEnemies.Count - 1; i >= 0; i--)
+            {
+                if (!IsAppropriateFoe(m_HatedEnemies[i]))
+                {
+                    m_HatedEnemies.RemoveAt(i);
+                }
+            }
             return m_HatedEnemies;
         }
 

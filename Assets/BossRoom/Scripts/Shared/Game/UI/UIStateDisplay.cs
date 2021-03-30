@@ -1,5 +1,5 @@
 using System;
-using MLAPI.NetworkedVar;
+using MLAPI.NetworkVariable;
 using UnityEngine;
 
 namespace BossRoom
@@ -15,13 +15,13 @@ namespace BossRoom
         [SerializeField]
         UIHealth m_UIHealth;
 
-        public void DisplayName(NetworkedVarString networkedName)
+        public void DisplayName(NetworkVariableString networkedName)
         {
             m_UIName.gameObject.SetActive(true);
             m_UIName.Initialize(networkedName);
         }
 
-        public void DisplayHealth(NetworkedVarInt networkedHealth, int maxValue)
+        public void DisplayHealth(NetworkVariableInt networkedHealth, int maxValue)
         {
             m_UIHealth.gameObject.SetActive(true);
             m_UIHealth.Initialize(networkedHealth, maxValue);

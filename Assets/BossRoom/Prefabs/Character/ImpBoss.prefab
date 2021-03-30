@@ -18,8 +18,21 @@ MonoBehaviour:
   m_NetworkNameState: {fileID: 0}
   m_NetworkHealthState: {fileID: 848206395698055335}
   m_BaseHP: {fileID: 11400000, guid: f393c51c2bce455478a0b995b8d4e3dd, type: 2}
-  m_TransformToTrack: {fileID: 3688950541947916327}
+  m_TransformToTrack: {fileID: 2561745155600296936}
+  m_VerticalWorldOffset: 0
   m_VerticalScreenOffset: -50
+--- !u!114 &8073394427373638825
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3688950541947916333}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a6b1447f40f499c4a82ca50d40c76051, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2203142923062114684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -93,6 +106,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3429869860599894341, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: CharacterType.InternalValue
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 3429869860599894341, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: CharacterType.m_InternalValue
       value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 8273023854864590149, guid: 64cfd098f62285f42918875fef849e88, type: 3}
@@ -191,3 +208,8 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
+--- !u!4 &2561745155600296936 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6170428688339538316, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
+  m_PrefabInstance: {fileID: 8515429031237761636}
+  m_PrefabAsset: {fileID: 0}

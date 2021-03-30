@@ -1,9 +1,10 @@
 using MLAPI;
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Visual
 {
-    public class ClientProjectileVisualization : NetworkedBehaviour
+    public class ClientProjectileVisualization : NetworkBehaviour
     {
         [SerializeField]
         [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
@@ -46,8 +47,8 @@ namespace BossRoom.Visual
             //in the future we could do quite fancy things, like deparenting the Graphics Arrow and parenting it to the target.
             //For the moment we play some particles (optionally), and cause the target to animate a hit-react.
 
-            NetworkedObject targetNetObject;
-            if (MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
+            NetworkObject targetNetObject;
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
             {
                 if (m_OnHitParticlePrefab)
                 {
@@ -55,8 +56,11 @@ namespace BossRoom.Visual
                     Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
                 }
 
-                ClientCharacterVisualization charViz = targetNetObject.GetComponent<Client.ClientCharacter>().ChildVizObject;
-                charViz.OurAnimator.SetTrigger("HitReact1");
+                var clientChar = targetNetObject.GetComponent<Client.ClientCharacter>();
+                if(clientChar)
+                {
+                    clientChar.ChildVizObject.OurAnimator.SetTrigger(ActionFX.k_DefaultHitReact);
+                }
             }
         }
     }

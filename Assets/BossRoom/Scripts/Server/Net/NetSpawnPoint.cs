@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -13,7 +14,7 @@ namespace BossRoom.Server
     public class NetSpawnPoint : MonoBehaviour
     {
         [SerializeField]
-        public MLAPI.NetworkedObject SpawnedObject;
+        public NetworkObject SpawnedObject;
 
         [SerializeField]
         private ServerBossRoomState BossRoomState;

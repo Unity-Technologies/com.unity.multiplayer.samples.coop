@@ -1,4 +1,5 @@
 using UnityEngine;
+using MLAPI.Spawning;
 
 namespace BossRoom
 {
@@ -62,7 +63,7 @@ namespace BossRoom
 
         /// <summary>
         /// Does this NetId represent a valid target? Used by Target Action. The target needs to exist, be a
-        /// NetworkCharacterState, and be alive. In the future, it will be any non-dead IDamageable. 
+        /// NetworkCharacterState, and be alive. In the future, it will be any non-dead IDamageable.
         /// </summary>
         /// <param name="targetId">the NetId of the target to investigate</param>
         /// <returns>true if this is a valid target</returns>
@@ -71,18 +72,13 @@ namespace BossRoom
             //note that we DON'T check if you're an ally. It's perfectly valid to target friends,
             //because there are friendly skills, such as Heal.
 
-            if (!MLAPI.Spawning.SpawnManager.SpawnedObjects.TryGetValue(targetId, out MLAPI.NetworkedObject targetChar))
+            if (!NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetChar))
             {
                 return false;
             }
 
-            var targetNetState = targetChar.GetComponent<NetworkCharacterState>();
-            if (targetNetState == null)
-            {
-                return false;
-            }
-            //only Dead characters are untargetable. All others are 
-            return targetNetState.NetworkLifeState.Value != LifeState.Dead;
+            var targetable = targetChar.GetComponent<ITargetable>();
+            return targetable != null && targetable.IsValidTarget;
         }
 
     }

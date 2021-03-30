@@ -35,8 +35,7 @@ namespace BossRoom.Server
 
             foreach (ServerCharacter character in ServerCharacter.GetAllActiveServerCharacters())
             {
-                if (m_Brain.IsAppropriateFoe(character) 
-                    && (character.transform.position - position).sqrMagnitude <= detectionRangeSqr)
+                if (m_Brain.IsAppropriateFoe(character) && (character.transform.position - position).sqrMagnitude <= detectionRangeSqr)
                 {
                     m_Brain.Hate(character);
                 }
