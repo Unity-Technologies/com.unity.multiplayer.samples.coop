@@ -12,6 +12,8 @@ namespace BossRoom.Client
         {
             AudioListener.volume = ClientPrefs.GetMasterVolume();
             SceneManager.LoadScene("MainMenu");
+
+            Shader.WarmupAllShaders();
         }
     }
 }
