@@ -4,6 +4,8 @@
 
 v0.1.0 is the first, experimental release for Multiplayer Samples Co-op.
 
+Requires and supports Unity version 2019.4 and later.
+
 ### New features
 
 The Multiplayer Samples Co-op release provides Boss Room, a small-scale cooperative game sample project built on top of the new experimental netcode library. The release provides example code, assets, and integrations to explore the concepts and patterns behind a multiplayer game flow. It supports up to 8 players for testing multiplayer functionality.
