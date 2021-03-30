@@ -71,9 +71,14 @@ namespace BossRoom.Client
             {
                 throw new System.Exception("Multiple ClientMuscPlayers!");
             }
-                        m_source = GetComponent<AudioSource>();
             DontDestroyOnLoad(gameObject);
             Instance = this;
+            m_source.volume = ClientPrefs.GetMusicVolume();
+        }
+
+        public void SetMusicVolume(float volume)
+        {
+            m_source.volume = volume;
         }
     }
 }
