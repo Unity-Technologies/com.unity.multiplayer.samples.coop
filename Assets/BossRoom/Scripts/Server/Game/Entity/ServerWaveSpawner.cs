@@ -62,6 +62,9 @@ namespace BossRoom.Server
         [Tooltip("A player must be within this distance to commence first wave spawn.")]
         [SerializeField]
         float m_ProximityDistance;
+        [SerializeField]
+        [Tooltip("The spawner won't create more than this many entities at a time. 0 = don't track spawn count")]
+        int m_MaxActiveSpawns;
 
         // indicates whether NetworkStart() has been called on us yet
         bool m_IsStarted;
@@ -71,6 +74,9 @@ namespace BossRoom.Server
 
         // a running tally of spawned entities, used in determining which spawn-point to use next
         int m_SpawnedCount;
+
+        // the currently-spawned entities. We only bother to track these if m_MaxActiveSpawns is non-zero
+        List<NetworkObject> m_ActiveSpawns = new List<NetworkObject>();
 
         void Awake()
         {
@@ -180,7 +186,14 @@ namespace BossRoom.Server
         {
             for (int i = 0; i < m_SpawnsPerWave; i++)
             {
-                SpawnPrefab();
+                if (IsRoomAvailableForAnotherSpawn())
+                {
+                    var newSpawn = SpawnPrefab();
+                    if (m_MaxActiveSpawns > 0) // 0 = no limit on spawns, so we don't bother tracking 'em
+                    {
+                        m_ActiveSpawns.Add(newSpawn);
+                    }
+                }
 
                 yield return new WaitForSeconds(m_TimeBetweenSpawns);
             }
@@ -191,7 +204,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Spawn a NetworkObject prefab clone.
         /// </summary>
-        void SpawnPrefab()
+        NetworkObject SpawnPrefab()
         {
             if (m_NetworkedPrefab == null)
             {
@@ -204,6 +217,20 @@ namespace BossRoom.Server
             {
                 clone.Spawn();
             }
+            return clone;
+        }
+
+        bool IsRoomAvailableForAnotherSpawn()
+        {
+            if (m_MaxActiveSpawns <= 0)
+            {
+                // no max-spawn limit
+                return true;
+            }
+            // references to spawned components that no longer exist will become null,
+            // so clear those out. Then we know how many we have left
+            m_ActiveSpawns.RemoveAll(spawnedNetworkObject => { return spawnedNetworkObject == null; });
+            return m_ActiveSpawns.Count < m_MaxActiveSpawns;
         }
 
         /// <summary>
@@ -223,6 +250,12 @@ namespace BossRoom.Server
             // and is not occluded by a blocking collider.
             foreach (KeyValuePair<ulong, NetworkClient> idToClient in NetworkManager.Singleton.ConnectedClients)
             {
+                if (idToClient.Value.PlayerObject == null)
+                {
+                    // skip over any connection that doesn't have a PlayerObject yet
+                    continue;
+                }
+
                 var playerPosition = idToClient.Value.PlayerObject.transform.position;
                 var direction = playerPosition - spawnerPosition;
 
