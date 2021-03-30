@@ -14,6 +14,9 @@ Our intention is that you can use everything in this project as a starting point
 Platforms : Windows, Mac
 ```
 
+![](Documentation/Images/3Players.png)
+![](Documentation/Images/Boss.png)
+
 ## Getting the project
  - A release version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
  - Alternatively: click the green `Code` button and then choose to download the zip archive. Remember, that you would download the branch that you are currently viewing in Github.
