@@ -53,7 +53,7 @@ After the build has completed you can launch several instances of the built exec
 ---------------
 **Multiplayer over internet**
 
-In order to play over internet we need to have a built executable that is shared between all players, so please check out the section above.
+In order to play over internet, we need to have a built executable that is shared between all players. See the previous section.
 
 It is possible to connect between multiple instances of the same executable OR between executables and the editor that produced said executable.
 
