@@ -2,9 +2,9 @@
 
 ## [0.1.0] - 2021-04-07
 
-v0.1.0 is the first release for Multiplayer Samples Co-op.
+v0.1.0 is an Early Release for Multiplayer Samples Co-op.
 
-Requires and supports Unity v2020LTS and Unity MLAPI v0.1.0.
+It requires and supports Unity v2020LTS and Unity MLAPI v0.1.0.
 
 ### New features
 
