@@ -8,15 +8,9 @@ namespace BossRoom.Client
     /// </summary>
     public class StartupUI : MonoBehaviour
     {
-        [SerializeField]
-        private ShaderVariantCollection m_PrewarmShaders;
-
         void Start()
         {
             AudioListener.volume = ClientPrefs.GetMasterVolume();
-
-            m_PrewarmShaders.WarmUp();
-
             SceneManager.LoadScene("MainMenu");
         }
     }
