@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using MLAPI;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Server
 {
@@ -47,7 +48,7 @@ namespace BossRoom.Server
 
         private void OnInitialSpawn()
         {
-            if( SpawnedObject != null )
+            if (SpawnedObject != null)
             {
                 var netObj = Instantiate(SpawnedObject, transform.position, transform.rotation);
 
@@ -57,11 +58,26 @@ namespace BossRoom.Server
                     for( int i = 0; i < m_AuxiliarySpawns.Count; i++ )
                     {
                         var newSwitch = Instantiate(m_AuxiliarySpawns[i].SpawnedObject, m_AuxiliarySpawns[i].transform.position, m_AuxiliarySpawns[i].transform.rotation);
-
-                        switchedDoor.m_SwitchesThatOpenThisDoor.Add(newSwitch.GetComponent<NetworkFloorSwitchState>());
+                        var switchState = newSwitch.GetComponent<NetworkFloorSwitchState>();
+                        Assert.IsNotNull(switchState);
+                        switchedDoor.m_SwitchesThatOpenThisDoor.Add(switchState);
                         newSwitch.Spawn(null,true);
                     }
                 }
+
+                var portal = netObj.GetComponent<ServerEnemyPortal>();
+                if (portal)
+                {
+                    for (int i = 0; i < m_AuxiliarySpawns.Count; i++)
+                    {
+                        var newBreakable = Instantiate(m_AuxiliarySpawns[i].SpawnedObject, m_AuxiliarySpawns[i].transform.position, m_AuxiliarySpawns[i].transform.rotation);
+                        var breakableState = newBreakable.GetComponent<NetworkBreakableState>();
+                        Assert.IsNotNull(breakableState);
+                        portal.m_BreakableElements.Add(breakableState);
+                        newBreakable.Spawn(null, true);
+                    }
+                }
+
                 // spawn objects with destroyWithScene = true so they clean up properly
                 netObj.Spawn(null, true);
 

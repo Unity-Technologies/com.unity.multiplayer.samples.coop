@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8468211178320996434}
   m_Layer: 6
-  m_Name: pot_break_parent
+  m_Name: env_pot_break_parent
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1001931975397017578}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 7.7, y: 0.35158285, z: -23.17}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 8818580106360345398}

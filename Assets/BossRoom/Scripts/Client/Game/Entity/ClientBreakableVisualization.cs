@@ -12,6 +12,18 @@ namespace BossRoom.Visual
         [SerializeField]
         private GameObject m_BrokenPrefab;
 
+        [SerializeField]
+        [Tooltip("We use this transform's position and rotation when creating the prefab. (Defaults to self)")]
+        private Transform m_BrokenPrefabPos;
+
+        [SerializeField]
+        private GameObject[] m_UnbrokenGameObjects;
+
+        [SerializeField]
+        private NetworkBreakableState m_NetState;
+
+        private GameObject m_CurrentBrokenVisualization;
+
         public override void NetworkStart()
         {
             if (!IsClient)
@@ -20,16 +32,9 @@ namespace BossRoom.Visual
             }
             else
             {
-                var netState = transform.parent.GetComponent<NetworkBreakableState>();
-                netState.IsBroken.OnValueChanged += (bool oldVal, bool newVal) =>
-                {
-                    if (oldVal == false && newVal == true)
-                    {
-                        PerformBreak();
-                    }
-                };
+                m_NetState.IsBroken.OnValueChanged += OnBreakableStateChanged;
 
-                if (netState.IsBroken.Value == true)
+                if (m_NetState.IsBroken.Value == true)
                 {
                     //todo: don't dramatically break on entry to scene, if already broken.
                     PerformBreak();
@@ -38,13 +43,62 @@ namespace BossRoom.Visual
             }
         }
 
+        private void OnBreakableStateChanged(bool wasBroken, bool isBroken)
+        {
+            if (!wasBroken && isBroken)
+            {
+                PerformBreak();
+            }
+            else if (wasBroken && !isBroken)
+            {
+                PerformUnbreak();
+            }
+        }
+
+        private void OnDestroy()
+        {
+            if (m_NetState)
+            {
+                m_NetState.IsBroken.OnValueChanged -= OnBreakableStateChanged;
+            }
+        }
+
         private void PerformBreak()
         {
-            var myParent = transform.parent;
-            Destroy(gameObject);
-            var brokenPot = Instantiate(m_BrokenPrefab);
-            brokenPot.transform.parent = myParent;
-            brokenPot.transform.localPosition = Vector3.zero;
+            foreach (var gameObject in m_UnbrokenGameObjects)
+            {
+                if (gameObject)
+                    gameObject.SetActive(false);
+            }
+
+            if (m_CurrentBrokenVisualization)
+                Destroy(m_CurrentBrokenVisualization); // just a safety check, should be null when we get here
+
+            if (m_BrokenPrefab)
+                m_CurrentBrokenVisualization = Instantiate(m_BrokenPrefab, m_BrokenPrefabPos.position, m_BrokenPrefabPos.rotation, transform);
         }
+
+        private void PerformUnbreak()
+        {
+            if (m_CurrentBrokenVisualization)
+            {
+                Destroy(m_CurrentBrokenVisualization);
+            }
+            foreach (var gameObject in m_UnbrokenGameObjects)
+            {
+                if (gameObject)
+                    gameObject.SetActive(true);
+            }
+        }
+
+#if UNITY_EDITOR
+        private void OnValidate()
+        {
+            if (!m_NetState)
+                m_NetState = GetComponent<NetworkBreakableState>();
+            if (!m_BrokenPrefabPos)
+                m_BrokenPrefabPos = transform;
+        }
+#endif
     }
 }

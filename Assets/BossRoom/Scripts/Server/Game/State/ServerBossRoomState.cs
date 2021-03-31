@@ -202,6 +202,7 @@ namespace BossRoom.Server
                 // Check the life state of all players in the scene
                 foreach (var p in NetworkManager.Singleton.ConnectedClientsList )
                 {
+                    if (p.PlayerObject == null) { continue; }
                     // if any player is alive just retrun
                     var netState = p.PlayerObject.GetComponent<NetworkCharacterState>();
                     if ( netState.NetworkLifeState.Value == LifeState.Alive ) { return; }
