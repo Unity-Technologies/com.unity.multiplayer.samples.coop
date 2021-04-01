@@ -1,11 +1,11 @@
 ![Banner](Documentation/Images/Banner.png)
-# BossRoom - co-op multiplayer RPG built with Unity MLAPI
+# Boss Room - co-op multiplayer RPG built with Unity MLAPI
 
 | 🛑  IMPORTANT - Early Access 🛑  | 
 | -- |
-| Package is on the road to a fully supported solution and we have solutions architects ready on discord and forums to help you work through issues you encounter. |
+| Boss Room: Small Scale Co-op Sample is built on top of the MLAPI package. The MLAPI package  is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
 
-BossRoom is a fully functional co-op multiplayer RPG made in Unity and MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
+Boss Room is a fully functional co-op multiplayer RPG made with Unity MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
 Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
@@ -18,7 +18,7 @@ Platforms : Windows, Mac
 ![](Documentation/Images/Boss.png)
 
 ## Getting the project
- - A release version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
+ - The early access version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
  - Alternatively: click the green `Code` button and then choose to download the zip archive. Remember, that you would download the branch that you are currently viewing in Github.
  - For Windows users: Using Windows' built-in extracting tool may generate a "Error 0x80010135: Path too long" error window which can invalidate the extraction process. A workaround for this is to shorten the zip file to a single character (eg. "c.zip") and move it to the shortest path on your computer (most often right at C:\\) and retry. If that solution fails, another workaround is to extract the downloaded zip file using 7zip.
 
@@ -29,7 +29,7 @@ This project uses Git Large Files Support (LFS), which ensures all large assets 
 
 ## Opening the project for the first time
 
-Once you have downloaded the project the steps below should get you up and running:
+Once you have downloaded the project, the steps below should get you up and running:
  - Make sure you have installed the version of Unity that is listed above in the prerequisites section.
  	- Make sure to include standalone support for Windows/Mac in your installation. 
  - Add the project in _Unity Hub_ by clicking on **Add** button and pointing it to the root folder of the downloaded project.
@@ -58,14 +58,16 @@ After the build has completed you can launch several instances of the built exec
 ---------------
 **Multiplayer over internet**
 
-In contrast to running a local setup, when playing over internet we don't neccessarily need a built executable. We can just run the game in editor. 
+In order to play over internet, we need to have a built executable that is shared between all players. See the previous section.
+
+It is possible to connect between multiple instances of the same executable OR between executables and the editor that produced said executable.
 
 Running the game over internet currently requires setting up a [Photon Transport for MLAPI](https://github.com/Unity-Technologies/mlapi-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.
 
 > Checkout our Photon-Realtime setup guide, here:
 > [Boss Room Photon Setup Guide](Documentation/Photon-Realtime/Readme.md)
 
-Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. BossRoom uses `UDP` and needs a `9998` external port to be open. 
+Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. 
 
 ------------------------------------------
 
