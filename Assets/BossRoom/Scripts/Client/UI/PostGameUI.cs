@@ -11,10 +11,10 @@ namespace BossRoom.Visual
     public class PostGameUI : MonoBehaviour
     {
         [SerializeField]
-        private RawImage m_Background;
+        private Image m_EndMessage;
 
         [SerializeField]
-        private Image m_EndMessage;
+        private Light m_SceneLight;
 
         [SerializeField]
         private GameObject m_ReplayButton;
@@ -29,6 +29,12 @@ namespace BossRoom.Visual
         private Sprite m_WinSprite;
         [SerializeField]
         private Sprite m_LoseSprite;
+
+        [SerializeField]
+        private Color m_WinLightColor;
+
+        [SerializeField]
+        private Color m_LoseLightColor;
 
         void Start()
         {
@@ -60,13 +66,13 @@ namespace BossRoom.Visual
             if (m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Won )
             {
                 m_EndMessage.sprite = m_WinSprite;
-                m_Background.color = Color.white;
+                m_SceneLight.color = m_WinLightColor;
                 m_EndMessage.color = Color.white;
             }
             else if( m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Lost )
             {
                 m_EndMessage.sprite = m_LoseSprite;
-                m_Background.color = new Color(1.0f, 0.5f, 0.5f);
+                m_SceneLight.color = m_LoseLightColor;
                 m_EndMessage.color = Color.white;
             }
         }
