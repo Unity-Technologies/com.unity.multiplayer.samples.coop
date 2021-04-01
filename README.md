@@ -1,11 +1,11 @@
 ![Banner](Documentation/Images/Banner.png)
-# BossRoom - co-op multiplayer RPG built with Unity MLAPI
+# Boss Room - co-op multiplayer RPG built with Unity MLAPI
 
 | 🛑  IMPORTANT - Early Access 🛑  | 
 | -- |
-| Multiplayer Samples Co-Op is built on top of the MLAPI package. The MLAPI package  is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
+| Boss Room: Small Scale Co-op Sample is built on top of the MLAPI package. The MLAPI package  is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
 
-BossRoom is a fully functional co-op multiplayer RPG made with Unity MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
+Boss Room is a fully functional co-op multiplayer RPG made with Unity MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
 Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE](LICENSE) for more legal information.
 
@@ -62,7 +62,7 @@ Running the game over internet currently requires setting up a [Photon Transport
 > Checkout our Photon-Realtime setup guide, here:
 > [Boss Room Photon Setup Guide](Documentation/Photon-Realtime/Readme.md)
 
-Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. BossRoom uses `UDP` and needs a `9998` external port to be open. 
+Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. 
 
 ------------------------------------------
 
