@@ -3,7 +3,7 @@
 
 | 🛑  IMPORTANT - Early Access 🛑  | 
 | -- |
-| The MLAPI package is on the road to being a fully featured solution. We have solutions architects available on discord and forums to help you work through issues you encounter. |
+| Multiplayer Samples Co-Op is built on top of the MLAPI package. The MLAPI package  is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
 
 BossRoom is a fully functional co-op multiplayer RPG made with Unity MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
