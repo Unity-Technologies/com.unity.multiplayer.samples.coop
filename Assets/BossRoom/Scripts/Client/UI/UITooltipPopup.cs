@@ -1,5 +1,5 @@
 using UnityEngine;
-using UnityEngine.UI;
+using TMPro;
 
 namespace BossRoom.Client
 {
@@ -21,7 +21,7 @@ namespace BossRoom.Client
         [Tooltip("This transform is shown/hidden to show/hide the popup box")]
         private GameObject m_WindowRoot;
         [SerializeField]
-        private Text m_TextField;
+        private TextMeshProUGUI m_TextField;
         [SerializeField]
         private Vector3 m_CursorOffset;
 

@@ -2,13 +2,13 @@ using MLAPI;
 using MLAPI.Transports;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.UI;
+using TMPro;
 
 public class RoomNameBox : MonoBehaviour
 {
 
     [SerializeField]
-    Text m_RoomNameText;
+    TextMeshProUGUI m_RoomNameText;
 
     void Awake()
     {

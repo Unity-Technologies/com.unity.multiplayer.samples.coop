@@ -1,5 +1,6 @@
 using UnityEngine.UI;
 using UnityEngine;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -11,7 +12,7 @@ namespace BossRoom.Visual
     public class NameDisplay : MonoBehaviour
     {
         [SerializeField]
-        private Text m_CurrentName;
+        private TextMeshProUGUI m_CurrentName;
 
         /// <summary>
         /// This is where we pull our name data from

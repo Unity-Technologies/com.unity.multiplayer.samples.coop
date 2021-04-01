@@ -4,6 +4,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -13,11 +14,11 @@ namespace BossRoom.Visual
     public class PopupPanel : MonoBehaviour
     {
         [SerializeField]
-        private Text m_TitleText;
+        private TextMeshProUGUI m_TitleText;
         [SerializeField]
-        private Text m_MainText;
+        private TextMeshProUGUI m_MainText;
         [SerializeField]
-        private Text m_SubText;
+        private TextMeshProUGUI m_SubText;
         [SerializeField]
         [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
         private GameObject m_ReconnectingImage;
@@ -29,7 +30,7 @@ namespace BossRoom.Visual
         [SerializeField]
         private Button m_ConfirmationButton;
         [SerializeField]
-        private Text m_ConfirmationText;
+        private TextMeshProUGUI m_ConfirmationText;
         [SerializeField]
         [Tooltip("This Button appears for popups that ask for player inputs")]
         private Button m_CancelButton;
