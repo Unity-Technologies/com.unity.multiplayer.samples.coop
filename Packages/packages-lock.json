@@ -1,18 +1,18 @@
 {
   "dependencies": {
     "com.mlapi.contrib.transport.litenetlib": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#3f0350ae57befd5ea7deabb1db310eb77704f58e",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "398432637744f5101f79dd50f4f45d2fea8de8c0"
+      "hash": "3f0350ae57befd5ea7deabb1db310eb77704f58e"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#a918826c5dcb90f861bb9f60c6d203ac4aac3377",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#3f0350ae57befd5ea7deabb1db310eb77704f58e",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "a918826c5dcb90f861bb9f60c6d203ac4aac3377"
+      "hash": "3f0350ae57befd5ea7deabb1db310eb77704f58e"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
