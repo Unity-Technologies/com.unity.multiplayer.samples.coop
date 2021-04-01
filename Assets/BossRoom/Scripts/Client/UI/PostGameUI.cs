@@ -82,8 +82,9 @@ namespace BossRoom.Visual
         public void OnMainMenuClicked()
         {
             // Player is leaving this group - leave current network connection first
-            MLAPI.NetworkManager.Singleton.StopClient();
-            MLAPI.NetworkManager.Singleton.Shutdown();
+            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
+            gameNetPortal.RequestDisconnect();
+
             SceneManager.LoadScene("MainMenu");
         }
     }

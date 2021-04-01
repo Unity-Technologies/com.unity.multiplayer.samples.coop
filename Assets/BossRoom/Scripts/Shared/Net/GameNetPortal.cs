@@ -72,6 +72,8 @@ namespace BossRoom
         /// </summary>
         public event Action<ulong, int> ClientSceneChanged;
 
+        public event Action UserDisconnectRequested;
+
         public NetworkManager NetManager { get; private set; }
 
         /// <summary>
@@ -234,6 +236,14 @@ namespace BossRoom
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// This will disconnect (on the client) or shutdown the server (on the host). 
+        /// </summary>
+        public void RequestDisconnect()
+        {
+            UserDisconnectRequested?.Invoke();
         }
     }
 }
