@@ -14602,8 +14602,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ParticleSystemsToTurnOffOnShutdown: []
-  m_PostShutdownSelfDestructTime: -1
   m_AutoShutdownTime: 1
+  m_PostShutdownSelfDestructTime: -1
 --- !u!1 &5258964564490418881
 GameObject:
   m_ObjectHideFlags: 0
@@ -14621,7 +14621,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5258964564490418880
 Transform:
   m_ObjectHideFlags: 0
@@ -29243,7 +29243,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &5258964565526710723
 Transform:
   m_ObjectHideFlags: 0
