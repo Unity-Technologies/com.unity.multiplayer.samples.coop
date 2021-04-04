@@ -163,12 +163,12 @@ namespace BossRoom.Client
             // lastly, now that we're all assembled, apply any override material.
             switch (specialMaterialMode)
             {
-            case SpecialMaterialMode.StealthySelf:
-                SetOverrideMaterial(modelIndex, m_StealthySelfMaterial);
-                break;
-            case SpecialMaterialMode.StealthyOther:
-                SetOverrideMaterial(modelIndex, m_StealthyOtherMaterial);
-                break;
+                case SpecialMaterialMode.StealthySelf:
+                    SetOverrideMaterial(modelIndex, m_StealthySelfMaterial);
+                    break;
+                case SpecialMaterialMode.StealthyOther:
+                    SetOverrideMaterial(modelIndex, m_StealthyOtherMaterial);
+                    break;
             }
         }
 
