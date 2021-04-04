@@ -1317,6 +1317,8 @@ MonoBehaviour:
     specialFx: {fileID: -4883610069003345042}
     animatorOverrides: {fileID: 22100000, guid: 59250e4e9e5786b408633dbbdb2cecff, type: 2}
   m_Animator: {fileID: 4199396739699390757}
+  m_StealthySelfMaterial: {fileID: 2100000, guid: 3a999e4944c72a84c830c337bdb6348b, type: 2}
+  m_StealthyOtherMaterial: {fileID: 2100000, guid: f3b8028a3fb2d3a42b5a0c73fc01b6f0, type: 2}
 --- !u!114 &-2356631595065836862
 MonoBehaviour:
   m_ObjectHideFlags: 0

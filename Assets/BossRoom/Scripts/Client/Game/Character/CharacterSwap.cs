@@ -1,5 +1,6 @@
 using UnityEngine.Assertions;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace BossRoom.Client
 {
@@ -41,6 +42,25 @@ namespace BossRoom.Client
                 shoulderRight.SetActive(isActive);
                 shoulderLeft.SetActive(isActive);
             }
+
+            public List<GameObject> GetAllBodyParts()
+            {
+                return new List<GameObject>()
+                {
+                    ears,
+                    head,
+                    mouth,
+                    hair,
+                    eyes,
+                    torso,
+                    gearRightHand,
+                    gearLeftHand,
+                    handRight,
+                    handLeft,
+                    shoulderRight,
+                    shoulderLeft,
+                };
+            }
         }
 
         [SerializeField]
@@ -59,6 +79,27 @@ namespace BossRoom.Client
         /// </summary>
         private RuntimeAnimatorController m_OriginalController;
 
+        [SerializeField]
+        [Tooltip("Special Material we plug in when the local player is \"stealthy\"")]
+        private Material m_StealthySelfMaterial;
+
+        [SerializeField]
+        [Tooltip("Special Material we plug in when another player is \"stealthy\"")]
+        private Material m_StealthyOtherMaterial;
+
+        public enum SpecialMaterialMode
+        {
+            None,
+            StealthySelf,
+            StealthyOther,
+        }
+
+        /// <summary>
+        /// When we swap all our Materials out for a special material,
+        /// we keep the old references here, so we can swap them back.
+        /// </summary>
+        private Dictionary<Renderer, Material> m_OriginalMaterials = new Dictionary<Renderer, Material>();
+
         private void Awake()
         {
             if (m_Animator)
@@ -67,13 +108,24 @@ namespace BossRoom.Client
             }
         }
 
+        private void OnDisable()
+        {
+            // It's important that the original Materials that we pulled out of the renderers are put back.
+            // Otherwise nothing will Destroy() them and they will leak! (Alternatively we could manually
+            // Destroy() these in our OnDestroy(), but in this case it makes more sense just to put them back.)
+            ClearOverrideMaterial();
+        }
+
         /// <summary>
-        /// Swap the visuals of the character to the index passed in. 
+        /// Swap the visuals of the character to the index passed in.
         /// </summary>
-        /// <param name="modelIndex"></param>
-        public void SwapToModel(int modelIndex)
+        /// <param name="modelIndex">Zero-based array index of the model</param>
+        /// <param name="specialMaterialMode">Special Material to apply to all body parts</param>
+        public void SwapToModel(int modelIndex, SpecialMaterialMode specialMaterialMode = SpecialMaterialMode.None)
         {
             Assert.IsTrue(modelIndex < m_CharacterModels.Length);
+
+            ClearOverrideMaterial();
 
             for (int i = 0; i < m_CharacterModels.Length; i++)
             {
@@ -107,20 +159,46 @@ namespace BossRoom.Client
                     m_Animator.runtimeAnimatorController = m_OriginalController;
                 }
             }
+
+            // lastly, now that we're all assembled, apply any override material.
+            switch (specialMaterialMode)
+            {
+            case SpecialMaterialMode.StealthySelf:
+                SetOverrideMaterial(modelIndex, m_StealthySelfMaterial);
+                break;
+            case SpecialMaterialMode.StealthyOther:
+                SetOverrideMaterial(modelIndex, m_StealthyOtherMaterial);
+                break;
+            }
         }
 
-        /// <summary>
-        /// Used by special effects where the character should be invisible.
-        /// </summary>
-        public void SwapAllOff()
+        private void ClearOverrideMaterial()
         {
-            for (int i = 0; i < m_CharacterModels.Length; i++)
+            foreach (var entry in m_OriginalMaterials)
             {
-                m_CharacterModels[i].SetFullActive(false);
-                if (m_CharacterModels[i].specialFx)
+                if (entry.Key)
                 {
-                    m_CharacterModels[i].specialFx.enabled = false;
+                    entry.Key.material = entry.Value;
                 }
+            }
+            m_OriginalMaterials.Clear();
+        }
+
+        private void SetOverrideMaterial(int modelIdx, Material overrideMaterial)
+        {
+            foreach (var bodyPartGO in m_CharacterModels[modelIdx].GetAllBodyParts())
+            {
+                if (!bodyPartGO)
+                {
+                    continue;
+                }
+                var renderer = bodyPartGO.GetComponent<Renderer>();
+                if (!renderer)
+                {
+                    continue;
+                }
+                m_OriginalMaterials[renderer] = renderer.material;
+                renderer.material = overrideMaterial;
             }
         }
 
