@@ -46,15 +46,7 @@ namespace BossRoom.Visual
             float age = Time.time - TimeStarted;
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
             {
-                m_SpawnedGraphics = new List<SpecialFXGraphic>();
-                foreach (var go in Description.Spawns)
-                {
-                    GameObject specialEffectsGO = GameObject.Instantiate(go, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
-                    var specialEffects = specialEffectsGO.GetComponent<SpecialFXGraphic>();
-                    if (!specialEffects)
-                        throw new System.Exception($"{Description.ActionTypeEnum} has a spawned graphic that does not have a SpecialFXGraphic component!");
-                    m_SpawnedGraphics.Add(specialEffects);
-                }
+                m_SpawnedGraphics = InstantiateSpecialFXGraphics(false);
             }
             return true;
         }

@@ -6,12 +6,14 @@ namespace BossRoom.Visual
 {
     /// <summary>
     /// The visual aspect of a "Charged" action, including ChargedShieldAction and ChargedLaunchProjectileAction.
+    /// (ChargedShieldActionFX derives from this class, whereas the charged-projectile action uses this class directly.)
+    /// 
     /// To show particles, the ActionDescription's Spawns list can provide a prefab that will be instantiated during run.
     /// The prefab must have a SpecialFXGraphic component on it, which is used to cleanly shut down the graphics.
     /// </summary>
-    public class ChargedActionFX : ActionFX
+    public class ChargedLaunchProjectileActionFX : ActionFX
     {
-        public ChargedActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public ChargedLaunchProjectileActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
         /// <summary>
         /// A list of the special particle graphics we spawned.
@@ -21,7 +23,7 @@ namespace BossRoom.Visual
         /// (like mobile devices), it can lead to major performance problems. On mobile platforms, visual graphics should
         /// use object-pooling (i.e. reusing the same GameObjects repeatedly). But that's outside the scope of this demo.
         /// </remarks>
-        private List<SpecialFXGraphic> m_Graphics = new List<SpecialFXGraphic>();
+        private List<SpecialFXGraphic> m_Graphics;
 
         private bool m_ChargeEnded;
 
@@ -29,42 +31,22 @@ namespace BossRoom.Visual
         {
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
 
-            if (Description.Spawns.Length > 0)
-            {
-                foreach (var prefab in Description.Spawns)
-                {
-                    if (prefab && prefab.GetComponent<SpecialFXGraphic>()) // we skip any prefabs that aren't usable by us
-                    {
-                        var graphicsGO = GameObject.Instantiate(prefab, m_Parent.Parent.position, m_Parent.Parent.rotation, null);
-                        var graphics = graphicsGO.GetComponent<SpecialFXGraphic>();
-                        m_Graphics.Add(graphics);
-                    }
-                }
-                if (m_Graphics.Count == 0)
-                    throw new System.Exception($"None of the {Description.Spawns.Length} Spawns attached to {Description.ActionTypeEnum} have a SpecialFXGraphic component! No charge-up particles found!");
-            }
+            m_Graphics = InstantiateSpecialFXGraphics(true);
             return true;
         }
 
         public override bool Update()
         {
-            // make sure the particles stick near us! (Even if we aren't moving on the server, our visualization could still be moving for a bit.)
-            // Note that we don't use the parent's rotation, because rotating the "charge up" particles just looks weird.
-            foreach (var graphic in m_Graphics)
-            {
-                if (graphic)
-                {
-                    graphic.transform.position = m_Parent.Parent.position;
-                }
-            }
-
             return !m_ChargeEnded;
         }
 
         public override void Cancel()
         {
-            if (Description.Anim2 != "")
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
                 m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+            }
+
             if (!m_ChargeEnded)
             {
                 foreach (var graphic in m_Graphics)
@@ -77,7 +59,7 @@ namespace BossRoom.Visual
             }
         }
 
-        public override void OnStoppedChargingUp()
+        public override void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
             m_ChargeEnded = true;
             foreach (var graphic in m_Graphics)

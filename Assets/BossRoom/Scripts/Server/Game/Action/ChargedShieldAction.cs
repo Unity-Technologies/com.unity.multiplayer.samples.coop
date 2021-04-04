@@ -74,12 +74,25 @@ namespace BossRoom.Server
             return m_StoppedChargingUpTime != 0;
         }
 
+        private float GetPercentChargedUp()
+        {
+            float timeSpentChargingUp;
+            if (m_StoppedChargingUpTime == 0)
+            {
+                timeSpentChargingUp = TimeRunning; // we're still charging up, so all of our runtime has been charge-up time
+            }
+            else
+            {
+                timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
+            }
+            return Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);
+        }
+
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
         {
             if (buffType == BuffableValue.PercentDamageReceived)
             {
-                float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
-                float pctChargedUp = Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);
+                float pctChargedUp = GetPercentChargedUp();
 
                 // the amount of damage reduction starts at 50% (for not-charged-up), then slowly increases to 100% depending on how charged-up we got
                 float pctDamageReduction = 0.5f + ((pctChargedUp * pctChargedUp) / 2);
@@ -93,8 +106,7 @@ namespace BossRoom.Server
             else if (buffType == BuffableValue.ChanceToStunTramplers)
             {
                 // if we are at "full charge", we stun enemies that try to trample us!
-                float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
-                if (timeSpentChargingUp / Description.ExecTimeSeconds >= 1 && buffedValue < 1)
+                if (GetPercentChargedUp() >= 1)
                 {
                     buffedValue = 1;
                 }
@@ -120,7 +132,7 @@ namespace BossRoom.Server
             if (m_StoppedChargingUpTime == 0)
             {
                 m_StoppedChargingUpTime = Time.time;
-                m_Parent.NetState.RecvStopChargingUpClientRpc();
+                m_Parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
             }
         }
 

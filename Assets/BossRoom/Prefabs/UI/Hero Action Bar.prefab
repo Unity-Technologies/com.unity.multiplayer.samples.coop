@@ -199,19 +199,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 9059929380243764533}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 9059929381720061998}
-        m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: OnButtonClicked
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 2
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &9059929380362573693
 GameObject:
   m_ObjectHideFlags: 0
@@ -411,19 +399,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 9059929380544550681}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 9059929381720061998}
-        m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: OnButtonClicked
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &9059929380831878972
 GameObject:
   m_ObjectHideFlags: 0
@@ -623,19 +599,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 9059929381413149709}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 9059929381720061998}
-        m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: OnButtonClicked
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 3
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &9059929381720062001
 GameObject:
   m_ObjectHideFlags: 0
@@ -895,19 +859,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 9059929381734582211}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 9059929381720061998}
-        m_TargetAssemblyTypeName: BossRoom.Visual.HeroActionBar, BossRoom.Client
-        m_MethodName: OnButtonClicked
-        m_Mode: 3
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!1 &9059929381991440440
 GameObject:
   m_ObjectHideFlags: 0

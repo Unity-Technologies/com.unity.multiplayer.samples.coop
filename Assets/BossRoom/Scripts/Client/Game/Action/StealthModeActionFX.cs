@@ -35,15 +35,7 @@ namespace BossRoom.Visual
         {
             if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.IsOwner)
             {
-                m_SpawnedGraphics = new List<SpecialFXGraphic>();
-                foreach (var prefab in Description.Spawns)
-                {
-                    var specialEffectsGO = GameObject.Instantiate(prefab, m_Parent.transform);
-                    var specialEffect = specialEffectsGO.GetComponent<SpecialFXGraphic>();
-                    if (!specialEffect)
-                        throw new System.Exception($"{Description.ActionTypeEnum} has a spawned graphic that does not have a SpecialFXGraphic component!");
-                    m_SpawnedGraphics.Add(specialEffect);
-                }
+                m_SpawnedGraphics = InstantiateSpecialFXGraphics(true);
             }
 
             return ActionConclusion.Continue;
