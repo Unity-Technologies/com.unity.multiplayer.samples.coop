@@ -46,6 +46,7 @@ namespace BossRoom.Client
             UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
             UIRelease,   //represents letting go of the mouse-button on a UI button
         }
+
         private bool IsReleaseStyle(SkillTriggerStyle style)
         {
             return style == SkillTriggerStyle.KeyboardRelease || style == SkillTriggerStyle.UIRelease;
