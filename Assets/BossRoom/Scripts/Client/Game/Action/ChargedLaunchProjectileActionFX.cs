@@ -5,9 +5,7 @@ using UnityEngine;
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// The visual aspect of a "Charged" action, including ChargedShieldAction and ChargedLaunchProjectileAction.
-    /// (ChargedShieldActionFX derives from this class, whereas the charged-projectile action uses this class directly.)
-    /// 
+    /// The visual aspect of a ChargedLaunchProjectileAction.
     /// To show particles, the ActionDescription's Spawns list can provide a prefab that will be instantiated during run.
     /// The prefab must have a SpecialFXGraphic component on it, which is used to cleanly shut down the graphics.
     /// </summary>
