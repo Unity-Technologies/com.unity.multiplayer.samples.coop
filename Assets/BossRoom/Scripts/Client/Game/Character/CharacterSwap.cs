@@ -186,6 +186,7 @@ namespace BossRoom.Client
 
         private void SetOverrideMaterial(int modelIdx, Material overrideMaterial)
         {
+            ClearOverrideMaterial(); // just sanity-checking; this should already have been called!
             foreach (var bodyPartGO in m_CharacterModels[modelIdx].GetAllBodyParts())
             {
                 if (!bodyPartGO)

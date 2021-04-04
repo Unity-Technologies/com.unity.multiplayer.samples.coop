@@ -261,20 +261,20 @@ namespace BossRoom.Visual
         {
             if (m_CharacterSwapper)
             {
-                CharacterSwap.SpecialMaterialMode specialMode = CharacterSwap.SpecialMaterialMode.None;
+                var specialMaterialMode = CharacterSwap.SpecialMaterialMode.None;
                 if (m_NetState.IsStealthy.Value != 0)
                 {
                     if (m_NetState.IsOwner)
                     {
-                        specialMode = CharacterSwap.SpecialMaterialMode.StealthySelf;
+                        specialMaterialMode = CharacterSwap.SpecialMaterialMode.StealthySelf;
                     }
                     else
                     {
-                        specialMode = CharacterSwap.SpecialMaterialMode.StealthyOther;
+                        specialMaterialMode = CharacterSwap.SpecialMaterialMode.StealthyOther;
                     }
                 }
 
-                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value, specialMode);
+                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value, specialMaterialMode);
             }
         }
 
