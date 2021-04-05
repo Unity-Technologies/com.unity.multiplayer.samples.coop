@@ -16,6 +16,9 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private Light m_SceneLight;
+		
+        [SerializeField]
+        private TextMeshProUGUI m_WinEndMessage;
 
         [SerializeField]
         private TextMeshProUGUI m_LoseGameMessage;
