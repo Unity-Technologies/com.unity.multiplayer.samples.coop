@@ -67,7 +67,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &5355783542964773244
 Transform:
   m_ObjectHideFlags: 0
@@ -114,8 +114,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5436007408952557925}
-  - component: {fileID: 5436007408952557924}
   - component: {fileID: 1359040526}
+  - component: {fileID: 5436007408952557924}
   m_Layer: 0
   m_Name: NetworkingManager
   m_TagString: Untagged
@@ -166,37 +166,53 @@ MonoBehaviour:
     - Startup
     AllowRuntimeSceneChanges: 1
     NetworkPrefabs:
-    - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
+    - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef,
+        type: 3}
       PlayerPrefab: 1
-    - Prefab: {fileID: 3565665953789623672, guid: 1a58a2c4657fe6d4890d9ad39f43894e, type: 3}
+    - Prefab: {fileID: 3565665953789623672, guid: 1a58a2c4657fe6d4890d9ad39f43894e,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 297185343939699586, guid: 8b9c63e7d70c5ff48a03aad51e17103c, type: 3}
+    - Prefab: {fileID: 297185343939699586, guid: 8b9c63e7d70c5ff48a03aad51e17103c,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
+    - Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
+    - Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a, type: 3}
+    - Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 7788790407431586438, guid: 7c9c0bade0c78da4b9825e198685ac1e, type: 3}
+    - Prefab: {fileID: 7788790407431586438, guid: 7c9c0bade0c78da4b9825e198685ac1e,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 7898142965061138134, guid: 10897010648fc204783f651034c504d9, type: 3}
+    - Prefab: {fileID: 7898142965061138134, guid: 10897010648fc204783f651034c504d9,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c, type: 3}
+    - Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb, type: 3}
+    - Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2, type: 3}
+    - Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 7475764267130300177, guid: 462e020e721ce4543b97867020621b15, type: 3}
+    - Prefab: {fileID: 7475764267130300177, guid: 462e020e721ce4543b97867020621b15,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 884761565141663561, guid: 00dca56744e297e41870a7aff65cca80, type: 3}
+    - Prefab: {fileID: 884761565141663561, guid: 00dca56744e297e41870a7aff65cca80,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 884761565141663561, guid: 5640f51641faec24ca0d332b154499bf, type: 3}
+    - Prefab: {fileID: 884761565141663561, guid: 5640f51641faec24ca0d332b154499bf,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 884761565141663561, guid: 054386ac446cf834c9d7f603a57ab70b, type: 3}
+    - Prefab: {fileID: 884761565141663561, guid: 054386ac446cf834c9d7f603a57ab70b,
+        type: 3}
       PlayerPrefab: 0
-    - Prefab: {fileID: 6205854018081152875, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+    - Prefab: {fileID: 6205854018081152875, guid: a6647793a8bc7c846abba94be1d257e5,
+        type: 3}
       PlayerPrefab: 0
     PlayerPrefabHash:
       id: 0
@@ -208,7 +224,6 @@ MonoBehaviour:
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
     ConnectionData: 
-    SecondsHistory: 0
     EnableTimeResync: 0
     TimeResyncInterval: 30
     EnableNetworkVariable: 1

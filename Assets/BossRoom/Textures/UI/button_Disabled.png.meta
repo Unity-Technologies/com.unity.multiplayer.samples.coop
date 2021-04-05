@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<< HEAD:Assets/BossRoom/Textures/UI/button_Disabled.png.meta
 guid: 830c96afe1b19f9408d5ead518a09fe9
+=======
+guid: 62d7fb22c0ec4164f9c6ef1c5846ca8c
+>>>>>>> origin/release/v0.1.0-experimental:Assets/BossRoom/Textures/Environment/env_deco_boss_arena_mtl.tga.meta
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
