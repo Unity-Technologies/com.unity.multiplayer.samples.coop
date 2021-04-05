@@ -44,7 +44,7 @@ namespace BossRoom.Server
         private ServerGameNetPortal m_ServerNetPortal;
 
         // Wait time constants for switching to post game after the game is won or lost
-        private const float k_WinDelay = 5.0f;
+        private const float k_WinDelay = 7.0f;
         private const float k_LoseDelay = 2.5f;
 
         /// <summary>
