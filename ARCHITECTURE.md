@@ -23,8 +23,8 @@ This approach works, but requires some care:
 
 ## Connection flow
 The Boss Room network connection flow is owned by the `GameNetPortal`:
- - The Host will invoke either `GameNetPortal.StartHost`, or `StartRelayHost` (if Photon relay is being used). 
- - The client will invoke either `ClientGameNetPortal.StartClient`, or `StartClientRelayMode`. 
+ - The Host will invoke either `GameNetPortal.StartHost` or `StartRelayHost` (if Photon relay is being used). 
+ - The client will invoke either `ClientGameNetPortal.StartClient` or `StartClientRelayMode`. 
  - Boss Room's own connection validation logic is performed in `ServerGameNetPortal.ApprovalCheck`, which is plugged in to the `NetworkingManager`'s connection approval callback. Here some basic information about the connection is recorded (including a GUID, to facilitate future reconnect logic), and success or failure is returned. In the future, additional game-level failures will be detected and returned (such as a `ServerFull` scenario). 
 
 ## Data model
