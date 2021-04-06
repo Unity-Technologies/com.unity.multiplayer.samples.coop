@@ -73,12 +73,6 @@ namespace BossRoom.Client
             }
             DontDestroyOnLoad(gameObject);
             Instance = this;
-            m_source.volume = ClientPrefs.GetMusicVolume();
-        }
-
-        public void SetMusicVolume(float volume)
-        {
-            m_source.volume = volume;
         }
     }
 }

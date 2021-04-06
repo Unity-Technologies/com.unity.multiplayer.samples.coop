@@ -10,7 +10,7 @@ Material:
   m_Name: FX_M_StylizeSmoke
   m_Shader: {fileID: 4800000, guid: 19584968e8d53424c9ce71b2c72d64f4, type: 3}
   m_ShaderKeywords: _HASDYNAMICDISSOLVE_ON _HASTEXTUREDISSOLVE_ON _STEPSUBTRACT_ON
-    _VERTEXAOPACITY_ON
+    _SWITCH_ALPHA_ON _VERTEXAOPACITY_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -48,6 +48,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 1ee97322756ea2c489f9311bd5c9f72d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: fa9d4375ce230e1488b5a2680fd71074, type: 3}
+        m_Scale: {x: 1, y: 2}
+        m_Offset: {x: -0.25, y: -0.25}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -88,6 +92,7 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StepSubtract: 1
+    - _Switch_Alpha: 1
     - _UVSec: 0
     - _UseAlphaChannel: 0
     - _VertexAOpacity: 1

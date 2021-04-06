@@ -16,8 +16,6 @@ Boss Room is a small-scale cooperative game sample project built on top of the n
 
 ### Known issues
 
-The following issues may occur for access and games:
-
 * Sometimes when the host leaves the Boss Room, not all clients will return to the Main Menu, but will remain stuck in the Boss Room scene. 
 * Sometimes after completing a match and the host starts a new match from the Victory or Loss screen, connected players may have no visible interactions to join or select characters.
 * A player may encounter a rare exception when the Tank character uses her Shield Aura ability. This issue may be due to intercepting the Boss charge attack.
@@ -30,9 +28,8 @@ The following issues may occur for access and games:
 * The spawner portal does not work in this release.
 * Players may not reliably play another match when selecting **Return to Main Menu** during the post-game scene. This may be due to states not properly clearing.
 * Some actions may feel unresponsive and require action anticipation animations.
-The following issues may occur in the graphics and gameplay actions:
-
 * In some degraded network conditions, a replicated entity on a client can vanish from that client, creating the effect of being assailed by an invisible enemy.
 * Boss collisions with a Pillar may not correctly apply a stun effect and shatter the pillar when using the Trample attack. 
 * The displayed graphical affects for casting and blocking a Bolt do not correctly match the caster and target. 
 * Some areas of the Boss Room require updates to geometry seams and collisions, for short walls and lava pits.
+

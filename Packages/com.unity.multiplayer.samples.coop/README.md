@@ -1,25 +1,35 @@
 ![Banner](Documentation/Images/Banner.png)
-# BossRoom - co-op multiplayer RPG built with Unity MLAPI
+# Boss Room - co-op multiplayer RPG built with Unity MLAPI
 
->**IMPORTANT**: This project is currently experimental.
+| 🛑  IMPORTANT - Early Access 🛑  | 
+| -- |
+| Boss Room: Small Scale Co-op Sample is built on top of the MLAPI package. The MLAPI package  is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
 
-BossRoom is a fully functional co-op multiplayer RPG made in Unity and MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
+Boss Room is a fully functional co-op multiplayer RPG made with Unity MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
-Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE](LICENSE) for more legal information.
+Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 
 ```
 Platforms : Windows, Mac
 ```
 
-## Getting the project
- - A release version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
- - Alternatively: click the green `Code` button and then choose to download the zip archive. Remember, that you would download the branch that you are currently viewing in Github.
+![](Documentation/Images/3Players.png)
+![](Documentation/Images/Boss.png)
 
+## Getting the project
+ - The early access version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
+ - Alternatively: click the green `Code` button and then choose to download the zip archive. Remember, that you would download the branch that you are currently viewing in Github.
+ - For Windows users: Using Windows' built-in extracting tool may generate a "Error 0x80010135: Path too long" error window which can invalidate the extraction process. A workaround for this is to shorten the zip file to a single character (eg. "c.zip") and move it to the shortest path on your computer (most often right at C:\\) and retry. If that solution fails, another workaround is to extract the downloaded zip file using 7zip.
+
+
+## Installing Git LFS
+
+This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. 
 
 ## Opening the project for the first time
 
-Once you have downloaded the project the steps below should get you up and running:
+Once you have downloaded the project, the steps below should get you up and running:
  - Make sure you have installed the version of Unity that is listed above in the prerequisites section.
  	- Make sure to include standalone support for Windows/Mac in your installation. 
  - Add the project in _Unity Hub_ by clicking on **Add** button and pointing it to the root folder of the downloaded project.
@@ -27,7 +37,6 @@ Once you have downloaded the project the steps below should get you up and runni
  - Once the editor is ready, navigate to the _Project_ window and open the _Project/Startup_ scene.
 ![](Documentation/Images/StartupScene.png)
  - From there you can click the **Play** button. You can host a new game or join an existing game using the in-game UI.
-
 
 ## Testing multiplayer
 
@@ -49,11 +58,16 @@ After the build has completed you can launch several instances of the built exec
 ---------------
 **Multiplayer over internet**
 
-In contrast to running a local setup, when playing over internet we don't neccessarily need a built executable. We can just run the game in editor. 
+In order to play over internet, we need to have a built executable that is shared between all players. See the previous section.
 
-Running the game over internet currently requires setting up a [Photon Transport for MLAPI](https://github.com/Unity-Technologies/mlapi-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.  
+It is possible to connect between multiple instances of the same executable OR between executables and the editor that produced said executable.
 
-Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. BossRoom uses `UDP` and needs a `9998` external port to be open. 
+Running the game over internet currently requires setting up a [Photon Transport for MLAPI](https://github.com/Unity-Technologies/mlapi-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.
+
+> Checkout our Photon-Realtime setup guide, here:
+> [Boss Room Photon Setup Guide](Documentation/Photon-Realtime/Readme.md)
+
+Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. 
 
 ------------------------------------------
 
@@ -66,13 +80,13 @@ The game is server-authoritative, with latency-masking animations. Position upda
 
 Code is organized into three separate assemblies: **Client**, **Shared** and **Server** which reference each other when appropriate.
 
-For an in-depth overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
+For an overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
 
+---------------
+
+For a deep dive in MLAPI and Boss Room, visit our [doc](https://docs-multiplayer.unity3d.com/) and [Learn](https://docs-multiplayer.unity3d.com/docs/learn/introduction) sections.
 
 ## Contributing
-
-> __IMPORTANT__: 
-> This project uses Git Large Files Support (LFS). See the [link with Git LFS installation options](https://git-lfs.github.com/).
 
 The project uses the `git-flow` branching strategy, as such:
  - `develop` branch contains all active development
@@ -83,4 +97,11 @@ To get the project on your machine you need to clone the repository from GitHub 
 git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop.git
 ```
 
+> __IMPORTANT__: 
+> You should have [Git LFS](https://git-lfs.github.com/) installed on your local machine.
+
 Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues and PRs to BossRoom!
+
+For futher discussion points and to connect with the team, join us on the MLAPI by Unity Discord Server - Channel #dev-samples
+
+[![Discord](https://img.shields.io/discord/449263083769036810.svg?label=discord&logo=discord&color=informational)](https://discord.gg/FM8SE9E)
