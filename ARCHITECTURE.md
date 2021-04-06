@@ -32,12 +32,12 @@ Game data in Boss Room is defined in `ScriptableObjects`. The `ScriptableObjects
 
 ## Transports
 Currently two network transport mechanisms are supported: 
-- IP based: The clients connect directy to a host via IP address. This will only work if both are in the same local are network or if the host forwards ports.
-- Relay Based: The clients and the host connect to a relay server with a room key and run all traffic over this relay server.
+- IP based
+- Relay Based
 
-In the former, Client users must know the IP and port they are connecting to, and establish connection directly.
+In the former, the clients connect directy to a host via IP address. This will only work if both are in the same local area network or if the host forwards ports.
 
-In the latter, the developer must have signed up with Photon and defined a Photon Realtime app id. Then Hosts create Rooms in Photon (essentially a string name associated with the photon app), and share that information with clients. The advantage of the Relay is that Host users are often on local networks and may need to perform actions like port forwarding (which they may or may not have permissions to do) in order to accept incoming connections. The disadvantage is that it effectively doubles latency to the clients (or potentially worse than that, if host and client are close, but relay is in a different region). The complexity of the Relay is mostly abstracted away from MLAPI. Assuming the right configuration settings in Assets/Photon/Resources/PhotonAppSettings are set, the Photon Relay appears as simply another Transport from the point of view of MLAPI. 
+In the latter, some setup is required. Please see our guide [here](Documentation/Photon-Realtime/Readme.md) on how to setup our current relay.  
 
 Please see [Multiplayer over internet](README.md) section of our Readme for more information on using either one.
 
