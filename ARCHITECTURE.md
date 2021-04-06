@@ -53,7 +53,7 @@ Each scene has exactly one `GameStateBehaviour` (a specialization of `MLAPI.Netw
 ## Important classes
 
 **Shared**
- - `NetworkCharacterState` Contains NetworkedVars that store the state of any given character, and both server and client RPC endpoints. The RPC endpoints only read out the call parameters and then raise events from them; they don’t do any logic internally. 
+ - `NetworkCharacterState` contains NetworkVariables that store the state of any given character, and both server and client RPC endpoints. The RPC endpoints only read out the call parameters and then raise events from them; they do not have any additional internal logic.
 
 **Server**
  - `ServerCharacterMovement` manages the movement Finite State Machine (FSM) on the server. Updates the NetworkedVars that synchronize position, rotation and movement speed of the entity on its FixedUpdate.
