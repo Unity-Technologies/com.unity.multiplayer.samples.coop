@@ -72,7 +72,7 @@ Running the game over internet currently requires setting up a [Photon Transport
 > Checkout our Photon-Realtime setup guide, here:
 > [Boss Room Photon Setup Guide](Documentation/Photon-Realtime/Readme.md)
 
-Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs an `9998` external port to be open. 
+Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. 
 
 ------------------------------------------
 
