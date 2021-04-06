@@ -3,8 +3,10 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
+using Photon.Realtime;
 
 namespace BossRoom.Client
 {
@@ -63,18 +65,21 @@ namespace BossRoom.Client
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
-            //On a client disconnect we want to take them back to the main menu.
-            //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
-            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
+            if(clientID == MLAPI.NetworkManager.Singleton.LocalClientId )
             {
-                // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
-                // Just shut down networking and switch back to main menu.
-                MLAPI.NetworkManager.Singleton.Shutdown();
-                SceneManager.LoadScene("MainMenu");
-            }
-            else
-            {
-                NetworkTimedOut?.Invoke();
+                //On a client disconnect we want to take them back to the main menu.
+                //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
+                if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
+                {
+                    // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
+                    // Just shut down networking and switch back to main menu.
+                    MLAPI.NetworkManager.Singleton.Shutdown();
+                    SceneManager.LoadScene("MainMenu");
+                }
+                else
+                {
+                    NetworkTimedOut?.Invoke();
+                }
             }
         }
 
@@ -92,9 +97,11 @@ namespace BossRoom.Client
         {
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
             switch (chosenTransport)
             {
-                case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                case LiteNetLibTransport liteNetLibTransport:
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;
@@ -116,9 +123,21 @@ namespace BossRoom.Client
         /// Relay version of <see cref="StartClient"/>, see start client remarks for more information.
         /// </remarks>
         /// <param name="portal"> </param>
-        /// <param name="roomName">The room name of the host to connect to.</param>
-        public static void StartClientRelayMode(GameNetPortal portal, string roomName)
+        /// <param name="roomKey">The room name of the host to connect to.</param>
+        public static bool StartClientRelayMode(GameNetPortal portal, string roomKey, out string failMessage)
         {
+            var splits = roomKey.Split('_');
+
+            if (splits.Length != 2)
+            {
+                failMessage = "Malformatted Room Key!";
+                return false;
+            }
+
+            var region = splits[0];
+            var roomName = splits[1];
+
+
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -126,12 +145,16 @@ namespace BossRoom.Client
             {
                 case PhotonRealtimeTransport photonRealtimeTransport:
                     photonRealtimeTransport.RoomName = roomName;
+                    PhotonAppSettings.Instance.AppSettings.FixedRegion = region;
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
             ConnectClient(portal);
+
+            failMessage = String.Empty;
+            return true;
         }
 
         private static void ConnectClient(GameNetPortal portal)

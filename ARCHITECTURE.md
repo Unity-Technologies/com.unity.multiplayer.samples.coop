@@ -2,7 +2,6 @@
 This document describes the high-level architecture of Boss Room.
 If you want to familiarize yourself with the code base, you are just in the right place!
 
-
 Code is organized into three separate assemblies: `Client`, `Server` and `Shared` (which, as it's name implies, contains shared functionality that both client and the server require).
 
 ## Host model

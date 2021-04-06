@@ -1,11 +1,18 @@
 {
   "dependencies": {
-    "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#feature/photon-realtime-transport",
+    "com.mlapi.contrib.transport.litenetlib": {
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#3f0350ae57befd5ea7deabb1db310eb77704f58e",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "2a73fd428a44481b24fc16abbb946d01d1a582e2"
+      "hash": "3f0350ae57befd5ea7deabb1db310eb77704f58e"
+    },
+    "com.mlapi.contrib.transport.photon-realtime": {
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#3f0350ae57befd5ea7deabb1db310eb77704f58e",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "3f0350ae57befd5ea7deabb1db310eb77704f58e"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -20,7 +27,7 @@
       "dependencies": {
         "com.unity.modules.ai": "1.0.0"
       },
-      "hash": "49d0b3b11730c51c48ce0bcc5d6cc718d061045d"
+      "hash": "0fc6f532e4f47d66d173314efcb906bc7cf0d00f"
     },
     "com.unity.cinemachine": {
       "version": "2.6.3",
@@ -86,7 +93,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.mlapi": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#0.1.0",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#release/0.1.0",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -94,7 +101,7 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "17bd894dff1d327410e02add871123c4bd6f910f"
+      "hash": "3e3aef6aa02c2a25359898319e5bd49d3518b57b"
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
@@ -110,14 +117,6 @@
         "com.unity.modules.physics": "1.0.0",
         "com.unity.modules.physics2d": "1.0.0",
         "com.unity.modules.ui": "1.0.0"
-      }
-    },
-    "com.unity.multiplayer.transport.litenet": {
-      "version": "file:com.unity.multiplayer.transport.litenet",
-      "depth": 0,
-      "source": "embedded",
-      "dependencies": {
-        "com.unity.multiplayer.mlapi": "0.0.1-preview.1"
       }
     },
     "com.unity.nuget.mono-cecil": {

@@ -1,9 +1,6 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using BossRoom;
-using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
 using UnityEngine;
@@ -32,7 +29,7 @@ public class TransportPicker : MonoBehaviour
 
     void OnValidate()
     {
-        Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UNetTransport || m_IpHostTransport as LiteNetLibTransport.LiteNetLibTransport),
+        Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UNetTransport || m_IpHostTransport as LiteNetLibTransport),
             "IpHost transport must be either Unet or LiteNetLib transport.");
 
         Assert.IsTrue(m_RelayTransport == null || (m_RelayTransport as PhotonRealtimeTransport), "" +

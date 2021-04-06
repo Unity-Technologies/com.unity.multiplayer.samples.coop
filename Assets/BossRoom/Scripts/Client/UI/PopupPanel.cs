@@ -135,6 +135,9 @@ namespace BossRoom.Visual
         /// </summary>
         private void OnOnlineModeDropdownChanged(int value)
         {
+            // activate this so that it is always activated unless entering as relay host
+            m_InputField.gameObject.SetActive(true);
+
             if (value == 0)
             {
                 // Ip host
@@ -147,8 +150,20 @@ namespace BossRoom.Visual
             {
                 if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
                 {
-                    // If there is no photon app id set tell the user they need to install
-                    SetupNotifierDisplay("Photon Realtime not Setup!", "Follow the instructions in the readme to setup Photon Realtime and use relay mode.", false, true);
+                    if (Application.isEditor)
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
+                            "to setup Photon Realtime and use relay mode.", false, true);
+                    }
+                    else
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project " +
+                            "by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
+                    }
                     return;
                 }
 
@@ -158,6 +173,7 @@ namespace BossRoom.Visual
                 if (m_EnterAsHost)
                 {
                     m_InputField.text = GenerateRandomRoomKey();
+                    m_InputField.gameObject.SetActive(false);
                 }
                 else
                 {
