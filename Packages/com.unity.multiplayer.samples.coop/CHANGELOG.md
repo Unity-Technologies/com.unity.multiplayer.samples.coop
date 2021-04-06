@@ -2,7 +2,7 @@
 
 ## [0.1.0] - 2021-04-07
 
-v0.1.0 is an Early Release for Multiplayer Samples Co-op.
+v0.1.0 is an Early Access release for Multiplayer Samples Co-op.
 
 It requires and supports Unity v2020LTS and Unity MLAPI v0.1.0.
 
@@ -18,4 +18,4 @@ The Multiplayer Samples Co-op release provides Boss Room, a small-scale cooperat
 
 * After a round of Boss Room completes and a party member returns to the menu, it pulls all players and leader to menu.
 * The welcome player message in the lobby indicates P2 (player 2) regardless of your player number.
-* When multiple players select the same character and click **Ready** at the same time, it defaults to host and prevents the game from starting.
+* When multiple players select the same character and click **Ready** at the same time, it defaults to host and prevents the game from starting. This may be due to Unity MLAPI exceptions, requiring additional messaging to expose the information to the user and developer.
