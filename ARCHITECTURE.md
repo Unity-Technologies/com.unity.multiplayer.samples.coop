@@ -41,8 +41,8 @@ In the latter, the developer must have signed up with Photon and defined a Photo
 
 Please see [Multiplayer over internet](README.md) section of our Readme for more information on using either one.
 
-## GameStateBehaviour (scene stuff)
-In Boss Room, scenes correspond to top-level Game States in a 1:1 way. That is, there is a `MainMenu` scene (and state), `Character Select` scene (and state), and so on. 
+## Game state / Scene flow
+In Boss Room, scenes correspond to top-level Game States (see `GameStateBehaviour` class) in a 1:1 way. That is, there is a `MainMenu` scene, `Character Select` scene (and state), and so on. 
 
 Because it is currently challenging to have a client be in a different scene than the server it's connected to, the options for MLAPI developers are either to not use scenes at all, or to use scenes, and let game state transitions on the host drive game state transitions on the client indirectly by forcing client scene transitions through MLAPI's networked scene management. 
 
