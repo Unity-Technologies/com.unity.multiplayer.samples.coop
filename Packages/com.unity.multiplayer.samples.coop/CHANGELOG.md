@@ -4,7 +4,7 @@
 
 v0.1.0 is an Early Access release for Multiplayer Samples Co-op.
 
-It requires and supports Unity v2020LTS and Unity MLAPI v0.1.0.
+It requires and supports Unity v2020LTS and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
 
 ### New features
 
