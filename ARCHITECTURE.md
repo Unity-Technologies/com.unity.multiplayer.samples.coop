@@ -24,7 +24,7 @@ This approach works, but requires some care:
 The Boss Room network connection flow is owned by the `GameNetPortal`:
  - The Host will invoke either `GameNetPortal.StartHost` or `StartRelayHost` (if Photon relay is being used). 
  - The client will invoke either `ClientGameNetPortal.StartClient` or `StartClientRelayMode`. 
- - Boss Room's own connection validation logic is performed in `ServerGameNetPortal.ApprovalCheck`, which is plugged in to the `NetworkingManager`'s connection approval callback. Here some basic information about the connection is recorded (including a GUID, to facilitate future reconnect logic), and success or failure is returned. In the future, additional game-level failures will be detected and returned (such as a `ServerFull` scenario). 
+ - Boss Room's own connection validation logic is performed in `ServerGameNetPortal.ApprovalCheck`, which is plugged in to the `NetworkingManager`'s connection approval callback. Here some basic information about the connection is recorded (including a GUID, to facilitate future reconnect logic), and success or failure is returned. 
 
 ## Data model
 Game data in Boss Room is defined in `ScriptableObjects`. The `ScriptableObjects` are organized by enum and made available in a singleton class: the `GameDataSource`, in particular `ActionDescription` and `CharacterData`. `Actions` represent discrete verbs (like swinging a weapon, or reviving someone), and are substantially data driven. Characters represent both the different player classes, and also monsters, and represent basic details like health, as well as what "Skill" Actions are available to each Character.
