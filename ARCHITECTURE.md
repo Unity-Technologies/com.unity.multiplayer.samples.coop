@@ -11,7 +11,7 @@ Boss Room uses a Host model for its server. This means one client acts as a serv
 
 A common pitfall of this pattern is writing the game in such a way that it is virtually impossible to adapt to a dedicated server model. 
 
-We attempted to combat this by using a compositional model for our client and server logic (rather than having it all combined is single modules):
+We attempted to resolve this by using a compositional model for our client and server logic, rather than having it all combined is single modules:
  - On the Host, each GameObject has `{Server, Shared, Client}` components. 
  - If you start up the game as a dedicated server, the client components will disable themselves, leaving you with `{Server, Shared}` components.
  - If you start up as a client, you get the complementary set of `{Shared, Client}` components. 
