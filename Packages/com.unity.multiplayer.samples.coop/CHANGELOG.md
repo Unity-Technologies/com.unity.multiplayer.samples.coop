@@ -27,7 +27,7 @@ The following issues may occur for access and games:
 * You may encounter a game error due to a Unity MLAPI exception. Not all MLAPI exceptions are fully exposed few informing users.
 * The Photon Transport currently generates some errors in the Player log related to the `PhotonCryptoPlugin`.
 * The welcome player message in the lobby indicates P2 (player 2) regardless of your generated name. Currently the Character Select scene displays “Player1” and “P1” in two locations, where it is intended that the user’s name be displayed.  
-* The spawner portal system requires updates to better handle wave spawning logic and destroying crystal game elements.
+* The spawner portal does not work in this release.
 * Players may not reliably play another match when selecting **Return to Main Menu** during the post-game scene. This may be due to states not properly clearing.
 * Some actions may feel unresponsive and require action anticipation animations.
 The following issues may occur in the graphics and gameplay actions:
