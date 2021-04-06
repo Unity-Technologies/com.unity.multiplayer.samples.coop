@@ -32,8 +32,8 @@ Game data in Boss Room is defined in `ScriptableObjects`. The `ScriptableObjects
 
 ## Transports
 Currently two network transport mechanisms are supported: 
- - IP/port connection;
- - Relay connection;
+ - IP/port connection
+ - Relay connection
 
 In the former, Client users must know the IP and port they are connecting to, and establish connection directly.
 
