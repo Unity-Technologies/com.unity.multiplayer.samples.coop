@@ -3,14 +3,14 @@
 
 | 🛑  IMPORTANT - Early Access 🛑  | 
 | -- |
-| Boss Room: Small Scale Co-op Sample is built on top of the MLAPI package. 
+| Boss Room: Small Scale Co-op Sample is built on top of the MLAPI package. The MLAPI package  is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
 
 Boss Room is a fully functional co-op multiplayer RPG made with Unity MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
 Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 > __IMPORTANT__:
-> - Boss Room supports all major Unity platforms. To use the WebGL platform a custom WebGL transport based on web sockets is needed.
+> - Boss Room supports those platforms supported by MLAPI (Windows and Mac). To use the WebGL platform a custom WebGL transport based on web sockets is needed.
 > - Boss Room is compatible with Unity 2020.3 onwards.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
 
