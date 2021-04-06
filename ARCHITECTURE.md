@@ -18,7 +18,7 @@ We attempted to resolve this by using a compositional model for our client and s
 
 This approach works, but requires some care: 
  - if you have server and clients of a shared base class, you need to remember that the shared code will run twice on the host; 
- - you also need to take care about code executing in `Start` and `Awake`: if this code runs contemporaneously with the `NetworkingManager`'s initialization, it may not know yet whether the player is a host or client.
+ - Be careful with code executing in `Start` and `Awake`: If this code runs contemporaneously with the `NetworkingManager`'s initialization, it may not know yet if the player is a host or client.
  - We judged this extra complexity worth it, as it provides a clear road-map to supporting true dedicated servers. 
 
 ## Connection flow
