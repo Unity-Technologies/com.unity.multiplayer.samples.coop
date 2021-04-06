@@ -11,7 +11,7 @@ Our intention is that you can use everything in this project as a starting point
 
 > __IMPORTANT__:
 > - Boss Room supports those platforms supported by MLAPI (Windows and Mac). To use the WebGL platform a custom WebGL transport based on web sockets is needed.
-> - Boss Room is compatible with Unity 2020.3 onwards.
+> - Boss Room is compatible with Unity 2020.3 and later.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
 
 
