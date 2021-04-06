@@ -10,7 +10,7 @@ Boss Room is a fully functional co-op multiplayer RPG made with Unity MLAPI. It 
 Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 > __IMPORTANT__:
-> - Boss Room supports those platforms supported by MLAPI (Windows and Mac). To use the WebGL platform a custom WebGL transport based on web sockets is needed.
+> - Boss Room supports those platforms supported by MLAPI (Windows and Mac).
 > - Boss Room is compatible with Unity 2020.3 and later.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
 
