@@ -73,5 +73,5 @@ Each scene has exactly one `GameStateBehaviour` (a specialization of `MLAPI.Netw
  - Client->server RPC, containing target destination. 
  - Anticipatory animation plays immediately on client. 
  - Server performs pathfinding.
- - Once pathfinding is finished, server representation of entity starts updating it's NetworkVariables at 30fps. Unit visuals are in a separate GameObject hierarchy and is connected to the networked GO via a spring, to smooth out small corrections.
- - Visuals game obejct never outpaces the simulation game object, always slightly behind and smoothly catching up. 
+ - Once pathfinding is finished, server representation of entity starts updating it's NetworkVariables at 30fps.
+ - Visuals GameObject never outpaces the simulation GameObject, always slightly behind and interpolating towards the networked position and rotation.
