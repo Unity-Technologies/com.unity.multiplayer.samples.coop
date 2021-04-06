@@ -38,7 +38,7 @@ If you would like to implement a new feature then consider what kind of change i
 
 ### <a name="docs"></a> Documentation
 
-We accept changes and improvements to our documentation. Just submit a Pull Request with your proposed changes as described in the [Pull Request Submission Guidelines](#submit-pr).
+We accept changes and improvements to our documentation through the [MLAPI Documentation repo](https://github.com/Unity-Technologies/com.unity.multiplayer.docs).
 
 ## <a name="cla"></a> Contributor License Agreements
 
