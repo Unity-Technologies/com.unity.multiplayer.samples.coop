@@ -2,7 +2,6 @@
 This document describes the high-level architecture of Boss Room.
 If you want to familiarize yourself with the code base, you are just in the right place!
 
-Boss Room is an 8-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. The control model is click-to-move, with skills triggered by mouse button or hotkey. 
 
 Code is organized into three separate assemblies: `Client`, `Server` and `Shared` (which, as it's name implies, contains shared functionality that both client and the server require).
 
