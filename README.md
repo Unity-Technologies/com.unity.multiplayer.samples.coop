@@ -10,9 +10,9 @@ Boss Room is a fully functional co-op multiplayer RPG made with Unity MLAPI. It 
 Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 > __IMPORTANT__:
-- Boss Room supports all major Unity platforms. To use the WebGL platform a custom WebGL transport based on web sockets is needed.
-- Boss Room is compatible with Unity 2020.3.0f1.
-- Make sure to include standalone support for Windows/Mac in your installation. 
+> - Boss Room supports all major Unity platforms. To use the WebGL platform a custom WebGL transport based on web sockets is needed.
+> - Boss Room is compatible with Unity 2020.3.0f1.
+> - Make sure to include standalone support for Windows/Mac in your installation. 
 
 
 ```
@@ -50,12 +50,12 @@ In order to see the multiplayer functionality in action we can either run multip
 ---------------
 **Local multiplayer setup**
 
-First we would need a built executable.
+First we need to build an executable.
 
-To make a build in the menu bar press _File/Build Settings_ and then press **Build**.
+To build an executable  press _File/Build Settings_ in the menu bar, and then press **Build**.
 ![](Documentation/Images/BuildProject.png)
 
-After the build has completed you can launch several instances of the built executable to be able to both host and join a game.
+Once the build has completed you can launch several instances of the built executable in order to both host and join a game.
 
 > Mac users: to run multiple instances of the same app, you need to use the command line.
 > Run `open -n BossRoom.app`
@@ -63,7 +63,7 @@ After the build has completed you can launch several instances of the built exec
 ---------------
 **Multiplayer over internet**
 
-In order to play over internet, we need to have a built executable that is shared between all players. See the previous section.
+To play over internet, we need to build an executable that is shared between all players. See the previous section.
 
 It is possible to connect between multiple instances of the same executable OR between executables and the editor that produced said executable.
 
@@ -72,14 +72,14 @@ Running the game over internet currently requires setting up a [Photon Transport
 > Checkout our Photon-Realtime setup guide, here:
 > [Boss Room Photon Setup Guide](Documentation/Photon-Realtime/Readme.md)
 
-Alternatively you can use Port Forwarding. The wonderful https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. 
+Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs an `9998` external port to be open. 
 
 ------------------------------------------
 
 ## Exploring the project
-BossRoom is an 8-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey. 
+BossRoom is an eight-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey. 
 
-One of the 8 clients acts as the host/server. That client will use a compositional approach so that its entities have both server and client components.
+One of the eight clients acts as the host/server. That client will use a compositional approach so that its entities have both server and client components.
 
 The game is server-authoritative, with latency-masking animations. Position updates are done through NetworkedVars that sync position, rotation and movement speed. NetworkedVars and Remote Procedure Calls (RPC) endpoints are isolated in a class that is shared between the server and client specialized logic components. All game logic runs in FixedUpdate at 30 Hz, matching our network update rate. 
 
