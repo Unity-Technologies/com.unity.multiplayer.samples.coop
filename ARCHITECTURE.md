@@ -20,6 +20,7 @@ This approach works, but requires some care:
  - if you have server and clients of a shared base class, you need to remember that the shared code will run twice on the host; 
  - you also need to take care about code executing in `Start` and `Awake`: if this code runs contemporaneously with the `NetworkingManager`'s initialization, it may not know yet whether the player is a host or client.
  - We judged this extra complexity worth it, as it provides a clear road-map to supporting true dedicated servers. 
+ - Client server separation also allows not having god-classes where both client and server code are intermingled. This way, when reading server code, you do not have to mentally skip client code and vice versa. This helps making bigger classes more readable and maintainable. Please note that this pattern can be applied on a case by case basis. If your class never grows too big, having a single `NetworkBehaviour` is perfectly fine.
 
 ## Connection flow
 The Boss Room network connection flow is owned by the `GameNetPortal`:
