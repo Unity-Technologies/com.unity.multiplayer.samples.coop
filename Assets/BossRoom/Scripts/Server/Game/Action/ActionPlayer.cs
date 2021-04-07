@@ -15,6 +15,8 @@ namespace BossRoom.Server
 
         private List<Action> m_NonBlockingActions;
 
+        private Dictionary<ActionType, float> m_LastUsedTimestamps;
+
         /// <summary>
         /// To prevent the action queue from growing without bound, we cap its play time to this number of seconds. We can only ever estimate
         /// the time-length of the queue, since actions are allowed to block indefinitely. But this is still a useful estimate that prevents
@@ -30,6 +32,7 @@ namespace BossRoom.Server
             m_Parent = parent;
             m_Queue = new List<Action>();
             m_NonBlockingActions = new List<Action>();
+            m_LastUsedTimestamps = new Dictionary<ActionType, float>();
         }
 
         /// <summary>
@@ -109,6 +112,16 @@ namespace BossRoom.Server
         {
             if (m_Queue.Count > 0)
             {
+                float reuseTime = m_Queue[0].Description.ReuseTimeSeconds;
+                if (   reuseTime > 0
+                    && m_LastUsedTimestamps.TryGetValue(m_Queue[0].Description.ActionTypeEnum, out float lastTimeUsed)
+                    && Time.time - lastTimeUsed < reuseTime)
+                {
+                    // we've already started one of these too recently
+                    AdvanceQueue(false); // note: this will call StartAction() recursively if there's more stuff in the queue ...
+                    return;              // ... so it's important not to try to do anything more here
+                }
+
                 int index = SynthesizeTargetIfNecessary(0);
                 SynthesizeChaseIfNecessary(index);
 
@@ -116,17 +129,20 @@ namespace BossRoom.Server
                 bool play = m_Queue[0].Start();
                 if (!play)
                 {
-                    //actions that exited out in the "Start" method will not have their End method called, by design.
-                    AdvanceQueue(false);
+                    AdvanceQueue(false); // note: this will call StartAction() recursively if there's more stuff in the queue ...
+                    return;              // ... so it's important not to try to do anything more here
                 }
 
-                if( m_Queue.Count > 0 && m_Queue[0].Description.ExecTimeSeconds==0 &&
-                    m_Queue[0].Description.BlockingMode==ActionDescription.BlockingModeType.OnlyDuringExecTime)
+                // remember that we successfully used this Action!
+                m_LastUsedTimestamps[m_Queue[0].Description.ActionTypeEnum] = Time.time;
+
+                if (m_Queue[0].Description.ExecTimeSeconds==0 && m_Queue[0].Description.BlockingMode== BlockingMode.OnlyDuringExecTime)
                 {
                     //this is a non-blocking action with no exec time. It should never be hanging out at the front of the queue (not even for a frame),
                     //because it could get cleared if a new Action came in in that interval.
                     m_NonBlockingActions.Add(m_Queue[0]);
-                    AdvanceQueue(false);
+                    AdvanceQueue(false); // note: this will call StartAction() recursively if there's more stuff in the queue ...
+                    return;              // ... so it's important not to try to do anything more here
                 }
             }
         }
