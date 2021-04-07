@@ -36,9 +36,7 @@ namespace BossRoom.Visual
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
 
             // animate shooting the projectile
-            // FIXME: remove this Play() call, and return to SetTrigger(), when mage-bolt reuse time situation is addressed
-            m_Parent.OurAnimator.Play("Attack1", 1, 0f);
-            //m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            m_Parent.OurAnimator.SetTrigger(Description.Anim);
 
             return true;
         }
