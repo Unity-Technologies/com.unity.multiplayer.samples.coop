@@ -26,6 +26,7 @@ namespace BossRoom.Client
             public GameObject shoulderLeft;
             public Visual.AnimatorTriggeredSpecialFX specialFx; // should be a component on the same GameObject as the Animator!
             public AnimatorOverrideController animatorOverrides; // references a separate stand-alone object in the project
+            private List<Renderer> m_CachedRenderers;
 
             public void SetFullActive(bool isActive)
             {
@@ -43,24 +44,34 @@ namespace BossRoom.Client
                 shoulderLeft.SetActive(isActive);
             }
 
-            public List<GameObject> GetAllBodyParts()
+            public List<Renderer> GetAllBodyParts()
             {
-                return new List<GameObject>()
+                if (m_CachedRenderers == null)
                 {
-                    ears,
-                    head,
-                    mouth,
-                    hair,
-                    eyes,
-                    torso,
-                    gearRightHand,
-                    gearLeftHand,
-                    handRight,
-                    handLeft,
-                    shoulderRight,
-                    shoulderLeft,
-                };
+                    m_CachedRenderers = new List<Renderer>();
+                    AddRenderer(ref m_CachedRenderers, ears);
+                    AddRenderer(ref m_CachedRenderers, head);
+                    AddRenderer(ref m_CachedRenderers, mouth);
+                    AddRenderer(ref m_CachedRenderers, hair);
+                    AddRenderer(ref m_CachedRenderers, torso);
+                    AddRenderer(ref m_CachedRenderers, gearRightHand);
+                    AddRenderer(ref m_CachedRenderers, gearLeftHand);
+                    AddRenderer(ref m_CachedRenderers, handRight);
+                    AddRenderer(ref m_CachedRenderers, handLeft);
+                    AddRenderer(ref m_CachedRenderers, shoulderRight);
+                    AddRenderer(ref m_CachedRenderers, shoulderLeft);
+                }
+                return m_CachedRenderers;
             }
+
+            private void AddRenderer(ref List<Renderer> rendererList, GameObject bodypartGO)
+            {
+                if (!bodypartGO) { return; }
+                var bodyPartRenderer = bodypartGO.GetComponent<Renderer>();
+                if (!bodyPartRenderer) { return; }
+                rendererList.Add(bodyPartRenderer);
+            }
+
         }
 
         [SerializeField]
@@ -187,19 +198,13 @@ namespace BossRoom.Client
         private void SetOverrideMaterial(int modelIdx, Material overrideMaterial)
         {
             ClearOverrideMaterial(); // just sanity-checking; this should already have been called!
-            foreach (var bodyPartGO in m_CharacterModels[modelIdx].GetAllBodyParts())
+            foreach (var bodypart in m_CharacterModels[modelIdx].GetAllBodyParts())
             {
-                if (!bodyPartGO)
+                if (bodypart)
                 {
-                    continue;
+                    m_OriginalMaterials[bodypart] = bodypart.material;
+                    bodypart.material = overrideMaterial;
                 }
-                var renderer = bodyPartGO.GetComponent<Renderer>();
-                if (!renderer)
-                {
-                    continue;
-                }
-                m_OriginalMaterials[renderer] = renderer.material;
-                renderer.material = overrideMaterial;
             }
         }
 
