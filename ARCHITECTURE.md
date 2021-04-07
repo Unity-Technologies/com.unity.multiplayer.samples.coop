@@ -50,6 +50,20 @@ For an in-depth overview of the project's architecture please check out our [ARC
  - Once path-plan is finished, server representation of entity starts updating its NetworkedTransform at 30fps. Graphics is on a separate GO and is connected to the networked GO via a spring, to smooth out small corrections.
  - Graphics GO never passes the simulation GO; if it catches up to the sim due to a network delay, the user will see a hitch. 
 
+### Transports
+
+Boss Room provides players with two ways to connect to a server.
+
+- IP based: The clients connect directy to a host via IP address. This will only work if both are in the same local are network or if the host forwards ports.
+- Relay Based: The clients and the host connect to a relay server with a room key and run all traffic over this relay server.
+
+To allow for both of these options to be chosen at runtime we created `TransportPicker`. `Transport` picker allows to chose a ip based and a relay based transport and will hook up the game UI to use those transports. The transport field in the `NetworkManager` will be ignored. Currently we support the following transports:
+- **UNet(IP):** UNet is the default MLAPI transport and the default IP transport for Boss Room.
+- **LiteNetLib(IP):** We use LiteNetLib in Boss Room because it has a built in way to simulate latency which is useful for spotting networking issues early during development.
+- **Photon Realtime (Relay):** Photon Realtime is a relay transport using the [Photon Realtime Service](https://www.photonengine.com/Realtime).
+
+To add new transport in the project parts of `GameNetPortal` and `ClientGameNetPortal` (transport switches) need to be extended.
+
 ### Navigation System
 
 #### Building a navigation mesh

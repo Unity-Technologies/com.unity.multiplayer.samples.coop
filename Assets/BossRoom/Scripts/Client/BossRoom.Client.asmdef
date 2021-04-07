@@ -5,8 +5,8 @@
         "Unity.Multiplayer.MLAPI.Runtime",
         "BossRoom.Shared",
         "Cinemachine",
-        "LiteNEt MLAPI Transport",
         "Photon Realtime MLAPI Transport",
+        "LiteNetLib MLAPI Transport",
         "Unity.TextMeshPro"
     ],
     "includePlatforms": [],

@@ -12,8 +12,11 @@ namespace BossRoom.Visual
     public class PostGameUI : MonoBehaviour
     {
         [SerializeField]
-        private RawImage m_Background;
+        private Image m_EndMessage;
 
+        [SerializeField]
+        private Light m_SceneLight;
+		
         [SerializeField]
         private TextMeshProUGUI m_WinEndMessage;
 
@@ -28,6 +31,12 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private PostGameData m_PostGameData;
+
+        [SerializeField]
+        private Color m_WinLightColor;
+
+        [SerializeField]
+        private Color m_LoseLightColor;
 
         void Start()
         {
@@ -57,13 +66,13 @@ namespace BossRoom.Visual
             // Set end message and background color based last game outcome
             if (m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Won )
             {
-                m_Background.color = Color.white;
+                m_SceneLight.color = m_WinLightColor;
                 m_WinEndMessage.gameObject.SetActive(true);
                 m_LoseGameMessage.gameObject.SetActive(false);
             }
             else if( m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Lost )
             {
-                m_Background.color = new Color(1.0f, 0.5f, 0.5f);
+                m_SceneLight.color = m_LoseLightColor;
                 m_WinEndMessage.gameObject.SetActive(false);
                 m_LoseGameMessage.gameObject.SetActive(true);
             }

@@ -3,6 +3,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using MLAPI;
 using MLAPI.Transports;
+using MLAPI.Transports.LiteNetLib;
+using MLAPI.Transports.PhotonRealtime;
 using UnityEngine.Assertions;
 
 namespace BossRoom.Scripts.Editor
@@ -26,7 +28,7 @@ namespace BossRoom.Scripts.Editor
                 {
                     // adding this preprocessor directive check since LiteNetLib only injects latency in #DEBUG
                     #if DEBUG
-                    case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                    case LiteNetLibTransport liteNetLibTransport:
                         m_ArtificialLatencyEnabled = liteNetLibTransport.SimulatePacketLossChance > 0 ||
                             liteNetLibTransport.SimulateMinLatency > 0 ||
                             liteNetLibTransport.SimulateMaxLatency > 0;
