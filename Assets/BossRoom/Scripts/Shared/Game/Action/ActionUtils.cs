@@ -1,5 +1,6 @@
 using UnityEngine;
 using MLAPI.Spawning;
+using UnityEngine.Assertions;
 
 namespace BossRoom
 {
@@ -10,6 +11,12 @@ namespace BossRoom
         // cache layer IDs (after first use). -1 is a sentinel value meaning "uninitialized"
         private static int s_layer_PCs = -1;
         private static int s_layer_NPCs = -1;
+        private static int s_layer_Ground = -1;
+
+        /// <summary>
+        /// When doing line-of-sight checks we assume the characters' "eyes" are at this height above their transform
+        /// </summary>
+        private static Vector3 s_CharacterEyelineOffset = new Vector3(0, 1, 0);
 
         /// <summary>
         /// Does a melee foe hit detect.
@@ -79,6 +86,40 @@ namespace BossRoom
 
             var targetable = targetChar.GetComponent<ITargetable>();
             return targetable != null && targetable.IsValidTarget;
+        }
+
+
+        /// <summary>
+        /// Given the coordinates of two entities, checks to see if there is an obstacle between them.
+        /// (Since character coordinates are beneath the feet of the visual avatar, we add a small amount of height to
+        /// these coordinates to simulate their eye-line.)
+        /// </summary>
+        /// <param name="character1Pos">first character's position</param>
+        /// <param name="character2Pos">second character's position</param>
+        /// <param name="missPos">the point where an obstruction occurred (or if no obstruction, this is just character2Pos)</param>
+        /// <returns>true if no obstructions, false if there is a Ground-layer object in the way</returns>
+        public static bool HasLineOfSight(Vector3 character1Pos, Vector3 character2Pos, out Vector3 missPos)
+        {
+            if (s_layer_Ground == -1)
+                s_layer_Ground = LayerMask.NameToLayer("Ground");
+            int mask = 1 << s_layer_Ground;
+
+            character1Pos += s_CharacterEyelineOffset;
+            character2Pos += s_CharacterEyelineOffset;
+            var rayDirection = character2Pos - character1Pos;
+            var distance = rayDirection.magnitude;
+
+            var numHits = Physics.RaycastNonAlloc(new Ray(character1Pos, rayDirection), s_Hits, distance, mask);
+            if (numHits == 0)
+            {
+                missPos = character2Pos;
+                return true;
+            }
+            else
+            {
+                missPos = s_Hits[0].point;
+                return false;
+            }
         }
 
     }
