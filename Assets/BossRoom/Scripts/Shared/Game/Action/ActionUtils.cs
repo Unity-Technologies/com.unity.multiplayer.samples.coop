@@ -16,7 +16,7 @@ namespace BossRoom
         /// <summary>
         /// When doing line-of-sight checks we assume the characters' "eyes" are at this height above their transform
         /// </summary>
-        private static Vector3 s_CharacterEyelineOffset = new Vector3(0, 1, 0);
+        private static readonly Vector3 s_CharacterEyelineOffset = new Vector3(0, 1, 0);
 
         /// <summary>
         /// Does a melee foe hit detect.
