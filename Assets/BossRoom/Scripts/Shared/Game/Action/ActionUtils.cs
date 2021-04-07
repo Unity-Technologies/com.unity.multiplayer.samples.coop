@@ -16,7 +16,7 @@ namespace BossRoom
         /// <summary>
         /// When doing line-of-sight checks we assume the characters' "eyes" are at this height above their transform
         /// </summary>
-        private static readonly Vector3 s_CharacterEyelineOffset = new Vector3(0, 1, 0);
+        private static readonly Vector3 k_CharacterEyelineOffset = new Vector3(0, 1, 0);
 
         /// <summary>
         /// Does a melee foe hit detect.
@@ -104,8 +104,8 @@ namespace BossRoom
                 s_layer_Ground = LayerMask.NameToLayer("Ground");
             int mask = 1 << s_layer_Ground;
 
-            character1Pos += s_CharacterEyelineOffset;
-            character2Pos += s_CharacterEyelineOffset;
+            character1Pos += k_CharacterEyelineOffset;
+            character2Pos += k_CharacterEyelineOffset;
             var rayDirection = character2Pos - character1Pos;
             var distance = rayDirection.magnitude;
 
