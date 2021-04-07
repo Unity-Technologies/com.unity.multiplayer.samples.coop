@@ -4,6 +4,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -13,11 +14,11 @@ namespace BossRoom.Visual
     public class PopupPanel : MonoBehaviour
     {
         [SerializeField]
-        private Text m_TitleText;
+        private TextMeshProUGUI m_TitleText;
         [SerializeField]
-        private Text m_MainText;
+        private TextMeshProUGUI m_MainText;
         [SerializeField]
-        private Text m_SubText;
+        private TextMeshProUGUI m_SubText;
         [SerializeField]
         [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
         private GameObject m_ReconnectingImage;
@@ -33,7 +34,7 @@ namespace BossRoom.Visual
         [SerializeField]
         private Button m_ConfirmationButton;
         [SerializeField]
-        private Text m_ConfirmationText;
+        private TextMeshProUGUI m_ConfirmationText;
         [SerializeField]
         [Tooltip("This Button appears for popups that ask for player inputs")]
         private Button m_CancelButton;
@@ -135,6 +136,9 @@ namespace BossRoom.Visual
         /// </summary>
         private void OnOnlineModeDropdownChanged(int value)
         {
+            // activate this so that it is always activated unless entering as relay host
+            m_InputField.gameObject.SetActive(true);
+
             if (value == 0)
             {
                 // Ip host
@@ -147,8 +151,20 @@ namespace BossRoom.Visual
             {
                 if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
                 {
-                    // If there is no photon app id set tell the user they need to install
-                    SetupNotifierDisplay("Photon Realtime not Setup!", "Follow the instructions in the readme to setup Photon Realtime and use relay mode.", false, true);
+                    if (Application.isEditor)
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
+                            "to setup Photon Realtime and use relay mode.", false, true);
+                    }
+                    else
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project " +
+                            "by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
+                    }
                     return;
                 }
 
@@ -158,6 +174,7 @@ namespace BossRoom.Visual
                 if (m_EnterAsHost)
                 {
                     m_InputField.text = GenerateRandomRoomKey();
+                    m_InputField.gameObject.SetActive(false);
                 }
                 else
                 {

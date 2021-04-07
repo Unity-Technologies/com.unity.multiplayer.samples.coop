@@ -1,8 +1,8 @@
 using System;
-using System.Net.Sockets;
 using MLAPI.Serialization.Pooled;
 using MLAPI.Transports;
 using MLAPI;
+using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
 
@@ -167,7 +167,7 @@ namespace BossRoom
             //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             switch (chosenTransport)
             {
-                case LiteNetLibTransport.LiteNetLibTransport liteNetLibTransport:
+                case LiteNetLibTransport liteNetLibTransport:
                     liteNetLibTransport.Address = ipaddress;
                     liteNetLibTransport.Port = (ushort)port;
                     break;

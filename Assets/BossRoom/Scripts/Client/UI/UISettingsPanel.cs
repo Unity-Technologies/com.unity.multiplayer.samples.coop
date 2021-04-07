@@ -31,14 +31,14 @@ namespace BossRoom.Client
 
         private void OnMasterVolumeSliderChanged(float newValue)
         {
-            AudioListener.volume = newValue;
             ClientPrefs.SetMasterVolume(newValue);
+            AudioMixerConfigurator.Instance.Configure();
         }
 
         private void OnMusicVolumeSliderChanged(float newValue)
         {
-            ClientMusicPlayer.Instance.SetMusicVolume(newValue);
             ClientPrefs.SetMusicVolume(newValue);
+            AudioMixerConfigurator.Instance.Configure();
         }
     }
 

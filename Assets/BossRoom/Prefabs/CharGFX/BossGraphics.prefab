@@ -634,7 +634,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2305735426247598617}
-  m_LocalRotation: {x: -0.000000066579034, y: -0.000000043711385, z: -0.00000011029043, w: 1}
+  m_LocalRotation: {x: -0.000000066579034, y: -0.000000043711385, z: -0.00000011029043,
+    w: 1}
   m_LocalPosition: {x: -15.063482, y: -0.56256866, z: -0.0000076293945}
   m_LocalScale: {x: 100, y: 99.999985, z: 100}
   m_Children: []
@@ -1976,7 +1977,7 @@ Animator:
   m_GameObject: {fileID: 6839301660383890230}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
-  m_Controller: {fileID: 9100000, guid: 81ba9d484ee6d174a8aeb3af411babc4, type: 2}
+  m_Controller: {fileID: 22100000, guid: 8edd57abbb5551d47b79195d80822b16, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -2018,7 +2019,8 @@ MonoBehaviour:
   m_EventsOnNodeEntry:
   - m_AnimatorNodeName: Action - Boss Trample
     m_AnimatorNodeNameHash: -1491039896
-    m_Prefab: {fileID: 0}
+    m_Prefab: {fileID: -1433333703484781611, guid: 1333b84cd80da3e4a820009415068d44,
+      type: 3}
     m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_SoundEffect: {fileID: 8300000, guid: a3d48c8599f0d584abc8ea603587d496, type: 3}
@@ -2043,6 +2045,36 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 1
+  - m_AnimatorNodeName: Stunned
+    m_AnimatorNodeNameHash: -449490811
+    m_Prefab: {fileID: -7841978760598146115, guid: 1fab07feb34d8c94c96944f0124d92e3,
+      type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 3d6f2e33acb1e8f4b9d829e245c62e16, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: HitReact1
+    m_AnimatorNodeNameHash: -1747783153
+    m_Prefab: {fileID: -2843690008440830094, guid: de5b665e7f32274419072e7bf4c3eff8,
+      type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 8300000, guid: 5ef809d665d13b245b559cd6170f5794, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: WalkRun
+    m_AnimatorNodeNameHash: -1624701500
+    m_Prefab: {fileID: -8608552164340512473, guid: 9336eb30e2a836544bfd5b5985fd0573,
+      type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_SoundEffect: {fileID: 0}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
   m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: 6900827550167648780}
@@ -2056,7 +2088,8 @@ AudioSource:
   m_GameObject: {fileID: 6839301660383890230}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -6199682581367681880, guid: e39f39bfdfb22b541bbc115192fc2809,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -2179,7 +2212,8 @@ AudioSource:
   m_GameObject: {fileID: 6839301660383890230}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -6199682581367681880, guid: e39f39bfdfb22b541bbc115192fc2809,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -2309,9 +2343,11 @@ MonoBehaviour:
   m_AnimatorVariable: Speed
   m_AnimatorVariableHash: -823668238
   m_AudioSource: {fileID: -2129752889114835779}
-  m_WalkFootstepAudioClip: {fileID: 8300000, guid: 58dfe905701797d4aa32f946d9c41be5, type: 3}
+  m_WalkFootstepAudioClip: {fileID: 8300000, guid: 58dfe905701797d4aa32f946d9c41be5,
+    type: 3}
   m_WalkFootstepVolume: 1
-  m_RunFootstepAudioClip: {fileID: 8300000, guid: 81079ef149d08774ab3eadab80944fa0, type: 3}
+  m_RunFootstepAudioClip: {fileID: 8300000, guid: 81079ef149d08774ab3eadab80944fa0,
+    type: 3}
   m_RunFootstepVolume: 1
   m_WalkingPoint: 0.6
   m_SilentPoint: 0.3
@@ -2324,7 +2360,8 @@ AudioSource:
   m_GameObject: {fileID: 6839301660383890230}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
+  OutputAudioMixerGroup: {fileID: -4341177700643628062, guid: e39f39bfdfb22b541bbc115192fc2809,
+    type: 2}
   m_audioClip: {fileID: 0}
   m_PlayOnAwake: 0
   m_Volume: 1
