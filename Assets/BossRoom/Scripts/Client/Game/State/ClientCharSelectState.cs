@@ -132,7 +132,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.ArrayChangedEvent -= OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
             }
             if (Instance == this)
                 Instance = null;
@@ -150,7 +150,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.ArrayChangedEvent += OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
             }
         }
 
@@ -166,7 +166,7 @@ namespace BossRoom.Client
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
-        private void OnLobbyPlayerStateChanged(CharSelectData.LobbyPlayerArray lobbyArray )
+        private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> lobbyArray )
         {
             UpdateSeats();
 
