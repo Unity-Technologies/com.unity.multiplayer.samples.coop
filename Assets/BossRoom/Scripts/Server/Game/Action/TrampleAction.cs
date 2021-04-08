@@ -185,8 +185,8 @@ namespace BossRoom.Server
                 {
                     damageable.ReceiveHP(this.m_Parent, -Description.SplashDamage);
 
-                    // lastly, a special case: if the boss runs into certain breakables, he is stunned!
-                    if ((damageable.GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.StunBossOnImpact) == IDamageable.SpecialDamageFlags.StunBossOnImpact)
+                    // lastly, a special case: if the trampler runs into certain breakables, they are stunned!
+                    if ((damageable.GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.StunOnTrample) == IDamageable.SpecialDamageFlags.StunOnTrample)
                     {
                         StunSelf();
                     }

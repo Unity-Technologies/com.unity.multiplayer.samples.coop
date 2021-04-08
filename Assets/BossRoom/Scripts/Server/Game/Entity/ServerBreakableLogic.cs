@@ -21,6 +21,7 @@ namespace BossRoom.Server
         [SerializeField]
         Collider m_Collider;
 
+        [SerializeField]
         [Tooltip("Indicate which special interaction behaviors are needed for this breakable")]
         IDamageable.SpecialDamageFlags m_SpecialDamageFlags;
 
@@ -50,6 +51,16 @@ namespace BossRoom.Server
         {
             if (HP < 0)
             {
+                if (inflicter && !inflicter.IsNpc)
+                {
+                    bool isNotDamagedByPlayers = (GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.NotDamagedByPlayers) == IDamageable.SpecialDamageFlags.NotDamagedByPlayers;
+                    if (isNotDamagedByPlayers)
+                    {
+                        // a player tried to damage us, but we are immune to player damage!
+                        return;
+                    }
+                }
+
                 if (m_NetworkHealthState)
                 {
                     m_NetworkHealthState.HitPoints.Value = Mathf.Max(m_NetworkHealthState.HitPoints.Value + HP, 0);
