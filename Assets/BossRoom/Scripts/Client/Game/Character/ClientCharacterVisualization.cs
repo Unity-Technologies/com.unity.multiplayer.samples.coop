@@ -252,7 +252,7 @@ namespace BossRoom.Visual
             SetAppearanceSwap();
         }
 
-        private void OnStealthyChanged(byte oldValue, byte newValue)
+        private void OnStealthyChanged(bool oldValue, bool newValue)
         {
             SetAppearanceSwap();
         }
@@ -261,7 +261,7 @@ namespace BossRoom.Visual
         {
             if (m_CharacterSwapper)
             {
-                if (m_NetState.IsStealthy.Value != 0 && !m_NetState.IsOwner)
+                if (m_NetState.IsStealthy.Value && !m_NetState.IsOwner)
                 {
                     // this character is in "stealth mode", so other players can't see them!
                     m_CharacterSwapper.SwapAllOff();
