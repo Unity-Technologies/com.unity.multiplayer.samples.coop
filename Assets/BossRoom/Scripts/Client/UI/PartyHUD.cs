@@ -1,6 +1,7 @@
 using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -18,7 +19,7 @@ namespace BossRoom.Visual
         private GameObject[] m_AllyPanel;
 
         [SerializeField]
-        private Text[] m_PartyNames;
+        private TextMeshProUGUI[] m_PartyNames;
 
         [SerializeField]
         private Image[] m_PartyClassSymbols;

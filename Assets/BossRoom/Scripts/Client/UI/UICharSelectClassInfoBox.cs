@@ -1,8 +1,8 @@
 using BossRoom;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 namespace BossRoom.Client
 {
@@ -17,9 +17,9 @@ namespace BossRoom.Client
     public class UICharSelectClassInfoBox : MonoBehaviour
     {
         [SerializeField]
-        private Text m_WelcomeBanner;
+        private TextMeshProUGUI m_WelcomeBanner;
         [SerializeField]
-        private Text m_ClassLabel;
+        private TextMeshProUGUI m_ClassLabel;
         [SerializeField]
         private GameObject m_HideWhenNoClassSelected;
         [SerializeField]
