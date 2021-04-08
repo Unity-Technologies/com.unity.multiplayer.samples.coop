@@ -92,16 +92,16 @@ namespace BossRoom.Server
         {
             if (buffType == BuffableValue.PercentDamageReceived)
             {
-                float pctChargedUp = GetPercentChargedUp();
+                float percentChargedUp = GetPercentChargedUp();
 
                 // the amount of damage reduction starts at 50% (for not-charged-up), then slowly increases to 100% depending on how charged-up we got
-                float pctDamageReduction = 0.5f + ((pctChargedUp * pctChargedUp) / 2);
+                float percentDamageReduction = 0.5f + ((percentChargedUp * percentChargedUp) / 2);
 
                 // Now that we know how much damage to reduce it by, we need to set buffedValue to the inverse (because
                 // it's looking for how much damage to DO, not how much to REDUCE BY). Also note how we don't just SET
                 // buffedValue... we multiply our buff in with the current value. This lets our Action "stack"
                 // with any other Actions that also alter this variable.)
-                buffedValue *= 1-pctDamageReduction;
+                buffedValue *= 1-percentDamageReduction;
             }
             else if (buffType == BuffableValue.ChanceToStunTramplers)
             {
