@@ -75,8 +75,12 @@ namespace BossRoom.Visual
                 }
                 else
                 {
-                    m_TargetReticule.transform.parent = null;
-                    m_TargetReticule.SetActive(false);
+                    // null check here in case the target was destroyed along with the target reticule
+                    if (m_TargetReticule != null)
+                    {
+                        m_TargetReticule.transform.parent = null;
+                        m_TargetReticule.SetActive(false);
+                    }
                 }
             }
 

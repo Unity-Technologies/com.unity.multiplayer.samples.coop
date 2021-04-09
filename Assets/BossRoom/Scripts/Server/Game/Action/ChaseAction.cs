@@ -60,6 +60,13 @@ namespace BossRoom.Server
         /// </summary>
         private bool StopIfDone()
         {
+            if(m_Target == null )
+            {
+                //if the target disappeared on us, then just stop.
+                Cancel();
+                return true;
+            }
+
             float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
             if ((m_Data.Amount * m_Data.Amount) > distToTarget2)
             {

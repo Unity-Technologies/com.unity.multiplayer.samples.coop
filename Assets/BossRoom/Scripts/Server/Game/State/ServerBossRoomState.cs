@@ -44,7 +44,7 @@ namespace BossRoom.Server
         private ServerGameNetPortal m_ServerNetPortal;
 
         // Wait time constants for switching to post game after the game is won or lost
-        private const float k_WinDelay = 5.0f;
+        private const float k_WinDelay = 7.0f;
         private const float k_LoseDelay = 2.5f;
 
         /// <summary>
@@ -202,6 +202,7 @@ namespace BossRoom.Server
                 // Check the life state of all players in the scene
                 foreach (var p in NetworkManager.Singleton.ConnectedClientsList )
                 {
+                    if (p.PlayerObject == null) { continue; }
                     // if any player is alive just retrun
                     var netState = p.PlayerObject.GetComponent<NetworkCharacterState>();
                     if ( netState.NetworkLifeState.Value == LifeState.Alive ) { return; }

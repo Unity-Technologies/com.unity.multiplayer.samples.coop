@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7019901313856816375}
   - component: {fileID: 7061959325340752229}
   - component: {fileID: 3946375560253007557}
+  - component: {fileID: 1747537897787916121}
   m_Layer: 8
   m_Name: env_floor_barrier_1
   m_TagString: Untagged
@@ -95,3 +96,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.0161152, y: 1.0000005, z: 4.000001}
   m_Center: {x: 0.5080563, y: 0.50512767, z: 2.0000005}
+--- !u!208 &1747537897787916121
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6858229082375244730}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.508, y: 0.5, z: 2}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0.508, y: 0.505, z: 2}
+  m_TimeToStationary: 0.5

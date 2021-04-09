@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
@@ -37,7 +38,7 @@ namespace BossRoom.Visual
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         /// Player characters need to report health changes and chracter info to the PartyHUD
-        private Visual.PartyHUD m_PartyHUD;
+        private PartyHUD m_PartyHUD;
 
         private float m_SmoothedSpeed;
 
@@ -45,8 +46,12 @@ namespace BossRoom.Visual
         int m_FaintedStateTriggerID;
         int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
+        int m_AnticipateMoveTriggerID;
+        int m_SpeedVariableID;
 
-        public bool CanPerformActions { get { return m_NetState.CanPerformActions;  } }
+        event Action Destroyed;
+
+       public bool CanPerformActions { get { return m_NetState.CanPerformActions;  } }
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -60,6 +65,8 @@ namespace BossRoom.Visual
             m_AliveStateTriggerID = Animator.StringToHash("StandUp");
             m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
             m_DeadStateTriggerID = Animator.StringToHash("Dead");
+            m_AnticipateMoveTriggerID = Animator.StringToHash("AnticipateMove");
+            m_SpeedVariableID = Animator.StringToHash("Speed");
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
@@ -74,10 +81,6 @@ namespace BossRoom.Visual
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
-            // With this call, players connecting to a game with down imps will see all of them do the "dying" animation.
-            // we should investigate for a way to have the imps already appear as down when connecting.
-            // todo gomps-220
-            OnLifeStateChanged(m_NetState.NetworkLifeState.Value, m_NetState.NetworkLifeState.Value);
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
@@ -88,9 +91,6 @@ namespace BossRoom.Visual
             transform.position = parentMovement.NetworkPosition.Value;
             transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
 
-            // sync our animator to the most up to date version received from server
-            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
-
             // listen for char-select info to change (in practice, this info doesn't
             // change, but we may not have the values set yet) ...
             m_NetState.CharacterAppearance.OnValueChanged += OnCharacterAppearanceChanged;
@@ -100,6 +100,9 @@ namespace BossRoom.Visual
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
+
+            // sync our animator to the most up to date version received from server
+            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
 
             if (!m_NetState.IsNpc)
             {
@@ -126,6 +129,19 @@ namespace BossRoom.Visual
                 else
                 {
                     m_PartyHUD.SetAllyData(m_NetState);
+
+                    // getting our parent's NetworkObjectID for PartyHUD removal on Destroy
+                    var parentNetworkObjectID = m_NetState.NetworkObjectId;
+
+                    // once this object is destroyed, remove this ally from the PartyHUD UI
+                    // NOTE: architecturally this will be refactored
+                    Destroyed += () =>
+                    {
+                        if (m_PartyHUD != null)
+                        {
+                            m_PartyHUD.RemoveAlly(parentNetworkObjectID);
+                        }
+                    };
                 }
             }
         }
@@ -139,7 +155,7 @@ namespace BossRoom.Visual
         {
             if( !IsAnimating )
             {
-                OurAnimator.SetTrigger("AnticipateMove");
+                OurAnimator.SetTrigger(m_AnticipateMoveTriggerID);
             }
         }
 
@@ -178,6 +194,8 @@ namespace BossRoom.Visual
                     sender.ClientMoveEvent -= OnMoveInput;
                 }
             }
+
+            Destroyed?.Invoke();
         }
 
         private void OnPerformHitReaction()
@@ -302,15 +320,15 @@ namespace BossRoom.Visual
         {
             get
             {
-                //layer 0 is our movement layer, and has a special base state. We detect if we are animating solely based on the Speed parameter. 
-                if (OurAnimator.GetFloat("Speed") > 0.0 )
-                {
-                    return true;
-                }
+                if( OurAnimator.GetFloat(m_SpeedVariableID) > 0.0 ) { return true; }
 
-                for (int i = 1; i < OurAnimator.layerCount; i++)
+                for( int i = 0; i < OurAnimator.layerCount; i++ )
                 {
-                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsName("Nothing")) { return true; }
+                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsTag("BaseNode"))
+                    {
+                        //we are in an active node, not the default "nothing" node.
+                        return true;
+                    }
                 }
 
                 return false;

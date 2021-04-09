@@ -4,6 +4,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -13,28 +14,32 @@ namespace BossRoom.Visual
     public class PopupPanel : MonoBehaviour
     {
         [SerializeField]
-        private Text m_TitleText;
+        private TextMeshProUGUI m_TitleText;
         [SerializeField]
-        private Text m_MainText;
+        private TextMeshProUGUI m_MainText;
         [SerializeField]
-        private Text m_SubText;
+        private TextMeshProUGUI m_SubText;
         [SerializeField]
         [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
         private GameObject m_ReconnectingImage;
         [SerializeField]
-        [Tooltip("The GameObject holding the Input field for the panel")]
-        private GameObject m_InputFieldParent;
+        [Tooltip("The GameObject holding the \"Generic\" Input field (for IP address or other address forms)")]
+        private InputField m_InputField;
         [SerializeField]
-        private GameObject m_InputBox;
+        [Tooltip("The nested Text component of m_InputField, where we stick the placeholder text")]
+        private Text m_InputFieldPlaceholderText;
+        [SerializeField]
+        [Tooltip("The Port-number input field for the panel")]
+        private InputField m_PortInputField;
         [SerializeField]
         private Button m_ConfirmationButton;
         [SerializeField]
-        private Text m_ConfirmationText;
+        private TextMeshProUGUI m_ConfirmationText;
         [SerializeField]
         [Tooltip("This Button appears for popups that ask for player inputs")]
         private Button m_CancelButton;
         [SerializeField]
-        private GameObject m_NameDisplayGO;
+        private NameDisplay m_NameDisplay;
         [SerializeField]
         private Dropdown m_OnlineModeDropdown;
 
@@ -44,12 +49,13 @@ namespace BossRoom.Visual
         string m_RelayMainText;
 
         string m_DefaultIpInput;
+        int m_DefaultPort;
 
         /// <summary>
         /// Confirm function invoked when confirm is hit on popup. The meaning of the arguments may vary by popup panel, but
-        /// in the initial case of the login popup, they represent the IP Address input, and the Player Name.
+        /// in the initial case of the login popup, they represent the IP Address, port, the Player Name, and the connection mode
         /// </summary>
-        private System.Action<string, string, OnlineMode> m_ConfirmFunction;
+        private System.Action<string, int, string, OnlineMode> m_ConfirmFunction;
 
         private const string k_DefaultConfirmText = "OK";
 
@@ -66,8 +72,9 @@ namespace BossRoom.Visual
         /// <param name="confirmationText"> Text to display on the confirmation button</param>
         /// <param name="confirmCallback">  The delegate to invoke when the player confirms.  It sends what the player input.</param>
         /// <param name="defaultIpInput">The default Ip value to show in the input field.</param>
+        /// <param name="defaultPortInput">The default Port# to show in the port-input field.</param>
         public void SetupEnterGameDisplay(bool enterAsHost, string titleText, string ipHostMainText, string relayMainText, string inputFieldText,
-            string confirmationText, System.Action<string, string, OnlineMode> confirmCallback, string defaultIpInput = "")
+            string confirmationText, System.Action<string, int, string, OnlineMode> confirmCallback, string defaultIpInput = "", int defaultPortInput = 0)
         {
             //Clear any previous settings of the Panel first
             ResetState();
@@ -75,13 +82,15 @@ namespace BossRoom.Visual
             m_EnterAsHost = enterAsHost;
 
             m_DefaultIpInput = defaultIpInput;
+            m_DefaultPort = defaultPortInput;
 
             m_IpHostMainText = ipHostMainText;
             m_RelayMainText = relayMainText;
 
             m_TitleText.text = titleText;
             m_SubText.text = string.Empty;
-            m_InputBox.GetComponent<Text>().text = inputFieldText;
+            m_InputFieldPlaceholderText.text = inputFieldText;
+            m_PortInputField.text = defaultPortInput.ToString();
             m_ConfirmFunction = confirmCallback;
 
             m_ConfirmationText.text = confirmationText;
@@ -96,18 +105,21 @@ namespace BossRoom.Visual
             m_CancelButton.onClick.AddListener(OnCancelClick);
             m_CancelButton.gameObject.SetActive(true);
 
-            m_InputFieldParent.SetActive(true);
+            m_InputField.gameObject.SetActive(true);
+            m_PortInputField.gameObject.SetActive(true);
 
-            m_NameDisplayGO.SetActive(true);
+            m_NameDisplay.gameObject.SetActive(true);
 
             gameObject.SetActive(true);
         }
 
         private void OnConfirmClick()
         {
-            var inputField = m_InputFieldParent.GetComponent<InputField>();
-            var nameDisplay = m_NameDisplayGO.GetComponent<NameDisplay>();
-            m_ConfirmFunction.Invoke(inputField.text, nameDisplay.GetCurrentName(), (OnlineMode)m_OnlineModeDropdown.value);
+            int portNum = 0;
+            int.TryParse(m_PortInputField.text, out portNum);
+            if (portNum <= 0)
+                portNum = m_DefaultPort;
+            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), (OnlineMode)m_OnlineModeDropdown.value);
         }
 
         /// <summary>
@@ -124,20 +136,35 @@ namespace BossRoom.Visual
         /// </summary>
         private void OnOnlineModeDropdownChanged(int value)
         {
-            var inputField = m_InputFieldParent.GetComponent<InputField>();
+            // activate this so that it is always activated unless entering as relay host
+            m_InputField.gameObject.SetActive(true);
 
             if (value == 0)
             {
                 // Ip host
                 m_MainText.text = m_IpHostMainText;
-                inputField.text = m_DefaultIpInput;
+                m_InputField.text = m_DefaultIpInput;
+                m_PortInputField.gameObject.SetActive(true);
+                m_PortInputField.text = m_DefaultPort.ToString();
             }
             else
             {
                 if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
                 {
-                    // If there is no photon app id set tell the user they need to install
-                    SetupNotifierDisplay("Photon Realtime not Setup!", "Follow the instructions in the readme to setup Photon Realtime and use relay mode.", false, true);
+                    if (Application.isEditor)
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
+                            "to setup Photon Realtime and use relay mode.", false, true);
+                    }
+                    else
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project " +
+                            "by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
+                    }
                     return;
                 }
 
@@ -146,12 +173,16 @@ namespace BossRoom.Visual
 
                 if (m_EnterAsHost)
                 {
-                    inputField.text = GenerateRandomRoomKey();
+                    m_InputField.text = GenerateRandomRoomKey();
+                    m_InputField.gameObject.SetActive(false);
                 }
                 else
                 {
-                    inputField.text = "";
+                    m_InputField.text = "";
                 }
+
+                m_PortInputField.gameObject.SetActive(false);
+                m_PortInputField.text = "";
             }
         }
 
@@ -180,12 +211,12 @@ namespace BossRoom.Visual
             m_TitleText.text = string.Empty;
             m_MainText.text = string.Empty;
             m_SubText.text = string.Empty;
-            var inputField = m_InputFieldParent.GetComponent<InputField>();
-            inputField.text = string.Empty;
+            m_InputField.text = string.Empty;
+            m_PortInputField.text = string.Empty;
             m_ReconnectingImage.SetActive(false);
             m_ConfirmationButton.gameObject.SetActive(false);
             m_CancelButton.gameObject.SetActive(false);
-            m_NameDisplayGO.gameObject.SetActive(false);
+            m_NameDisplay.gameObject.SetActive(false);
 
             m_OnlineModeDropdown.gameObject.SetActive(false);
             m_OnlineModeDropdown.onValueChanged.RemoveListener(OnOnlineModeDropdownChanged);
@@ -214,7 +245,8 @@ namespace BossRoom.Visual
             m_ReconnectingImage.SetActive(displayImage);
 
             m_ConfirmationButton.gameObject.SetActive(displayConfirmation);
-            m_InputFieldParent.gameObject.SetActive(false);
+            m_InputField.gameObject.SetActive(false);
+            m_PortInputField.gameObject.SetActive(false);
             gameObject.SetActive(true);
         }
     }

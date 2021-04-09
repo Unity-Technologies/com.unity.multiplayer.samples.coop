@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 namespace BossRoom.Client
 {
@@ -15,7 +16,7 @@ namespace BossRoom.Client
         [SerializeField]
         private Image m_PlayerNumberHolder;
         [SerializeField]
-        private Text m_PlayerNameHolder;
+        private TextMeshProUGUI m_PlayerNameHolder;
         [SerializeField]
         private Image m_Glow;
         [SerializeField]
