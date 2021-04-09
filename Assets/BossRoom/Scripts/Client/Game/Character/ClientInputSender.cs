@@ -20,6 +20,7 @@ namespace BossRoom.Client
         //upstream network conservation. This matters when holding down your mouse button to move. 
         private const float k_MoveSendRateSeconds = 0.05f; //20 fps.
 
+
         private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked). 
 
         private float m_LastSentMove;
@@ -32,6 +33,11 @@ namespace BossRoom.Client
         private LayerMask k_ActionLayerMask;
 
         private NetworkCharacterState m_NetworkCharacter;
+
+        /// <summary>
+        /// This event fires at the time when an action request is sent to the server. 
+        /// </summary>
+        public Action<ActionRequestData> ActionInputEvent;
 
         /// <summary>
         /// This describes how a skill was requested. Skills requested via mouse click will do raycasts to determine their target; skills requested
@@ -216,6 +222,7 @@ namespace BossRoom.Client
                 //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
                 m_LastSentMove = Time.time + k_TargetMoveTimeout;
 
+                ActionInputEvent?.Invoke(playerAction);
                 m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
             }
             else if(actionType != ActionType.GeneralTarget )
@@ -223,7 +230,10 @@ namespace BossRoom.Client
                 // clicked on nothing... perform a "miss" attack on the spot they clicked on
                 var data = new ActionRequestData();
                 PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
+
+                ActionInputEvent?.Invoke(data);
                 m_NetworkCharacter.RecvDoActionServerRPC(data);
+
             }
         }
 

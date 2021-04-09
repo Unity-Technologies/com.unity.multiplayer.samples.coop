@@ -9,14 +9,19 @@ namespace BossRoom.Visual
     /// </summary>
     public class ActionVisualization
     {
-        private List<ActionFX> m_PlayingActions;
+        private List<ActionFX> m_PlayingActions = new List<ActionFX>();
+
+        /// <summary>
+        /// Don't let anticipated actionFXs persist longer than this. This is a safeguard against scenarios
+        /// where we never get a confirmed action for an action we anticipated. 
+        /// </summary>
+        private const float k_AnticipationTimeoutSeconds = 1;
 
         public ClientCharacterVisualization Parent { get; private set; }
 
         public ActionVisualization(ClientCharacterVisualization parent)
         {
             Parent = parent;
-            m_PlayingActions = new List<ActionFX>();
         }
 
         public void Update()
@@ -27,13 +32,22 @@ namespace BossRoom.Visual
                 var action = m_PlayingActions[i];
                 bool keepGoing = action.Update();
                 bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
-                bool timeExpired = expirable && (Time.time - action.TimeStarted) >= action.Description.DurationSeconds;
-                if (!keepGoing || timeExpired)
+                bool timeExpired = expirable && action.TimeRunning >= action.Description.DurationSeconds;
+                bool timedOut = action.Anticipated && action.TimeRunning >= k_AnticipationTimeoutSeconds;
+                if (!keepGoing || timeExpired || timedOut)
                 {
-                    action.End();
+                    if (timedOut) { action.Cancel(); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead. 
+                    else { action.End(); }
+
                     m_PlayingActions.RemoveAt(i);
                 }
             }
+        }
+
+        //helper wrapper for a FindIndex call on m_PlayingActions. 
+        private int FindAction(ActionType action, bool anticipatedOnly )
+        {
+            return m_PlayingActions.FindIndex(a => a.Description.ActionTypeEnum == action && (!anticipatedOnly || a.Anticipated));
         }
 
         public void OnAnimEvent(string id)
@@ -52,22 +66,55 @@ namespace BossRoom.Visual
             }
         }
 
+        /// <summary>
+        /// Called on the client that owns the Character when the player triggers an action. This allows actions to immediately start playing feedback. 
+        /// </summary>
+        /// <remarks>
+        ///
+        /// What is Action Anticipation and what problem does it solve? In short, it lets Actions run logic the moment the input event that triggers them
+        /// is detected on the local client. The purpose of this is to help mask latency. Because this demo is server authoritative, the default behavior is
+        /// to only see feedback for your input after a server-client roundtrip. Somewhere over 200ms of round-trip latency, this starts to feel oppressively sluggish.
+        /// To combat this, you can play visual effects immediately. For example, MeleeActionFX plays both its weapon swing and applies a hit react to the target,
+        /// without waiting to hear from the server. This can lead to discrepancies when the server doesn't think the target was hit, but on the net, will feel
+        /// more responsive. 
+        ///
+        /// An important concept of Action Anticipation is that it is opportunistic--it doesn't make any strong guarantees. You don't get an anticipated
+        /// action animation if you are already animating in some way, as one example. Another complexity is that you don't know if the server will actually
+        /// let you play all the actions that you've requested--some may get thrown away, e.g. because you have too many actions in your queue. What this means
+        /// is that Anticipated Actions (actions that have been constructed but not started) won't match up perfectly with actual approved delivered actions from
+        /// the server. For that reason, it must always be fine to receive PlayAction and not have an anticipated action already started (this is true for playback
+        /// Characters belonging to the server and other characters anyway). It also means we need to handle the case where we created an Anticipated Action, but
+        /// never got a confirmation--actions like that need to eventually get discarded.
+        ///
+        /// Another important aspect of Anticipated Actions is that they are an "opt-in" system. You must call base.Start in your Start implementation, but other than
+        /// that, if you don't have a good way to implement an Anticipation for your action, you don't have to do anything. In this case, that action will play
+        /// "normally" (with visual feedback starting when the server's action broadcast reaches the client). Every action type will have its own particular set of
+        /// problems to solve to sell the anticipation effect. For example, in this demo, the mage base attack (FXProjectileTargetedActionFX) just plays the attack animation
+        /// anticipatively, but it could be revised to create and drive the mage bolt effect as well--leaving only damage to arrive in true server time. 
+        ///
+        /// How to implement your own Anticipation logic:
+        ///   1. Isolate the visual feedback you want play anticipatively in a private helper method on your ActionFX, like "PlayAttackAnim". 
+        ///   2. Override ActionFX.AnticipateAction. Be sure to call base.AnticipateAction, as well as play your visual logic (like PlayAttackAnim). 
+        ///   3. In your Start method, be sure to call base.Start (note that this will reset the "Anticipated" field to false).
+        ///   4. In Start, check if the action was Anticipated. If NOT, then play call your PlayAttackAnim method.
+        ///
+        /// </remarks>
+        /// <param name="data">The Action that is being requested.</param>
+        public void AnticipateAction(ref ActionRequestData data)
+        {
+            if (!Parent.IsAnimating && ActionFX.ShouldAnticipate(this, ref data))
+            {
+                var actionFX = ActionFX.MakeActionFX(ref data, Parent);
+                actionFX.AnticipateAction();
+                m_PlayingActions.Add(actionFX);
+            }
+        }
+
         public void PlayAction(ref ActionRequestData data)
         {
-            ActionDescription actionDesc = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
+            var anticipatedActionIndex = FindAction(data.ActionTypeEnum, true);
 
-            //Do Trivial Actions (actions that just require playing a single animation, and don't require any state tracking).
-            switch (actionDesc.Logic)
-            {
-                case ActionLogic.LaunchProjectile:
-                case ActionLogic.Revive:
-                case ActionLogic.Emote:
-                    Parent.OurAnimator.SetTrigger(actionDesc.Anim);
-                    return;
-            }
-
-            var actionFX = ActionFX.MakeActionFX(ref data, Parent);
-            actionFX.TimeStarted = Time.time;
+            var actionFX = anticipatedActionIndex>=0 ? m_PlayingActions[anticipatedActionIndex] : ActionFX.MakeActionFX(ref data, Parent);
             if (actionFX.Start())
             {
                 m_PlayingActions.Add(actionFX);
@@ -85,7 +132,7 @@ namespace BossRoom.Visual
 
         public void CancelAllActionsOfType(ActionType actionType)
         {
-            for (int i = m_PlayingActions.Count-1; i >=0; --i)
+            for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
                 if (m_PlayingActions[i].Description.ActionTypeEnum == actionType)
                 {
@@ -100,7 +147,7 @@ namespace BossRoom.Visual
         /// </summary>
         public void CancelAll()
         {
-            foreach( var action in m_PlayingActions )
+            foreach (var action in m_PlayingActions)
             {
                 action.Cancel();
             }

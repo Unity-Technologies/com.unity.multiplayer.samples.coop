@@ -53,6 +53,7 @@ namespace BossRoom.Server
         {
             m_Portal = GetComponent<GameNetPortal>();
             m_Portal.NetworkStarted += NetworkStart;
+
             // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
@@ -69,27 +70,65 @@ namespace BossRoom.Server
             }
             else
             {
+                //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
+                m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
+                m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
+                m_Portal.ClientSceneChanged += OnClientSceneChanged;
+
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
                 NetworkSceneManager.SwitchScene("CharSelect");
-
-                m_Portal.NetManager.OnClientDisconnectCallback += (ulong clientId) =>
-                {
-                    m_ClientSceneMap.Remove(clientId);
-                };
-
-                m_Portal.ClientSceneChanged += (ulong clientId, int sceneIndex) =>
-                {
-                    m_ClientSceneMap[clientId] = sceneIndex;
-                };
 
                 if( m_Portal.NetManager.IsHost)
                 {
                     m_ClientSceneMap[m_Portal.NetManager.LocalClientId] = ServerScene;
                 }
             }
+        }
 
+        /// <summary>
+        /// Handles the case where NetworkManager has told us a client has disconnected. This includes ourselves, if we're the host,
+        /// and the server is stopped."
+        /// </summary>
+        private void OnClientDisconnect(ulong clientId)
+        {
+            m_ClientSceneMap.Remove(clientId);
 
+            if( clientId == m_Portal.NetManager.LocalClientId )
+            {
+                //the ServerGameNetPortal may be initialized again, which will cause its NetworkStart to be called again.
+                //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
+                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
+                m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
+                m_Portal.ClientSceneChanged -= OnClientSceneChanged;
+            }
+        }
+
+        private void OnClientSceneChanged(ulong clientId, int sceneIndex)
+        {
+            m_ClientSceneMap[clientId] = sceneIndex;
+        }
+
+        /// <summary>
+        /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
+        /// handled in server code). 
+        /// </summary>
+        private void OnUserDisconnectRequest()
+        {
+            if( m_Portal.NetManager.IsServer )
+            {
+                m_Portal.NetManager.StopServer();
+            }
+
+            Clear();
+        }
+
+        private void Clear()
+        {
+            //resets all our runtime state.
+            m_ClientData.Clear();
+            m_ClientIDToGuid.Clear();
+            m_ClientSceneMap.Clear();
         }
 
         /// <summary>

@@ -13,8 +13,24 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            if( !Anticipated )
+            {
+                PlayStartAnim();
+            }
+
+            base.Start();
             return true;
+        }
+
+        private void PlayStartAnim()
+        {
+            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+        }
+
+        public override void AnticipateAction()
+        {
+            base.AnticipateAction();
+            PlayStartAnim();
         }
 
         public override bool Update()
@@ -22,7 +38,7 @@ namespace BossRoom.Visual
             return ActionConclusion.Continue;
         }
 
-        public override void End()
+        public override void Cancel()
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {

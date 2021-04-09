@@ -10,7 +10,6 @@ namespace BossRoom.Client
     {
         void Start()
         {
-            AudioListener.volume = ClientPrefs.GetMasterVolume();
             SceneManager.LoadScene("MainMenu");
         }
     }

@@ -25,6 +25,8 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
+            bool wasAnticipated = Anticipated;
+            base.Start();
             m_Target = GetTarget();
             if (HasTarget() && m_Target == null)
             {
@@ -35,23 +37,35 @@ namespace BossRoom.Visual
             if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
 
-            // figure out how long the pretend-projectile will be flying to the target
-            Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
-            float initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
-            m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed_m_s;
-
-            // create the projectile. It will control itself from here on out
-            m_Projectile = SpawnAndInitializeProjectile();
-
             // animate shooting the projectile
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            if( !wasAnticipated )
+            {
+                PlayFireAnim();
+            }
+
             return true;
+        }
+
+        private void PlayFireAnim()
+        {
+            m_Parent.OurAnimator.SetTrigger(Description.Anim);
         }
 
         public override bool Update()
         {
+            if (TimeRunning >= Description.ExecTimeSeconds && m_Projectile == null)
+            {
+                // figure out how long the pretend-projectile will be flying to the target
+                Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
+                float initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
+                m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed_m_s;
+
+                // create the projectile. It will control itself from here on out
+                m_Projectile = SpawnAndInitializeProjectile();
+            }
+
             // we keep going until the projectile's duration ends
-            return (Time.time - TimeStarted) <= m_ProjectileDuration + Description.ExecTimeSeconds;
+            return TimeRunning <= m_ProjectileDuration + Description.ExecTimeSeconds;
         }
 
         public override void OnAnimEvent(string id)
@@ -125,8 +139,14 @@ namespace BossRoom.Visual
             }
 
             // now that we have our projectile, initialize it so it'll fly at the target appropriately
-            projectile.Initialize(m_Parent.transform.position, m_Target?.transform, m_Data.Position, Description.ExecTimeSeconds, m_ProjectileDuration);
+            projectile.Initialize(m_Parent.transform.position, m_Target?.transform, m_Data.Position, m_ProjectileDuration);
             return projectile;
+        }
+
+        public override void AnticipateAction()
+        {
+            base.AnticipateAction();
+            PlayFireAnim();
         }
     }
 }

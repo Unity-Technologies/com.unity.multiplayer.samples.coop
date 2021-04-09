@@ -13,6 +13,7 @@ namespace BossRoom.Visual
     {
         private GameObject m_TargetReticule;
         private ulong m_CurrentTarget;
+        private ulong m_NewTarget;
         private NetworkCharacterState m_ParentState;
 
         private const float k_ReticuleGroundHeight = 0.2f;
@@ -23,15 +24,34 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
+            base.Start();
             m_ParentState = m_Parent.Parent.GetComponent<NetworkCharacterState>();
+
+            m_ParentState.TargetId.OnValueChanged += OnTargetChanged;
+            m_ParentState.GetComponent<Client.ClientInputSender>().ActionInputEvent += OnActionInput;
+
             return true;
+        }
+
+        private void OnTargetChanged(ulong oldTarget, ulong newTarget )
+        {
+            m_NewTarget = newTarget;
+        }
+
+        private void OnActionInput(ActionRequestData data )
+        {
+            //this method runs on the owning client, and allows us to anticipate our new target for purposes of FX visualization.
+            if( data.ActionTypeEnum == ActionType.GeneralTarget )
+            {
+                m_NewTarget = data.TargetIds[0];
+            }
         }
 
         public override bool Update()
         {
-            if( m_CurrentTarget != m_ParentState.TargetId.Value )
+            if( m_CurrentTarget != m_NewTarget )
             {
-                m_CurrentTarget = m_ParentState.TargetId.Value;
+                m_CurrentTarget = m_NewTarget;
 
                 if (NetworkSpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject ) )
                 {
@@ -89,6 +109,12 @@ namespace BossRoom.Visual
         public override void Cancel()
         {
             GameObject.Destroy(m_TargetReticule);
+
+            m_ParentState.TargetId.OnValueChanged -= OnTargetChanged;
+            if( m_ParentState.TryGetComponent(out Client.ClientInputSender inputSender))
+            {
+                inputSender.ActionInputEvent -= OnActionInput;
+            }
         }
 
     }

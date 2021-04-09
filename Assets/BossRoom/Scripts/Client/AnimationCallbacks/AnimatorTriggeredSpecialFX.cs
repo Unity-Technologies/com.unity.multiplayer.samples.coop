@@ -38,6 +38,10 @@ namespace BossRoom.Visual
             public float m_PrefabSpawnDelaySeconds;
             [Tooltip("If we leave the AnimationNode, should we shutdown the fx or let it play out? 0 = never cancel. Any other time = we can cancel up until this amount of time has elapsed... after that, we just let it play out. So a really big value like 9999 effectively means 'always cancel'")]
             public float m_PrefabCanBeAbortedUntilSecs;
+            [Tooltip("If the particle should be parented to a specific bone, link that bone here. (If null, plays at character's feet.)")]
+            public Transform m_PrefabParent;
+            [Tooltip("Prefab will be spawned with this local offset from the parent (Remember, it's a LOCAL offset, so it's affected by the parent transform's scale and rotation!)")]
+            public Vector3 m_PrefabParentOffset;
 
             [Header("Sound Effect")]
             [Tooltip("If we want to use a sound effect that's not in the prefab, specify it here")]
@@ -65,6 +69,10 @@ namespace BossRoom.Visual
             public SpecialFXGraphic m_Prefab;
             [Tooltip("Wait this many seconds before instantiating the Prefab.")]
             public float m_PrefabStartDelaySeconds;
+            [Tooltip("If the particle should be parented to a specific bone, link that bone here. (By default, plays at character's feet.)")]
+            public Transform m_PrefabParent;
+            [Tooltip("Prefab will be spawned with this local offset from the parent (Remember, it's a LOCAL offset, so it's affected by the parent transform's scale and rotation!)")]
+            public Vector3 m_PrefabParentOffset;
 
             [Header("Sound Effect")]
             [Tooltip("If we want to use a sound effect that's not in the prefab, specify it here")]
@@ -137,7 +145,9 @@ namespace BossRoom.Visual
             if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
                 yield break;
 
-            var instantiatedFX = Instantiate(eventInfo.m_Prefab, m_Animator.transform);
+            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_Animator.transform;
+            var instantiatedFX = Instantiate(eventInfo.m_Prefab, parent);
+            instantiatedFX.transform.localPosition += eventInfo.m_PrefabParentOffset;
 
             // now we just need to watch and see if we end up needing to prematurely end these new graphics
             if (eventInfo.m_PrefabCanBeAbortedUntilSecs > 0)
@@ -233,7 +243,9 @@ namespace BossRoom.Visual
             if (eventInfo.m_PrefabStartDelaySeconds > 0)
                 yield return new WaitForSeconds(eventInfo.m_PrefabStartDelaySeconds);
 
-            Instantiate(eventInfo.m_Prefab, m_Animator.transform);
+            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_Animator.transform;
+            var instantiatedFX = Instantiate(eventInfo.m_Prefab, parent);
+            instantiatedFX.transform.localPosition += eventInfo.m_PrefabParentOffset;
         }
 
         // plays the sound effect of an on-exit event
