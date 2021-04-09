@@ -166,7 +166,6 @@ namespace BossRoom.Client
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
                     if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                     {
-                    // The MLAPI_INTERNAL channel is a reliable sequenced channel. Inputs should always arrive and be in order that's why this channel is used.
                         m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
 
                         //Send our client only click request
