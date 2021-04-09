@@ -25,6 +25,8 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
+            bool wasAnticipated = Anticipated;
+            base.Start();
             m_Target = GetTarget();
             if (HasTarget() && m_Target == null)
             {
@@ -44,8 +46,17 @@ namespace BossRoom.Visual
             m_Projectile = SpawnAndInitializeProjectile();
 
             // animate shooting the projectile
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            if( !wasAnticipated )
+            {
+                PlayFireAnim();
+            }
+
             return true;
+        }
+
+        private void PlayFireAnim()
+        {
+            m_Parent.OurAnimator.SetTrigger(Description.Anim);
         }
 
         public override bool Update()
@@ -127,6 +138,12 @@ namespace BossRoom.Visual
             // now that we have our projectile, initialize it so it'll fly at the target appropriately
             projectile.Initialize(m_Parent.transform.position, m_Target?.transform, m_Data.Position, Description.ExecTimeSeconds, m_ProjectileDuration);
             return projectile;
+        }
+
+        public override void AnticipateAction()
+        {
+            base.AnticipateAction();
+            PlayFireAnim();
         }
     }
 }
