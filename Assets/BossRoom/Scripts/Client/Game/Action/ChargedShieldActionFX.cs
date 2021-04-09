@@ -30,6 +30,8 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
+            base.Start();
+
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
             Assert.IsTrue(Description.Spawns.Length == 2, $"Found {Description.Spawns.Length} spawns for action {Description.ActionTypeEnum}. Should be exactly 2: a charge-up particle and a fully-charged particle");
 

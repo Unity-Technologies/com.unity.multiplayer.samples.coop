@@ -100,6 +100,18 @@ namespace BossRoom
         public bool IsValidTarget { get { return NetworkLifeState.Value != LifeState.Dead; } }
 
         /// <summary>
+        /// Returns true if the Character is currently in a state where it can play actions, false otherwise.
+        /// </summary>
+        public bool CanPerformActions
+        {
+            get
+            {
+                //TODO: stun state should be tracked in NetworkCharacterState, and then also checked here.
+                return NetworkLifeState.Value == LifeState.Alive;
+            }
+        }
+
+        /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
         public CharacterClass CharacterData

@@ -38,6 +38,9 @@ namespace BossRoom
         [Tooltip("How long the effect this Action leaves behind will last, in seconds")]
         public float EffectDurationSeconds;
 
+        [Tooltip("After this Action is successfully started, the server will discard any attempts to perform it again until this amount of time has elapsed.")]
+        public float ReuseTimeSeconds;
+
         [Tooltip("The primary Animation trigger that gets raised when visualizing this Action")]
         public string Anim;
 

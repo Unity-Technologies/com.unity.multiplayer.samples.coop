@@ -51,6 +51,8 @@ namespace BossRoom.Visual
 
         event Action Destroyed;
 
+       public bool CanPerformActions { get { return m_NetState.CanPerformActions;  } }
+
         /// <inheritdoc />
         public override void NetworkStart()
         {
@@ -120,6 +122,7 @@ namespace BossRoom.Visual
 
                     if( Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
+                        inputSender.ActionInputEvent += OnActionInput;
                         inputSender.ClientMoveEvent += OnMoveInput;
                     }
                 }
@@ -141,6 +144,11 @@ namespace BossRoom.Visual
                     };
                 }
             }
+        }
+
+        private void OnActionInput(ActionRequestData data)
+        {
+            m_ActionViz.AnticipateAction(ref data);
         }
 
         private void OnMoveInput(Vector3 position)
@@ -182,6 +190,7 @@ namespace BossRoom.Visual
 
                 if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
                 {
+                    sender.ActionInputEvent -= OnActionInput;
                     sender.ClientMoveEvent -= OnMoveInput;
                 }
             }

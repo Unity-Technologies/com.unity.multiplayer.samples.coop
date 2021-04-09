@@ -37,6 +37,7 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
+            base.Start();
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
             return true;
         }
