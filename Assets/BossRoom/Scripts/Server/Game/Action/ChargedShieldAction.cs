@@ -76,16 +76,7 @@ namespace BossRoom.Server
 
         private float GetPercentChargedUp()
         {
-            float timeSpentChargingUp;
-            if (m_StoppedChargingUpTime == 0)
-            {
-                timeSpentChargingUp = TimeRunning; // we're still charging up, so all of our runtime has been charge-up time
-            }
-            else
-            {
-                timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
-            }
-            return Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);
+            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Description.ExecTimeSeconds);
         }
 
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
