@@ -270,15 +270,20 @@ namespace BossRoom.Visual
         {
             if (m_CharacterSwapper)
             {
-                if (m_NetState.IsStealthy.Value != 0 && !m_NetState.IsOwner)
+                var specialMaterialMode = CharacterSwap.SpecialMaterialMode.None;
+                if (m_NetState.IsStealthy.Value != 0)
                 {
-                    // this character is in "stealth mode", so other players can't see them!
-                    m_CharacterSwapper.SwapAllOff();
+                    if (m_NetState.IsOwner)
+                    {
+                        specialMaterialMode = CharacterSwap.SpecialMaterialMode.StealthySelf;
+                    }
+                    else
+                    {
+                        specialMaterialMode = CharacterSwap.SpecialMaterialMode.StealthyOther;
+                    }
                 }
-                else
-                {
-                    m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value);
-                }
+
+                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value, specialMaterialMode);
             }
         }
 
