@@ -34,6 +34,7 @@ namespace BossRoom.Client
         void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
+
             m_Portal.NetworkStarted += NetworkStart;
             m_Portal.ConnectFinished += OnConnectFinished;
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
@@ -47,10 +48,43 @@ namespace BossRoom.Client
             }
             else
             {
-                SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
+                // O__O if adding any event registrations in this block, please add unregistrations in the OnClientDisconnect method.
+                if(!m_Portal.NetManager.IsHost )
                 {
-                    m_Portal.C2SSceneChanged(SceneManager.GetActiveScene().buildIndex);
-                };
+                    //only do this if a pure client, so as not to overlap with host behavior in ServerGameNetPortal.
+                    m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
+                }
+                m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
+                SceneManager.sceneLoaded += OnSceneLoaded;
+            }
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            m_Portal.C2SSceneChanged(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        /// <summary>
+        /// Invoked when the user has requested a disconnect via the UI, e.g. when hitting "Return to Main Menu" in the post-game scene.
+        /// </summary>
+        private void OnUserDisconnectRequest()
+        {
+            if( m_Portal.NetManager.IsClient )
+            {
+                m_Portal.NetManager.StopClient();
+            }
+        }
+
+        /// <summary>
+        /// Invoked whenever a client disconnects from the host. 
+        /// </summary>
+        private void OnClientDisconnect(ulong clientId)
+        {
+            if( clientId == m_Portal.NetManager.LocalClientId )
+            {
+                SceneManager.sceneLoaded -= OnSceneLoaded;
+                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
+                m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
             }
         }
 
