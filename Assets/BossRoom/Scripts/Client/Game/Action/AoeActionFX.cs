@@ -11,6 +11,7 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
+            base.Start();
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
             GameObject.Instantiate(Description.Spawns[0], m_Data.Position, Quaternion.identity);
             return ActionConclusion.Stop;

@@ -11,8 +11,6 @@ GameObject:
   - component: {fileID: 7980115660496427320}
   - component: {fileID: 8801324764397981686}
   - component: {fileID: 8184890942973508939}
-  - component: {fileID: 4897062626467851486}
-  - component: {fileID: 8778471712971589033}
   m_Layer: 0
   m_Name: env_door_boss_head
   m_TagString: Untagged
@@ -83,29 +81,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &4897062626467851486
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1899106884463111546}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.13, y: 6.8740873, z: 2.58}
-  m_Center: {x: 7.1, y: 2.1874208, z: -0.0069583077}
---- !u!65 &8778471712971589033
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1899106884463111546}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 2.13, y: 6.8740873, z: 2.58}
-  m_Center: {x: 0.86, y: 2.1874208, z: -0.0069583077}
