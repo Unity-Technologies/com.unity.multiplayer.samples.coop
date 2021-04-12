@@ -1,3 +1,4 @@
+using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -33,7 +34,7 @@ namespace BossRoom.Server
             float detectionRangeSqr = detectionRange * detectionRange;
             Vector3 position = m_Brain.GetMyServerCharacter().transform.position;
 
-            foreach (var spawnedObject in MLAPI.Spawning.NetworkSpawnManager.SpawnedObjectsList)
+            foreach (var spawnedObject in NetworkSpawnManager.SpawnedObjectsList)
             {
                 if (!spawnedObject) { continue; } // must have been Destroy()ed very recently
                 if ((spawnedObject.transform.position - position).sqrMagnitude <= detectionRangeSqr)
