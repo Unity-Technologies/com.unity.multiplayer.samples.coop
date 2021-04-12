@@ -152,8 +152,7 @@ namespace BossRoom.Visual
             // we change our data in the same way that the server will (changing our target point to the spot on the wall)
             if (Data.TargetIds != null && Data.TargetIds.Length > 0)
             {
-                var targetId = Data.TargetIds[0];
-                NetworkObject targetObj = MLAPI.Spawning.NetworkSpawnManager.SpawnedObjects[targetId];
+                var targetObj = NetworkSpawnManager.SpawnedObjects[Data.TargetIds[0]];
                 if (targetObj != null && !ActionUtils.HasLineOfSight(m_Parent.transform.position, targetObj.transform.position, out Vector3 collidePos))
                 {
                     // we do not have line of sight to the target point. So our target instead becomes the obstruction point
