@@ -15,21 +15,11 @@ namespace BossRoom.Server
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_PlayerPrefab;
 
-        // note: this is temporary, for testing!
-        [SerializeField]
-        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_EnemyPrefab;
-
-        // note: this is temporary, for testing!
-        [SerializeField]
-        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_BossPrefab;
-
         [SerializeField] [Tooltip("A collection of locations for spawning players")]
         private Transform[] m_PlayerSpawnPoints;
+
         private List<Transform> m_PlayerSpawnPointsList = null;
 
-        // note: this is temporary, for testing!
         public override GameState ActiveState { get { return GameState.BossRoom; } }
 
         /// <summary>
@@ -215,28 +205,6 @@ namespace BossRoom.Server
 
             GameStateRelay.SetRelayObject(gameWon);
             MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
-        }
-
-        /// <summary>
-        /// Temp code to spawn an enemy
-        /// </summary>
-        private void Update()
-        {
-            if (Input.GetKeyDown(KeyCode.E))
-            {
-                var newEnemy = Instantiate(m_EnemyPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId);
-            }
-            if (Input.GetKeyDown(KeyCode.B))
-            {
-                var newEnemy = Instantiate(m_BossPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId);
-            }
-            if (Input.GetKeyDown(KeyCode.Q))
-            {
-                GameStateRelay.SetRelayObject(false);
-                MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
-            }
         }
     }
 }

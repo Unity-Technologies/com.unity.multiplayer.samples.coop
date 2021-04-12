@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: -1764033382396218637}
   - component: {fileID: 3608714310874968837}
   - component: {fileID: 5762482089640033414}
+  - component: {fileID: 2113376856512980659}
   m_Layer: 0
   m_Name: BossRoomState
   m_TagString: Untagged
@@ -83,8 +84,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
-  m_EnemyPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
-  m_BossPrefab: {fileID: 3688950541947916326, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
   m_PlayerSpawnPoints:
   - {fileID: 6319832178442273571}
   - {fileID: 374135395555381814}
@@ -94,6 +93,23 @@ MonoBehaviour:
   - {fileID: 6314369147267609336}
   - {fileID: 8725901042666772653}
   - {fileID: 7239491272522478247}
+--- !u!114 &2113376856512980659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297185343939699586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab1e76745edfc434ab8154ad27efc5fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_EnemyPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
+  m_BossPrefab: {fileID: 3688950541947916326, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
+  m_SpawnEnemyKeyCode: 101
+  m_SpawnBossKeyCode: 98
+  m_InstantQuitKeyCode: 113
 --- !u!1 &1088799320945899822
 GameObject:
   m_ObjectHideFlags: 0
