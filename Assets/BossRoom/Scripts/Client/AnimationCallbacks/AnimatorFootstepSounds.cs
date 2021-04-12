@@ -13,6 +13,8 @@ namespace BossRoom.Visual
     /// approach, but it does have a flaw: it becomes inaccurate when the character's speed is slowed.
     /// e.g. if a slowness debuff makes you move at 75% speed, the footsteps will be slightly off because
     /// we only have sound-loops for 50% and 100%. That's not a big deal in this particular game, though.
+    /// In the rare situations where animted speed is faster than 100% (due to speed buffs etc.), we currently
+    /// just don't play any footsteps at all.
     /// </remarks>
     public class AnimatorFootstepSounds : MonoBehaviour
     {
@@ -49,6 +51,10 @@ namespace BossRoom.Visual
         private float m_RunFootstepVolume = 1;
 
         [SerializeField]
+        [Tooltip("At what point do we play \"running\" footsteps? Higher than this point, we don't play any footstep sounds")]
+        private float m_RunningPoint = 1.2f;
+
+        [SerializeField]
         [Tooltip("At what point do we switch from running sounds to walking? From 0 (stationary) to 1 (full sprint)")]
         private float m_WalkingPoint = 0.6f;
 
@@ -78,10 +84,15 @@ namespace BossRoom.Visual
                 clipToUse = m_WalkFootstepAudioClip;
                 volume = m_WalkFootstepVolume;
             }
-            else
+            else if (speed <= m_RunningPoint)
             {
                 clipToUse = m_RunFootstepAudioClip;
                 volume = m_RunFootstepVolume;
+            }
+            else
+            {
+                // we're animating the character's legs faster than either of our clips can support.
+                // We could play a faster clip here... but we don't have one, so just play nothing
             }
 
             // now actually configure and play the appropriate sound
