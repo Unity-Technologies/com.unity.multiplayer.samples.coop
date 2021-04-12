@@ -50,6 +50,9 @@ namespace BossRoom
         [Tooltip("The reaction anim to play in response to being hit by this skill")]
         public string ReactAnim;
 
+        [Tooltip("The name of an animator variable used by this action")]
+        public string OtherAnimatorVariable;
+
         [Tooltip("For Actions that can hit multiple enemies, this determines how much damage is done to non-primary targets")]
         public int SplashDamage;
 

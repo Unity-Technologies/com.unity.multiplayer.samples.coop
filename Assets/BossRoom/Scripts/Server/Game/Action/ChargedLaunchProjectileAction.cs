@@ -65,13 +65,10 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            if (m_StoppedChargingUpTime == 0)
+            if (m_StoppedChargingUpTime == 0 && GetPercentChargedUp() >= 1)
             {
-                // we haven't explicitly stopped charging up... but if we've reached max charge, that implicitly stops us
-                if (TimeRunning >= Description.ExecTimeSeconds)
-                {
-                    StopChargingUp();
-                }
+                // we haven't explicitly stopped charging up... but we've reached max charge, so that implicitly stops us
+                StopChargingUp();
             }
 
             // we end as soon as we've stopped charging up (and have fired the projectile)
@@ -107,12 +104,17 @@ namespace BossRoom.Server
             if (m_StoppedChargingUpTime == 0)
             {
                 m_StoppedChargingUpTime = Time.time;
-                m_Parent.NetState.RecvStopChargingUpClientRpc();
+                m_Parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
                 if (!m_HitByAttack)
                 {
                     LaunchProjectile();
                 }
             }
+        }
+
+        private float GetPercentChargedUp()
+        {
+            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Description.ExecTimeSeconds);
         }
 
         /// <summary>
@@ -129,13 +131,10 @@ namespace BossRoom.Server
             if (Description.Projectiles.Length == 0) // uh oh, this is bad data
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no Projectiles!");
 
-            float timeSpentChargingUp = m_StoppedChargingUpTime - TimeStarted;
-            float pctChargedUp = Mathf.Clamp01(timeSpentChargingUp / Description.ExecTimeSeconds);
-
-            // Finally, choose which prefab to use based on how charged-up we got.
+            // choose which prefab to use based on how charged-up we got.
             // Note how we cast the result to an int, which implicitly rounds down.
             // Thus, only a 100% maxed charge can return the most powerful prefab.
-            int projectileIdx = (int)(pctChargedUp * (Description.Projectiles.Length - 1));
+            int projectileIdx = (int)(GetPercentChargedUp() * (Description.Projectiles.Length - 1));
 
             return Description.Projectiles[projectileIdx];
         }
