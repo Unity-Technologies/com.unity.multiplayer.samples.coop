@@ -67,7 +67,10 @@ namespace BossRoom.Visual
             {
                 foreach (var particleSystem in m_ParticleSystemsToTurnOffOnShutdown)
                 {
-                    particleSystem.Stop();
+                    if (particleSystem)
+                    {
+                        particleSystem.Stop();
+                    }
                 }
 
                 // now, when and how do we fully destroy ourselves?
@@ -143,6 +146,11 @@ namespace BossRoom.Visual
 
         private void AddAllParticleSystems(SpecialFXGraphic specialFxGraphic)
         {
+            if (specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown == null)
+            {
+                specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown = new List<ParticleSystem>();
+            }
+
             specialFxGraphic.m_ParticleSystemsToTurnOffOnShutdown.Clear();
             foreach (var particleSystem in specialFxGraphic.GetComponentsInChildren<ParticleSystem>())
             {

@@ -257,8 +257,9 @@ namespace BossRoom
 
         /// <summary>
         /// Called on all clients when this character has stopped "charging up" an attack.
+        /// Provides a value between 0 and 1 inclusive which indicates how "charged up" the attack ended up being.
         /// </summary>
-        public event Action OnStopChargingUpClient;
+        public event Action<float> OnStopChargingUpClient;
 
         [ServerRpc]
         public void RecvStopChargingUpServerRpc()
@@ -267,9 +268,9 @@ namespace BossRoom
         }
 
         [ClientRpc]
-        public void RecvStopChargingUpClientRpc()
+        public void RecvStopChargingUpClientRpc(float percentCharged)
         {
-            OnStopChargingUpClient?.Invoke();
+            OnStopChargingUpClient?.Invoke(percentCharged);
         }
     }
 }

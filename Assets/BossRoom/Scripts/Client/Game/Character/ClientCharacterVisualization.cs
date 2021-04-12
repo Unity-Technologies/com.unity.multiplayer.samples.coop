@@ -218,9 +218,9 @@ namespace BossRoom.Visual
             m_ActionViz.CancelAllActionsOfType(actionType);
         }
 
-        private void OnStoppedChargingUp()
+        private void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
-            m_ActionViz.OnStoppedChargingUp();
+            m_ActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
         }
 
         private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
