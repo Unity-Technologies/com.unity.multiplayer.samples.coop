@@ -42,6 +42,11 @@ namespace BossRoom.Server
         // Cached component reference
         private ServerCharacterMovement m_Movement;
 
+        /// <summary>
+        /// Stores a list of all the active characters.
+        /// </summary>
+        private static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
+
         private void Awake()
         {
             m_Movement = GetComponent<ServerCharacterMovement>();
@@ -52,6 +57,32 @@ namespace BossRoom.Server
             {
                 m_AIBrain = new AIBrain(this, m_ActionPlayer);
             }
+        }
+
+        private void OnEnable()
+        {
+            s_ActiveServerCharacters.Add(this);
+        }
+
+        private void OnDisable()
+        {
+            s_ActiveServerCharacters.Remove(this);
+        }
+
+        /// <summary>
+        /// Retrieve a list of all active ServerCharacters. Treat the list as read-only!
+        /// </summary>
+        /// <remarks>
+        /// MLAPI also has a built-in list for this: you can just iterate over
+        /// MLAPI.Spawning.NetworkSpawnManager.SpawnedObjectsList. However, that's a list of
+        /// NetworkObjects, so we'd still still need to call GetComponent on those to get a
+        /// ServerCharacter reference. This function is an optimization for when we just need
+        /// to iterate on ServerCharacters.
+        /// </remarks>
+        /// <returns>list of all ServerCharacters which are active and enabled</returns>
+        public static List<ServerCharacter> GetAllActiveServerCharacters()
+        {
+            return s_ActiveServerCharacters;
         }
 
         public override void NetworkStart()

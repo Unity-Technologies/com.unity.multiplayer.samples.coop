@@ -1,4 +1,3 @@
-using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -34,18 +33,11 @@ namespace BossRoom.Server
             float detectionRangeSqr = detectionRange * detectionRange;
             Vector3 position = m_Brain.GetMyServerCharacter().transform.position;
 
-            foreach (var spawnedObject in NetworkSpawnManager.SpawnedObjectsList)
+            foreach (ServerCharacter character in ServerCharacter.GetAllActiveServerCharacters())
             {
-                if (!spawnedObject) { continue; } // must have been Destroy()ed very recently
-                if ((spawnedObject.transform.position - position).sqrMagnitude <= detectionRangeSqr)
+                if (m_Brain.IsAppropriateFoe(character) && (character.transform.position - position).sqrMagnitude <= detectionRangeSqr)
                 {
-                    // they're within range... are they an appropriate foe?
-                    ServerCharacter serverChar = spawnedObject.GetComponent<ServerCharacter>();
-                    if (!serverChar) { continue; } // not even a character at all...
-                    if (m_Brain.IsAppropriateFoe(serverChar))
-                    {
-                        m_Brain.Hate(serverChar);
-                    }
+                    m_Brain.Hate(character);
                 }
             }
         }
