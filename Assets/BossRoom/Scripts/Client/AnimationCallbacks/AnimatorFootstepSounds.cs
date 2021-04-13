@@ -51,15 +51,15 @@ namespace BossRoom.Visual
         private float m_RunFootstepVolume = 1;
 
         [SerializeField]
-        [Tooltip("At what point do we play \"running\" footsteps? Higher than this point, we don't play any footstep sounds")]
-        private float m_RunningPoint = 1.2f;
+        [Tooltip("At what point do we consider the speed \"too fast\", and not play any sound?")]
+        private float m_FootstepSpeedThreshold = 1.2f;
 
         [SerializeField]
-        [Tooltip("At what point do we switch from running sounds to walking? From 0 (stationary) to 1 (full sprint)")]
+        [Tooltip("At what point do we switch from running sounds to walking?")]
         private float m_WalkingPoint = 0.6f;
 
         [SerializeField]
-        [Tooltip("At what point do we switch from walking sounds to no sounds? From 0 (stationary) to 1 (full sprint)")]
+        [Tooltip("At what point do we switch from walking sounds to no sounds?")]
         private float m_SilentPoint = 0.3f;
 
         private void Update()
@@ -84,7 +84,7 @@ namespace BossRoom.Visual
                 clipToUse = m_WalkFootstepAudioClip;
                 volume = m_WalkFootstepVolume;
             }
-            else if (speed <= m_RunningPoint)
+            else if (speed <= m_FootstepSpeedThreshold)
             {
                 clipToUse = m_RunFootstepAudioClip;
                 volume = m_RunFootstepVolume;

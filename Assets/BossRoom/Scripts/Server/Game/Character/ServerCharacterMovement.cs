@@ -222,7 +222,9 @@ namespace BossRoom.Server
             }
         }
 
-        // just retrieves the speed for this character's class
+        /// <summary>
+        /// Retrieves the speed for this character's class.
+        /// </summary>
         private float GetBaseMovementSpeed()
         {
             CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.NetState.CharacterType];
@@ -230,7 +232,10 @@ namespace BossRoom.Server
             return characterClass.Speed;
         }
 
-        // figure out how to describe the character's movement to the client
+        /// <summary>
+        /// Determines the appropriate MovementStatus for the character. The
+        /// MovementStatus is used by the client code when animating the character.
+        /// </summary>
         private MovementStatus GetMovementStatus()
         {
             switch (m_MovementState)

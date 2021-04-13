@@ -48,6 +48,9 @@ namespace BossRoom.Visual
         int m_HitStateTriggerID;
         int m_AnticipateMoveTriggerID;
         int m_SpeedVariableID;
+        int m_BaseNodeTagID;
+        int m_EntryDeathTriggerID;
+        int m_EntryFaintedTriggerID;
 
         event Action Destroyed;
 
@@ -68,6 +71,9 @@ namespace BossRoom.Visual
             m_AnticipateMoveTriggerID = Animator.StringToHash("AnticipateMove");
             m_SpeedVariableID = Animator.StringToHash("Speed");
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
+            m_BaseNodeTagID = Animator.StringToHash("BaseNode");
+            m_EntryDeathTriggerID = Animator.StringToHash("EntryDeath");
+            m_EntryFaintedTriggerID = Animator.StringToHash("EntryFainted");
 
             m_ActionViz = new ActionVisualization(this);
 
@@ -169,10 +175,10 @@ namespace BossRoom.Visual
             switch (lifeState)
             {
                 case LifeState.Dead: // ie. NPCs already dead
-                    m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryDeath"));
+                    m_ClientVisualsAnimator.SetTrigger(m_EntryDeathTriggerID);
                     break;
                 case LifeState.Fainted: // ie. PCs already fainted
-                    m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryFainted"));
+                    m_ClientVisualsAnimator.SetTrigger(m_EntryFaintedTriggerID);
                     break;
             }
         }
@@ -351,7 +357,7 @@ namespace BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat("Speed", GetVisualMovementSpeed());
+                m_ClientVisualsAnimator.SetFloat(m_SpeedVariableID, GetVisualMovementSpeed());
             }
 
             m_ActionViz.Update();
@@ -374,7 +380,7 @@ namespace BossRoom.Visual
 
                 for( int i = 0; i < OurAnimator.layerCount; i++ )
                 {
-                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsTag("BaseNode"))
+                    if (OurAnimator.GetCurrentAnimatorStateInfo(i).tagHash != m_BaseNodeTagID)
                     {
                         //we are in an active node, not the default "nothing" node.
                         return true;
