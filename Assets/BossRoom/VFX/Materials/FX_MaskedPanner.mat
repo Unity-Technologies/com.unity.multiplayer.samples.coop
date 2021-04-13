@@ -48,6 +48,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 037eea83bb383c34ebc2ee292c903057, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MaskTexture:
+        m_Texture: {fileID: 2800000, guid: 9a69c5a954f525a44a117b8d5d15e056, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -93,8 +97,8 @@ Material:
     - _HasMask: 1
     - _HasTextureDissolve: 1
     - _InvertMask: 0
-    - _MaskIntenicty: 4
-    - _MaskPower: 2
+    - _MaskIntenicty: 1
+    - _MaskPower: 3
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
