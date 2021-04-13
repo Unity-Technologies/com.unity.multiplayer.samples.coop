@@ -13,8 +13,8 @@ namespace BossRoom.Visual
     /// approach, but it does have a flaw: it becomes inaccurate when the character's speed is slowed.
     /// e.g. if a slowness debuff makes you move at 75% speed, the footsteps will be slightly off because
     /// we only have sound-loops for 50% and 100%. That's not a big deal in this particular game, though.
-    /// In the rare situations where animted speed is faster than 100% (due to speed buffs etc.), we currently
-    /// just don't play any footsteps at all.
+    /// In the rare situations where animated speed is faster than 100% (due to speed buffs etc.), we
+    /// currently just don't play any footsteps at all.
     /// </remarks>
     public class AnimatorFootstepSounds : MonoBehaviour
     {
