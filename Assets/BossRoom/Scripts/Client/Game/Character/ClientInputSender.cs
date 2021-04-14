@@ -231,10 +231,6 @@ namespace BossRoom.Client
                 // (Different Actions will deal with this differently. For some, like archer arrows, this will fire an arrow
                 // in the desired direction. For others, like mage's bolts, this will fire a "miss" projectile at the spot clicked on.)
 
-                // Don't trigger our move logic for a while. This protects us from moving immediately after
-                // starting the untargeted action (which would abort the action on the server)
-                m_LastSentMove = Time.time + k_TargetMoveTimeout;
-
                 var data = new ActionRequestData();
                 PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
 

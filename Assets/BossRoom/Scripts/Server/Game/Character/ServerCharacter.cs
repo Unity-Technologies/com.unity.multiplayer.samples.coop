@@ -129,7 +129,18 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                ClearActions(false);
+                // if we're currently playing an interruptible action, cancel it!
+                if (m_ActionPlayer.GetActiveActionInfo(out ActionRequestData data))
+                {
+                    if (GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out ActionDescription description))
+                    {
+                        if (description.ActionInterruptible)
+                        {
+                            ClearActions(false);
+                        }
+                    }
+                }
+
                 m_ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
                 m_Movement.SetMovementTarget(targetPosition);
             }
