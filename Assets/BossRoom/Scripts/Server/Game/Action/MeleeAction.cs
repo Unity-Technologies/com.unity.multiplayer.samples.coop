@@ -88,21 +88,18 @@ namespace BossRoom.Server
             RaycastHit[] results;
             int numResults = ActionUtils.DetectMeleeFoe(isNPC, ourCollider, meleeRange, out results);
 
-            if (numResults == 0) { return null; }
-
             IDamageable foundFoe = null;
 
-            //everything that passes the mask should have an IDamageable component, so we can retrieve that and see if they're appropriate targets.
+            //everything that got hit by the raycast should have an IDamageable component, so we can retrieve that and see if they're appropriate targets.
             //we always prefer the hinted foe. If he's still in range, he should take the damage, because he's who the client visualization
             //system will play the hit-react on (in case there's any ambiguity).
             for (int i = 0; i < numResults; i++)
             {
-                var serverChar = results[i].collider.GetComponent<IDamageable>();
-                if (serverChar != null
-                    && serverChar.IsDamageable() 
-                    && (serverChar.NetworkObjectId == preferredTargetNetworkId || foundFoe == null))
+                var damageable = results[i].collider.GetComponent<IDamageable>();
+                if (damageable != null && damageable.IsDamageable() &&
+                    (damageable.NetworkObjectId == preferredTargetNetworkId || foundFoe == null))
                 {
-                    foundFoe = serverChar;
+                    foundFoe = damageable;
                 }
             }
 
