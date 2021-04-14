@@ -63,15 +63,14 @@ namespace BossRoom.Visual
             var targetPosition = Data.Position;
             if (Data.TargetIds != null && Data.TargetIds.Length > 0)
             {
-                ulong targetId = Data.TargetIds[0];
-                var targetObject = NetworkSpawnManager.SpawnedObjects[targetId];
+                var targetObject = NetworkSpawnManager.SpawnedObjects[Data.TargetIds[0]];
                 if (targetObject)
                 {
                     targetPosition = targetObject.transform.position;
                 }
             }
 
-            float distanceToTargetPos = Vector3.Distance(targetPosition, m_Parent.transform.position);
+            var distanceToTargetPos = Vector3.Distance(targetPosition, m_Parent.transform.position);
             return distanceToTargetPos / Description.MoveSpeed;
         }
 
