@@ -49,8 +49,8 @@ namespace BossRoom.Server
                 m_StartedDash = true;
                 float distanceToTargetPos = Vector3.Distance(GetTargetSpot(), m_Parent.transform.position);
                 m_DashDuration = distanceToTargetPos / Description.MoveSpeed;
-                //Debug.Log($"Dashing for {m_DashDuration}");
 
+                // actually start the movement
                 var movement = m_Parent.GetComponent<ServerCharacterMovement>();
                 movement.StartForwardCharge(Description.MoveSpeed, m_DashDuration);
             }
@@ -73,7 +73,6 @@ namespace BossRoom.Server
                 buffedValue = 0;
             }
         }
-
 
         /// <summary>
         /// Returns the targeted NetworkObject, or null if no valid target specified.
@@ -106,16 +105,14 @@ namespace BossRoom.Server
         private void PerformMeleeAttack()
         {
             RaycastHit[] results;
-            // perform a typical melee-hit. But note that we are using the Radius field instead of the Range field here
+            // perform a typical melee-hit. But note that we are using the Radius field for range, not the Range field!
             int numResults = ActionUtils.DetectMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description.Radius, out results);
-
             if (numResults == 0) { return; }
 
             // everything that gets returned should have have a component that is IDamageable.
-            // We default to the first foe we hit...
             IDamageable foundFoe = results[0].collider.GetComponent<IDamageable>();
 
-            // ... but if we find the user-selected target, damage that instead
+            // We defaulted to the first foe in the array, but if we find the user-selected target, use that instead
             var provisionalTarget = GetTarget();
             if (provisionalTarget)
             {

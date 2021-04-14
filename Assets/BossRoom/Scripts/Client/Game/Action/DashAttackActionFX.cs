@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// Visualization of a DashAttackAction.
+    /// Visualization of a DashAttackAction. See DashAttackAction.cs for more info.
     /// </summary>
     public class DashAttackActionFX : ActionFX
     {
