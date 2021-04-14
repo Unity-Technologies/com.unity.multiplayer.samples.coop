@@ -110,32 +110,17 @@ namespace BossRoom.Server
 
         private void PerformMeleeAttack()
         {
-            RaycastHit[] results;
-            // perform a typical melee-hit. But note that we are using the Radius field for range, not the Range field!
-            int numResults = ActionUtils.DetectMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description.Radius, out results);
-            if (numResults == 0) { return; }
-
-            // everything that gets returned should have have a component that is IDamageable.
-            IDamageable foundFoe = results[0].collider.GetComponent<IDamageable>();
-
-            // We defaulted to the first foe in the array, but if we find the user-selected target, use that instead
             var provisionalTarget = GetTarget();
-            if (provisionalTarget)
-            {
-                for (int i = 0; i < numResults; i++)
-                {
-                    var damageable = results[i].collider.GetComponent<IDamageable>();
-                    if (damageable != null && damageable.NetworkObjectId == provisionalTarget.NetworkObjectId)
-                    {
-                        foundFoe = damageable;
-                        break;
-                    }
-                }
-            }
 
-            if (foundFoe != null)
+            // perform a typical melee-hit. But note that we are using the Radius field for range, not the Range field!
+            IDamageable foe = MeleeAction.GetIdealMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc,
+                                                            m_Parent.GetComponent<Collider>(),
+                                                            Description.Radius,
+                                                            (provisionalTarget ? provisionalTarget.NetworkObjectId : 0));
+
+            if (foe != null)
             {
-                foundFoe.ReceiveHP(m_Parent, -Description.Amount);
+                foe.ReceiveHP(m_Parent, -Description.Amount);
             }
         }
     }

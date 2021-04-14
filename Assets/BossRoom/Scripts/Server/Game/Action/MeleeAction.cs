@@ -64,36 +64,50 @@ namespace BossRoom.Server
             return true;
         }
 
-
         /// <summary>
         /// Returns the ServerCharacter of the foe we hit, or null if none found.
         /// </summary>
         /// <returns></returns>
         private IDamageable DetectFoe(ulong foeHint = 0)
         {
-            //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack.
+            return GetIdealMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description.Range, foeHint);
+        }
 
+        /// <summary>
+        /// Utility used by Actions to perform Melee attacks. Performs a melee hit-test
+        /// and then looks through the results to find an alive target, preferring the provided
+        /// enemy.
+        /// </summary>
+        /// <param name="isNPC">true if the attacker is an NPC (and therefore should hit PCs). False for the reverse.</param>
+        /// <param name="attacker">The collider of the attacking GameObject.</param>
+        /// <param name="range">The range in meters to check for foes.</param>
+        /// <param name="preferredTargetNetworkId">The NetworkObjectId of our preferred foe, or 0 if no preference</param>
+        /// <returns></returns>
+        public static IDamageable GetIdealMeleeFoe(bool isNPC, Collider ourCollider, float meleeRange, ulong preferredTargetNetworkId)
+        {
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description.Range, out results);
+            int numResults = ActionUtils.DetectMeleeFoe(isNPC, ourCollider, meleeRange, out results);
 
             if (numResults == 0) { return null; }
 
-            //everything that passes the mask should have a ServerCharacter component.
-            IDamageable foundFoe = results[0].collider.GetComponent<IDamageable>();
+            IDamageable foundFoe = null;
 
+            //everything that passes the mask should have an IDamageable component, so we can retrieve that and see if they're appropriate targets.
             //we always prefer the hinted foe. If he's still in range, he should take the damage, because he's who the client visualization
             //system will play the hit-react on (in case there's any ambiguity).
             for (int i = 0; i < numResults; i++)
             {
                 var serverChar = results[i].collider.GetComponent<IDamageable>();
-                if (serverChar!=null && serverChar.NetworkObjectId == foeHint)
+                if (serverChar != null
+                    && serverChar.IsDamageable() 
+                    && (serverChar.NetworkObjectId == preferredTargetNetworkId || foundFoe == null))
                 {
                     foundFoe = serverChar;
-                    break;
                 }
             }
 
             return foundFoe;
         }
+
     }
 }

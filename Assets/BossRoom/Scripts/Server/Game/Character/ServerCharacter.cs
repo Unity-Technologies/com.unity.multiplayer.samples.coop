@@ -275,5 +275,10 @@ namespace BossRoom.Server
         {
             return IDamageable.SpecialDamageFlags.None;
         }
+
+        public bool IsDamageable()
+        {
+            return NetState.NetworkLifeState.Value == LifeState.Alive;
+        }
     }
 }
