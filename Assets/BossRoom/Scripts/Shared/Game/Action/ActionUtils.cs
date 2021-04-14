@@ -23,16 +23,16 @@ namespace BossRoom
         /// </summary>
         /// <param name="isNPC">true if the attacker is an NPC (and therefore should hit PCs). False for the reverse.</param>
         /// <param name="attacker">The collider of the attacking GameObject.</param>
-        /// <param name="description">The Description of the Action being played (containing things like Range that control the physics query.</param>
+        /// <param name="range">The range in meters to check for foes.</param>
         /// <param name="results">Place an uninitialized RayCastHit[] ref in here. It will be set to the results array. </param>
         /// <remarks>
         /// This method does not alloc. It returns a maximum of 4 results. Consume the results immediately, as the array will be overwritten with
         /// the next similar query.
         /// </remarks>
         /// <returns>Total number of foes encountered. </returns>
-        public static int DetectMeleeFoe(bool isNPC, Collider attacker, ActionDescription description, out RaycastHit[] results)
+        public static int DetectMeleeFoe(bool isNPC, Collider attacker, float range, out RaycastHit[] results)
         {
-            return DetectNearbyEntities(isNPC, !isNPC, attacker, description.Range, out results);
+            return DetectNearbyEntities(isNPC, !isNPC, attacker, range, out results);
         }
 
         /// <summary>

@@ -74,7 +74,7 @@ namespace BossRoom.Server
             //this simple detect just does a boxcast out from our position in the direction we're facing, out to the range of the attack.
 
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description, out results);
+            int numResults = ActionUtils.DetectMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description.Range, out results);
 
             if (numResults == 0) { return null; }
 

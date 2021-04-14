@@ -175,6 +175,7 @@ namespace BossRoom.Server
                 case ActionLogic.Target: return new TargetAction(parent, ref data);
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction(parent, ref data);
                 case ActionLogic.StealthMode: return new StealthModeAction(parent, ref data);
+                case ActionLogic.DashAttack: return new DashAttackAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

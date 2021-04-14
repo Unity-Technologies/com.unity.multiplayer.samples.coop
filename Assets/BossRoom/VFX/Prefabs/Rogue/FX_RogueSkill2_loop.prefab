@@ -19299,6 +19299,7 @@ GameObject:
   - component: {fileID: 8279546802530658470}
   - component: {fileID: 8279546802530658521}
   - component: {fileID: 8279546802530658520}
+  - component: {fileID: 2835887070665065536}
   m_Layer: 0
   m_Name: FX_RogueSkill2_loop
   m_TagString: Untagged
@@ -24093,3 +24094,23 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &2835887070665065536
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8279546802530658523}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e80714725b908940a76375b52b8d53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParticleSystemsToTurnOffOnShutdown:
+  - {fileID: 8279546802530658521}
+  - {fileID: 7894923564669476378}
+  - {fileID: 7894923564482491163}
+  - {fileID: 7938493581288829229}
+  - {fileID: 1531092160092885589}
+  m_AutoShutdownTime: -1
+  m_PostShutdownSelfDestructTime: -1
