@@ -51,16 +51,16 @@ namespace BossRoom.Visual
         private float m_RunFootstepVolume = 1;
 
         [SerializeField]
-        [Tooltip("At what point do we consider the speed \"too fast\", and not play any sound?")]
-        private float m_FootstepSpeedThreshold = 1.2f;
+        [Tooltip("If the speed variable is this or below, we're moving too slowly for footsteps (no sounds played)")]
+        private float m_TooSlowThreshold = 0.3f;
 
         [SerializeField]
-        [Tooltip("At what point do we switch from running sounds to walking?")]
-        private float m_WalkingPoint = 0.6f;
+        [Tooltip("If the speed variable is between TooSlowThreshold and this, we're walking")]
+        private float m_WalkSpeedThreshold = 0.6f;
 
         [SerializeField]
-        [Tooltip("At what point do we switch from walking sounds to no sounds?")]
-        private float m_SilentPoint = 0.3f;
+        [Tooltip("If the speed variable is between WalkSpeedThreshold and this, we're running. (Higher than this means no sound)")]
+        private float m_RunSpeedThreshold = 1.2f;
 
         private void Update()
         {
@@ -75,16 +75,16 @@ namespace BossRoom.Visual
             AudioClip clipToUse = null;
             float volume = 0;
             float speed = m_Animator.GetFloat(m_AnimatorVariableHash);
-            if (speed <= m_SilentPoint)
+            if (speed <= m_TooSlowThreshold)
             {
                 // we could have a "VERY slow walk" sound... but we don't, so just play nothing
             }
-            else if (speed <= m_WalkingPoint)
+            else if (speed <= m_WalkSpeedThreshold)
             {
                 clipToUse = m_WalkFootstepAudioClip;
                 volume = m_WalkFootstepVolume;
             }
-            else if (speed <= m_FootstepSpeedThreshold)
+            else if (speed <= m_RunSpeedThreshold)
             {
                 clipToUse = m_RunFootstepAudioClip;
                 volume = m_RunFootstepVolume;
