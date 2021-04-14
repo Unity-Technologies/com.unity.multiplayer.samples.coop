@@ -46,7 +46,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Are we still able to take damage? If we're broken or dead, should return false!
         /// </summary>
-        public bool IsDamageable();
+        bool IsDamageable();
     }
 }
 
