@@ -1,3 +1,6 @@
+using MLAPI;
+using MLAPI.Connection;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -31,13 +34,25 @@ namespace BossRoom.Server
             float detectionRange = m_Brain.CharacterData.DetectRange;
             // we are doing this check every Update, so we'll use square-magnitude distance to avoid the expensive sqrt (that's implicit in Vector3.magnitude)
             float detectionRangeSqr = detectionRange * detectionRange;
-            Vector3 position = m_Brain.GetMyServerCharacter().transform.position;
+            Vector3 myPosition = m_Brain.GetMyServerCharacter().transform.position;
 
-            foreach (ServerCharacter character in ServerCharacter.GetAllActiveServerCharacters())
+            // in this game, NPCs only attack players (and never other NPCs), so we can just iterate over the connected players to see if any are nearby
+            foreach (var networkClient in NetworkManager.Singleton.ConnectedClientsList)
             {
-                if (m_Brain.IsAppropriateFoe(character) && (character.transform.position - position).sqrMagnitude <= detectionRangeSqr)
+                if (networkClient.PlayerObject == null)
                 {
-                    m_Brain.Hate(character);
+                    // skip over any connection that doesn't have a PlayerObject yet
+                    continue;
+                }
+
+                if ((networkClient.PlayerObject.transform.position - myPosition).sqrMagnitude <= detectionRangeSqr)
+                {
+                    // they're in range! Make sure that they're actually an enemy
+                    var serverCharacter = networkClient.PlayerObject.GetComponent<ServerCharacter>();
+                    if (serverCharacter && m_Brain.IsAppropriateFoe(serverCharacter))
+                    {
+                        m_Brain.Hate(serverCharacter);
+                    }
                 }
             }
         }
