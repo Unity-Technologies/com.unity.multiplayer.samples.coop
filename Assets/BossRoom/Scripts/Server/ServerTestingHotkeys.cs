@@ -11,7 +11,7 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerTestingHotkeys : NetworkBehaviour
     {
-#if DEBUG
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField]
         [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_EnemyPrefab;
