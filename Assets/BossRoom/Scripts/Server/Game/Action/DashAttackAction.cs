@@ -47,7 +47,13 @@ namespace BossRoom.Server
             {
                 // time to start dashing!
                 m_StartedDash = true;
-                float distanceToTargetPos = Vector3.Distance(GetTargetSpot(), m_Parent.transform.position);
+
+                // re-orient ourselves again (in case we got turned around during ExecTime)
+                var targetSpot = GetTargetSpot();
+                m_Parent.transform.LookAt(targetSpot);
+
+                // figure out how long to dash
+                var distanceToTargetPos = Vector3.Distance(targetSpot, m_Parent.transform.position);
                 m_DashDuration = distanceToTargetPos / Description.MoveSpeed;
 
                 // actually start the movement
