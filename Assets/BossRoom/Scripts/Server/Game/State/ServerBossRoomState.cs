@@ -139,8 +139,14 @@ namespace BossRoom.Server
         protected override void OnDestroy()
         {
             base.OnDestroy();
+
+            //NOTE: right now, heroes and the boss can't outlive the ServerBossRoomState, because they co-exist in the same scene and are cleaned
+            //up together when that scene ends. If BossRoom is changed in such a way that heroes can outlive the scene (perhaps adapting to a
+            //version of the game with multiple dungeon scenes), then some care may need to be taken to unregister from the hero NetworkLifeState events. 
+
             if (m_NetPortal==null) { return; }
             m_NetPortal.ClientSceneChanged -= OnClientSceneChanged;
+
         }
 
         private void SpawnPlayer(ulong clientId)

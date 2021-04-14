@@ -40,6 +40,20 @@ namespace BossRoom.Client
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
 
+        private void OnDestroy()
+        {
+            if( m_Portal != null )
+            {
+                m_Portal.NetworkStarted -= NetworkStart;
+                m_Portal.ConnectFinished -= OnConnectFinished;
+
+                if( m_Portal.NetManager != null )
+                {
+                    m_Portal.NetManager.OnClientDisconnectCallback -= OnDisconnectOrTimeout;
+                }
+            }
+        }
+
         private void NetworkStart()
         {
             if (!m_Portal.NetManager.IsClient)
@@ -197,7 +211,7 @@ namespace BossRoom.Client
             //var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
             //payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
             //payload += $"player_name={portal.PlayerName}\n";
-			var payload = JsonUtility.ToJson(new ConnectionPayload() {clientGUID = clientGuid, clientScene = SceneManager.GetActiveScene().buildIndex, playerName = portal.PlayerName});
+            var payload = JsonUtility.ToJson(new ConnectionPayload() {clientGUID = clientGuid, clientScene = SceneManager.GetActiveScene().buildIndex, playerName = portal.PlayerName});
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 

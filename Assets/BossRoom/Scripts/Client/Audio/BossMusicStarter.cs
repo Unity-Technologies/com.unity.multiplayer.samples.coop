@@ -17,6 +17,19 @@ namespace BossRoom.Client
             netState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
         }
 
+        private void OnDestroy()
+        {
+            var netState = GetComponent<NetworkCharacterState>();
+            if( netState != null )
+            {
+                netState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+                if( netState.HealthState != null )
+                {
+                    netState.HealthState.HitPoints.OnValueChanged -= OnHealthChanged;
+                }
+            }
+        }
+
         private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             if (newValue!= LifeState.Alive)

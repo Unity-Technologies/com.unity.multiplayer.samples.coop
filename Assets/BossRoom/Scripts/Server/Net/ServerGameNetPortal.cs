@@ -62,6 +62,20 @@ namespace BossRoom.Server
             m_ClientIDToGuid = new Dictionary<ulong, string>();
         }
 
+        private void OnDestroy()
+        {
+            if( m_Portal != null )
+            {
+                m_Portal.NetworkStarted -= NetworkStart;
+
+                if( m_Portal.NetManager != null)
+                {
+                    m_Portal.NetManager.ConnectionApprovalCallback -= ApprovalCheck;
+                    m_Portal.NetManager.OnServerStarted -= ServerStartedHandler;
+                }
+            }
+        }
+
         private void NetworkStart()
         {
             if (!m_Portal.NetManager.IsServer)

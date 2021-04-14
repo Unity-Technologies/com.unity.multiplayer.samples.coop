@@ -25,6 +25,16 @@ namespace BossRoom
             m_NetworkHealthState.HitPoints.OnValueChanged += HitPointsChanged;
         }
 
+        private void OnDestroy()
+        {
+            if (m_NetworkHealthState != null)
+            {
+                m_NetworkHealthState.HitPointsDepleted -= SpawnerHitPointsDepleted;
+                m_NetworkHealthState.HitPointsReplenished -= SpawnerHitPointsReplenished;
+                m_NetworkHealthState.HitPoints.OnValueChanged -= HitPointsChanged;
+            }
+        }
+
         void SpawnerHitPointsDepleted()
         {
             // TODO: Integrate visuals (GOMPS-123)
