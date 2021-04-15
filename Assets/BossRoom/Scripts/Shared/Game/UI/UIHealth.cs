@@ -21,8 +21,8 @@ namespace BossRoom
             m_HitPointsSlider.minValue = 0;
             m_HitPointsSlider.maxValue = maxValue;
             m_HitPointsSlider.value = networkedHealth.Value;
-            // disable ourselves when we're at full health!
-            gameObject.SetActive(m_HitPointsSlider.value != m_HitPointsSlider.maxValue);
+            // disable slider when we're at full health!
+            m_HitPointsSlider.gameObject.SetActive(m_HitPointsSlider.value != m_HitPointsSlider.maxValue);
 
             m_NetworkedHealth.OnValueChanged += HealthChanged;
         }
@@ -30,7 +30,7 @@ namespace BossRoom
         void HealthChanged(int previousValue, int newValue)
         {
             m_HitPointsSlider.value = newValue;
-            gameObject.SetActive(m_HitPointsSlider.value != m_HitPointsSlider.maxValue);
+            m_HitPointsSlider.gameObject.SetActive(m_HitPointsSlider.value != m_HitPointsSlider.maxValue);
         }
 
         void OnDestroy()
