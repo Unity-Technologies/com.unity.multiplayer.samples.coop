@@ -34,23 +34,12 @@ namespace BossRoom.Server
             float detectionRangeSqr = detectionRange * detectionRange;
             Vector3 myPosition = m_Brain.GetMyServerCharacter().transform.position;
 
-            // in this game, NPCs only attack players (and never other NPCs), so we can just iterate over the connected players to see if any are nearby
-            foreach (var networkClient in NetworkManager.Singleton.ConnectedClientsList)
+            // in this game, NPCs only attack players (and never other NPCs), so we can just iterate over the players to see if any are nearby
+            foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (networkClient.PlayerObject == null)
+                if (m_Brain.IsAppropriateFoe(serverCharacter) && (serverCharacter.transform.position - myPosition).sqrMagnitude <= detectionRangeSqr)
                 {
-                    // skip over any connection that doesn't have a PlayerObject yet
-                    continue;
-                }
-
-                if ((networkClient.PlayerObject.transform.position - myPosition).sqrMagnitude <= detectionRangeSqr)
-                {
-                    // they're in range! Make sure that they're actually an enemy
-                    var serverCharacter = networkClient.PlayerObject.GetComponent<ServerCharacter>();
-                    if (serverCharacter && m_Brain.IsAppropriateFoe(serverCharacter))
-                    {
-                        m_Brain.Hate(serverCharacter);
-                    }
+                    m_Brain.Hate(serverCharacter);
                 }
             }
         }

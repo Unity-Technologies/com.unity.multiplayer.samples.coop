@@ -184,12 +184,10 @@ namespace BossRoom.Server
             if (lifeState == LifeState.Fainted)
             {
                 // Check the life state of all players in the scene
-                foreach (var p in NetworkManager.Singleton.ConnectedClientsList )
+                foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
                 {
-                    if (p.PlayerObject == null) { continue; }
-                    // if any player is alive just retrun
-                    var netState = p.PlayerObject.GetComponent<NetworkCharacterState>();
-                    if ( netState.NetworkLifeState.Value == LifeState.Alive ) { return; }
+                    // if any player is alive just retun
+                    if (serverCharacter.NetState && serverCharacter.NetState.NetworkLifeState.Value == LifeState.Alive) { return; }
                 }
 
                 // If we made it this far, all players are down! switch to post game
