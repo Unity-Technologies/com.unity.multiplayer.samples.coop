@@ -1,6 +1,6 @@
 using MLAPI;
-using System.Collections;
 using MLAPI.Spawning;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -25,7 +25,8 @@ namespace BossRoom.Server
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_BossPrefab;
 
-        [SerializeField] [Tooltip("A collection of locations for spawning players")]
+        [SerializeField]
+        [Tooltip("A collection of locations for spawning players")]
         private Transform[] m_PlayerSpawnPoints;
         private List<Transform> m_PlayerSpawnPointsList = null;
 
@@ -52,12 +53,18 @@ namespace BossRoom.Server
         /// </summary>
         public bool InitialSpawnDone { get; private set; }
 
+        //these Ids are recorded for event unregistration at destruction time and are not maintained (the objects they point to may be destroyed during
+        //the lifetime of the ServerBossRoomState). 
+        private ulong m_BossId;
+        private List<ulong> m_HeroIds = new List<ulong>();
+
         /// <summary>
         /// We need to get told about the Boss to track their health for game win
         /// </summary>
         public void OnBossSpawned(NetworkCharacterState bossCharState)
         {
             bossCharState.NetworkLifeState.OnValueChanged += OnBossLifeStateChanged;
+            m_BossId = bossCharState.NetworkObjectId;
         }
 
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
@@ -118,13 +125,13 @@ namespace BossRoom.Server
         private void OnClientSceneChanged(ulong clientId, int sceneIndex)
         {
             int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-            if( sceneIndex == serverScene )
+            if (sceneIndex == serverScene)
             {
                 Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
-                
+
                 bool didSpawn = DoInitialSpawnIfPossible();
 
-                if( !didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
+                if (!didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
                 {
                     //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                     //(either because multiple people are late-joining at once, or because some dynamic entities are
@@ -132,7 +139,7 @@ namespace BossRoom.Server
                     //ServerBossRoomState.
                     SpawnPlayer(clientId);
                 }
-                
+
             }
         }
 
@@ -140,13 +147,39 @@ namespace BossRoom.Server
         {
             base.OnDestroy();
 
-            //NOTE: right now, heroes and the boss can't outlive the ServerBossRoomState, because they co-exist in the same scene and are cleaned
-            //up together when that scene ends. If BossRoom is changed in such a way that heroes can outlive the scene (perhaps adapting to a
-            //version of the game with multiple dungeon scenes), then some care may need to be taken to unregister from the hero NetworkLifeState events. 
+            var bossLife = GetLifeStateEvent(m_BossId);
+            if (bossLife != null)
+            {
+                bossLife -= OnBossLifeStateChanged;
+            }
 
-            if (m_NetPortal==null) { return; }
-            m_NetPortal.ClientSceneChanged -= OnClientSceneChanged;
+            foreach (ulong id in m_HeroIds)
+            {
+                var heroLife = GetLifeStateEvent(id);
+                if (heroLife != null)
+                {
+                    heroLife -= OnHeroLifeStateChanged;
+                }
+            }
 
+            if (m_NetPortal != null)
+            {
+                m_NetPortal.ClientSceneChanged -= OnClientSceneChanged;
+            }
+        }
+
+        /// <summary>
+        /// Helper method for OnDestroy that gets the NetworkLifeState.OnValueChanged event for a NetworkObjectId, or null if it doesn't exist.
+        /// </summary>
+        private MLAPI.NetworkVariable.NetworkVariable<LifeState>.OnValueChangedDelegate GetLifeStateEvent(ulong id)
+        {
+            //this is all a little paranoid, because during shutdown it's not always obvious what state is still valid.
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject netObj))
+            {
+                var netState = netObj.GetComponent<NetworkCharacterState>();
+                return netState != null ? netState.NetworkLifeState.OnValueChanged : null;
+            }
+            return null;
         }
 
         private void SpawnPlayer(ulong clientId)
@@ -162,14 +195,15 @@ namespace BossRoom.Server
                 $"PlayerSpawnPoints array should have at least 1 spawn points.");
 
             int index = Random.Range(0, m_PlayerSpawnPointsList.Count);
-                spawnPoint = m_PlayerSpawnPointsList[index];
-                m_PlayerSpawnPointsList.RemoveAt(index);
+            spawnPoint = m_PlayerSpawnPointsList[index];
+            m_PlayerSpawnPointsList.RemoveAt(index);
 
             var newPlayer = spawnPoint != null ?
                 Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation) :
                 Instantiate(m_PlayerPrefab);
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
             netState.NetworkLifeState.OnValueChanged += OnHeroLifeStateChanged;
+            m_HeroIds.Add(netState.NetworkObjectId);
 
             var lobbyResults = GetLobbyResultsForClient(clientId);
 
@@ -180,7 +214,7 @@ namespace BossRoom.Server
             netState.Name = playerName;
 
             // spawn players characters with destroyWithScene = true
-            newPlayer.SpawnAsPlayerObject(clientId,null,true);
+            newPlayer.SpawnAsPlayerObject(clientId, null, true);
         }
 
         // Every time a player's life state changes we check to see if game is over
@@ -190,12 +224,12 @@ namespace BossRoom.Server
             if (lifeState == LifeState.Fainted)
             {
                 // Check the life state of all players in the scene
-                foreach (var p in NetworkManager.Singleton.ConnectedClientsList )
+                foreach (var p in NetworkManager.Singleton.ConnectedClientsList)
                 {
                     if (p.PlayerObject == null) { continue; }
                     // if any player is alive just retrun
                     var netState = p.PlayerObject.GetComponent<NetworkCharacterState>();
-                    if ( netState.NetworkLifeState.Value == LifeState.Alive ) { return; }
+                    if (netState.NetworkLifeState.Value == LifeState.Alive) { return; }
                 }
 
                 // If we made it this far, all players are down! switch to post game
