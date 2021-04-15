@@ -1,5 +1,6 @@
+using MLAPI;
+using MLAPI.Spawning;
 using UnityEngine;
-using UnityEngine.UI;
 using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
 namespace BossRoom.Visual
@@ -21,16 +22,35 @@ namespace BossRoom.Visual
         private BossRoom.Client.ClientInputSender m_InputSender;
 
         // We find the Sprites to use by checking the Skill1, Skill2, and Skill3 members of our chosen CharacterClass
-        private CharacterClass m_CharacterData;
+        private NetworkCharacterState m_NetState;
 
+        // Each button has a UITooltipDetector; we cache references to these to avoid having to call GetComponent<> repeatedly
+        private Client.UITooltipDetector[] m_Tooltips;
+
+        private bool m_IsOtherPlayerSelected;
+
+        public void RegisterInputSender(Client.ClientInputSender inputSender)
+        {
+            if (m_InputSender != null)
+            {
+                Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
+            }
+
+            m_InputSender = inputSender;
+            m_NetState = m_InputSender.GetComponent<NetworkCharacterState>();
+            m_NetState.TargetId.OnValueChanged += OnSelectionChanged;
+            UpdateAllIcons();
+        }
 
         void OnEnable()
         {
+            m_Tooltips = new Client.UITooltipDetector[m_Buttons.Length];
             for (int i = 0; i < m_Buttons.Length; ++i)
             {
                 m_Buttons[i].ButtonID = i;
                 m_Buttons[i].OnPointerDownEvent += OnButtonClickedDown;
                 m_Buttons[i].OnPointerUpEvent += OnButtonClickedUp;
+                m_Tooltips[i] = m_Buttons[i].GetComponent<Client.UITooltipDetector>();
             }
         }
 
@@ -43,52 +63,17 @@ namespace BossRoom.Visual
             }
         }
 
-        public void RegisterInputSender(Client.ClientInputSender inputSender)
+        void OnDestroy()
         {
-            if (m_InputSender != null)
+            if (m_NetState)
             {
-                Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
+                m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;
             }
-
-            m_InputSender = inputSender;
-            m_CharacterData = m_InputSender.GetComponent<NetworkCharacterState>().CharacterData;
-            SetPlayerType(m_CharacterData);
         }
 
-        private void SetPlayerType(CharacterClass characterData)
+        void OnSelectionChanged(ulong oldSelectionNetworkId, ulong newSelectionNetworkId)
         {
-            var sprites = new Sprite[]
-            {
-                GetSpriteForAction(characterData.Skill1),
-                GetSpriteForAction(characterData.Skill2),
-                GetSpriteForAction(characterData.Skill3),
-            };
-            SetButtonIcons(sprites);
-        }
-
-        /// <summary>
-        /// Returns the Sprite for an Action, or null if no sprite is available
-        /// </summary>
-        private Sprite GetSpriteForAction(ActionType actionType)
-        {
-            if (actionType == ActionType.None)
-                return null;
-            var desc = GameDataSource.Instance.ActionDataByType[actionType];
-            if (desc != null)
-                return desc.Icon;
-            return null;
-        }
-
-        void SetButtonIcons(Sprite[] icons)
-        {
-            for (int i = 0; i < m_Buttons.Length; i++)
-            {
-                if (i < icons.Length)
-                {
-                    m_Buttons[i].image.sprite = icons[i];
-                    m_Buttons[i].gameObject.SetActive(icons[i] != null);
-                }
-            }
+            UpdateAllIcons();
         }
 
         void OnButtonClickedDown(int buttonIndex)
@@ -106,9 +91,9 @@ namespace BossRoom.Visual
 
             switch (buttonIndex)
             {
-                case 0: m_InputSender.RequestAction(m_CharacterData.Skill1, SkillTriggerStyle.UI); break;
-                case 1: m_InputSender.RequestAction(m_CharacterData.Skill2, SkillTriggerStyle.UI); break;
-                case 2: m_InputSender.RequestAction(m_CharacterData.Skill3, SkillTriggerStyle.UI); break;
+                case 0: m_InputSender.RequestAction(m_IsOtherPlayerSelected ? ActionType.GeneralRevive : m_NetState.CharacterData.Skill1, SkillTriggerStyle.UI); break;
+                case 1: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UI); break;
+                case 2: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UI); break;
             }
         }
 
@@ -128,10 +113,62 @@ namespace BossRoom.Visual
 
             switch (buttonIndex)
             {
-                case 0: m_InputSender.RequestAction(m_CharacterData.Skill1, SkillTriggerStyle.UIRelease); break;
-                case 1: m_InputSender.RequestAction(m_CharacterData.Skill2, SkillTriggerStyle.UIRelease); break;
-                case 2: m_InputSender.RequestAction(m_CharacterData.Skill3, SkillTriggerStyle.UIRelease); break;
+                case 0: m_InputSender.RequestAction(m_IsOtherPlayerSelected ? ActionType.GeneralRevive : m_NetState.CharacterData.Skill1, SkillTriggerStyle.UIRelease); break;
+                case 1: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UIRelease); break;
+                case 2: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UIRelease); break;
             }
         }
+
+        void UpdateAllIcons()
+        {
+            UpdateIcon(0, m_NetState.CharacterData.Skill1);
+            UpdateIcon(1, m_NetState.CharacterData.Skill2);
+            UpdateIcon(2, m_NetState.CharacterData.Skill3);
+
+            if (m_NetState.TargetId.Value != 0
+                && NetworkSpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
+                && selection != null
+                && selection.IsPlayerObject
+                && selection.NetworkObjectId != m_NetState.NetworkObjectId)
+            {
+                m_IsOtherPlayerSelected = true;
+                // we have a different player selected! In that case we want to reflect that our basic Action is a Revive, not an attack
+                UpdateIcon(0, ActionType.GeneralRevive);
+            }
+            else
+            {
+                m_IsOtherPlayerSelected = false;
+            }
+        }
+
+        void UpdateIcon(int slotIdx, ActionType actionType)
+        {
+            // first find the info we need (sprite and description)
+            Sprite sprite = null;
+            string description = "";
+
+            if (actionType != ActionType.None)
+            {
+                var desc = GameDataSource.Instance.ActionDataByType[actionType];
+                sprite = desc.Icon;
+                description = desc.Description;
+            }
+
+            // set up UI elements appropriately
+            if (sprite == null)
+            {
+                m_Buttons[slotIdx].gameObject.SetActive(false);
+            }
+            else
+            {
+                m_Buttons[slotIdx].gameObject.SetActive(true);
+                m_Buttons[slotIdx].image.sprite = sprite;
+                if (m_Tooltips[slotIdx])
+                {
+                    m_Tooltips[slotIdx].SetText(description);
+                }
+            }
+        }
+
     }
 }

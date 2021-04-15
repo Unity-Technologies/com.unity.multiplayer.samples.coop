@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Client
 {
@@ -7,12 +8,6 @@ namespace BossRoom.Client
     /// This controls the tooltip popup -- the little text blurb that appears when you hover your mouse
     /// over an ability icon.
     /// </summary>
-    /// <remarks>
-    /// For this demo we're using a Text component. It offers a few HTML-like formatting options, but is limited
-    /// to text. If you need to fancier tooltips, consider replacing the Text component with a Text Mesh Pro
-    /// component (in code, that's a TMPro.TextMeshProUGUI component). This is a beefed-up version of Text with
-    /// more features, including better HTML-like formatting, embedded images, hyperlinks, and more.
-    /// </remarks>
     public class UITooltipPopup : MonoBehaviour
     {
         [SerializeField]
@@ -24,6 +19,11 @@ namespace BossRoom.Client
         private TextMeshProUGUI m_TextField;
         [SerializeField]
         private Vector3 m_CursorOffset;
+
+        private void Awake()
+        {
+            Assert.IsNotNull(m_Canvas);
+        }
 
         /// <summary>
         /// Shows a tooltip at the given mouse coordinates.
