@@ -23,15 +23,10 @@ namespace BossRoom.Server
             else
             {
                 bool won = (bool)GameStateRelay.GetRelayObject();
-                StartCoroutine(CoroSetWinLoss(won));
-            }
-        }
 
-        private IEnumerator CoroSetWinLoss(bool won)
-        {
-            yield return new WaitForSeconds(1);
-            GetComponent<PostGameData>().GameBannerState.Value =
-                (byte)(won ? PostGameData.BannerState.Won : PostGameData.BannerState.Lost);
+                GetComponent<PostGameData>().GameBannerState.Value =
+                    (byte)(won ? PostGameData.BannerState.Won : PostGameData.BannerState.Lost);
+            }
         }
     }
 }
