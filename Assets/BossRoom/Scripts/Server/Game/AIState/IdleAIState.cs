@@ -32,14 +32,14 @@ namespace BossRoom.Server
             float detectionRange = m_Brain.CharacterData.DetectRange;
             // we are doing this check every Update, so we'll use square-magnitude distance to avoid the expensive sqrt (that's implicit in Vector3.magnitude)
             float detectionRangeSqr = detectionRange * detectionRange;
-            Vector3 myPosition = m_Brain.GetMyServerCharacter().transform.position;
+            Vector3 position = m_Brain.GetMyServerCharacter().transform.position;
 
             // in this game, NPCs only attack players (and never other NPCs), so we can just iterate over the players to see if any are nearby
-            foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            foreach (var character in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (m_Brain.IsAppropriateFoe(serverCharacter) && (serverCharacter.transform.position - myPosition).sqrMagnitude <= detectionRangeSqr)
+                if (m_Brain.IsAppropriateFoe(character) && (character.transform.position - position).sqrMagnitude <= detectionRangeSqr)
                 {
-                    m_Brain.Hate(serverCharacter);
+                    m_Brain.Hate(character);
                 }
             }
         }
