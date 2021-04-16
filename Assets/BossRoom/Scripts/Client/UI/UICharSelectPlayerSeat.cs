@@ -86,8 +86,7 @@ namespace BossRoom.Client
                 m_InactiveStateVisuals.SetActive(false);
                 m_PlayerNumberHolder.sprite = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Indicator;
                 m_ActiveStateVisuals.SetActive(true);
-                m_Glow.gameObject.SetActive(false);
-                m_Checkbox.gameObject.SetActive(false);
+               
                 m_PlayerNameHolder.gameObject.SetActive(true);
                 m_PlayerNameHolder.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
                 m_Button.interactable = m_IsPermanentlyDisabled ? false : true;
@@ -100,6 +99,13 @@ namespace BossRoom.Client
                     m_Button.interactable = false;
                     if (m_Animator)
                         m_Animator.SetTrigger(m_AnimatorTriggerWhenLockedIn);
+                }
+                else
+                {
+                    m_Glow.gameObject.SetActive(false);
+                    m_Checkbox.gameObject.SetActive(false);
+                    if (m_Animator)
+                        m_Animator.ResetTrigger(m_AnimatorTriggerWhenLockedIn);
                 }
             }
         }

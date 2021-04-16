@@ -3,6 +3,7 @@ using MLAPI.NetworkVariable.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 namespace BossRoom.Client
 {
@@ -365,8 +366,33 @@ namespace BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, true);
+            // if t
+
+            if(m_HasLocalPlayerLockedIn)
+            {
+                CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, false);
+            }
+            else
+            {
+                CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, true);
+            }
         }
+
+        /// <summary>
+        /// Called directly by UI elements!
+        /// </summary>
+        public void OnPlayerExit()
+        {
+            // FIXME - duped code from postgame UI
+            // Player is leaving this group - leave current network connection first
+            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
+            gameNetPortal.RequestDisconnect();
+
+            SceneManager.LoadScene("MainMenu");
+        }
+
+
+
 
 #if UNITY_EDITOR
         private void OnValidate()
