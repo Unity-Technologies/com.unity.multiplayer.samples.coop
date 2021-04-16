@@ -54,7 +54,7 @@ namespace BossRoom.Client
                     //only do this if a pure client, so as not to overlap with host behavior in ServerGameNetPortal.
                     m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 }
-                m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
+
                 SceneManager.sceneLoaded += OnSceneLoaded;
             }
         }
@@ -71,20 +71,8 @@ namespace BossRoom.Client
         {
             if( m_Portal.NetManager.IsClient )
             {
+                ClientMainMenuState.SetTransitionReason(ClientMainMenuState.TransitionReason.UserRequested);
                 m_Portal.NetManager.StopClient();
-            }
-        }
-
-        /// <summary>
-        /// Invoked whenever a client disconnects from the host. 
-        /// </summary>
-        private void OnClientDisconnect(ulong clientId)
-        {
-            if( clientId == m_Portal.NetManager.LocalClientId )
-            {
-                SceneManager.sceneLoaded -= OnSceneLoaded;
-                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
-                m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
             }
         }
 
@@ -99,8 +87,13 @@ namespace BossRoom.Client
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
-            if(clientID == MLAPI.NetworkManager.Singleton.LocalClientId )
+            // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
+            //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
+            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient )
             {
+                SceneManager.sceneLoaded -= OnSceneLoaded;
+                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
+
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
@@ -108,6 +101,11 @@ namespace BossRoom.Client
                     // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
                     // Just shut down networking and switch back to main menu.
                     MLAPI.NetworkManager.Singleton.Shutdown();
+                    if( !ClientMainMenuState.HasTransitionReason )
+                    {
+                        //disconnect that happened for some other reason than user UI interaction--should display a message.
+                        ClientMainMenuState.SetTransitionReason(ClientMainMenuState.TransitionReason.Disconnect);
+                    }
                     SceneManager.LoadScene("MainMenu");
                 }
                 else
