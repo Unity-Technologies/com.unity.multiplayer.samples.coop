@@ -20,11 +20,19 @@ namespace BossRoom.Server
     {
         static List<ServerCharacter> s_ActivePlayers = new List<ServerCharacter>();
 
+        [SerializeField]
         ServerCharacter m_CachedServerCharacter;
+
+        public override void NetworkStart()
+        {
+            if( !IsServer )
+            {
+                enabled = false;
+            }
+        }
 
         void OnEnable()
         {
-            m_CachedServerCharacter = GetComponent<ServerCharacter>();
             s_ActivePlayers.Add(m_CachedServerCharacter);
         }
 
@@ -35,9 +43,11 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Returns a list of all active players' ServerCharacters. Treat the list as read-only!
+        /// The list will be empty on the client.
         /// </summary>
         public static List<ServerCharacter> GetPlayerServerCharacters()
         {
+
             return s_ActivePlayers;
         }
     }
