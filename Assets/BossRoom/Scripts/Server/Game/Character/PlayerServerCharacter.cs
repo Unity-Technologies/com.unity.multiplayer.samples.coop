@@ -13,7 +13,7 @@ namespace BossRoom.Server
     /// iterating over the active connections and calling GetComponent() on their PlayerObject. But we need
     /// to iterate over all players quite often -- the monsters' IdleAIState does so in every Update() --
     /// and all those GetComponent() calls add up! So this optimization lets us iterate without calling
-    /// GetComponent().
+    /// GetComponent(). This will be refactored with a ScriptableObject-based approach on player collection.
     /// </remarks>
     [RequireComponent(typeof(ServerCharacter))]
     public class PlayerServerCharacter : NetworkBehaviour
