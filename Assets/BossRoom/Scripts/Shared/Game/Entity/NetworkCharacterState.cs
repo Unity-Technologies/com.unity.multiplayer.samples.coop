@@ -16,7 +16,8 @@ namespace BossRoom
     /// <summary>
     /// Contains all NetworkVariables and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
-    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
+    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState),
+        typeof(NetworkLifeState))]
     public class NetworkCharacterState : NetworkBehaviour, INetMovement, ITargetable
     {
         public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
@@ -78,34 +79,37 @@ namespace BossRoom
             set { m_NetworkHealthState.HitPoints.Value = value; }
         }
 
+        /// <summary>
         /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
         public NetworkVariableInt Mana;
 
+        [SerializeField]
+        NetworkLifeState m_NetworkLifeState;
+
+        public NetworkLifeState NetworkLifeState => m_NetworkLifeState;
+
         /// <summary>
         /// Current LifeState. Only Players should enter the FAINTED state.
         /// </summary>
-        public NetworkVariable<LifeState> NetworkLifeState { get; } = new NetworkVariable<LifeState>(LifeState.Alive);
+        public LifeState LifeState
+        {
+            get => m_NetworkLifeState.LifeState.Value;
+            set => m_NetworkLifeState.LifeState.Value = value;
+        }
 
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
 
-        public bool IsValidTarget { get { return NetworkLifeState.Value != LifeState.Dead; } }
+        public bool IsValidTarget => LifeState != LifeState.Dead;
 
         /// <summary>
         /// Returns true if the Character is currently in a state where it can play actions, false otherwise.
         /// </summary>
-        public bool CanPerformActions
-        {
-            get
-            {
-                //TODO: stun state should be tracked in NetworkCharacterState, and then also checked here.
-                return NetworkLifeState.Value == LifeState.Alive;
-            }
-        }
+        public bool CanPerformActions => LifeState == LifeState.Alive;
 
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
@@ -198,8 +202,11 @@ namespace BossRoom
         /// </summary>
         public event Action<ActionType> CancelActionsByTypeEventClient;
 
+        /// <summary>
+        /// /// Server to Client RPC that broadcasts this action play to all clients.
+        /// </summary>
+        /// <param name="data"> Data about which action to play and its associated details. </param>
         [ClientRpc]
-        /// Server->Client RPC that broadcasts this action play to all clients.
         public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);

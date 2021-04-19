@@ -3,6 +3,7 @@ using System.Collections;
 using MLAPI.Spawning;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Server
 {
@@ -11,6 +12,9 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerBossRoomState : GameStateBehaviour
     {
+        [SerializeField]
+        Transform m_RuntimeNetworkObjectsSeparator;
+
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_PlayerPrefab;
@@ -41,14 +45,6 @@ namespace BossRoom.Server
         /// Has the ServerBossRoomState already hit its initial spawn? (i.e. spawned players following load from character select).
         /// </summary>
         public bool InitialSpawnDone { get; private set; }
-
-        /// <summary>
-        /// We need to get told about the Boss to track their health for game win
-        /// </summary>
-        public void OnBossSpawned(NetworkCharacterState bossCharState)
-        {
-            bossCharState.NetworkLifeState.OnValueChanged += OnBossLifeStateChanged;
-        }
 
         public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
         {
@@ -111,7 +107,7 @@ namespace BossRoom.Server
             if( sceneIndex == serverScene )
             {
                 Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
-                
+
                 bool didSpawn = DoInitialSpawnIfPossible();
 
                 if( !didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
@@ -122,7 +118,7 @@ namespace BossRoom.Server
                     //ServerBossRoomState.
                     SpawnPlayer(clientId);
                 }
-                
+
             }
         }
 
@@ -152,8 +148,12 @@ namespace BossRoom.Server
             var newPlayer = spawnPoint != null ?
                 Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation) :
                 Instantiate(m_PlayerPrefab);
+
+            Assert.IsNotNull(m_RuntimeNetworkObjectsSeparator, "Separator Transform is null!");
+            newPlayer.transform.SetSiblingIndex(m_RuntimeNetworkObjectsSeparator.GetSiblingIndex() + 1);
+
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
-            netState.NetworkLifeState.OnValueChanged += OnHeroLifeStateChanged;
+            netState.NetworkLifeState.LifeState.OnValueChanged += OnHeroLifeStateChanged;
 
             var lobbyResults = GetLobbyResultsForClient(clientId);
 
@@ -177,7 +177,10 @@ namespace BossRoom.Server
                 foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
                 {
                     // if any player is alive just retun
-                    if (serverCharacter.NetState && serverCharacter.NetState.NetworkLifeState.Value == LifeState.Alive) { return; }
+                    if (serverCharacter.NetState && serverCharacter.NetState.LifeState == LifeState.Alive)
+                    {
+                        return;
+                    }
                 }
 
                 // If we made it this far, all players are down! switch to post game
@@ -185,15 +188,13 @@ namespace BossRoom.Server
             }
         }
 
-
-        // When the Boss dies, we also check to see if the game is over
-        private void OnBossLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        /// <summary>
+        /// Hooked up to GameListener UI event for the event when the boss is defeated.
+        /// </summary>
+        public void BossDefeated()
         {
-            if (lifeState == LifeState.Dead)
-            {
-                // Boss is dead - set game won to true
-                StartCoroutine(CoroGameOver(k_WinDelay, true));
-            }
+            // Boss is dead - set game won to true
+            StartCoroutine(CoroGameOver(k_WinDelay, true));
         }
 
         private IEnumerator CoroGameOver(float wait, bool gameWon)

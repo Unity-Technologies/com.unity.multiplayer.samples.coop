@@ -77,7 +77,7 @@ namespace BossRoom.Visual
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
-            m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+            m_NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
@@ -102,7 +102,7 @@ namespace BossRoom.Visual
             SetAppearanceSwap();
 
             // sync our animator to the most up to date version received from server
-            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
+            SyncEntryAnimation(m_NetState.LifeState);
 
             if (!m_NetState.IsNpc)
             {
@@ -183,7 +183,7 @@ namespace BossRoom.Visual
                 m_NetState.DoActionEventClient -= PerformActionFX;
                 m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
                 m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
-                m_NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+                m_NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
@@ -302,7 +302,7 @@ namespace BossRoom.Visual
             {
                 // set Animator variables here
                 float visibleSpeed = 0;
-                if (m_NetState.NetworkLifeState.Value == LifeState.Alive)
+                if (m_NetState.LifeState == LifeState.Alive)
                 {
                     visibleSpeed = m_NetState.VisualMovementSpeed.Value;
                 }
