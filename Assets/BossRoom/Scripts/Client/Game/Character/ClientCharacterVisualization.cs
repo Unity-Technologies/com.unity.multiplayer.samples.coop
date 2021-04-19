@@ -261,7 +261,7 @@ namespace BossRoom.Visual
             SetAppearanceSwap();
         }
 
-        private void OnStealthyChanged(byte oldValue, byte newValue)
+        private void OnStealthyChanged(bool oldValue, bool newValue)
         {
             SetAppearanceSwap();
         }
@@ -271,7 +271,7 @@ namespace BossRoom.Visual
             if (m_CharacterSwapper)
             {
                 var specialMaterialMode = CharacterSwap.SpecialMaterialMode.None;
-                if (m_NetState.IsStealthy.Value != 0)
+                if (m_NetState.IsStealthy.Value)
                 {
                     if (m_NetState.IsOwner)
                     {
