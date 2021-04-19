@@ -13,7 +13,7 @@ namespace BossRoom.Visual
     public class HeroActionBar : MonoBehaviour
     {
         [SerializeField]
-        [Tooltip("All buttons in this action bar")]
+        [Tooltip("All buttons in this action bar. Should be exactly 4!")]
         private UIHUDButton[] m_Buttons;
 
         [SerializeField]
@@ -83,6 +83,7 @@ namespace BossRoom.Visual
                 m_Buttons[i].OnPointerDownEvent -= OnButtonClickedDown;
                 m_Buttons[i].OnPointerUpEvent -= OnButtonClickedUp;
             }
+            m_Tooltips = null;
         }
 
         void OnDestroy()
@@ -236,6 +237,5 @@ namespace BossRoom.Visual
             }
             
         }
-
     }
 }
