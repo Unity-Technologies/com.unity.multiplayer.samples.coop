@@ -143,7 +143,6 @@ GameObject:
   - component: {fileID: 1457853304372527301}
   - component: {fileID: 1457853304372527299}
   - component: {fileID: 1457853304372527300}
-  - component: {fileID: 7803507824846740947}
   m_Layer: 5
   m_Name: HowToPlayPopupPanel
   m_TagString: Untagged
@@ -221,30 +220,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &7803507824846740947
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1457853304372527302}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b247bc798e114a642aaf1ba2a3fbd936, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TitleText: {fileID: 9115335084066362084}
-  m_MainText: {fileID: 0}
-  m_SubText: {fileID: 0}
-  m_ReconnectingImage: {fileID: 0}
-  m_InputField: {fileID: 0}
-  m_InputFieldPlaceholderText: {fileID: 0}
-  m_PortInputField: {fileID: 0}
-  m_ConfirmationButton: {fileID: 1692213958212137916}
-  m_ConfirmationText: {fileID: 2270440096912765473}
-  m_CancelButton: {fileID: 5688156018925286825}
-  m_NameDisplay: {fileID: 0}
-  m_OnlineModeDropdown: {fileID: 0}
 --- !u!1 &3917177445312180813
 GameObject:
   m_ObjectHideFlags: 0
@@ -1212,7 +1187,7 @@ GameObject:
   - component: {fileID: 5277713031684110769}
   - component: {fileID: 5277713031684110768}
   m_Layer: 5
-  m_Name: Canvas
+  m_Name: BossRoomHudCanvas
   m_TagString: GameCanvas
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
