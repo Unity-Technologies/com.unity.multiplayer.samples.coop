@@ -4,6 +4,7 @@ using Cinemachine;
 using MLAPI;
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Visual
 {
@@ -19,6 +20,9 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private CharacterSwap m_CharacterSwapper;
+
+        [SerializeField]
+        private VisualizationConfiguration m_VisualizationConfiguration;
 
         [Tooltip("Prefab for the Target Reticule used by this Character")]
         public GameObject TargetReticule;
@@ -42,15 +46,7 @@ namespace BossRoom.Visual
 
         private float m_SmoothedSpeed;
 
-        int m_AliveStateTriggerID;
-        int m_FaintedStateTriggerID;
-        int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
-        int m_AnticipateMoveTriggerID;
-        int m_SpeedVariableID;
-        int m_BaseNodeTagID;
-        int m_EntryDeathTriggerID;
-        int m_EntryFaintedTriggerID;
 
         event Action Destroyed;
 
@@ -65,15 +61,7 @@ namespace BossRoom.Visual
                 return;
             }
 
-            m_AliveStateTriggerID = Animator.StringToHash("StandUp");
-            m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
-            m_DeadStateTriggerID = Animator.StringToHash("Dead");
-            m_AnticipateMoveTriggerID = Animator.StringToHash("AnticipateMove");
-            m_SpeedVariableID = Animator.StringToHash("Speed");
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
-            m_BaseNodeTagID = Animator.StringToHash("BaseNode");
-            m_EntryDeathTriggerID = Animator.StringToHash("EntryDeath");
-            m_EntryFaintedTriggerID = Animator.StringToHash("EntryFainted");
 
             m_ActionViz = new ActionVisualization(this);
 
@@ -126,7 +114,7 @@ namespace BossRoom.Visual
                     gameObject.AddComponent<CameraController>();
                     m_PartyHUD.SetHeroData(m_NetState);
 
-                    if( Parent.TryGetComponent(out ClientInputSender inputSender))
+                    if (Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
                         inputSender.ActionInputEvent += OnActionInput;
                         inputSender.ClientMoveEvent += OnMoveInput;
@@ -159,9 +147,9 @@ namespace BossRoom.Visual
 
         private void OnMoveInput(Vector3 position)
         {
-            if( !IsAnimating )
+            if (!IsAnimating)
             {
-                OurAnimator.SetTrigger(m_AnticipateMoveTriggerID);
+                OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
             }
         }
 
@@ -175,10 +163,10 @@ namespace BossRoom.Visual
             switch (lifeState)
             {
                 case LifeState.Dead: // ie. NPCs already dead
-                    m_ClientVisualsAnimator.SetTrigger(m_EntryDeathTriggerID);
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.EntryDeathTriggerID);
                     break;
                 case LifeState.Fainted: // ie. PCs already fainted
-                    m_ClientVisualsAnimator.SetTrigger(m_EntryFaintedTriggerID);
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.EntryFaintedTriggerID);
                     break;
             }
         }
@@ -234,13 +222,13 @@ namespace BossRoom.Visual
             switch (newValue)
             {
                 case LifeState.Alive:
-                    m_ClientVisualsAnimator.SetTrigger(m_AliveStateTriggerID);
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
                     break;
                 case LifeState.Fainted:
-                    m_ClientVisualsAnimator.SetTrigger(m_FaintedStateTriggerID);
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
                     break;
                 case LifeState.Dead:
-                    m_ClientVisualsAnimator.SetTrigger(m_DeadStateTriggerID);
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
@@ -294,50 +282,31 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Returns the value we should set the Animator's "Speed" variable, which has the following range
-        /// (as configured in the AnimatorController's blend tree):
-        ///     0   = idle
-        ///     0.5 = walking
-        ///     1   = sprinting
-        ///     1.5 = fast-sprinting
-        ///     2   = comically fast-sprinting.
-        /// </summary>
-        /// <remarks>
-        /// Values in between these positions will be blended by the animator controller (e.g. a value of .75 is animated
-        /// as something between a walk and a run), but because we have footstep clips at specific speeds, we prefer to use
-        /// the specific animation-speeds that line up with the footsteps: 0.5 = walking footsteps, 1.0 = running footsteps.
-        /// Higher than 1 = no footsteps at all (at present).
-        /// 
-        /// This is why we don't try to determine the character's "normal" speed ourselves (by dividing their current speed in
-        /// m_NetState.NetworkMovementSpeed with the character class's base movement speed). Doing so could give us more precise
-        /// footsteps when the character's speed is buffed an arbitrary amount (e.g. a 10% speed buff would make the legs move
-        /// 10% faster)... but at the cost of the footstep sounds being misaligned.
-        ///
-        /// For a cartoony-styled game, it works out better to just rely on what the server says we're doing
-        /// (as represented by NetworkLifeState and MovementStatus values).
+        /// Returns the value we should set the Animator's "Speed" variable, given current
+        /// gameplay conditions.
         /// </remarks>
-        /// <returns>speed value, between 0 and 2</returns>
         private float GetVisualMovementSpeed()
         {
+            Assert.IsNotNull(m_VisualizationConfiguration);
             if (m_NetState.NetworkLifeState.Value != LifeState.Alive)
             {
-                return 0;
+                return m_VisualizationConfiguration.SpeedDead;
             }
 
             switch (m_NetState.MovementStatus.Value)
             {
                 case MovementStatus.Idle:
-                    return 0;
+                    return m_VisualizationConfiguration.SpeedIdle;
                 case MovementStatus.Normal:
-                    return 1;
+                    return m_VisualizationConfiguration.SpeedNormal;
                 case MovementStatus.Uncontrolled:
-                    return 0; // don't move legs at all -- the character seems to slide haplessly across the ground
+                    return m_VisualizationConfiguration.SpeedUncontrolled;
                 case MovementStatus.Slowed:
-                    return 2f; // comical over-exaggeration. The idea is the character is struggling to move at all, so their legs are going fast even though they are moving slowly. (Could also use 0.5 to have the slowed character just walk.)
+                    return m_VisualizationConfiguration.SpeedSlowed;
                 case MovementStatus.Hasted:
-                    return 1.5f;
+                    return m_VisualizationConfiguration.SpeedHasted;
                 case MovementStatus.Walking:
-                    return 0.5f;
+                    return m_VisualizationConfiguration.SpeedWalking;
                 default:
                     throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
             }
@@ -357,7 +326,7 @@ namespace BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat(m_SpeedVariableID, GetVisualMovementSpeed());
+                m_ClientVisualsAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
             }
 
             m_ActionViz.Update();
@@ -376,11 +345,11 @@ namespace BossRoom.Visual
         {
             get
             {
-                if( OurAnimator.GetFloat(m_SpeedVariableID) > 0.0 ) { return true; }
+                if (OurAnimator.GetFloat(m_VisualizationConfiguration.SpeedVariableID) > 0.0) { return true; }
 
                 for( int i = 0; i < OurAnimator.layerCount; i++ )
                 {
-                    if (OurAnimator.GetCurrentAnimatorStateInfo(i).tagHash != m_BaseNodeTagID)
+                    if (OurAnimator.GetCurrentAnimatorStateInfo(i).tagHash != m_VisualizationConfiguration.BaseNodeTagID)
                     {
                         //we are in an active node, not the default "nothing" node.
                         return true;
