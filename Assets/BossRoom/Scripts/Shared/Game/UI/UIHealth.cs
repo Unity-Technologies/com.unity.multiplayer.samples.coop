@@ -28,6 +28,7 @@ namespace BossRoom
         void HealthChanged(int previousValue, int newValue)
         {
             m_HitPointsSlider.value = newValue;
+            // disable slider when we're at full health!
             m_HitPointsSlider.gameObject.SetActive(m_HitPointsSlider.value != m_HitPointsSlider.maxValue);
         }
 
