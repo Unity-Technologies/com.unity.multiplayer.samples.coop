@@ -44,6 +44,17 @@ namespace BossRoom
         [Tooltip("The animator Speed value when character is moving at a slower walking pace")]
         public float SpeedWalking = 0.5f;
 
+        [Header("Associated Resources")]
+        [Tooltip("Prefab for the Target Reticule used by this Character")]
+        public GameObject TargetReticule;
+
+        [Tooltip("Material to use when displaying a friendly target reticule (e.g. green color)")]
+        public Material ReticuleFriendlyMat;
+
+        [Tooltip("Material to use when displaying a hostile target reticule (e.g. red color)")]
+        public Material ReticuleHostileMat;
+
+
         // These are maintained by our OnValidate(). Code refers to these hashed values, not the string versions!
         [SerializeField] [HideInInspector] public int AliveStateTriggerID;
         [SerializeField] [HideInInspector] public int FaintedStateTriggerID;

@@ -13,8 +13,6 @@ namespace BossRoom.Visual
     /// </summary>
     public class ClientCharacterVisualization : NetworkBehaviour
     {
-        private NetworkCharacterState m_NetState;
-
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
@@ -24,33 +22,48 @@ namespace BossRoom.Visual
         [SerializeField]
         private VisualizationConfiguration m_VisualizationConfiguration;
 
-        [Tooltip("Prefab for the Target Reticule used by this Character")]
-        public GameObject TargetReticule;
-
-        [Tooltip("Material to use when displaying a friendly target reticule (e.g. green color)")]
-        public Material ReticuleFriendlyMat;
-
-        [Tooltip("Material to use when displaying a hostile target reticule (e.g. red color)")]
-        public Material ReticuleHostileMat;
-
+        /// <summary>
+        /// Returns a reference to the active Animator for this visualization
+        /// </summary>
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
 
-        private ActionVisualization m_ActionViz;
+        /// <summary>
+        /// Returns the targeting-reticule prefab for this character visualization
+        /// </summary>
+        public GameObject TargetReticulePrefab { get { return m_VisualizationConfiguration.TargetReticule; } }
 
+        /// <summary>
+        /// Returns the Material to plug into the reticule when the selected entity is hostile
+        /// </summary>
+        public Material ReticuleHostileMat { get { return m_VisualizationConfiguration.ReticuleHostileMat; } }
+
+        /// <summary>
+        /// Returns the Material to plug into the reticule when the selected entity is friendly
+        /// </summary>
+        public Material ReticuleFriendlyMat { get { return m_VisualizationConfiguration.ReticuleFriendlyMat; } }
+
+        /// <summary>
+        /// Returns our pseudo-Parent, the object that owns the visualization.
+        /// (We don't have an actual transform parent because we're on a top-level GameObject.)
+        /// </summary>
         public Transform Parent { get; private set; }
+
+        public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
+
+        private NetworkCharacterState m_NetState;
+
+        private ActionVisualization m_ActionViz;
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         /// Player characters need to report health changes and chracter info to the PartyHUD
-        private PartyHUD m_PartyHUD;
+        PartyHUD m_PartyHUD;
 
-        private float m_SmoothedSpeed;
+        float m_SmoothedSpeed;
 
         int m_HitStateTriggerID;
 
         event Action Destroyed;
-
-       public bool CanPerformActions { get { return m_NetState.CanPerformActions;  } }
 
         /// <inheritdoc />
         public override void NetworkStart()
