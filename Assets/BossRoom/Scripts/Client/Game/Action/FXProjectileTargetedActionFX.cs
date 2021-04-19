@@ -147,6 +147,25 @@ namespace BossRoom.Visual
         {
             base.AnticipateAction();
             PlayFireAnim();
+
+            // see if this is going to be a "miss" because the player tried to click through a wall. If so,
+            // we change our data in the same way that the server will (changing our target point to the spot on the wall)
+            Vector3 targetSpot = Data.Position;
+            if (Data.TargetIds != null && Data.TargetIds.Length > 0)
+            {
+                var targetObj = NetworkSpawnManager.SpawnedObjects[Data.TargetIds[0]];
+                if (targetObj)
+                {
+                    targetSpot = targetObj.transform.position;
+                }
+            }
+
+            if (!ActionUtils.HasLineOfSight(m_Parent.transform.position, targetSpot, out Vector3 collidePos))
+            {
+                // we do not have line of sight to the target point. So our target instead becomes the obstruction point
+                Data.TargetIds = null;
+                Data.Position = collidePos;
+            }
         }
     }
 }

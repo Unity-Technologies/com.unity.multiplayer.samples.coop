@@ -10,7 +10,7 @@ Material:
   m_Name: M_MotionFlash
   m_Shader: {fileID: 4800000, guid: 19584968e8d53424c9ce71b2c72d64f4, type: 3}
   m_ShaderKeywords: _HASFLOWEFFECT_ON _HASMASK_ON _HASTEXTUREDISSOLVE_ON _STEPSUBTRACT_ON
-    _SWITCH_ALPHA_ON _VERTEXAOPACITY_ON
+    _VERTEXAOPACITY_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -48,8 +48,12 @@ Material:
         m_Texture: {fileID: 2800000, guid: 037eea83bb383c34ebc2ee292c903057, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _MainTexture:
-        m_Texture: {fileID: 2800000, guid: fa9d4375ce230e1488b5a2680fd71074, type: 3}
+    - _MaskTexture:
+        m_Texture: {fileID: 2800000, guid: 886abf5df7054d749aae3c9907e011f7, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MaskTexture2:
+        m_Texture: {fileID: 2800000, guid: 9a69c5a954f525a44a117b8d5d15e056, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -83,10 +87,12 @@ Material:
     m_Floats:
     - _BumpScale: 1
     - _ChangeMasktoX: 0
-    - _CullMode: 2
+    - _CullMode: 0
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _Float2: 1
+    - _Float3: 2
     - _Flowintencity: 0.172
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -97,8 +103,10 @@ Material:
     - _HasMask: 1
     - _HasTextureDissolve: 1
     - _InvertMask: 0
-    - _MaskIntenicty: 4
-    - _MaskPower: 2
+    - _MaskIntenicty: 1
+    - _MaskIntenicty2: 1
+    - _MaskPower: 2.5
+    - _MaskPower2: 2.3
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -108,7 +116,6 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _StepSubtract: 1
-    - _Switch_Alpha: 1
     - _UVSec: 0
     - _UseAlphaChannel: 0
     - _Use_alpha: 0
