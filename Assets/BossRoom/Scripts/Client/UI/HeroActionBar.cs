@@ -66,6 +66,7 @@ namespace BossRoom.Visual
 
         void OnEnable()
         {
+            Assert.IsTrue(m_Buttons.Length == 4, $"m_Buttons expects a hard-coded length of 4; found {m_Buttons.Length}");
             m_Tooltips = new Client.UITooltipDetector[m_Buttons.Length];
             for (int i = 0; i < m_Buttons.Length; ++i)
             {
