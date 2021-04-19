@@ -160,7 +160,7 @@ namespace BossRoom.Visual
 
         private void OnMoveInput(Vector3 position)
         {
-            if (!IsAnimating)
+            if (!IsAnimating())
             {
                 OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
             }
@@ -354,23 +354,20 @@ namespace BossRoom.Visual
             m_ActionViz.OnAnimEvent(id);
         }
 
-        public bool IsAnimating
+        public bool IsAnimating()
         {
-            get
+            if (OurAnimator.GetFloat(m_VisualizationConfiguration.SpeedVariableID) > 0.0) { return true; }
+
+            for (int i = 0; i < OurAnimator.layerCount; i++)
             {
-                if (OurAnimator.GetFloat(m_VisualizationConfiguration.SpeedVariableID) > 0.0) { return true; }
-
-                for( int i = 0; i < OurAnimator.layerCount; i++ )
+                if (OurAnimator.GetCurrentAnimatorStateInfo(i).tagHash != m_VisualizationConfiguration.BaseNodeTagID)
                 {
-                    if (OurAnimator.GetCurrentAnimatorStateInfo(i).tagHash != m_VisualizationConfiguration.BaseNodeTagID)
-                    {
-                        //we are in an active node, not the default "nothing" node.
-                        return true;
-                    }
+                    //we are in an active node, not the default "nothing" node.
+                    return true;
                 }
-
-                return false;
             }
+
+            return false;
         }
     }
 }
