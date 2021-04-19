@@ -50,12 +50,12 @@ namespace BossRoom.Server
             if (m_SpawnEnemyKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnEnemyKeyCode))
             {
                 var newEnemy = Instantiate(m_EnemyPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, null, false);
             }
             if (m_SpawnBossKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnBossKeyCode))
             {
                 var newEnemy = Instantiate(m_BossPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, null, false);
             }
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
