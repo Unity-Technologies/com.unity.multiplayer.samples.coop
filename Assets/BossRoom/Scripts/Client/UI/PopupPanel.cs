@@ -59,6 +59,8 @@ namespace BossRoom.Visual
 
         private const string k_DefaultConfirmText = "OK";
 
+        static readonly char[] k_InputFieldIncludeChars = new[] { '.' };
+
         /// <summary>
         /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
         /// cancel their input and requests.
@@ -120,6 +122,45 @@ namespace BossRoom.Visual
             if (portNum <= 0)
                 portNum = m_DefaultPort;
             m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), (OnlineMode)m_OnlineModeDropdown.value);
+        }
+
+        /// <summary>
+        /// Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
+        /// </summary>
+        /// <param name="dirtyString"> string to sanitize. </param>
+        /// <param name="includeChars"> Array of chars to include. </param>
+        /// <returns> Sanitized text string. </returns>
+        static string Sanitize(string dirtyString, char[] includeChars = null)
+        {
+            var result = new StringBuilder(dirtyString.Length);
+            foreach (char c in dirtyString)
+            {
+                if (char.IsLetterOrDigit(c) ||
+                    (includeChars != null && Array.Exists(includeChars, excludeChar => excludeChar == c)))
+                {
+                    result.Append(c);
+                }
+            }
+
+            return result.ToString();
+        }
+
+        /// <summary>
+        /// Added to the InputField component's OnValueChanged callback for the Room/IP UI text.
+        /// </summary>
+        public void SanitizeInputText()
+        {
+            var inputFieldText = Sanitize(m_InputField.text, k_InputFieldIncludeChars);
+            m_InputField.text = inputFieldText;
+        }
+
+        /// <summary>
+        /// Added to the InputField component's OnValueChanged callback for the Port UI text.
+        /// </summary>
+        public void SanitizePortText()
+        {
+            var inputFieldText = Sanitize(m_PortInputField.text);
+            m_PortInputField.text = inputFieldText;
         }
 
         /// <summary>
