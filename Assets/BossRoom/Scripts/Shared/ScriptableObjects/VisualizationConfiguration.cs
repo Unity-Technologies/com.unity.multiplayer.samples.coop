@@ -10,23 +10,23 @@ namespace BossRoom
     {
         [Header("Animation Triggers")]
         [Tooltip("Trigger for when a player character is resurrected")]
-        [SerializeField] private string AliveStateTrigger = "StandUp";
+        [SerializeField] string m_AliveStateTrigger = "StandUp";
         [Tooltip("Trigger for when a player-character using this visualization becomes incapacitated")]
-        [SerializeField] private string FaintedStateTrigger = "FallDown";
+        [SerializeField] string m_FaintedStateTrigger = "FallDown";
         [Tooltip("Trigger for when a monster using this visualization becomes dead")]
-        [SerializeField] private string DeadStateTrigger = "Dead";
+        [SerializeField] string m_DeadStateTrigger = "Dead";
         [Tooltip("Trigger for when we expect to start moving very soon (to play a short animation in anticipation of moving soon)")]
-        [SerializeField] private string AnticipateMoveTrigger = "AnticipateMove";
+        [SerializeField] string m_AnticipateMoveTrigger = "AnticipateMove";
         [Tooltip("Trigger for when a new character joins the game and we are already a dead monster")]
-        [SerializeField] private string EntryDeathTrigger = "EntryDeath";
+        [SerializeField] string m_EntryDeathTrigger = "EntryDeath";
         [Tooltip("Trigger for when a new character joins the game and we are already an incapacitated player")]
-        [SerializeField] private string EntryFaintedTrigger = "EntryFainted";
+        [SerializeField] string m_EntryFaintedTrigger = "EntryFainted";
 
         [Header("Other Animation Variables")]
         [Tooltip("Variable that drives the character's movement animations")]
-        [SerializeField] private string SpeedVariable = "Speed";
+        [SerializeField] string m_SpeedVariable = "Speed";
         [Tooltip("Tag that should be on the \"do nothing\" default nodes of each animator layer")]
-        [SerializeField] private string BaseNodeTag = "BaseNode";
+        [SerializeField] string m_BaseNodeTag = "BaseNode";
 
         [Header("Animation Speeds")]
         [Tooltip("The animator Speed value when character is dead")]
@@ -65,19 +65,17 @@ namespace BossRoom
         [SerializeField] [HideInInspector] public int SpeedVariableID;
         [SerializeField] [HideInInspector] public int BaseNodeTagID;
 
-#if UNITY_EDITOR
         void OnValidate()
         {
-            AliveStateTriggerID = Animator.StringToHash(AliveStateTrigger);
-            FaintedStateTriggerID = Animator.StringToHash(FaintedStateTrigger);
-            DeadStateTriggerID = Animator.StringToHash(DeadStateTrigger);
-            AnticipateMoveTriggerID = Animator.StringToHash(AnticipateMoveTrigger);
-            EntryDeathTriggerID = Animator.StringToHash(EntryDeathTrigger);
-            EntryFaintedTriggerID = Animator.StringToHash(EntryFaintedTrigger);
+            AliveStateTriggerID = Animator.StringToHash(m_AliveStateTrigger);
+            FaintedStateTriggerID = Animator.StringToHash(m_FaintedStateTrigger);
+            DeadStateTriggerID = Animator.StringToHash(m_DeadStateTrigger);
+            AnticipateMoveTriggerID = Animator.StringToHash(m_AnticipateMoveTrigger);
+            EntryDeathTriggerID = Animator.StringToHash(m_EntryDeathTrigger);
+            EntryFaintedTriggerID = Animator.StringToHash(m_EntryFaintedTrigger);
 
-            SpeedVariableID = Animator.StringToHash(SpeedVariable);
-            BaseNodeTagID = Animator.StringToHash(BaseNodeTag);
+            SpeedVariableID = Animator.StringToHash(m_SpeedVariable);
+            BaseNodeTagID = Animator.StringToHash(m_BaseNodeTag);
         }
-#endif
     }
 }
