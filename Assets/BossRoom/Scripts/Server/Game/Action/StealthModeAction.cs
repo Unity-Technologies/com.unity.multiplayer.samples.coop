@@ -20,12 +20,6 @@ namespace BossRoom.Server
         {
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
-            // not allowed to walk while going stealthy!
-            var movement = m_Parent.GetComponent<ServerCharacterMovement>();
-            if (!movement.IsPerformingForcedMovement())
-            {
-                movement.CancelMove();
-            }    
             return true;
         }
 

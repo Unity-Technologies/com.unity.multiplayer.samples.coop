@@ -129,14 +129,14 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                // if we're currently playing an interruptible action, cancel it!
+                // if we're currently playing an interruptible action, interrupt it!
                 if (m_ActionPlayer.GetActiveActionInfo(out ActionRequestData data))
                 {
                     if (GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out ActionDescription description))
                     {
                         if (description.ActionInterruptible)
                         {
-                            ClearActions(false);
+                            m_ActionPlayer.ClearActions(false);
                         }
                     }
                 }
@@ -150,17 +150,9 @@ namespace BossRoom.Server
         {
             if (lifeState != LifeState.Alive)
             {
-                ClearActions(true);
+                m_ActionPlayer.ClearActions(true);
                 m_Movement.CancelMove();
             }
-        }
-
-        /// <summary>
-        /// Clear all active Actions.
-        /// </summary>
-        public void ClearActions(bool alsoClearNonBlockingActions)
-        {
-            m_ActionPlayer.ClearActions(alsoClearNonBlockingActions);
         }
 
         private void OnActionPlayRequest(ActionRequestData data)
@@ -217,7 +209,7 @@ namespace BossRoom.Server
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
             {
-                ClearActions(false);
+                m_ActionPlayer.ClearActions(false);
 
                 if (IsNpc)
                 {

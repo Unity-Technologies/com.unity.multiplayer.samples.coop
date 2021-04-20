@@ -11,6 +11,8 @@ namespace BossRoom.Server
     {
         private ServerCharacter m_Parent;
 
+        private ServerCharacterMovement m_Movement;
+
         private List<Action> m_Queue;
 
         private List<Action> m_NonBlockingActions;
@@ -30,6 +32,7 @@ namespace BossRoom.Server
         public ActionPlayer(ServerCharacter parent)
         {
             m_Parent = parent;
+            m_Movement = parent.GetComponent<ServerCharacterMovement>();
             m_Queue = new List<Action>();
             m_NonBlockingActions = new List<Action>();
             m_LastUsedTimestamps = new Dictionary<ActionType, float>();
@@ -132,6 +135,12 @@ namespace BossRoom.Server
                     //actions that exited out in the "Start" method will not have their End method called, by design.
                     AdvanceQueue(false); // note: this will call StartAction() recursively if there's more stuff in the queue ...
                     return;              // ... so it's important not to try to do anything more here
+                }
+
+                // if this Action is interruptible, that means movement would interrupt it. So stop any active movement!
+                if (m_Queue[0].Description.ActionInterruptible && !m_Movement.IsPerformingForcedMovement())
+                {
+                    m_Movement.CancelMove();
                 }
 
                 // remember that we successfully used this Action!
