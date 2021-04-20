@@ -28,17 +28,12 @@ namespace BossRoom.Visual
             bool wasAnticipated = Anticipated;
             base.Start();
             m_Target = GetTarget();
-            if (HasTarget() && m_Target == null)
-            {
-                // target has disappeared! Abort.
-                return false;
-            }
 
             if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
 
             // animate shooting the projectile
-            if( !wasAnticipated )
+            if (!wasAnticipated)
             {
                 PlayFireAnim();
             }
@@ -56,7 +51,7 @@ namespace BossRoom.Visual
             if (TimeRunning >= Description.ExecTimeSeconds && m_Projectile == null)
             {
                 // figure out how long the pretend-projectile will be flying to the target
-                Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
+                Vector3 targetPos = m_Target ? m_Target.transform.position : m_Data.Position;
                 float initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
                 m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed_m_s;
 
@@ -98,14 +93,6 @@ namespace BossRoom.Visual
                 var hitReact = !string.IsNullOrEmpty(Description.ReactAnim) ? Description.ReactAnim : k_DefaultHitReact;
                 clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
             }
-        }
-
-        /// <summary>
-        /// Do we even have a target? (If false, it means player clicked on nothing, and we're rendering a "missed" fake bolt.)
-        /// </summary>
-        private bool HasTarget()
-        {
-            return Data.TargetIds != null && Data.TargetIds.Length > 0;
         }
 
         private NetworkObject GetTarget()
