@@ -248,15 +248,9 @@ namespace BossRoom.Server
 
             // iterate through clients and only return true if a player is in range
             // and is not occluded by a blocking collider.
-            foreach (KeyValuePair<ulong, NetworkClient> idToClient in NetworkManager.Singleton.ConnectedClients)
+            foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (idToClient.Value.PlayerObject == null)
-                {
-                    // skip over any connection that doesn't have a PlayerObject yet
-                    continue;
-                }
-
-                var playerPosition = idToClient.Value.PlayerObject.transform.position;
+                var playerPosition = serverCharacter.transform.position;
                 var direction = playerPosition - spawnerPosition;
 
                 if (direction.sqrMagnitude > squaredProximityDistance)
