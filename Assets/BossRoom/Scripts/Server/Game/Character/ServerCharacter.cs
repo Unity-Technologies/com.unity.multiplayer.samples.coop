@@ -42,6 +42,12 @@ namespace BossRoom.Server
         // Cached component reference
         private ServerCharacterMovement m_Movement;
 
+        /// <summary>
+        /// If we are created by a spawner, the spawner might override our detection radius
+        /// -1 is a sentinel value meaning "no override"
+        /// </summary>
+        private float m_DetectRadiusOverride = -1;
+
         private void Awake()
         {
             m_Movement = GetComponent<ServerCharacterMovement>();
@@ -212,6 +218,33 @@ namespace BossRoom.Server
         public float GetBuffedValue(Action.BuffableValue buffType)
         {
             return m_ActionPlayer.GetBuffedValue(buffType);
+        }
+
+        /// <summary>
+        /// Returns the range at which this character can detect enemies. Only applicable to NPCs.
+        /// This is usually the same value as is indicated by our game data, but it can be
+        /// dynamically overridden.
+        /// </summary>
+        /// <returns>our entity detection range (in meters)</returns>
+        public float GetDetectRadius()
+        {
+            if (m_DetectRadiusOverride == -1)
+            {
+                return GameDataSource.Instance.CharacterDataByType[NetState.CharacterType].DetectRange;
+            }
+            else
+            {
+                return m_DetectRadiusOverride;
+            }
+        }
+
+        /// <summary>
+        /// Changes this creature's detection radius. Only meaningful for NPCs.
+        /// </summary>
+        /// <param name="radius">new detection radius for this entity (in meters)</param>
+        public void SetDetectRadius(float radius)
+        {
+            m_DetectRadiusOverride = radius;
         }
 
         /// <summary>
