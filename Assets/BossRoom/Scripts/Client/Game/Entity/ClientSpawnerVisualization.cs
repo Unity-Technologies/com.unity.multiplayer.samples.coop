@@ -25,7 +25,7 @@ namespace BossRoom
             m_NetworkHealthState.HitPoints.OnValueChanged += HitPointsChanged;
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             if (m_NetworkHealthState != null)
             {

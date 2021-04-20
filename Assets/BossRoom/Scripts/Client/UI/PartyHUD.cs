@@ -229,7 +229,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             foreach( var kvp in m_TrackedHeroes )
             {

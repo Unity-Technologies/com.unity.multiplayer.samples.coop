@@ -59,7 +59,7 @@ namespace BossRoom.Visual
             m_PostGameData.GameBannerState.OnValueChanged += OnGameWonChanged;
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             if( m_PostGameData != null )
             {
