@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -1764033382396218637}
   - component: {fileID: 3608714310874968837}
   - component: {fileID: 5762482089640033414}
-  - component: {fileID: 605417794361661468}
+  - component: {fileID: 863254816570832310}
   m_Layer: 0
   m_Name: BossRoomState
   m_TagString: Untagged
@@ -94,7 +94,7 @@ MonoBehaviour:
   - {fileID: 6314369147267609336}
   - {fileID: 8725901042666772653}
   - {fileID: 7239491272522478247}
---- !u!114 &605417794361661468
+--- !u!114 &863254816570832310
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -103,10 +103,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 297185343939699586}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b485354c9406ae843a51583d81e67530, type: 3}
+  m_Script: {fileID: 11500000, guid: 1ddfeda1c7e74b74d9baaca2a96c95d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Event: {fileID: 11400000, guid: 9fb31cde6d024114488a5bf48fff8a86, type: 2}
+  m_GameEvent: {fileID: 11400000, guid: 9fb31cde6d024114488a5bf48fff8a86, type: 2}
   m_Response:
     m_PersistentCalls:
       m_Calls:

@@ -1,5 +1,6 @@
 using MLAPI;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Server
 {
@@ -25,6 +26,8 @@ namespace BossRoom.Server
                 enabled = false;
                 return;
             }
+
+            Assert.IsNotNull(m_NetworkLifeState, "NetworkLifeState has not been set!");
 
             m_NetworkLifeState.LifeState.OnValueChanged += LifeStateChanged;
         }

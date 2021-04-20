@@ -61,10 +61,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: ImpBoss
       objectReference: {fileID: 0}
-    - target: {fileID: 3288448142974003541, guid: 64cfd098f62285f42918875fef849e88, type: 3}
-      propertyPath: CharacterType.InternalValue
-      value: 5
-      objectReference: {fileID: 0}
     - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: PrefabHash
       value: 10222221329416050842

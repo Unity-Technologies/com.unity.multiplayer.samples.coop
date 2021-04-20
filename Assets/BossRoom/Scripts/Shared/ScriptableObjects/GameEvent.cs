@@ -10,7 +10,7 @@ namespace BossRoom
     [CreateAssetMenu]
     public class GameEvent : ScriptableObject
     {
-        List<GameEventListener> m_Listeners = new List<GameEventListener>();
+        List<IGameEventListenable> m_Listeners = new List<IGameEventListenable>();
 
         public void Raise()
         {
@@ -26,12 +26,20 @@ namespace BossRoom
             }
         }
 
-        public void RegisterListener(GameEventListener listener)
+        public void RegisterListener(IGameEventListenable listener)
         {
+            for (int i = 0; i < m_Listeners.Count; i++)
+            {
+                if (m_Listeners[i] == listener)
+                {
+                    return;
+                }
+            }
+
             m_Listeners.Add(listener);
         }
 
-        public void DeregisterListener(GameEventListener listener)
+        public void DeregisterListener(IGameEventListenable listener)
         {
             m_Listeners.Remove(listener);
         }
