@@ -5,13 +5,11 @@ namespace BossRoom.Server
 {
     /// <summary>
     /// Provides various special commands that the Host can use while developing and
-    /// debugging the game. These are not compiled into release builds. (If you want
-    /// to disable them for debug builds, disable or remove this component from the
-    /// BossRoomState prefab.)
+    /// debugging the game. To disable them, just disable or remove this component from the
+    /// BossRoomState prefab.
     /// </summary>
     public class ServerTestingHotkeys : NetworkBehaviour
     {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
         [SerializeField]
         [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_EnemyPrefab;
@@ -63,6 +61,5 @@ namespace BossRoom.Server
                 MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
             }
         }
-#endif
     }
 }
