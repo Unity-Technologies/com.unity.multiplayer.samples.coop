@@ -34,15 +34,9 @@ namespace BossRoom.Visual
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
-            var stateGO = GameObject.FindGameObjectWithTag("ActiveState");
-            var mainMenuState = stateGO != null ? stateGO.GetComponent<ClientMainMenuState>() : null;
-            if( mainMenuState != null )
+            if (m_ClientNetPortal.DisconnectReason.Reason == DisconnectReasonType.Disconnect )
             {
-                var transitionReason = mainMenuState.ReadAndUnsetTransitionReason();
-                if( transitionReason == ClientMainMenuState.TransitionReason.Disconnect )
-                {
-                    m_ResponsePopup.SetupNotifierDisplay("Disconnected From Host", "The connection to the Host was lost", false, true );
-                }
+                m_ResponsePopup.SetupNotifierDisplay("Disconnected From Host", "The connection to the Host was lost", false, true );
             }
         }
 

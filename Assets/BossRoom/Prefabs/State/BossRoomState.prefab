@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 2113376856512980659}
   m_Layer: 0
   m_Name: BossRoomState
-  m_TagString: ActiveState
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -83,8 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927521835ae055247b17e4abe805b4ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef,
-    type: 3}
+  m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
   m_PlayerSpawnPoints:
   - {fileID: 6319832178442273571}
   - {fileID: 374135395555381814}
@@ -106,10 +105,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1e76745edfc434ab8154ad27efc5fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_EnemyPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded,
-    type: 3}
-  m_BossPrefab: {fileID: 3688950541947916326, guid: 365e94337fd10fe4ebde1906df413ac7,
-    type: 3}
+  m_EnemyPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
+  m_BossPrefab: {fileID: 3688950541947916326, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
   m_SpawnEnemyKeyCode: 101
   m_SpawnBossKeyCode: 98
   m_InstantQuitKeyCode: 113

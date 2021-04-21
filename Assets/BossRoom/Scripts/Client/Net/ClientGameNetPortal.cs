@@ -19,6 +19,11 @@ namespace BossRoom.Client
         private GameNetPortal m_Portal;
 
         /// <summary>
+        /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
+        /// </summary>
+        public DisconnectReason DisconnectReason { get; private set; } = new DisconnectReason();
+
+        /// <summary>
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
         private const int k_TimeoutDuration = 10;
@@ -71,7 +76,7 @@ namespace BossRoom.Client
         {
             if( m_Portal.NetManager.IsClient )
             {
-                ClientMainMenuState.SetTransitionReason(ClientMainMenuState.TransitionReason.UserRequested);
+                DisconnectReason.SetDisconnectReason(DisconnectReasonType.UserRequested);
                 m_Portal.NetManager.StopClient();
             }
         }
@@ -101,10 +106,10 @@ namespace BossRoom.Client
                     // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
                     // Just shut down networking and switch back to main menu.
                     MLAPI.NetworkManager.Singleton.Shutdown();
-                    if( !ClientMainMenuState.HasTransitionReason )
+                    if( !DisconnectReason.HasTransitionReason )
                     {
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
-                        ClientMainMenuState.SetTransitionReason(ClientMainMenuState.TransitionReason.Disconnect);
+                        DisconnectReason.SetDisconnectReason(DisconnectReasonType.Disconnect);
                     }
                     SceneManager.LoadScene("MainMenu");
                 }
@@ -127,7 +132,8 @@ namespace BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public static void StartClient(GameNetPortal portal, string ipaddress, int port)
         {
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
+            portal.GetComponent<ClientGameNetPortal>().DisconnectReason.Clear();
+
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 

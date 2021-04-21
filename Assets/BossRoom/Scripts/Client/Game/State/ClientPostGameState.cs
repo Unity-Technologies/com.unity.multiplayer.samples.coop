@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace BossRoom.Client
 {
     /// <summary>
@@ -17,7 +19,8 @@ namespace BossRoom.Client
             //display a "Host Abandoned the Game" message, but this would require some more plumbing (an RPC from the host before it quit,
             //containing that information).
             //In the meantime, we just set "UserRequested" to suppress the Disconnected error popup.
-            ClientMainMenuState.SetTransitionReason(ClientMainMenuState.TransitionReason.UserRequested);
+            var portalGO = GameObject.FindGameObjectWithTag("GameNetPortal");
+            portalGO.GetComponent<ClientGameNetPortal>().DisconnectReason.SetDisconnectReason(DisconnectReasonType.UserRequested);
         }
 
         public override void NetworkStart()
