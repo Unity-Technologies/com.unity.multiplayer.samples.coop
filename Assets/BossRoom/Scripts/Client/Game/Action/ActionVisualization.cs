@@ -66,6 +66,14 @@ namespace BossRoom.Visual
             }
         }
 
+        public void OnTeleport()
+        {
+            foreach (var actionFX in m_PlayingActions)
+            {
+                actionFX.OnTeleport();
+            }
+        }
+
         /// <summary>
         /// Called on the client that owns the Character when the player triggers an action. This allows actions to immediately start playing feedback. 
         /// </summary>

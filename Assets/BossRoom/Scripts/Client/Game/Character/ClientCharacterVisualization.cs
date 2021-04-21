@@ -302,6 +302,7 @@ namespace BossRoom.Visual
             m_SmoothedSpeed = 0;
 
             // give actions a chance to react to the teleportation
+            m_ActionViz.OnTeleport();
 
         }
 
