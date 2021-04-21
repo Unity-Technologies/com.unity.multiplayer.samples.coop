@@ -66,12 +66,17 @@ namespace BossRoom.Client
             ConfigureStateGraphics();
         }
 
+        public bool IsLocked()
+        {
+            return m_State == CharSelectData.SeatState.LockedIn;
+        }
+
         public void SetDisableInteraction(bool disable)
         {
             m_Button.interactable = !disable;
             m_IsDisabled = disable;
 
-            if (disable)
+            if (!disable)
             {
                 // if we were locked move to unlocked state
                 PlayUnlockAnim();

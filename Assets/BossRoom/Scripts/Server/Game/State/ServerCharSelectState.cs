@@ -37,20 +37,28 @@ namespace BossRoom.Server
                 return;
             }
 
-            // see if someone has already locked-in that seat! If so, too late... discard this choice
-            foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
+            if ( newSeatIdx ==-1)
             {
-                if ( playerInfo.ClientId != clientId && playerInfo.SeatIdx == newSeatIdx && playerInfo.SeatState == CharSelectData.SeatState.LockedIn)
+                // we can't lock in with no seat
+                lockedIn = false;
+            }
+            else
+            {
+                // see if someone has already locked-in that seat! If so, too late... discard this choice
+                foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
                 {
-                    // somebody already locked this choice in. Stop!
-                    // Instead of granting lock request, change this player to Inactive state.
-                    CharSelectData.LobbyPlayers[idx] = new CharSelectData.LobbyPlayerState(clientId,
-                        CharSelectData.LobbyPlayers[idx].PlayerName,
-                        CharSelectData.LobbyPlayers[idx].PlayerNum,
-                        CharSelectData.SeatState.Inactive);
+                    if (playerInfo.ClientId != clientId && playerInfo.SeatIdx == newSeatIdx && playerInfo.SeatState == CharSelectData.SeatState.LockedIn)
+                    {
+                        // somebody already locked this choice in. Stop!
+                        // Instead of granting lock request, change this player to Inactive state.
+                        CharSelectData.LobbyPlayers[idx] = new CharSelectData.LobbyPlayerState(clientId,
+                            CharSelectData.LobbyPlayers[idx].PlayerName,
+                            CharSelectData.LobbyPlayers[idx].PlayerNum,
+                            CharSelectData.SeatState.Inactive);
 
-                    // then early out
-                    return;
+                        // then early out
+                        return;
+                    }
                 }
             }
 

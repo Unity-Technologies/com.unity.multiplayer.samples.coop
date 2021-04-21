@@ -234,18 +234,18 @@ namespace BossRoom.Client
             }
             else
             {
-                m_InSceneCharacter.gameObject.SetActive(true);
-                m_InSceneCharacter.SwapToModel(CharSelectData.LobbySeatConfigurations[seatIdx].CharacterArtIdx);
-                m_ClassInfoBox.ConfigureForClass(CharSelectData.LobbySeatConfigurations[seatIdx].Class);
+                if ( seatIdx != -1 )
+                {
+                    m_InSceneCharacter.gameObject.SetActive(true);
+                    m_InSceneCharacter.SwapToModel(CharSelectData.LobbySeatConfigurations[seatIdx].CharacterArtIdx);
+                    m_ClassInfoBox.ConfigureForClass(CharSelectData.LobbySeatConfigurations[seatIdx].Class);
+                }
                 if (state == CharSelectData.SeatState.LockedIn && !m_HasLocalPlayerLockedIn)
                 {
                     // the local player has locked in their seat choice! Rearrange the UI appropriately
-
                     // the character should act excited
                     m_InSceneCharacterAnimator.SetTrigger(m_AnimationTriggerOnCharChosen);
-
                     ConfigureUIForLobbyMode(CharSelectData.IsLobbyClosed.Value ? LobbyMode.LobbyEnding : LobbyMode.SeatChosen);
-
                     m_HasLocalPlayerLockedIn = true;
                 }
                 else if (m_HasLocalPlayerLockedIn && state == CharSelectData.SeatState.Active)
@@ -257,7 +257,6 @@ namespace BossRoom.Client
                         m_ClassInfoBox.SetLockedIn(false);
                         m_HasLocalPlayerLockedIn = false;
                     }
-
                 }
                 else if (state == CharSelectData.SeatState.Active && isNewSeat)
                 {
@@ -352,6 +351,7 @@ namespace BossRoom.Client
                 case LobbyMode.ChooseSeat:
                     if ( m_LastSeatSelected == -1)
                     {
+                        m_InSceneCharacter.gameObject.SetActive(false);
                         m_ClassInfoBox.ConfigureForNoSelection();
                     }
                     break;
@@ -369,10 +369,11 @@ namespace BossRoom.Client
                     break;
             }
 
-            // go through all our seats and tell them to stop acting like they're clickable buttons
+            // go through all our seats and enable or disable buttons
             foreach (var seat in m_PlayerSeats)
             {
-                seat.SetDisableInteraction(isSeatsDisabledInThisMode);
+                // disable interaction if seat is already locked or all seats disabled
+                seat.SetDisableInteraction(seat.IsLocked() || isSeatsDisabledInThisMode);
             }
 
         }
