@@ -46,6 +46,17 @@ namespace BossRoom.Visual
         /// </summary>
         private bool m_WasSelectedPlayerAliveDuringLastUpdate;
 
+        // identifiers for each of the buttons in m_Buttons
+        const int k_BasicActionButtonID = 0;
+        const int k_SpecialAction1ButtonID = 1;
+        const int k_SpecialAction2ButtonID = 2;
+        const int k_EmoteButtonID = 3;
+
+        /// <summary>
+        /// Total number of buttons we manage
+        /// </summary>
+        const int k_NumButtons = 4;
+
         /// <summary>
         /// Called during startup by the ClientInputSender. In response, we cache the provided
         /// inputSender and self-initialize.
@@ -66,7 +77,7 @@ namespace BossRoom.Visual
 
         void OnEnable()
         {
-            Assert.IsTrue(m_Buttons.Length == 4, $"m_Buttons expects a hard-coded length of 4; found {m_Buttons.Length}");
+            Assert.IsTrue(m_Buttons.Length == k_NumButtons, $"m_Buttons expects a hard-coded length of {k_NumButtons}; found {m_Buttons.Length}");
             m_Tooltips = new Client.UITooltipDetector[m_Buttons.Length];
             for (int i = 0; i < m_Buttons.Length; ++i)
             {
@@ -117,9 +128,9 @@ namespace BossRoom.Visual
             UpdateAllIcons();
         }
 
-        void OnButtonClickedDown(int buttonIndex)
+        void OnButtonClickedDown(int buttonID)
         {
-            if (buttonIndex == 3)
+            if (buttonID == k_EmoteButtonID)
             {
                 return; // this is the "emote" button; we won't do anything until they let go of the button
             }
@@ -130,23 +141,24 @@ namespace BossRoom.Visual
                 return;
             }
 
-            ActionType button1Action = m_NetState.CharacterData.Skill1;
+            ActionType basicAction = m_NetState.CharacterData.Skill1;
             if (m_SelectedPlayerNetState && !m_WasSelectedPlayerAliveDuringLastUpdate)
             {
-                button1Action = ActionType.GeneralRevive;
+                basicAction = ActionType.GeneralRevive;
             }
 
-            switch (buttonIndex)
+            switch (buttonID)
             {
-                case 0: m_InputSender.RequestAction(button1Action, SkillTriggerStyle.UI); break;
-                case 1: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UI); break;
-                case 2: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UI); break;
+                case k_BasicActionButtonID: m_InputSender.RequestAction(basicAction, SkillTriggerStyle.UI); break;
+                case k_SpecialAction1ButtonID: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UI); break;
+                case k_SpecialAction2ButtonID: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UI); break;
+                default: throw new System.Exception($"Unknown button ID {buttonID}");
             }
         }
 
-        void OnButtonClickedUp(int buttonIndex)
+        void OnButtonClickedUp(int buttonID)
         {
-            if (buttonIndex == 3)
+            if (buttonID == k_EmoteButtonID)
             {
                 m_EmotePanel.SetActive(!m_EmotePanel.activeSelf);
                 return;
@@ -158,17 +170,18 @@ namespace BossRoom.Visual
                 return;
             }
 
-            ActionType button1Action = m_NetState.CharacterData.Skill1;
+            ActionType basicAction = m_NetState.CharacterData.Skill1;
             if (m_SelectedPlayerNetState && !m_WasSelectedPlayerAliveDuringLastUpdate)
             {
-                button1Action = ActionType.GeneralRevive;
+                basicAction = ActionType.GeneralRevive;
             }
 
-            switch (buttonIndex)
+            switch (buttonID)
             {
-                case 0: m_InputSender.RequestAction(button1Action, SkillTriggerStyle.UIRelease); break;
-                case 1: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UIRelease); break;
-                case 2: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UIRelease); break;
+                case k_BasicActionButtonID: m_InputSender.RequestAction(basicAction, SkillTriggerStyle.UIRelease); break;
+                case k_SpecialAction1ButtonID: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UIRelease); break;
+                case k_SpecialAction2ButtonID: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UIRelease); break;
+                default: throw new System.Exception($"Unknown button ID {buttonID}");
             }
         }
 
@@ -178,9 +191,9 @@ namespace BossRoom.Visual
         /// </summary>
         void UpdateAllIcons()
         {
-            UpdateIcon(0, m_NetState.CharacterData.Skill1);
-            UpdateIcon(1, m_NetState.CharacterData.Skill2);
-            UpdateIcon(2, m_NetState.CharacterData.Skill3);
+            UpdateIcon(k_BasicActionButtonID, m_NetState.CharacterData.Skill1);
+            UpdateIcon(k_SpecialAction1ButtonID, m_NetState.CharacterData.Skill2);
+            UpdateIcon(k_SpecialAction2ButtonID, m_NetState.CharacterData.Skill3);
 
             if (m_NetState.TargetId.Value != 0
                 && NetworkSpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
@@ -195,7 +208,7 @@ namespace BossRoom.Visual
                 Assert.IsNotNull(charState); // all PlayerObjects should have a NetworkCharacterState component
 
                 bool isAlive = charState.NetworkLifeState.Value == LifeState.Alive;
-                UpdateIcon(0, ActionType.GeneralRevive, !isAlive);
+                UpdateIcon(k_BasicActionButtonID, ActionType.GeneralRevive, !isAlive);
 
                 // we'll continue to monitor our selected player every frame to see if their life-state changes.
                 m_SelectedPlayerNetState = charState;
