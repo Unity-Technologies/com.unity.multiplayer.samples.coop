@@ -116,8 +116,23 @@ namespace BossRoom.Visual
             return isTargetEligible && actionDescription.Logic != ActionLogic.Target;
         }
 
+        /// <summary>
+        /// Called when the visualization receives an animation event.
+        /// </summary>
         public virtual void OnAnimEvent(string id) { }
+
+        /// <summary>
+        /// Called when this action has finished "charging up". (Which is only meaningful for a
+        /// few types of actions -- it is not called for other actions.)
+        /// </summary>
+        /// <param name="finalChargeUpPercentage"></param>
         public virtual void OnStoppedChargingUp(float finalChargeUpPercentage) { }
+
+        /// <summary>
+        /// Called when the server has teleported this character. When this is called, the
+        /// visualization's transform position has already been updated to the new location.
+        /// </summary>
+        public virtual void OnTeleport() { }
 
         /// <summary>
         /// Utility function that instantiates all the graphics in the Spawns list. If parentToSelf is true,

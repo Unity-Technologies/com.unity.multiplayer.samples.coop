@@ -51,7 +51,13 @@ namespace BossRoom.Visual
 
         event Action Destroyed;
 
-       public bool CanPerformActions { get { return m_NetState.CanPerformActions;  } }
+        public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
+
+        /// <summary>
+        /// When true, the visualization moves itself to keep in sync with the network transform.
+        /// (This can be disabled by special actions that want to reposition the visualization manually.)
+        /// </summary>
+        bool m_IsFollowingNetworkTransform = true;
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -81,6 +87,7 @@ namespace BossRoom.Visual
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
+            m_NetState.OnTeleport += OnTeleport;
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
@@ -187,6 +194,7 @@ namespace BossRoom.Visual
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+                m_NetState.OnTeleport -= OnTeleport;
 
                 if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
                 {
@@ -287,6 +295,16 @@ namespace BossRoom.Visual
             }
         }
 
+        void OnTeleport(Vector3 newCanonicalPosition)
+        {
+            // to ensure that we don't try to smooth-move between our old and new positions, move us there immediately!
+            transform.position = newCanonicalPosition;
+            m_SmoothedSpeed = 0;
+
+            // give actions a chance to react to the teleportation
+
+        }
+
         void Update()
         {
             if (Parent == null)
@@ -296,7 +314,10 @@ namespace BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+            if (m_IsFollowingNetworkTransform)
+            {
+                VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+            }
 
             if (m_ClientVisualsAnimator)
             {
@@ -338,6 +359,28 @@ namespace BossRoom.Visual
 
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Turns off the normal auto-movement mode, allowing ActionFXes to manually move
+        /// the visualization around. To return to normal mode, call <see cref="StartFollowingNetworkTransform"/>().
+        /// </summary>
+        public void StopFollowingNetworkTransform()
+        {
+            if (m_IsFollowingNetworkTransform)
+            {
+                m_IsFollowingNetworkTransform = false;
+                m_SmoothedSpeed = 0;
+            }
+        }
+
+        /// <summary>
+        /// Resume automatically following the network object during Update().
+        /// This ends special mode that is begun by a call to <see cref="StopFollowingNetworkTransform"/>().
+        /// </summary>
+        public void StartFollowingNetworkTransform()
+        {
+            m_IsFollowingNetworkTransform = true;
         }
     }
 }

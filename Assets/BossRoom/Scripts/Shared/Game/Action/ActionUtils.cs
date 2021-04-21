@@ -1,6 +1,5 @@
 using UnityEngine;
 using MLAPI.Spawning;
-using UnityEngine.Assertions;
 
 namespace BossRoom
 {
@@ -17,6 +16,11 @@ namespace BossRoom
         /// When doing line-of-sight checks we assume the characters' "eyes" are at this height above their transform
         /// </summary>
         private static readonly Vector3 k_CharacterEyelineOffset = new Vector3(0, 1, 0);
+
+        /// <summary>
+        /// When teleporting to a destination, this is how far away from the destination spot to arrive
+        /// </summary>
+        private const float k_CloseDistanceOffset = 1;
 
         /// <summary>
         /// Does a melee foe hit detect.
@@ -144,6 +148,34 @@ namespace BossRoom
             }
             return Mathf.Clamp01(timeSpentChargingUp / execTime );
         }
+
+        /// <summary>
+        /// Determines a spot very near a chosen location, so that we can teleport next to the target (rather
+        /// than teleporting literally on top of the target). Can optionally perform a line-of-sight check and
+        /// stop at the first obstruction.
+        /// </summary>
+        /// <param name="originSpot">Initial character location</param>
+        /// <param name="destinationSpot">location we want to be next to</param>
+        /// <param name="stopAtObstructions">true if we should be blocked by obstructions such as walls</param>
+        /// <returns>new coordinates that are near the destination (or near the first obstruction)</returns>
+        public static Vector3 GetTeleportDestination(Vector3 originSpot, Vector3 targetSpot, bool stopAtObstructions)
+        {
+            Vector3 destinationSpot = targetSpot;
+
+            if (stopAtObstructions)
+            {
+                // if we're going to hit an obstruction, stop at the obstruction
+                if (!HasLineOfSight(originSpot, destinationSpot, out Vector3 collidePos))
+                {
+                    destinationSpot = collidePos;
+                }
+            }
+
+            // now get a spot "near" the end point
+            return Vector3.MoveTowards(destinationSpot, originSpot, k_CloseDistanceOffset);
+        }
+
+
     }
 
     /// <summary>

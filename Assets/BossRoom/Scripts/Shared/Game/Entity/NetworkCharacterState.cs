@@ -272,5 +272,17 @@ namespace BossRoom
         {
             OnStopChargingUpClient?.Invoke(percentCharged);
         }
+
+        /// <summary>
+        /// Called when the client has been explicitly moved to a new spot, effective immediately.
+        /// </summary>
+        public event Action<Vector3> OnTeleport;
+
+        [ClientRpc]
+        public void RecvTeleportClientRpc(Vector3 newCanonicalPosition)
+        {
+            OnTeleport?.Invoke(newCanonicalPosition);
+        }
+
     }
 }
