@@ -47,6 +47,8 @@ namespace BossRoom.Client
 
         private void NetworkStart()
         {
+            DisconnectReason.Clear();
+
             if (!m_Portal.NetManager.IsClient)
             {
                 enabled = false;
@@ -132,8 +134,6 @@ namespace BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public static void StartClient(GameNetPortal portal, string ipaddress, int port)
         {
-            portal.GetComponent<ClientGameNetPortal>().DisconnectReason.Clear();
-
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
