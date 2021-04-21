@@ -59,7 +59,7 @@ namespace BossRoom.Visual
 
         private const string k_DefaultConfirmText = "OK";
 
-        static readonly char[] k_InputFieldIncludeChars = new[] { '.' };
+        static readonly char[] k_InputFieldIncludeChars = new[] { '.', '_' };
 
         /// <summary>
         /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
