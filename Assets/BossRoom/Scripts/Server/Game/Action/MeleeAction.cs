@@ -79,10 +79,10 @@ namespace BossRoom.Server
         /// enemy.
         /// </summary>
         /// <param name="isNPC">true if the attacker is an NPC (and therefore should hit PCs). False for the reverse.</param>
-        /// <param name="attacker">The collider of the attacking GameObject.</param>
-        /// <param name="range">The range in meters to check for foes.</param>
+        /// <param name="ourCollider">The collider of the attacking GameObject.</param>
+        /// <param name="meleeRange">The range in meters to check for foes.</param>
         /// <param name="preferredTargetNetworkId">The NetworkObjectId of our preferred foe, or 0 if no preference</param>
-        /// <returns></returns>
+        /// <returns>ideal target's IDamageable, or null if no valid target found</returns>
         public static IDamageable GetIdealMeleeFoe(bool isNPC, Collider ourCollider, float meleeRange, ulong preferredTargetNetworkId)
         {
             RaycastHit[] results;
