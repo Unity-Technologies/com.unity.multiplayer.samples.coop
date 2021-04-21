@@ -25,6 +25,12 @@ namespace BossRoom.Server
         private Dictionary<AIStateType, AIState> m_Logics;
         private List<ServerCharacter> m_HatedEnemies;
 
+        /// <summary>
+        /// If we are created by a spawner, the spawner might override our detection radius
+        /// -1 is a sentinel value meaning "no override"
+        /// </summary>
+        private float m_DetectRangeOverride = -1;
+
         public AIBrain(ServerCharacter me, ActionPlayer myActionPlayer)
         {
             m_ServerCharacter = me;
@@ -145,6 +151,24 @@ namespace BossRoom.Server
             get
             {
                 return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType];
+            }
+        }
+
+        /// <summary>
+        /// The range at which this character can detect enemies, in meters.
+        /// This is usually the same value as is indicated by our game data, but it
+        /// can be dynamically overridden.
+        /// </summary>
+        public float DetectRange
+        {
+            get
+            {
+                return (m_DetectRangeOverride == -1) ? CharacterData.DetectRange : m_DetectRangeOverride;
+            }
+
+            set
+            {
+                m_DetectRangeOverride = value;
             }
         }
 

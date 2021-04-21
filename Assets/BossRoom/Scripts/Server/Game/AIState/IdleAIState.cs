@@ -29,9 +29,8 @@ namespace BossRoom.Server
 
         protected void DetectFoes()
         {
-            float detectionRange = m_Brain.GetMyServerCharacter().GetDetectRadius();
             // we are doing this check every Update, so we'll use square-magnitude distance to avoid the expensive sqrt (that's implicit in Vector3.magnitude)
-            float detectionRangeSqr = detectionRange * detectionRange;
+            float detectionRangeSqr = m_Brain.DetectRange * m_Brain.DetectRange;
             Vector3 position = m_Brain.GetMyServerCharacter().transform.position;
 
             // in this game, NPCs only attack players (and never other NPCs), so we can just iterate over the players to see if any are nearby

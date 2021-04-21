@@ -234,9 +234,9 @@ namespace BossRoom.Server
             {
                 // need to override the spawned creature's detection range (if they even have a detection range!)
                 var serverChar = clone.GetComponent<ServerCharacter>();
-                if (serverChar)
+                if (serverChar && serverChar.AIBrain != null)
                 {
-                    serverChar.SetDetectRadius(m_SpawnedEntityDetectDistance);
+                    serverChar.AIBrain.DetectRange = m_SpawnedEntityDetectDistance;
                 }
             }
 
