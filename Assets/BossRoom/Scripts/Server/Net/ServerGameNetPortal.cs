@@ -182,7 +182,15 @@ namespace BossRoom.Server
             return null;
         }
 
-
+        /// <summary>
+        /// Convenience method to get player name from player data
+        /// Returns name in data or default name using playerNum
+        /// </summary>
+        public string GetPlayerName(ulong clientId, int playerNum)
+        {
+            var playerData = GetPlayerData(clientId);
+            return (playerData != null) ? playerData.Value.m_PlayerName : ("Player" + playerNum);
+        }
 
 
         /// <summary>

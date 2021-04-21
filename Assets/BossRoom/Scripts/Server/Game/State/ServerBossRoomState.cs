@@ -157,8 +157,7 @@ namespace BossRoom.Server
 
             var lobbyResults = GetLobbyResultsForClient(clientId);
 
-            var playerData = m_NetPortal.GetComponent<ServerGameNetPortal>().GetPlayerData(clientId);
-            string playerName = playerData != null ? playerData.Value.m_PlayerName : ("Player" + lobbyResults.PlayerNumber);
+            string playerName = m_ServerNetPortal.GetPlayerName(clientId, lobbyResults.PlayerNumber);
 
             netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
             netState.Name = playerName;

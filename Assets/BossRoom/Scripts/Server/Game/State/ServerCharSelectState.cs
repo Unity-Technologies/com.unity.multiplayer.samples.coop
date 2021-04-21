@@ -8,15 +8,21 @@ namespace BossRoom.Server
     /// <summary>
     /// Server specialization of Character Select game state.
     /// </summary>
+    /// </summary>
     [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
 
+        private GameNetPortal m_NetPortal;
+        private ServerGameNetPortal m_ServerNetPortal;
+
         private void Awake()
         {
             CharSelectData = GetComponent<CharSelectData>();
+            GameNetPortal netPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
+            m_ServerNetPortal = netPortal.GetComponent<ServerGameNetPortal>();
         }
 
         private void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
@@ -34,9 +40,16 @@ namespace BossRoom.Server
             // see if someone has already locked-in that seat! If so, too late... discard this choice
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
-                if (playerInfo.SeatIdx == newSeatIdx && playerInfo.SeatState == CharSelectData.SeatState.LockedIn)
+                if ( playerInfo.ClientId != clientId && playerInfo.SeatIdx == newSeatIdx && playerInfo.SeatState == CharSelectData.SeatState.LockedIn)
                 {
-                    // yep, somebody already locked this choice in. Stop!
+                    // somebody already locked this choice in. Stop!
+                    // Instead of granting lock request, change this player to Inactive state.
+                    CharSelectData.LobbyPlayers[idx] = new CharSelectData.LobbyPlayerState(clientId,
+                        CharSelectData.LobbyPlayers[idx].PlayerName,
+                        CharSelectData.LobbyPlayers[idx].PlayerNum,
+                        CharSelectData.SeatState.Inactive);
+
+                    // then early out
                     return;
                 }
             }
@@ -231,9 +244,7 @@ namespace BossRoom.Server
                 return;
             }
 
-            // this will be replaced with an auto-generated name
-            string playerName = "Player" + (playerNum + 1);
-
+            string playerName = m_ServerNetPortal.GetPlayerName(clientId,playerNum);
             CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
         }
 
