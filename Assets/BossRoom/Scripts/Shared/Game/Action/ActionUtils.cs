@@ -155,7 +155,7 @@ namespace BossRoom
         /// stop at the first obstruction.
         /// </summary>
         /// <param name="originSpot">Initial character location</param>
-        /// <param name="destinationSpot">location we want to be next to</param>
+        /// <param name="targetSpot">location we want to be next to</param>
         /// <param name="stopAtObstructions">true if we should be blocked by obstructions such as walls</param>
         /// <returns>new coordinates that are near the destination (or near the first obstruction)</returns>
         public static Vector3 GetTeleportDestination(Vector3 originSpot, Vector3 targetSpot, bool stopAtObstructions)
