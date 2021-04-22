@@ -8,21 +8,18 @@ namespace BossRoom.Server
     /// <summary>
     /// Server specialization of Character Select game state.
     /// </summary>
-    /// </summary>
     [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
 
-        private GameNetPortal m_NetPortal;
         private ServerGameNetPortal m_ServerNetPortal;
 
         private void Awake()
         {
             CharSelectData = GetComponent<CharSelectData>();
-            GameNetPortal netPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
-            m_ServerNetPortal = netPortal.GetComponent<ServerGameNetPortal>();
+            m_ServerNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<ServerGameNetPortal>();
         }
 
         private void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)

@@ -31,7 +31,7 @@ namespace BossRoom.Client
         [SerializeField]
         private Image m_Skill3;
         [SerializeField]
-        private Image m_ReadyButtonImg;
+        private Image m_ReadyButtonImage;
         [SerializeField]
         private GameObject m_Checkmark;
         [SerializeField]
@@ -58,7 +58,7 @@ namespace BossRoom.Client
 
         public void SetLockedIn(bool lockedIn)
         {
-            m_ReadyButtonImg.color = lockedIn ? Color.green : Color.white;
+            m_ReadyButtonImage.color = lockedIn ? Color.green : Color.white;
             m_IsLockedIn = lockedIn;
             m_Checkmark.SetActive(lockedIn);
         }
