@@ -52,7 +52,7 @@ namespace BossRoom.Server
         void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
-            m_Portal.NetworkReadyEvent += OnNetworkReady;
+            m_Portal.NetworkReadied += OnNetworkReady;
 
             // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
@@ -66,7 +66,7 @@ namespace BossRoom.Server
         {
             if( m_Portal != null )
             {
-                m_Portal.NetworkReadyEvent -= OnNetworkReady;
+                m_Portal.NetworkReadied -= OnNetworkReady;
 
                 if( m_Portal.NetManager != null)
                 {

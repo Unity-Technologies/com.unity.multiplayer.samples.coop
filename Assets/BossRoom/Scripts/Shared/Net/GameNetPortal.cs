@@ -59,7 +59,7 @@ namespace BossRoom
         /// This event is fired when MLAPI has reported that it has finished initialization, and is ready for
         /// business, equivalent to OnServerStarted on the server, and OnClientConnected on the client.
         /// </summary>
-        public event Action NetworkReadyEvent;
+        public event Action NetworkReadied;
 
         /// <summary>
         /// This event contains the game-level results of the ApprovalCheck carried out by the server, and is fired
@@ -160,7 +160,7 @@ namespace BossRoom
                 ConnectFinished?.Invoke(ConnectStatus.Success);
             }
 
-            NetworkReadyEvent?.Invoke();
+            NetworkReadied?.Invoke();
         }
 
         /// <summary>

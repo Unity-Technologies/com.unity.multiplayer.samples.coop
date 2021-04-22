@@ -40,7 +40,7 @@ namespace BossRoom.Client
         {
             m_Portal = GetComponent<GameNetPortal>();
 
-            m_Portal.NetworkReadyEvent += OnNetworkReady;
+            m_Portal.NetworkReadied += OnNetworkReady;
             m_Portal.ConnectFinished += OnConnectFinished;
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
@@ -49,7 +49,7 @@ namespace BossRoom.Client
         {
             if( m_Portal != null )
             {
-                m_Portal.NetworkReadyEvent -= OnNetworkReady;
+                m_Portal.NetworkReadied -= OnNetworkReady;
                 m_Portal.ConnectFinished -= OnConnectFinished;
 
                 if( m_Portal.NetManager != null )
