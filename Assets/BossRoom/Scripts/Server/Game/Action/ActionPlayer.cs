@@ -137,7 +137,7 @@ namespace BossRoom.Server
                     return;              // ... so it's important not to try to do anything more here
                 }
 
-                // if this Action is interruptible, that means movement would interrupt it. So stop any active movement!
+                // if this Action is interruptible, that means movement should interrupt it. So stop any movement that's already happening before we begin
                 if (m_Queue[0].Description.ActionInterruptible && !m_Movement.IsPerformingForcedMovement())
                 {
                     m_Movement.CancelMove();
