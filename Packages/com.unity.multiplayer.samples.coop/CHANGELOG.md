@@ -1,8 +1,25 @@
-# Multiplayer Samples Co-op Changelog
+# Boss Room: Small Scale Co-op Sample Changelog
+
+## [0.1.2] - 2021-04-22
+
+v0.1.2 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
+
+### Updates
+
+* License updated to [Unity Companion License (UCL)](https://unity3d.com/legal/licenses/unity_companion_license) for Unity-dependent projects. See LICENSE in package for details.
+
+## [0.1.1] - 2021-04-09
+
+v0.1.1 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
+
+### Updates
+
+* Added [Third Party Contributors](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/blob/master/third-party%20contributors.md) file listing external partner contributors.
+* Corrected information for `NetworkVariableBool`.
 
 ## [0.1.0] - 2021-04-07
 
-v0.1.0 is an Early Access release for Multiplayer Samples Co-op.
+v0.1.0 is an Early Access release for Boss Room: Small Scale Co-op Sample.
 
 It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
 
