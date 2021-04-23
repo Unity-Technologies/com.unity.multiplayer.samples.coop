@@ -1,8 +1,43 @@
-# Multiplayer Samples Co-op Changelog
+# Boss Room: Small Scale Co-op Sample Changelog
+
+## [0.1.2] - 2021-04-23
+
+v0.1.2 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
+
+### Updates
+
+* License updated to [Unity Companion License (UCL)](https://unity3d.com/legal/licenses/unity_companion_license) for Unity-dependent projects. See LICENSE in package for details.
+* The GitHub repository `master` branch has been renamed to `main`. If you have local clones of the repository, you may need to perform the following steps or reclone the repo:
+
+```
+# Switch to the "master" branch:
+$ git checkout master
+
+# Rename it to "main":
+$ git branch -m master main
+
+# Get the latest commits (and branches!) from the remote:
+$ git fetch
+
+# Remove the existing tracking connection with "origin/master":
+$ git branch --unset-upstream
+
+# Create a new tracking connection with the new "origin/main" branch:
+$ git branch -u origin/main
+```
+
+## [0.1.1] - 2021-04-09
+
+v0.1.1 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
+
+### Updates
+
+* Added [Third Party Contributors](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/blob/master/third-party%20contributors.md) file listing external partner contributors.
+* Refactored `IsStealthy` from `NetworkVariableByte` to `NetworkVariableBool` to indicate state.
 
 ## [0.1.0] - 2021-04-07
 
-v0.1.0 is an Early Access release for Multiplayer Samples Co-op.
+v0.1.0 is an Early Access release for Boss Room: Small Scale Co-op Sample.
 
 It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
 
