@@ -1,6 +1,6 @@
 # Boss Room: Small Scale Co-op Sample Changelog
 
-## [0.1.2] - 2021-04-22
+## [0.1.2] - 2021-04-23
 
 v0.1.2 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
 
@@ -15,7 +15,7 @@ v0.1.1 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op 
 ### Updates
 
 * Added [Third Party Contributors](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/blob/master/third-party%20contributors.md) file listing external partner contributors.
-* Corrected information for `NetworkVariableBool`.
+* Refactored `IsStealthy` from `NetworkVariableByte` to `NetworkVariableBool` to indicate state.
 
 ## [0.1.0] - 2021-04-07
 
