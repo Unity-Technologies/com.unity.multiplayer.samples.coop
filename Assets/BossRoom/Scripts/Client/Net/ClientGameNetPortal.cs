@@ -96,7 +96,7 @@ namespace BossRoom.Client
         {
             // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
             //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
-            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient )
+            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient && !MLAPI.NetworkManager.Singleton.IsHost )
             {
                 SceneManager.sceneLoaded -= OnSceneLoaded;
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;

@@ -183,36 +183,6 @@ namespace BossRoom.Server
 
         private void OnClientConnected(ulong clientId)
         {
-            // FIXME: here we work around another MLAPI bug when starting up scenes with in-scene networked objects.
-            // We'd like to immediately give the new client a slot in our lobby, but if we try to send an RPC to the
-            // client-side version of this scene NetworkObject, it will fail. The client's log will show
-            //      "[MLAPI] ClientRPC message received for a non-existent object with id: 1. This message is lost."
-            // If we wait a moment, the object will be assigned its ID (of 1) and everything will work. But there's no
-            // notification to reliably tell us when the server and client are truly initialized.
-            //
-            // Add'l notes: I tried to work around this by having the newly-connected client send an "I'm ready" RPC to the
-            // server, assuming that by the time the server received an RPC, it would be safe to respond. But the client
-            // literally cannot send RPCs yet! If it sends one too quickly after connecting, the server gets a null-reference
-            // exception. (Exception is in either MLAPI.NetworkBehaviour.InvokeServerRPCLocal() or
-            // MLAPI.NetworkBehaviour.OnRemoteServerRPC, depending on whether we're in host mode or a standalone
-            // client, respectively). This actually seems like a separate bug, but probably tied into the same problem.
-
-            //      To repro the bug, comment out this line...
-            StartCoroutine(CoroWorkAroundMlapiBug(clientId));
-            //      ... and uncomment this one:
-            //AssignNewLobbyIndex(clientId);
-        }
-
-        private IEnumerator CoroWorkAroundMlapiBug(ulong clientId)
-        {
-            var client = NetworkManager.Singleton.ConnectedClients[clientId];
-
-            // for the host-mode client, a single frame of delay seems to be enough;
-            // for networked connections, it often takes longer, so we wait a second.
-            if (IsHost && clientId == NetworkManager.Singleton.LocalClientId)
-                yield return new WaitForFixedUpdate();
-            else
-                yield return new WaitForSeconds(1);
             SeatNewPlayer(clientId);
         }
 
