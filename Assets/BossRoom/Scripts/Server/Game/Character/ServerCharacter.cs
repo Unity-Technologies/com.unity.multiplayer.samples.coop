@@ -254,5 +254,10 @@ namespace BossRoom.Server
         {
             return IDamageable.SpecialDamageFlags.None;
         }
+
+        /// <summary>
+        /// This character's AIBrain. Will be null if this is not an NPC.
+        /// </summary>
+        public AIBrain AIBrain { get { return m_AIBrain; } }
     }
 }
