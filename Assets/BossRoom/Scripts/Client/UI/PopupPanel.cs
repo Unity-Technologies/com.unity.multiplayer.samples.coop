@@ -136,7 +136,7 @@ namespace BossRoom.Visual
             foreach (char c in dirtyString)
             {
                 if (char.IsLetterOrDigit(c) ||
-                    (includeChars != null && Array.Exists(includeChars, excludeChar => excludeChar == c)))
+                    (includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c)))
                 {
                     result.Append(c);
                 }
