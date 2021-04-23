@@ -25,7 +25,7 @@ namespace BossRoom.Server
             if (!movement.IsPerformingForcedMovement())
             {
                 movement.CancelMove();
-            }    
+            }
             return true;
         }
 
@@ -40,7 +40,7 @@ namespace BossRoom.Server
             {
                 // start actual stealth-mode... NOW!
                 m_IsStealthStarted = true;
-                m_Parent.NetState.IsStealthy.Value = 1;
+                m_Parent.NetState.IsStealthy.Value = true;
             }
             return !m_IsStealthEnded;
         }
@@ -66,7 +66,7 @@ namespace BossRoom.Server
                 m_IsStealthEnded = true;
                 if (m_IsStealthStarted)
                 {
-                    m_Parent.NetState.IsStealthy.Value = 0;
+                    m_Parent.NetState.IsStealthy.Value = false;
                 }
 
                 // note that we cancel the ActionFX here, and NOT in Cancel(). That's to handle the case where someone

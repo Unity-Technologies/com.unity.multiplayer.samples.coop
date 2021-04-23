@@ -1158,6 +1158,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: 714700a9be690ab4ab62c7cad766e9ee, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
@@ -1169,6 +1170,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 1
     m_SoundEffect: {fileID: 8300000, guid: 7fbc6b32425f98840b339a705b4a28cb, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
@@ -1180,6 +1182,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: 5ef809d665d13b245b559cd6170f5794, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
@@ -1191,6 +1194,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 0}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1

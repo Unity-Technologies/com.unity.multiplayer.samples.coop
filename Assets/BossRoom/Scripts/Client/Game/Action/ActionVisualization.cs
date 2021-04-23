@@ -58,11 +58,11 @@ namespace BossRoom.Visual
             }
         }
 
-        public void OnStoppedChargingUp()
+        public void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnStoppedChargingUp();
+                actionFX.OnStoppedChargingUp(finalChargeUpPercentage);
             }
         }
 

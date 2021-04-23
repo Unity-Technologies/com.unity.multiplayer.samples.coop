@@ -50,6 +50,12 @@ namespace BossRoom.Client
             Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
             KeyboardRelease, //represents a released key.
             UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
+            UIRelease,   //represents letting go of the mouse-button on a UI button
+        }
+
+        private bool IsReleaseStyle(SkillTriggerStyle style)
+        {
+            return style == SkillTriggerStyle.KeyboardRelease || style == SkillTriggerStyle.UIRelease;
         }
 
         /// <summary>
@@ -131,15 +137,15 @@ namespace BossRoom.Client
             //play all ActionRequests, in FIFO order.
             for (int i = 0; i < m_ActionRequestCount; ++i)
             {
-                if( m_CurrentSkillInput != null )
+                if (m_CurrentSkillInput != null)
                 {
                     //actions requested while input is active are discarded, except for "Release" requests, which go through.
-                    if (m_ActionRequests[i].TriggerStyle == SkillTriggerStyle.KeyboardRelease )
+                    if (IsReleaseStyle(m_ActionRequests[i].TriggerStyle))
                     {
                         m_CurrentSkillInput.OnReleaseKey();
                     }
                 }
-                else
+                else if (!IsReleaseStyle(m_ActionRequests[i].TriggerStyle))
                 {
                     var actionData = GameDataSource.Instance.ActionDataByType[m_ActionRequests[i].RequestedAction];
                     if (actionData.ActionInput != null)
@@ -157,7 +163,7 @@ namespace BossRoom.Client
 
             m_ActionRequestCount = 0;
 
-            if( m_MoveRequest )
+            if (m_MoveRequest)
             {
                 m_MoveRequest = false;
                 if ( (Time.time - m_LastSentMove) > k_MoveSendRateSeconds)
@@ -337,7 +343,7 @@ namespace BossRoom.Client
             Assert.IsTrue(GameDataSource.Instance.ActionDataByType.ContainsKey(action),
                 $"Action {action} must be part of ActionData dictionary!");
 
-            if( m_ActionRequestCount < m_ActionRequests.Length )
+            if (m_ActionRequestCount < m_ActionRequests.Length)
             {
                 m_ActionRequests[m_ActionRequestCount].RequestedAction = action;
                 m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
