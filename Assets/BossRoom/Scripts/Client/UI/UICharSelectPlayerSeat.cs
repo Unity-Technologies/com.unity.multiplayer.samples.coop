@@ -27,6 +27,8 @@ namespace BossRoom.Client
         private Animator m_Animator;
         [SerializeField]
         private string m_AnimatorTriggerWhenLockedIn = "LockedIn";
+        [SerializeField]
+        private string m_AnimatorTriggerWhenUnlocked = "Unlocked";
 
         [SerializeField]
         private CharacterTypeEnum m_CharacterClass;
@@ -41,7 +43,7 @@ namespace BossRoom.Client
         private CharSelectData.SeatState m_State;
 
         // once this is true, we're never clickable again!
-        private bool m_IsPermanentlyDisabled;
+        private bool m_IsDisabled;
 
         public void Initialize(int seatIndex)
         {
@@ -64,10 +66,39 @@ namespace BossRoom.Client
             ConfigureStateGraphics();
         }
 
-        public void PermanentlyDisableInteraction()
+        public bool IsLocked()
         {
-            m_Button.interactable = false;
-            m_IsPermanentlyDisabled = true;
+            return m_State == CharSelectData.SeatState.LockedIn;
+        }
+
+        public void SetDisableInteraction(bool disable)
+        {
+            m_Button.interactable = !disable;
+            m_IsDisabled = disable;
+
+            if (!disable)
+            {
+                // if we were locked move to unlocked state
+                PlayUnlockAnim();
+            }
+        }
+
+        private void PlayLockAnim()
+        {
+            if (m_Animator)
+            {
+                m_Animator.ResetTrigger(m_AnimatorTriggerWhenUnlocked);
+                m_Animator.SetTrigger(m_AnimatorTriggerWhenLockedIn);
+            }
+        }
+
+        private void PlayUnlockAnim()
+        {
+            if (m_Animator)
+            {
+                m_Animator.ResetTrigger(m_AnimatorTriggerWhenLockedIn);
+                m_Animator.SetTrigger(m_AnimatorTriggerWhenUnlocked);
+            }
         }
 
         private void ConfigureStateGraphics()
@@ -79,18 +110,18 @@ namespace BossRoom.Client
                 m_Glow.gameObject.SetActive(false);
                 m_Checkbox.gameObject.SetActive(false);
                 m_PlayerNameHolder.gameObject.SetActive(false);
-                m_Button.interactable = m_IsPermanentlyDisabled ? false : true;
+                m_Button.interactable = m_IsDisabled ? false : true;
+                PlayUnlockAnim();
             }
             else // either active or locked-in... these states are visually very similar
             {
                 m_InactiveStateVisuals.SetActive(false);
                 m_PlayerNumberHolder.sprite = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Indicator;
                 m_ActiveStateVisuals.SetActive(true);
-                m_Glow.gameObject.SetActive(false);
-                m_Checkbox.gameObject.SetActive(false);
+               
                 m_PlayerNameHolder.gameObject.SetActive(true);
                 m_PlayerNameHolder.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
-                m_Button.interactable = m_IsPermanentlyDisabled ? false : true;
+                m_Button.interactable = m_IsDisabled ? false : true;
 
                 if (m_State == CharSelectData.SeatState.LockedIn)
                 {
@@ -98,8 +129,13 @@ namespace BossRoom.Client
                     m_Glow.gameObject.SetActive(true);
                     m_Checkbox.gameObject.SetActive(true);
                     m_Button.interactable = false;
-                    if (m_Animator)
-                        m_Animator.SetTrigger(m_AnimatorTriggerWhenLockedIn);
+                    PlayLockAnim();
+                }
+                else
+                {
+                    m_Glow.gameObject.SetActive(false);
+                    m_Checkbox.gameObject.SetActive(false);
+                    PlayUnlockAnim();
                 }
             }
         }
