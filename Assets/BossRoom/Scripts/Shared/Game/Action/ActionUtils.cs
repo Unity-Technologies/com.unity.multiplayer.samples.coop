@@ -122,6 +122,28 @@ namespace BossRoom
             }
         }
 
+        /// <summary>
+        /// Helper method that calculates the percent a charge-up action is charged, based on how long it has run, returning a value
+        /// from 0-1. 
+        /// </summary>
+        /// <param name="stoppedChargingUpTime">The time when we finished charging up, or 0 if we're still charging.</param>
+        /// <param name="timeRunning">How long the action has been running. </param>
+        /// <param name="timeStarted">when the action started. </param>
+        /// <param name="execTime">the total execution time of the action (usually not its duration). </param>
+        /// <returns>Percent charge-up, from 0 to 1. </returns>
+        public static float GetPercentChargedUp(float stoppedChargingUpTime, float timeRunning, float timeStarted, float execTime )
+        {
+            float timeSpentChargingUp;
+            if (stoppedChargingUpTime == 0)
+            {
+                timeSpentChargingUp = timeRunning; // we're still charging up, so all of our runtime has been charge-up time
+            }
+            else
+            {
+                timeSpentChargingUp = stoppedChargingUpTime - timeStarted;
+            }
+            return Mathf.Clamp01(timeSpentChargingUp / execTime );
+        }
     }
 
     /// <summary>

@@ -51,11 +51,7 @@ namespace BossRoom
         /// <summary>
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
         /// </summary>
-        /// <remarks>
-        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's serialized
-        /// as a bit, but deserialized as a byte, which corrupts the whole network-var stream.
-        /// </remarks>
-        public NetworkVariableByte IsStealthy { get; } = new NetworkVariableByte(0);
+        public NetworkVariableBool IsStealthy { get; } = new NetworkVariableBool();
 
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
@@ -257,8 +253,9 @@ namespace BossRoom
 
         /// <summary>
         /// Called on all clients when this character has stopped "charging up" an attack.
+        /// Provides a value between 0 and 1 inclusive which indicates how "charged up" the attack ended up being.
         /// </summary>
-        public event Action OnStopChargingUpClient;
+        public event Action<float> OnStopChargingUpClient;
 
         [ServerRpc]
         public void RecvStopChargingUpServerRpc()
@@ -267,9 +264,9 @@ namespace BossRoom
         }
 
         [ClientRpc]
-        public void RecvStopChargingUpClientRpc()
+        public void RecvStopChargingUpClientRpc(float percentCharged)
         {
-            OnStopChargingUpClient?.Invoke();
+            OnStopChargingUpClient?.Invoke(percentCharged);
         }
     }
 }

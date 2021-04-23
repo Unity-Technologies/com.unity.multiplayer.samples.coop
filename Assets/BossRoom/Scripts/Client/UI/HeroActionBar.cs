@@ -12,7 +12,7 @@ namespace BossRoom.Visual
     {
         // All buttons in this action bar
         [SerializeField]
-        private Button[] m_Buttons;
+        private UIHUDButton[] m_Buttons;
 
         // The Emote panel will be enabled or disabled when clicking the last button
         [SerializeField]
@@ -22,6 +22,26 @@ namespace BossRoom.Visual
 
         // We find the Sprites to use by checking the Skill1, Skill2, and Skill3 members of our chosen CharacterClass
         private CharacterClass m_CharacterData;
+
+
+        void OnEnable()
+        {
+            for (int i = 0; i < m_Buttons.Length; ++i)
+            {
+                m_Buttons[i].ButtonID = i;
+                m_Buttons[i].OnPointerDownEvent += OnButtonClickedDown;
+                m_Buttons[i].OnPointerUpEvent += OnButtonClickedUp;
+            }
+        }
+
+        void OnDisable()
+        {
+            for (int i = 0; i < m_Buttons.Length; ++i)
+            {
+                m_Buttons[i].OnPointerDownEvent -= OnButtonClickedDown;
+                m_Buttons[i].OnPointerUpEvent -= OnButtonClickedUp;
+            }
+        }
 
         public void RegisterInputSender(Client.ClientInputSender inputSender)
         {
@@ -71,7 +91,28 @@ namespace BossRoom.Visual
             }
         }
 
-        public void OnButtonClicked(int buttonIndex)
+        void OnButtonClickedDown(int buttonIndex)
+        {
+            if (buttonIndex == 3)
+            {
+                return; // this is the "emote" button; we won't do anything until they let go of the button
+            }
+
+            if (m_InputSender == null)
+            {
+                //nothing to do past this point if we don't have an InputSender.
+                return;
+            }
+
+            switch (buttonIndex)
+            {
+                case 0: m_InputSender.RequestAction(m_CharacterData.Skill1, SkillTriggerStyle.UI); break;
+                case 1: m_InputSender.RequestAction(m_CharacterData.Skill2, SkillTriggerStyle.UI); break;
+                case 2: m_InputSender.RequestAction(m_CharacterData.Skill3, SkillTriggerStyle.UI); break;
+            }
+        }
+
+        void OnButtonClickedUp(int buttonIndex)
         {
             if (buttonIndex == 3)
             {
@@ -87,9 +128,9 @@ namespace BossRoom.Visual
 
             switch (buttonIndex)
             {
-                case 0: m_InputSender.RequestAction(m_CharacterData.Skill1, SkillTriggerStyle.UI); break;
-                case 1: m_InputSender.RequestAction(m_CharacterData.Skill2, SkillTriggerStyle.UI); break;
-                case 2: m_InputSender.RequestAction(m_CharacterData.Skill3, SkillTriggerStyle.UI); break;
+                case 0: m_InputSender.RequestAction(m_CharacterData.Skill1, SkillTriggerStyle.UIRelease); break;
+                case 1: m_InputSender.RequestAction(m_CharacterData.Skill2, SkillTriggerStyle.UIRelease); break;
+                case 2: m_InputSender.RequestAction(m_CharacterData.Skill3, SkillTriggerStyle.UIRelease); break;
             }
         }
     }

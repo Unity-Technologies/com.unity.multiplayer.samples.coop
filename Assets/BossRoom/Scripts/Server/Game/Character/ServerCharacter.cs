@@ -42,12 +42,6 @@ namespace BossRoom.Server
         // Cached component reference
         private ServerCharacterMovement m_Movement;
 
-        /// <summary>
-        /// Temp place to store all the active characters (to avoid having to
-        /// perform insanely-expensive GameObject.Find operations during Update)
-        /// </summary>
-        private static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
-
         private void Awake()
         {
             m_Movement = GetComponent<ServerCharacterMovement>();
@@ -58,21 +52,6 @@ namespace BossRoom.Server
             {
                 m_AIBrain = new AIBrain(this, m_ActionPlayer);
             }
-        }
-
-        private void OnEnable()
-        {
-            s_ActiveServerCharacters.Add(this);
-        }
-
-        private void OnDisable()
-        {
-            s_ActiveServerCharacters.Remove(this);
-        }
-
-        public static List<ServerCharacter> GetAllActiveServerCharacters()
-        {
-            return s_ActiveServerCharacters;
         }
 
         public override void NetworkStart()
@@ -278,5 +257,10 @@ namespace BossRoom.Server
         {
             return IDamageable.SpecialDamageFlags.None;
         }
+
+        /// <summary>
+        /// This character's AIBrain. Will be null if this is not an NPC.
+        /// </summary>
+        public AIBrain AIBrain { get { return m_AIBrain; } }
     }
 }
