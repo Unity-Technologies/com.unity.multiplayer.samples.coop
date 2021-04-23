@@ -1133,6 +1133,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ClientVisualsAnimator: {fileID: 234724737205816310}
   m_CharacterSwapper: {fileID: 0}
+  m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
   TargetReticule: {fileID: 0}
   ReticuleFriendlyMat: {fileID: 0}
   ReticuleHostileMat: {fileID: 0}
@@ -1468,8 +1469,9 @@ MonoBehaviour:
   m_WalkFootstepVolume: 0.8
   m_RunFootstepAudioClip: {fileID: 8300000, guid: 6ad4d1d63bc70494bbc9172ae70bcdd0, type: 3}
   m_RunFootstepVolume: 0.8
-  m_WalkingPoint: 0.6
-  m_SilentPoint: 0.3
+  m_TooSlowThreshold: 0.3
+  m_WalkSpeedThreshold: 0.6
+  m_RunSpeedThreshold: 1.2
 --- !u!82 &-8995571906845300287
 AudioSource:
   m_ObjectHideFlags: 0
