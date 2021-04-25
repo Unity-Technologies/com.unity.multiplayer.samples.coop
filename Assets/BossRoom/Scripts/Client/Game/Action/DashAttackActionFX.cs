@@ -26,14 +26,8 @@ namespace BossRoom.Visual
                 PlayStartAnim();
             }
 
-            // if we don't have a meaningufl stop-spot, try to find one that's a decent distance away
-            if ((Data.TargetIds == null || Data.TargetIds.Length == 0) && (Data.Position == Vector3.zero || Vector3.Distance(m_Parent.transform.position, Data.Position) < 1))
-            {
-                // it seems like the player doesn't have a useful target. Choose a default one based on their current direction, so that they go somewhere!
-                Data.Position = m_Parent.transform.position + m_Parent.transform.forward * Description.Range;
-            }
             // save the ending position. But note that we don't save the START position yet!
-            m_EndPos = ActionUtils.GetTeleportDestination(m_Parent.transform.position, Data.Position, true);
+            m_EndPos = ActionUtils.GetTeleportDestination(m_Parent.transform, Data.Position, true, Description.Range, Description.Range);
 
             base.Start();
 

@@ -39,7 +39,7 @@ namespace BossRoom.Server
             }
 
             // remember the exact spot we'll stop.
-            m_TargetSpot = ActionUtils.GetTeleportDestination(m_Parent.transform.position, Data.Position, true);
+            m_TargetSpot = ActionUtils.GetTeleportDestination(m_Parent.transform, Data.Position, true, Description.Range, Description.Range);
 
             // snap to face our destination. This ensures the client visualization faces the right way while "pretending" to dash
             m_Parent.transform.LookAt(m_TargetSpot);
