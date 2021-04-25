@@ -26,6 +26,12 @@ namespace BossRoom.Visual
                 PlayStartAnim();
             }
 
+            // if we don't have a meaningufl stop-spot, try to find one that's a decent distance away
+            if ((Data.TargetIds == null || Data.TargetIds.Length == 0) && (Data.Position == Vector3.zero || Vector3.Distance(m_Parent.transform.position, Data.Position) < 1))
+            {
+                // it seems like the player doesn't have a useful target. Choose a default one based on their current direction, so that they go somewhere!
+                Data.Position = m_Parent.transform.position + m_Parent.transform.forward * Description.Range;
+            }
             // save the ending position. But note that we don't save the START position yet!
             m_EndPos = ActionUtils.GetTeleportDestination(m_Parent.transform.position, Data.Position, true);
 
@@ -91,7 +97,6 @@ namespace BossRoom.Visual
 
         public override void End()
         {
-            Debug.Log("End!");
             // Anim2 contains the name of the end-loop-sequence trigger
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
@@ -105,8 +110,6 @@ namespace BossRoom.Visual
 
         public override void Cancel()
         {
-            Debug.Log("Cancel!");
-
             // OtherAnimatorVariable contains the name of the cancelation trigger
             if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
             {
