@@ -30,7 +30,7 @@ namespace BossRoom.Visual
         UIHUDButton m_EmoteBarButton;
 
         [SerializeField]
-        [Tooltip("The Emote panel that will be enabled or disabled when clicking the Emote bar button")]
+        [Tooltip("The Emote bar that will be enabled or disabled when clicking the Emote bar button")]
         GameObject m_EmotePanel;
 
         /// <summary>
