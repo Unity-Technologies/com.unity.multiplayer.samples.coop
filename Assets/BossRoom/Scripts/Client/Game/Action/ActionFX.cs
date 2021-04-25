@@ -129,12 +129,6 @@ namespace BossRoom.Visual
         public virtual void OnStoppedChargingUp(float finalChargeUpPercentage) { }
 
         /// <summary>
-        /// Called when the server has teleported this character. When this is called, the
-        /// visualization's transform position has already been updated to the new location.
-        /// </summary>
-        public virtual void OnTeleport() { }
-
-        /// <summary>
         /// Utility function that instantiates all the graphics in the Spawns list. If parentToSelf is true,
         /// the new graphics are parented to our owning Transform. If false, they are positioned/oriented the same
         /// as our Transform, but are not parented.

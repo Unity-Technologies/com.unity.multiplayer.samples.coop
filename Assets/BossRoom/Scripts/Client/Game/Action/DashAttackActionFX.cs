@@ -34,14 +34,6 @@ namespace BossRoom.Visual
             return true;
         }
 
-        public override void OnTeleport()
-        {
-            // we've been moved to a new spot by the server! This is expected behavior for DashAttack,
-            // but we must be careful not to presume that it's DEFINITELY due to DashAttack... some other gameplay
-            // mechanism may have teleported us first! So our safest action is to just end this action visualization.
-            m_Teleported = true;
-        }
-
         private void PlayStartAnim()
         {
             // this action plays a "melee attack" animation when it successfully ends. But if the player aborts

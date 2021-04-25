@@ -308,9 +308,6 @@ namespace BossRoom.Visual
             // to ensure that we don't try to smooth-move between our old and new positions, move us there immediately!
             transform.position = newCanonicalPosition;
             m_SmoothedSpeed = 0;
-
-            // give actions a chance to react to the teleportation
-            m_ActionViz.OnTeleport();
         }
 
         /// <summary>

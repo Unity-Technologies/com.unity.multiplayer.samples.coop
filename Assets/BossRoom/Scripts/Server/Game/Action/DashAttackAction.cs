@@ -51,7 +51,7 @@ namespace BossRoom.Server
         public override void End()
         {
             // we're done, time to teleport!
-            m_Parent.GetComponent<ServerCharacterMovement>().Teleport(m_TargetSpot);
+            m_Parent.GetComponent<ServerCharacterMovement>().Teleport(m_TargetSpot, false);
 
             // and then swing!
             PerformMeleeAttack();
