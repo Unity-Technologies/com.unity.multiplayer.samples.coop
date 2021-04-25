@@ -86,13 +86,13 @@ namespace BossRoom.Visual
                 m_Owner = owner;
             }
 
-            public void RegisterCallbacks()
+            public void RegisterEventHandlers()
             {
                 Button.OnPointerDownEvent += OnClickDown;
                 Button.OnPointerUpEvent += OnClickUp;
             }
 
-            public void UnregisterCallbacks()
+            public void UnregisterEventHandlers()
             {
                 Button.OnPointerDownEvent -= OnClickDown;
                 Button.OnPointerUpEvent -= OnClickUp;
@@ -147,7 +147,7 @@ namespace BossRoom.Visual
         {
             foreach (ActionButtonInfo buttonInfo in m_ButtonInfo.Values)
             {
-                buttonInfo.RegisterCallbacks();
+                buttonInfo.RegisterEventHandlers();
             }
         }
 
@@ -155,7 +155,7 @@ namespace BossRoom.Visual
         {
             foreach (ActionButtonInfo buttonInfo in m_ButtonInfo.Values)
             {
-                buttonInfo.UnregisterCallbacks();
+                buttonInfo.UnregisterEventHandlers();
             }
         }
 
