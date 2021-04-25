@@ -311,8 +311,39 @@ namespace BossRoom.Visual
 
             // give actions a chance to react to the teleportation
             m_ActionViz.OnTeleport();
-
         }
+
+        /// <summary>
+        /// Returns the value we should set the Animator's "Speed" variable, given current
+        /// gameplay conditions.
+        /// </remarks>
+        private float GetVisualMovementSpeed()
+        {
+            Assert.IsNotNull(m_VisualizationConfiguration);
+            if (m_NetState.NetworkLifeState.Value != LifeState.Alive)
+            {
+                return m_VisualizationConfiguration.SpeedDead;
+            }
+
+            switch (m_NetState.MovementStatus.Value)
+            {
+            case MovementStatus.Idle:
+                return m_VisualizationConfiguration.SpeedIdle;
+            case MovementStatus.Normal:
+                return m_VisualizationConfiguration.SpeedNormal;
+            case MovementStatus.Uncontrolled:
+                return m_VisualizationConfiguration.SpeedUncontrolled;
+            case MovementStatus.Slowed:
+                return m_VisualizationConfiguration.SpeedSlowed;
+            case MovementStatus.Hasted:
+                return m_VisualizationConfiguration.SpeedHasted;
+            case MovementStatus.Walking:
+                return m_VisualizationConfiguration.SpeedWalking;
+            default:
+                throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
+            }
+        }
+
 
         void Update()
         {
