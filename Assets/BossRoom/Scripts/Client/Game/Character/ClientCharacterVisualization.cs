@@ -327,20 +327,20 @@ namespace BossRoom.Visual
 
             switch (m_NetState.MovementStatus.Value)
             {
-            case MovementStatus.Idle:
-                return m_VisualizationConfiguration.SpeedIdle;
-            case MovementStatus.Normal:
-                return m_VisualizationConfiguration.SpeedNormal;
-            case MovementStatus.Uncontrolled:
-                return m_VisualizationConfiguration.SpeedUncontrolled;
-            case MovementStatus.Slowed:
-                return m_VisualizationConfiguration.SpeedSlowed;
-            case MovementStatus.Hasted:
-                return m_VisualizationConfiguration.SpeedHasted;
-            case MovementStatus.Walking:
-                return m_VisualizationConfiguration.SpeedWalking;
-            default:
-                throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
+                case MovementStatus.Idle:
+                    return m_VisualizationConfiguration.SpeedIdle;
+                case MovementStatus.Normal:
+                    return m_VisualizationConfiguration.SpeedNormal;
+                case MovementStatus.Uncontrolled:
+                    return m_VisualizationConfiguration.SpeedUncontrolled;
+                case MovementStatus.Slowed:
+                    return m_VisualizationConfiguration.SpeedSlowed;
+                case MovementStatus.Hasted:
+                    return m_VisualizationConfiguration.SpeedHasted;
+                case MovementStatus.Walking:
+                    return m_VisualizationConfiguration.SpeedWalking;
+                default:
+                    throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
             }
         }
 
