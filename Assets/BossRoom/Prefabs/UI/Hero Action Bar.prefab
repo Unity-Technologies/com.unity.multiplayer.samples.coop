@@ -770,6 +770,10 @@ MonoBehaviour:
   - {fileID: 9059929381734582210}
   - {fileID: 9059929380243764532}
   - {fileID: 9059929381413149708}
+  m_BasicActionButton: {fileID: 9059929380544550680}
+  m_SpecialAction1Button: {fileID: 9059929381734582210}
+  m_SpecialAction2Button: {fileID: 9059929380243764532}
+  m_EmoteBarButton: {fileID: 9059929381413149708}
   m_EmotePanel: {fileID: 0}
 --- !u!1 &9059929381734582208
 GameObject:

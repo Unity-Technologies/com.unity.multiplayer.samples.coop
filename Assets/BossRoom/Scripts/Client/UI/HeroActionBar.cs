@@ -1,5 +1,6 @@
 using MLAPI;
 using MLAPI.Spawning;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
 using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
@@ -7,55 +8,111 @@ using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 namespace BossRoom.Visual
 {
     /// <summary>
-    /// Provides logic for a Hero Action Bar with attack, skill button and a button to open emotes panel
+    /// Provides logic for a Hero Action Bar with attack, skill buttons and a button to open emotes panel
     /// This bar tracks button clicks on hero action buttons for later use by ClientInputSender
     /// </summary>
     public class HeroActionBar : MonoBehaviour
     {
         [SerializeField]
-        [Tooltip("All buttons in this action bar. Should be exactly 4!")]
-        private UIHUDButton[] m_Buttons;
+        [Tooltip("The button that activates the basic action (comparable to right-clicking the mouse)")]
+        UIHUDButton m_BasicActionButton;
 
         [SerializeField]
-        [Tooltip("The Emote panel will be enabled or disabled when clicking the last button")]
-        private GameObject m_EmotePanel;
+        [Tooltip("The button that activates the hero's first special move")]
+        UIHUDButton m_SpecialAction1Button;
+
+        [SerializeField]
+        [Tooltip("The button that activates the hero's second special move")]
+        UIHUDButton m_SpecialAction2Button;
+
+        [SerializeField]
+        [Tooltip("The button that opens/closes the Emote bar")]
+        UIHUDButton m_EmoteBarButton;
+
+        [SerializeField]
+        [Tooltip("The Emote panel that will be enabled or disabled when clicking the Emote bar button")]
+        GameObject m_EmotePanel;
 
         /// <summary>
         /// Our input-sender. Initialized in RegisterInputSender()
         /// </summary>
-        private Client.ClientInputSender m_InputSender;
+        Client.ClientInputSender m_InputSender;
 
         /// <summary>
         /// Cached reference to local player's net state. 
         /// We find the Sprites to use by checking the Skill1, Skill2, and Skill3 members of our chosen CharacterClass
         /// </summary>
-        private NetworkCharacterState m_NetState;
-
-        /// <summary>
-        /// Each button has a UITooltipDetector; we cache references to these to avoid having to call GetComponent<> repeatedly
-        /// </summary>
-        private Client.UITooltipDetector[] m_Tooltips;
+        NetworkCharacterState m_NetState;
 
         /// <summary>
         /// If we have another player selected, this is a reference to their stats; if anything else is selected, this is null
         /// </summary>
-        private NetworkCharacterState m_SelectedPlayerNetState;
+        NetworkCharacterState m_SelectedPlayerNetState;
 
         /// <summary>
         /// If m_SelectedPlayerNetState is non-null, this indicates whether we think they're alive. (Updated every frame)
         /// </summary>
-        private bool m_WasSelectedPlayerAliveDuringLastUpdate;
-
-        // identifiers for each of the buttons in m_Buttons
-        const int k_BasicActionButtonID = 0;
-        const int k_SpecialAction1ButtonID = 1;
-        const int k_SpecialAction2ButtonID = 2;
-        const int k_EmoteButtonID = 3;
+        bool m_WasSelectedPlayerAliveDuringLastUpdate;
 
         /// <summary>
-        /// Total number of buttons we manage
+        /// Identifiers for the buttons on the action bar.
         /// </summary>
-        const int k_NumButtons = 4;
+        enum ActionButtonType
+        {
+            BasicAction,
+            Special1,
+            Special2,
+            EmoteBar,
+        }
+
+        /// <summary>
+        /// Cached UI information about one of the buttons on the action bar.
+        /// Takes care of registering/unregistering click-event messages,
+        /// and routing the events into HeroActionBar.
+        /// </summary>
+        struct ActionButtonInfo
+        {
+            public readonly ActionButtonType Type;
+            public readonly UIHUDButton Button;
+            public readonly Client.UITooltipDetector Tooltip;
+
+            readonly HeroActionBar m_Owner;
+
+            public ActionButtonInfo(ActionButtonType type, UIHUDButton button, HeroActionBar owner)
+            {
+                Type = type;
+                Button = button;
+                Tooltip = button.GetComponent<Client.UITooltipDetector>();
+                m_Owner = owner;
+            }
+
+            public void RegisterCallbacks()
+            {
+                Button.OnPointerDownEvent += OnClickDown;
+                Button.OnPointerUpEvent += OnClickUp;
+            }
+
+            public void UnregisterCallbacks()
+            {
+                Button.OnPointerDownEvent -= OnClickDown;
+                Button.OnPointerUpEvent -= OnClickUp;
+            }
+
+            void OnClickDown()
+            {
+                m_Owner.OnButtonClickedDown(Type);
+            }
+
+            void OnClickUp()
+            {
+                m_Owner.OnButtonClickedUp(Type);
+            }
+        }
+
+        /// <summary>
+        /// Dictionary of info about all the buttons on the action bar.
+        /// </summary>
+        Dictionary<ActionButtonType, ActionButtonInfo> m_ButtonInfo;
 
         /// <summary>
         /// Called during startup by the ClientInputSender. In response, we cache the provided
@@ -72,30 +129,34 @@ namespace BossRoom.Visual
             m_InputSender = inputSender;
             m_NetState = m_InputSender.GetComponent<NetworkCharacterState>();
             m_NetState.TargetId.OnValueChanged += OnSelectionChanged;
-            UpdateAllIcons();
+            UpdateAllActionButtons();
+        }
+
+        void Awake()
+        {
+            m_ButtonInfo = new Dictionary<ActionButtonType, ActionButtonInfo>()
+            {
+                [ActionButtonType.BasicAction] = new ActionButtonInfo(ActionButtonType.BasicAction, m_BasicActionButton, this),
+                [ActionButtonType.Special1] = new ActionButtonInfo(ActionButtonType.Special1, m_SpecialAction1Button, this),
+                [ActionButtonType.Special2] = new ActionButtonInfo(ActionButtonType.Special2, m_SpecialAction2Button, this),
+                [ActionButtonType.EmoteBar] = new ActionButtonInfo(ActionButtonType.EmoteBar, m_EmoteBarButton, this),
+            };
         }
 
         void OnEnable()
         {
-            Assert.IsTrue(m_Buttons.Length == k_NumButtons, $"m_Buttons expects a hard-coded length of {k_NumButtons}; found {m_Buttons.Length}");
-            m_Tooltips = new Client.UITooltipDetector[m_Buttons.Length];
-            for (int i = 0; i < m_Buttons.Length; ++i)
+            foreach (ActionButtonInfo buttonInfo in m_ButtonInfo.Values)
             {
-                m_Buttons[i].ButtonID = i;
-                m_Buttons[i].OnPointerDownEvent += OnButtonClickedDown;
-                m_Buttons[i].OnPointerUpEvent += OnButtonClickedUp;
-                m_Tooltips[i] = m_Buttons[i].GetComponent<Client.UITooltipDetector>();
+                buttonInfo.RegisterCallbacks();
             }
         }
 
         void OnDisable()
         {
-            for (int i = 0; i < m_Buttons.Length; ++i)
+            foreach (ActionButtonInfo buttonInfo in m_ButtonInfo.Values)
             {
-                m_Buttons[i].OnPointerDownEvent -= OnButtonClickedDown;
-                m_Buttons[i].OnPointerUpEvent -= OnButtonClickedUp;
+                buttonInfo.UnregisterCallbacks();
             }
-            m_Tooltips = null;
         }
 
         void OnDestroy()
@@ -117,7 +178,7 @@ namespace BossRoom.Visual
             if (isAliveNow != m_WasSelectedPlayerAliveDuringLastUpdate)
             {
                 // this will update the icons so that button 1's interactiveness is correct
-                UpdateAllIcons();
+                UpdateAllActionButtons();
             }
 
             m_WasSelectedPlayerAliveDuringLastUpdate = isAliveNow;
@@ -125,12 +186,12 @@ namespace BossRoom.Visual
 
         void OnSelectionChanged(ulong oldSelectionNetworkId, ulong newSelectionNetworkId)
         {
-            UpdateAllIcons();
+            UpdateAllActionButtons();
         }
 
-        void OnButtonClickedDown(int buttonID)
+        void OnButtonClickedDown(ActionButtonType buttonType)
         {
-            if (buttonID == k_EmoteButtonID)
+            if (buttonType == ActionButtonType.EmoteBar)
             {
                 return; // this is the "emote" button; we won't do anything until they let go of the button
             }
@@ -147,18 +208,18 @@ namespace BossRoom.Visual
                 basicAction = ActionType.GeneralRevive;
             }
 
-            switch (buttonID)
+            switch (buttonType)
             {
-                case k_BasicActionButtonID: m_InputSender.RequestAction(basicAction, SkillTriggerStyle.UI); break;
-                case k_SpecialAction1ButtonID: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UI); break;
-                case k_SpecialAction2ButtonID: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UI); break;
-                default: throw new System.Exception($"Unknown button ID {buttonID}");
+                case ActionButtonType.BasicAction: m_InputSender.RequestAction(basicAction, SkillTriggerStyle.UI); break;
+                case ActionButtonType.Special1: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UI); break;
+                case ActionButtonType.Special2: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UI); break;
+                default: throw new System.Exception($"Unknown button {buttonType}");
             }
         }
 
-        void OnButtonClickedUp(int buttonID)
+        void OnButtonClickedUp(ActionButtonType buttonType)
         {
-            if (buttonID == k_EmoteButtonID)
+            if (buttonType == ActionButtonType.EmoteBar)
             {
                 m_EmotePanel.SetActive(!m_EmotePanel.activeSelf);
                 return;
@@ -176,12 +237,12 @@ namespace BossRoom.Visual
                 basicAction = ActionType.GeneralRevive;
             }
 
-            switch (buttonID)
+            switch (buttonType)
             {
-                case k_BasicActionButtonID: m_InputSender.RequestAction(basicAction, SkillTriggerStyle.UIRelease); break;
-                case k_SpecialAction1ButtonID: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UIRelease); break;
-                case k_SpecialAction2ButtonID: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UIRelease); break;
-                default: throw new System.Exception($"Unknown button ID {buttonID}");
+                case ActionButtonType.BasicAction: m_InputSender.RequestAction(basicAction, SkillTriggerStyle.UIRelease); break;
+                case ActionButtonType.Special1: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UIRelease); break;
+                case ActionButtonType.Special2: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UIRelease); break;
+                default: throw new System.Exception($"Unknown button {buttonType}");
             }
         }
 
@@ -189,12 +250,13 @@ namespace BossRoom.Visual
         /// Updates all the action buttons and caches info about the currently-selected entity (when appropriate):
         /// stores info in m_SelectedPlayerNetState and m_WasSelectedPlayerAliveDuringLastUpdate
         /// </summary>
-        void UpdateAllIcons()
+        void UpdateAllActionButtons()
         {
-            UpdateIcon(k_BasicActionButtonID, m_NetState.CharacterData.Skill1);
-            UpdateIcon(k_SpecialAction1ButtonID, m_NetState.CharacterData.Skill2);
-            UpdateIcon(k_SpecialAction2ButtonID, m_NetState.CharacterData.Skill3);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], m_NetState.CharacterData.Skill1);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_NetState.CharacterData.Skill2);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_NetState.CharacterData.Skill3);
 
+            // special case: when we have a player selected, we change the meaning of the basic action
             if (m_NetState.TargetId.Value != 0
                 && NetworkSpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
                 && selection != null
@@ -208,7 +270,7 @@ namespace BossRoom.Visual
                 Assert.IsNotNull(charState); // all PlayerObjects should have a NetworkCharacterState component
 
                 bool isAlive = charState.NetworkLifeState.Value == LifeState.Alive;
-                UpdateIcon(k_BasicActionButtonID, ActionType.GeneralRevive, !isAlive);
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.GeneralRevive, !isAlive);
 
                 // we'll continue to monitor our selected player every frame to see if their life-state changes.
                 m_SelectedPlayerNetState = charState;
@@ -221,7 +283,7 @@ namespace BossRoom.Visual
             }
         }
 
-        void UpdateIcon(int slotIdx, ActionType actionType, bool isClickable = true)
+        void UpdateActionButton(ActionButtonInfo buttonInfo, ActionType actionType, bool isClickable = true)
         {
             // first find the info we need (sprite and description)
             Sprite sprite = null;
@@ -237,17 +299,14 @@ namespace BossRoom.Visual
             // set up UI elements appropriately
             if (sprite == null)
             {
-                m_Buttons[slotIdx].gameObject.SetActive(false);
+                buttonInfo.Button.gameObject.SetActive(false);
             }
             else
             {
-                m_Buttons[slotIdx].gameObject.SetActive(true);
-                m_Buttons[slotIdx].interactable = isClickable;
-                m_Buttons[slotIdx].image.sprite = sprite;
-                if (m_Tooltips[slotIdx])
-                {
-                    m_Tooltips[slotIdx].SetText(description);
-                }
+                buttonInfo.Button.gameObject.SetActive(true);
+                buttonInfo.Button.interactable = isClickable;
+                buttonInfo.Button.image.sprite = sprite;
+                buttonInfo.Tooltip.SetText(description);
             }
             
         }
