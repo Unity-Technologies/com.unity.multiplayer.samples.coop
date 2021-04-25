@@ -110,7 +110,7 @@ namespace BossRoom.Visual
         /// <param name="data">The Action that is being requested.</param>
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!Parent.IsAnimating && ActionFX.ShouldAnticipate(this, ref data))
+            if (!Parent.IsAnimating() && ActionFX.ShouldAnticipate(this, ref data))
             {
                 var actionFX = ActionFX.MakeActionFX(ref data, Parent);
                 actionFX.AnticipateAction();

@@ -225,7 +225,7 @@ namespace BossRoom.Client
 
             if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
             {
-                //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
+                //Don't trigger our move logic for a while. This protects us from moving just because we clicked on them to target them.
                 m_LastSentMove = Time.time + k_TargetMoveTimeout;
 
                 ActionInputEvent?.Invoke(playerAction);
@@ -233,7 +233,10 @@ namespace BossRoom.Client
             }
             else if(actionType != ActionType.GeneralTarget )
             {
-                // clicked on nothing... perform a "miss" attack on the spot they clicked on
+                // clicked on nothing... perform an "untargeted" attack on the spot they clicked on.
+                // (Different Actions will deal with this differently. For some, like archer arrows, this will fire an arrow
+                // in the desired direction. For others, like mage's bolts, this will fire a "miss" projectile at the spot clicked on.)
+
                 var data = new ActionRequestData();
                 PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
 

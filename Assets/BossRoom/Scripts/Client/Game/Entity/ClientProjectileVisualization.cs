@@ -31,6 +31,14 @@ namespace BossRoom.Visual
             m_NetState.HitEnemyEvent += OnEnemyHit;
         }
 
+        void OnDestroy()
+        {
+            if( m_NetState != null )
+            {
+                m_NetState.HitEnemyEvent -= OnEnemyHit;
+            }
+        }
+
         void Update()
         {
             if (m_Parent == null)

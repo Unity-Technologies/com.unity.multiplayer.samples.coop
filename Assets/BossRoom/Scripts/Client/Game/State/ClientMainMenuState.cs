@@ -19,5 +19,4 @@ namespace BossRoom.Client
             //fortunately we know you are a client, because all players are clients when sitting at the main menu screen. 
         }
     }
-
 }

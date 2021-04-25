@@ -42,6 +42,8 @@ namespace BossRoom.Visual
             public Transform m_PrefabParent;
             [Tooltip("Prefab will be spawned with this local offset from the parent (Remember, it's a LOCAL offset, so it's affected by the parent transform's scale and rotation!)")]
             public Vector3 m_PrefabParentOffset;
+            [Tooltip("Should we disconnect the prefab from the character? (So the prefab's transform has no parent)")]
+            public bool m_DeParentPrefab;
 
             [Header("Sound Effect")]
             [Tooltip("If we want to use a sound effect that's not in the prefab, specify it here")]
@@ -148,6 +150,13 @@ namespace BossRoom.Visual
             Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_Animator.transform;
             var instantiatedFX = Instantiate(eventInfo.m_Prefab, parent);
             instantiatedFX.transform.localPosition += eventInfo.m_PrefabParentOffset;
+
+            // should we have no parent transform at all? (Note that we're de-parenting AFTER applying
+            // the PrefabParent, so that PrefabParent can still be used to determine the initial position/rotation/scale.)
+            if (eventInfo.m_DeParentPrefab)
+            {
+                instantiatedFX.transform.SetParent(null);
+            }
 
             // now we just need to watch and see if we end up needing to prematurely end these new graphics
             if (eventInfo.m_PrefabCanBeAbortedUntilSecs > 0)

@@ -14,6 +14,22 @@ namespace BossRoom
     }
 
     /// <summary>
+    /// Describes how the character's movement should be animated: as standing idle, running normally,
+    /// magically slowed, sped up, etc. (Not all statuses are currently used by game content,
+    /// but they are set up to be displayed correctly for future use.)
+    /// </summary>
+    [Serializable]
+    public enum MovementStatus
+    {
+        Idle,         // not trying to move
+        Normal,       // character is moving (normally)
+        Uncontrolled, // character is being moved by e.g. a knockback -- they are not in control!
+        Slowed,       // character's movement is magically hindered
+        Hasted,       // character's movement is magically enhanced
+        Walking,      // character should appear to be "walking" rather than normal running (e.g. for cut-scenes)
+    }
+
+    /// <summary>
     /// Contains all NetworkVariables and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
     [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
@@ -40,22 +56,13 @@ namespace BossRoom
         /// </summary>
         public NetworkVariableFloat NetworkMovementSpeed { get; } = new NetworkVariableFloat();
 
-        /// <summary>
-        /// Used by animations. Indicates how fast the character should "look like" they're moving,
-        /// according to the server. This is a value from 0 (not moving) to 1 (moving as fast as possible).
-        /// This does not always correspond to the NetworkMovementSpeed; for instance when a player is being
-        /// "knocked back", they are moving, but they visually look like they're standing still.
-        /// </summary>
-        public NetworkVariableFloat VisualMovementSpeed { get; } = new NetworkVariableFloat();
+        /// Indicates how the character's movement should be depicted.
+        public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
 
         /// <summary>
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
         /// </summary>
-        /// <remarks>
-        /// FIXME: this should be a bool, but NetworkedVarBool doesn't work at the moment! It's serialized
-        /// as a bit, but deserialized as a byte, which corrupts the whole network-var stream.
-        /// </remarks>
-        public NetworkVariableByte IsStealthy { get; } = new NetworkVariableByte(0);
+        public NetworkVariableBool IsStealthy { get; } = new NetworkVariableBool();
 
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
