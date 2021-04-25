@@ -2019,8 +2019,8 @@ MonoBehaviour:
     m_Prefab: {fileID: -1433333703484781611, guid: 1333b84cd80da3e4a820009415068d44, type: 3}
     m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_PrefabParent: {fileID: 1363468141647399746}
+    m_PrefabParentOffset: {x: 0, y: 80, z: 40}
     m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: a3d48c8599f0d584abc8ea603587d496, type: 3}
     m_SoundStartDelaySeconds: 0
