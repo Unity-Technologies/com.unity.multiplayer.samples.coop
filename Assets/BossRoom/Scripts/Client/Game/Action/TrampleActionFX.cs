@@ -47,7 +47,7 @@ namespace BossRoom.Visual
             float age = Time.time - TimeStarted;
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
             {
-                m_SpawnedGraphics = InstantiateSpecialFXGraphics(false);
+                m_SpawnedGraphics = InstantiateSpecialFXGraphics(m_Parent.transform, false);
             }
             return true;
         }

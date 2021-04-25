@@ -2000,9 +2000,6 @@ MonoBehaviour:
   m_ClientVisualsAnimator: {fileID: 234724737205816310}
   m_CharacterSwapper: {fileID: 0}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
-  TargetReticule: {fileID: 0}
-  ReticuleFriendlyMat: {fileID: 0}
-  ReticuleHostileMat: {fileID: 0}
 --- !u!114 &4538447335436592133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2024,6 +2021,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: a3d48c8599f0d584abc8ea603587d496, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
@@ -2035,6 +2033,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: 263888c6e986c944d80c59c3ac332ba1, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
@@ -2046,6 +2045,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: 87cdf94f9ac5ef541b45ebaa3d8bf7aa, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
@@ -2057,6 +2057,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: 3d6f2e33acb1e8f4b9d829e245c62e16, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
@@ -2068,6 +2069,7 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: 5ef809d665d13b245b559cd6170f5794, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
@@ -2079,6 +2081,19 @@ MonoBehaviour:
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 0}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Dead Loop
+    m_AnimatorNodeNameHash: -1573871441
+    m_Prefab: {fileID: 6607808867635938880, guid: 260ac2f5765fdfb4bb4fe3d466851e01, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 1363468141647399746}
+    m_PrefabParentOffset: {x: 0, y: 100, z: 0}
+    m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 0}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
