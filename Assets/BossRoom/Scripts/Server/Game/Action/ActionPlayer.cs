@@ -18,6 +18,7 @@ namespace BossRoom.Server
         private List<Action> m_NonBlockingActions;
 
         private Dictionary<ActionType, float> m_LastUsedTimestamps;
+        private Dictionary<ActionType, float> m_OldLastUsedTimestamps;
 
         /// <summary>
         /// To prevent the action queue from growing without bound, we cap its play time to this number of seconds. We can only ever estimate
@@ -36,6 +37,7 @@ namespace BossRoom.Server
             m_Queue = new List<Action>();
             m_NonBlockingActions = new List<Action>();
             m_LastUsedTimestamps = new Dictionary<ActionType, float>();
+            m_OldLastUsedTimestamps = new Dictionary<ActionType, float>();
         }
 
         /// <summary>
@@ -63,6 +65,14 @@ namespace BossRoom.Server
         {
             if (m_Queue.Count > 0)
             {
+                // revert this action's usage-time to the old value. (Since this action was canceled, we don't
+                // want the player to have to wait Description.ReuseTimeSeconds to be able to start it again.)
+                var actionType = m_Queue[0].Description.ActionTypeEnum;
+                if (m_OldLastUsedTimestamps.ContainsKey(actionType) && m_LastUsedTimestamps.ContainsKey(actionType))
+                {
+                    m_LastUsedTimestamps[actionType] = m_OldLastUsedTimestamps[actionType];
+                }
+
                 m_Queue[0].Cancel();
             }
             m_Queue.Clear();
@@ -144,8 +154,14 @@ namespace BossRoom.Server
                     m_Movement.CancelMove();
                 }
 
-                // remember that we successfully used this Action!
-                m_LastUsedTimestamps[m_Queue[0].Description.ActionTypeEnum] = Time.time;
+                // remember the moment when we successfully used this Action! (And keep track of the old time, if any,
+                // so that if we cancel this action we can put it back.)
+                var actionType = m_Queue[0].Description.ActionTypeEnum;
+                if (m_LastUsedTimestamps.ContainsKey(actionType))
+                {
+                    m_OldLastUsedTimestamps[actionType] = m_LastUsedTimestamps[actionType];
+                }
+                m_LastUsedTimestamps[actionType] = Time.time;
 
                 if (m_Queue[0].Description.ExecTimeSeconds==0 && m_Queue[0].Description.BlockingMode== BlockingMode.OnlyDuringExecTime)
                 {

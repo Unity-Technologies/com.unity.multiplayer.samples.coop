@@ -55,8 +55,14 @@ namespace BossRoom.Server
 
             // and then swing!
             PerformMeleeAttack();
+        }
 
-            base.End();
+        public override void Cancel()
+        {
+            // because the client-side visualization of the action moves the character visualization around,
+            // we need to explicitly end the client-side visuals when we abort
+            m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+
         }
 
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
