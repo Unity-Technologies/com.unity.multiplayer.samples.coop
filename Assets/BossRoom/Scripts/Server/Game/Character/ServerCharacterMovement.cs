@@ -127,10 +127,10 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Instantly moves the character to a new position. NOTE: this cancels any active movement operation!
-        /// Typically this action should also include an RPC that will let clients know that this movement
-        /// happened due to a teleport, so that they don't try to smooth-move the character to the new location.
-        /// But if the teleport occurs as part of an Action that already handles the visualization (such as in
-        /// DashAttackActionFX), this extra RPC isn't necessary.
+        /// Typically this includes an RPC that will let clients know that this movement happened due to a teleport,
+        /// so that they don't try to animate the character traveling to the new location. But if the teleport occurs
+        /// as part of an Action that already handles the visualization (such as in DashAttackActionFX), this extra
+        /// RPC isn't necessary and can be omitted.
         /// </summary>
         /// <param name="newPosition">new coordinates the character should be at</param>
         /// <param name="sendClientRpc">whether we should notify clients with an RPC</param>
