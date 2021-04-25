@@ -170,14 +170,14 @@ namespace BossRoom.Visual
         void Update()
         {
             // If we have another player selected, see if their aliveness state has changed,
-            // and if so, update the interactiveness of the first button
+            // and if so, update the interactiveness of the basic-action button
 
             if (!m_SelectedPlayerNetState) { return; }
 
             bool isAliveNow = m_SelectedPlayerNetState.NetworkLifeState.Value == LifeState.Alive;
             if (isAliveNow != m_WasSelectedPlayerAliveDuringLastUpdate)
             {
-                // this will update the icons so that button 1's interactiveness is correct
+                // this will update the icons so that the basic-action button's interactiveness is correct
                 UpdateAllActionButtons();
             }
 
