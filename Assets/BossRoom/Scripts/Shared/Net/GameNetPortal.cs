@@ -56,10 +56,10 @@ namespace BossRoom
         public GameObject NetworkManagerGO;
 
         /// <summary>
-        /// This synthesizes a general NetworkStart event out of other events provided by MLAPI. This can be removed
-        /// when the NetworkManager starts publishing this event directly.
+        /// This event is fired when MLAPI has reported that it has finished initialization, and is ready for
+        /// business, equivalent to OnServerStarted on the server, and OnClientConnected on the client.
         /// </summary>
-        public event Action NetworkStarted;
+        public event Action NetworkReadied;
 
         /// <summary>
         /// This event contains the game-level results of the ApprovalCheck carried out by the server, and is fired
@@ -87,18 +87,28 @@ namespace BossRoom
 
             NetManager = NetworkManagerGO.GetComponent<NetworkManager>();
 
-            //because we are not a true NetworkedBehavior, we don't get NetworkStart messages. But we still need to run at that point
-            //where we know if we're a host or client. So we fake a "NetworkManager.OnNetworkStarted" event out of the existing OnServerStarted
-            //and OnClientConnectedCallback events.
-            //FIXME_DMW could this be improved?
-            NetManager.OnServerStarted += NetworkStart;
-            NetManager.OnClientConnectedCallback += (clientId) =>
+            //we synthesize a "NetworkStart" event for the NetworkManager out of existing events. At some point
+            //we expect NetworkManager will expose an event like this itself.
+            NetManager.OnServerStarted += OnNetworkReady;
+            NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
+        }
+
+        private void OnDestroy()
+        {
+            if( NetManager != null )
             {
-                if (clientId == NetManager.LocalClientId)
-                {
-                    NetworkStart();
-                }
-            };
+                NetManager.OnServerStarted -= OnNetworkReady;
+                NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
+            }
+        }
+
+
+        private void ClientNetworkReadyWrapper(ulong clientId)
+        {
+            if (clientId == NetManager.LocalClientId)
+            {
+                OnNetworkReady();
+            }
         }
 
         private void RegisterClientMessageHandlers()
@@ -133,7 +143,7 @@ namespace BossRoom
         /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
         /// </summary>
-        private void NetworkStart()
+        private void OnNetworkReady()
         {
             if (NetManager.IsClient)
             {
@@ -150,7 +160,7 @@ namespace BossRoom
                 ConnectFinished?.Invoke(ConnectStatus.Success);
             }
 
-            NetworkStarted?.Invoke();
+            NetworkReadied?.Invoke();
         }
 
         /// <summary>
