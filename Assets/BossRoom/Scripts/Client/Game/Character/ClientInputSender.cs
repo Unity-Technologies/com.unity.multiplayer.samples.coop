@@ -325,7 +325,7 @@ namespace BossRoom.Client
                     resultData.CancelMovement = true;
                     return;
                 case ActionLogic.RangedFXTargeted:
-                    if (resultData.TargetIds == null) { resultData.Position = hitPoint; }
+                    resultData.Position = hitPoint;
                     return;
             }
         }
