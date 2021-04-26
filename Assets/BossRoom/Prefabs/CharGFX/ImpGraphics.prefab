@@ -1134,9 +1134,6 @@ MonoBehaviour:
   m_ClientVisualsAnimator: {fileID: 234724737205816310}
   m_CharacterSwapper: {fileID: 0}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
-  TargetReticule: {fileID: 0}
-  ReticuleFriendlyMat: {fileID: 0}
-  ReticuleHostileMat: {fileID: 0}
 --- !u!114 &8005647249789065143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1159,7 +1156,7 @@ MonoBehaviour:
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 714700a9be690ab4ab62c7cad766e9ee, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: 808ba00e4b69fe8489fd8020ec50ed2d, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -1465,10 +1462,10 @@ MonoBehaviour:
   m_AnimatorVariable: Speed
   m_AnimatorVariableHash: -823668238
   m_AudioSource: {fileID: -8995571906845300287}
-  m_WalkFootstepAudioClip: {fileID: 8300000, guid: 6fd6fb49b9fc5324a8baf1de798388fa, type: 3}
-  m_WalkFootstepVolume: 0.8
-  m_RunFootstepAudioClip: {fileID: 8300000, guid: 6ad4d1d63bc70494bbc9172ae70bcdd0, type: 3}
-  m_RunFootstepVolume: 0.8
+  m_WalkFootstepAudioClip: {fileID: 8300000, guid: aa9f712ea6ad1fe449743a9a3c05d76f, type: 3}
+  m_WalkFootstepVolume: 0.15
+  m_RunFootstepAudioClip: {fileID: 8300000, guid: 6842c0c48408e2440b85b37c3326bd84, type: 3}
+  m_RunFootstepVolume: 0.2
   m_TooSlowThreshold: 0.3
   m_WalkSpeedThreshold: 0.6
   m_RunSpeedThreshold: 1.2

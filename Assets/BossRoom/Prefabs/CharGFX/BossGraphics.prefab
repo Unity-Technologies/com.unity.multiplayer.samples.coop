@@ -2022,7 +2022,7 @@ MonoBehaviour:
     m_PrefabParent: {fileID: 1363468141647399746}
     m_PrefabParentOffset: {x: 0, y: 80, z: 40}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: a3d48c8599f0d584abc8ea603587d496, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: 0b74479e119665147b4587c43d851d2a, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -2034,7 +2034,7 @@ MonoBehaviour:
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 263888c6e986c944d80c59c3ac332ba1, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: c3e8f5c27c9662f44a412e4c44c74f6a, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -2046,7 +2046,7 @@ MonoBehaviour:
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 87cdf94f9ac5ef541b45ebaa3d8bf7aa, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: 952f8ac853b2bcb4b9369d4f08ee33ef, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 1
@@ -2094,7 +2094,7 @@ MonoBehaviour:
     m_PrefabParent: {fileID: 1363468141647399746}
     m_PrefabParentOffset: {x: 0, y: 100, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 0}
+    m_SoundEffect: {fileID: 8300000, guid: 4ec1f2194317a224c85c142cd9d44b17, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -2364,10 +2364,10 @@ MonoBehaviour:
   m_AnimatorVariable: Speed
   m_AnimatorVariableHash: -823668238
   m_AudioSource: {fileID: -2129752889114835779}
-  m_WalkFootstepAudioClip: {fileID: 8300000, guid: 58dfe905701797d4aa32f946d9c41be5, type: 3}
-  m_WalkFootstepVolume: 1
-  m_RunFootstepAudioClip: {fileID: 8300000, guid: 81079ef149d08774ab3eadab80944fa0, type: 3}
-  m_RunFootstepVolume: 1
+  m_WalkFootstepAudioClip: {fileID: 8300000, guid: 6f7fad52c7520d449a853b093844f2d1, type: 3}
+  m_WalkFootstepVolume: 0.25
+  m_RunFootstepAudioClip: {fileID: 8300000, guid: efbdca64daf8cc9409bd1168dac65370, type: 3}
+  m_RunFootstepVolume: 0.3
   m_TooSlowThreshold: 0.3
   m_WalkSpeedThreshold: 0.6
   m_RunSpeedThreshold: 1.2
