@@ -70,11 +70,16 @@ namespace BossRoom.Visual
         /// Takes care of registering/unregistering click-event messages,
         /// and routing the events into HeroActionBar.
         /// </summary>
-        struct ActionButtonInfo
+        class ActionButtonInfo
         {
             public readonly ActionButtonType Type;
             public readonly UIHUDButton Button;
             public readonly Client.UITooltipDetector Tooltip;
+
+            /// <summary>
+            /// The current ActionType that is used when this button is pressed.
+            /// </summary>
+            public ActionType CurActionType;
 
             readonly HeroActionBar m_Owner;
 
@@ -83,6 +88,7 @@ namespace BossRoom.Visual
                 Type = type;
                 Button = button;
                 Tooltip = button.GetComponent<Client.UITooltipDetector>();
+                CurActionType = ActionType.None;
                 m_Owner = owner;
             }
 
@@ -202,19 +208,8 @@ namespace BossRoom.Visual
                 return;
             }
 
-            ActionType basicAction = m_NetState.CharacterData.Skill1;
-            if (m_SelectedPlayerNetState && !m_WasSelectedPlayerAliveDuringLastUpdate)
-            {
-                basicAction = ActionType.GeneralRevive;
-            }
-
-            switch (buttonType)
-            {
-                case ActionButtonType.BasicAction: m_InputSender.RequestAction(basicAction, SkillTriggerStyle.UI); break;
-                case ActionButtonType.Special1: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UI); break;
-                case ActionButtonType.Special2: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UI); break;
-                default: throw new System.Exception($"Unknown button {buttonType}");
-            }
+            // send input to begin the action associated with this button
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurActionType, SkillTriggerStyle.UI);
         }
 
         void OnButtonClickedUp(ActionButtonType buttonType)
@@ -231,19 +226,8 @@ namespace BossRoom.Visual
                 return;
             }
 
-            ActionType basicAction = m_NetState.CharacterData.Skill1;
-            if (m_SelectedPlayerNetState && !m_WasSelectedPlayerAliveDuringLastUpdate)
-            {
-                basicAction = ActionType.GeneralRevive;
-            }
-
-            switch (buttonType)
-            {
-                case ActionButtonType.BasicAction: m_InputSender.RequestAction(basicAction, SkillTriggerStyle.UIRelease); break;
-                case ActionButtonType.Special1: m_InputSender.RequestAction(m_NetState.CharacterData.Skill2, SkillTriggerStyle.UIRelease); break;
-                case ActionButtonType.Special2: m_InputSender.RequestAction(m_NetState.CharacterData.Skill3, SkillTriggerStyle.UIRelease); break;
-                default: throw new System.Exception($"Unknown button {buttonType}");
-            }
+            // send input to complete the action associated with this button
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurActionType, SkillTriggerStyle.UIRelease);
         }
 
         /// <summary>
@@ -308,7 +292,9 @@ namespace BossRoom.Visual
                 buttonInfo.Button.image.sprite = sprite;
                 buttonInfo.Tooltip.SetText(description);
             }
-            
+
+            // store the action type so that we can retrieve it in click events
+            buttonInfo.CurActionType = actionType;
         }
     }
 }
