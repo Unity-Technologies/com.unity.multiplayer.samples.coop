@@ -12,6 +12,11 @@ namespace BossRoom.Server
 
         List<ActionType> m_AttackActions;
 
+        /// <summary>
+        /// a temporary list used by GetCurrentAttackInfo() so that it doesn't have to allocate a list every call
+        /// </summary>
+        List<ActionType> m_TempListOfAttackActions = new List<ActionType>();
+
         public AttackAIState(AIBrain brain, ActionPlayer actionPlayer)
         {
             m_Brain = brain;
@@ -88,8 +93,15 @@ namespace BossRoom.Server
                 }
             }
 
-            // Choose whether we can attack our foe directly, or if we need to get closer first
+            // choose the attack to use
             var attackInfo = GetCurrentAttackInfo();
+            if (attackInfo == null)
+            {
+                // no actions are usable right now
+                return;
+            }
+
+            // attack!
             var attackData = new ActionRequestData
             {
                 ActionTypeEnum = attackInfo.ActionTypeEnum,
@@ -122,9 +134,27 @@ namespace BossRoom.Server
             return closestFoe;
         }
 
+        /// <summary>
+        /// Chooses a usable attack and returns an ActionDescription representing it. If no actions are usable, returns null.
+        /// </summary>
+        /// <returns>Action to use, or null</returns>
         private ActionDescription GetCurrentAttackInfo()
         {
-            m_CurAttackAction = m_AttackActions[Random.Range(0, m_AttackActions.Count)];
+            m_TempListOfAttackActions.Clear();
+            foreach (var actionType in m_AttackActions)
+            {
+                if (m_ActionPlayer.IsReuseTimeElapsed(actionType))
+                {
+                    m_TempListOfAttackActions.Add(actionType);
+                }
+            }
+
+            if (m_TempListOfAttackActions.Count == 0)
+            {
+                return null;
+            }
+
+            m_CurAttackAction = m_TempListOfAttackActions[Random.Range(0, m_TempListOfAttackActions.Count)];
 
             ActionDescription result;
             bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out result);
