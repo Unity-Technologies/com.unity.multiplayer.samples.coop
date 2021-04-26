@@ -133,7 +133,6 @@ namespace BossRoom.Visual
                     {
                         StartCoroutine(CoroPlayStateEnterSound(info));
                     }
-                    break;
                 }
             }
         }
@@ -375,10 +374,13 @@ namespace BossRoom.Visual
             {
                 for (int j = i+1; j < fx.m_EventsOnNodeEntry.Length; ++j)
                 {
-                    if (fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeEntry[j].m_AnimatorNodeNameHash && fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash != 0)
+                    if (fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeEntry[j].m_AnimatorNodeNameHash
+                        && fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash != 0
+                        && fx.m_EventsOnNodeEntry[i].m_Prefab == fx.m_EventsOnNodeEntry[j].m_Prefab
+                        && fx.m_EventsOnNodeEntry[i].m_SoundEffect == fx.m_EventsOnNodeEntry[j].m_SoundEffect)
                     {
                         ++totalErrors;
-                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeEntry refer to the same node name ({fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName})! This is probably a copy-paste error. (But if it isn't and you intend to play two effects, remove this error-check!)");
+                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeEntry refer to the same node name ({fx.m_EventsOnNodeEntry[i].m_AnimatorNodeName}) and have the same prefab/sounds! This is probably a copy-paste error.");
                     }
                 }
             }
@@ -387,10 +389,13 @@ namespace BossRoom.Visual
             {
                 for (int j = i+1; j < fx.m_EventsOnNodeExit.Length; ++j)
                 {
-                    if (fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeExit[j].m_AnimatorNodeNameHash && fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash != 0)
+                    if (fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeExit[j].m_AnimatorNodeNameHash
+                        && fx.m_EventsOnNodeExit[i].m_AnimatorNodeNameHash != 0
+                        && fx.m_EventsOnNodeExit[i].m_Prefab == fx.m_EventsOnNodeExit[j].m_Prefab
+                        && fx.m_EventsOnNodeExit[i].m_SoundEffect == fx.m_EventsOnNodeExit[j].m_SoundEffect)
                     {
                         ++totalErrors;
-                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeExit refer to the same node name ({fx.m_EventsOnNodeExit[i].m_AnimatorNodeName})! This is probably a copy-paste error. (But if it isn't and you intend to play two effects, remove this error-check!)");
+                        Debug.LogError($"Entries {i} and {j} in EventsOnNodeExit refer to the same node name ({fx.m_EventsOnNodeExit[i].m_AnimatorNodeName}) and have the same prefab/sounds! This is probably a copy-paste error.");
                     }
                 }
             }
