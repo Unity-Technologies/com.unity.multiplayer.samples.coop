@@ -102,10 +102,16 @@ namespace BossRoom.Visual
                 return null;
             }
 
-            NetworkObject obj;
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out NetworkObject targetObject) && targetObject != null)
             {
-                return obj;
+                // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
+                var targetable = targetObject.GetComponent<ITargetable>();
+                if (targetable != null && targetable.IsNpc == (Description.IsFriendly ^ IsParentAnNPC()))
+                {
+                    // not a valid target
+                    return null;
+                }
+                return targetObject;
             }
             else
             {
@@ -114,6 +120,16 @@ namespace BossRoom.Visual
                 return null;
             }
         }
+
+        /// <summary>
+        /// Determines if the character playing this Action is an NPC (as opposed to a player)
+        /// </summary>
+        private bool IsParentAnNPC()
+        {
+            var targetable = m_Parent.Parent.GetComponent<ITargetable>();
+            return targetable.IsNpc;
+        }
+
 
         private FXProjectile SpawnAndInitializeProjectile()
         {
