@@ -1698,6 +1698,18 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
+  - m_AnimatorNodeName: SkillHeal
+    m_AnimatorNodeNameHash: 903055143
+    m_Prefab: {fileID: -8503384853690052432, guid: 4d05cda5d1dbccc458454625df6b2eed, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: 97c406be535d27e4fb6e1e8b64113e34, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
   - m_AnimatorNodeName: Fall Down
     m_AnimatorNodeNameHash: 950593707
     m_Prefab: {fileID: -288210933268752174, guid: 98f11693945a93b4abd1cebb803338cc, type: 3}

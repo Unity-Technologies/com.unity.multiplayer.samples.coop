@@ -34064,6 +34064,7 @@ GameObject:
   - component: {fileID: 6614281682663833097}
   - component: {fileID: 6614281682663833094}
   - component: {fileID: 6614281682663833095}
+  - component: {fileID: -8503384853690052432}
   m_Layer: 0
   m_Name: FX_Caster_skill1_impact
   m_TagString: Untagged
@@ -34079,7 +34080,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6614281682663833092}
   m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0.16, y: 1.66, z: 0.44}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 2465931362902736282}
@@ -38883,3 +38884,18 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!114 &-8503384853690052432
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6614281682663833092}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e80714725b908940a76375b52b8d53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParticleSystemsToTurnOffOnShutdown: []
+  m_AutoShutdownTime: 3
+  m_PostShutdownSelfDestructTime: -1
