@@ -94,8 +94,8 @@ namespace BossRoom.Server
             }
 
             // choose the attack to use
-            var attackInfo = GetCurrentAttackInfo();
-            if (attackInfo == null)
+            m_CurAttackAction = ChooseAttack();
+            if (m_CurAttackAction == ActionType.None)
             {
                 // no actions are usable right now
                 return;
@@ -104,7 +104,7 @@ namespace BossRoom.Server
             // attack!
             var attackData = new ActionRequestData
             {
-                ActionTypeEnum = attackInfo.ActionTypeEnum,
+                ActionTypeEnum = m_CurAttackAction,
                 TargetIds = new ulong[] { m_Foe.NetworkObjectId },
                 ShouldClose = true
             };
@@ -135,10 +135,10 @@ namespace BossRoom.Server
         }
 
         /// <summary>
-        /// Chooses a usable attack and returns an ActionDescription representing it. If no actions are usable, returns null.
+        /// Randomly picks a usable attack. If no actions are usable right now, returns ActionType.None.
         /// </summary>
-        /// <returns>Action to use, or null</returns>
-        private ActionDescription GetCurrentAttackInfo()
+        /// <returns>Action to attack with, or ActionType.None</returns>
+        private ActionType ChooseAttack()
         {
             m_TempListOfAttackActions.Clear();
             foreach (var actionType in m_AttackActions)
@@ -151,19 +151,10 @@ namespace BossRoom.Server
 
             if (m_TempListOfAttackActions.Count == 0)
             {
-                return null;
+                return ActionType.None;
             }
 
-            m_CurAttackAction = m_TempListOfAttackActions[Random.Range(0, m_TempListOfAttackActions.Count)];
-
-            ActionDescription result;
-            bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out result);
-            if (!found)
-            {
-                throw new System.Exception($"GameObject {m_Brain.GetMyServerCharacter().gameObject.name} tried to play Action {m_CurAttackAction} but this action does not exist");
-            }
-
-            return result;
+            return m_TempListOfAttackActions[Random.Range(0, m_TempListOfAttackActions.Count)];
         }
     }
 }
