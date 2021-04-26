@@ -2020,9 +2020,21 @@ MonoBehaviour:
     m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 1363468141647399746}
-    m_PrefabParentOffset: {x: 0, y: 100, z: 0}
+    m_PrefabParentOffset: {x: 18, y: 76, z: 42.6}
     m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: 0b74479e119665147b4587c43d851d2a, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Action - Boss Trample
+    m_AnimatorNodeNameHash: -1491039896
+    m_Prefab: {fileID: -1433333703484781611, guid: 1333b84cd80da3e4a820009415068d44, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 1363468141647399746}
+    m_PrefabParentOffset: {x: -18, y: 76, z: 42.6}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 0}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -2097,7 +2109,7 @@ MonoBehaviour:
     m_SoundEffect: {fileID: 8300000, guid: 4ec1f2194317a224c85c142cd9d44b17, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
-    m_LoopSound: 0
+    m_LoopSound: 1
   - m_AnimatorNodeName: Dead
     m_AnimatorNodeNameHash: 1293411866
     m_Prefab: {fileID: 0}
