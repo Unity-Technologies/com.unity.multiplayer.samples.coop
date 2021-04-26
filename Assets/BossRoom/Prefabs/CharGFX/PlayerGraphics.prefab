@@ -1494,6 +1494,18 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
+  - m_AnimatorNodeName: TankShieldBuff (loop)
+    m_AnimatorNodeNameHash: 33309060
+    m_Prefab: {fileID: 0}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: e2b92d0cf329be3418e4ff36cb854af6, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 1
   - m_AnimatorNodeName: TankShieldBuff (end)
     m_AnimatorNodeNameHash: -1512839320
     m_Prefab: {fileID: 0}
@@ -1566,18 +1578,6 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 1
-  - m_AnimatorNodeName: TankShieldBuff (loop)
-    m_AnimatorNodeNameHash: 33309060
-    m_Prefab: {fileID: 0}
-    m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: e2b92d0cf329be3418e4ff36cb854af6, type: 3}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
   m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -674663276945163795}
@@ -1668,6 +1668,18 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
+  - m_AnimatorNodeName: Buff1
+    m_AnimatorNodeNameHash: -1764501741
+    m_Prefab: {fileID: 0}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: ecb194ed3290a3b46946eea3d401b170, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 0.09
+    m_LoopSound: 1
   m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -674663276945163795}

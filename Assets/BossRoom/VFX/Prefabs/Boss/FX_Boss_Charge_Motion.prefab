@@ -9735,8 +9735,9 @@ GameObject:
   - component: {fileID: 2036539136839813352}
   - component: {fileID: 2036539136839813354}
   - component: {fileID: 2036539136839813353}
+  - component: {fileID: 6043546068530540440}
   m_Layer: 0
-  m_Name: FX_Boss_Motion
+  m_Name: FX_Boss_Charge_Motion
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14533,6 +14534,21 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &6043546068530540440
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2036539136839813359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e80714725b908940a76375b52b8d53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParticleSystemsToTurnOffOnShutdown: []
+  m_AutoShutdownTime: 3
+  m_PostShutdownSelfDestructTime: -1
 --- !u!1 &2036539137353892726
 GameObject:
   m_ObjectHideFlags: 0
