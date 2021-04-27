@@ -127,14 +127,13 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Instantly moves the character to a new position. NOTE: this cancels any active movement operation!
-        /// Typically this includes an RPC that will let clients know that this movement happened due to a teleport,
-        /// so that they don't try to animate the character traveling to the new location. But if the teleport occurs
-        /// as part of an Action that already handles the visualization (such as in DashAttackActionFX), this extra
-        /// RPC isn't necessary and can be omitted.
+        /// This does not notify the client that the movement occurred due to teleportation, so that needs to
+        /// happen in some other way, such as with the custom action visualization in DashAttackActionFX. (Without
+        /// this, the clients will animate the character moving to the new destination spot, rather than instantly
+        /// appearing in the new spot.)
         /// </summary>
         /// <param name="newPosition">new coordinates the character should be at</param>
-        /// <param name="sendClientRpc">whether we should notify clients with an RPC</param>
-        public void Teleport(Vector3 newPosition, bool sendClientRpc)
+        public void Teleport(Vector3 newPosition)
         {
             CancelMove();
             if (!m_NavMeshAgent.Warp(newPosition))
@@ -146,11 +145,6 @@ namespace BossRoom.Server
 
             m_Rigidbody.position = transform.position;
             m_Rigidbody.rotation = transform.rotation;
-
-            if (sendClientRpc)
-            {
-                m_NetworkCharacterState.RecvTeleportClientRpc(newPosition);
-            }
         }
 
         private void FixedUpdate()

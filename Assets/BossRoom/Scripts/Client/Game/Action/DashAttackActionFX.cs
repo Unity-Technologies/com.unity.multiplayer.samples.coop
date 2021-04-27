@@ -9,6 +9,13 @@ namespace BossRoom.Visual
     /// But on the client, we visualize this as the character dashing across the screen. The dashing begins after
     /// ExecTimeSeconds have elapsed.
     /// </summary>
+    /// <remarks>
+    /// This script moves the character visualization during the "dash", which is normally performed by
+    /// <see cref="ClientCharacterVisualization"/>. If both scripts try to move the visualization at the
+    /// same time it would result in unpredictable movement stuttering, but it's fine in this case because
+    /// the character has been stationary for ExecTimeSeconds before we start moving it (so the regular
+    /// visualization code will be dormant.)
+    /// </remarks>
     public class DashAttackActionFX : ActionFX
     {
         private Vector3 m_StartPos;
@@ -71,9 +78,6 @@ namespace BossRoom.Visual
                 // we've waited for ExecTime, so now we will pretend to dash across the screen.
                 m_StartedDash = true;
 
-                // We'll be controlling the visualization for a bit, so tell it to stop auto-moving itself.
-                m_Parent.StartFollowingNetworkTransform();
-
                 // Consider our current position to be the starting point of our "dash"
                 m_StartPos = m_Parent.transform.position;
             }
@@ -96,10 +100,6 @@ namespace BossRoom.Visual
             {
                 m_Parent.OurAnimator.SetTrigger(Description.Anim2);
             }
-            if (m_StartedDash)
-            {
-                m_Parent.StartFollowingNetworkTransform();
-            }
         }
 
         public override void Cancel()
@@ -108,10 +108,6 @@ namespace BossRoom.Visual
             if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
             {
                 m_Parent.OurAnimator.SetTrigger(Description.OtherAnimatorVariable);
-            }
-            if (m_StartedDash)
-            {
-                m_Parent.StartFollowingNetworkTransform();
             }
         }
 

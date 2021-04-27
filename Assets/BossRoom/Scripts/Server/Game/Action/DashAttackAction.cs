@@ -31,13 +31,6 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            // if we don't have a meaningufl stop-spot, try to find one that's a decent distance away
-            if ((Data.TargetIds == null || Data.TargetIds.Length == 0) && (Data.Position == Vector3.zero || Vector3.Distance(m_Parent.transform.position, Data.Position) < 1))
-            {
-                // it seems like the player doesn't have a useful target. Choose a default one based on their current direction, so that they go somewhere!
-                Data.Position = m_Parent.transform.position + m_Parent.transform.forward * Description.Range;
-            }
-
             // remember the exact spot we'll stop.
             m_TargetSpot = ActionUtils.GetTeleportDestination(m_Parent.transform, Data.Position, true, Description.Range, Description.Range);
 
@@ -58,7 +51,7 @@ namespace BossRoom.Server
         public override void End()
         {
             // we're done, time to teleport!
-            m_Parent.GetComponent<ServerCharacterMovement>().Teleport(m_TargetSpot, false);
+            m_Parent.GetComponent<ServerCharacterMovement>().Teleport(m_TargetSpot);
 
             // and then swing!
             PerformMeleeAttack();
