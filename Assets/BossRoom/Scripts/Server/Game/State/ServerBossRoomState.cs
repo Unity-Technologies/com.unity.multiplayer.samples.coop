@@ -164,7 +164,7 @@ namespace BossRoom.Server
         private MLAPI.NetworkVariable.NetworkVariable<LifeState>.OnValueChangedDelegate GetLifeStateEvent(ulong id)
         {
             //this is all a little paranoid, because during shutdown it's not always obvious what state is still valid.
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject netObj))
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject netObj) && netObj != null)
             {
                 var netState = netObj.GetComponent<NetworkCharacterState>();
                 return netState != null ? netState.NetworkLifeState.OnValueChanged : null;
