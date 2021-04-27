@@ -12,11 +12,6 @@ namespace BossRoom.Server
 
         List<ActionType> m_AttackActions;
 
-        /// <summary>
-        /// a temporary list used by GetCurrentAttackInfo() so that it doesn't have to allocate a list every call
-        /// </summary>
-        List<ActionType> m_TempListOfAttackActions = new List<ActionType>();
-
         public AttackAIState(AIBrain brain, ActionPlayer actionPlayer)
         {
             m_Brain = brain;
@@ -140,21 +135,30 @@ namespace BossRoom.Server
         /// <returns>Action to attack with, or ActionType.None</returns>
         private ActionType ChooseAttack()
         {
-            m_TempListOfAttackActions.Clear();
-            foreach (var actionType in m_AttackActions)
+            // make a random choice
+            int idx = Random.Range(0, m_AttackActions.Count);
+
+            // now iterate through our options to find one that's currently usable
+            bool anyUsable;
+            do
             {
-                if (m_ActionPlayer.IsReuseTimeElapsed(actionType))
+                anyUsable = false;
+                for (int i = 0; i < m_AttackActions.Count; ++i)
                 {
-                    m_TempListOfAttackActions.Add(actionType);
+                    if (m_ActionPlayer.IsReuseTimeElapsed(m_AttackActions[i]))
+                    {
+                        anyUsable = true;
+                        if (idx == 0)
+                        {
+                            return m_AttackActions[i];
+                        }
+                        --idx;
+                    }
                 }
-            }
+            } while (anyUsable);
 
-            if (m_TempListOfAttackActions.Count == 0)
-            {
-                return ActionType.None;
-            }
-
-            return m_TempListOfAttackActions[Random.Range(0, m_TempListOfAttackActions.Count)];
+            // none of our actions are available now
+            return ActionType.None;
         }
     }
 }
