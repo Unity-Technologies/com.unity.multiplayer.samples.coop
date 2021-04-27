@@ -1,5 +1,6 @@
 using MLAPI.Spawning;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Server
 {
@@ -20,8 +21,8 @@ namespace BossRoom.Server
                 return false;
             }
 
-            var targetNeworkedObj = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
-            m_TargetCharacter = targetNeworkedObj.GetComponent<ServerCharacter>();
+            var targetNetworkObject = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+            m_TargetCharacter = targetNetworkObject.GetComponent<ServerCharacter>();
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
             return true;
@@ -35,7 +36,8 @@ namespace BossRoom.Server
 
                 if (m_TargetCharacter.NetState.NetworkLifeState.Value == LifeState.Fainted)
                 {
-                    m_TargetCharacter.Revive(m_Parent, (int)m_Data.Amount);
+                    Assert.IsTrue(Description.Amount > 0, "Revive amount must be greater than 0.");
+                    m_TargetCharacter.Revive(m_Parent, Description.Amount);
                 }
                 else
                 {

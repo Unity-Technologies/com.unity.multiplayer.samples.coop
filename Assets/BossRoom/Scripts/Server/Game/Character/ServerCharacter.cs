@@ -180,7 +180,7 @@ namespace BossRoom.Server
 
             if( m_AIBrain != null )
             {
-                //let the brain know about the modified amount of damage we received. 
+                //let the brain know about the modified amount of damage we received.
                 m_AIBrain.ReceiveHP(inflicter, HP);
             }
 
@@ -226,7 +226,7 @@ namespace BossRoom.Server
         {
             if (NetState.NetworkLifeState.Value == LifeState.Fainted)
             {
-                NetState.HitPoints = NetState.CharacterData.BaseHP.Value;
+                NetState.HitPoints = Mathf.Clamp(HP, 0, NetState.CharacterData.BaseHP.Value);
                 NetState.NetworkLifeState.Value = LifeState.Alive;
             }
         }
