@@ -143,14 +143,14 @@ namespace BossRoom.Server
             do
             {
                 anyUsable = false;
-                for (int i = 0; i < m_AttackActions.Count; ++i)
+                foreach (var actionType in m_AttackActions)
                 {
-                    if (m_ActionPlayer.IsReuseTimeElapsed(m_AttackActions[i]))
+                    if (m_ActionPlayer.IsReuseTimeElapsed(actionType))
                     {
                         anyUsable = true;
                         if (idx == 0)
                         {
-                            return m_AttackActions[i];
+                            return actionType;
                         }
                         --idx;
                     }
