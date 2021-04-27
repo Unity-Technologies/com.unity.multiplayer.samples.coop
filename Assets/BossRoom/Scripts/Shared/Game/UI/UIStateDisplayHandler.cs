@@ -209,7 +209,7 @@ namespace BossRoom
 
         void LateUpdate()
         {
-            if (m_UIStateActive)
+            if (m_UIStateActive && m_TransformToTrack)
             {
                 // set world position with world offset added
                 m_WorldPos.Set(m_TransformToTrack.position.x,
