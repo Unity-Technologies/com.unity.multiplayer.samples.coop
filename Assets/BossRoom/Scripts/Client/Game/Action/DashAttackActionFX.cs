@@ -43,23 +43,6 @@ namespace BossRoom.Visual
 
         private void PlayStartAnim()
         {
-            // this action plays a "melee attack" animation when it successfully ends. But if the player aborts
-            // the action, we shouldn't play a swing animation (because we aren't really attacking). To do this,
-            // we have two triggers that can end the animation sequence: the one in our Anim2 var ends cleanly, and
-            // the one in our OtherAnimatorVariable var cancels the sequence. Before we start, we'll make sure that
-            // both the cancel-trigger and the end-trigger haven't been left in a raised state from a previous DashAttack.
-            // (This isn't strictly necessary but is good anti-bugging. When you have an animation sequence that has multiple
-            // end-triggers, it's a good idea to make sure the end-triggers are in the correct state when you start.)
-            if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
-            {
-                m_Parent.OurAnimator.ResetTrigger(Description.OtherAnimatorVariable); // reset cancel trigger
-            }
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.ResetTrigger(Description.Anim2); // reset end trigger
-            }
-
-            // now start the animation sequence
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
         }
 
