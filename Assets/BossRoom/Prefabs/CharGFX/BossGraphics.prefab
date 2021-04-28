@@ -2090,7 +2090,7 @@ MonoBehaviour:
     m_AnimatorNodeNameHash: -1624701500
     m_Prefab: {fileID: -8608552164340512473, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
     m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabCanBeAbortedUntilSecs: 99999
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
