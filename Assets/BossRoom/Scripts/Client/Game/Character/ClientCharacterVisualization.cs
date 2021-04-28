@@ -4,6 +4,7 @@ using Cinemachine;
 using MLAPI;
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Visual
 {
@@ -12,46 +13,57 @@ namespace BossRoom.Visual
     /// </summary>
     public class ClientCharacterVisualization : NetworkBehaviour
     {
-        private NetworkCharacterState m_NetState;
-
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
         [SerializeField]
         private CharacterSwap m_CharacterSwapper;
 
-        [Tooltip("Prefab for the Target Reticule used by this Character")]
-        public GameObject TargetReticule;
+        [SerializeField]
+        private VisualizationConfiguration m_VisualizationConfiguration;
 
-        [Tooltip("Material to use when displaying a friendly target reticule (e.g. green color)")]
-        public Material ReticuleFriendlyMat;
-
-        [Tooltip("Material to use when displaying a hostile target reticule (e.g. red color)")]
-        public Material ReticuleHostileMat;
-
+        /// <summary>
+        /// Returns a reference to the active Animator for this visualization
+        /// </summary>
         public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
 
-        private ActionVisualization m_ActionViz;
+        /// <summary>
+        /// Returns the targeting-reticule prefab for this character visualization
+        /// </summary>
+        public GameObject TargetReticulePrefab { get { return m_VisualizationConfiguration.TargetReticule; } }
 
+        /// <summary>
+        /// Returns the Material to plug into the reticule when the selected entity is hostile
+        /// </summary>
+        public Material ReticuleHostileMat { get { return m_VisualizationConfiguration.ReticuleHostileMat; } }
+
+        /// <summary>
+        /// Returns the Material to plug into the reticule when the selected entity is friendly
+        /// </summary>
+        public Material ReticuleFriendlyMat { get { return m_VisualizationConfiguration.ReticuleFriendlyMat; } }
+
+        /// <summary>
+        /// Returns our pseudo-Parent, the object that owns the visualization.
+        /// (We don't have an actual transform parent because we're on a top-level GameObject.)
+        /// </summary>
         public Transform Parent { get; private set; }
+
+        public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
+
+        private NetworkCharacterState m_NetState;
+
+        private ActionVisualization m_ActionViz;
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         /// Player characters need to report health changes and chracter info to the PartyHUD
-        private PartyHUD m_PartyHUD;
+        PartyHUD m_PartyHUD;
 
-        private float m_SmoothedSpeed;
+        float m_SmoothedSpeed;
 
-        int m_AliveStateTriggerID;
-        int m_FaintedStateTriggerID;
-        int m_DeadStateTriggerID;
         int m_HitStateTriggerID;
-        int m_AnticipateMoveTriggerID;
-        int m_SpeedVariableID;
 
         event Action Destroyed;
-
-       public bool CanPerformActions { get { return m_NetState.CanPerformActions;  } }
 
         /// <inheritdoc />
         public override void NetworkStart()
@@ -62,11 +74,6 @@ namespace BossRoom.Visual
                 return;
             }
 
-            m_AliveStateTriggerID = Animator.StringToHash("StandUp");
-            m_FaintedStateTriggerID = Animator.StringToHash("FallDown");
-            m_DeadStateTriggerID = Animator.StringToHash("Dead");
-            m_AnticipateMoveTriggerID = Animator.StringToHash("AnticipateMove");
-            m_SpeedVariableID = Animator.StringToHash("Speed");
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
@@ -120,7 +127,7 @@ namespace BossRoom.Visual
                     gameObject.AddComponent<CameraController>();
                     m_PartyHUD.SetHeroData(m_NetState);
 
-                    if( Parent.TryGetComponent(out ClientInputSender inputSender))
+                    if (Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
                         inputSender.ActionInputEvent += OnActionInput;
                         inputSender.ClientMoveEvent += OnMoveInput;
@@ -153,9 +160,9 @@ namespace BossRoom.Visual
 
         private void OnMoveInput(Vector3 position)
         {
-            if( !IsAnimating )
+            if (!IsAnimating())
             {
-                OurAnimator.SetTrigger(m_AnticipateMoveTriggerID);
+                OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
             }
         }
 
@@ -169,10 +176,10 @@ namespace BossRoom.Visual
             switch (lifeState)
             {
                 case LifeState.Dead: // ie. NPCs already dead
-                    m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryDeath"));
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.EntryDeathTriggerID);
                     break;
                 case LifeState.Fainted: // ie. PCs already fainted
-                    m_ClientVisualsAnimator.SetTrigger(Animator.StringToHash("EntryFainted"));
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.EntryFaintedTriggerID);
                     break;
             }
         }
@@ -228,13 +235,13 @@ namespace BossRoom.Visual
             switch (newValue)
             {
                 case LifeState.Alive:
-                    m_ClientVisualsAnimator.SetTrigger(m_AliveStateTriggerID);
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
                     break;
                 case LifeState.Fainted:
-                    m_ClientVisualsAnimator.SetTrigger(m_FaintedStateTriggerID);
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
                     break;
                 case LifeState.Dead:
-                    m_ClientVisualsAnimator.SetTrigger(m_DeadStateTriggerID);
+                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
@@ -287,6 +294,37 @@ namespace BossRoom.Visual
             }
         }
 
+        /// <summary>
+        /// Returns the value we should set the Animator's "Speed" variable, given current
+        /// gameplay conditions.
+        /// </remarks>
+        private float GetVisualMovementSpeed()
+        {
+            Assert.IsNotNull(m_VisualizationConfiguration);
+            if (m_NetState.NetworkLifeState.LifeState.Value != LifeState.Alive)
+            {
+                return m_VisualizationConfiguration.SpeedDead;
+            }
+
+            switch (m_NetState.MovementStatus.Value)
+            {
+                case MovementStatus.Idle:
+                    return m_VisualizationConfiguration.SpeedIdle;
+                case MovementStatus.Normal:
+                    return m_VisualizationConfiguration.SpeedNormal;
+                case MovementStatus.Uncontrolled:
+                    return m_VisualizationConfiguration.SpeedUncontrolled;
+                case MovementStatus.Slowed:
+                    return m_VisualizationConfiguration.SpeedSlowed;
+                case MovementStatus.Hasted:
+                    return m_VisualizationConfiguration.SpeedHasted;
+                case MovementStatus.Walking:
+                    return m_VisualizationConfiguration.SpeedWalking;
+                default:
+                    throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
+            }
+        }
+
         void Update()
         {
             if (Parent == null)
@@ -301,12 +339,7 @@ namespace BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                float visibleSpeed = 0;
-                if (m_NetState.LifeState == LifeState.Alive)
-                {
-                    visibleSpeed = m_NetState.VisualMovementSpeed.Value;
-                }
-                m_ClientVisualsAnimator.SetFloat("Speed", visibleSpeed);
+                m_ClientVisualsAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
             }
 
             m_ActionViz.Update();
@@ -321,23 +354,20 @@ namespace BossRoom.Visual
             m_ActionViz.OnAnimEvent(id);
         }
 
-        public bool IsAnimating
+        public bool IsAnimating()
         {
-            get
+            if (OurAnimator.GetFloat(m_VisualizationConfiguration.SpeedVariableID) > 0.0) { return true; }
+
+            for (int i = 0; i < OurAnimator.layerCount; i++)
             {
-                if( OurAnimator.GetFloat(m_SpeedVariableID) > 0.0 ) { return true; }
-
-                for( int i = 0; i < OurAnimator.layerCount; i++ )
+                if (OurAnimator.GetCurrentAnimatorStateInfo(i).tagHash != m_VisualizationConfiguration.BaseNodeTagID)
                 {
-                    if (!OurAnimator.GetCurrentAnimatorStateInfo(i).IsTag("BaseNode"))
-                    {
-                        //we are in an active node, not the default "nothing" node.
-                        return true;
-                    }
+                    //we are in an active node, not the default "nothing" node.
+                    return true;
                 }
-
-                return false;
             }
+
+            return false;
         }
     }
 }

@@ -22,7 +22,7 @@ namespace BossRoom.Visual
                 ShouldQueue = false,
                 TargetIds = null
             };
-            m_PlayerOwner.RecvDoActionServerRPC(data);
+            m_SendInput(data);
         }
 
         public override void OnReleaseKey()

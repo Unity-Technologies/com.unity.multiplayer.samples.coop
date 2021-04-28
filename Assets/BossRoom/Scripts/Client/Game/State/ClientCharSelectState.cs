@@ -3,6 +3,8 @@ using MLAPI.NetworkVariable.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
+using TMPro;
 
 namespace BossRoom.Client
 {
@@ -51,6 +53,10 @@ namespace BossRoom.Client
         [Tooltip("Representational information for each player")]
         public ColorAndIndicator[] m_IdentifiersForEachPlayerNumber;
 
+        [SerializeField]
+        [Tooltip("Text element containing player count which updates as players connect")]
+        private TextMeshProUGUI m_NumPlayersText;
+
         [Header("UI Elements for different lobby modes")]
         [SerializeField]
         [Tooltip("UI elements to turn on when the player hasn't chosen their seat yet. Turned off otherwise!")]
@@ -81,8 +87,8 @@ namespace BossRoom.Client
         [Tooltip("Error message text when lobby is full")]
         private string m_FatalErrorLobbyFullMsg = "Error: lobby is full! You cannot play.";
 
-        private int m_LastSeatSelected;
-        private bool m_HasLocalPlayerLockedIn;
+        private int m_LastSeatSelected = -1;
+        private bool m_HasLocalPlayerLockedIn = false;
 
         /// <summary>
         /// Conceptual modes or stages that the lobby can be in. We don't actually
@@ -163,12 +169,20 @@ namespace BossRoom.Client
             m_ClassInfoBox.OnSetPlayerNumber(playerNum);
         }
 
+        private void UpdatePlayerCount()
+        {
+            int count = CharSelectData.LobbyPlayers.Count;
+            var pstr = (count > 1) ? "players" : "player";
+            m_NumPlayersText.text = "<b>" + count + "</b> " + pstr +" connected";
+        }
+
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
         private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> lobbyArray )
         {
             UpdateSeats();
+            UpdatePlayerCount();
 
             // now let's find our local player in the list and update the character/info box appropriately
             int localPlayerIdx = -1;
@@ -220,19 +234,29 @@ namespace BossRoom.Client
             }
             else
             {
-                m_InSceneCharacter.gameObject.SetActive(true);
-                m_InSceneCharacter.SwapToModel(CharSelectData.LobbySeatConfigurations[seatIdx].CharacterArtIdx);
-                m_ClassInfoBox.ConfigureForClass(CharSelectData.LobbySeatConfigurations[seatIdx].Class);
+                if ( seatIdx != -1 )
+                {
+                    m_InSceneCharacter.gameObject.SetActive(true);
+                    m_InSceneCharacter.SwapToModel(CharSelectData.LobbySeatConfigurations[seatIdx].CharacterArtIdx);
+                    m_ClassInfoBox.ConfigureForClass(CharSelectData.LobbySeatConfigurations[seatIdx].Class);
+                }
                 if (state == CharSelectData.SeatState.LockedIn && !m_HasLocalPlayerLockedIn)
                 {
                     // the local player has locked in their seat choice! Rearrange the UI appropriately
-
                     // the character should act excited
                     m_InSceneCharacterAnimator.SetTrigger(m_AnimationTriggerOnCharChosen);
-
                     ConfigureUIForLobbyMode(CharSelectData.IsLobbyClosed.Value ? LobbyMode.LobbyEnding : LobbyMode.SeatChosen);
-
                     m_HasLocalPlayerLockedIn = true;
+                }
+                else if (m_HasLocalPlayerLockedIn && state == CharSelectData.SeatState.Active)
+                {
+                    // reset character seats if locked in choice was unselected
+                    if (m_HasLocalPlayerLockedIn)
+                    {
+                        ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
+                        m_ClassInfoBox.SetLockedIn(false);
+                        m_HasLocalPlayerLockedIn = false;
+                    }
                 }
                 else if (state == CharSelectData.SeatState.Active && isNewSeat)
                 {
@@ -325,11 +349,15 @@ namespace BossRoom.Client
             switch (mode)
             {
                 case LobbyMode.ChooseSeat:
-                    m_ClassInfoBox.ConfigureForNoSelection();
+                    if ( m_LastSeatSelected == -1)
+                    {
+                        m_InSceneCharacter.gameObject.SetActive(false);
+                        m_ClassInfoBox.ConfigureForNoSelection();
+                    }
                     break;
                 case LobbyMode.SeatChosen:
                     isSeatsDisabledInThisMode = true;
-                    m_ClassInfoBox.ConfigureForLockedIn();
+                    m_ClassInfoBox.SetLockedIn(true);
                     break;
                 case LobbyMode.FatalError:
                     isSeatsDisabledInThisMode = true;
@@ -341,14 +369,13 @@ namespace BossRoom.Client
                     break;
             }
 
-            if (isSeatsDisabledInThisMode)
+            // go through all our seats and enable or disable buttons
+            foreach (var seat in m_PlayerSeats)
             {
-                // go through all our seats and tell them to stop acting like they're clickable buttons
-                foreach (var seat in m_PlayerSeats)
-                {
-                    seat.PermanentlyDisableInteraction();
-                }
+                // disable interaction if seat is already locked or all seats disabled
+                seat.SetDisableInteraction(seat.IsLocked() || isSeatsDisabledInThisMode);
             }
+
         }
 
         /// <summary>
@@ -365,8 +392,22 @@ namespace BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, true);
+            // request to lock in or unlock if already locked in
+            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn );
         }
+
+        /// <summary>
+        /// Called directly by UI elements!
+        /// </summary>
+        public void OnPlayerExit()
+        {
+            // Player is leaving the group
+            // first disconnect then return to menu
+            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
+            gameNetPortal.RequestDisconnect();
+            SceneManager.LoadScene("MainMenu");
+        }
+
 
 #if UNITY_EDITOR
         private void OnValidate()

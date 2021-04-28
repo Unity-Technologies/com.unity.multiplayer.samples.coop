@@ -33,6 +33,8 @@ namespace BossRoom
         float m_PingIntervalSeconds = 0.1f;
         float m_LastPingTime;
         Text m_TextStat;
+        Text m_TextHostType;
+
         // When receiving pong client RPCs, we need to know when the initiating ping sent it so we can calculate its individual RTT
         int m_CurrentRTTPingId;
 
@@ -43,7 +45,6 @@ namespace BossRoom
 
         ClientRpcParams m_PongClientParams;
 
-        GameObject m_NetworkStatsText;
 
         public override void NetworkStart()
         {
@@ -66,16 +67,23 @@ namespace BossRoom
             Assert.IsNotNull(Scripts.Editor.NetworkOverlay.Instance,
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
-            m_NetworkStatsText = new GameObject("UI Stat Text");
-            m_TextStat = m_NetworkStatsText.AddComponent<Text>();
-            m_TextStat.text = "No Stat";
-            m_TextStat.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
-            m_TextStat.horizontalOverflow = HorizontalWrapMode.Overflow;
-            m_TextStat.alignment = TextAnchor.MiddleLeft;
-            m_TextStat.raycastTarget = false;
-            m_TextStat.resizeTextForBestFit = true;
+            string hostType = IsHost ? "Host" : IsClient ? "Client" : "Unknown";
+            InitializeTextLine($"Type: {hostType}", out m_TextHostType);
+            InitializeTextLine("No Stat", out m_TextStat);
+        }
 
-            var rectTransform = m_NetworkStatsText.GetComponent<RectTransform>();
+        private void InitializeTextLine(string defaultText, out Text textComponent )
+        {
+            GameObject rootGO = new GameObject("UI Stat Text");
+            textComponent = rootGO.AddComponent<Text>();
+            textComponent.text = defaultText;
+            textComponent.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
+            textComponent.horizontalOverflow = HorizontalWrapMode.Overflow;
+            textComponent.alignment = TextAnchor.MiddleLeft;
+            textComponent.raycastTarget = false;
+            textComponent.resizeTextForBestFit = true;
+
+            var rectTransform = rootGO.GetComponent<RectTransform>();
             Scripts.Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
         }
 
@@ -145,9 +153,13 @@ namespace BossRoom
 
         void OnDestroy()
         {
-            if (m_NetworkStatsText != null)
+            if (m_TextStat != null)
             {
-                Destroy(m_NetworkStatsText);
+                Destroy(m_TextStat.gameObject);
+            }
+            if( m_TextHostType != null )
+            {
+                Destroy(m_TextHostType.gameObject);
             }
         }
     }

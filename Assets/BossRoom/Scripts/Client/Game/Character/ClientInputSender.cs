@@ -127,9 +127,15 @@ namespace BossRoom.Client
             m_MainCamera = Camera.main;
         }
 
-        public void FinishSkill()
+        void FinishSkill()
         {
             m_CurrentSkillInput = null;
+        }
+
+        void SendInput(ActionRequestData action)
+        {
+            ActionInputEvent?.Invoke(action);
+            m_NetworkCharacter.RecvDoActionServerRPC(action);
         }
 
         void FixedUpdate()
@@ -151,7 +157,7 @@ namespace BossRoom.Client
                     if (actionData.ActionInput != null)
                     {
                         var skillPlayer = Instantiate(actionData.ActionInput);
-                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, FinishSkill);
+                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, SendInput, FinishSkill);
                         m_CurrentSkillInput = skillPlayer;
                     }
                     else
@@ -225,21 +231,21 @@ namespace BossRoom.Client
 
             if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
             {
-                //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
+                //Don't trigger our move logic for a while. This protects us from moving just because we clicked on them to target them.
                 m_LastSentMove = Time.time + k_TargetMoveTimeout;
 
-                ActionInputEvent?.Invoke(playerAction);
-                m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
+                SendInput(playerAction);
             }
             else if(actionType != ActionType.GeneralTarget )
             {
-                // clicked on nothing... perform a "miss" attack on the spot they clicked on
+                // clicked on nothing... perform an "untargeted" attack on the spot they clicked on.
+                // (Different Actions will deal with this differently. For some, like archer arrows, this will fire an arrow
+                // in the desired direction. For others, like mage's bolts, this will fire a "miss" projectile at the spot clicked on.)
+
                 var data = new ActionRequestData();
                 PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
 
-                ActionInputEvent?.Invoke(data);
-                m_NetworkCharacter.RecvDoActionServerRPC(data);
-
+                SendInput(data);
             }
         }
 
@@ -322,7 +328,7 @@ namespace BossRoom.Client
                     resultData.CancelMovement = true;
                     return;
                 case ActionLogic.RangedFXTargeted:
-                    if (resultData.TargetIds == null) { resultData.Position = hitPoint; }
+                    resultData.Position = hitPoint;
                     return;
             }
         }

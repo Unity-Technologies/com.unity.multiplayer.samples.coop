@@ -107,7 +107,18 @@ namespace BossRoom.Server
         {
             if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                ClearActions(false);
+                // if we're currently playing an interruptible action, interrupt it!
+                if (m_ActionPlayer.GetActiveActionInfo(out ActionRequestData data))
+                {
+                    if (GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out ActionDescription description))
+                    {
+                        if (description.ActionInterruptible)
+                        {
+                            m_ActionPlayer.ClearActions(false);
+                        }
+                    }
+                }
+
                 m_ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
                 m_Movement.SetMovementTarget(targetPosition);
             }
@@ -117,17 +128,9 @@ namespace BossRoom.Server
         {
             if (lifeState != LifeState.Alive)
             {
-                ClearActions(true);
+                m_ActionPlayer.ClearActions(true);
                 m_Movement.CancelMove();
             }
-        }
-
-        /// <summary>
-        /// Clear all active Actions.
-        /// </summary>
-        public void ClearActions(bool alsoClearNonBlockingActions)
-        {
-            m_ActionPlayer.ClearActions(alsoClearNonBlockingActions);
         }
 
         private void OnActionPlayRequest(ActionRequestData data)
@@ -184,7 +187,7 @@ namespace BossRoom.Server
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
             {
-                ClearActions(false);
+                m_ActionPlayer.ClearActions(false);
 
                 if (IsNpc)
                 {
@@ -253,5 +256,10 @@ namespace BossRoom.Server
         {
             return IDamageable.SpecialDamageFlags.None;
         }
+
+        /// <summary>
+        /// This character's AIBrain. Will be null if this is not an NPC.
+        /// </summary>
+        public AIBrain AIBrain { get { return m_AIBrain; } }
     }
 }
