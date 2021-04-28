@@ -1452,7 +1452,6 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
-  m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -674663276945163795}
   - {fileID: 8195155732997438405}
@@ -1578,7 +1577,6 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 1
-  m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -674663276945163795}
   - {fileID: 8195155732997438405}
@@ -1680,7 +1678,6 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 0.09
     m_LoopSound: 1
-  m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -674663276945163795}
   - {fileID: 8195155732997438405}
@@ -1794,7 +1791,6 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
-  m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -674663276945163795}
   - {fileID: 8195155732997438405}

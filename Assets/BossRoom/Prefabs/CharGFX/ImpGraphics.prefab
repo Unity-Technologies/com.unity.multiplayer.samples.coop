@@ -1196,7 +1196,6 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
-  m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -8069025211240352543}
   - {fileID: -4965377615854939036}
