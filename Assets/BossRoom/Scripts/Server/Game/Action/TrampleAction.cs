@@ -22,7 +22,6 @@ namespace BossRoom.Server
             Windup,     // performing animations prior to actually moving
             Charging,   // running across the screen and hitting characters
             Complete,   // ending action
-            Cooldown,   // time spent after completion
         }
 
         /// <summary>
@@ -78,13 +77,9 @@ namespace BossRoom.Server
             {
                 return ActionStage.Windup;
             }
-            if (timeSoFar < Description.ExecTimeSeconds + Description.DurationSeconds)
+            if (timeSoFar < Description.DurationSeconds)
             {
                 return ActionStage.Charging;
-            }
-            if (timeSoFar < Description.ExecTimeSeconds + Description.DurationSeconds + Description.CooldownSeconds)
-            {
-                return ActionStage.Cooldown;
             }
             return ActionStage.Complete;
         }
