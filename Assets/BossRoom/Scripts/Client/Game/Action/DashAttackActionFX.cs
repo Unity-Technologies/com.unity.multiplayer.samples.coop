@@ -11,10 +11,7 @@ namespace BossRoom.Visual
     /// </summary>
     /// <remarks>
     /// This script moves the character visualization during the "dash", which is normally performed by
-    /// <see cref="ClientCharacterVisualization"/>. If both scripts try to move the visualization at the
-    /// same time it would result in unpredictable movement stuttering, but it's fine in this case because
-    /// the character has been stationary for ExecTimeSeconds before we start moving it (so the regular
-    /// visualization code will be dormant.)
+    /// <see cref="ClientCharacterVisualization"/>. Since SmoothMove is called before ActionFX.Update, action fx position changes override interpolated positions
     /// </remarks>
     public class DashAttackActionFX : ActionFX
     {
