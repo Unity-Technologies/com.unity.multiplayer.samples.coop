@@ -22,6 +22,9 @@ namespace BossRoom.Visual
         [SerializeField]
         private VisualizationConfiguration m_VisualizationConfiguration;
 
+        [SerializeField]
+        TransformVariable m_RuntimeObjectsParent;
+
         /// <summary>
         /// Returns a reference to the active Animator for this visualization
         /// </summary>
@@ -91,7 +94,10 @@ namespace BossRoom.Visual
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
-            transform.SetParent(null);
+
+            Assert.IsTrue(m_RuntimeObjectsParent && m_RuntimeObjectsParent.Value,
+                "RuntimeObjectsParent transform is not set!");
+            transform.SetParent(m_RuntimeObjectsParent.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
             var parentMovement = Parent.GetComponent<INetMovement>();

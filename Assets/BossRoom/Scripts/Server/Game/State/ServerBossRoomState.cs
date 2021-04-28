@@ -13,7 +13,7 @@ namespace BossRoom.Server
     public class ServerBossRoomState : GameStateBehaviour
     {
         [SerializeField]
-        Transform m_RuntimeNetworkObjectsSeparator;
+        TransformVariable m_RuntimeNetworkObjectsParent;
 
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
@@ -169,12 +169,12 @@ namespace BossRoom.Server
             spawnPoint = m_PlayerSpawnPointsList[index];
             m_PlayerSpawnPointsList.RemoveAt(index);
 
-            var newPlayer = spawnPoint != null ?
-                Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation) :
-                Instantiate(m_PlayerPrefab);
+            Assert.IsTrue(m_RuntimeNetworkObjectsParent && m_RuntimeNetworkObjectsParent.Value,
+                "RuntimeNetworkObjectsParent transform is not set!");
 
-            Assert.IsNotNull(m_RuntimeNetworkObjectsSeparator, "Separator Transform is null!");
-            newPlayer.transform.SetSiblingIndex(m_RuntimeNetworkObjectsSeparator.GetSiblingIndex() + 1);
+            var newPlayer = spawnPoint != null ?
+                Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation, m_RuntimeNetworkObjectsParent.Value) :
+                Instantiate(m_PlayerPrefab, m_RuntimeNetworkObjectsParent.Value);
 
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
             netState.NetworkLifeState.LifeState.OnValueChanged += OnHeroLifeStateChanged;
