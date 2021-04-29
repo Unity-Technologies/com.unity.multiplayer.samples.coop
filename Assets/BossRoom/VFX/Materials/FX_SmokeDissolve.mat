@@ -10,7 +10,7 @@ Material:
   m_Name: FX_SmokeDissolve
   m_Shader: {fileID: 210, guid: 0000000000000000f000000000000000, type: 0}
   m_ShaderKeywords: _ALPHABLEND_ON _DISSOLVETYPE_CUSTOM _DISSOLVETYPE_UV _DISSOLVE_UV
-    _DISTYPE_DISSOLVETEXRED _INVERTDISSOLVE_ON _KEYWORD0_ON
+    _DISTYPE_DISSOLVETEXRED _FADING_ON _INVERTDISSOLVE_ON _KEYWORD0_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -105,7 +105,7 @@ Material:
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
-    - _SoftParticlesEnabled: 0
+    - _SoftParticlesEnabled: 1
     - _SoftParticlesFarFadeDistance: 1
     - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
@@ -122,6 +122,6 @@ Material:
     - _Fresnel: {r: 0, g: 3, b: 5, a: 0}
     - _FresnelColor: {r: 0, g: 0, b: 0, a: 0}
     - _Panner: {r: 0, g: 0, b: 0, a: 0}
-    - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
+    - _SoftParticleFadeParams: {r: 0, g: 1, b: 0, a: 0}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
