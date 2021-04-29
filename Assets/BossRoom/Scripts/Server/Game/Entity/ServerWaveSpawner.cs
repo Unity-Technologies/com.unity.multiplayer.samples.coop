@@ -261,7 +261,7 @@ namespace BossRoom.Server
             int numPlayers = 0;
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (serverCharacter.NetState.NetworkLifeState.Value == LifeState.Alive)
+                if (serverCharacter.NetState.NetworkLifeState.LifeState.Value == LifeState.Alive)
                 {
                     ++numPlayers;
                 }

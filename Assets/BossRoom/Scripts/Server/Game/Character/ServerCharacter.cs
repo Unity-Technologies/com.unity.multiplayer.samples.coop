@@ -63,8 +63,7 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
-                NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
-
+                NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
 
                 NetState.ApplyCharacterData();
 
@@ -83,7 +82,7 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer -= OnActionPlayRequest;
                 NetState.ReceivedClientInput -= OnClientMoveRequest;
                 NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
-                NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+                NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
             }
         }
 
@@ -93,7 +92,7 @@ namespace BossRoom.Server
         public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
-            if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 if (action.CancelMovement)
                 {
@@ -106,7 +105,7 @@ namespace BossRoom.Server
 
         private void OnClientMoveRequest(Vector3 targetPosition)
         {
-            if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 // if we're currently playing an interruptible action, interrupt it!
                 if (m_ActionPlayer.GetActiveActionInfo(out ActionRequestData data))
@@ -180,7 +179,7 @@ namespace BossRoom.Server
 
             if( m_AIBrain != null )
             {
-                //let the brain know about the modified amount of damage we received. 
+                //let the brain know about the modified amount of damage we received.
                 m_AIBrain.ReceiveHP(inflicter, HP);
             }
 
@@ -192,16 +191,16 @@ namespace BossRoom.Server
 
                 if (IsNpc)
                 {
-                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.NetworkLifeState.Value != LifeState.Dead)
+                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.LifeState != LifeState.Dead)
                     {
                         StartCoroutine(KilledDestroyProcess());
                     }
 
-                    NetState.NetworkLifeState.Value = LifeState.Dead;
+                    NetState.LifeState = LifeState.Dead;
                 }
                 else
                 {
-                    NetState.NetworkLifeState.Value = LifeState.Fainted;
+                    NetState.LifeState = LifeState.Fainted;
                 }
             }
         }
@@ -224,17 +223,17 @@ namespace BossRoom.Server
         /// <param name="HP">The HP to set to a newly revived character.</param>
         public void Revive(ServerCharacter inflicter, int HP)
         {
-            if (NetState.NetworkLifeState.Value == LifeState.Fainted)
+            if (NetState.LifeState == LifeState.Fainted)
             {
                 NetState.HitPoints = NetState.CharacterData.BaseHP.Value;
-                NetState.NetworkLifeState.Value = LifeState.Alive;
+                NetState.LifeState = LifeState.Alive;
             }
         }
 
         void Update()
         {
             m_ActionPlayer.Update();
-            if (m_AIBrain != null && NetState.NetworkLifeState.Value == LifeState.Alive && m_BrainEnabled)
+            if (m_AIBrain != null && NetState.LifeState == LifeState.Alive && m_BrainEnabled)
             {
                 m_AIBrain.Update();
             }
