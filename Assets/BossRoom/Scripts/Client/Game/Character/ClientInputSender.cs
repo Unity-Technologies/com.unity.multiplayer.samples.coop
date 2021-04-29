@@ -17,11 +17,11 @@ namespace BossRoom.Client
         private const float k_MouseInputRaycastDistance = 100f;
 
         //The movement input rate is capped at 50ms (or 20 fps). This provides a nice balance between responsiveness and
-        //upstream network conservation. This matters when holding down your mouse button to move. 
+        //upstream network conservation. This matters when holding down your mouse button to move.
         private const float k_MoveSendRateSeconds = 0.05f; //20 fps.
 
 
-        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked). 
+        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
 
         private float m_LastSentMove;
 
@@ -35,7 +35,7 @@ namespace BossRoom.Client
         private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
-        /// This event fires at the time when an action request is sent to the server. 
+        /// This event fires at the time when an action request is sent to the server.
         /// </summary>
         public Action<ActionRequestData> ActionInputEvent;
 
@@ -127,9 +127,15 @@ namespace BossRoom.Client
             m_MainCamera = Camera.main;
         }
 
-        public void FinishSkill()
+        void FinishSkill()
         {
             m_CurrentSkillInput = null;
+        }
+
+        void SendInput(ActionRequestData action)
+        {
+            ActionInputEvent?.Invoke(action);
+            m_NetworkCharacter.RecvDoActionServerRPC(action);
         }
 
         void FixedUpdate()
@@ -151,7 +157,7 @@ namespace BossRoom.Client
                     if (actionData.ActionInput != null)
                     {
                         var skillPlayer = Instantiate(actionData.ActionInput);
-                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, FinishSkill);
+                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, SendInput, FinishSkill);
                         m_CurrentSkillInput = skillPlayer;
                     }
                     else
@@ -190,7 +196,7 @@ namespace BossRoom.Client
         private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
-            
+
             if (targetId != 0)
             {
                 // if a targetId is given, try to find the object
@@ -225,21 +231,21 @@ namespace BossRoom.Client
 
             if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
             {
-                //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
+                //Don't trigger our move logic for a while. This protects us from moving just because we clicked on them to target them.
                 m_LastSentMove = Time.time + k_TargetMoveTimeout;
 
-                ActionInputEvent?.Invoke(playerAction);
-                m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
+                SendInput(playerAction);
             }
             else if(actionType != ActionType.GeneralTarget )
             {
-                // clicked on nothing... perform a "miss" attack on the spot they clicked on
+                // clicked on nothing... perform an "untargeted" attack on the spot they clicked on.
+                // (Different Actions will deal with this differently. For some, like archer arrows, this will fire an arrow
+                // in the desired direction. For others, like mage's bolts, this will fire a "miss" projectile at the spot clicked on.)
+
                 var data = new ActionRequestData();
                 PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
 
-                ActionInputEvent?.Invoke(data);
-                m_NetworkCharacter.RecvDoActionServerRPC(data);
-
+                SendInput(data);
             }
         }
 
@@ -265,7 +271,7 @@ namespace BossRoom.Client
                 NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
             }
 
-            //sanity check that this is indeed a valid target. 
+            //sanity check that this is indeed a valid target.
             if(targetNetObj==null || !ActionUtils.IsValidTarget(targetNetObj.NetworkObjectId))
             {
                 return false;
@@ -277,7 +283,7 @@ namespace BossRoom.Client
                 //Skill1 may be contextually overridden if it was generated from a mouse-click.
                 if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
-                    if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+                    if (!targetNetState.IsNpc && targetNetState.LifeState == LifeState.Fainted)
                     {
                         //right-clicked on a downed ally--change the skill play to Revive.
                         actionType = ActionType.GeneralRevive;
@@ -322,7 +328,10 @@ namespace BossRoom.Client
                     resultData.CancelMovement = true;
                     return;
                 case ActionLogic.RangedFXTargeted:
-                    if (resultData.TargetIds == null) { resultData.Position = hitPoint; }
+                    resultData.Position = hitPoint;
+                    return;
+                case ActionLogic.DashAttack:
+                    resultData.Position = hitPoint;
                     return;
             }
         }

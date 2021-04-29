@@ -42,12 +42,6 @@ namespace BossRoom.Server
         // Cached component reference
         private ServerCharacterMovement m_Movement;
 
-        /// <summary>
-        /// Temp place to store all the active characters (to avoid having to
-        /// perform insanely-expensive GameObject.Find operations during Update)
-        /// </summary>
-        private static List<ServerCharacter> s_ActiveServerCharacters = new List<ServerCharacter>();
-
         private void Awake()
         {
             m_Movement = GetComponent<ServerCharacterMovement>();
@@ -60,21 +54,6 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnEnable()
-        {
-            s_ActiveServerCharacters.Add(this);
-        }
-
-        private void OnDisable()
-        {
-            s_ActiveServerCharacters.Remove(this);
-        }
-
-        public static List<ServerCharacter> GetAllActiveServerCharacters()
-        {
-            return s_ActiveServerCharacters;
-        }
-
         public override void NetworkStart()
         {
             if (!IsServer) { enabled = false; }
@@ -84,8 +63,7 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
-                NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
-
+                NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
 
                 NetState.ApplyCharacterData();
 
@@ -104,7 +82,7 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer -= OnActionPlayRequest;
                 NetState.ReceivedClientInput -= OnClientMoveRequest;
                 NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
-                NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+                NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
             }
         }
 
@@ -114,7 +92,7 @@ namespace BossRoom.Server
         public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
-            if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 if (action.CancelMovement)
                 {
@@ -127,9 +105,20 @@ namespace BossRoom.Server
 
         private void OnClientMoveRequest(Vector3 targetPosition)
         {
-            if (NetState.NetworkLifeState.Value == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
-                ClearActions(false);
+                // if we're currently playing an interruptible action, interrupt it!
+                if (m_ActionPlayer.GetActiveActionInfo(out ActionRequestData data))
+                {
+                    if (GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out ActionDescription description))
+                    {
+                        if (description.ActionInterruptible)
+                        {
+                            m_ActionPlayer.ClearActions(false);
+                        }
+                    }
+                }
+
                 m_ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
                 m_Movement.SetMovementTarget(targetPosition);
             }
@@ -139,17 +128,9 @@ namespace BossRoom.Server
         {
             if (lifeState != LifeState.Alive)
             {
-                ClearActions(true);
+                m_ActionPlayer.ClearActions(true);
                 m_Movement.CancelMove();
             }
-        }
-
-        /// <summary>
-        /// Clear all active Actions.
-        /// </summary>
-        public void ClearActions(bool alsoClearNonBlockingActions)
-        {
-            m_ActionPlayer.ClearActions(alsoClearNonBlockingActions);
         }
 
         private void OnActionPlayRequest(ActionRequestData data)
@@ -198,7 +179,7 @@ namespace BossRoom.Server
 
             if( m_AIBrain != null )
             {
-                //let the brain know about the modified amount of damage we received. 
+                //let the brain know about the modified amount of damage we received.
                 m_AIBrain.ReceiveHP(inflicter, HP);
             }
 
@@ -206,20 +187,20 @@ namespace BossRoom.Server
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
             {
-                ClearActions(false);
+                m_ActionPlayer.ClearActions(false);
 
                 if (IsNpc)
                 {
-                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.NetworkLifeState.Value != LifeState.Dead)
+                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.LifeState != LifeState.Dead)
                     {
                         StartCoroutine(KilledDestroyProcess());
                     }
 
-                    NetState.NetworkLifeState.Value = LifeState.Dead;
+                    NetState.LifeState = LifeState.Dead;
                 }
                 else
                 {
-                    NetState.NetworkLifeState.Value = LifeState.Fainted;
+                    NetState.LifeState = LifeState.Fainted;
                 }
             }
         }
@@ -242,17 +223,17 @@ namespace BossRoom.Server
         /// <param name="HP">The HP to set to a newly revived character.</param>
         public void Revive(ServerCharacter inflicter, int HP)
         {
-            if (NetState.NetworkLifeState.Value == LifeState.Fainted)
+            if (NetState.LifeState == LifeState.Fainted)
             {
                 NetState.HitPoints = NetState.CharacterData.BaseHP.Value;
-                NetState.NetworkLifeState.Value = LifeState.Alive;
+                NetState.LifeState = LifeState.Alive;
             }
         }
 
         void Update()
         {
             m_ActionPlayer.Update();
-            if (m_AIBrain != null && NetState.NetworkLifeState.Value == LifeState.Alive && m_BrainEnabled)
+            if (m_AIBrain != null && NetState.LifeState == LifeState.Alive && m_BrainEnabled)
             {
                 m_AIBrain.Update();
             }
@@ -275,5 +256,15 @@ namespace BossRoom.Server
         {
             return IDamageable.SpecialDamageFlags.None;
         }
+
+        public bool IsDamageable()
+        {
+            return NetState.NetworkLifeState.LifeState.Value == LifeState.Alive;
+        }
+
+        /// <summary>
+        /// This character's AIBrain. Will be null if this is not an NPC.
+        /// </summary>
+        public AIBrain AIBrain { get { return m_AIBrain; } }
     }
 }

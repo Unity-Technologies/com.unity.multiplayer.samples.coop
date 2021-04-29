@@ -33,7 +33,7 @@ namespace BossRoom.Server
             {
                 m_ExecFired = true;
 
-                if (m_TargetCharacter.NetState.NetworkLifeState.Value == LifeState.Fainted)
+                if (m_TargetCharacter.NetState.LifeState == LifeState.Fainted)
                 {
                     m_TargetCharacter.Revive(m_Parent, (int)m_Data.Amount);
                 }

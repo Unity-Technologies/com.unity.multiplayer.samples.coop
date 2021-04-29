@@ -28,17 +28,12 @@ namespace BossRoom.Visual
             bool wasAnticipated = Anticipated;
             base.Start();
             m_Target = GetTarget();
-            if (HasTarget() && m_Target == null)
-            {
-                // target has disappeared! Abort.
-                return false;
-            }
 
             if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
 
             // animate shooting the projectile
-            if( !wasAnticipated )
+            if (!wasAnticipated)
             {
                 PlayFireAnim();
             }
@@ -56,7 +51,7 @@ namespace BossRoom.Visual
             if (TimeRunning >= Description.ExecTimeSeconds && m_Projectile == null)
             {
                 // figure out how long the pretend-projectile will be flying to the target
-                Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
+                Vector3 targetPos = m_Target ? m_Target.transform.position : m_Data.Position;
                 float initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
                 m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed_m_s;
 
@@ -100,14 +95,6 @@ namespace BossRoom.Visual
             }
         }
 
-        /// <summary>
-        /// Do we even have a target? (If false, it means player clicked on nothing, and we're rendering a "missed" fake bolt.)
-        /// </summary>
-        private bool HasTarget()
-        {
-            return Data.TargetIds != null && Data.TargetIds.Length > 0;
-        }
-
         private NetworkObject GetTarget()
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
@@ -115,10 +102,16 @@ namespace BossRoom.Visual
                 return null;
             }
 
-            NetworkObject obj;
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
+            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out NetworkObject targetObject) && targetObject != null)
             {
-                return obj;
+                // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
+                var targetable = targetObject.GetComponent<ITargetable>();
+                if (targetable != null && targetable.IsNpc == (Description.IsFriendly ^ IsParentAnNPC()))
+                {
+                    // not a valid target
+                    return null;
+                }
+                return targetObject;
             }
             else
             {
@@ -127,6 +120,16 @@ namespace BossRoom.Visual
                 return null;
             }
         }
+
+        /// <summary>
+        /// Determines if the character playing this Action is an NPC (as opposed to a player)
+        /// </summary>
+        private bool IsParentAnNPC()
+        {
+            var targetable = m_Parent.Parent.GetComponent<ITargetable>();
+            return targetable.IsNpc;
+        }
+
 
         private FXProjectile SpawnAndInitializeProjectile()
         {
@@ -147,6 +150,25 @@ namespace BossRoom.Visual
         {
             base.AnticipateAction();
             PlayFireAnim();
+
+            // see if this is going to be a "miss" because the player tried to click through a wall. If so,
+            // we change our data in the same way that the server will (changing our target point to the spot on the wall)
+            Vector3 targetSpot = Data.Position;
+            if (Data.TargetIds != null && Data.TargetIds.Length > 0)
+            {
+                var targetObj = NetworkSpawnManager.SpawnedObjects[Data.TargetIds[0]];
+                if (targetObj)
+                {
+                    targetSpot = targetObj.transform.position;
+                }
+            }
+
+            if (!ActionUtils.HasLineOfSight(m_Parent.transform.position, targetSpot, out Vector3 collidePos))
+            {
+                // we do not have line of sight to the target point. So our target instead becomes the obstruction point
+                Data.TargetIds = null;
+                Data.Position = collidePos;
+            }
         }
     }
 }

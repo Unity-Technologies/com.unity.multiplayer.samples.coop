@@ -2,7 +2,8 @@
     "name": "BossRoom.Editor",
     "rootNamespace": "",
     "references": [
-        "Unity.Multiplayer.MultiPie.Editor"
+        "BossRoom.Shared",
+        "Unity.Multiplayer.MLAPI.Runtime"
     ],
     "includePlatforms": [
         "Editor"

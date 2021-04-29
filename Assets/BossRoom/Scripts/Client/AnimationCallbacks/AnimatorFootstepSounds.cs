@@ -13,6 +13,8 @@ namespace BossRoom.Visual
     /// approach, but it does have a flaw: it becomes inaccurate when the character's speed is slowed.
     /// e.g. if a slowness debuff makes you move at 75% speed, the footsteps will be slightly off because
     /// we only have sound-loops for 50% and 100%. That's not a big deal in this particular game, though.
+    /// In the rare situations where animated speed is faster than 100% (due to speed buffs etc.), we
+    /// currently just don't play any footsteps at all.
     /// </remarks>
     public class AnimatorFootstepSounds : MonoBehaviour
     {
@@ -49,12 +51,16 @@ namespace BossRoom.Visual
         private float m_RunFootstepVolume = 1;
 
         [SerializeField]
-        [Tooltip("At what point do we switch from running sounds to walking? From 0 (stationary) to 1 (full sprint)")]
-        private float m_WalkingPoint = 0.6f;
+        [Tooltip("If the speed variable is this or below, we're moving too slowly for footsteps (no sounds played)")]
+        private float m_TooSlowThreshold = 0.3f;
 
         [SerializeField]
-        [Tooltip("At what point do we switch from walking sounds to no sounds? From 0 (stationary) to 1 (full sprint)")]
-        private float m_SilentPoint = 0.3f;
+        [Tooltip("If the speed variable is between TooSlowThreshold and this, we're walking")]
+        private float m_WalkSpeedThreshold = 0.6f;
+
+        [SerializeField]
+        [Tooltip("If the speed variable is between WalkSpeedThreshold and this, we're running. (Higher than this means no sound)")]
+        private float m_RunSpeedThreshold = 1.2f;
 
         private void Update()
         {
@@ -69,19 +75,24 @@ namespace BossRoom.Visual
             AudioClip clipToUse = null;
             float volume = 0;
             float speed = m_Animator.GetFloat(m_AnimatorVariableHash);
-            if (speed <= m_SilentPoint)
+            if (speed <= m_TooSlowThreshold)
             {
                 // we could have a "VERY slow walk" sound... but we don't, so just play nothing
             }
-            else if (speed <= m_WalkingPoint)
+            else if (speed <= m_WalkSpeedThreshold)
             {
                 clipToUse = m_WalkFootstepAudioClip;
                 volume = m_WalkFootstepVolume;
             }
-            else
+            else if (speed <= m_RunSpeedThreshold)
             {
                 clipToUse = m_RunFootstepAudioClip;
                 volume = m_RunFootstepVolume;
+            }
+            else
+            {
+                // we're animating the character's legs faster than either of our clips can support.
+                // We could play a faster clip here... but we don't have one, so just play nothing
             }
 
             // now actually configure and play the appropriate sound

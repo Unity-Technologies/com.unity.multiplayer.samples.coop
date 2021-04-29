@@ -88,11 +88,18 @@ namespace BossRoom.Server
                 }
             }
 
-            // Choose whether we can attack our foe directly, or if we need to get closer first
-            var attackInfo = GetCurrentAttackInfo();
+            // choose the attack to use
+            m_CurAttackAction = ChooseAttack();
+            if (m_CurAttackAction == ActionType.None)
+            {
+                // no actions are usable right now
+                return;
+            }
+
+            // attack!
             var attackData = new ActionRequestData
             {
-                ActionTypeEnum = attackInfo.ActionTypeEnum,
+                ActionTypeEnum = m_CurAttackAction,
                 TargetIds = new ulong[] { m_Foe.NetworkObjectId },
                 ShouldClose = true
             };
@@ -122,18 +129,36 @@ namespace BossRoom.Server
             return closestFoe;
         }
 
-        private ActionDescription GetCurrentAttackInfo()
+        /// <summary>
+        /// Randomly picks a usable attack. If no actions are usable right now, returns ActionType.None.
+        /// </summary>
+        /// <returns>Action to attack with, or ActionType.None</returns>
+        private ActionType ChooseAttack()
         {
-            m_CurAttackAction = m_AttackActions[Random.Range(0, m_AttackActions.Count)];
+            // make a random choice
+            int idx = Random.Range(0, m_AttackActions.Count);
 
-            ActionDescription result;
-            bool found = GameDataSource.Instance.ActionDataByType.TryGetValue(m_CurAttackAction, out result);
-            if (!found)
+            // now iterate through our options to find one that's currently usable
+            bool anyUsable;
+            do
             {
-                throw new System.Exception($"GameObject {m_Brain.GetMyServerCharacter().gameObject.name} tried to play Action {m_CurAttackAction} but this action does not exist");
-            }
+                anyUsable = false;
+                foreach (var actionType in m_AttackActions)
+                {
+                    if (m_ActionPlayer.IsReuseTimeElapsed(actionType))
+                    {
+                        anyUsable = true;
+                        if (idx == 0)
+                        {
+                            return actionType;
+                        }
+                        --idx;
+                    }
+                }
+            } while (anyUsable);
 
-            return result;
+            // none of our actions are available now
+            return ActionType.None;
         }
     }
 }

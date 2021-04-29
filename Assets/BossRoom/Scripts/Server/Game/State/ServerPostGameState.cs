@@ -11,6 +11,9 @@ namespace BossRoom.Server
     [RequireComponent(typeof(PostGameData))]
     public class ServerPostGameState : GameStateBehaviour
     {
+        [SerializeField]
+        private PostGameData m_PostGameData;
+
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
         public override void NetworkStart()
@@ -23,15 +26,10 @@ namespace BossRoom.Server
             else
             {
                 bool won = (bool)GameStateRelay.GetRelayObject();
-                StartCoroutine(CoroSetWinLoss(won));
-            }
-        }
 
-        private IEnumerator CoroSetWinLoss(bool won)
-        {
-            yield return new WaitForSeconds(1);
-            GetComponent<PostGameData>().GameBannerState.Value =
-                (byte)(won ? PostGameData.BannerState.Won : PostGameData.BannerState.Lost);
+                m_PostGameData.GameBannerState.Value =
+                    (byte)(won ? PostGameData.BannerState.Won : PostGameData.BannerState.Lost);
+            }
         }
     }
 }

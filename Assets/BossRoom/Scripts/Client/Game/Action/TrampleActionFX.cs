@@ -38,7 +38,16 @@ namespace BossRoom.Visual
         public override bool Start()
         {
             base.Start();
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.OurAnimator.ResetTrigger(Description.Anim2);
+            }
+            // start the animation sequence!
+            if (!string.IsNullOrEmpty(Description.Anim))
+            {
+                m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            }
             return true;
         }
 
@@ -66,6 +75,11 @@ namespace BossRoom.Visual
                 }
             }
             m_SpawnedGraphics = null;
+
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+            }
         }
     }
 }

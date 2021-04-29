@@ -33,11 +33,16 @@ namespace BossRoom.Visual
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
+
+            if (m_ClientNetPortal.DisconnectReason.Reason == DisconnectReasonType.Disconnect )
+            {
+                m_ResponsePopup.SetupNotifierDisplay("Disconnected From Host", "The connection to the Host was lost", false, true );
+            }
         }
 
         public void OnHostClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the IP to host on", "", "iphost", "Confirm",
+            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select drop down to use relay", "", "iphost", "Confirm",
                 (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
             {
                 m_GameNetPortal.PlayerName = playerName;

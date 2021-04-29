@@ -29,9 +29,6 @@ namespace BossRoom
         [Tooltip("Duration in seconds that this Action takes to play")]
         public float DurationSeconds;
 
-        [Tooltip("Duration in seconds that this Action takes to cooldown, after DurationSeconds has elapsed.")]
-        public float CooldownSeconds;
-
         [Tooltip("Time when the Action should do its \"main thing\" (e.g. when a melee attack should apply damage")]
         public float ExecTimeSeconds;
 
@@ -71,7 +68,7 @@ namespace BossRoom
         [Tooltip("Prefab to spawn that will manage this action's input")]
         public BaseActionInput ActionInput;
 
-        [Tooltip("Is this Action interruptible by other action plays. Generally, actions with short exec times should not be interruptible in this way.")]
+        [Tooltip("Is this Action interruptible by other action-plays or by movement? (Implicitly stops movement when action starts.) Generally, actions with short exec times should not be interruptible in this way.")]
         public bool ActionInterruptible;
 
         [System.Serializable]
@@ -79,7 +76,6 @@ namespace BossRoom
         {
             EntireDuration,
             OnlyDuringExecTime,
-            ExecTimeWithCooldown,
         }
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;
