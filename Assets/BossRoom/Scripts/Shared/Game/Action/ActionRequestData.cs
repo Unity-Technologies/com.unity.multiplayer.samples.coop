@@ -33,6 +33,7 @@ namespace BossRoom
         ArcherChargedShot,
         RogueStealthMode,
         ArcherVolley,
+        RogueDashAttack,
     }
 
 
@@ -55,6 +56,7 @@ namespace BossRoom
         Target,
         ChargedLaunchProjectile,
         StealthMode,
+        DashAttack,
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 

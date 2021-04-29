@@ -75,6 +75,7 @@ namespace BossRoom.Visual
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileActionFX(ref data, parent);
 
                 case ActionLogic.StealthMode: return new StealthModeActionFX(ref data, parent);
+                case ActionLogic.DashAttack: return new DashAttackActionFX(ref data, parent);
 
                 case ActionLogic.Stunned:
                 case ActionLogic.LaunchProjectile:
@@ -115,7 +116,16 @@ namespace BossRoom.Visual
             return isTargetEligible && actionDescription.Logic != ActionLogic.Target;
         }
 
+        /// <summary>
+        /// Called when the visualization receives an animation event.
+        /// </summary>
         public virtual void OnAnimEvent(string id) { }
+
+        /// <summary>
+        /// Called when this action has finished "charging up". (Which is only meaningful for a
+        /// few types of actions -- it is not called for other actions.)
+        /// </summary>
+        /// <param name="finalChargeUpPercentage"></param>
         public virtual void OnStoppedChargingUp(float finalChargeUpPercentage) { }
 
         /// <summary>

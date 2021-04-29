@@ -330,6 +330,9 @@ namespace BossRoom.Client
                 case ActionLogic.RangedFXTargeted:
                     resultData.Position = hitPoint;
                     return;
+                case ActionLogic.DashAttack:
+                    resultData.Position = hitPoint;
+                    return;
             }
         }
 

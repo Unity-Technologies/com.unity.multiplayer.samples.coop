@@ -1635,6 +1635,39 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
+  - m_AnimatorNodeName: Dash Attack (start)
+    m_AnimatorNodeNameHash: 781031506
+    m_Prefab: {fileID: 8602858633822946138, guid: 82b604a7e56cd6c46b91c9256f4601e7, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_SoundEffect: {fileID: 8300000, guid: c6e94ad9384fdcc4bbcc394f00dbb923, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Dash Attack (loop)
+    m_AnimatorNodeNameHash: 2116358526
+    m_Prefab: {fileID: 2835887070665065536, guid: 39c947028645b9f4d83666c8846f4904, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 999999
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_SoundEffect: {fileID: 8300000, guid: ee5f517650ebf6a4b885b6c907ee4771, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 1
+  - m_AnimatorNodeName: Dash Attack (end)
+    m_AnimatorNodeNameHash: 378447396
+    m_Prefab: {fileID: -834938783768071283, guid: c48f18d481ac9074ea2e8410ea8ed3e0, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_SoundEffect: {fileID: 8300000, guid: ef1b245877a39b94d86a631867e20a61, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 1
   m_EventsOnNodeExit: []
   m_AudioSources:
   - {fileID: -674663276945163795}

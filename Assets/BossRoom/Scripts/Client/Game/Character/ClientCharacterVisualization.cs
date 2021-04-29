@@ -325,6 +325,7 @@ namespace BossRoom.Visual
             }
         }
 
+
         void Update()
         {
             if (Parent == null)
@@ -369,5 +370,6 @@ namespace BossRoom.Visual
 
             return false;
         }
+
     }
 }

@@ -258,6 +258,11 @@ namespace BossRoom.Server
             return IDamageable.SpecialDamageFlags.None;
         }
 
+        public bool IsDamageable()
+        {
+            return NetState.NetworkLifeState.Value == LifeState.Alive;
+        }
+
         /// <summary>
         /// This character's AIBrain. Will be null if this is not an NPC.
         /// </summary>

@@ -63,6 +63,10 @@ namespace BossRoom.Server
         {
             if (m_Queue.Count > 0)
             {
+                // Since this action was canceled, we don't want the player to have to wait Description.ReuseTimeSeconds
+                // to be able to start it again. It should be restartable immediately!
+                m_LastUsedTimestamps.Remove(m_Queue[0].Description.ActionTypeEnum);
+
                 m_Queue[0].Cancel();
             }
             m_Queue.Clear();
@@ -167,7 +171,7 @@ namespace BossRoom.Server
                     m_Movement.CancelMove();
                 }
 
-                // remember that we successfully used this Action!
+                // remember the moment when we successfully used this Action!
                 m_LastUsedTimestamps[m_Queue[0].Description.ActionTypeEnum] = Time.time;
 
                 if (m_Queue[0].Description.ExecTimeSeconds==0 && m_Queue[0].Description.BlockingMode== BlockingMode.OnlyDuringExecTime)
