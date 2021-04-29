@@ -1941,6 +1941,7 @@ GameObject:
   - component: {fileID: 5287069443216318009}
   - component: {fileID: 6713727153812284024}
   - component: {fileID: -2129752889114835779}
+  - component: {fileID: -1103479630647314628}
   m_Layer: 6
   m_Name: BossGraphics
   m_TagString: Untagged
@@ -2483,6 +2484,19 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-1103479630647314628
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6839301660383890230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f9861f5280458794a935935c2e0db02a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_HelmetTransform: {fileID: 8350592313923235650}
 --- !u!1 &7108127146651356877
 GameObject:
   m_ObjectHideFlags: 0
