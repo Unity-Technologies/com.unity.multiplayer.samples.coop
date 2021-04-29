@@ -98,6 +98,12 @@ namespace BossRoom.Server
             return m_SpecialDamageFlags;
         }
 
+        public bool IsDamageable()
+        {
+            // you can damage this breakable until it's broken!
+            return !m_State.IsBroken.Value;
+        }
+
 #if UNITY_EDITOR
         private void OnValidate()
         {

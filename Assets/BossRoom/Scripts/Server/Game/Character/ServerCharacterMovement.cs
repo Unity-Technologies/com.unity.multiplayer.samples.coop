@@ -104,7 +104,7 @@ namespace BossRoom.Server
         /// <returns></returns>
         public bool IsPerformingForcedMovement()
         {
-            return m_MovementState == MovementState.Knockback;
+            return m_MovementState == MovementState.Knockback || m_MovementState == MovementState.Charging;
         }
 
         /// <summary>
@@ -123,6 +123,28 @@ namespace BossRoom.Server
         {
             m_NavPath.Clear();
             m_MovementState = MovementState.Idle;
+        }
+
+        /// <summary>
+        /// Instantly moves the character to a new position. NOTE: this cancels any active movement operation!
+        /// This does not notify the client that the movement occurred due to teleportation, so that needs to
+        /// happen in some other way, such as with the custom action visualization in DashAttackActionFX. (Without
+        /// this, the clients will animate the character moving to the new destination spot, rather than instantly
+        /// appearing in the new spot.)
+        /// </summary>
+        /// <param name="newPosition">new coordinates the character should be at</param>
+        public void Teleport(Vector3 newPosition)
+        {
+            CancelMove();
+            if (!m_NavMeshAgent.Warp(newPosition))
+            {
+                // warping failed! We're off the navmesh somehow. Weird... but we can still teleport
+                Debug.LogWarning($"NavMeshAgent.Warp({newPosition}) failed!", gameObject);
+                transform.position = newPosition;
+            }
+
+            m_Rigidbody.position = transform.position;
+            m_Rigidbody.rotation = transform.rotation;
         }
 
         private void FixedUpdate()

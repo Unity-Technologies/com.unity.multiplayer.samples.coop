@@ -39,7 +39,7 @@ namespace BossRoom.Visual
         Client.ClientInputSender m_InputSender;
 
         /// <summary>
-        /// Cached reference to local player's net state. 
+        /// Cached reference to local player's net state.
         /// We find the Sprites to use by checking the Skill1, Skill2, and Skill3 members of our chosen CharacterClass
         /// </summary>
         NetworkCharacterState m_NetState;
@@ -180,7 +180,7 @@ namespace BossRoom.Visual
 
             if (!m_SelectedPlayerNetState) { return; }
 
-            bool isAliveNow = m_SelectedPlayerNetState.NetworkLifeState.Value == LifeState.Alive;
+            bool isAliveNow = m_SelectedPlayerNetState.NetworkLifeState.LifeState.Value == LifeState.Alive;
             if (isAliveNow != m_WasSelectedPlayerAliveDuringLastUpdate)
             {
                 // this will update the icons so that the basic-action button's interactiveness is correct
@@ -253,7 +253,7 @@ namespace BossRoom.Visual
                 var charState = selection.GetComponent<NetworkCharacterState>();
                 Assert.IsNotNull(charState); // all PlayerObjects should have a NetworkCharacterState component
 
-                bool isAlive = charState.NetworkLifeState.Value == LifeState.Alive;
+                bool isAlive = charState.NetworkLifeState.LifeState.Value == LifeState.Alive;
                 UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.GeneralRevive, !isAlive);
 
                 // we'll continue to monitor our selected player every frame to see if their life-state changes.
