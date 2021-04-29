@@ -259,7 +259,7 @@ namespace BossRoom.Server
 
         public bool IsDamageable()
         {
-            return NetState.NetworkLifeState.Value == LifeState.Alive;
+            return NetState.NetworkLifeState.LifeState.Value == LifeState.Alive;
         }
 
         /// <summary>
