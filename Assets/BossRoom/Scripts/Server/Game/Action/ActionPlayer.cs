@@ -101,6 +101,29 @@ namespace BossRoom.Server
         }
 
         /// <summary>
+        /// Figures out if an action can be played now, or if it would automatically fail because it was
+        /// used too recently. (Meaning that its ReuseTimeSeconds hasn't elapsed since the last use.)
+        /// </summary>
+        /// <param name="actionType">the action we want to run</param>
+        /// <returns>true if the action can be run now, false if more time must elapse before this action can be run</returns>
+        public bool IsReuseTimeElapsed(ActionType actionType)
+        {
+            if (m_LastUsedTimestamps.TryGetValue(actionType, out float lastTimeUsed))
+            {
+                if (GameDataSource.Instance.ActionDataByType.TryGetValue(actionType, out ActionDescription description))
+                {
+                    float reuseTime = description.ReuseTimeSeconds;
+                    if (reuseTime > 0 && Time.time - lastTimeUsed < reuseTime)
+                    {
+                        // still needs more time!
+                        return false;
+                    }
+                }
+            }
+            return true;
+        }
+
+        /// <summary>
         /// Returns how many actions are actively running. This includes all non-blocking actions,
         /// and the one blocking action at the head of the queue (if present).
         /// </summary>
@@ -292,8 +315,7 @@ namespace BossRoom.Server
             bool keepGoing = action.Update();
             bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
             var timeElapsed = Time.time - action.TimeStarted;
-            bool timeExpired = expirable &&
-                timeElapsed >= (action.Description.DurationSeconds + action.Description.CooldownSeconds);
+            bool timeExpired = expirable && timeElapsed >= action.Description.DurationSeconds;
             return keepGoing && !timeExpired;
         }
 
@@ -311,8 +333,7 @@ namespace BossRoom.Server
             {
                 var info = action.Description;
                 float actionTime =  info.BlockingMode == BlockingMode.OnlyDuringExecTime   ? info.ExecTimeSeconds :
-                                    info.BlockingMode == BlockingMode.ExecTimeWithCooldown ? (info.ExecTimeSeconds+info.CooldownSeconds) :
-                                    info.BlockingMode == BlockingMode.EntireDuration       ? (info.DurationSeconds + info.CooldownSeconds) :
+                                    info.BlockingMode == BlockingMode.EntireDuration       ? info.DurationSeconds :
                                     throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
                 totalTime += actionTime;
             }

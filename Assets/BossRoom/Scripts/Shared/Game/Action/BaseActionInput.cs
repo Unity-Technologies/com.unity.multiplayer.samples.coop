@@ -7,12 +7,14 @@ namespace BossRoom
     {
         protected NetworkCharacterState m_PlayerOwner;
         protected ActionType m_ActionType;
+        protected Action<ActionRequestData> m_SendInput;
         Action m_OnFinished;
 
-        public void Initiate(NetworkCharacterState playerOwner, ActionType actionType, Action onFinished)
+        public void Initiate(NetworkCharacterState playerOwner, ActionType actionType, Action<ActionRequestData> onSendInput, Action onFinished)
         {
             m_PlayerOwner = playerOwner;
             m_ActionType = actionType;
+            m_SendInput = onSendInput;
             m_OnFinished = onFinished;
         }
 
