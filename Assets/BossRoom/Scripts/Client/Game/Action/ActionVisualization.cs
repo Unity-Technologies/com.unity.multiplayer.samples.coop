@@ -30,7 +30,7 @@ namespace BossRoom.Visual
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
                 var action = m_PlayingActions[i];
-                bool keepGoing = action.Update();
+                bool keepGoing = action.Anticipated || action.Update(); // only call Update() on actions that are past anticipation
                 bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
                 bool timeExpired = expirable && action.TimeRunning >= action.Description.DurationSeconds;
                 bool timedOut = action.Anticipated && action.TimeRunning >= k_AnticipationTimeoutSeconds;
@@ -102,7 +102,7 @@ namespace BossRoom.Visual
         /// <param name="data">The Action that is being requested.</param>
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!Parent.IsAnimating && ActionFX.ShouldAnticipate(this, ref data))
+            if (!Parent.IsAnimating() && ActionFX.ShouldAnticipate(this, ref data))
             {
                 var actionFX = ActionFX.MakeActionFX(ref data, Parent);
                 actionFX.AnticipateAction();
@@ -118,6 +118,10 @@ namespace BossRoom.Visual
             if (actionFX.Start())
             {
                 m_PlayingActions.Add(actionFX);
+            }
+            else if (anticipatedActionIndex >= 0)
+            {
+                m_PlayingActions.RemoveAt(anticipatedActionIndex);
             }
         }
 

@@ -96,7 +96,7 @@ namespace BossRoom.Server
         {
             if (potentialFoe == null ||
                 potentialFoe.IsNpc ||
-                potentialFoe.NetState.NetworkLifeState.Value != LifeState.Alive ||
+                potentialFoe.NetState.LifeState != LifeState.Alive ||
                 potentialFoe.NetState.IsStealthy.Value)
             {
                 return false;

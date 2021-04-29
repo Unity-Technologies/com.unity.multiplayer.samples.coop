@@ -59,6 +59,14 @@ namespace BossRoom.Visual
             m_PostGameData.GameBannerState.OnValueChanged += OnGameWonChanged;
         }
 
+        void OnDestroy()
+        {
+            if( m_PostGameData != null )
+            {
+                m_PostGameData.GameBannerState.OnValueChanged -= OnGameWonChanged;
+            }
+        }
+
         //this won't actually change dynamically, but using a callback robustifies us against race
         //conditions between the PostGameState starting up, and this UI starting up.
         private void OnGameWonChanged(byte prevVal, byte currentVal)

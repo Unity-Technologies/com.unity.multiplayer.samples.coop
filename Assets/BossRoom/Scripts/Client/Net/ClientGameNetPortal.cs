@@ -40,12 +40,26 @@ namespace BossRoom.Client
         {
             m_Portal = GetComponent<GameNetPortal>();
 
-            m_Portal.NetworkStarted += NetworkStart;
+            m_Portal.NetworkReadied += OnNetworkReady;
             m_Portal.ConnectFinished += OnConnectFinished;
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
 
-        private void NetworkStart()
+        void OnDestroy()
+        {
+            if( m_Portal != null )
+            {
+                m_Portal.NetworkReadied -= OnNetworkReady;
+                m_Portal.ConnectFinished -= OnConnectFinished;
+
+                if( m_Portal.NetManager != null )
+                {
+                    m_Portal.NetManager.OnClientDisconnectCallback -= OnDisconnectOrTimeout;
+                }
+            }
+        }
+
+        private void OnNetworkReady()
         {
             DisconnectReason.Clear();
 
@@ -96,7 +110,7 @@ namespace BossRoom.Client
         {
             // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
             //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
-            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient )
+            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient && !MLAPI.NetworkManager.Singleton.IsHost )
             {
                 SceneManager.sceneLoaded -= OnSceneLoaded;
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
@@ -201,7 +215,7 @@ namespace BossRoom.Client
             //var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
             //payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
             //payload += $"player_name={portal.PlayerName}\n";
-			var payload = JsonUtility.ToJson(new ConnectionPayload() {clientGUID = clientGuid, clientScene = SceneManager.GetActiveScene().buildIndex, playerName = portal.PlayerName});
+            var payload = JsonUtility.ToJson(new ConnectionPayload() {clientGUID = clientGuid, clientScene = SceneManager.GetActiveScene().buildIndex, playerName = portal.PlayerName});
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 

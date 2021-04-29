@@ -29,7 +29,7 @@ namespace BossRoom
 
         void OnDestroy()
         {
-            m_NetworkedNameTag.OnValueChanged += NameUpdated;
+            m_NetworkedNameTag.OnValueChanged -= NameUpdated;
         }
     }
 }
