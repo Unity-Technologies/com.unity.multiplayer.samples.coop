@@ -73,7 +73,7 @@ namespace BossRoom.Visual
                         string hitAnim = Description.ReactAnim;
                         if(string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
                         var clientChar = originalTarget.GetComponent<Client.ClientCharacter>();
-                        if (clientChar)
+                        if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
                         {
                             clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);
                         }
