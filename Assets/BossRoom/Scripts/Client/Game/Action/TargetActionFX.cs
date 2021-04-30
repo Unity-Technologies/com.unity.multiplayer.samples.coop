@@ -62,7 +62,7 @@ namespace BossRoom.Visual
                         m_TargetReticule.SetActive(true);
 
                         var parentTransform = targetObject.transform;
-                        if( targetObject.TryGetComponent(out Client.ClientCharacter clientCharacter))
+                        if( targetObject.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject )
                         {
                             //for characters, attach the reticule to the child graphics object.
                             parentTransform = clientCharacter.ChildVizObject.transform;
