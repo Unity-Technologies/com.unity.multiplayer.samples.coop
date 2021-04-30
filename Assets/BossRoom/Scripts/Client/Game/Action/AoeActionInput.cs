@@ -20,6 +20,7 @@ namespace BossRoom.Visual
         Camera m_Camera;
         int m_GroundLayerMask;
         Vector3 m_Origin;
+        bool m_ReceivedMouseDownEvent;
 
         RaycastHit[] m_UpdateResult = new RaycastHit[1];
 
@@ -48,7 +49,13 @@ namespace BossRoom.Visual
             m_InRangeVisualization.SetActive(isInRange);
             m_OutOfRangeVisualization.SetActive(!isInRange);
 
-            if (Input.GetMouseButtonUp(0))
+            // wait for the player to click down and then release the mouse button before actually taking the input
+            if (Input.GetMouseButtonDown(0))
+            {
+                m_ReceivedMouseDownEvent = true;
+            }
+
+            if (Input.GetMouseButtonUp(0) && m_ReceivedMouseDownEvent)
             {
                 if (isInRange)
                 {

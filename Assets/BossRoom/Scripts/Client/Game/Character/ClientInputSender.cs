@@ -312,14 +312,20 @@ namespace BossRoom.Client
             //most skill types should implicitly close distance. The ones that don't are explicitly set to false in the following switch.
             resultData.ShouldClose = true;
 
+            // figure out the Direction in case we want to send it
+            Vector3 offset = hitPoint - transform.position;
+            offset.y = 0;
+            Vector3 direction = offset.normalized;
+
             switch (actionInfo.Logic)
             {
                 //for projectile logic, infer the direction from the click position.
                 case ActionLogic.LaunchProjectile:
-                    Vector3 offset = hitPoint - transform.position;
-                    offset.y = 0;
-                    resultData.Direction = offset.normalized;
+                    resultData.Direction = direction;
                     resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive.
+                    return;
+                case ActionLogic.Melee:
+                    resultData.Direction = direction;
                     return;
                 case ActionLogic.Target:
                     resultData.ShouldClose = false;
@@ -365,17 +371,25 @@ namespace BossRoom.Client
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
+                RequestAction(CharacterData.Skill1, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha1))
             {
-                RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(CharacterData.Skill1, SkillTriggerStyle.KeyboardRelease);
             }
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
+                RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha2))
+            {
+                RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha3))
             {
                 RequestAction(CharacterData.Skill3, SkillTriggerStyle.KeyboardRelease);
             }
