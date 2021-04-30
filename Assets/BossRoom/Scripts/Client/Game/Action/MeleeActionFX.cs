@@ -37,7 +37,10 @@ namespace BossRoom.Visual
 
             // we can optionally have special particles that should play on the target. If so, add them now.
             // (don't wait until impact, because the particles need to start sooner!)
-            if (Data.TargetIds != null && Data.TargetIds.Length > 0 && NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj))
+            if (Data.TargetIds != null
+                && Data.TargetIds.Length > 0
+                && NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
+                && targetNetworkObj != null)
             {
                 float padRange = Description.Range + k_RangePadding;
 
