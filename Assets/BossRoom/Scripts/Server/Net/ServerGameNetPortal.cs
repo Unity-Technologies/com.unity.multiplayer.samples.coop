@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI.SceneManagement;
@@ -107,6 +108,19 @@ namespace BossRoom.Server
         private void OnClientDisconnect(ulong clientId)
         {
             m_ClientSceneMap.Remove(clientId);
+            if( m_ClientIDToGuid.TryGetValue(clientId, out var guid ) )
+            {
+                m_ClientIDToGuid.Remove(clientId);
+
+                if( m_ClientData[guid].m_ClientID == clientId )
+                {
+                    //be careful to only remove the ClientData if it is associated with THIS clientId; in a case where a new connection
+                    //for the same GUID kicks the old connection, this could get complicated. In a game that fully supported the reconnect flow,
+                    //we would NOT remove ClientData here, but instead time it out after a certain period, since the whole point of it is
+                    //to remember client information on a per-guid basis after the connection has been lost.
+                    m_ClientData.Remove(guid);
+                }
+            }
 
             if( clientId == m_Portal.NetManager.LocalClientId )
             {
@@ -233,23 +247,75 @@ namespace BossRoom.Server
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
             int clientScene = connectionPayload.clientScene;
 
-            m_ClientSceneMap[clientId] = clientScene;
+            //a nice addition in the future will be to support rejoining the game and getting your same character back. This will require tracking a map of the GUID
+            //to the player's owned character object, and cleaning that object on a timer, rather than doing so immediately when a connection is lost. 
+            Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
-            //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect.
-            Debug.Log("host ApprovalCheck: client guid was: " + connectionPayload.clientGUID);
+            ConnectStatus gameReturnStatus = ConnectStatus.Success;
+
+            //Test for Duplicate Login. 
+            if( m_ClientData.ContainsKey(connectionPayload.clientGUID))
+            {
+                if( Debug.isDebugBuild )
+                {
+                    Debug.Log($"Client GUID {connectionPayload.clientGUID} already exists. Because this is a debug build, we will still accept the connection");
+                    while( m_ClientData.ContainsKey(connectionPayload.clientGUID)) { connectionPayload.clientGUID += "_Secondary"; }
+                }
+                else
+                {
+                    ulong oldClientId = m_ClientData[connectionPayload.clientGUID].m_ClientID;
+                    StartCoroutine(CoroDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
+                }
+            }
+
+            //Test for over-capacity Login.
+            if( m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers )
+            {
+                gameReturnStatus = ConnectStatus.ServerFull;
+            }
 
             //Populate our dictionaries with the playerData
-            m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
-            m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
-
-            //TODO: GOMPS-79 handle different error cases.
+            if( gameReturnStatus == ConnectStatus.Success )
+            {
+                m_ClientSceneMap[clientId] = clientScene;
+                m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
+                m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
+            }
 
             callback(false, 0, true, null, null);
 
-            //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
-            //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably
-            //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection.
-            m_Portal.S2CConnectResult(clientId, ConnectStatus.Success);
+            //TODO:MLAPI: this must be done after the callback for now. In the future we expect MLAPI to allow us to return more information as part of
+            //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
+            //and then manually close down the connection.
+            m_Portal.S2CConnectResult(clientId, gameReturnStatus);
+            if(gameReturnStatus != ConnectStatus.Success )
+            {
+                StartCoroutine(CoroDisconnectClient(clientId, gameReturnStatus));
+            }
+        }
+
+        private IEnumerator CoroDisconnectClient(ulong clientId, ConnectStatus reason)
+        {
+            const float disconnectDelay = 0.15f;
+
+            m_Portal.S2CSetDisconnectReason(clientId, reason);
+
+            yield return new WaitForSeconds(disconnectDelay);
+            BootClient(clientId);
+        }
+
+        /// <summary>
+        /// This method will summarily remove a player connection, as well as its controlled object.
+        /// </summary>
+        /// <param name="clientId">the ID of the client to boot.</param>
+        public void BootClient(ulong clientId)
+        {
+            var netObj = MLAPI.Spawning.NetworkSpawnManager.GetPlayerNetworkObject(clientId);
+            if( netObj )
+            {
+                netObj.Despawn(true);
+            }
+            m_Portal.NetManager.DisconnectClient(clientId);
         }
 
         /// <summary>

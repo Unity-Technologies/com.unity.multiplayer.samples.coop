@@ -20,7 +20,7 @@ namespace BossRoom.Client
             //containing that information).
             //In the meantime, we just set "UserRequested" to suppress the Disconnected error popup.
             var portalGO = GameObject.FindGameObjectWithTag("GameNetPortal");
-            portalGO.GetComponent<ClientGameNetPortal>().DisconnectReason.SetDisconnectReason(DisconnectReasonType.UserRequested);
+            portalGO.GetComponent<ClientGameNetPortal>().DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
         }
 
         public override void NetworkStart()

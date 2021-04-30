@@ -36,7 +36,8 @@ namespace BossRoom.Visual
 
                 if (m_NetState.IsBroken.Value == true)
                 {
-                    //todo: don't dramatically break on entry to scene, if already broken.
+                    //A good future enhancement to BossRoom would be to add a "curtain" that hides transient loading effects.
+                    //As written, a late joiner may see already-broken pots break when they log in.
                     PerformBreak();
                 }
 

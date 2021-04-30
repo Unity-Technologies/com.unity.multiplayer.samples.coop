@@ -99,7 +99,6 @@ namespace BossRoom.Client
 
         public override void NetworkStart()
         {
-            // TODO Don't use NetworkBehaviour for just NetworkStart [GOMPS-81]
             if (!IsClient || !IsOwner)
             {
                 enabled = false;

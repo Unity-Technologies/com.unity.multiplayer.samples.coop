@@ -26,7 +26,13 @@ namespace BossRoom.Server
         {
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
-                throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
+            {
+                //FIXME:MLAPI See note about MLAPI issue 745 in CoroSeatNewPlayer.
+                //while this workaround is in place, we must simply ignore these update requests from the client.
+                //throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
+                return;
+            }
+
 
             if (CharSelectData.IsLobbyClosed.Value)
             {
@@ -183,6 +189,16 @@ namespace BossRoom.Server
 
         private void OnClientConnected(ulong clientId)
         {
+            StartCoroutine(CoroSeatNewPlayer(clientId));
+        }
+
+        private IEnumerator CoroSeatNewPlayer(ulong clientId)
+        {
+            //FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
+            //causing the NetworkList of lobby players to get out of sync.
+            //tracking MLAPI issue: https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/745
+            //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback. 
+            yield return new WaitForSeconds(2.5f);
             SeatNewPlayer(clientId);
         }
 
