@@ -38,7 +38,7 @@ namespace BossRoom.Visual
             }
 
             base.Start();
-            m_ChargeGraphics = InstantiateSpecialFXGraphic(Description.Spawns[0], true);
+            m_ChargeGraphics = InstantiateSpecialFXGraphic(Description.Spawns[0], m_Parent.transform, true);
             return true;
         }
 
@@ -98,7 +98,7 @@ namespace BossRoom.Visual
             // (where we don't flinch from damage)
             if (Mathf.Approximately(finalChargeUpPercentage, 1))
             {
-                m_ShieldGraphics = InstantiateSpecialFXGraphic(Description.Spawns[1], true);
+                m_ShieldGraphics = InstantiateSpecialFXGraphic(Description.Spawns[1], m_Parent.transform, true);
 
                 // increment our "invincibility counter". We use an integer count instead of a boolean because the player
                 // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.

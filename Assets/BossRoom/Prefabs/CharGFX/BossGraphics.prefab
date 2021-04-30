@@ -2001,6 +2001,9 @@ MonoBehaviour:
   m_CharacterSwapper: {fileID: 0}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
   m_RuntimeObjectsParent: {fileID: 11400000, guid: deda38c596e7fbd4386b9d8f9b7bb4b5, type: 2}
+  TargetReticule: {fileID: 0}
+  ReticuleFriendlyMat: {fileID: 0}
+  ReticuleHostileMat: {fileID: 0}
 --- !u!114 &4538447335436592133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2020,34 +2023,46 @@ MonoBehaviour:
     m_Prefab: {fileID: -1433333703484781611, guid: 1333b84cd80da3e4a820009415068d44, type: 3}
     m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_PrefabParent: {fileID: 1363468141647399746}
+    m_PrefabParentOffset: {x: 18, y: 76, z: 42.6}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: a3d48c8599f0d584abc8ea603587d496, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: 0b74479e119665147b4587c43d851d2a, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Action - Boss Trample
+    m_AnimatorNodeNameHash: -1491039896
+    m_Prefab: {fileID: -1433333703484781611, guid: 1333b84cd80da3e4a820009415068d44, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 1363468141647399746}
+    m_PrefabParentOffset: {x: -18, y: 76, z: 42.6}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 0}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
   - m_AnimatorNodeName: (Trample Stop)
     m_AnimatorNodeNameHash: -2018876257
-    m_Prefab: {fileID: 0}
+    m_Prefab: {fileID: -1144995844113132186, guid: bad05de9531f2604fb84de8c856043b9, type: 3}
     m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 263888c6e986c944d80c59c3ac332ba1, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: c3e8f5c27c9662f44a412e4c44c74f6a, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
   - m_AnimatorNodeName: (Trampling)
     m_AnimatorNodeNameHash: -186961091
-    m_Prefab: {fileID: 0}
+    m_Prefab: {fileID: 6043546068530540440, guid: d6bbda1efd94fe64caedc72c5eb9e8e6, type: 3}
     m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 87cdf94f9ac5ef541b45ebaa3d8bf7aa, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: 952f8ac853b2bcb4b9369d4f08ee33ef, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 1
@@ -2079,7 +2094,7 @@ MonoBehaviour:
     m_AnimatorNodeNameHash: -1624701500
     m_Prefab: {fileID: -8608552164340512473, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
     m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabCanBeAbortedUntilSecs: 99999
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
@@ -2087,7 +2102,30 @@ MonoBehaviour:
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
-  m_EventsOnNodeExit: []
+  - m_AnimatorNodeName: Dead Loop
+    m_AnimatorNodeNameHash: -1573871441
+    m_Prefab: {fileID: 6607808867635938880, guid: 260ac2f5765fdfb4bb4fe3d466851e01, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 1363468141647399746}
+    m_PrefabParentOffset: {x: 0, y: 100, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: 4ec1f2194317a224c85c142cd9d44b17, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 1
+  - m_AnimatorNodeName: Dead
+    m_AnimatorNodeNameHash: 1293411866
+    m_Prefab: {fileID: 0}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 1363468141647399746}
+    m_PrefabParentOffset: {x: 0, y: 100, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: 6519c554f1671494ca8ced6e3849ada4, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
   m_AudioSources:
   - {fileID: 6900827550167648780}
   - {fileID: 5287069443216318009}
@@ -2353,10 +2391,10 @@ MonoBehaviour:
   m_AnimatorVariable: Speed
   m_AnimatorVariableHash: -823668238
   m_AudioSource: {fileID: -2129752889114835779}
-  m_WalkFootstepAudioClip: {fileID: 8300000, guid: 58dfe905701797d4aa32f946d9c41be5, type: 3}
-  m_WalkFootstepVolume: 1
-  m_RunFootstepAudioClip: {fileID: 8300000, guid: 81079ef149d08774ab3eadab80944fa0, type: 3}
-  m_RunFootstepVolume: 1
+  m_WalkFootstepAudioClip: {fileID: 8300000, guid: 6f7fad52c7520d449a853b093844f2d1, type: 3}
+  m_WalkFootstepVolume: 0.25
+  m_RunFootstepAudioClip: {fileID: 8300000, guid: efbdca64daf8cc9409bd1168dac65370, type: 3}
+  m_RunFootstepVolume: 0.3
   m_TooSlowThreshold: 0.3
   m_WalkSpeedThreshold: 0.6
   m_RunSpeedThreshold: 1.2

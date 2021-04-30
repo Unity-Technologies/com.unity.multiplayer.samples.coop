@@ -36,7 +36,7 @@ namespace BossRoom.Visual
         {
             if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.IsOwner)
             {
-                m_SpawnedGraphics = InstantiateSpecialFXGraphics(true);
+                m_SpawnedGraphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
             }
 
             return ActionConclusion.Continue;

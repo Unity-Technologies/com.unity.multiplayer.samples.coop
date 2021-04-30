@@ -30,7 +30,7 @@ namespace BossRoom.Visual
             base.Start();
             m_Parent.OurAnimator.SetTrigger(Description.Anim);
 
-            m_Graphics = InstantiateSpecialFXGraphics(true);
+            m_Graphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
             return true;
         }
 

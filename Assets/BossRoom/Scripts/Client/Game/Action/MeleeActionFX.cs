@@ -1,5 +1,6 @@
 using MLAPI;
 using MLAPI.Spawning;
+using System.Collections.Generic;
 
 namespace BossRoom.Visual
 {
@@ -19,6 +20,12 @@ namespace BossRoom.Visual
         /// </summary>
         private const float k_RangePadding = 3f;
 
+        /// <summary>
+        /// List of active special graphics playing on the target.
+        /// </summary>
+        private List<SpecialFXGraphic> m_SpawnedGraphics = null;
+
+
         public override bool Start()
         {
             if( !Anticipated)
@@ -27,6 +34,22 @@ namespace BossRoom.Visual
             }
 
             base.Start();
+
+            // we can optionally have special particles that should play on the target. If so, add them now.
+            // (don't wait until impact, because the particles need to start sooner!)
+            if (Data.TargetIds != null
+                && Data.TargetIds.Length > 0
+                && NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
+                && targetNetworkObj != null)
+            {
+                float padRange = Description.Range + k_RangePadding;
+
+                if ((m_Parent.transform.position - targetNetworkObj.transform.position).sqrMagnitude < (padRange * padRange))
+                {
+                    // target is in range! Play the graphics
+                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(targetNetworkObj.transform, true);
+                }
+            }
             return true;
         }
 
@@ -48,6 +71,22 @@ namespace BossRoom.Visual
             //if this didn't already happen, make sure it gets a chance to run. This could have failed to run because
             //our animationclip didn't have the "impact" event properly configured (as one possibility).
             PlayHitReact();
+            base.End();
+        }
+
+        public override void Cancel()
+        {
+            // if we had any special target graphics, tell them we're done
+            if (m_SpawnedGraphics != null)
+            {
+                foreach (var spawnedGraphic in m_SpawnedGraphics)
+                {
+                    if (spawnedGraphic)
+                    {
+                        spawnedGraphic.Shutdown();
+                    }
+                }
+            }
         }
 
         private void PlayAnim()
