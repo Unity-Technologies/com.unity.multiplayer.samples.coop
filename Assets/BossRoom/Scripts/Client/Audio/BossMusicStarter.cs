@@ -1,20 +1,42 @@
 using UnityEngine;
-
+using UnityEngine.Assertions;
 
 namespace BossRoom.Client
 {
     /// <summary>
     /// Simple class to restart game theme on main menu load
     /// </summary>
+    [RequireComponent(typeof(NetworkLifeState)), RequireComponent(typeof(NetworkHealthState))]
     public class BossMusicStarter : MonoBehaviour
     {
-        private bool m_Won = false;
+        [SerializeField]
+        NetworkLifeState m_NetworkLifeState;
+
+        [SerializeField]
+        NetworkHealthState m_NetworkHealthState;
+
+        bool m_Won;
 
         void Start()
         {
+            Assert.IsNotNull(m_NetworkLifeState, "NetworkLifeState not set!");
+            Assert.IsNotNull(m_NetworkHealthState, "NetworkHealthState not set!");
+
+            m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+            m_NetworkHealthState.HitPoints.OnValueChanged += OnHealthChanged;
+        }
+
+        void OnDestroy()
+        {
             var netState = GetComponent<NetworkCharacterState>();
-            netState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
-            netState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
+            if( netState != null )
+            {
+                netState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
+                if( netState.HealthState != null )
+                {
+                    netState.HealthState.HitPoints.OnValueChanged -= OnHealthChanged;
+                }
+            }
         }
 
         private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
@@ -33,7 +55,7 @@ namespace BossRoom.Client
             if (m_Won) { return; }
 
             // make sure battle music started anytime boss is hurt
-            if (previousValue>newValue)
+            if (newValue < previousValue)
             {
                 ClientMusicPlayer.Instance.PlayBossMusic();
             }

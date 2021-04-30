@@ -11,6 +11,8 @@ namespace BossRoom.Server
     {
         private ServerCharacter m_Parent;
 
+        private ServerCharacterMovement m_Movement;
+
         private List<Action> m_Queue;
 
         private List<Action> m_NonBlockingActions;
@@ -30,6 +32,7 @@ namespace BossRoom.Server
         public ActionPlayer(ServerCharacter parent)
         {
             m_Parent = parent;
+            m_Movement = parent.GetComponent<ServerCharacterMovement>();
             m_Queue = new List<Action>();
             m_NonBlockingActions = new List<Action>();
             m_LastUsedTimestamps = new Dictionary<ActionType, float>();
@@ -60,6 +63,10 @@ namespace BossRoom.Server
         {
             if (m_Queue.Count > 0)
             {
+                // Since this action was canceled, we don't want the player to have to wait Description.ReuseTimeSeconds
+                // to be able to start it again. It should be restartable immediately!
+                m_LastUsedTimestamps.Remove(m_Queue[0].Description.ActionTypeEnum);
+
                 m_Queue[0].Cancel();
             }
             m_Queue.Clear();
@@ -91,6 +98,29 @@ namespace BossRoom.Server
                 data = new ActionRequestData();
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Figures out if an action can be played now, or if it would automatically fail because it was
+        /// used too recently. (Meaning that its ReuseTimeSeconds hasn't elapsed since the last use.)
+        /// </summary>
+        /// <param name="actionType">the action we want to run</param>
+        /// <returns>true if the action can be run now, false if more time must elapse before this action can be run</returns>
+        public bool IsReuseTimeElapsed(ActionType actionType)
+        {
+            if (m_LastUsedTimestamps.TryGetValue(actionType, out float lastTimeUsed))
+            {
+                if (GameDataSource.Instance.ActionDataByType.TryGetValue(actionType, out ActionDescription description))
+                {
+                    float reuseTime = description.ReuseTimeSeconds;
+                    if (reuseTime > 0 && Time.time - lastTimeUsed < reuseTime)
+                    {
+                        // still needs more time!
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         /// <summary>
@@ -134,7 +164,14 @@ namespace BossRoom.Server
                     return;              // ... so it's important not to try to do anything more here
                 }
 
-                // remember that we successfully used this Action!
+                // if this Action is interruptible, that means movement should interrupt it... character needs to be stationary for this!
+                // So stop any movement that's already happening before we begin
+                if (m_Queue[0].Description.ActionInterruptible && !m_Movement.IsPerformingForcedMovement())
+                {
+                    m_Movement.CancelMove();
+                }
+
+                // remember the moment when we successfully used this Action!
                 m_LastUsedTimestamps[m_Queue[0].Description.ActionTypeEnum] = Time.time;
 
                 if (m_Queue[0].Description.ExecTimeSeconds==0 && m_Queue[0].Description.BlockingMode== BlockingMode.OnlyDuringExecTime)
@@ -278,8 +315,7 @@ namespace BossRoom.Server
             bool keepGoing = action.Update();
             bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
             var timeElapsed = Time.time - action.TimeStarted;
-            bool timeExpired = expirable &&
-                timeElapsed >= (action.Description.DurationSeconds + action.Description.CooldownSeconds);
+            bool timeExpired = expirable && timeElapsed >= action.Description.DurationSeconds;
             return keepGoing && !timeExpired;
         }
 
@@ -297,8 +333,7 @@ namespace BossRoom.Server
             {
                 var info = action.Description;
                 float actionTime =  info.BlockingMode == BlockingMode.OnlyDuringExecTime   ? info.ExecTimeSeconds :
-                                    info.BlockingMode == BlockingMode.ExecTimeWithCooldown ? (info.ExecTimeSeconds+info.CooldownSeconds) :
-                                    info.BlockingMode == BlockingMode.EntireDuration       ? (info.DurationSeconds + info.CooldownSeconds) :
+                                    info.BlockingMode == BlockingMode.EntireDuration       ? info.DurationSeconds :
                                     throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
                 totalTime += actionTime;
             }

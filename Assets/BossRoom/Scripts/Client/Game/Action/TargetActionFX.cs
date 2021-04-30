@@ -95,7 +95,7 @@ namespace BossRoom.Visual
         {
             if( m_TargetReticule == null )
             {
-                m_TargetReticule = Object.Instantiate(m_Parent.TargetReticule);
+                m_TargetReticule = Object.Instantiate(m_Parent.TargetReticulePrefab);
             }
 
             bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;

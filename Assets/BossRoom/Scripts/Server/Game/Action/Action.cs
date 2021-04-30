@@ -55,9 +55,7 @@ namespace BossRoom.Server
         /// <returns>true to become a non-blocking Action, false to remain a blocking Action</returns>
         public virtual bool ShouldBecomeNonBlocking()
         {
-            return Description.BlockingMode == BlockingMode.OnlyDuringExecTime ?  TimeRunning >= Description.ExecTimeSeconds :
-                   Description.BlockingMode == BlockingMode.ExecTimeWithCooldown ? TimeRunning >= (Description.ExecTimeSeconds + Description.CooldownSeconds) :
-                   false;
+            return Description.BlockingMode == BlockingMode.OnlyDuringExecTime ?  TimeRunning >= Description.ExecTimeSeconds : false;
         }
 
         /// <summary>
@@ -175,6 +173,7 @@ namespace BossRoom.Server
                 case ActionLogic.Target: return new TargetAction(parent, ref data);
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction(parent, ref data);
                 case ActionLogic.StealthMode: return new StealthModeAction(parent, ref data);
+                case ActionLogic.DashAttack: return new DashAttackAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

@@ -20,6 +20,52 @@ namespace BossRoom.Server
         [Tooltip("Each spawned enemy appears at one of the points in this list")]
         List<Transform> m_SpawnPositions;
 
+        [Tooltip("Select which layers will block visibility.")]
+        [SerializeField]
+        LayerMask m_BlockingMask;
+
+        [Tooltip("Time between player distance & visibility scans, in seconds.")]
+        [SerializeField]
+        float m_PlayerProximityValidationTimestep = 2;
+
+        [SerializeField]
+        [Tooltip("The detection range of spawned entities. Only meaningful for NPCs (not breakables). -1 = \"use default for this NPC\"")]
+        float m_SpawnedEntityDetectDistance = -1;
+
+        [Header("Wave parameters")]
+        [Tooltip("Total number of waves.")]
+        [SerializeField]
+        int m_NumberOfWaves = 2;
+        [Tooltip("Number of spawns per wave.")]
+        [SerializeField]
+        int m_SpawnsPerWave = 2;
+        [Tooltip("Time between individual spawns, in seconds.")]
+        [SerializeField]
+        float m_TimeBetweenSpawns = 0.5f;
+        [Tooltip("Time between waves, in seconds.")]
+        [SerializeField]
+        float m_TimeBetweenWaves = 5;
+        [Tooltip("Once last wave is spawned, the spawner waits this long to restart wave spawns, in seconds.")]
+        [SerializeField]
+        float m_RestartDelay = 10;
+        [Tooltip("A player must be within this distance to commence first wave spawn.")]
+        [SerializeField]
+        float m_ProximityDistance = 30;
+        [SerializeField]
+        [Tooltip("When looking for players within proximity distance, should we count players in stealth mode?")]
+        bool m_DetectStealthyPlayers = true;
+
+        [Header("Spawn Cap (i.e. number of simultaneously spawned entities)")]
+        [SerializeField]
+        [Tooltip("The minimum number of entities this spawner will try to maintain (regardless of player count)")]
+        int m_MinSpawnCap = 2;
+        [SerializeField]
+        [Tooltip("The maximum number of entities this spawner will try to maintain (regardless of player count)")]
+        int m_MaxSpawnCap = 10;
+        [SerializeField]
+        [Tooltip("For each player in the game, the Spawn Cap is raised above the minimum by this amount. (Rounds up to nearest whole number.)")]
+        float m_SpawnCapIncreasePerPlayer = 1;
+
         // cache reference to our own transform
         Transform m_Transform;
 
@@ -34,37 +80,6 @@ namespace BossRoom.Server
 
         // cache array of RaycastHit as it will be reused for player visibility
         RaycastHit[] m_Hit;
-
-        [Tooltip("Select which layers will block visibility.")]
-        [SerializeField]
-        LayerMask m_BlockingMask;
-
-        [Tooltip("Time between player distance & visibility scans, in seconds.")]
-        [SerializeField]
-        float m_PlayerProximityValidationTimestep;
-
-        [Header("Wave parameters")]
-        [Tooltip("Total number of waves.")]
-        [SerializeField]
-        int m_NumberOfWaves;
-        [Tooltip("Number of spawns per wave.")]
-        [SerializeField]
-        int m_SpawnsPerWave;
-        [Tooltip("Time between individual spawns, in seconds.")]
-        [SerializeField]
-        float m_TimeBetweenSpawns;
-        [Tooltip("Time between waves, in seconds.")]
-        [SerializeField]
-        float m_TimeBetweenWaves;
-        [Tooltip("Once last wave is spawned, the spawner waits this long to restart wave spawns, in seconds.")]
-        [SerializeField]
-        float m_RestartDelay;
-        [Tooltip("A player must be within this distance to commence first wave spawn.")]
-        [SerializeField]
-        float m_ProximityDistance;
-        [SerializeField]
-        [Tooltip("The spawner won't create more than this many entities at a time. 0 = don't track spawn count")]
-        int m_MaxActiveSpawns;
 
         // indicates whether NetworkStart() has been called on us yet
         bool m_IsStarted;
@@ -189,10 +204,7 @@ namespace BossRoom.Server
                 if (IsRoomAvailableForAnotherSpawn())
                 {
                     var newSpawn = SpawnPrefab();
-                    if (m_MaxActiveSpawns > 0) // 0 = no limit on spawns, so we don't bother tracking 'em
-                    {
-                        m_ActiveSpawns.Add(newSpawn);
-                    }
+                    m_ActiveSpawns.Add(newSpawn);
                 }
 
                 yield return new WaitForSeconds(m_TimeBetweenSpawns);
@@ -217,20 +229,45 @@ namespace BossRoom.Server
             {
                 clone.Spawn();
             }
+
+            if (m_SpawnedEntityDetectDistance > -1)
+            {
+                // need to override the spawned creature's detection range (if they even have a detection range!)
+                var serverChar = clone.GetComponent<ServerCharacter>();
+                if (serverChar && serverChar.AIBrain != null)
+                {
+                    serverChar.AIBrain.DetectRange = m_SpawnedEntityDetectDistance;
+                }
+            }
+
             return clone;
         }
 
         bool IsRoomAvailableForAnotherSpawn()
         {
-            if (m_MaxActiveSpawns <= 0)
-            {
-                // no max-spawn limit
-                return true;
-            }
             // references to spawned components that no longer exist will become null,
             // so clear those out. Then we know how many we have left
             m_ActiveSpawns.RemoveAll(spawnedNetworkObject => { return spawnedNetworkObject == null; });
-            return m_ActiveSpawns.Count < m_MaxActiveSpawns;
+            return m_ActiveSpawns.Count < GetCurrentSpawnCap();
+        }
+
+        /// <summary>
+        /// Returns the current max number of entities we should try to maintain.
+        /// This can change based on the current number of living players; if the cap goes below
+        /// our current number of active spawns, we don't spawn anything new until we're below the cap.
+        /// </summary>
+        int GetCurrentSpawnCap()
+        {
+            int numPlayers = 0;
+            foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            {
+                if (serverCharacter.NetState.NetworkLifeState.LifeState.Value == LifeState.Alive)
+                {
+                    ++numPlayers;
+                }
+            }
+
+            return Mathf.CeilToInt(Mathf.Min(m_MinSpawnCap + (numPlayers * m_SpawnCapIncreasePerPlayer), m_MaxSpawnCap));
         }
 
         /// <summary>
@@ -250,6 +287,12 @@ namespace BossRoom.Server
             // and is not occluded by a blocking collider.
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
+                if (!m_DetectStealthyPlayers && serverCharacter.NetState.IsStealthy.Value)
+                {
+                    // we don't detect stealthy players
+                    continue;
+                }
+
                 var playerPosition = serverCharacter.transform.position;
                 var direction = playerPosition - spawnerPosition;
 

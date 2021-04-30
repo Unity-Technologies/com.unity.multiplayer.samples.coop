@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
@@ -40,6 +41,8 @@ namespace BossRoom.Visual
         // track Hero's target to show when it is the Hero or an ally
         private ulong m_CurrentTarget;
 
+        private Dictionary<ulong, NetworkCharacterState> m_TrackedHeroes = new Dictionary<ulong, NetworkCharacterState>();
+
         private Client.ClientInputSender m_ClientSender;
 
         public void SetHeroData(NetworkCharacterState netState)
@@ -57,6 +60,7 @@ namespace BossRoom.Visual
             }
             // plus we track their target
             netState.TargetId.OnValueChanged += OnHeroSelectionChanged;
+            m_TrackedHeroes.Add(netState.NetworkObjectId, netState);
 
             m_ClientSender = netState.GetComponent<Client.ClientInputSender>();
         }
@@ -213,6 +217,25 @@ namespace BossRoom.Visual
                     // and save ally ID to party array
                     m_PartyIds[i] = 0;
                     return;
+                }
+            }
+
+            if( m_TrackedHeroes.TryGetValue(id, out var heroState))
+            {
+                if( heroState != null )
+                {
+                    heroState.TargetId.OnValueChanged -= OnHeroSelectionChanged;
+                }
+            }
+        }
+
+        void OnDestroy()
+        {
+            foreach( var kvp in m_TrackedHeroes )
+            {
+                if( kvp.Value != null )
+                {
+                    kvp.Value.TargetId.OnValueChanged -= OnHeroSelectionChanged;
                 }
             }
         }

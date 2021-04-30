@@ -42,6 +42,11 @@ namespace BossRoom.Server
             // It's just there so that we can select all the "real" flags and not get it turned into "Everything" in the editor.
         }
         SpecialDamageFlags GetSpecialDamageFlags();
+
+        /// <summary>
+        /// Are we still able to take damage? If we're broken or dead, should return false!
+        /// </summary>
+        bool IsDamageable();
     }
 }
 

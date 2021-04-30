@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: -1764033382396218637}
   - component: {fileID: 3608714310874968837}
   - component: {fileID: 5762482089640033414}
-  - component: {fileID: 2113376856512980659}
+  - component: {fileID: 863254816570832310}
+  - component: {fileID: 6958834149743394217}
   m_Layer: 0
   m_Name: BossRoomState
   m_TagString: Untagged
@@ -83,6 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927521835ae055247b17e4abe805b4ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_RuntimeNetworkObjectsParent: {fileID: 11400000, guid: 777947e430fc5cb4ba60df7eed45a515, type: 2}
   m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
   m_PlayerSpawnPoints:
   - {fileID: 6319832178442273571}
@@ -93,7 +95,35 @@ MonoBehaviour:
   - {fileID: 6314369147267609336}
   - {fileID: 8725901042666772653}
   - {fileID: 7239491272522478247}
---- !u!114 &2113376856512980659
+--- !u!114 &863254816570832310
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 297185343939699586}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ddfeda1c7e74b74d9baaca2a96c95d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_GameEvent: {fileID: 11400000, guid: 9fb31cde6d024114488a5bf48fff8a86, type: 2}
+  m_Response:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 5762482089640033414}
+        m_TargetAssemblyTypeName: BossRoom.Server.ServerBossRoomState, BossRoom.Server
+        m_MethodName: BossDefeated
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &6958834149743394217
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
