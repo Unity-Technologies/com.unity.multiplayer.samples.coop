@@ -22,6 +22,9 @@ namespace BossRoom.Visual
         [SerializeField]
         private VisualizationConfiguration m_VisualizationConfiguration;
 
+        [SerializeField]
+        TransformVariable m_RuntimeObjectsParent;
+
         /// <summary>
         /// Returns a reference to the active Animator for this visualization
         /// </summary>
@@ -84,14 +87,17 @@ namespace BossRoom.Visual
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
-            m_NetState.NetworkLifeState.OnValueChanged += OnLifeStateChanged;
+            m_NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
-            transform.SetParent(null);
+
+            Assert.IsTrue(m_RuntimeObjectsParent && m_RuntimeObjectsParent.Value,
+                "RuntimeObjectsParent transform is not set!");
+            transform.SetParent(m_RuntimeObjectsParent.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
             var parentMovement = Parent.GetComponent<INetMovement>();
@@ -109,7 +115,7 @@ namespace BossRoom.Visual
             SetAppearanceSwap();
 
             // sync our animator to the most up to date version received from server
-            SyncEntryAnimation(m_NetState.NetworkLifeState.Value);
+            SyncEntryAnimation(m_NetState.LifeState);
 
             if (!m_NetState.IsNpc)
             {
@@ -190,7 +196,7 @@ namespace BossRoom.Visual
                 m_NetState.DoActionEventClient -= PerformActionFX;
                 m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
                 m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
-                m_NetState.NetworkLifeState.OnValueChanged -= OnLifeStateChanged;
+                m_NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
@@ -301,7 +307,7 @@ namespace BossRoom.Visual
         private float GetVisualMovementSpeed()
         {
             Assert.IsNotNull(m_VisualizationConfiguration);
-            if (m_NetState.NetworkLifeState.Value != LifeState.Alive)
+            if (m_NetState.NetworkLifeState.LifeState.Value != LifeState.Alive)
             {
                 return m_VisualizationConfiguration.SpeedDead;
             }
@@ -324,6 +330,7 @@ namespace BossRoom.Visual
                     throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
             }
         }
+
 
         void Update()
         {
@@ -369,5 +376,6 @@ namespace BossRoom.Visual
 
             return false;
         }
+
     }
 }

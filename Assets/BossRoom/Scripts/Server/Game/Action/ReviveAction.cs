@@ -34,7 +34,7 @@ namespace BossRoom.Server
             {
                 m_ExecFired = true;
 
-                if (m_TargetCharacter.NetState.NetworkLifeState.Value == LifeState.Fainted)
+                if (m_TargetCharacter.NetState.LifeState == LifeState.Fainted)
                 {
                     Assert.IsTrue(Description.Amount > 0, "Revive amount must be greater than 0.");
                     m_TargetCharacter.Revive(m_Parent, Description.Amount);

@@ -17,11 +17,11 @@ namespace BossRoom.Client
         private const float k_MouseInputRaycastDistance = 100f;
 
         //The movement input rate is capped at 50ms (or 20 fps). This provides a nice balance between responsiveness and
-        //upstream network conservation. This matters when holding down your mouse button to move. 
+        //upstream network conservation. This matters when holding down your mouse button to move.
         private const float k_MoveSendRateSeconds = 0.05f; //20 fps.
 
 
-        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked). 
+        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
 
         private float m_LastSentMove;
 
@@ -35,7 +35,7 @@ namespace BossRoom.Client
         private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
-        /// This event fires at the time when an action request is sent to the server. 
+        /// This event fires at the time when an action request is sent to the server.
         /// </summary>
         public Action<ActionRequestData> ActionInputEvent;
 
@@ -196,7 +196,7 @@ namespace BossRoom.Client
         private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
-            
+
             if (targetId != 0)
             {
                 // if a targetId is given, try to find the object
@@ -271,7 +271,7 @@ namespace BossRoom.Client
                 NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
             }
 
-            //sanity check that this is indeed a valid target. 
+            //sanity check that this is indeed a valid target.
             if(targetNetObj==null || !ActionUtils.IsValidTarget(targetNetObj.NetworkObjectId))
             {
                 return false;
@@ -283,7 +283,7 @@ namespace BossRoom.Client
                 //Skill1 may be contextually overridden if it was generated from a mouse-click.
                 if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
-                    if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+                    if (!targetNetState.IsNpc && targetNetState.LifeState == LifeState.Fainted)
                     {
                         //right-clicked on a downed ally--change the skill play to Revive.
                         actionType = ActionType.GeneralRevive;
@@ -328,6 +328,9 @@ namespace BossRoom.Client
                     resultData.CancelMovement = true;
                     return;
                 case ActionLogic.RangedFXTargeted:
+                    resultData.Position = hitPoint;
+                    return;
+                case ActionLogic.DashAttack:
                     resultData.Position = hitPoint;
                     return;
             }
