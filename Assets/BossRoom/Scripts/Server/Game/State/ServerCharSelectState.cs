@@ -163,6 +163,35 @@ namespace BossRoom.Server
             }
         }
 
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// This is a suggested fix until v1.0.0 where there will be new features that will greatly help with this type of issue
+        /// GitHub Issue: #745 Fix Example Code Segment Begins:
+        /// </summary>
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        internal System.Collections.Generic.Dictionary<ulong, bool> m_IsClientReady = new System.Collections.Generic.Dictionary<ulong, bool>();
+
+
+        [ClientRpc]
+        internal void PingClientUntilReadyClientRpc(ulong clientId, ClientRpcParams parameters = default)
+        {
+            // Invoke this Rpc on the server side before any NetworkObject has been updated
+            var serverParms = new ServerRpcParams();
+            serverParms.Send.UpdateStage = NetworkUpdateStage.EarlyUpdate;
+            PingClientUntilReadyServerRpc(clientId, serverParms);
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        internal void PingClientUntilReadyServerRpc(ulong clientId, ServerRpcParams parameters = default)
+        {
+            if(m_IsClientReady.ContainsKey(clientId))
+            {
+                m_IsClientReady[clientId] = true;
+            }
+        }
+
+
         private void OnClientConnected(ulong clientId)
         {
             // FIXME: here we work around another MLAPI bug when starting up scenes with in-scene networked objects.
@@ -179,6 +208,19 @@ namespace BossRoom.Server
             // MLAPI.NetworkBehaviour.OnRemoteServerRPC, depending on whether we're in host mode or a standalone
             // client, respectively). This actually seems like a separate bug, but probably tied into the same problem.
 
+            /////////////////////////////////////////////////////////
+            // GitHub Issue: #745 Fix Example code segment begins:
+            if (m_IsClientReady.ContainsKey(clientId))
+            {
+                m_IsClientReady.Add(clientId, false);
+            }
+            else
+            {
+                m_IsClientReady[clientId] = false;
+            }
+            //GitHub Issue: #745 Fix Example code segment ends
+            /////////////////////////////////////////////////////////            
+
             //      To repro the bug, comment out this line...
             StartCoroutine(CoroWorkAroundMlapiBug(clientId));
             //      ... and uncomment this one:
@@ -192,11 +234,44 @@ namespace BossRoom.Server
             // for the host-mode client, a single frame of delay seems to be enough;
             // for networked connections, it often takes longer, so we wait a second.
             if (IsHost && clientId == NetworkManager.Singleton.LocalClientId)
+            {
                 yield return new WaitForFixedUpdate();
+            }
+            /////////////////////////////////////////////////////////
+            //GitHub Issue: #745 Fix Example code segment begins:
             else
-                yield return new WaitForSeconds(1);
+            {
+                ClientRpcParams clientRpcParams = new ClientRpcParams();
+                // We want to invoke this after everything else has updated.
+                // PostLateUpdate
+                // Using PostLateUpdate assures the frame it is received most likely all NetworkObjects 
+                // will have updated by this time after their NetworkStart has been invoked (one potential timing issue)
+                // If the NetworkObject on the client side isn't ready, then this will be ignored/dropped.
+                // Once the NetworkObject has initialized (i.e. NetworkStart) then this Rpc will be received,
+                // the client will respond, and then it is safe to update everyone that a new player has joined.
+                clientRpcParams.Send.UpdateStage = NetworkUpdateStage.PostLateUpdate;
+                clientRpcParams.Send.TargetClientIds = new ulong[] { clientId };
+                while (!m_IsClientReady[clientId])
+                {
+                    //Ping client
+                    PingClientUntilReadyClientRpc(clientId);
+                    //Every 100ms
+                    yield return new WaitForSeconds(0.01f);
+
+                    // !!!Note: You could add a timeout check here if you use this suggested fix
+
+                }
+            }
+            //GitHub Issue: #745 Fix Example code segment ends
+            /////////////////////////////////////////////////////////     
             SeatNewPlayer(clientId);
         }
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+        /// <summary>
+        /// GitHub Issue: #745 Fix Example Code Segment Ends.
+        /// </summary>
+        //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
         private int GetAvailablePlayerNum()
         {
