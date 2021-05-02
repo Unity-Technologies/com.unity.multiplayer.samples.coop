@@ -1637,6 +1637,22 @@ PrefabInstance:
       propertyPath: m_BreakableElements.Array.data[1]
       value: 
       objectReference: {fileID: 8716741661167391602}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_MinSpawnCap
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_ProximityDistance
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnCapIncreasePerPlayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnedEntityDetectDistance
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 6205854018081152875, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_Name
       value: EnemySpawner
@@ -2106,6 +2122,22 @@ PrefabInstance:
       propertyPath: m_BreakableElements.Array.data[1]
       value: 
       objectReference: {fileID: 8716741661302336333}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_MinSpawnCap
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_ProximityDistance
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnCapIncreasePerPlayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnedEntityDetectDistance
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 6205854018081152875, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_Name
       value: EnemySpawner
@@ -4143,6 +4175,22 @@ PrefabInstance:
       propertyPath: m_BreakableElements.Array.data[1]
       value: 
       objectReference: {fileID: 8716741662986081972}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_MinSpawnCap
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_ProximityDistance
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnCapIncreasePerPlayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnedEntityDetectDistance
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 6205854018081152875, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_Name
       value: EnemySpawner
@@ -4786,6 +4834,22 @@ PrefabInstance:
       propertyPath: m_BreakableElements.Array.data[1]
       value: 
       objectReference: {fileID: 8716741662108676766}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_MinSpawnCap
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_ProximityDistance
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnCapIncreasePerPlayer
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnedEntityDetectDistance
+      value: 60
+      objectReference: {fileID: 0}
     - target: {fileID: 6205854018081152875, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_Name
       value: EnemySpawner
@@ -6772,9 +6836,21 @@ PrefabInstance:
       propertyPath: m_BreakableElements.Array.data[1]
       value: 
       objectReference: {fileID: 7594961327638560775}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_MinSpawnCap
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnsPerWave
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
+      propertyPath: m_SpawnCapIncreasePerPlayer
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 6205854018081152875, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_Name
-      value: EnemySpawner (1)
+      value: EnemySpawnerRoom1
       objectReference: {fileID: 0}
     - target: {fileID: 8727022540156222958, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_RootOrder
