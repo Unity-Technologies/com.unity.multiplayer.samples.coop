@@ -210,7 +210,7 @@ PrefabInstance:
     - target: {fileID: -2088346993707834735, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 5dc79f6519261e547a9d31b0de849df7, type: 2}
+      objectReference: {fileID: 2100000, guid: 7e2bcc7429e4286459b329e36f352b1d, type: 2}
     - target: {fileID: 919132149155446097, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Name
       value: FX_crystal_fractured
@@ -222,11 +222,11 @@ PrefabInstance:
     - target: {fileID: 3290009304433194289, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 5dc79f6519261e547a9d31b0de849df7, type: 2}
+      objectReference: {fileID: 2100000, guid: 7e2bcc7429e4286459b329e36f352b1d, type: 2}
     - target: {fileID: 4420464326313142980, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 5dc79f6519261e547a9d31b0de849df7, type: 2}
+      objectReference: {fileID: 2100000, guid: 7e2bcc7429e4286459b329e36f352b1d, type: 2}
     - target: {fileID: 4776845662628537640, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Layer
       value: 11
@@ -234,7 +234,7 @@ PrefabInstance:
     - target: {fileID: 5252780467383862430, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 5dc79f6519261e547a9d31b0de849df7, type: 2}
+      objectReference: {fileID: 2100000, guid: 7e2bcc7429e4286459b329e36f352b1d, type: 2}
     - target: {fileID: 5561462458993163771, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Layer
       value: 11

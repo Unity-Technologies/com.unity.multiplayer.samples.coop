@@ -129,33 +129,33 @@ namespace BossRoom.Visual
         public virtual void OnStoppedChargingUp(float finalChargeUpPercentage) { }
 
         /// <summary>
-        /// Utility function that instantiates all the graphics in the Spawns list. If parentToSelf is true,
-        /// the new graphics are parented to our owning Transform. If false, they are positioned/oriented the same
-        /// as our Transform, but are not parented.
+        /// Utility function that instantiates all the graphics in the Spawns list. 
+        /// If parentToOrigin is true, the new graphics are parented to the origin Transform.
+        /// If false, they are positioned/oriented the same way but are not parented.
         /// </summary>
-        protected List<SpecialFXGraphic> InstantiateSpecialFXGraphics(bool parentToSelf)
+        protected List<SpecialFXGraphic> InstantiateSpecialFXGraphics(Transform origin, bool parentToOrigin)
         {
             var returnList = new List<SpecialFXGraphic>();
             foreach (var prefab in Description.Spawns)
             {
                 if (!prefab) { continue; } // skip blank entries in our prefab list
-                returnList.Add(InstantiateSpecialFXGraphic(prefab, parentToSelf));
+                returnList.Add(InstantiateSpecialFXGraphic(prefab, origin, parentToOrigin));
             }
             return returnList;
         }
 
         /// <summary>
-        /// Utility function that instantiates one of the graphics from the Spawns list. If parentToSelf is true,
-        /// the new graphic is parented to our owning Transform. If false, it's positioned/oriented the same
-        /// as our Transform, but not parented.
+        /// Utility function that instantiates one of the graphics from the Spawns list.
+        /// If parentToOrigin is true, the new graphics are parented to the origin Transform.
+        /// If false, they are positioned/oriented the same way but are not parented.
         /// </summary>
-        protected SpecialFXGraphic InstantiateSpecialFXGraphic(GameObject prefab, bool parentToSelf)
+        protected SpecialFXGraphic InstantiateSpecialFXGraphic(GameObject prefab, Transform origin, bool parentToOrigin)
         {
             if (prefab.GetComponent<SpecialFXGraphic>() == null)
             {
                 throw new System.Exception($"One of the Spawns on action {Description.ActionTypeEnum} does not have a SpecialFXGraphic component and can't be instantiated!");
             }
-            var graphicsGO = GameObject.Instantiate(prefab, m_Parent.transform.position, m_Parent.transform.rotation, (parentToSelf ? m_Parent.transform : null));
+            var graphicsGO = GameObject.Instantiate(prefab, origin.transform.position, origin.transform.rotation, (parentToOrigin ? origin.transform : null));
             return graphicsGO.GetComponent<SpecialFXGraphic>();
         }
 		

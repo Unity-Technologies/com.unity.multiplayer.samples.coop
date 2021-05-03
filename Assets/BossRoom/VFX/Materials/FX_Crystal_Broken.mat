@@ -7,11 +7,11 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Head_Mage_Boy
-  m_Shader: {fileID: 4800000, guid: 41c49b64d906a384cab2d953a43231e3, type: 3}
-  m_ShaderKeywords: _NORMALMAP
-  m_LightmapFlags: 4
-  m_EnableInstancingVariants: 1
+  m_Name: FX_Crystal_Broken
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
+  m_ShaderKeywords: _EMISSION
+  m_LightmapFlags: 2
+  m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -20,7 +20,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 6241db63cd35e7a47bdbc327c5058789, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -36,12 +36,12 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 9ed3e7e3831313745a7354fa9e38753c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 25a789f4915b9244689e0da2577dafb9, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Texture: {fileID: 2800000, guid: 9ed3e7e3831313745a7354fa9e38753c, type: 3}
+        m_Scale: {x: 2, y: 2}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 0}
@@ -55,29 +55,44 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _Texture0:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _texcoord:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _Float0: 0.05
+    - _FresnelBias: -7.06
+    - _FresnelPower: -0.78
+    - _FresnelScale: 5.17
     - _GlossMapScale: 1
-    - _Glossiness: 2.89
+    - _Glossiness: 0.417
     - _GlossyReflections: 1
+    - _MainTexStepMax: 0.919
+    - _MainTexStepMin: 0.239
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _RimAmount: 0.667
-    - _RimThreshold: 0
+    - _ParallaxDepth: 0.05
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
+    - __dirty: 0
     m_Colors:
-    - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 0.5019608, g: 0.5019608, b: 0.5019608, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 6.7764707, g: 6.7764707, b: 6.7764707, a: 1}
-    - _SpecularColor: {r: 4.0156865, g: 4.0156865, b: 4.0156865, a: 1}
+    - _Color: {r: 1, g: 0.5529412, b: 0.79607844, a: 1}
+    - _EmissionColor: {r: 2, g: 0.53333336, b: 1.1921569, a: 1}
+    - _FresnelColor: {r: 1, g: 0.5518868, b: 0.7967859, a: 0}
+    - _Tint: {r: 1, g: 0.023584902, b: 0.795634, a: 1}
+    - _TintBlack: {r: 0.047169805, g: 0.014836603, b: 0.006897471, a: 0}
+    - _TintWhite: {r: 1, g: 0.05020623, b: 0.042452812, a: 1}
   m_BuildTextureStacks: []
