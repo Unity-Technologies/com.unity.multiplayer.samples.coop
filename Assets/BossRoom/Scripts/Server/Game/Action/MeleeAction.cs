@@ -45,6 +45,9 @@ namespace BossRoom.Server
                 Data.TargetIds = new ulong[] { foe.NetworkObjectId };
             }
 
+            // snap to face the right direction
+            m_Parent.transform.forward = Data.Direction;
+
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
