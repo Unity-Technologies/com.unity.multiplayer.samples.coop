@@ -27,7 +27,7 @@ namespace BossRoom.Server
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
             {
-                //FIXME:MLAPI See note about MLAPI issue 745 in CoroSeatNewPlayer.
+                //TODO-FIXME:MLAPI See note about MLAPI issue 745 in CoroSeatNewPlayer.
                 //while this workaround is in place, we must simply ignore these update requests from the client.
                 //throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
                 return;
