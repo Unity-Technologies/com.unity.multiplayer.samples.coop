@@ -79,6 +79,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb44a31731a459546bdf01f1af48173c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_MaxHealth: {fileID: 0}
+  m_NetworkHealthState: {fileID: 0}
+  m_Collider: {fileID: 8991873088713291135}
+  m_SpecialDamageFlags: 0
 --- !u!136 &8991873088713291135
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -106,6 +110,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrokenPrefab: {fileID: 1001931975397017578, guid: 03e282e700b05664daab32d4e7965212, type: 3}
+  m_PrebrokenPrefab: {fileID: 3819967873106414044, guid: 98dce1da5a97464448a4290ecfd75607, type: 3}
   m_BrokenPrefabPos: {fileID: 1927651668276376163}
   m_UnbrokenGameObjects:
   - {fileID: 598843305552521647}

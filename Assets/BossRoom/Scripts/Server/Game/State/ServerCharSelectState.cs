@@ -27,7 +27,7 @@ namespace BossRoom.Server
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
             {
-                //FIXME:MLAPI See note about MLAPI issue 745 in CoroSeatNewPlayer.
+                //FIXME:MLAPI See note about MLAPI issue 745 in WaitToSeatNowPlayer.
                 //while this workaround is in place, we must simply ignore these update requests from the client.
                 //throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
                 return;
@@ -125,7 +125,7 @@ namespace BossRoom.Server
             SaveLobbyResults();
 
             // Delay a few seconds to give the UI time to react, then switch scenes
-            StartCoroutine(CoroEndLobby());
+            StartCoroutine(WaitToEndLobby());
         }
 
         private void SaveLobbyResults()
@@ -140,7 +140,7 @@ namespace BossRoom.Server
             GameStateRelay.SetRelayObject(lobbyResults);
         }
 
-        private IEnumerator CoroEndLobby()
+        private IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
             MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("BossRoom");
@@ -189,10 +189,10 @@ namespace BossRoom.Server
 
         private void OnClientConnected(ulong clientId)
         {
-            StartCoroutine(CoroSeatNewPlayer(clientId));
+            StartCoroutine(WaitToSeatNewPlayer(clientId));
         }
 
-        private IEnumerator CoroSeatNewPlayer(ulong clientId)
+        private IEnumerator WaitToSeatNewPlayer(ulong clientId)
         {
             //FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
             //causing the NetworkList of lobby players to get out of sync.

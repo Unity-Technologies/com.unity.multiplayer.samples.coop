@@ -251,6 +251,8 @@ namespace BossRoom.Server
             //to the player's owned character object, and cleaning that object on a timer, rather than doing so immediately when a connection is lost. 
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
+            //TODO: GOMPS-78. We are saving the GUID, but we have more to do to fully support a reconnect flow (where you get your same character back after disconnect/reconnect).
+
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
 
             //Test for Duplicate Login. 
@@ -264,7 +266,7 @@ namespace BossRoom.Server
                 else
                 {
                     ulong oldClientId = m_ClientData[connectionPayload.clientGUID].m_ClientID;
-                    StartCoroutine(CoroDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
+                    StartCoroutine(WaitToDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
                 }
             }
 
@@ -287,20 +289,19 @@ namespace BossRoom.Server
             //TODO:MLAPI: this must be done after the callback for now. In the future we expect MLAPI to allow us to return more information as part of
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
             //and then manually close down the connection.
-            m_Portal.S2CConnectResult(clientId, gameReturnStatus);
+            m_Portal.ServerToClientConnectResult(clientId, gameReturnStatus);
             if(gameReturnStatus != ConnectStatus.Success )
             {
-                StartCoroutine(CoroDisconnectClient(clientId, gameReturnStatus));
+                //TODO-FIXME:MLAPI Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
+                StartCoroutine(WaitToDisconnectClient(clientId, gameReturnStatus));
             }
         }
 
-        private IEnumerator CoroDisconnectClient(ulong clientId, ConnectStatus reason)
+        private IEnumerator WaitToDisconnectClient(ulong clientId, ConnectStatus reason)
         {
-            const float disconnectDelay = 0.15f;
+            m_Portal.ServerToClientSetDisconnectReason(clientId, reason);
 
-            m_Portal.S2CSetDisconnectReason(clientId, reason);
-
-            yield return new WaitForSeconds(disconnectDelay);
+            yield return new WaitForSeconds(0); 
             BootClient(clientId);
         }
 
@@ -313,6 +314,7 @@ namespace BossRoom.Server
             var netObj = MLAPI.Spawning.NetworkSpawnManager.GetPlayerNetworkObject(clientId);
             if( netObj )
             {
+                //TODO-FIXME:MLAPI Issue #795. Should not need to explicitly despawn player objects.
                 netObj.Despawn(true);
             }
             m_Portal.NetManager.DisconnectClient(clientId);

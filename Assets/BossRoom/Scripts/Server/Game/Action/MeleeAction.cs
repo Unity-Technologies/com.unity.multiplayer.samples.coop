@@ -46,7 +46,10 @@ namespace BossRoom.Server
             }
 
             // snap to face the right direction
-            m_Parent.transform.forward = Data.Direction;
+            if( Data.Direction != Vector3.zero )
+            {
+                m_Parent.transform.forward = Data.Direction;
+            }
 
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;

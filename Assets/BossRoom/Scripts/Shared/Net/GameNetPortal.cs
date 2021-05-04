@@ -107,7 +107,8 @@ namespace BossRoom
             //we register these without knowing whether we're a client or host. This is because certain messages can be sent super-early,
             //before we even get our ClientConnected event (if acting as a client). It should be harmless to have server handlers registered
             //on the client, because (a) nobody will be sending us these messages and (b) even if they did, nobody is listening for those
-            //server message events on the client anyway. 
+            //server message events on the client anyway.
+            //TODO-FIXME:MLAPI Issue 799. We shouldn't really have to worry about getting messages before our ClientConnected callback.
             RegisterClientMessageHandlers();
             RegisterServerMessageHandlers();
         }
@@ -135,7 +136,7 @@ namespace BossRoom
 
         private void RegisterClientMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("S2C_ConnectResult", (senderClientId, stream) =>
+            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientConnectResult", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -145,7 +146,7 @@ namespace BossRoom
                 }
             });
 
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("S2C_SetDisconnectReason", (senderClientId, stream) =>
+            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientSetDisconnectReason", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -158,7 +159,7 @@ namespace BossRoom
 
         private void RegisterServerMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("C2S_SceneChanged", (senderClientId, stream) =>
+            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ClientToServerSceneChanged", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -172,13 +173,13 @@ namespace BossRoom
 
         private void UnregisterClientMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("S2C_ConnectResult");
-            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("S2C_SetDisconnectReason");
+            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
+            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
         }
 
         private void UnregisterServerMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("C2S_SceneChanged");
+            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ClientToServerSceneChanged");
         }
 
 
@@ -251,7 +252,7 @@ namespace BossRoom
         /// </summary>
         /// <param name="netId"> id of the client to send to </param>
         /// <param name="status"> the status to pass to the client</param>
-        public void S2CConnectResult(ulong netId, ConnectStatus status)
+        public void ServerToClientConnectResult(ulong netId, ConnectStatus status)
         {
 
             using (var buffer = PooledNetworkBuffer.Get())
@@ -259,7 +260,7 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, buffer, NetworkChannel.Internal);
+                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer, NetworkChannel.Internal);
                 }
             }
         }
@@ -269,19 +270,19 @@ namespace BossRoom
         /// </summary>
         /// <param name="netId"> id of the client to send to </param>
         /// <param name="status"> The reason for the upcoming disconnect.</param>
-        public void S2CSetDisconnectReason(ulong netId, ConnectStatus status)
+        public void ServerToClientSetDisconnectReason(ulong netId, ConnectStatus status)
         {
             using (var buffer = PooledNetworkBuffer.Get())
             {
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_SetDisconnectReason", netId, buffer, NetworkChannel.Internal);
+                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer, NetworkChannel.Internal);
                 }
             }
         }
 
-        public void C2SSceneChanged(int newScene)
+        public void ClientToServerSceneChanged(int newScene)
         {
             if(NetManager.IsHost)
             {
@@ -294,7 +295,7 @@ namespace BossRoom
                     using (var writer = PooledNetworkWriter.Get(buffer))
                     {
                         writer.WriteInt32(newScene);
-                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("C2S_SceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
+                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ClientToServerSceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
                     }
                 }
             }

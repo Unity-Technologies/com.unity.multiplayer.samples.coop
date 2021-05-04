@@ -12,6 +12,9 @@ namespace BossRoom.Visual
         [SerializeField]
         private GameObject m_BrokenPrefab;
 
+        [SerializeField][Tooltip("If set, will be used instead of BrokenPrefab when new players join, skipping transition effects.")]
+        private GameObject m_PrebrokenPrefab;
+
         [SerializeField]
         [Tooltip("We use this transform's position and rotation when creating the prefab. (Defaults to self)")]
         private Transform m_BrokenPrefabPos;
@@ -36,9 +39,7 @@ namespace BossRoom.Visual
 
                 if (m_NetState.IsBroken.Value == true)
                 {
-                    //A good future enhancement to BossRoom would be to add a "curtain" that hides transient loading effects.
-                    //As written, a late joiner may see already-broken pots break when they log in.
-                    PerformBreak();
+                    PerformBreak(true);
                 }
 
             }
@@ -48,7 +49,7 @@ namespace BossRoom.Visual
         {
             if (!wasBroken && isBroken)
             {
-                PerformBreak();
+                PerformBreak(false);
             }
             else if (wasBroken && !isBroken)
             {
@@ -64,7 +65,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private void PerformBreak()
+        private void PerformBreak(bool onStart)
         {
             foreach (var gameObject in m_UnbrokenGameObjects)
             {
@@ -75,8 +76,11 @@ namespace BossRoom.Visual
             if (m_CurrentBrokenVisualization)
                 Destroy(m_CurrentBrokenVisualization); // just a safety check, should be null when we get here
 
-            if (m_BrokenPrefab)
-                m_CurrentBrokenVisualization = Instantiate(m_BrokenPrefab, m_BrokenPrefabPos.position, m_BrokenPrefabPos.rotation, transform);
+            GameObject brokenPrefab = (onStart && m_PrebrokenPrefab != null) ? m_PrebrokenPrefab : m_BrokenPrefab;
+            if (brokenPrefab)
+            {
+                m_CurrentBrokenVisualization = Instantiate(brokenPrefab, m_BrokenPrefabPos.position, m_BrokenPrefabPos.rotation, transform);
+            }
         }
 
         private void PerformUnbreak()

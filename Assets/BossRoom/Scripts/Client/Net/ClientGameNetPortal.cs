@@ -82,7 +82,7 @@ namespace BossRoom.Client
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            m_Portal.C2SSceneChanged(SceneManager.GetActiveScene().buildIndex);
+            m_Portal.ClientToServerSceneChanged(SceneManager.GetActiveScene().buildIndex);
         }
 
         /// <summary>
@@ -121,10 +121,7 @@ namespace BossRoom.Client
         {
             // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
             //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
-            bool disconnectedClient = !MLAPI.NetworkManager.Singleton.IsConnectedClient && !MLAPI.NetworkManager.Singleton.IsHost;
-            bool disconnectedHost = MLAPI.NetworkManager.Singleton.IsHost && clientID == NetworkManager.Singleton.LocalClientId;
-
-            if ( disconnectedClient || disconnectedHost )
+            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient && !MLAPI.NetworkManager.Singleton.IsHost )
             {
                 SceneManager.sceneLoaded -= OnSceneLoaded;
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
@@ -239,7 +236,7 @@ namespace BossRoom.Client
             portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! MLAPI will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves. 
+            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:MLAPI GOMPS-79, provide feedback for different transport failures). 
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
         }
