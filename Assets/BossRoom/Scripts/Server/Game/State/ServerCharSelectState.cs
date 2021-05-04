@@ -194,7 +194,7 @@ namespace BossRoom.Server
 
         private IEnumerator CoroSeatNewPlayer(ulong clientId)
         {
-            //FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
+            //TODO-FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
             //causing the NetworkList of lobby players to get out of sync.
             //tracking MLAPI issue: https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/745
             //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback. 
