@@ -1,3 +1,4 @@
+using MLAPI;
 using UnityEngine;
 using MLAPI.Spawning;
 
@@ -88,7 +89,7 @@ namespace BossRoom
             //note that we DON'T check if you're an ally. It's perfectly valid to target friends,
             //because there are friendly skills, such as Heal.
 
-            if (!NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetChar))
+            if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetChar))
             {
                 return false;
             }
@@ -133,7 +134,7 @@ namespace BossRoom
 
         /// <summary>
         /// Helper method that calculates the percent a charge-up action is charged, based on how long it has run, returning a value
-        /// from 0-1. 
+        /// from 0-1.
         /// </summary>
         /// <param name="stoppedChargingUpTime">The time when we finished charging up, or 0 if we're still charging.</param>
         /// <param name="timeRunning">How long the action has been running. </param>
@@ -170,7 +171,7 @@ namespace BossRoom
         public static Vector3 GetTeleportDestination(Transform characterTransform, Vector3 targetSpot, bool stopAtObstructions, float distanceToUseIfVeryClose = -1, float maxDistance = -1)
         {
             Vector3 destinationSpot = targetSpot;
-            
+
             if (distanceToUseIfVeryClose != -1)
             {
                 // make sure our stopping point is a meaningful distance away!

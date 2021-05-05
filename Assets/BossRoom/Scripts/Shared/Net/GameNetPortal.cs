@@ -14,7 +14,7 @@ namespace BossRoom
         Success,                  //client successfully connected. This may also be a successful reconnect.
         ServerFull,               //can't join, server is already at capacity.
         LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
-        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user. 
+        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
     }
 
@@ -82,7 +82,7 @@ namespace BossRoom
 
         /// <summary>
         /// This fires in response to GameNetPortal.RequestDisconnect. It's a local signal (not from the network), indicating that
-        /// the user has requested a disconnect. 
+        /// the user has requested a disconnect.
         /// </summary>
         public event Action UserDisconnectRequested;
 
@@ -136,7 +136,7 @@ namespace BossRoom
 
         private void RegisterClientMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientConnectResult", (senderClientId, stream) =>
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientConnectResult", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -146,7 +146,7 @@ namespace BossRoom
                 }
             });
 
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientSetDisconnectReason", (senderClientId, stream) =>
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientSetDisconnectReason", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -159,7 +159,7 @@ namespace BossRoom
 
         private void RegisterServerMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ClientToServerSceneChanged", (senderClientId, stream) =>
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler("ClientToServerSceneChanged", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -173,13 +173,13 @@ namespace BossRoom
 
         private void UnregisterClientMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
-            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
+            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
+            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
         }
 
         private void UnregisterServerMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ClientToServerSceneChanged");
+            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler("ClientToServerSceneChanged");
         }
 
 
@@ -260,7 +260,7 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer, NetworkChannel.Internal);
+                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer, NetworkChannel.Internal);
                 }
             }
         }
@@ -277,7 +277,7 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer, NetworkChannel.Internal);
+                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer, NetworkChannel.Internal);
                 }
             }
         }
@@ -295,14 +295,14 @@ namespace BossRoom
                     using (var writer = PooledNetworkWriter.Get(buffer))
                     {
                         writer.WriteInt32(newScene);
-                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ClientToServerSceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
+                        NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ClientToServerSceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// This will disconnect (on the client) or shutdown the server (on the host). 
+        /// This will disconnect (on the client) or shutdown the server (on the host).
         /// </summary>
         public void RequestDisconnect()
         {

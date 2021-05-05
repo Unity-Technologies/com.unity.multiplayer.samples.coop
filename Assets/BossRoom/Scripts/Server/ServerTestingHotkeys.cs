@@ -58,7 +58,7 @@ namespace BossRoom.Server
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
                 GameStateRelay.SetRelayObject(false); // indicate to the post-game screen that the game was lost
-                MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
+                NetworkManager.SceneManager.SwitchScene("PostGame");
             }
         }
     }

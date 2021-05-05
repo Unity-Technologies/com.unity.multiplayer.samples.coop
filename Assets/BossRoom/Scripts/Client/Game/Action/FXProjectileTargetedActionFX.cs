@@ -102,7 +102,7 @@ namespace BossRoom.Visual
                 return null;
             }
 
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out NetworkObject targetObject) && targetObject != null)
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out NetworkObject targetObject) && targetObject != null)
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var targetable = targetObject.GetComponent<ITargetable>();
@@ -156,7 +156,7 @@ namespace BossRoom.Visual
             Vector3 targetSpot = Data.Position;
             if (Data.TargetIds != null && Data.TargetIds.Length > 0)
             {
-                var targetObj = NetworkSpawnManager.SpawnedObjects[Data.TargetIds[0]];
+                var targetObj = NetworkManager.Singleton.SpawnManager.SpawnedObjects[Data.TargetIds[0]];
                 if (targetObj)
                 {
                     targetSpot = targetObj.transform.position;

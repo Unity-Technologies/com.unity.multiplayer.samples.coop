@@ -26,7 +26,7 @@ namespace BossRoom.Server
                 return ActionConclusion.Stop;
             }
 
-            m_Target = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+            m_Target = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
 
             m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
             Vector3 currentTargetPos = m_Target.transform.position;
@@ -52,7 +52,7 @@ namespace BossRoom.Server
         {
             return m_Data.TargetIds != null &&
                    m_Data.TargetIds.Length > 0 &&
-                   NetworkSpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
+                   NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]);
         }
 
         /// <summary>

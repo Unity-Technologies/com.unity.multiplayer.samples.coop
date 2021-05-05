@@ -149,7 +149,7 @@ namespace BossRoom.Server
 
                         //retrieve the person that created us, if he's still around.
                         NetworkObject spawnerNet;
-                        NetworkSpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
+                        NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
                         targetNetObj.GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);

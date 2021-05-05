@@ -93,7 +93,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.mlapi": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#release/0.1.0",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -101,7 +101,7 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "3e3aef6aa02c2a25359898319e5bd49d3518b57b"
+      "hash": "a8f16aa78190cd5013a3bdea1e583b8c2eb87abc"
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",

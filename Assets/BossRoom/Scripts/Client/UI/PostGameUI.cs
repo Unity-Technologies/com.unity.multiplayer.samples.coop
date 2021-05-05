@@ -1,3 +1,4 @@
+using MLAPI;
 using MLAPI.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -16,7 +17,7 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private Light m_SceneLight;
-		
+
         [SerializeField]
         private TextMeshProUGUI m_WinEndMessage;
 
@@ -89,7 +90,7 @@ namespace BossRoom.Visual
         public void OnPlayAgainClicked()
         {
             // this should only ever be called by the Host - so just go ahead and switch scenes
-            NetworkSceneManager.SwitchScene("CharSelect");
+            NetworkManager.Singleton.SceneManager.SwitchScene("CharSelect");
 
             // FUTURE: could be improved to better support a dedicated server architecture
         }

@@ -143,7 +143,7 @@ namespace BossRoom.Server
         private IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
-            MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("BossRoom");
+            NetworkManager.SceneManager.SwitchScene("BossRoom");
         }
 
         protected override void OnDestroy()
@@ -197,7 +197,7 @@ namespace BossRoom.Server
             //TODO-FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
             //causing the NetworkList of lobby players to get out of sync.
             //tracking MLAPI issue: https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/745
-            //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback. 
+            //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback.
             yield return new WaitForSeconds(2.5f);
             SeatNewPlayer(clientId);
         }

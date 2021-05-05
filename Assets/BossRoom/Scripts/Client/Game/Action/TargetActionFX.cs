@@ -53,7 +53,7 @@ namespace BossRoom.Visual
             {
                 m_CurrentTarget = m_NewTarget;
 
-                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject ) )
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject ) )
                 {
                     var targetEntity = targetObject != null ? targetObject.GetComponent<ITargetable>() : null;
                     if( targetEntity != null )
