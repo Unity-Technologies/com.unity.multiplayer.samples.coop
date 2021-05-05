@@ -301,7 +301,10 @@ namespace BossRoom.Server
         {
             m_Portal.ServerToClientSetDisconnectReason(clientId, reason);
 
+            // TODO fix once this is solved: Issue 796 Unity-Technologies/com.unity.multiplayer.mlapi#796
+            // this wait is a workaround to give the client time to receive the above RPC before closing the connection
             yield return new WaitForSeconds(0); 
+
             BootClient(clientId);
         }
 
@@ -331,4 +334,3 @@ namespace BossRoom.Server
 
     }
 }
-
