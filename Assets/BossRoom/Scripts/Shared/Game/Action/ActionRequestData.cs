@@ -60,21 +60,6 @@ namespace BossRoom
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 
-    /// <summary>
-    /// Retrieves static information about ActionLogics
-    /// </summary>
-    public static class ActionLogicUtils
-    {
-        /// <summary>
-        /// When requesting an action with this type of ActionLogic, do we need to store the Position where player clicked?
-        /// (We separate this out so that we don't need to send the extra Vector3 across the network if unneeded.)
-        /// </summary>
-        public static bool IsPositionUsed(ActionLogic logic)
-        {
-            return logic == ActionLogic.RangedFXTargeted;
-        }
-
-    }
 
     /// <summary>
     /// Comprehensive class that contains information needed to play back any action on the server. This is what gets sent client->server when
@@ -179,4 +164,3 @@ namespace BossRoom
         }
     }
 }
-
