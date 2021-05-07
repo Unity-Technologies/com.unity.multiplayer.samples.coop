@@ -246,6 +246,11 @@ namespace BossRoom.Server
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
+            // Another hackfix to unblock me since this is now called on the host's client instance as well
+            if (connectionPayload == null)
+            {
+                return;
+            }
             int clientScene = connectionPayload.clientScene;
 
             //a nice addition in the future will be to support rejoining the game and getting your same character back. This will require tracking a map of the GUID
