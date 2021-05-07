@@ -187,8 +187,12 @@ namespace BossRoom
 
         private void UnregisterClientMessageHandlers()
         {
-            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
-            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
+            // Early return here if the NetworkManager or the CustomMessagingManager are null
+            if (NetManager == null || NetManager.CustomMessagingManager == null)
+                return;
+
+            NetManager.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
+            NetManager.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
         }
 
         private void UnregisterServerMessageHandlers()
