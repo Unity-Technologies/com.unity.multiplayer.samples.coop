@@ -116,10 +116,14 @@ namespace BossRoom
             {
                 NetManager.OnServerStarted -= OnNetworkReady;
                 NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
-            }
 
-            UnregisterClientMessageHandlers();
-            UnregisterServerMessageHandlers();
+                // Only unregister the Client/Server message handlers if the CustomMessagingManager is not null
+                if (NetManager.CustomMessagingManager != null)
+                {
+                    UnregisterClientMessageHandlers();
+                    UnregisterServerMessageHandlers();
+                }
+            }
         }
 
 
@@ -187,10 +191,6 @@ namespace BossRoom
 
         private void UnregisterClientMessageHandlers()
         {
-            // Early return here if the NetworkManager or the CustomMessagingManager are null
-            if (NetManager == null || NetManager.CustomMessagingManager == null)
-                return;
-
             NetManager.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
             NetManager.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
         }
