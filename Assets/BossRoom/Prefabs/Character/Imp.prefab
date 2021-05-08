@@ -98,9 +98,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: Imp
       objectReference: {fileID: 0}
+    - target: {fileID: 3288448142974003541, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_NetworkLifeState
+      value: 
+      objectReference: {fileID: 3837839015300097846}
     - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: PrefabHash
       value: 15588270132579523469
+      objectReference: {fileID: 0}
+    - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
       objectReference: {fileID: 0}
     - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: PrefabHashGenerator
@@ -195,5 +203,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6733907396f36c44891916e5c62f25a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3837839015300097846 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3128178037050369367, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+  m_PrefabInstance: {fileID: 2173896227866280545}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3713729372785093424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818290ebb0ac23541921b4dfc6842778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

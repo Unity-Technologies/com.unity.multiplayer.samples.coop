@@ -34,7 +34,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Event: {fileID: 11400000, guid: 9fb31cde6d024114488a5bf48fff8a86, type: 2}
-  m_NetworkLifeState: {fileID: 3889605435075370027}
+  m_NetworkLifeState: {fileID: 0}
   m_RaiseCondition: 2
 --- !u!114 &8073394427373638825
 MonoBehaviour:
@@ -48,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a6b1447f40f499c4a82ca50d40c76051, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkLifeState: {fileID: 3889605435075370027}
+  m_NetworkLifeState: {fileID: 0}
   m_NetworkHealthState: {fileID: 848206395698055335}
 --- !u!1001 &2203142923062114684
 PrefabInstance:
@@ -61,9 +61,17 @@ PrefabInstance:
       propertyPath: m_Name
       value: ImpBoss
       objectReference: {fileID: 0}
+    - target: {fileID: 3288448142974003541, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_NetworkLifeState
+      value: 
+      objectReference: {fileID: 3889605435075370027}
     - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: PrefabHash
       value: 10222221329416050842
+      objectReference: {fileID: 0}
+    - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
       objectReference: {fileID: 0}
     - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: PrefabHashGenerator
