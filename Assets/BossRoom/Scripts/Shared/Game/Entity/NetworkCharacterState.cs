@@ -51,7 +51,8 @@ namespace BossRoom
         /// <summary>
         /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
-        public NetworkVariableFloat NetworkRotationY { get; } = new NetworkVariableFloat();
+        public NetworkVariableFloat NetworkRotationY { get; } = new NetworkVariableFloat(
+            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
 
         /// <summary>
         /// The speed that the character is currently allowed to move, according to the server.
