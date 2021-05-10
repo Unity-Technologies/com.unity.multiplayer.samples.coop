@@ -45,7 +45,8 @@ namespace BossRoom
         /// <summary>
         /// The networked position of this Character. This reflects the authoritative position on the server.
         /// </summary>
-        public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3();
+        public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3(
+            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
 
         /// <summary>
         /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
