@@ -893,6 +893,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ally HP bg 5
       objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5210474333085558483}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectPartyMember
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7612533173075622658, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
       value: Ally HUD 5
@@ -1060,6 +1072,18 @@ PrefabInstance:
     - target: {fileID: 953618194077248222, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
       value: Ally HP bg 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5210474333085558483}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectPartyMember
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 7
       objectReference: {fileID: 0}
     - target: {fileID: 7612533173075622658, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
@@ -1385,6 +1409,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ally HP bg 4
       objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5210474333085558483}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectPartyMember
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 7612533173075622658, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
       value: Ally HUD 4
@@ -1552,6 +1588,18 @@ PrefabInstance:
     - target: {fileID: 953618194077248222, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
       value: Ally HP bg 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5210474333085558483}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectPartyMember
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7612533173075622658, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
@@ -1721,6 +1769,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ally HP bg 6
       objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5210474333085558483}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectPartyMember
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7612533173075622658, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
       value: Ally HUD 6
@@ -1888,6 +1948,18 @@ PrefabInstance:
     - target: {fileID: 953618194077248222, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
       value: Ally HP bg 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 5210474333085558483}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: SelectPartyMember
+      objectReference: {fileID: 0}
+    - target: {fileID: 3608269473308587364, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_IntArgument
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 7612533173075622658, guid: 1782ae3289c756b469d350bb8a554592, type: 3}
       propertyPath: m_Name
