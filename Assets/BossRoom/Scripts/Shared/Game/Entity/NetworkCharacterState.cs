@@ -32,15 +32,11 @@ namespace BossRoom
     /// <summary>
     /// Contains all NetworkVariables and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
-    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState),
-        typeof(NetworkLifeState))]
+    [RequireComponent(typeof(NetworkLifeState))]
     public class NetworkCharacterState : NetworkBehaviour, INetMovement, ITargetable
     {
-        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
-        {
-            NetworkPosition.Value = initPosition;
-            NetworkRotationY.Value = initRotationY;
-        }
+        [SerializeField]
+        BossRoomPlayerCharacter m_BossRoomPlayerCharacter;
 
         /// <summary>
         /// The networked position of this Character. This reflects the authoritative position on the server.
@@ -65,109 +61,75 @@ namespace BossRoom
         /// </summary>
         public NetworkVariableBool IsStealthy { get; } = new NetworkVariableBool();
 
-        [SerializeField]
-        NetworkHealthState m_NetworkHealthState;
-
-        public NetworkHealthState HealthState
-        {
-            get
-            {
-                return m_NetworkHealthState;
-            }
-        }
-
         /// <summary>
         /// The active target of this character.
         /// </summary>
         public NetworkVariableULong TargetId { get; } = new NetworkVariableULong();
 
-        /// <summary>
-        /// Current HP. This value is populated at startup time from CharacterClass data.
-        /// </summary>
-        public int HitPoints
-        {
-            get { return m_NetworkHealthState.HitPoints.Value; }
-            set { m_NetworkHealthState.HitPoints.Value = value; }
-        }
-
-        /// <summary>
-        /// Current Mana. This value is populated at startup time from CharacterClass data.
-        /// </summary>
-        [HideInInspector]
-        public NetworkVariableInt Mana;
-
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
-        public NetworkLifeState NetworkLifeState => m_NetworkLifeState;
+        public bool IsNpc => CharacterData.IsNpc;
 
-        /// <summary>
-        /// Current LifeState. Only Players should enter the FAINTED state.
-        /// </summary>
-        public LifeState LifeState
-        {
-            get => m_NetworkLifeState.LifeState.Value;
-            set => m_NetworkLifeState.LifeState.Value = value;
-        }
-
-        /// <summary>
-        /// Returns true if this Character is an NPC.
-        /// </summary>
-        public bool IsNpc { get { return CharacterData.IsNpc; } }
-
-        public bool IsValidTarget => LifeState != LifeState.Dead;
+        public bool IsValidTarget => m_NetworkLifeState.NetworkLife != LifeState.Dead;
 
         /// <summary>
         /// Returns true if the Character is currently in a state where it can play actions, false otherwise.
         /// </summary>
-        public bool CanPerformActions => LifeState == LifeState.Alive;
+        public bool CanPerformActions => m_NetworkLifeState.NetworkLife == LifeState.Alive;
+
+        // This field is exposed in the editor for prefabs which have a non-changing character type (ie. NPCs). For
+        // players, this field is set on spawn. This will be refactored further.
+        [SerializeField]
+        CharacterClass m_CharacterData;
 
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
-        public CharacterClass CharacterData
-        {
-            get
-            {
-                return GameDataSource.Instance.CharacterDataByType[CharacterType];
-            }
-        }
-
-        [SerializeField]
-        NetworkCharacterTypeState m_NetworkCharacterTypeState;
-
-        /// <summary>
-        /// Character Type. This value is populated during character selection.
-        /// </summary>
-        public CharacterTypeEnum CharacterType
-        {
-            get { return m_NetworkCharacterTypeState.CharacterType.Value; }
-            set { m_NetworkCharacterTypeState.CharacterType.Value = value; }
-        }
-
-        [SerializeField]
-        NetworkNameState m_NetworkNameState;
-
-        /// <summary>
-        /// Current nametag. This value is populated at startup time from CharacterClass data.
-        /// </summary>
-        public string Name
-        {
-            get { return m_NetworkNameState.Name.Value; }
-            set { m_NetworkNameState.Name.Value = value; }
-        }
-
-        /// <summary>
-        /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
-        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
-        /// </summary>
-        [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
-        public NetworkVariableInt CharacterAppearance;
+        public CharacterClass CharacterData => m_CharacterData;
 
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
         public event Action<Vector3> ReceivedClientInput;
+
+        public override void NetworkStart()
+        {
+            if (m_BossRoomPlayerCharacter)
+            {
+                if (m_BossRoomPlayerCharacter.Data)
+                {
+                    NetworkInitialize();
+                }
+                else
+                {
+                    m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                }
+            }
+        }
+
+        void NetworkInitialize()
+        {
+            if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+            {
+                m_CharacterData =
+                    GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (m_BossRoomPlayerCharacter)
+            {
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
+            }
+        }
+
+        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
+        {
+            NetworkPosition.Value = initPosition;
+            NetworkRotationY.Value = initRotationY;
+        }
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
@@ -177,18 +139,6 @@ namespace BossRoom
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
             ReceivedClientInput?.Invoke(movementTarget);
-        }
-
-        public void SetCharacterType(CharacterTypeEnum playerType, int playerAppearance)
-        {
-            CharacterType = playerType;
-            CharacterAppearance.Value = playerAppearance;
-        }
-
-        public void ApplyCharacterData()
-        {
-            HitPoints = CharacterData.BaseHP.Value;
-            Mana.Value = CharacterData.BaseMana;
         }
 
         // ACTION SYSTEM

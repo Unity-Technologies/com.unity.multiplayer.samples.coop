@@ -44,10 +44,12 @@ namespace BossRoom.Visual
         /// </summary>
         NetworkCharacterState m_NetState;
 
+        CharacterClass m_CharacterClass;
+
         /// <summary>
         /// If we have another player selected, this is a reference to their stats; if anything else is selected, this is null
         /// </summary>
-        NetworkCharacterState m_SelectedPlayerNetState;
+        NetworkLifeState m_SelectedPlayerLifeState;
 
         /// <summary>
         /// If m_SelectedPlayerNetState is non-null, this indicates whether we think they're alive. (Updated every frame)
@@ -124,17 +126,24 @@ namespace BossRoom.Visual
         /// Called during startup by the ClientInputSender. In response, we cache the provided
         /// inputSender and self-initialize.
         /// </summary>
-        /// <param name="inputSender"></param>
-        public void RegisterInputSender(Client.ClientInputSender inputSender)
+        /// <param name="bossRoomPlayerCharacter"></param>
+        public void RegisterInputSender(BossRoomPlayerCharacter bossRoomPlayerCharacter)
         {
             if (m_InputSender != null)
             {
-                Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
+                Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {bossRoomPlayerCharacter.gameObject.name} ");
             }
 
-            m_InputSender = inputSender;
-            m_NetState = m_InputSender.GetComponent<NetworkCharacterState>();
+            bossRoomPlayerCharacter.TryGetNetworkBehaviour(out m_InputSender);
+            bossRoomPlayerCharacter.TryGetNetworkBehaviour(out m_NetState);
             m_NetState.TargetId.OnValueChanged += OnSelectionChanged;
+
+            if (bossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+            {
+                m_CharacterClass =
+                    GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];
+            }
+
             UpdateAllActionButtons();
         }
 
@@ -178,9 +187,12 @@ namespace BossRoom.Visual
             // If we have another player selected, see if their aliveness state has changed,
             // and if so, update the interactiveness of the basic-action button
 
-            if (!m_SelectedPlayerNetState) { return; }
+            if (!m_SelectedPlayerLifeState)
+            {
+                return;
+            }
 
-            bool isAliveNow = m_SelectedPlayerNetState.NetworkLifeState.LifeState.Value == LifeState.Alive;
+            bool isAliveNow = m_SelectedPlayerLifeState.NetworkLife == LifeState.Alive;
             if (isAliveNow != m_WasSelectedPlayerAliveDuringLastUpdate)
             {
                 // this will update the icons so that the basic-action button's interactiveness is correct
@@ -236,33 +248,34 @@ namespace BossRoom.Visual
         /// </summary>
         void UpdateAllActionButtons()
         {
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], m_NetState.CharacterData.Skill1);
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_NetState.CharacterData.Skill2);
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_NetState.CharacterData.Skill3);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], m_CharacterClass.Skill1);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_CharacterClass.Skill2);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_CharacterClass.Skill3);
 
             // special case: when we have a player selected, we change the meaning of the basic action
             if (m_NetState.TargetId.Value != 0
                 && NetworkSpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
                 && selection != null
-                && selection.IsPlayerObject
+                && selection.TryGetComponent(out BossRoomPlayerCharacter bossRoomPlayer)
                 && selection.NetworkObjectId != m_NetState.NetworkObjectId)
             {
                 // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
                 // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
 
-                var charState = selection.GetComponent<NetworkCharacterState>();
-                Assert.IsNotNull(charState); // all PlayerObjects should have a NetworkCharacterState component
+                bossRoomPlayer.TryGetNetworkBehaviour(out NetworkLifeState networkLifeState);
 
-                bool isAlive = charState.NetworkLifeState.LifeState.Value == LifeState.Alive;
+                Assert.IsNotNull(networkLifeState); // all PlayerObjects should have a NetworkCharacterState component
+
+                bool isAlive = networkLifeState.NetworkLife == LifeState.Alive;
                 UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.GeneralRevive, !isAlive);
 
                 // we'll continue to monitor our selected player every frame to see if their life-state changes.
-                m_SelectedPlayerNetState = charState;
+                m_SelectedPlayerLifeState = networkLifeState;
                 m_WasSelectedPlayerAliveDuringLastUpdate = isAlive;
             }
             else
             {
-                m_SelectedPlayerNetState = null;
+                m_SelectedPlayerLifeState = null;
                 m_WasSelectedPlayerAliveDuringLastUpdate = false;
             }
         }

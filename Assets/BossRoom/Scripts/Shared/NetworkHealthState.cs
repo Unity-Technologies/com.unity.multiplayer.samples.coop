@@ -8,10 +8,16 @@ namespace BossRoom
     /// <summary>
     /// MonoBehaviour containing only one NetworkVariableInt which represents this object's health.
     /// </summary>
-    public class NetworkHealthState : NetworkBehaviour
+    public class NetworkHealthState : NetworkBehaviour, INetworkSubscribable<int>
     {
-        [HideInInspector]
-        public NetworkVariableInt HitPoints = new NetworkVariableInt();
+        [SerializeField]
+        NetworkVariableInt m_NetworkHealth = new NetworkVariableInt();
+
+        public int NetworkHealth
+        {
+            get => m_NetworkHealth.Value;
+            set => m_NetworkHealth.Value = value;
+        }
 
         // public subscribable event to be invoked when HP has been fully depleted
         public event Action HitPointsDepleted;
@@ -19,14 +25,24 @@ namespace BossRoom
         // public subscribable event to be invoked when HP has been replenished
         public event Action HitPointsReplenished;
 
+        public void AddListener(NetworkVariable<int>.OnValueChangedDelegate action)
+        {
+            m_NetworkHealth.OnValueChanged += action;
+        }
+
+        public void RemoveListener(NetworkVariable<int>.OnValueChangedDelegate action)
+        {
+            m_NetworkHealth.OnValueChanged -= action;
+        }
+
         void OnEnable()
         {
-            HitPoints.OnValueChanged += HitPointsChanged;
+            m_NetworkHealth.OnValueChanged += HitPointsChanged;
         }
 
         void OnDisable()
         {
-            HitPoints.OnValueChanged -= HitPointsChanged;
+            m_NetworkHealth.OnValueChanged -= HitPointsChanged;
         }
 
         void HitPointsChanged(int previousValue, int newValue)

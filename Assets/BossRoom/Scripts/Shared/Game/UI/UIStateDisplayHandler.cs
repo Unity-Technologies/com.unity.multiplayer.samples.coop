@@ -9,7 +9,7 @@ namespace BossRoom
     /// <summary>
     /// Class designed to only run on a client. Add this to a world-space prefab to display health or name on UI.
     /// </summary>
-    public class UIStateDisplayHandler : MonoBehaviour
+    public class UIStateDisplayHandler : NetworkBehaviour
     {
         [SerializeField]
         bool m_DisplayHealth;
@@ -28,6 +28,8 @@ namespace BossRoom
         bool m_UIStateActive;
 
         [SerializeField]
+        BossRoomPlayerCharacter m_BossRoomPlayerCharacter;
+
         NetworkNameState m_NetworkNameState;
 
         [SerializeField]
@@ -60,9 +62,13 @@ namespace BossRoom
         Vector3 m_VerticalOffset;
 
         // used to compute corld pos based on target and offsets
-        private Vector3 m_WorldPos;
+        Vector3 m_WorldPos;
 
-        void OnEnable()
+        /// <remarks>
+        /// One needs to wait until NetworkStart to access properties like OwnerId from another NetworkBehaviour or else
+        /// they will contain default values (0).
+        /// </remarks>
+        public override void NetworkStart()
         {
             if (!NetworkManager.Singleton.IsClient)
             {
@@ -79,16 +85,28 @@ namespace BossRoom
 
             Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
             if (m_DisplayHealth)
+            {
                 Assert.IsNotNull(m_NetworkHealthState, "A NetworkHealthState component needs to be attached!");
-            if (m_DisplayName)
-                Assert.IsNotNull(m_NetworkNameState, "A NetworkNameState component needs to be attached!");
+            }
+
             Assert.IsTrue(m_Camera != null && m_CanvasTransform != null);
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
             if (m_DisplayName)
             {
-                DisplayUIName();
+                if (m_BossRoomPlayerCharacter)
+                {
+                    if (m_BossRoomPlayerCharacter.Data)
+                    {
+                        NetworkInitializeName();
+                    }
+                    else
+                    {
+                        m_BossRoomPlayerCharacter.DataSet += NetworkInitializeName;
+                        enabled = false;
+                    }
+                }
             }
 
             if (!m_DisplayHealth)
@@ -104,14 +122,21 @@ namespace BossRoom
             {
                 // the lines below are added in case a player wanted to display a health bar, since their max HP is
                 // dependent on their respective character class
-                m_NetworkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
-                if (m_NetworkCharacterTypeState != null)
+                if (m_BossRoomPlayerCharacter)
                 {
-                    m_NetworkCharacterTypeState.CharacterType.OnValueChanged += CharacterTypeChanged;
-
-                    // we initialize the health bar with our current character type as well
-                    CharacterTypeChanged(m_NetworkCharacterTypeState.CharacterType.Value,
-                        m_NetworkCharacterTypeState.CharacterType.Value);
+                    if (m_BossRoomPlayerCharacter.Data)
+                    {
+                        NetworkInitializeHealth();
+                    }
+                    else
+                    {
+                        m_BossRoomPlayerCharacter.DataSet += NetworkInitializeHealth;
+                        enabled = false;
+                    }
+                }
+                else
+                {
+                    DisplayUIHealth();
                 }
 
                 if (m_NetworkHealthState != null)
@@ -122,6 +147,38 @@ namespace BossRoom
             }
         }
 
+        void NetworkInitializeName()
+        {
+            if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out m_NetworkNameState))
+            {
+                m_NetworkNameState.AddListener(CharacterNameChanged);
+            }
+
+            Assert.IsNotNull(m_NetworkNameState, "A NetworkNameState component has not been set");
+
+            DisplayUIName();
+
+            enabled = true;
+        }
+
+        void NetworkInitializeHealth()
+        {
+            if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out m_NetworkCharacterTypeState))
+            {
+                m_NetworkCharacterTypeState.AddListener(CharacterTypeChanged);
+
+                // we initialize the health bar with our current character type as well
+                CharacterTypeChanged(m_NetworkCharacterTypeState.NetworkCharacterType,
+                    m_NetworkCharacterTypeState.NetworkCharacterType);
+            }
+
+            Assert.IsNotNull(m_NetworkCharacterTypeState, "A NetworkCharacterTypeState component has not been set!");
+
+            DisplayUIName();
+
+            enabled = true;
+        }
+
         void OnDisable()
         {
             if (!m_DisplayHealth)
@@ -129,9 +186,16 @@ namespace BossRoom
                 return;
             }
 
+            if (m_NetworkNameState != null)
+            {
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitializeName;
+                m_NetworkNameState.RemoveListener(CharacterNameChanged);
+            }
+
             if (m_NetworkCharacterTypeState != null)
             {
-                m_NetworkCharacterTypeState.CharacterType.OnValueChanged -= CharacterTypeChanged;
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitializeHealth;
+                m_NetworkCharacterTypeState.RemoveListener(CharacterTypeChanged);
             }
 
             if (m_NetworkHealthState != null)
@@ -148,11 +212,16 @@ namespace BossRoom
             {
                 m_BaseHP = characterClass.BaseHP;
 
-                if (m_NetworkHealthState != null && m_NetworkHealthState.HitPoints.Value > 0)
+                if (m_NetworkHealthState != null && m_NetworkHealthState.NetworkHealth > 0)
                 {
                     DisplayUIHealth();
                 }
             }
+        }
+
+        void CharacterNameChanged(string previousValue, string newValue)
+        {
+            DisplayUIName();
         }
 
         void DisplayUIName()
@@ -167,7 +236,7 @@ namespace BossRoom
                 SpawnUIState();
             }
 
-            m_UIState.DisplayName(m_NetworkNameState.Name);
+            m_UIState.DisplayName(m_NetworkNameState);
             m_UIStateActive = true;
         }
 
@@ -183,7 +252,7 @@ namespace BossRoom
                 SpawnUIState();
             }
 
-            m_UIState.DisplayHealth(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
+            m_UIState.DisplayHealth(m_NetworkHealthState, m_BaseHP.Value);
             m_UIStateActive = true;
         }
 
@@ -222,6 +291,12 @@ namespace BossRoom
 
         void OnDestroy()
         {
+            if (m_BossRoomPlayerCharacter)
+            {
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitializeName;
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitializeHealth;
+            }
+
             if (m_UIState != null)
             {
                 Destroy(m_UIState.gameObject);

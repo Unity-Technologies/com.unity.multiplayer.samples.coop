@@ -49,7 +49,7 @@ MonoBehaviour:
   m_ChannelIdCodesStartRange: 130
   m_AttachSupportLogger: 0
   m_BatchMode: 1
-  m_SendQueueBatchSize: 4096
+  m_SendQueueBatchSize: 4992
   m_BatchedTransportEventCode: 129
   m_KickEventCode: 130
 --- !u!1 &3591499506183471245
@@ -132,7 +132,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5436007408952557947}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: -10}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1092014798135837016}
@@ -174,15 +174,17 @@ MonoBehaviour:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 7898291372908163337}
     RegisteredScenes:
+    - Startup
     - MainMenu
     - CharSelect
     - BossRoom
     - PostGame
-    - Startup
     AllowRuntimeSceneChanges: 1
     NetworkPrefabs:
-    - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
+    - Prefab: {fileID: 4568396743210956375, guid: e1a7a73b1dc3d104189346569ef236a7, type: 3}
       PlayerPrefab: 1
+    - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
+      PlayerPrefab: 0
     - Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
       PlayerPrefab: 0
     - Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
@@ -212,11 +214,11 @@ MonoBehaviour:
     EnableSceneManagement: 1
     ForceSamePrefabs: 0
     UsePrefabSync: 0
-    RecycleNetworkIds: 1
+    RecycleNetworkIds: 0
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
-    EnableMessageBuffering: 0
+    EnableMessageBuffering: 1
     MessageBufferTimeout: 20
     EnableNetworkLogs: 1
   references:
@@ -224,7 +226,7 @@ MonoBehaviour:
     00000000:
       type: {class: NullableBoolSerializable, ns: MLAPI.Configuration, asm: Unity.Multiplayer.MLAPI.Runtime}
       data:
-        Value: 1897319656204293034
+        Value: 11504545503404487402
 --- !u!1 &6889060209805043266
 GameObject:
   m_ObjectHideFlags: 0

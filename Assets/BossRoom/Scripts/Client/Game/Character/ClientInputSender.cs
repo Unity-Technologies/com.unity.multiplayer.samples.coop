@@ -1,6 +1,5 @@
 using MLAPI;
 using System;
-using System.Collections.Generic;
 using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -14,25 +13,27 @@ namespace BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkBehaviour
     {
-        private const float k_MouseInputRaycastDistance = 100f;
+        [SerializeField]
+        BossRoomPlayerCharacter m_BossRoomPlayerCharacter;
+
+        const float k_MouseInputRaycastDistance = 100f;
 
         //The movement input rate is capped at 50ms (or 20 fps). This provides a nice balance between responsiveness and
         //upstream network conservation. This matters when holding down your mouse button to move.
-        private const float k_MoveSendRateSeconds = 0.05f; //20 fps.
+        const float k_MoveSendRateSeconds = 0.05f; //20 fps.
 
+        const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
 
-        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
-
-        private float m_LastSentMove;
+        float m_LastSentMove;
 
         // Cache raycast hit array so that we can use non alloc raycasts
-        private readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
+        readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
 
         // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
-        private LayerMask k_GroundLayerMask;
-        private LayerMask k_ActionLayerMask;
+        LayerMask m_GroundLayerMask;
+        LayerMask m_ActionLayerMask;
 
-        private NetworkCharacterState m_NetworkCharacter;
+        NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
         /// This event fires at the time when an action request is sent to the server.
@@ -53,7 +54,7 @@ namespace BossRoom.Client
             UIRelease,   //represents letting go of the mouse-button on a UI button
         }
 
-        private bool IsReleaseStyle(SkillTriggerStyle style)
+        bool IsReleaseStyle(SkillTriggerStyle style)
         {
             return style == SkillTriggerStyle.KeyboardRelease || style == SkillTriggerStyle.UIRelease;
         }
@@ -66,7 +67,7 @@ namespace BossRoom.Client
         /// <remarks>
         /// Reference: https://answers.unity.com/questions/1141633/why-does-fixedupdate-work-when-update-doesnt.html
         /// </remarks>
-        private struct ActionRequest
+        struct ActionRequest
         {
             public SkillTriggerStyle TriggerStyle;
             public ActionType RequestedAction;
@@ -77,47 +78,73 @@ namespace BossRoom.Client
         /// List of ActionRequests that have been received since the last FixedUpdate ran. This is a static array, to avoid allocs, and
         /// because we don't really want to let this list grow indefinitely.
         /// </summary>
-        private readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
+        readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
 
         /// <summary>
         /// Number of ActionRequests that have been queued since the last FixedUpdate.
         /// </summary>
-        private int m_ActionRequestCount;
+        int m_ActionRequestCount;
 
-        private BaseActionInput m_CurrentSkillInput = null;
-        private bool m_MoveRequest = false;
-
+        BaseActionInput m_CurrentSkillInput;
+        bool m_MoveRequest;
 
         Camera m_MainCamera;
 
         public event Action<Vector3> ClientMoveEvent;
 
-        /// <summary>
-        /// Convenience getter that returns our CharacterData
-        /// </summary>
-        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType];
+        CharacterClass m_CharacterClass;
 
         public override void NetworkStart()
         {
-            if (!IsClient || !IsOwner)
+            if (!IsClient)
             {
                 enabled = false;
+
+                // dont need to do anything else if not a client
+                return;
+            }
+
+            if (m_BossRoomPlayerCharacter)
+            {
+                if (m_BossRoomPlayerCharacter.Data)
+                {
+                    NetworkInitialize();
+                }
+                else
+                {
+                    m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                    enabled = false;
+                }
+            }
+        }
+
+        void NetworkInitialize()
+        {
+            if (!m_BossRoomPlayerCharacter.Data.IsLocalPlayer)
+            {
                 // dont need to do anything else if not the owner
                 return;
             }
 
-            k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
-            k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
+            m_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
+            m_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
+
+            if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+            {
+                m_CharacterClass = GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];
+            }
 
             // find the hero action UI bar
-            GameObject actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
-            actionUIobj.GetComponent<Visual.HeroActionBar>().RegisterInputSender(this);
+            var actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
+            actionUIobj.GetComponent<Visual.HeroActionBar>().RegisterInputSender(m_BossRoomPlayerCharacter);
 
             // find the emote bar to track its buttons
-            GameObject emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
+            var emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
             emoteUIobj.GetComponent<Visual.HeroEmoteBar>().RegisterInputSender(this);
             // once connected to the emote bar, hide it
             emoteUIobj.SetActive(false);
+
+            enabled = true;
         }
 
         void Awake()
@@ -175,7 +202,7 @@ namespace BossRoom.Client
                 {
                     m_LastSentMove = Time.time;
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
+                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_GroundLayerMask) > 0)
                     {
                         m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
 
@@ -192,17 +219,17 @@ namespace BossRoom.Client
         /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
         /// <param name="triggerStyle">What sort of input triggered this skill?</param>
         /// <param name="targetId">(optional) Pass in a specific networkID to target for this action</param>
-        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
+        void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
 
             if (targetId != 0)
             {
                 // if a targetId is given, try to find the object
-                NetworkObject targetNetObj;
-                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj))
+                NetworkObject targetNetworkObject;
+                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetworkObject))
                 {
-                    hitTransform = targetNetObj.transform;
+                    hitTransform = targetNetworkObject.transform;
                 }
             }
             else
@@ -212,7 +239,7 @@ namespace BossRoom.Client
                 if (triggerStyle == SkillTriggerStyle.MouseClick)
                 {
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                    numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
+                    numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_ActionLayerMask);
                 }
 
                 int networkedHitIndex = -1;
@@ -257,7 +284,7 @@ namespace BossRoom.Client
         /// <param name="triggerStyle">How did this skill play get triggered? Mouse, Keyboard, UI etc.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
         /// <returns>true if we should play an action, false otherwise. </returns>
-        private bool GetActionRequestForTarget(Transform hit, ActionType actionType, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
+        bool GetActionRequestForTarget(Transform hit, ActionType actionType, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
         {
             resultData = new ActionRequestData();
 
@@ -276,13 +303,13 @@ namespace BossRoom.Client
                 return false;
             }
 
-            var targetNetState = targetNetObj.GetComponent<NetworkCharacterState>();
-            if (targetNetState != null)
+            if (targetNetObj.TryGetComponent(out NetworkCharacterState networkCharacterState) &&
+                targetNetObj.TryGetComponent(out NetworkLifeState networkLifeState))
             {
                 //Skill1 may be contextually overridden if it was generated from a mouse-click.
-                if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
+                if (actionType == m_CharacterClass.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
-                    if (!targetNetState.IsNpc && targetNetState.LifeState == LifeState.Fainted)
+                    if (!networkCharacterState.IsNpc && networkLifeState.NetworkLife == LifeState.Fainted)
                     {
                         //right-clicked on a downed ally--change the skill play to Revive.
                         actionType = ActionType.GeneralRevive;
@@ -303,7 +330,7 @@ namespace BossRoom.Client
         /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
         /// <param name="action">The action to perform (will be stamped on the resultData)</param>
         /// <param name="resultData">The ActionRequestData to be filled out with additional information.</param>
-        private void PopulateSkillRequest(Vector3 hitPoint, ActionType action, ref ActionRequestData resultData)
+        void PopulateSkillRequest(Vector3 hitPoint, ActionType action, ref ActionRequestData resultData)
         {
             resultData.ActionTypeEnum = action;
             var actionInfo = GameDataSource.Instance.ActionDataByType[action];
@@ -346,6 +373,7 @@ namespace BossRoom.Client
         /// </summary>
         /// <param name="action">the action you'd like to perform. </param>
         /// <param name="triggerStyle">What input style triggered this action.</param>
+        /// <param name="targetId"></param>
         public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             // do not populate an action request unless said action is valid
@@ -370,27 +398,27 @@ namespace BossRoom.Client
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                RequestAction(CharacterData.Skill1, SkillTriggerStyle.Keyboard);
+                RequestAction(m_CharacterClass.Skill1, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha1))
             {
-                RequestAction(CharacterData.Skill1, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(m_CharacterClass.Skill1, SkillTriggerStyle.KeyboardRelease);
             }
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
+                RequestAction(m_CharacterClass.Skill2, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha2))
             {
-                RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(m_CharacterClass.Skill2, SkillTriggerStyle.KeyboardRelease);
             }
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {
-                RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
+                RequestAction(m_CharacterClass.Skill3, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha3))
             {
-                RequestAction(CharacterData.Skill3, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(m_CharacterClass.Skill3, SkillTriggerStyle.KeyboardRelease);
             }
 
             if (Input.GetKeyDown(KeyCode.Alpha4))
@@ -417,7 +445,7 @@ namespace BossRoom.Client
 
                 if (Input.GetMouseButtonDown(1))
                 {
-                    RequestAction(CharacterData.Skill1, SkillTriggerStyle.MouseClick);
+                    RequestAction(m_CharacterClass.Skill1, SkillTriggerStyle.MouseClick);
                 }
 
                 if (Input.GetMouseButtonDown(0))
@@ -428,6 +456,14 @@ namespace BossRoom.Client
                 {
                     m_MoveRequest = true;
                 }
+            }
+        }
+
+        void OnDestroy()
+        {
+            if (m_BossRoomPlayerCharacter)
+            {
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
             }
         }
     }

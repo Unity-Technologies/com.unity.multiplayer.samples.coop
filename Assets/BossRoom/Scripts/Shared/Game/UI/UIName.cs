@@ -1,4 +1,3 @@
-using MLAPI.NetworkVariable;
 using UnityEngine;
 using TMPro;
 
@@ -12,14 +11,15 @@ namespace BossRoom
         [SerializeField]
         TextMeshProUGUI m_UINameText;
 
-        NetworkVariableString m_NetworkedNameTag;
+        NetworkNameState m_NetworkNameState;
 
-        public void Initialize(NetworkVariableString networkedName)
+        public void Initialize(NetworkNameState networkedName)
         {
-            m_NetworkedNameTag = networkedName;
+            m_NetworkNameState = networkedName;
 
-            m_UINameText.text = networkedName.Value;
-            networkedName.OnValueChanged += NameUpdated;
+            m_UINameText.text = networkedName.NetworkName;
+
+            m_NetworkNameState.AddListener(NameUpdated);
         }
 
         void NameUpdated(string previousValue, string newValue)
@@ -29,7 +29,7 @@ namespace BossRoom
 
         void OnDestroy()
         {
-            m_NetworkedNameTag.OnValueChanged -= NameUpdated;
+            m_NetworkNameState.RemoveListener(NameUpdated);
         }
     }
 }

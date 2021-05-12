@@ -12,11 +12,11 @@ namespace BossRoom.Server
     {
         [SerializeField]
         [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_EnemyPrefab;
+        NetworkObject m_EnemyPrefab;
 
         [SerializeField]
         [Tooltip("Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_BossPrefab;
+        NetworkObject m_BossPrefab;
 
         [SerializeField]
         [Tooltip("Key that the Host can press to spawn an extra enemy")]
@@ -30,6 +30,9 @@ namespace BossRoom.Server
         [Tooltip("Key that the Host can press to quit the game")]
         KeyCode m_InstantQuitKeyCode = KeyCode.Q;
 
+        [SerializeField]
+        BossRoomPlayerCharacterRuntimeCollection m_BossRoomPlayerCharacters;
+
         public override void NetworkStart()
         {
             base.NetworkStart();
@@ -41,9 +44,13 @@ namespace BossRoom.Server
             }
         }
 
-        private void Update()
+        void Update()
         {
-            if (!IsServer) { return; } // not initialized yet
+            if (!IsServer)
+            {
+                // not initialized yet
+                return;
+            }
 
             if (m_SpawnEnemyKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnEnemyKeyCode))
             {
@@ -57,8 +64,13 @@ namespace BossRoom.Server
             }
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
-                GameStateRelay.SetRelayObject(false); // indicate to the post-game screen that the game was lost
-                MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
+                foreach (BossRoomPlayerCharacter bossRoomPlayer in m_BossRoomPlayerCharacters.Items)
+                {
+                    if (bossRoomPlayer.TryGetNetworkBehaviour(out NetworkLifeState networkLifeState))
+                    {
+                        networkLifeState.NetworkLife = LifeState.Fainted;
+                    }
+                }
             }
         }
     }

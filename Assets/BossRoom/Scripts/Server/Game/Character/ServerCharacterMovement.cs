@@ -16,32 +16,37 @@ namespace BossRoom.Server
     /// <summary>
     /// Component responsible for moving a character on the server side based on inputs.
     /// </summary>
-    [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent), typeof(ServerCharacter)), RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent)), RequireComponent(typeof(Rigidbody))]
     public class ServerCharacterMovement : NetworkBehaviour
     {
-        private NavMeshAgent m_NavMeshAgent;
-        private Rigidbody m_Rigidbody;
-        private NetworkCharacterState m_NetworkCharacterState;
-        private NavigationSystem m_NavigationSystem;
+        [SerializeField]
+        BossRoomPlayerCharacter m_BossRoomPlayerCharacter;
+        [SerializeField]
+        NavMeshAgent m_NavMeshAgent;
+        [SerializeField]
+        Rigidbody m_Rigidbody;
+        [SerializeField]
+        NetworkCharacterState m_NetworkCharacterState;
+        NavigationSystem m_NavigationSystem;
 
-        private DynamicNavPath m_NavPath;
+        DynamicNavPath m_NavPath;
 
-        private MovementState m_MovementState;
-        private ServerCharacter m_CharLogic;
+        MovementState m_MovementState;
 
         // when we are in charging and knockback mode, we use these additional variables
-        private float m_ForcedSpeed;
-        private float m_SpecialModeDurationRemaining;
+        float m_ForcedSpeed;
+        float m_SpecialModeDurationRemaining;
 
         // this one is specific to knockback mode
-        private Vector3 m_KnockbackVector;
+        Vector3 m_KnockbackVector;
 
-        private void Awake()
+        // This field is exposed in the editor for prefabs which have a non-changing character type (ie. NPCs). For
+        // players, this field is set on spawn. This will be refactored further.
+        [SerializeField]
+        CharacterClass m_CharacterData;
+
+        void Awake()
         {
-            m_NavMeshAgent = GetComponent<NavMeshAgent>();
-            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
-            m_CharLogic = GetComponent<ServerCharacter>();
-            m_Rigidbody = GetComponent<Rigidbody>();
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
         }
 
@@ -54,11 +59,41 @@ namespace BossRoom.Server
                 return;
             }
 
+            if (m_BossRoomPlayerCharacter)
+            {
+                if (m_BossRoomPlayerCharacter.Data)
+                {
+                    NetworkInitialize();
+                }
+                else
+                {
+                    m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                    enabled = false;
+                }
+            }
+            else
+            {
+                NetworkInitialize();
+            }
+        }
+
+        void NetworkInitialize()
+        {
+            if (m_BossRoomPlayerCharacter &&
+                m_BossRoomPlayerCharacter.Data &&
+                m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+            {
+                m_CharacterData =
+                    GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];
+            }
+
             m_NetworkCharacterState.InitNetworkPositionAndRotationY(transform.position, transform.rotation.eulerAngles.y);
 
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
             m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
+
+            enabled = true;
         }
 
         /// <summary>
@@ -147,7 +182,7 @@ namespace BossRoom.Server
             m_Rigidbody.rotation = transform.rotation;
         }
 
-        private void FixedUpdate()
+        void FixedUpdate()
         {
             PerformMovement();
 
@@ -158,7 +193,7 @@ namespace BossRoom.Server
             m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
         }
 
-        private void OnValidate()
+        void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
@@ -169,15 +204,19 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
+            if (m_BossRoomPlayerCharacter)
+            {
+                m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+            }
             if (m_NavPath != null)
             {
                 m_NavPath.Dispose();
             }
         }
 
-        private void PerformMovement()
+        void PerformMovement()
         {
             if (m_MovementState == MovementState.Idle)
                 return;
@@ -230,7 +269,7 @@ namespace BossRoom.Server
             m_Rigidbody.rotation = transform.rotation;
         }
 
-        private float GetMaxMovementSpeed()
+        float GetMaxMovementSpeed()
         {
             switch (m_MovementState)
             {
@@ -247,18 +286,17 @@ namespace BossRoom.Server
         /// <summary>
         /// Retrieves the speed for this character's class.
         /// </summary>
-        private float GetBaseMovementSpeed()
+        float GetBaseMovementSpeed()
         {
-            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.NetState.CharacterType];
-            Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.NetState.CharacterType}");
-            return characterClass.Speed;
+            Assert.IsNotNull(m_CharacterData, "No CharacterClass data for character");
+            return m_CharacterData.Speed;
         }
 
         /// <summary>
         /// Determines the appropriate MovementStatus for the character. The
         /// MovementStatus is used by the client code when animating the character.
         /// </summary>
-        private MovementStatus GetMovementStatus()
+        MovementStatus GetMovementStatus()
         {
             switch (m_MovementState)
             {

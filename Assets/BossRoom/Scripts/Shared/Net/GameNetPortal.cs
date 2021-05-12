@@ -14,7 +14,7 @@ namespace BossRoom
         Success,                  //client successfully connected. This may also be a successful reconnect.
         ServerFull,               //can't join, server is already at capacity.
         LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
-        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user. 
+        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
     }
 
@@ -55,8 +55,6 @@ namespace BossRoom
     ///
     public class GameNetPortal : MonoBehaviour
     {
-        public GameObject NetworkManagerGO;
-
         /// <summary>
         /// This event is fired when MLAPI has reported that it has finished initialization, and is ready for
         /// business, equivalent to OnServerStarted on the server, and OnClientConnected on the client.
@@ -82,27 +80,24 @@ namespace BossRoom
 
         /// <summary>
         /// This fires in response to GameNetPortal.RequestDisconnect. It's a local signal (not from the network), indicating that
-        /// the user has requested a disconnect. 
+        /// the user has requested a disconnect.
         /// </summary>
         public event Action UserDisconnectRequested;
-
-        public NetworkManager NetManager { get; private set; }
 
         /// <summary>
         /// the name of the player chosen at game start
         /// </summary>
+        [HideInInspector]
         public string PlayerName;
 
         void Start()
         {
             DontDestroyOnLoad(gameObject);
 
-            NetManager = NetworkManagerGO.GetComponent<NetworkManager>();
-
             //we synthesize a "NetworkStart" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
-            NetManager.OnServerStarted += OnNetworkReady;
-            NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
+            NetworkManager.Singleton.OnServerStarted += OnNetworkReady;
+            NetworkManager.Singleton.OnClientConnectedCallback += ClientNetworkReadyWrapper;
 
             //we register these without knowing whether we're a client or host. This is because certain messages can be sent super-early,
             //before we even get our ClientConnected event (if acting as a client). It should be harmless to have server handlers registered
@@ -113,28 +108,27 @@ namespace BossRoom
             RegisterServerMessageHandlers();
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
-            if( NetManager != null )
+            if (NetworkManager.Singleton != null)
             {
-                NetManager.OnServerStarted -= OnNetworkReady;
-                NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
+                NetworkManager.Singleton.OnServerStarted -= OnNetworkReady;
+                NetworkManager.Singleton.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
             }
 
             UnregisterClientMessageHandlers();
             UnregisterServerMessageHandlers();
         }
 
-
-        private void ClientNetworkReadyWrapper(ulong clientId)
+        void ClientNetworkReadyWrapper(ulong clientId)
         {
-            if (clientId == NetManager.LocalClientId)
+            if (clientId == NetworkManager.Singleton.LocalClientId)
             {
                 OnNetworkReady();
             }
         }
 
-        private void RegisterClientMessageHandlers()
+        void RegisterClientMessageHandlers()
         {
             MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientConnectResult", (senderClientId, stream) =>
             {
@@ -157,7 +151,7 @@ namespace BossRoom
             });
         }
 
-        private void RegisterServerMessageHandlers()
+        void RegisterServerMessageHandlers()
         {
             MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ClientToServerSceneChanged", (senderClientId, stream) =>
             {
@@ -171,25 +165,24 @@ namespace BossRoom
             });
         }
 
-        private void UnregisterClientMessageHandlers()
+        void UnregisterClientMessageHandlers()
         {
             MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
             MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
         }
 
-        private void UnregisterServerMessageHandlers()
+        void UnregisterServerMessageHandlers()
         {
             MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ClientToServerSceneChanged");
         }
-
 
         /// <summary>
         /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
         /// </summary>
-        private void OnNetworkReady()
+        void OnNetworkReady()
         {
-            if (NetManager.IsHost)
+            if (NetworkManager.Singleton.IsHost)
             {
                 //special host code. This is what kicks off the flow that happens on a regular client
                 //when it has finished connecting successfully. A dedicated server would remove this.
@@ -227,7 +220,7 @@ namespace BossRoom
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
             }
 
-            NetManager.StartHost();
+            NetworkManager.Singleton.StartHost();
         }
 
         public void StartRelayHost(string roomName)
@@ -244,7 +237,7 @@ namespace BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            NetManager.StartHost();
+            NetworkManager.Singleton.StartHost();
         }
 
         /// <summary>
@@ -254,7 +247,6 @@ namespace BossRoom
         /// <param name="status"> the status to pass to the client</param>
         public void ServerToClientConnectResult(ulong netId, ConnectStatus status)
         {
-
             using (var buffer = PooledNetworkBuffer.Get())
             {
                 using (var writer = PooledNetworkWriter.Get(buffer))
@@ -277,32 +269,35 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer, NetworkChannel.Internal);
+                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason",
+                        netId,
+                        buffer);
                 }
             }
         }
 
         public void ClientToServerSceneChanged(int newScene)
         {
-            if(NetManager.IsHost)
+            if (NetworkManager.Singleton.IsHost)
             {
-                ClientSceneChanged?.Invoke(NetManager.ServerClientId, newScene);
+                ClientSceneChanged?.Invoke(NetworkManager.Singleton.ServerClientId, newScene);
             }
-            else if(NetManager.IsConnectedClient)
+            else if (NetworkManager.Singleton.IsConnectedClient)
             {
                 using (var buffer = PooledNetworkBuffer.Get())
                 {
                     using (var writer = PooledNetworkWriter.Get(buffer))
                     {
                         writer.WriteInt32(newScene);
-                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ClientToServerSceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
+                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ClientToServerSceneChanged",
+                            NetworkManager.Singleton.ServerClientId, buffer);
                     }
                 }
             }
         }
 
         /// <summary>
-        /// This will disconnect (on the client) or shutdown the server (on the host). 
+        /// This will disconnect (on the client) or shutdown the server (on the host).
         /// </summary>
         public void RequestDisconnect()
         {

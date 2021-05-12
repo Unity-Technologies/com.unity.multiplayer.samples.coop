@@ -29,12 +29,12 @@ namespace BossRoom.Server
 
             Assert.IsNotNull(m_NetworkLifeState, "NetworkLifeState has not been set!");
 
-            m_NetworkLifeState.LifeState.OnValueChanged += LifeStateChanged;
+            m_NetworkLifeState.AddListener(LifeStateChanged);
         }
 
         void OnDestroy()
         {
-            m_NetworkLifeState.LifeState.OnValueChanged -= LifeStateChanged;
+            m_NetworkLifeState.RemoveListener(LifeStateChanged);
         }
 
         void LifeStateChanged(LifeState previousValue, LifeState newValue)

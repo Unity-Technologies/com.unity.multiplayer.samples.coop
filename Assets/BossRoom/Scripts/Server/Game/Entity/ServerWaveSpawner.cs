@@ -2,7 +2,6 @@ using MLAPI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MLAPI.Connection;
 
 namespace BossRoom.Server
 {
@@ -261,7 +260,7 @@ namespace BossRoom.Server
             int numPlayers = 0;
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (serverCharacter.NetState.NetworkLifeState.LifeState.Value == LifeState.Alive)
+                if (serverCharacter.NetworkLifeState.NetworkLife == LifeState.Alive)
                 {
                     ++numPlayers;
                 }

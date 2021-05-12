@@ -15,7 +15,6 @@ MonoBehaviour:
   m_DisplayHealth: 1
   m_DisplayName: 0
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
-  m_NetworkNameState: {fileID: 0}
   m_NetworkHealthState: {fileID: 848206395698055335}
   m_BaseHP: {fileID: 11400000, guid: f393c51c2bce455478a0b995b8d4e3dd, type: 2}
   m_TransformToTrack: {fileID: 2561745155600296936}
@@ -57,10 +56,22 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -174416280147701473, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_NetworkCharacterType.m_InternalValue
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 3288448142974003537, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_Name
       value: ImpBoss
       objectReference: {fileID: 0}
+    - target: {fileID: 3288448142974003541, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_CharacterData
+      value: 
+      objectReference: {fileID: 11400000, guid: 1fdbcd02edb11484a91de118f5ef44b3, type: 2}
+    - target: {fileID: 3288448142974003543, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_CharacterData
+      value: 
+      objectReference: {fileID: 11400000, guid: 1fdbcd02edb11484a91de118f5ef44b3, type: 2}
     - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: PrefabHash
       value: 10222221329416050842
@@ -112,6 +123,14 @@ PrefabInstance:
     - target: {fileID: 3288448142974003547, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3290951984472920787, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_CharacterData
+      value: 
+      objectReference: {fileID: 11400000, guid: 1fdbcd02edb11484a91de118f5ef44b3, type: 2}
+    - target: {fileID: 3290951984472920787, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_CharacterType
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 3290951984472920787, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_KilledDestroyDelaySeconds

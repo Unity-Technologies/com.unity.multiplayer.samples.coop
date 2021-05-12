@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 4600110157238723791}
   - component: {fileID: 4600110157238723790}
   - component: {fileID: 4600110157238723777}
-  - component: {fileID: 4600110157238723776}
   - component: {fileID: 4600110157238723779}
   - component: {fileID: 4470766618279719912}
   - component: {fileID: -3542424572169399493}
@@ -20,8 +19,8 @@ GameObject:
   - component: {fileID: 7690172137830037487}
   - component: {fileID: -909640835356089789}
   - component: {fileID: 514105321093282895}
-  - component: {fileID: 4462343263575301329}
   - component: {fileID: -5107732197415868221}
+  - component: {fileID: 1667492069087111410}
   m_Layer: 3
   m_Name: Character
   m_TagString: Player
@@ -72,26 +71,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edb78c1621dad5149bb47b96120d3fbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkHealthState: {fileID: 514105321093282895}
-  Mana:
-    m_InternalValue: 0
+  m_BossRoomPlayer: {fileID: 0}
   m_NetworkLifeState: {fileID: -5107732197415868221}
-  m_NetworkCharacterTypeState: {fileID: 4462343263575301329}
-  m_NetworkNameState: {fileID: 0}
-  CharacterAppearance:
-    m_InternalValue: 0
---- !u!114 &4600110157238723776
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600110157238723781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 331c67f15523ad7419792662b9768f44, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  m_CharacterData: {fileID: 0}
 --- !u!114 &4600110157238723779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,12 +81,16 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4600110157238723781}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fdad0914904cc1e47933ecd7a58514ac, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_MovementSpeed: 4
+  m_BossRoomPlayer: {fileID: 0}
+  m_NavMeshAgent: {fileID: -3542424572169399493}
+  m_Rigidbody: {fileID: 4470766618279719912}
+  m_NetworkCharacterState: {fileID: 4600110157238723777}
+  m_CharacterData: {fileID: 0}
 --- !u!54 &4470766618279719912
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -169,9 +155,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 920a440eb254ba348915767fd046027a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_BossRoomPlayer: {fileID: 0}
+  m_Movement: {fileID: 4600110157238723779}
+  m_NetworkCharacterState: {fileID: 4600110157238723777}
+  m_NetworkHealthState: {fileID: 514105321093282895}
+  m_NetworkLifeState: {fileID: -5107732197415868221}
   m_BrainEnabled: 1
   m_KilledDestroyDelaySeconds: 3
   m_StartingAction: 0
+  m_CharacterData: {fileID: 0}
 --- !u!114 &7690172137830037487
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -208,21 +200,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6733907396f36c44891916e5c62f25a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HitPoints:
-    m_InternalValue: 0
---- !u!114 &4462343263575301329
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600110157238723781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 082f826a48a1017479079f944dff718f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  CharacterType:
+  m_NetworkHealth:
     m_InternalValue: 0
 --- !u!114 &-5107732197415868221
 MonoBehaviour:
@@ -236,3 +214,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 818290ebb0ac23541921b4dfc6842778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_NetworkLife:
+    m_InternalValue: 0
+--- !u!114 &1667492069087111410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600110157238723781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e138b8f23e49b1042857391cd30e1d6d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NetworkBehaviours: []

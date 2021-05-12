@@ -1,78 +1,125 @@
 using System.Collections;
-using System.Collections.Generic;
 using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
-    [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
+    [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState),
+        typeof(NetworkLifeState)), RequireComponent(typeof(NetworkHealthState))]
     public class ServerCharacter : NetworkBehaviour, IDamageable
     {
-        public NetworkCharacterState NetState { get; private set; }
+        [SerializeField]
+        BossRoomPlayerCharacter m_BossRoomPlayerCharacter;
+
+        [SerializeField]
+        ServerCharacterMovement m_Movement;
+
+        [SerializeField]
+        NetworkCharacterState m_NetworkCharacterState;
+
+        public NetworkCharacterState NetState => m_NetworkCharacterState;
+
+        [SerializeField]
+        NetworkHealthState m_NetworkHealthState;
+
+        [SerializeField]
+        NetworkLifeState m_NetworkLifeState;
+
+        public NetworkLifeState NetworkLifeState => m_NetworkLifeState;
 
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNpc
-        {
-            get { return NetState.IsNpc; }
-        }
+        public bool IsNpc => m_CharacterData.IsNpc;
 
         /// <summary>
         /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
         /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
         /// </summary>
-        public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
+        public ActionPlayer RunningActions => m_ActionPlayer;
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
-        private bool m_BrainEnabled = true;
+        bool m_BrainEnabled = true;
 
         [SerializeField]
         [Tooltip("Setting negative value disables destroying object after it is killed.")]
-        private float m_KilledDestroyDelaySeconds = 3.0f;
+        float m_KilledDestroyDelaySeconds = 3.0f;
 
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
-        private ActionType m_StartingAction = ActionType.None;
+        ActionType m_StartingAction = ActionType.None;
 
-        private ActionPlayer m_ActionPlayer;
-        private AIBrain m_AIBrain;
+        ActionPlayer m_ActionPlayer;
 
-        // Cached component reference
-        private ServerCharacterMovement m_Movement;
+        /// <summary>
+        /// This character's AIBrain. Will be null if this is not an NPC.
+        /// </summary>
+        public AIBrain AIBrain { get; private set; }
 
-        private void Awake()
-        {
-            m_Movement = GetComponent<ServerCharacterMovement>();
-
-            NetState = GetComponent<NetworkCharacterState>();
-            m_ActionPlayer = new ActionPlayer(this);
-            if (IsNpc)
-            {
-                m_AIBrain = new AIBrain(this, m_ActionPlayer);
-            }
-        }
+        // This field is exposed in the editor for prefabs which have a non-changing character type (ie. NPCs). For
+        // players, this field is set on spawn. This will be refactored further.
+        [SerializeField]
+        CharacterClass m_CharacterData;
 
         public override void NetworkStart()
         {
-            if (!IsServer) { enabled = false; }
+            if (!IsServer)
+            {
+                enabled = false;
+            }
             else
             {
-                NetState = GetComponent<NetworkCharacterState>();
-                NetState.DoActionEventServer += OnActionPlayRequest;
-                NetState.ReceivedClientInput += OnClientMoveRequest;
-                NetState.OnStopChargingUpServer += OnStoppedChargingUp;
-                NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
-
-                NetState.ApplyCharacterData();
-
-                if (m_StartingAction != ActionType.None)
+                if (m_BossRoomPlayerCharacter)
                 {
-                    var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
-                    PlayAction(ref startingAction);
+                    if (m_BossRoomPlayerCharacter.Data)
+                    {
+                        NetworkInitialize();
+                    }
+                    else
+                    {
+                        m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                        enabled = false;
+                    }
+                }
+                else
+                {
+                    NetworkInitialize();
                 }
             }
+        }
+
+        void NetworkInitialize()
+        {
+            // create AI classes
+            m_ActionPlayer = new ActionPlayer(this);
+
+            if (m_BossRoomPlayerCharacter &&
+                m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+            {
+                m_CharacterData = GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];
+            }
+
+            if (IsNpc)
+            {
+                AIBrain = new AIBrain(this, m_ActionPlayer);
+            }
+
+            NetState.DoActionEventServer += OnActionPlayRequest;
+            NetState.ReceivedClientInput += OnClientMoveRequest;
+            NetState.OnStopChargingUpServer += OnStoppedChargingUp;
+            m_NetworkLifeState.AddListener(OnLifeStateChanged);
+
+            // assign starting health value
+            m_NetworkHealthState.NetworkHealth = m_CharacterData.BaseHP.Value;
+
+            if (m_StartingAction != ActionType.None)
+            {
+                var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
+                PlayAction(ref startingAction);
+            }
+
+            enabled = true;
         }
 
         public void OnDestroy()
@@ -82,7 +129,12 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer -= OnActionPlayRequest;
                 NetState.ReceivedClientInput -= OnClientMoveRequest;
                 NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
-                NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
+                m_NetworkLifeState.AddListener(OnLifeStateChanged);
+            }
+
+            if (m_BossRoomPlayerCharacter)
+            {
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
             }
         }
 
@@ -92,7 +144,7 @@ namespace BossRoom.Server
         public void PlayAction(ref ActionRequestData action)
         {
             //the character needs to be alive in order to be able to play actions
-            if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            if (m_NetworkLifeState.NetworkLife == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 if (action.CancelMovement)
                 {
@@ -103,9 +155,9 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnClientMoveRequest(Vector3 targetPosition)
+        void OnClientMoveRequest(Vector3 targetPosition)
         {
-            if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            if (m_NetworkLifeState.NetworkLife == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 // if we're currently playing an interruptible action, interrupt it!
                 if (m_ActionPlayer.GetActiveActionInfo(out ActionRequestData data))
@@ -124,7 +176,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
             if (lifeState != LifeState.Alive)
             {
@@ -133,7 +185,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnActionPlayRequest(ActionRequestData data)
+        void OnActionPlayRequest(ActionRequestData data)
         {
             if (!GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].IsFriendly)
             {
@@ -175,32 +227,33 @@ namespace BossRoom.Server
                 HP = (int)(HP * damageMod);
             }
 
-            NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
+            m_NetworkHealthState.NetworkHealth = Mathf.Min(m_CharacterData.BaseHP.Value,
+                m_NetworkHealthState.NetworkHealth + HP);
 
-            if( m_AIBrain != null )
+            if( AIBrain != null )
             {
                 //let the brain know about the modified amount of damage we received.
-                m_AIBrain.ReceiveHP(inflicter, HP);
+                AIBrain.ReceiveHP(inflicter, HP);
             }
 
             //we can't currently heal a dead character back to Alive state.
             //that's handled by a separate function.
-            if (NetState.HitPoints <= 0)
+            if (m_NetworkHealthState.NetworkHealth <= 0)
             {
                 m_ActionPlayer.ClearActions(false);
 
                 if (IsNpc)
                 {
-                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.LifeState != LifeState.Dead)
+                    if (m_KilledDestroyDelaySeconds >= 0.0f && m_NetworkLifeState.NetworkLife != LifeState.Dead)
                     {
                         StartCoroutine(KilledDestroyProcess());
                     }
 
-                    NetState.LifeState = LifeState.Dead;
+                    m_NetworkLifeState.NetworkLife = LifeState.Dead;
                 }
                 else
                 {
-                    NetState.LifeState = LifeState.Fainted;
+                    m_NetworkLifeState.NetworkLife = LifeState.Fainted;
                 }
             }
         }
@@ -223,23 +276,27 @@ namespace BossRoom.Server
         /// <param name="HP">The HP to set to a newly revived character.</param>
         public void Revive(ServerCharacter inflicter, int HP)
         {
-            if (NetState.LifeState == LifeState.Fainted)
+            if (m_NetworkLifeState.NetworkLife == LifeState.Fainted)
             {
-                NetState.HitPoints = Mathf.Clamp(HP, 0, NetState.CharacterData.BaseHP.Value);
-                NetState.NetworkLifeState.LifeState.Value = LifeState.Alive;
+                m_NetworkHealthState.NetworkHealth = Mathf.Clamp(HP, 0, m_CharacterData.BaseHP.Value);
+                m_NetworkLifeState.NetworkLife = LifeState.Alive;
             }
         }
 
         void Update()
         {
-            m_ActionPlayer.Update();
-            if (m_AIBrain != null && NetState.LifeState == LifeState.Alive && m_BrainEnabled)
+            if (m_ActionPlayer != null)
             {
-                m_AIBrain.Update();
+                m_ActionPlayer.Update();
+            }
+
+            if (AIBrain != null && m_NetworkLifeState.NetworkLife == LifeState.Alive && m_BrainEnabled)
+            {
+                AIBrain.Update();
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
+        void OnCollisionEnter(Collision collision)
         {
             if (m_ActionPlayer != null)
             {
@@ -247,7 +304,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnStoppedChargingUp()
+        void OnStoppedChargingUp()
         {
             m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }
@@ -259,12 +316,7 @@ namespace BossRoom.Server
 
         public bool IsDamageable()
         {
-            return NetState.NetworkLifeState.LifeState.Value == LifeState.Alive;
+            return m_NetworkLifeState.NetworkLife == LifeState.Alive;
         }
-
-        /// <summary>
-        /// This character's AIBrain. Will be null if this is not an NPC.
-        /// </summary>
-        public AIBrain AIBrain { get { return m_AIBrain; } }
     }
 }

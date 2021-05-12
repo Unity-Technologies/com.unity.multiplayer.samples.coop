@@ -25,9 +25,9 @@ namespace BossRoom.Server
         [Tooltip("Indicate which special interaction behaviors are needed for this breakable")]
         IDamageable.SpecialDamageFlags m_SpecialDamageFlags;
 
-        private NetworkBreakableState m_State;
+        NetworkBreakableState m_State;
 
-        private void Awake()
+        void Awake()
         {
             m_State = GetComponent<NetworkBreakableState>();
         }
@@ -42,7 +42,7 @@ namespace BossRoom.Server
             {
                 if (m_MaxHealth && m_NetworkHealthState)
                 {
-                    m_NetworkHealthState.HitPoints.Value = m_MaxHealth.Value;
+                    m_NetworkHealthState.NetworkHealth = m_MaxHealth.Value;
                 }
             }
         }
@@ -63,8 +63,8 @@ namespace BossRoom.Server
 
                 if (m_NetworkHealthState)
                 {
-                    m_NetworkHealthState.HitPoints.Value = Mathf.Max(m_NetworkHealthState.HitPoints.Value + HP, 0);
-                    if (m_NetworkHealthState.HitPoints.Value <= 0)
+                    m_NetworkHealthState.NetworkHealth = Mathf.Max(m_NetworkHealthState.NetworkHealth + HP, 0);
+                    if (m_NetworkHealthState.NetworkHealth <= 0)
                     {
                         Break();
                     }
@@ -77,7 +77,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void Break()
+        void Break()
         {
             m_State.IsBroken.Value = true;
             if (m_Collider)
@@ -88,9 +88,14 @@ namespace BossRoom.Server
         {
             m_State.IsBroken.Value = false;
             if (m_Collider)
+            {
                 m_Collider.enabled = true;
+            }
+
             if (m_MaxHealth && m_NetworkHealthState)
-                m_NetworkHealthState.HitPoints.Value = m_MaxHealth.Value;
+            {
+                m_NetworkHealthState.NetworkHealth = m_MaxHealth.Value;
+            }
         }
 
         public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()
@@ -105,7 +110,7 @@ namespace BossRoom.Server
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             if (!m_Collider)
                 m_Collider = GetComponent<Collider>();

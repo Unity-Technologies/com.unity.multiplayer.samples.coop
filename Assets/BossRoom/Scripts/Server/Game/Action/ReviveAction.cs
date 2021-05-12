@@ -6,8 +6,9 @@ namespace BossRoom.Server
 {
     public class ReviveAction : Action
     {
-        private bool m_ExecFired;
-        private ServerCharacter m_TargetCharacter;
+        bool m_ExecFired;
+        ServerCharacter m_TargetCharacter;
+        NetworkLifeState m_NetworkLifeState;
 
         public ReviveAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
@@ -22,6 +23,7 @@ namespace BossRoom.Server
             }
 
             var targetNetworkObject = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+            m_NetworkLifeState = targetNetworkObject.GetComponent<NetworkLifeState>();
             m_TargetCharacter = targetNetworkObject.GetComponent<ServerCharacter>();
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
@@ -34,7 +36,7 @@ namespace BossRoom.Server
             {
                 m_ExecFired = true;
 
-                if (m_TargetCharacter.NetState.LifeState == LifeState.Fainted)
+                if (m_NetworkLifeState.NetworkLife == LifeState.Fainted)
                 {
                     Assert.IsTrue(Description.Amount > 0, "Revive amount must be greater than 0.");
                     m_TargetCharacter.Revive(m_Parent, Description.Amount);
@@ -46,7 +48,6 @@ namespace BossRoom.Server
                     return false;
                 }
             }
-
 
             return true;
         }

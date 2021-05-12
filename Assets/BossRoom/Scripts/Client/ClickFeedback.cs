@@ -7,46 +7,77 @@ namespace BossRoom.Client
     /// Responsible for managing and creating a feedback icon where the player clicked to move
     /// </summary>
     [RequireComponent(typeof(ClientInputSender))]
-  public class ClickFeedback : MonoBehaviour
-  {
-    [SerializeField]
-    GameObject m_FeedbackPrefab;
-    GameObject m_FeedbackObj;
-    ClientInputSender m_ClientSender;
-
-    private const float HOVER_HEIGHT = .1f;
-
-    // Start is called before the first frame update
-    void Start()
+    public class ClickFeedback : NetworkBehaviour
     {
-        var networkedObject = GetComponent<NetworkObject>();
-        if (networkedObject == null || !networkedObject.IsLocalPlayer)
+        [SerializeField]
+        BossRoomPlayerCharacter m_BossRoomPlayerCharacter;
+
+        [SerializeField]
+        ClientInputSender m_ClientInputSender;
+
+        [SerializeField]
+        GameObject m_FeedbackPrefab;
+
+        GameObject m_FeedbackObj;
+
+        const float k_HoverHeight = .1f;
+
+        public override void NetworkStart()
         {
-            Destroy(this);
-            return;
+            if (!IsClient)
+            {
+                Destroy(this);
+            }
+            else
+            {
+                if (m_BossRoomPlayerCharacter)
+                {
+                    if (m_BossRoomPlayerCharacter.Data)
+                    {
+                        NetworkInitialize();
+                    }
+                    else
+                    {
+                        m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                        enabled = false;
+                    }
+                }
+            }
         }
 
-      m_ClientSender = GetComponent<ClientInputSender>();
-      m_ClientSender.ClientMoveEvent += onClientMove;
-      m_FeedbackObj = Instantiate(m_FeedbackPrefab);
-      m_FeedbackObj.SetActive(false);
-    }
-
-    void onClientMove(Vector3 position)
-    {
-      position.y += HOVER_HEIGHT;
-
-      m_FeedbackObj.transform.position = position;
-      m_FeedbackObj.SetActive(true);
-    }
-
-    private void OnDestroy()
-    {
-        if (m_ClientSender)
+        void NetworkInitialize()
         {
-            m_ClientSender.ClientMoveEvent -= onClientMove;
+            if (!m_BossRoomPlayerCharacter.Data.IsLocalPlayer)
+            {
+                Destroy(this);
+                return;
+            }
+
+            m_ClientInputSender.ClientMoveEvent += OnClientMove;
+            m_FeedbackObj = Instantiate(m_FeedbackPrefab);
+            m_FeedbackObj.SetActive(false);
+
+            enabled = true;
+        }
+
+        void OnClientMove(Vector3 position)
+        {
+            position.y += k_HoverHeight;
+
+            m_FeedbackObj.transform.position = position;
+            m_FeedbackObj.SetActive(true);
+        }
+
+        void OnDestroy()
+        {
+            if (m_BossRoomPlayerCharacter)
+            {
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
+            }
+            if (m_ClientInputSender)
+            {
+                m_ClientInputSender.ClientMoveEvent -= OnClientMove;
+            }
         }
     }
-  }
 }
-

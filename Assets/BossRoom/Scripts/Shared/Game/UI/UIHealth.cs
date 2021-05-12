@@ -1,4 +1,3 @@
-using MLAPI.NetworkVariable;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,17 +11,17 @@ namespace BossRoom
         [SerializeField]
         Slider m_HitPointsSlider;
 
-        NetworkVariableInt m_NetworkedHealth;
+        NetworkHealthState m_NetworkHealthState;
 
-        public void Initialize(NetworkVariableInt networkedHealth, int maxValue)
+        public void Initialize(NetworkHealthState networkedHealth, int maxValue)
         {
-            m_NetworkedHealth = networkedHealth;
+            m_NetworkHealthState = networkedHealth;
 
             m_HitPointsSlider.minValue = 0;
             m_HitPointsSlider.maxValue = maxValue;
             HealthChanged(maxValue, maxValue);
 
-            m_NetworkedHealth.OnValueChanged += HealthChanged;
+            m_NetworkHealthState.AddListener(HealthChanged);
         }
 
         void HealthChanged(int previousValue, int newValue)
@@ -34,7 +33,7 @@ namespace BossRoom
 
         void OnDestroy()
         {
-            m_NetworkedHealth.OnValueChanged -= HealthChanged;
+            m_NetworkHealthState.RemoveListener(HealthChanged);
         }
     }
 }

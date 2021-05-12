@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -14,46 +13,45 @@ namespace BossRoom.Visual
     public class PartyHUD : MonoBehaviour
     {
         [SerializeField]
-        private Image m_HeroPortrait;
+        Image m_HeroPortrait;
 
         [SerializeField]
-        private GameObject[] m_AllyPanel;
+        GameObject[] m_AllyPanel;
 
         [SerializeField]
-        private TextMeshProUGUI[] m_PartyNames;
+        TextMeshProUGUI[] m_PartyNames;
 
         [SerializeField]
-        private Image[] m_PartyClassSymbols;
+        Image[] m_PartyClassSymbols;
 
         [SerializeField]
-        private Slider[] m_PartyHealthSliders;
+        Slider[] m_PartyHealthSliders;
 
         [SerializeField]
-        private Sprite[] m_PortraitAppearances;
+        Sprite[] m_PortraitAppearances;
 
         // set sprites for classes - order must match class enum
         [SerializeField]
-        private Sprite[] m_ClassSymbols;
+        Sprite[] m_ClassSymbols;
 
         // track a list of hero (slot 0) + allies
-        private ulong[] m_PartyIds;
+        ulong[] m_PartyIds;
 
         // track Hero's target to show when it is the Hero or an ally
-        private ulong m_CurrentTarget;
+        ulong m_CurrentTarget;
 
-        private Dictionary<ulong, NetworkCharacterState> m_TrackedHeroes = new Dictionary<ulong, NetworkCharacterState>();
+        Dictionary<ulong, NetworkCharacterState> m_TrackedHeroes = new Dictionary<ulong, NetworkCharacterState>();
 
-        private Client.ClientInputSender m_ClientSender;
+        Client.ClientInputSender m_ClientSender;
 
-        public void SetHeroData(NetworkCharacterState netState)
+        public void SetHeroData(NetworkCharacterState netState, int appearance, CharacterTypeEnum characterType, int HP, string playerName)
         {
             // Make sure arrays are initialized
             InitPartyArrays();
             // Hero is always our slot 0
             m_PartyIds[0] = netState.NetworkObject.NetworkObjectId;
-            SetUIFromSlotData(0, netState);
-            // Hero also gets a protrait
-            int appearance = netState.CharacterAppearance.Value;
+            SetUIFromSlotData(0, characterType, HP, playerName);
+            // Hero also gets a portrait
             if (appearance < m_PortraitAppearances.Length)
             {
                 m_HeroPortrait.sprite = m_PortraitAppearances[appearance];
@@ -70,38 +68,32 @@ namespace BossRoom.Visual
             m_PartyHealthSliders[0].value = hp;
         }
 
-        private int GetMaxHPForClass(CharacterTypeEnum characterType)
+        int GetMaxHPForClass(CharacterTypeEnum characterType)
         {
             return GameDataSource.Instance.CharacterDataByType[characterType].BaseHP.Value;
         }
 
-        /// <summary>
-        /// Gets Player Name from the NetworkObjectId of his controlled Character.
-        /// </summary>
-        private string GetPlayerName(ulong netId)
-        {
-            var netState = NetworkSpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
-            return netState.Name;
-        }
-
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id
-        public void SetAllyData(NetworkCharacterState netState)
+        public void SetAllyData(ulong networkObjectID, CharacterTypeEnum characterType, int HP, string playerName)
         {
-            ulong id = netState.NetworkObjectId;
+            ulong id = networkObjectID;
             int slot = FindOrAddAlly(id);
             // do nothing if not in a slot
-            if (slot == -1) { return; }
+            if (slot == -1)
+            {
+                return;
+            }
 
-            SetUIFromSlotData(slot, netState);
+            SetUIFromSlotData(slot, characterType, HP, playerName);
         }
 
-        private void SetUIFromSlotData(int slot, NetworkCharacterState netState)
+        void SetUIFromSlotData(int slot, CharacterTypeEnum characterType, int HP, string playerName)
         {
-            m_PartyHealthSliders[slot].maxValue = GetMaxHPForClass(netState.CharacterType);
-            m_PartyHealthSliders[slot].value = netState.HitPoints;
-            m_PartyNames[slot].text = GetPlayerName(m_PartyIds[slot]);
+            m_PartyHealthSliders[slot].maxValue = GetMaxHPForClass(characterType);
+            m_PartyHealthSliders[slot].value = HP;
+            m_PartyNames[slot].text = playerName;
 
-            int symbol = (int)netState.CharacterType;
+            int symbol = (int)characterType;
             if (symbol > m_ClassSymbols.Length)
             {
                 return;
@@ -118,15 +110,15 @@ namespace BossRoom.Visual
             m_PartyHealthSliders[slot].value = hp;
         }
 
-        private void OnHeroSelectionChanged(ulong prevTarget, ulong newTarget)
+        void OnHeroSelectionChanged(ulong prevTarget, ulong newTarget)
         {
             SetHeroSelectFX(m_CurrentTarget, false);
             SetHeroSelectFX(newTarget, true);
         }
 
-        // Helper to chaneg name appearance for selected or unselected party members
+        // Helper to change name appearance for selected or unselected party members
         // also updates m_CurrentTarget
-        private void SetHeroSelectFX(ulong target, bool selected)
+        void SetHeroSelectFX(ulong target, bool selected)
         {
             // check id against all party slots
             int slot = FindOrAddAlly(target, true);
@@ -150,7 +142,7 @@ namespace BossRoom.Visual
         }
 
         // helper to initialize the Allies array - safe to call multiple times
-        private void InitPartyArrays()
+        void InitPartyArrays()
         {
             if (m_PartyIds == null)
             {
@@ -168,7 +160,7 @@ namespace BossRoom.Visual
 
         // Helper to find ally slots, returns -1 if no slot is found for the id
         // If a slot is available one will be added for this id unless dontAdd=true
-        private int FindOrAddAlly(ulong id, bool dontAdd = false)
+        int FindOrAddAlly(ulong id, bool dontAdd = false)
         {
             // make sure allies array is ready
             InitPartyArrays();
@@ -177,7 +169,10 @@ namespace BossRoom.Visual
             for (int i = 0; i < m_PartyIds.Length; i++)
             {
                 // if this ID is in the list, return the slot index
-                if (m_PartyIds[i] == id) { return i; }
+                if (m_PartyIds[i] == id)
+                {
+                    return i;
+                }
                 // otherwise, record the first open slot (not slot 0 thats for the Hero)
                 if (openslot == -1 && i > 0 && m_PartyIds[i] == 0)
                 {
@@ -220,9 +215,9 @@ namespace BossRoom.Visual
                 }
             }
 
-            if( m_TrackedHeroes.TryGetValue(id, out var heroState))
+            if (m_TrackedHeroes.TryGetValue(id, out var heroState))
             {
-                if( heroState != null )
+                if (heroState != null)
                 {
                     heroState.TargetId.OnValueChanged -= OnHeroSelectionChanged;
                 }
@@ -231,7 +226,7 @@ namespace BossRoom.Visual
 
         void OnDestroy()
         {
-            foreach( var kvp in m_TrackedHeroes )
+            foreach (var kvp in m_TrackedHeroes)
             {
                 if( kvp.Value != null )
                 {

@@ -1,6 +1,4 @@
-using System.Collections.Generic;
 using BossRoom.Client;
-using Cinemachine;
 using MLAPI;
 using System;
 using UnityEngine;
@@ -14,13 +12,16 @@ namespace BossRoom.Visual
     public class ClientCharacterVisualization : NetworkBehaviour
     {
         [SerializeField]
-        private Animator m_ClientVisualsAnimator;
+        BossRoomPlayerCharacter m_BossRoomPlayerCharacter;
 
         [SerializeField]
-        private CharacterSwap m_CharacterSwapper;
+        Animator m_ClientVisualsAnimator;
 
         [SerializeField]
-        private VisualizationConfiguration m_VisualizationConfiguration;
+        CharacterSwap m_CharacterSwapper;
+
+        [SerializeField]
+        VisualizationConfiguration m_VisualizationConfiguration;
 
         [SerializeField]
         TransformVariable m_RuntimeObjectsParent;
@@ -28,22 +29,22 @@ namespace BossRoom.Visual
         /// <summary>
         /// Returns a reference to the active Animator for this visualization
         /// </summary>
-        public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
+        public Animator OurAnimator => m_ClientVisualsAnimator;
 
         /// <summary>
         /// Returns the targeting-reticule prefab for this character visualization
         /// </summary>
-        public GameObject TargetReticulePrefab { get { return m_VisualizationConfiguration.TargetReticule; } }
+        public GameObject TargetReticulePrefab => m_VisualizationConfiguration.TargetReticule;
 
         /// <summary>
         /// Returns the Material to plug into the reticule when the selected entity is hostile
         /// </summary>
-        public Material ReticuleHostileMat { get { return m_VisualizationConfiguration.ReticuleHostileMat; } }
+        public Material ReticuleHostileMat => m_VisualizationConfiguration.ReticuleHostileMat;
 
         /// <summary>
         /// Returns the Material to plug into the reticule when the selected entity is friendly
         /// </summary>
-        public Material ReticuleFriendlyMat { get { return m_VisualizationConfiguration.ReticuleFriendlyMat; } }
+        public Material ReticuleFriendlyMat => m_VisualizationConfiguration.ReticuleFriendlyMat;
 
         /// <summary>
         /// Returns our pseudo-Parent, the object that owns the visualization.
@@ -51,13 +52,17 @@ namespace BossRoom.Visual
         /// </summary>
         public Transform Parent { get; private set; }
 
-        public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
+        public bool CanPerformActions => m_NetState.CanPerformActions;
 
-        private NetworkCharacterState m_NetState;
+        NetworkCharacterState m_NetState;
 
-        private ActionVisualization m_ActionViz;
+        NetworkAppearanceState m_NetworkAppearanceState;
 
-        private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
+        NetworkLifeState m_NetworkLifeState;
+
+        ActionVisualization m_ActionViz;
+
+        const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
         /// Player characters need to report health changes and chracter info to the PartyHUD
         PartyHUD m_PartyHUD;
@@ -68,15 +73,33 @@ namespace BossRoom.Visual
 
         event Action Destroyed;
 
-        /// <inheritdoc />
         public override void NetworkStart()
         {
             if (!IsClient || transform.parent == null)
             {
                 enabled = false;
-                return;
             }
 
+            if (m_BossRoomPlayerCharacter)
+            {
+                if (m_BossRoomPlayerCharacter.Data)
+                {
+                    NetworkInitialize();
+                }
+                else
+                {
+                    m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                    enabled = false;
+                }
+            }
+            else
+            {
+                NetworkInitialize();
+            }
+        }
+
+        void NetworkInitialize()
+        {
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
@@ -87,7 +110,10 @@ namespace BossRoom.Visual
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
-            m_NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+            if (Parent.TryGetComponent(out m_NetworkLifeState))
+            {
+                m_NetworkLifeState.AddListener(OnLifeStateChanged);
+            }
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
@@ -104,34 +130,61 @@ namespace BossRoom.Visual
             transform.position = parentMovement.NetworkPosition.Value;
             transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
 
-            // listen for char-select info to change (in practice, this info doesn't
-            // change, but we may not have the values set yet) ...
-            m_NetState.CharacterAppearance.OnValueChanged += OnCharacterAppearanceChanged;
+            // override our appearance if we are a player
+            if (m_BossRoomPlayerCharacter &&
+                m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out m_NetworkAppearanceState))
+            {
+                // listen for char-select info to change (in practice, this info doesn't
+                // change, but we may not have the values set yet) ...
+                m_NetworkAppearanceState.AddListener(OnCharacterAppearanceChanged);
 
-            // ...and visualize the current char-select value that we know about
-            OnCharacterAppearanceChanged(0, m_NetState.CharacterAppearance.Value);
+                // ...and visualize the current char-select value that we know about
+                OnCharacterAppearanceChanged(0, m_NetworkAppearanceState.NetworkCharacterAppearance);
+            }
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
 
             // sync our animator to the most up to date version received from server
-            SyncEntryAnimation(m_NetState.LifeState);
+            SyncEntryAnimation(m_NetworkLifeState.NetworkLife);
 
-            if (!m_NetState.IsNpc)
+            if (m_BossRoomPlayerCharacter)
             {
                 // track health for heroes
-                m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
+                if (m_BossRoomPlayerCharacter.TryGetNetworkBehaviour(out NetworkHealthState networkHealthState))
+                {
+                    networkHealthState.AddListener(OnHealthChanged);
+                }
+
+                string playerName = string.Empty;
+                // get player name
+                if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkNameState networkNameState))
+                {
+                    playerName = networkNameState.NetworkName;
+                }
+
+                CharacterTypeEnum characterType = CharacterTypeEnum.Tank;
+                // get our character type
+                if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+                {
+                    // if we are a player, find our character type set from the lobby
+                    characterType = networkCharacterTypeState.NetworkCharacterType;
+                }
 
                 // find the emote bar to track its buttons
-                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
-                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
+                var partyHudGameObject = GameObject.FindGameObjectWithTag("PartyHUD");
+                m_PartyHUD = partyHudGameObject.GetComponent<PartyHUD>();
 
-                if (IsLocalPlayer)
+                if (m_BossRoomPlayerCharacter.Data.IsLocalPlayer)
                 {
-                    ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
+                    var data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
-                    m_PartyHUD.SetHeroData(m_NetState);
+                    m_PartyHUD.SetHeroData(m_NetState,
+                        m_NetworkAppearanceState.NetworkCharacterAppearance,
+                        characterType,
+                        networkHealthState.NetworkHealth,
+                        playerName);
 
                     if (Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
@@ -141,7 +194,10 @@ namespace BossRoom.Visual
                 }
                 else
                 {
-                    m_PartyHUD.SetAllyData(m_NetState);
+                    m_PartyHUD.SetAllyData(m_NetState.NetworkObjectId,
+                        characterType,
+                        networkHealthState.NetworkHealth,
+                        playerName);
 
                     // getting our parent's NetworkObjectID for PartyHUD removal on Destroy
                     var parentNetworkObjectID = m_NetState.NetworkObjectId;
@@ -157,14 +213,16 @@ namespace BossRoom.Visual
                     };
                 }
             }
+
+            enabled = true;
         }
 
-        private void OnActionInput(ActionRequestData data)
+        void OnActionInput(ActionRequestData data)
         {
             m_ActionViz.AnticipateAction(ref data);
         }
 
-        private void OnMoveInput(Vector3 position)
+        void OnMoveInput(Vector3 position)
         {
             if (!IsAnimating())
             {
@@ -189,14 +247,17 @@ namespace BossRoom.Visual
                     break;
             }
         }
-        private void OnDestroy()
+        void OnDestroy()
         {
             if (m_NetState)
             {
                 m_NetState.DoActionEventClient -= PerformActionFX;
                 m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
                 m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
-                m_NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
+                if (m_NetworkLifeState)
+                {
+                    m_NetworkLifeState.RemoveListener(OnLifeStateChanged);
+                }
                 m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
@@ -208,35 +269,40 @@ namespace BossRoom.Visual
                 }
             }
 
+            if (m_BossRoomPlayerCharacter)
+            {
+                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
+            }
+
             Destroyed?.Invoke();
         }
 
-        private void OnPerformHitReaction()
+        void OnPerformHitReaction()
         {
             m_ClientVisualsAnimator.SetTrigger(m_HitStateTriggerID);
         }
 
-        private void PerformActionFX(ActionRequestData data)
+        void PerformActionFX(ActionRequestData data)
         {
             m_ActionViz.PlayAction(ref data);
         }
 
-        private void CancelAllActionFXs()
+        void CancelAllActionFXs()
         {
             m_ActionViz.CancelAllActions();
         }
 
-        private void CancelActionFXByType(ActionType actionType)
+        void CancelActionFXByType(ActionType actionType)
         {
             m_ActionViz.CancelAllActionsOfType(actionType);
         }
 
-        private void OnStoppedChargingUp(float finalChargeUpPercentage)
+        void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
             m_ActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
         }
 
-        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+        void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             switch (newValue)
             {
@@ -254,32 +320,32 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnHealthChanged(int previousValue, int newValue)
+        void OnHealthChanged(int previousValue, int newValue)
         {
             // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
             if (m_PartyHUD == null) { return; }
 
             if (IsLocalPlayer)
             {
-                this.m_PartyHUD.SetHeroHealth(newValue);
+                m_PartyHUD.SetHeroHealth(newValue);
             }
             else
             {
-                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
+                m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
             }
         }
 
-        private void OnCharacterAppearanceChanged(int oldValue, int newValue)
+        void OnCharacterAppearanceChanged(int oldValue, int newValue)
         {
             SetAppearanceSwap();
         }
 
-        private void OnStealthyChanged(bool oldValue, bool newValue)
+        void OnStealthyChanged(bool oldValue, bool newValue)
         {
             SetAppearanceSwap();
         }
 
-        private void SetAppearanceSwap()
+        void SetAppearanceSwap()
         {
             if (m_CharacterSwapper)
             {
@@ -296,18 +362,17 @@ namespace BossRoom.Visual
                     }
                 }
 
-                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value, specialMaterialMode);
+                m_CharacterSwapper.SwapToModel(m_NetworkAppearanceState.NetworkCharacterAppearance, specialMaterialMode);
             }
         }
 
         /// <summary>
-        /// Returns the value we should set the Animator's "Speed" variable, given current
-        /// gameplay conditions.
-        /// </remarks>
-        private float GetVisualMovementSpeed()
+        /// Returns the value we should set the Animator's "Speed" variable, given current gameplay conditions.
+        /// </summary>
+        float GetVisualMovementSpeed()
         {
             Assert.IsNotNull(m_VisualizationConfiguration);
-            if (m_NetState.NetworkLifeState.LifeState.Value != LifeState.Alive)
+            if (m_NetworkLifeState.NetworkLife != LifeState.Alive)
             {
                 return m_VisualizationConfiguration.SpeedDead;
             }
@@ -330,7 +395,6 @@ namespace BossRoom.Visual
                     throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
             }
         }
-
 
         void Update()
         {

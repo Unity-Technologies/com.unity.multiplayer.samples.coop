@@ -1,4 +1,4 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
 using MLAPI;
 using UnityEngine;
@@ -25,7 +25,7 @@ namespace BossRoom.Server
 
         public override void NetworkStart()
         {
-            if( !IsServer )
+            if (!IsServer)
             {
                 enabled = false;
             }
@@ -47,7 +47,6 @@ namespace BossRoom.Server
         /// </summary>
         public static List<ServerCharacter> GetPlayerServerCharacters()
         {
-
             return s_ActivePlayers;
         }
     }

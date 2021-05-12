@@ -1,12 +1,8 @@
-
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.Serialization;
 using MLAPI.NetworkVariable;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using MLAPI.NetworkVariable.Collections;
 using UnityEngine;
 
@@ -66,16 +62,14 @@ namespace BossRoom
         public struct LobbyPlayerState : INetworkSerializable
         {
             public ulong ClientId;
-            public string PlayerName;
             public int PlayerNum; // this player's assigned "P#". (0=P1, 1=P2, etc.)
             public int SeatIdx; // the latest seat they were in. -1 means none
             public SeatState SeatState;
             public float LastChangeTime;
 
-            public LobbyPlayerState(ulong clientId, string name, int playerNum, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
+            public LobbyPlayerState(ulong clientId, int playerNum, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
             {
                 ClientId = clientId;
-                PlayerName = name;
                 PlayerNum = playerNum;
                 SeatState = state;
                 SeatIdx = seatIdx;
@@ -84,7 +78,6 @@ namespace BossRoom
             public void NetworkSerialize(NetworkSerializer serializer)
             {
                 serializer.Serialize(ref ClientId);
-                serializer.Serialize(ref PlayerName);
                 serializer.Serialize(ref PlayerNum);
                 serializer.Serialize(ref SeatState);
                 serializer.Serialize(ref SeatIdx);
@@ -92,9 +85,9 @@ namespace BossRoom
             }
         }
 
-        private NetworkList<LobbyPlayerState> m_LobbyPlayers;
+        NetworkList<LobbyPlayerState> m_LobbyPlayers;
 
-        private void Awake()
+        void Awake()
         {
             m_LobbyPlayers = new NetworkList<LobbyPlayerState>();
         }
@@ -107,7 +100,7 @@ namespace BossRoom
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
         /// </summary>
-        public MLAPI.NetworkVariable.NetworkVariableBool IsLobbyClosed { get; } = new MLAPI.NetworkVariable.NetworkVariableBool(false);
+        public NetworkVariableBool IsLobbyClosed { get; } = new MLAPI.NetworkVariable.NetworkVariableBool(false);
 
         /// <summary>
         /// Client notification when the server has assigned this client a player Index (from 0 to 7);

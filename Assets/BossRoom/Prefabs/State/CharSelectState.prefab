@@ -46,6 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ae93287066a264d92939aa957cf227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_CharacterSelectData: {fileID: 3565665953789623673}
+  m_BossRoomPlayers: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
 --- !u!114 &3565665953789623674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,6 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eca1f4b442326cc4d9be3975746b8cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_BossRoomPlayers: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
   m_InSceneCharacter: {fileID: 0}
   m_InSceneCharacterAnimator: {fileID: 0}
   m_AnimationTriggerOnCharSelect: BeginRevive
@@ -80,6 +83,7 @@ MonoBehaviour:
     Color: {r: 0.99607843, g: 0.6745098, b: 0.03137255, a: 1}
   - Indicator: {fileID: 8070130267694257472, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
     Color: {r: 0.19215687, g: 0.03137255, b: 0.9882353, a: 1}
+  m_NumPlayersText: {fileID: 0}
   m_UIElementsForNoSeatChosen: []
   m_UIElementsForSeatChosen: []
   m_UIElementsForLobbyEnding: []

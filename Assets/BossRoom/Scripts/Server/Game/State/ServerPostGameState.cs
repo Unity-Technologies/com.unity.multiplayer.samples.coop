@@ -1,20 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
-
     /// <summary>
-    /// The ServerPostGameState contains logic for 
+    /// The ServerPostGameState contains logic for displaying UI in either a loss or win state
     /// </summary>
-    [RequireComponent(typeof(PostGameData))]
+    [RequireComponent(typeof(NetworkWinState))]
     public class ServerPostGameState : GameStateBehaviour
     {
         [SerializeField]
-        private PostGameData m_PostGameData;
+        NetworkWinState m_NetworkWinState;
 
-        public override GameState ActiveState { get { return GameState.PostGame; } }
+        [SerializeField]
+        BossRoomPlayerRuntimeCollection m_BossRoomPlayers;
+
+        public override GameState ActiveState => GameState.PostGame;
 
         public override void NetworkStart()
         {
@@ -25,10 +25,12 @@ namespace BossRoom.Server
             }
             else
             {
-                bool won = (bool)GameStateRelay.GetRelayObject();
-
-                m_PostGameData.GameBannerState.Value =
-                    (byte)(won ? PostGameData.BannerState.Won : PostGameData.BannerState.Lost);
+                if (m_BossRoomPlayers.TryGetPlayer(NetworkManager.LocalClientId,
+                    out BossRoomPlayer bossRoomPlayerData) &&
+                    bossRoomPlayerData.TryGetNetworkBehaviour(out NetworkWinState networkWinState))
+                {
+                    m_NetworkWinState.NetworkWin = networkWinState.NetworkWin;
+                }
             }
         }
     }

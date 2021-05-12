@@ -22,24 +22,24 @@ namespace BossRoom.Client
             Assert.IsNotNull(m_NetworkLifeState, "NetworkLifeState not set!");
             Assert.IsNotNull(m_NetworkHealthState, "NetworkHealthState not set!");
 
-            m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
-            m_NetworkHealthState.HitPoints.OnValueChanged += OnHealthChanged;
+            m_NetworkLifeState.AddListener(OnLifeStateChanged);
+            m_NetworkHealthState.AddListener(OnHealthChanged);
         }
 
         void OnDestroy()
         {
-            var netState = GetComponent<NetworkCharacterState>();
-            if( netState != null )
+            if (m_NetworkLifeState)
             {
-                netState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
-                if( netState.HealthState != null )
-                {
-                    netState.HealthState.HitPoints.OnValueChanged -= OnHealthChanged;
-                }
+                m_NetworkLifeState.RemoveListener(OnLifeStateChanged);
+            }
+
+            if (m_NetworkHealthState)
+            {
+                m_NetworkHealthState.RemoveListener(OnHealthChanged);
             }
         }
 
-        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+        void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             if (newValue!= LifeState.Alive)
             {
@@ -49,7 +49,7 @@ namespace BossRoom.Client
             }
         }
 
-        private void OnHealthChanged(int previousValue, int newValue)
+        void OnHealthChanged(int previousValue, int newValue)
         {
             // don't do anything if battle is over
             if (m_Won) { return; }

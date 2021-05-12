@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using MLAPI;
 using MLAPI.Spawning;
@@ -11,12 +9,12 @@ namespace BossRoom.Visual
     /// </summary>
     public class TargetActionFX : ActionFX
     {
-        private GameObject m_TargetReticule;
-        private ulong m_CurrentTarget;
-        private ulong m_NewTarget;
-        private NetworkCharacterState m_ParentState;
+        GameObject m_TargetReticule;
+        ulong m_CurrentTarget;
+        ulong m_NewTarget;
+        NetworkCharacterState m_ParentState;
 
-        private const float k_ReticuleGroundHeight = 0.2f;
+        const float k_ReticuleGroundHeight = 0.2f;
 
         public TargetActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent)
         {
@@ -33,12 +31,12 @@ namespace BossRoom.Visual
             return true;
         }
 
-        private void OnTargetChanged(ulong oldTarget, ulong newTarget )
+        void OnTargetChanged(ulong oldTarget, ulong newTarget )
         {
             m_NewTarget = newTarget;
         }
 
-        private void OnActionInput(ActionRequestData data )
+        void OnActionInput(ActionRequestData data )
         {
             //this method runs on the owning client, and allows us to anticipate our new target for purposes of FX visualization.
             if( data.ActionTypeEnum == ActionType.GeneralTarget )
@@ -91,7 +89,7 @@ namespace BossRoom.Visual
         /// Ensures that the TargetReticule GameObject exists. This must be done prior to enabling it because it can be destroyed
         /// "accidentally" if its parent is destroyed while it is detached.
         /// </summary>
-        private void ValidateReticule(NetworkObject targetObject)
+        void ValidateReticule(NetworkObject targetObject)
         {
             if( m_TargetReticule == null )
             {
@@ -99,7 +97,7 @@ namespace BossRoom.Visual
             }
 
             bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;
-            bool myself_isnpc = m_ParentState.CharacterData.IsNpc;
+            bool myself_isnpc = m_ParentState.IsNpc;
             bool hostile = target_isnpc != myself_isnpc;
 
             m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? m_Parent.ReticuleHostileMat : m_Parent.ReticuleFriendlyMat;

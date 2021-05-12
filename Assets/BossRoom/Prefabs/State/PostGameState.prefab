@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7475764267130300179}
-  - component: {fileID: 7475764267130300204}
-  - component: {fileID: 7475764267130300178}
   - component: {fileID: -1007214952234040975}
+  - component: {fileID: 7475764267130300178}
   - component: {fileID: 4223400095609434710}
+  - component: {fileID: -1274718490461894152}
   m_Layer: 0
   m_Name: PostGameState
   m_TagString: Untagged
@@ -34,31 +34,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7475764267130300204
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7475764267130300177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b41949685c1fb0144b10279e8ca313cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &7475764267130300178
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7475764267130300177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a2a5cf2c4e970b64a9073f4f760322b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_PostGameData: {fileID: 7475764267130300204}
 --- !u!114 &-1007214952234040975
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,6 +51,20 @@ MonoBehaviour:
   PrefabHashGenerator: PostGameState
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+--- !u!114 &7475764267130300178
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7475764267130300177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a2a5cf2c4e970b64a9073f4f760322b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NetworkWinState: {fileID: -1274718490461894152}
+  m_BossRoomPlayers: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
 --- !u!114 &4223400095609434710
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,3 +77,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cb58d1788f410740b05cace1af646d7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-1274718490461894152
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7475764267130300177}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c469cecf3042e1f4a9d074ec3af9f60f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_NetworkWin:
+    m_InternalValue: 0
