@@ -243,7 +243,7 @@ namespace BossRoom.Server
 
             callback(true, m_PlayerPrefab.PrefabHash, true, Vector3.zero, Quaternion.identity);
 
-            // get this client's player network object and modify its name in the hierarchy
+            // get this client's player NetworkObject
             var networkObject = NetworkSpawnManager.GetPlayerNetworkObject(clientId);
 
             // update client's name from received payload
@@ -256,7 +256,7 @@ namespace BossRoom.Server
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
             //and then manually close down the connection.
             m_Portal.ServerToClientConnectResult(clientId, gameReturnStatus);
-            if(gameReturnStatus != ConnectStatus.Success )
+            if (gameReturnStatus != ConnectStatus.Success)
             {
                 //TODO-FIXME:MLAPI Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
                 StartCoroutine(WaitToDisconnectClient(clientId, gameReturnStatus));
