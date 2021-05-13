@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CharacterSelectData: {fileID: 3565665953789623673}
-  m_BossRoomPlayers: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
+  m_BossRoomPlayers: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
 --- !u!114 &3565665953789623674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60,7 +60,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eca1f4b442326cc4d9be3975746b8cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BossRoomPlayers: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
+  m_BossRoomPlayers: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
   m_InSceneCharacter: {fileID: 0}
   m_InSceneCharacterAnimator: {fileID: 0}
   m_AnimationTriggerOnCharSelect: BeginRevive

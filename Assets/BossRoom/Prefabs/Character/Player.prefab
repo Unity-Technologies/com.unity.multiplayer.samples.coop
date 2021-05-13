@@ -66,7 +66,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e9bbde9373514244f989e226f86fdc6b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BossRoomPlayerRuntimeCollection: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
+  m_BossRoomPlayerRuntimeCollection: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
   m_NetworkBehaviourLookup: {fileID: -990654933791837614}
 --- !u!114 &5066527324307575210
 MonoBehaviour:

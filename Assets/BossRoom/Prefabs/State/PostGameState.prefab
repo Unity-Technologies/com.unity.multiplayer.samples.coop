@@ -64,7 +64,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NetworkWinState: {fileID: -1274718490461894152}
-  m_BossRoomPlayers: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
+  m_BossRoomPlayers: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
 --- !u!114 &4223400095609434710
 MonoBehaviour:
   m_ObjectHideFlags: 0

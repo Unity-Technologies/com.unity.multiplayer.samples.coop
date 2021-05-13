@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fa0e587270c07154e814de941891b96a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BossRoomPlayers: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
-  m_BossRoomPlayerCharacters: {fileID: 11400000, guid: 7facf08ea62f7e24ea77c8de41d50613, type: 2}
+  m_BossRoomPlayers: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
+  m_BossRoomPlayerCharacters: {fileID: 11400000, guid: 9a466b09d921d714586974340720e6eb, type: 2}
   m_NetworkBehaviourLookup: {fileID: 8904755443903065987}
 --- !u!114 &-4877982356580531930
 MonoBehaviour:

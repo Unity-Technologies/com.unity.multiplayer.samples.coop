@@ -85,8 +85,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_RuntimeNetworkObjectsParent: {fileID: 11400000, guid: 777947e430fc5cb4ba60df7eed45a515, type: 2}
-  m_BossRoomPlayers: {fileID: 11400000, guid: 526b74fa69662f54699e0b5148e465a0, type: 2}
-  m_BossRoomPlayerCharacters: {fileID: 11400000, guid: 7facf08ea62f7e24ea77c8de41d50613, type: 2}
+  m_BossRoomPlayers: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
+  m_BossRoomPlayerCharacters: {fileID: 11400000, guid: 9a466b09d921d714586974340720e6eb, type: 2}
   m_PlayerCharacterPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
   m_PlayerSpawnPoints:
   - {fileID: 6319832178442273571}
@@ -142,7 +142,7 @@ MonoBehaviour:
   m_SpawnEnemyKeyCode: 101
   m_SpawnBossKeyCode: 98
   m_InstantQuitKeyCode: 113
-  m_BossRoomPlayerCharacters: {fileID: 11400000, guid: 7facf08ea62f7e24ea77c8de41d50613, type: 2}
+  m_BossRoomPlayerCharacters: {fileID: 11400000, guid: 9a466b09d921d714586974340720e6eb, type: 2}
 --- !u!1 &1088799320945899822
 GameObject:
   m_ObjectHideFlags: 0
