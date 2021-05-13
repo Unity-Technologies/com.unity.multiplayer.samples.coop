@@ -25,7 +25,7 @@ namespace BossRoom
 
         public override void NetworkStart()
         {
-            gameObject.name = "BossRoomPlayerData" + OwnerClientId;
+            gameObject.name = "BossRoomPlayer" + OwnerClientId;
 
             // Note that this is done here on NetworkStart in case this NetworkBehaviour's properties are looked up
             // when this element is added to the runtime collection. If this was done in OnEnable() there is a chance

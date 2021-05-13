@@ -138,7 +138,7 @@ namespace BossRoom.Visual
             bossRoomPlayerCharacter.TryGetNetworkBehaviour(out m_NetState);
             m_NetState.TargetId.OnValueChanged += OnSelectionChanged;
 
-            if (bossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+            if (bossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
             {
                 m_CharacterClass =
                     GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];

@@ -299,8 +299,8 @@ namespace BossRoom.Client
             for (int i = 0; i < m_PlayerSeats.Count; ++i)
             {
                 string playerName = string.Empty;
-                if (m_BossRoomPlayers.TryGetPlayer(curSeats[i].ClientId, out BossRoomPlayer bossRoomPlayerData) &&
-                    bossRoomPlayerData.TryGetNetworkBehaviour(out NetworkNameState networkNameState))
+                if (m_BossRoomPlayers.TryGetPlayer(curSeats[i].ClientId, out BossRoomPlayer bossRoomPlayer) &&
+                    bossRoomPlayer.TryGetNetworkBehaviour(out NetworkNameState networkNameState))
                 {
                     playerName = networkNameState.NetworkName;
                 }

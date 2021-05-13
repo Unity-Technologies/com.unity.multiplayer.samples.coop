@@ -23,7 +23,7 @@ namespace BossRoom.Server
 
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
-        NetworkObject m_PlayerPrefab;
+        NetworkObject m_PlayerCharacterPrefab;
 
         [SerializeField]
         [Tooltip("A collection of locations for spawning players")]
@@ -78,9 +78,9 @@ namespace BossRoom.Server
                 NetworkManager.Singleton.ConnectedClientsList.Count == m_BossRoomPlayers.Items.Count)
             {
                 InitialSpawnDone = true;
-                foreach (var bossRoomPlayerData in m_BossRoomPlayers.Items)
+                foreach (var bossRoomPlayer in m_BossRoomPlayers.Items)
                 {
-                    SpawnPlayer(bossRoomPlayerData.OwnerClientId);
+                    SpawnPlayer(bossRoomPlayer.OwnerClientId);
                 }
                 return true;
             }
@@ -98,7 +98,7 @@ namespace BossRoom.Server
 
                 if (!didSpawn &&
                     InitialSpawnDone &&
-                    !m_BossRoomPlayerCharacters.TryGetPlayerCharacter(clientId, out BossRoomPlayerCharacter bossRoomPlayer))
+                    !m_BossRoomPlayerCharacters.TryGetPlayerCharacter(clientId, out BossRoomPlayerCharacter bossRoomPlayerCharacter))
                 {
                     //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                     //(either because multiple people are late-joining at once, or because some dynamic entities are
@@ -158,8 +158,8 @@ namespace BossRoom.Server
                 "RuntimeNetworkObjectsParent transform is not set!");
 
             var newPlayer = spawnPoint != null ?
-                Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation, m_RuntimeNetworkObjectsParent.Value) :
-                Instantiate(m_PlayerPrefab, m_RuntimeNetworkObjectsParent.Value);
+                Instantiate(m_PlayerCharacterPrefab, spawnPoint.position, spawnPoint.rotation, m_RuntimeNetworkObjectsParent.Value) :
+                Instantiate(m_PlayerCharacterPrefab, m_RuntimeNetworkObjectsParent.Value);
 
             var networkLifeState = newPlayer.GetComponent<NetworkLifeState>();
             networkLifeState.AddListener(OnHeroLifeStateChanged);

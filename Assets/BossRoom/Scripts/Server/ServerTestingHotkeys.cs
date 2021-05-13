@@ -64,9 +64,9 @@ namespace BossRoom.Server
             }
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
-                foreach (BossRoomPlayerCharacter bossRoomPlayer in m_BossRoomPlayerCharacters.Items)
+                foreach (BossRoomPlayerCharacter bossRoomPlayerCharacter in m_BossRoomPlayerCharacters.Items)
                 {
-                    if (bossRoomPlayer.TryGetNetworkBehaviour(out NetworkLifeState networkLifeState))
+                    if (bossRoomPlayerCharacter.TryGetNetworkBehaviour(out NetworkLifeState networkLifeState))
                     {
                         networkLifeState.NetworkLife = LifeState.Fainted;
                     }

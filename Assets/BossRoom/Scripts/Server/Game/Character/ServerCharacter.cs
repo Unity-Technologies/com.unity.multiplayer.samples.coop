@@ -72,13 +72,13 @@ namespace BossRoom.Server
             {
                 if (m_BossRoomPlayerCharacter)
                 {
-                    if (m_BossRoomPlayerCharacter.Data)
+                    if (m_BossRoomPlayerCharacter.BossRoomPlayer)
                     {
                         NetworkInitialize();
                     }
                     else
                     {
-                        m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                        m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied += NetworkInitialize;
                         enabled = false;
                     }
                 }
@@ -95,7 +95,7 @@ namespace BossRoom.Server
             m_ActionPlayer = new ActionPlayer(this);
 
             if (m_BossRoomPlayerCharacter &&
-                m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+                m_BossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
             {
                 m_CharacterData = GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];
             }
@@ -134,7 +134,7 @@ namespace BossRoom.Server
 
             if (m_BossRoomPlayerCharacter)
             {
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitialize;
             }
         }
 

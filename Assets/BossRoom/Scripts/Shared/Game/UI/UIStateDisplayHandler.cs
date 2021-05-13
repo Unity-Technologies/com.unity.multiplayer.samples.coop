@@ -97,13 +97,13 @@ namespace BossRoom
             {
                 if (m_BossRoomPlayerCharacter)
                 {
-                    if (m_BossRoomPlayerCharacter.Data)
+                    if (m_BossRoomPlayerCharacter.BossRoomPlayer)
                     {
                         NetworkInitializeName();
                     }
                     else
                     {
-                        m_BossRoomPlayerCharacter.DataSet += NetworkInitializeName;
+                        m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied += NetworkInitializeName;
                         enabled = false;
                     }
                 }
@@ -124,13 +124,13 @@ namespace BossRoom
                 // dependent on their respective character class
                 if (m_BossRoomPlayerCharacter)
                 {
-                    if (m_BossRoomPlayerCharacter.Data)
+                    if (m_BossRoomPlayerCharacter.BossRoomPlayer)
                     {
                         NetworkInitializeHealth();
                     }
                     else
                     {
-                        m_BossRoomPlayerCharacter.DataSet += NetworkInitializeHealth;
+                        m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied += NetworkInitializeHealth;
                         enabled = false;
                     }
                 }
@@ -149,7 +149,7 @@ namespace BossRoom
 
         void NetworkInitializeName()
         {
-            if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out m_NetworkNameState))
+            if (m_BossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out m_NetworkNameState))
             {
                 m_NetworkNameState.AddListener(CharacterNameChanged);
             }
@@ -163,7 +163,7 @@ namespace BossRoom
 
         void NetworkInitializeHealth()
         {
-            if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out m_NetworkCharacterTypeState))
+            if (m_BossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out m_NetworkCharacterTypeState))
             {
                 m_NetworkCharacterTypeState.AddListener(CharacterTypeChanged);
 
@@ -188,13 +188,13 @@ namespace BossRoom
 
             if (m_NetworkNameState != null)
             {
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitializeName;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitializeName;
                 m_NetworkNameState.RemoveListener(CharacterNameChanged);
             }
 
             if (m_NetworkCharacterTypeState != null)
             {
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitializeHealth;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitializeHealth;
                 m_NetworkCharacterTypeState.RemoveListener(CharacterTypeChanged);
             }
 
@@ -293,8 +293,8 @@ namespace BossRoom
         {
             if (m_BossRoomPlayerCharacter)
             {
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitializeName;
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitializeHealth;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitializeName;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitializeHealth;
             }
 
             if (m_UIState != null)

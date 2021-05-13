@@ -26,8 +26,8 @@ namespace BossRoom.Server
             else
             {
                 if (m_BossRoomPlayers.TryGetPlayer(NetworkManager.LocalClientId,
-                    out BossRoomPlayer bossRoomPlayerData) &&
-                    bossRoomPlayerData.TryGetNetworkBehaviour(out NetworkWinState networkWinState))
+                    out BossRoomPlayer bossRoomPlayer) &&
+                    bossRoomPlayer.TryGetNetworkBehaviour(out NetworkWinState networkWinState))
                 {
                     m_NetworkWinState.NetworkWin = networkWinState.NetworkWin;
                 }

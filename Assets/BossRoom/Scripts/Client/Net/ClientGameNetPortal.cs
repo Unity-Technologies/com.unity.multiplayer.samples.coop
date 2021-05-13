@@ -46,10 +46,12 @@ namespace BossRoom.Client
             m_Portal.ConnectFinished += OnConnectFinished;
             m_Portal.DisconnectReasonReceived += OnDisconnectReasonReceived;
 
-            // the following event fires on both clients and hosts EXCEPT on initial connections
+            // the following event fires on both clients and hosts when the server switches scenes
             NetworkSceneManager.OnSceneSwitched += SceneSwitched;
-            // to notify the host that this client has transitioned scenes on initial connection,
-            // we use the following event subscription
+            // however, the event above will not fire in the case where a client newly connects to a host and is forced
+            // to switch scenes as well
+            // to notify the host that this client has transitioned scenes on initial connection, a client listens for
+            // the following event to be raised
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
@@ -95,9 +97,8 @@ namespace BossRoom.Client
         }
 
         /// <summary>
-        /// This callback is only ran on the server and on the local client that connects.
-        /// When a client newly connects, they will not receive a callback from NetworkSceneManager.OnSceneSwitched.
-        /// So when a client initially connects, it notifies the server that it has transitioned scenes.
+        /// When a client initially connects, it will wait until it has knowledge of its associated Player before
+        /// notifying the server that it has loaded into a scene.
         /// </summary>
         /// <param name="clientID"> A connecting client ID as host, or the local client ID connecting to a host.</param>
         void OnClientConnected(ulong clientID)
@@ -109,11 +110,10 @@ namespace BossRoom.Client
             }
 
             // wait until we can locate this client's player data component
-            StartCoroutine(WaitUntilPlayerDataCreated(SceneSwitched));
-
+            StartCoroutine(WaitUntilPlayerCreated(SceneSwitched));
         }
 
-        IEnumerator WaitUntilPlayerDataCreated(Action action)
+        IEnumerator WaitUntilPlayerCreated(Action action)
         {
             NetworkObject clientNetworkObject = null;
             while (!clientNetworkObject)

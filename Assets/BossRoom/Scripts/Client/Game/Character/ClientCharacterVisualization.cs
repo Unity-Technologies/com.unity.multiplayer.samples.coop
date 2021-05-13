@@ -82,13 +82,13 @@ namespace BossRoom.Visual
 
             if (m_BossRoomPlayerCharacter)
             {
-                if (m_BossRoomPlayerCharacter.Data)
+                if (m_BossRoomPlayerCharacter.BossRoomPlayer)
                 {
                     NetworkInitialize();
                 }
                 else
                 {
-                    m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                    m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied += NetworkInitialize;
                     enabled = false;
                 }
             }
@@ -132,7 +132,7 @@ namespace BossRoom.Visual
 
             // override our appearance if we are a player
             if (m_BossRoomPlayerCharacter &&
-                m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out m_NetworkAppearanceState))
+                m_BossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out m_NetworkAppearanceState))
             {
                 // listen for char-select info to change (in practice, this info doesn't
                 // change, but we may not have the values set yet) ...
@@ -158,14 +158,14 @@ namespace BossRoom.Visual
 
                 string playerName = string.Empty;
                 // get player name
-                if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkNameState networkNameState))
+                if (m_BossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out NetworkNameState networkNameState))
                 {
                     playerName = networkNameState.NetworkName;
                 }
 
                 CharacterTypeEnum characterType = CharacterTypeEnum.Tank;
                 // get our character type
-                if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+                if (m_BossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
                 {
                     // if we are a player, find our character type set from the lobby
                     characterType = networkCharacterTypeState.NetworkCharacterType;
@@ -175,7 +175,7 @@ namespace BossRoom.Visual
                 var partyHudGameObject = GameObject.FindGameObjectWithTag("PartyHUD");
                 m_PartyHUD = partyHudGameObject.GetComponent<PartyHUD>();
 
-                if (m_BossRoomPlayerCharacter.Data.IsLocalPlayer)
+                if (m_BossRoomPlayerCharacter.BossRoomPlayer.IsLocalPlayer)
                 {
                     var data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
@@ -271,7 +271,7 @@ namespace BossRoom.Visual
 
             if (m_BossRoomPlayerCharacter)
             {
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitialize;
             }
 
             Destroyed?.Invoke();

@@ -160,16 +160,16 @@ namespace BossRoom.Server
         {
             foreach (CharSelectData.LobbyPlayerState playerInfo in m_CharacterSelectData.LobbyPlayers)
             {
-                if (m_BossRoomPlayers.TryGetPlayer(playerInfo.ClientId, out BossRoomPlayer bossRoomPlayerData))
+                if (m_BossRoomPlayers.TryGetPlayer(playerInfo.ClientId, out BossRoomPlayer bossRoomPlayer))
                 {
-                    if (bossRoomPlayerData.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState) &&
+                    if (bossRoomPlayer.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState) &&
                         networkCharacterTypeState)
                     {
                         networkCharacterTypeState.NetworkCharacterType =
                             m_CharacterSelectData.LobbySeatConfigurations[playerInfo.SeatIdx].Class;
                     }
 
-                    if (bossRoomPlayerData.TryGetNetworkBehaviour(out NetworkAppearanceState networkAppearanceBehaviour) &&
+                    if (bossRoomPlayer.TryGetNetworkBehaviour(out NetworkAppearanceState networkAppearanceBehaviour) &&
                         networkAppearanceBehaviour)
                     {
                         networkAppearanceBehaviour.NetworkCharacterAppearance =

@@ -28,7 +28,7 @@ namespace BossRoom.Server
     public class ServerGameNetPortal : MonoBehaviour
     {
         [SerializeField]
-        NetworkObject m_PlayerDataPrefab;
+        NetworkObject m_PlayerPrefab;
 
         [SerializeField]
         GameNetPortal m_Portal;
@@ -241,7 +241,7 @@ namespace BossRoom.Server
                 m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
             }
 
-            callback(true, m_PlayerDataPrefab.PrefabHash, true, Vector3.zero, Quaternion.identity);
+            callback(true, m_PlayerPrefab.PrefabHash, true, Vector3.zero, Quaternion.identity);
 
             // get this client's player network object and modify its name in the hierarchy
             var networkObject = NetworkSpawnManager.GetPlayerNetworkObject(clientId);
@@ -299,10 +299,10 @@ namespace BossRoom.Server
             m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, localClientID));
             m_ClientIDToGuid.Add(localClientID, "host_guid");
 
-            var newPlayerData = Instantiate(m_PlayerDataPrefab, Vector3.zero, Quaternion.identity, null);
-            newPlayerData.SpawnAsPlayerObject(localClientID);
+            var newPlayer = Instantiate(m_PlayerPrefab, Vector3.zero, Quaternion.identity, null);
+            newPlayer.SpawnAsPlayerObject(localClientID);
 
-            if (newPlayerData.TryGetComponent(out NetworkNameState networkNameState))
+            if (newPlayer.TryGetComponent(out NetworkNameState networkNameState))
             {
                 networkNameState.NetworkName = m_Portal.PlayerName;
             }

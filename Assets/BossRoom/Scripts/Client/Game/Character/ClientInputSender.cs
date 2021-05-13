@@ -106,13 +106,13 @@ namespace BossRoom.Client
 
             if (m_BossRoomPlayerCharacter)
             {
-                if (m_BossRoomPlayerCharacter.Data)
+                if (m_BossRoomPlayerCharacter.BossRoomPlayer)
                 {
                     NetworkInitialize();
                 }
                 else
                 {
-                    m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                    m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied += NetworkInitialize;
                     enabled = false;
                 }
             }
@@ -120,7 +120,7 @@ namespace BossRoom.Client
 
         void NetworkInitialize()
         {
-            if (!m_BossRoomPlayerCharacter.Data.IsLocalPlayer)
+            if (!m_BossRoomPlayerCharacter.BossRoomPlayer.IsLocalPlayer)
             {
                 // dont need to do anything else if not the owner
                 return;
@@ -129,7 +129,7 @@ namespace BossRoom.Client
             m_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
             m_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
 
-            if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+            if (m_BossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
             {
                 m_CharacterClass = GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];
             }
@@ -463,7 +463,7 @@ namespace BossRoom.Client
         {
             if (m_BossRoomPlayerCharacter)
             {
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitialize;
             }
         }
     }

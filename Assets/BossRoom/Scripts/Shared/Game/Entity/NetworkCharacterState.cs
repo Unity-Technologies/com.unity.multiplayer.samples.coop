@@ -97,20 +97,20 @@ namespace BossRoom
         {
             if (m_BossRoomPlayerCharacter)
             {
-                if (m_BossRoomPlayerCharacter.Data)
+                if (m_BossRoomPlayerCharacter.BossRoomPlayer)
                 {
                     NetworkInitialize();
                 }
                 else
                 {
-                    m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                    m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied += NetworkInitialize;
                 }
             }
         }
 
         void NetworkInitialize()
         {
-            if (m_BossRoomPlayerCharacter.Data.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
+            if (m_BossRoomPlayerCharacter.BossRoomPlayer.TryGetNetworkBehaviour(out NetworkCharacterTypeState networkCharacterTypeState))
             {
                 m_CharacterData =
                     GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.NetworkCharacterType];
@@ -121,7 +121,7 @@ namespace BossRoom
         {
             if (m_BossRoomPlayerCharacter)
             {
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitialize;
             }
         }
 

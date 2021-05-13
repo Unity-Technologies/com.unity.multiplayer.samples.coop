@@ -32,13 +32,13 @@ namespace BossRoom.Client
             {
                 if (m_BossRoomPlayerCharacter)
                 {
-                    if (m_BossRoomPlayerCharacter.Data)
+                    if (m_BossRoomPlayerCharacter.BossRoomPlayer)
                     {
                         NetworkInitialize();
                     }
                     else
                     {
-                        m_BossRoomPlayerCharacter.DataSet += NetworkInitialize;
+                        m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied += NetworkInitialize;
                         enabled = false;
                     }
                 }
@@ -47,7 +47,7 @@ namespace BossRoom.Client
 
         void NetworkInitialize()
         {
-            if (!m_BossRoomPlayerCharacter.Data.IsLocalPlayer)
+            if (!m_BossRoomPlayerCharacter.BossRoomPlayer.IsLocalPlayer)
             {
                 Destroy(this);
                 return;
@@ -72,7 +72,7 @@ namespace BossRoom.Client
         {
             if (m_BossRoomPlayerCharacter)
             {
-                m_BossRoomPlayerCharacter.DataSet -= NetworkInitialize;
+                m_BossRoomPlayerCharacter.BossRoomPlayerNetworkReadied -= NetworkInitialize;
             }
             if (m_ClientInputSender)
             {
