@@ -212,11 +212,11 @@ MonoBehaviour:
     EnableSceneManagement: 1
     ForceSamePrefabs: 0
     UsePrefabSync: 0
-    RecycleNetworkIds: 1
+    RecycleNetworkIds: 0
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
-    EnableMessageBuffering: 0
+    EnableMessageBuffering: 1
     MessageBufferTimeout: 20
     EnableNetworkLogs: 1
   references:
