@@ -122,6 +122,8 @@ namespace BossRoom.Client
         {
             if (!m_BossRoomPlayerCharacter.BossRoomPlayer.IsLocalPlayer)
             {
+                enabled = false;
+
                 // dont need to do anything else if not the owner
                 return;
             }

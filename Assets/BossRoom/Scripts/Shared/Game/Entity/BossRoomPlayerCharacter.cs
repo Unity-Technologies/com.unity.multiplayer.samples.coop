@@ -32,7 +32,7 @@ namespace BossRoom
 
         public override void NetworkStart()
         {
-            gameObject.name = "BossRoomPlayer" + OwnerClientId;
+            gameObject.name = "BossRoomPlayerCharacter" + OwnerClientId;
 
             TryGetPlayer();
 
