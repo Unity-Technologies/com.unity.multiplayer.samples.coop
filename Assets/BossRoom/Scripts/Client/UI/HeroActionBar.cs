@@ -256,13 +256,13 @@ namespace BossRoom.Visual
             if (m_NetState.TargetId.Value != 0
                 && NetworkSpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
                 && selection != null
-                && selection.TryGetComponent(out BossRoomPlayerCharacter bossRoomPlayer)
+                && selection.TryGetComponent(out BossRoomPlayerCharacter bossRoomPlayerCharacter)
                 && selection.NetworkObjectId != m_NetState.NetworkObjectId)
             {
                 // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
                 // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
 
-                bossRoomPlayer.TryGetNetworkBehaviour(out NetworkLifeState networkLifeState);
+                bossRoomPlayerCharacter.TryGetNetworkBehaviour(out NetworkLifeState networkLifeState);
 
                 Assert.IsNotNull(networkLifeState); // all PlayerObjects should have a NetworkCharacterState component
 
