@@ -20,7 +20,7 @@ namespace BossRoom.Client
 
         GameObject m_FeedbackObj;
 
-        const float k_HoverHeight = .1f;
+        const float k_HoverHeight = 0.15f;
 
         public override void NetworkStart()
         {
