@@ -36,7 +36,7 @@ It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For add
   * Character attack actions properly support Hold to charge options. 
 
 * To show how UI elements and game objects can be networked, added networked functionality using `INetworkSerializable` for UI elements on the Character Selection screen including networked mouse cursors. 
-* Added a Photon filter for host room names not to allow profanity, racial slurs, and additionsl socially acceptable words. 
+* Added a Photon filter for host room names not to allow profanity, racial slurs, and additional socially acceptable words. 
 * Boss Room now uses the [UnityToonShader](https://github.com/IronWarrior/UnityToonShader) for rendering the 3D surfaces to emulate 2D, flat surfaces.
 * Added disconnection error message to load when a player or host disconnects due to limited or no network connectivity. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
 * Balanced hero and enemy stats, spawners, trigger areas, and enemy detetction areas. 
@@ -44,7 +44,7 @@ It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For add
 
 ### Changes
 
-* Updated the Photon Setup Guide, indicating you need only only app ID when playing with friends. For users connecting across regions, you may need to hard code a region in your app settings by using the room code and region instead of just the room code sharing in game. 
+* Updated the Photon Setup Guide, indicating you need only app ID when playing with friends. For users connecting across regions, you may need to hard code a region in your app settings by using the room code and region instead of just the room code sharing in game. 
 * Removed Singleton usage, allowing multiple instances of MLAPI networking stack to start up in the same process. 
 * Removed a duplicated `GameObject` from the MainMenu scene. 
 * Reviewed and revised code to better following quality standards.
@@ -66,7 +66,14 @@ It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For add
   * Player connection if they experience a game-level connection failure
 
 * Updated code to allow hosts to specify a port to listen to, removing the hard-coded port. 
-* Updated the Boss Room UI to only show skill and ability buttons for character abilities. Empty buttons no longer load for characters. 
+* Refactored Action Bar code including the following:
+
+  * Removed the `ButtonID` from `UIHudButton`
+  * Removed hard-coded values from `HeroActionBar`
+  * Removed switch statements
+  * Completed minor code cleanup
+  * Verify and only show skill and ability buttons for character abilities. Empty buttons no longer load for characters.
+
 * Added a call to warm up shaders when the project starts to ensure animations issues do not occur.
 * Removed collision from objects that have a Broken (dead) state.
 * Implemented a better cooldown solution and calculations for tracking and managing character, imp, and boss actions. 
@@ -89,7 +96,6 @@ This release includes the following issue fixes:
 * On Wizards, fixed issue with imp spawners not respawning new imps after exploring the room.
 * Fixed an issue where the door state does not reflect the existing state when players connect late to a game, for example if other players open the door and a player joins late the door displays as closed. 
 * Removed a previous work-around for character selections when host replays a completed game. The issue was resolved, allowing players to see character selections during replay. 
-* Fixed a Null reference for `RoomNameBox` that potentially caused a "NullReferenceExceltion: Object reference not set to an instance of an object".
 * Fixed collision wall settings, fixing an issues where the boss knock-back ability sent players through walls.
 * Resolved an issue where any players leaving the lobby sent all players to the lobby.
 * Fixed animations for enemies including the smoke animation for destroyed imps and the boss helmet when crying.
