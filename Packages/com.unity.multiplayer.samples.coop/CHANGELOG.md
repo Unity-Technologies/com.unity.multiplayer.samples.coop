@@ -11,7 +11,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 * Introduced static scene `NetworkObject`s to Boss Room including the following updates:
 
     * Added two separator `GameObject`s for scene readability: runtime `NetworkObject`s and `NetworkObject`s already placed in the scene.
-    * Added `GameEvent` (ScriptableObject) and `GameEventListener` (MonoBehaviour) to encapsulate events inside assets, located in the `ServerBossRoomState` prefab which now has a `GameEventListener` component. The event associated to this listener is `BossDefeated`, which the Boss raises when the `LifeState` is Dead in the `RaiseEventOnLifeChange` component. This feature can be expanded for other events, such as characters deaths.
+    * Added `GameEvent` (ScriptableObject) and `GameEventListener` (MonoBehaviour) to encapsulate events inside assets, located in the `ServerBossRoomState` prefab which now has a `GameEventListener` component. The event associated to this listener is `BossDefeated`, which the Boss raises when the `LifeState` is Dead in the `RaiseEventOnLifeChange` component.
     * Added a custom editor for GameEvents to fire in the editor (greatly enhances testing).
     * The `LifeState` NetworkVariable was moved from `NetworkCharacterState` into its own component, `NetworkLifeState`.
     * Cleaned up and removed old spawn prefab collections and spawner scripts (NetSpawnPoint).
@@ -51,7 +51,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 
 ### Changes
 
-* Refactored and updated Boss Room code and architecture for increased performance and better resource management:
+* Updated Boss Room per asset and project settings for increased performance and better resource management:
 
   * Disabled GPU Skinning to optimize GPU usage and FPS.
   * Lowered quality of ambient occlusion from high to medium.
@@ -59,7 +59,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Modified GPU Instancing on imps, heroes, and the boss to significantly reduce the number of draw calls.
   * Turned off Cast Shadows on Imp and Imp Boss.
   * Disabled mesh colliders of lava, which is more decorative than interactive.
-  * Removed the S_SimpleDissolve shader which consumed most import time.
+  * Refactored the S_SimpleDissolve shader which consumed most import time.
 
 * Updated the Photon Setup Guide, indicating you need only app ID when playing with friends. For users connecting across regions, you may need to hard code a region in your app settings by using the room code and region instead of just the room code sharing in game. 
 * Removed a duplicated `GameObject` from the MainMenu scene. 
@@ -126,7 +126,7 @@ This release includes the following issue fixes:
 
 v0.1.0 is an Early Access release for Multiplayer Samples Co-op.
 
-It requires and supports Unity 2020.3.8f1 and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
+It requires and supports Unity 2020.3.8f1 LTS and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
 
 ### New features
 
