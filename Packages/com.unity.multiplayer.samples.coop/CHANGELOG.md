@@ -4,7 +4,7 @@
 
 v0.2.0 is an Early Access release for Multiplayer Samples Co-op.
 
-It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
+It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
 
 ### New features
 
@@ -109,7 +109,7 @@ This release includes the following issue fixes:
 
 v0.1.0 is an Early Access release for Multiplayer Samples Co-op.
 
-It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
+It requires and supports Unity 2020.3.0f1 and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
 
 ### New features
 
