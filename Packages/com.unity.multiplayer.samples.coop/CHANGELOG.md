@@ -10,7 +10,7 @@ It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For add
 
 * Updated the user interface including the following:
 
-  * When joining a game, a "Connecting..." UI loads. When disconnecting from a game, you are returned to the MainMenuScene with a "Connection to Host lost" message. If the game fails to connect, a general message " Connection to Host failed" loads. 
+  * When joining a game, a "Connecting..." UI loads. When disconnecting from a game, you are returned to the MainMenuScene with a "Connection to Host lost" message. If the game fails to connect, a general message "Connection to Host failed" loads. 
   * Added an option to leave the lobby after joining it. You no longer have to restart the game to leave the lobby.
   * Added option to cancel the game after clicking **Ready**. 
   * Added a gear icon for accessing and modifying app settings. 
@@ -50,8 +50,8 @@ It requires and supports Unity v2020.3 and later and Unity MLAPI v0.1.0. For add
 * Reviewed and revised code to better following quality standards.
 * Updated the mage character base attack to better support the new enqueuing ability and handle game behaviors. Updates include:
 
-  * Actions being non-blocking allowing other actions while a mage-bolt is in flight
-  * Sending actions in `ActionSequence` groups to better handle actions when players spam click enemies
+  * Actions being non-blocking now allow other actions while a mage-bolt is in flight
+  * Actions send in `ActionSequence` groups to better handle actions when players spam click enemies
   * Timing issues with animations, actions, and character location
   * Bolt animation for legitimate hits
   * Updated attacks not to knock rogues out of stealth 
