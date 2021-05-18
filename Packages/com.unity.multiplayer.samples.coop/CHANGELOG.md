@@ -126,7 +126,7 @@ This release includes the following issue fixes:
 
 v0.1.0 is an Early Access release for Multiplayer Samples Co-op.
 
-It requires and supports Unity 2020.3.0f1 and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
+It requires and supports Unity 2020.3.8f1 and Unity MLAPI v0.1.0. For additional information on MLAPI, see the changelog and release notes for the Unity MLAPI package.
 
 ### New features
 
@@ -154,4 +154,3 @@ Boss Room is a small-scale cooperative game sample project built on top of the n
 * Boss collisions with a Pillar may not correctly apply a stun effect and shatter the pillar when using the Trample attack. 
 * The displayed graphical affects for casting and blocking a Bolt do not correctly match the caster and target. 
 * Some areas of the Boss Room require updates to geometry seams and collisions, for short walls and lava pits.
-
