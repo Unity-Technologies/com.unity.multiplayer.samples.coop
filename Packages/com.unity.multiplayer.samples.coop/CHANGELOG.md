@@ -37,9 +37,8 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 * Updated and added various hero abilities:
 
   * Added a cooldown to Archer's PowerShot. 
-  * Used generic actions to implement Rogue's Dagger skill. 
-  * Used generic actions to implement Rogue's Sneak skill using local stealth, applying a graphical effect to the stealthy character while still sending all network events normally. 
-  * Used generic actions to implement Rogue's Dash skill. 
+  * Added the Rogue's Dagger and Dash skills. 
+  * Added the Rogue's Sneak skill using local stealth, applying a graphical effect to the stealthy character while still sending all network events normally.
   * Properly display Heal abilities when targeting a fallen ally character. 
   * Character attack actions properly support Hold to charge options. 
 
@@ -51,6 +50,16 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 * Added healthbars to display when damaged and properly track imp health locally and across clients. 
 
 ### Changes
+
+* Refactored and updated Boss Room code and architecture for increased performance and better resource management:
+
+  * Disabled GPU Skinning to optimize GPU usage and FPS.
+  * Lowered quality of ambient occlusion from high to medium.
+  * Switched SMAA High to FXAA (fast mode) reducing GPU cost.
+  * Modified GPU Instancing on imps, heroes, and the boss to significantly reduce the number of draw calls.
+  * Turned off Cast Shadows on Imp and Imp Boss.
+  * Disabled mesh colliders of lava, which is more decorative than interactive.
+  * Removed the S_SimpleDissolve shader which consumed most import time.
 
 * Updated the Photon Setup Guide, indicating you need only app ID when playing with friends. For users connecting across regions, you may need to hard code a region in your app settings by using the room code and region instead of just the room code sharing in game. 
 * Removed a duplicated `GameObject` from the MainMenu scene. 
@@ -75,11 +84,11 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 * Updated code to allow hosts to specify a port to listen to, removing the hard-coded port. 
 * Refactored Action Bar code including the following:
 
-  * Removed the `ButtonID` from `UIHudButton`
-  * Removed hard-coded values from `HeroActionBar`
-  * Removed switch statements
-  * Completed minor code cleanup
-  * Verify and only show skill and ability buttons for character abilities. Empty buttons no longer load for characters.
+  * Removed the `ButtonID` from `UIHudButton`.
+  * Removed hard-coded values from `HeroActionBar`.
+  * Removed switch statements.
+  * Completed minor code cleanup.
+  * Added verification to only show skill and ability buttons for available character abilities. Empty buttons no longer load for characters.
 
 * Added a call to warm up shaders when the project starts to ensure animations issues do not occur.
 * Removed collision from objects that have a Broken (dead) state.
@@ -99,8 +108,8 @@ This release includes the following issue fixes:
 * Fixed issue to correctly allow one player to receive a character when two players in the Character Select click **Ready** for the same hero at the same time. Character Select is no longer blocked.  
 * Fixed an issue with boss collisions with a Pillar correctly applying a stun effect and shattering the pillar when using the Trample attack. 
 * Fixed the lobby welcome messages to correctly list the player names, including a previous issues for P1 and P2. 
-* On Windows, investigated and fixed issues with visible effects for character actions including Mage Freeze attack and Rogue Dash.
-* On Wizards, fixed issue with imp spawners not respawning new imps after exploring the room.
+* On Windows, investigated and fixed issues with visible effects for character actions including Mage Freeze attack.
+* On Windows, fixed issue with imp spawners not respawning new imps after exploring the room.
 * Fixed an issue where the door state does not reflect the existing state when players connect late to a game, for example if other players open the door and a player joins late the door displays as closed. 
 * Removed a previous work-around for character selections when host replays a completed game. The issue was resolved, allowing players to see character selections during replay. 
 * Fixed collision wall settings, fixing an issues where the boss knock-back ability sent players through walls.
