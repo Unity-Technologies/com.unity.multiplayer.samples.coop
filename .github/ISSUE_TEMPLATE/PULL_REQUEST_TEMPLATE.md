@@ -22,6 +22,7 @@ Fixes issue(s):
 ### Manual testing scenarios
 <!---
     Please provide a set of unambiguous steps to test the proposed code change.
+    If an error is output to either the player or editor log file, please attach.
     Giving us manual testing scenarios will help with the processing and validation process.
 -->
 1. ...
