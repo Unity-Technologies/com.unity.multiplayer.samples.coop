@@ -8,6 +8,14 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 
 ### New features
 
+* Introduced static scene `NetworkObject`s to Boss Room including the following updates:
+
+    * Added two separator `GameObject`s for scene readability: runtime `NetworkObject`s and `NetworkObject`s already placed in the scene.
+    * Added `GameEvent` (ScriptableObject) and `GameEventListener` (MonoBehaviour) to encapsulate events inside assets, located in the `ServerBossRoomState` prefab which now has a `GameEventListener` component. The event associated to this listener is `BossDefeated`, which the Boss raises when the `LifeState` is Dead in the `RaiseEventOnLifeChange` component. This feature can be expanded for other events, such as characters deaths.
+    * Added a custom editor for GameEvents to fire in the editor (greatly enhances testing).
+    * The `LifeState` NetworkVariable was moved from `NetworkCharacterState` into its own component, `NetworkLifeState`.
+    * Cleaned up and removed old spawn prefab collections and spawner scripts (NetSpawnPoint).
+
 * Updated the user interface including the following:
 
   * When joining a game, a "Connecting..." UI loads. When disconnecting from a game, you are returned to the MainMenuScene with a "Connection to Host lost" message. If the game fails to connect, a general message "Connection to Host failed" loads. 
@@ -35,7 +43,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Properly display Heal abilities when targeting a fallen ally character. 
   * Character attack actions properly support Hold to charge options. 
 
-* To show how UI elements and game objects can be networked, added networked functionality using `INetworkSerializable` for UI elements on the Character Selection screen including networked mouse cursors. 
+* To show how UI elements and game objects can be networked, added networked functionality using `INetworkSerializable` in the `CharSelect` screen to network player's selected character on the Character Selection screen. 
 * Added a Photon filter for host room names not to allow profanity, racial slurs, and additional socially acceptable words. 
 * Boss Room now uses the [UnityToonShader](https://github.com/IronWarrior/UnityToonShader) for rendering the 3D surfaces to emulate 2D, flat surfaces.
 * Added disconnection error message to load when a player or host disconnects due to limited or no network connectivity. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
@@ -45,7 +53,6 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 ### Changes
 
 * Updated the Photon Setup Guide, indicating you need only app ID when playing with friends. For users connecting across regions, you may need to hard code a region in your app settings by using the room code and region instead of just the room code sharing in game. 
-* Removed Singleton usage, allowing multiple instances of MLAPI networking stack to start up in the same process. 
 * Removed a duplicated `GameObject` from the MainMenu scene. 
 * Reviewed and revised code to better following quality standards.
 * Updated the mage character base attack to better support the new enqueuing ability and handle game behaviors. Updates include:
@@ -103,6 +110,7 @@ This release includes the following issue fixes:
 ### Known issues
 
 * An MLAPI soft sync error on cleanup between scene transitions may break the game, for example imps do not spawn and pots are intangible.
+* The game can be initiated while a second player is connecting to the host in `CharSelect`. Players may join without selected characters spawning and in an unresponsive state.
 * Sometimes after completing a match and the host starts a new match from the Victory or Loss screen, connected players may have no visible interactions to join or select characters. A work-around is implemented to not block entry into the game. 
 
 ## [0.1.0] - 2021-04-07
