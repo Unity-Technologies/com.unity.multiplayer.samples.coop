@@ -1,6 +1,6 @@
 # Multiplayer Samples Co-op Changelog
 
-## [0.2.0] - 2021-05-18
+## [0.2.0] - 2021-05-19
 
 v0.2.0 is an Early Access release for Multiplayer Samples Co-op.
 
@@ -10,11 +10,11 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 
 * Introduced static scene `NetworkObject`s to Boss Room including the following updates:
 
+    * Implemented a `ScriptableObject` based event system to encapsulate events inside assets. These objects include a `GameEvent` (ScriptableObject) and `GameEventListener` (MonoBehaviour) to encapsulate events inside assets, located in the `ServerBossRoomState` prefab which now has a `GameEventListener` component. The event associated to this listener is `BossDefeated`, which the Boss raises when the `LifeState` is Dead in the `RaiseEventOnLifeChange` component.
     * Added two separator `GameObject`s for scene readability: runtime `NetworkObject`s and `NetworkObject`s already placed in the scene.
-    * Added `GameEvent` (ScriptableObject) and `GameEventListener` (MonoBehaviour) to encapsulate events inside assets, located in the `ServerBossRoomState` prefab which now has a `GameEventListener` component. The event associated to this listener is `BossDefeated`, which the Boss raises when the `LifeState` is Dead in the `RaiseEventOnLifeChange` component.
     * Added a custom editor for GameEvents to fire in the editor (greatly enhances testing).
     * The `LifeState` NetworkVariable was moved from `NetworkCharacterState` into its own component, `NetworkLifeState`.
-    * Cleaned up and removed old spawn prefab collections and spawner scripts (NetSpawnPoint).
+    * Cleaned up and removed old spawn prefab collections and spawner scripts (`NetSpawnPoint`).
 
 * Updated the user interface including the following:
 
@@ -64,7 +64,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 * Updated the Photon Setup Guide, indicating you need only app ID when playing with friends. For users connecting across regions, you may need to hard code a region in your app settings by using the room code and region instead of just the room code sharing in game. 
 * Removed a duplicated `GameObject` from the MainMenu scene. 
 * Reviewed and revised code to better following quality standards.
-* Updated the mage character base attack to better support the new enqueuing ability and handle game behaviors. Updates include:
+* Updated the Mage character base attack to better support the new enqueuing ability and handle game behaviors. Updates include:
 
   * Actions being non-blocking now allow other actions while a mage-bolt is in flight
   * Actions send in `ActionSequence` groups to better handle actions when players spam click enemies
@@ -93,7 +93,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 * Added a call to warm up shaders when the project starts to ensure animations issues do not occur.
 * Removed collision from objects that have a Broken (dead) state.
 * Implemented a better cooldown solution and calculations for tracking and managing character, imp, and boss actions. 
-* Fixed the ignored health amount (HP parameter) for revived characters. The correct value correctly sets the revived character to a lower amount than maximum. 
+* Updated event registration and unregistration code to be symmetrical across the project.
 
 ### Fixes
 
@@ -114,13 +114,51 @@ This release includes the following issue fixes:
 * Removed a previous work-around for character selections when host replays a completed game. The issue was resolved, allowing players to see character selections during replay. 
 * Fixed collision wall settings, fixing an issues where the boss knock-back ability sent players through walls.
 * Resolved an issue where any players leaving the lobby sent all players to the lobby.
+* Fixed the ignored health amount (HP parameter) for revived characters. The correct value correctly sets the revived character to a lower amount than maximum. 
 * Fixed animations for enemies including the smoke animation for destroyed imps and the boss helmet when crying.
+* Fixed loading of the game skybox before the menu loaded.
 
 ### Known issues
 
 * An MLAPI soft sync error on cleanup between scene transitions may break the game, for example imps do not spawn and pots are intangible.
 * The game can be initiated while a second player is connecting to the host in `CharSelect`. Players may join without selected characters spawning and in an unresponsive state.
-* Sometimes after completing a match and the host starts a new match from the Victory or Loss screen, connected players may have no visible interactions to join or select characters. A work-around is implemented to not block entry into the game. 
+* Sometimes after completing a match and the host starts a new match from the Victory or Loss screen, connected players may have no visible interactions to join or select characters. A work-around is implemented to not block entry into the game.
+* Sometimes the client may be disconnected from Photon which causes a timeout and `PhotonRealtimeTransport` to be in a bad state after the shutdown. An exception is developed that fires every frame.  
+
+## [0.1.2] - 2021-04-23
+
+v0.1.2 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
+
+### Updates
+
+* License updated to [Unity Companion License (UCL)](https://unity3d.com/legal/licenses/unity_companion_license) for Unity-dependent projects. See LICENSE in package for details.
+* The GitHub repository `master` branch has been renamed to `main`. If you have local clones of the repository, you may need to perform the following steps or reclone the repo:
+
+```
+# Switch to the "master" branch:
+$ git checkout master
+
+# Rename it to "main":
+$ git branch -m master main
+
+# Get the latest commits (and branches!) from the remote:
+$ git fetch
+
+# Remove the existing tracking connection with "origin/master":
+$ git branch --unset-upstream
+
+# Create a new tracking connection with the new "origin/main" branch:
+$ git branch -u origin/main
+```
+
+## [0.1.1] - 2021-04-09
+
+v0.1.1 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
+
+### Updates
+
+* Added [Third Party Contributors](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/blob/master/third-party%20contributors.md) file listing external partner contributors.
+* Refactored `IsStealthy` from `NetworkVariableByte` to `NetworkVariableBool` to indicate state.
 
 ## [0.1.0] - 2021-04-07
 
