@@ -22,9 +22,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Audio files for boss sound effects
   * Visual effects and particles for Tank charge skill 
   * Art assets to wave spawner, including animations for ReceiveDamage, Broken (died), and Revive 
-  * Game music 
-
-* Added audiomixer to Boss Room for separate audio channels and a master mixer. 
+  * Game music  
 
 * Updated and added various hero abilities:
 
@@ -40,6 +38,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 
 ### Changes
 
+* The Boss Room project now loads MLAPI 0.1.0-experimental package through the Unity Package Manager Registry. See the [MLAPI install guide](https://docs-multiplayer.unity3d.com/docs/migration/install) for details.
 * Updated the user interface including the following:
 
   * When joining a game, a "Connecting..." UI loads. When disconnecting from a game, you are returned to the MainMenuScene with a "Connection to Host lost" message. If the game fails to connect, a general message "Connection to Host failed" loads. 
@@ -58,9 +57,8 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Disabled mesh colliders of lava, which is more decorative than interactive.
   * Refactored the S_SimpleDissolve shader which consumed most import time.
 
-* Added disconnection error message to load when a player or host disconnects. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
+* Added disconnection error message to be displayed when a player or host disconnects. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
 * Balanced hero and enemy stats, spawners, trigger areas, and enemy detetction areas.
-* Updated the Photon Setup Guide, indicating you need only app ID when playing with friends. For users connecting across regions, you may need to hard code a region in your app settings by using the room code and region instead of just the room code sharing in game. 
 * Removed a duplicated `GameObject` from the MainMenu scene. 
 * Reviewed and revised code to better following quality standards.
 * Updated the Mage character base attack to better support the new enqueuing ability and handle game behaviors. Updates include:
