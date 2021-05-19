@@ -16,14 +16,6 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
     * The `LifeState` NetworkVariable was moved from `NetworkCharacterState` into its own component, `NetworkLifeState`.
     * Cleaned up and removed old spawn prefab collections and spawner scripts (`NetSpawnPoint`).
 
-* Updated the user interface including the following:
-
-  * When joining a game, a "Connecting..." UI loads. When disconnecting from a game, you are returned to the MainMenuScene with a "Connection to Host lost" message. If the game fails to connect, a general message "Connection to Host failed" loads. 
-  * Added an option to leave the lobby after joining it. You no longer have to restart the game to leave the lobby.
-  * Added option to cancel my selection after clicking **Ready**. 
-  * Added a gear icon for accessing and modifying app settings. 
-  * The UI now tracks and displays player has arrived, number of connected players in the lobby, and player status. 
-
 * Added ramp-up animation for hero movement and actions
 * Added F/X and animation assets for the game including:
 
@@ -43,12 +35,18 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Character attack actions properly support Hold to charge options. 
 
 * To show how UI elements and game objects can be networked, added networked functionality using `INetworkSerializable` in the `CharSelect` screen to network player's selected character on the Character Selection screen. 
-* Added input sanitization to remove any invisible characters introduced by other chat programs when copy-pasting room names, IP addresses, or ports. (Useful when sharing with friends.)
-* Added disconnection error message to load when a player or host disconnects. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
-* Balanced hero and enemy stats, spawners, trigger areas, and enemy detetction areas. 
+* Added input sanitization to remove any invisible characters introduced by other chat programs when copy-pasting room names, IP addresses, or ports. (Useful when sharing with friends.) 
 * Added healthbars to display when damaged and properly track imp health locally and across clients. 
 
 ### Changes
+
+* Updated the user interface including the following:
+
+  * When joining a game, a "Connecting..." UI loads. When disconnecting from a game, you are returned to the MainMenuScene with a "Connection to Host lost" message. If the game fails to connect, a general message "Connection to Host failed" loads. 
+  * Added an option to leave the lobby after joining it. You no longer have to restart the game to leave the lobby.
+  * Added option to cancel my selection after clicking **Ready**. 
+  * Added a gear icon for accessing and modifying app settings. 
+  * The UI now tracks and displays player has arrived, number of connected players in the lobby, and player status. 
 
 * Updated Boss Room per asset and project settings for increased performance and better resource management:
 
@@ -60,6 +58,8 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Disabled mesh colliders of lava, which is more decorative than interactive.
   * Refactored the S_SimpleDissolve shader which consumed most import time.
 
+* Added disconnection error message to load when a player or host disconnects. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
+* Balanced hero and enemy stats, spawners, trigger areas, and enemy detetction areas.
 * Updated the Photon Setup Guide, indicating you need only app ID when playing with friends. For users connecting across regions, you may need to hard code a region in your app settings by using the room code and region instead of just the room code sharing in game. 
 * Removed a duplicated `GameObject` from the MainMenu scene. 
 * Reviewed and revised code to better following quality standards.
@@ -79,7 +79,6 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Per-connection state on client disconnect
   * Additional errors including a full server and player ID (GUID) already playing
 
-* Updated code to allow hosts to specify a port to listen to, removing the hard-coded port. 
 * Refactored Action Bar code including the following:
 
   * Removed the `ButtonID` from `UIHudButton`.
