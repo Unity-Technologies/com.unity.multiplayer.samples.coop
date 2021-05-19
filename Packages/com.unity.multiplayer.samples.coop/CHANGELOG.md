@@ -43,7 +43,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Character attack actions properly support Hold to charge options. 
 
 * To show how UI elements and game objects can be networked, added networked functionality using `INetworkSerializable` in the `CharSelect` screen to network player's selected character on the Character Selection screen. 
-* Added a Photon filter to remove any invisible characters introduced by Zoom when copy-pasting room names. 
+* Added a filter to remove any invisible characters introduced by Zoom when copy-pasting room names, IP addresses, or ports. 
 * Boss Room now uses the [UnityToonShader](https://github.com/IronWarrior/UnityToonShader) for rendering the 3D surfaces to emulate 2D, flat surfaces.
 * Added disconnection error message to load when a player or host disconnects due to limited or no network connectivity. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
 * Balanced hero and enemy stats, spawners, trigger areas, and enemy detetction areas. 
