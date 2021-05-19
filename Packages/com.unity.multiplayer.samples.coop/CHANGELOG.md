@@ -20,7 +20,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 
   * When joining a game, a "Connecting..." UI loads. When disconnecting from a game, you are returned to the MainMenuScene with a "Connection to Host lost" message. If the game fails to connect, a general message "Connection to Host failed" loads. 
   * Added an option to leave the lobby after joining it. You no longer have to restart the game to leave the lobby.
-  * Added option to cancel the game after clicking **Ready**. 
+  * Added option to cancel my selection after clicking **Ready**. 
   * Added a gear icon for accessing and modifying app settings. 
   * The UI now tracks and displays player has arrived, number of connected players in the lobby, and player status. 
 
@@ -37,15 +37,14 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 * Updated and added various hero abilities:
 
   * Added a cooldown to Archer's PowerShot. 
-  * Added the Rogue's Dagger and Dash skills. 
+  * Added the Rogue's Dagger and Dash skills. The dash skill shows an instinct teleport (using an RPC) instead of a charge like the boss' (which updates its position over time). 
   * Added the Rogue's Sneak skill using local stealth, applying a graphical effect to the stealthy character while still sending all network events normally.
   * Properly display Heal abilities when targeting a fallen ally character. 
   * Character attack actions properly support Hold to charge options. 
 
 * To show how UI elements and game objects can be networked, added networked functionality using `INetworkSerializable` in the `CharSelect` screen to network player's selected character on the Character Selection screen. 
-* Added a filter to remove any invisible characters introduced by Zoom when copy-pasting room names, IP addresses, or ports. 
-* Boss Room now uses the [UnityToonShader](https://github.com/IronWarrior/UnityToonShader) for rendering the 3D surfaces to emulate 2D, flat surfaces.
-* Added disconnection error message to load when a player or host disconnects due to limited or no network connectivity. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
+* Added input sanitization to remove any invisible characters introduced by other chat programs when copy-pasting room names, IP addresses, or ports. (Useful when sharing with friends.)
+* Added disconnection error message to load when a player or host disconnects. Client logic was also updated to detect Host disconnection scenarios, such as losting connectivity.
 * Balanced hero and enemy stats, spawners, trigger areas, and enemy detetction areas. 
 * Added healthbars to display when damaged and properly track imp health locally and across clients. 
 
@@ -79,7 +78,6 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 
   * Per-connection state on client disconnect
   * Additional errors including a full server and player ID (GUID) already playing
-  * Player connection if they experience a game-level connection failure
 
 * Updated code to allow hosts to specify a port to listen to, removing the hard-coded port. 
 * Refactored Action Bar code including the following:
