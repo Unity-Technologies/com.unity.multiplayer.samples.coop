@@ -21,6 +21,13 @@ namespace BossRoom.Visual
         int m_GroundLayerMask;
         Vector3 m_Origin;
 
+        //The general action system works on MouseDown events (to support Charged Actions), but that means that if we only wait for
+        //a mouse up event internally, we will fire as part of the same UI click that started the action input (meaning the user would
+        //have to drag her mouse from the button to the firing location). Tracking a mouse-down mouse-up cycle means that a user can
+        //click on the ground separately from the mouse-click that engaged the action (which also makes the UI flow equivalent to the
+        //flow from hitting a number key). 
+        bool m_ReceivedMouseDownEvent;
+
         RaycastHit[] m_UpdateResult = new RaycastHit[1];
 
         void Start()
@@ -48,7 +55,13 @@ namespace BossRoom.Visual
             m_InRangeVisualization.SetActive(isInRange);
             m_OutOfRangeVisualization.SetActive(!isInRange);
 
-            if (Input.GetMouseButtonUp(0))
+            // wait for the player to click down and then release the mouse button before actually taking the input
+            if (Input.GetMouseButtonDown(0))
+            {
+                m_ReceivedMouseDownEvent = true;
+            }
+
+            if (Input.GetMouseButtonUp(0) && m_ReceivedMouseDownEvent)
             {
                 if (isInRange)
                 {
@@ -59,7 +72,7 @@ namespace BossRoom.Visual
                         ShouldQueue = false,
                         TargetIds = null
                     };
-                    m_PlayerOwner.RecvDoActionServerRPC(data);
+                    m_SendInput(data);
                 }
                 Destroy(gameObject);
                 return;

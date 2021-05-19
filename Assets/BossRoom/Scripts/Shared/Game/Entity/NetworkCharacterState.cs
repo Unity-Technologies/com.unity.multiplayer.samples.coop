@@ -14,9 +14,26 @@ namespace BossRoom
     }
 
     /// <summary>
+    /// Describes how the character's movement should be animated: as standing idle, running normally,
+    /// magically slowed, sped up, etc. (Not all statuses are currently used by game content,
+    /// but they are set up to be displayed correctly for future use.)
+    /// </summary>
+    [Serializable]
+    public enum MovementStatus
+    {
+        Idle,         // not trying to move
+        Normal,       // character is moving (normally)
+        Uncontrolled, // character is being moved by e.g. a knockback -- they are not in control!
+        Slowed,       // character's movement is magically hindered
+        Hasted,       // character's movement is magically enhanced
+        Walking,      // character should appear to be "walking" rather than normal running (e.g. for cut-scenes)
+    }
+
+    /// <summary>
     /// Contains all NetworkVariables and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
-    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState))]
+    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState),
+        typeof(NetworkLifeState))]
     public class NetworkCharacterState : NetworkBehaviour, INetMovement, ITargetable
     {
         public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
@@ -28,25 +45,22 @@ namespace BossRoom
         /// <summary>
         /// The networked position of this Character. This reflects the authoritative position on the server.
         /// </summary>
-        public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3();
+        public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3(
+            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
 
         /// <summary>
         /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
         /// </summary>
-        public NetworkVariableFloat NetworkRotationY { get; } = new NetworkVariableFloat();
+        public NetworkVariableFloat NetworkRotationY { get; } = new NetworkVariableFloat(
+            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
 
         /// <summary>
         /// The speed that the character is currently allowed to move, according to the server.
         /// </summary>
         public NetworkVariableFloat NetworkMovementSpeed { get; } = new NetworkVariableFloat();
 
-        /// <summary>
-        /// Used by animations. Indicates how fast the character should "look like" they're moving,
-        /// according to the server. This is a value from 0 (not moving) to 1 (moving as fast as possible).
-        /// This does not always correspond to the NetworkMovementSpeed; for instance when a player is being
-        /// "knocked back", they are moving, but they visually look like they're standing still.
-        /// </summary>
-        public NetworkVariableFloat VisualMovementSpeed { get; } = new NetworkVariableFloat();
+        /// Indicates how the character's movement should be depicted.
+        public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
 
         /// <summary>
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
@@ -78,22 +92,37 @@ namespace BossRoom
             set { m_NetworkHealthState.HitPoints.Value = value; }
         }
 
+        /// <summary>
         /// Current Mana. This value is populated at startup time from CharacterClass data.
         /// </summary>
         [HideInInspector]
         public NetworkVariableInt Mana;
 
+        [SerializeField]
+        NetworkLifeState m_NetworkLifeState;
+
+        public NetworkLifeState NetworkLifeState => m_NetworkLifeState;
+
         /// <summary>
         /// Current LifeState. Only Players should enter the FAINTED state.
         /// </summary>
-        public NetworkVariable<LifeState> NetworkLifeState { get; } = new NetworkVariable<LifeState>(LifeState.Alive);
+        public LifeState LifeState
+        {
+            get => m_NetworkLifeState.LifeState.Value;
+            set => m_NetworkLifeState.LifeState.Value = value;
+        }
 
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
         public bool IsNpc { get { return CharacterData.IsNpc; } }
 
-        public bool IsValidTarget { get { return NetworkLifeState.Value != LifeState.Dead; } }
+        public bool IsValidTarget => LifeState != LifeState.Dead;
+
+        /// <summary>
+        /// Returns true if the Character is currently in a state where it can play actions, false otherwise.
+        /// </summary>
+        public bool CanPerformActions => LifeState == LifeState.Alive;
 
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
@@ -186,8 +215,11 @@ namespace BossRoom
         /// </summary>
         public event Action<ActionType> CancelActionsByTypeEventClient;
 
+        /// <summary>
+        /// /// Server to Client RPC that broadcasts this action play to all clients.
+        /// </summary>
+        /// <param name="data"> Data about which action to play and its associated details. </param>
         [ClientRpc]
-        /// Server->Client RPC that broadcasts this action play to all clients.
         public void RecvDoActionClientRPC(ActionRequestData data)
         {
             DoActionEventClient?.Invoke(data);
@@ -241,8 +273,9 @@ namespace BossRoom
 
         /// <summary>
         /// Called on all clients when this character has stopped "charging up" an attack.
+        /// Provides a value between 0 and 1 inclusive which indicates how "charged up" the attack ended up being.
         /// </summary>
-        public event Action OnStopChargingUpClient;
+        public event Action<float> OnStopChargingUpClient;
 
         [ServerRpc]
         public void RecvStopChargingUpServerRpc()
@@ -251,9 +284,9 @@ namespace BossRoom
         }
 
         [ClientRpc]
-        public void RecvStopChargingUpClientRpc()
+        public void RecvStopChargingUpClientRpc(float percentCharged)
         {
-            OnStopChargingUpClient?.Invoke();
+            OnStopChargingUpClient?.Invoke(percentCharged);
         }
     }
 }

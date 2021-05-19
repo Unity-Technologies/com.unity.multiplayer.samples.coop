@@ -1,8 +1,8 @@
 using BossRoom;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+
 
 namespace BossRoom.Client
 {
@@ -17,9 +17,9 @@ namespace BossRoom.Client
     public class UICharSelectClassInfoBox : MonoBehaviour
     {
         [SerializeField]
-        private Text m_WelcomeBanner;
+        private TextMeshProUGUI m_WelcomeBanner;
         [SerializeField]
-        private Text m_ClassLabel;
+        private TextMeshProUGUI m_ClassLabel;
         [SerializeField]
         private GameObject m_HideWhenNoClassSelected;
         [SerializeField]
@@ -31,7 +31,9 @@ namespace BossRoom.Client
         [SerializeField]
         private Image m_Skill3;
         [SerializeField]
-        private Button m_ReadyButton;
+        private Image m_ReadyButtonImage;
+        [SerializeField]
+        private GameObject m_Checkmark;
         [SerializeField]
         [Tooltip("Message shown in the char-select screen. {0} will be replaced with the player's seat number")]
         [Multiline]
@@ -41,7 +43,7 @@ namespace BossRoom.Client
         [Multiline]
         private string m_TooltipFormat = "<b>{0}</b>\n\n{1}";
 
-        private bool isLockedIn = false;
+        private bool m_IsLockedIn = false;
 
         public void OnSetPlayerNumber(int playerNumber)
         {
@@ -51,22 +53,21 @@ namespace BossRoom.Client
         public void ConfigureForNoSelection()
         {
             m_HideWhenNoClassSelected.SetActive(false);
-            m_ReadyButton.interactable = false;
+            SetLockedIn(false);
         }
 
-        public void ConfigureForLockedIn()
+        public void SetLockedIn(bool lockedIn)
         {
-            m_ReadyButton.interactable = false;
-            isLockedIn = true;
+            m_ReadyButtonImage.color = lockedIn ? Color.green : Color.white;
+            m_IsLockedIn = lockedIn;
+            m_Checkmark.SetActive(lockedIn);
         }
 
         public void ConfigureForClass(CharacterTypeEnum characterType)
         {
             m_HideWhenNoClassSelected.SetActive(true);
-            if (!isLockedIn)
-            {
-                m_ReadyButton.interactable = true;
-            }
+
+            m_Checkmark.SetActive(m_IsLockedIn);
 
             CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[characterType];
             m_ClassLabel.text = characterClass.DisplayedName;

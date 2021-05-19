@@ -19,6 +19,11 @@ namespace BossRoom.Client
         private GameNetPortal m_Portal;
 
         /// <summary>
+        /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
+        /// </summary>
+        public DisconnectReason DisconnectReason { get; private set; } = new DisconnectReason();
+
+        /// <summary>
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
         private const int k_TimeoutDuration = 10;
@@ -34,12 +39,29 @@ namespace BossRoom.Client
         void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
-            m_Portal.NetworkStarted += NetworkStart;
+
+            m_Portal.NetworkReadied += OnNetworkReady;
             m_Portal.ConnectFinished += OnConnectFinished;
+            m_Portal.DisconnectReasonReceived += OnDisconnectReasonReceived;
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
 
-        private void NetworkStart()
+        void OnDestroy()
+        {
+            if( m_Portal != null )
+            {
+                m_Portal.NetworkReadied -= OnNetworkReady;
+                m_Portal.ConnectFinished -= OnConnectFinished;
+                m_Portal.DisconnectReasonReceived -= OnDisconnectReasonReceived;
+
+                if( m_Portal.NetManager != null )
+                {
+                    m_Portal.NetManager.OnClientDisconnectCallback -= OnDisconnectOrTimeout;
+                }
+            }
+        }
+
+        private void OnNetworkReady()
         {
             if (!m_Portal.NetManager.IsClient)
             {
@@ -47,10 +69,31 @@ namespace BossRoom.Client
             }
             else
             {
-                SceneManager.sceneLoaded += (Scene scene, LoadSceneMode mode) =>
+                // O__O if adding any event registrations in this block, please add unregistrations in the OnClientDisconnect method.
+                if(!m_Portal.NetManager.IsHost )
                 {
-                    m_Portal.C2SSceneChanged(SceneManager.GetActiveScene().buildIndex);
-                };
+                    //only do this if a pure client, so as not to overlap with host behavior in ServerGameNetPortal.
+                    m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
+                }
+
+                SceneManager.sceneLoaded += OnSceneLoaded;
+            }
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            m_Portal.ClientToServerSceneChanged(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        /// <summary>
+        /// Invoked when the user has requested a disconnect via the UI, e.g. when hitting "Return to Main Menu" in the post-game scene.
+        /// </summary>
+        private void OnUserDisconnectRequest()
+        {
+            if( m_Portal.NetManager.IsClient )
+            {
+                DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+                m_Portal.NetManager.StopClient();
             }
         }
 
@@ -60,13 +103,29 @@ namespace BossRoom.Client
             //on failure, we must raise an event so that the UI layer can display something.
             Debug.Log("RecvConnectFinished Got status: " + status);
 
+            if( status != ConnectStatus.Success )
+            {
+                //this indicates a game level failure, rather than a network failure. See note in ServerGameNetPortal.
+                DisconnectReason.SetDisconnectReason(status);
+            }
+
             ConnectFinished?.Invoke(status);
+        }
+
+        private void OnDisconnectReasonReceived(ConnectStatus status)
+        {
+            DisconnectReason.SetDisconnectReason(status);
         }
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
-            if(clientID == MLAPI.NetworkManager.Singleton.LocalClientId )
+            // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
+            //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
+            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient && !MLAPI.NetworkManager.Singleton.IsHost )
             {
+                SceneManager.sceneLoaded -= OnSceneLoaded;
+                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
+
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
@@ -74,6 +133,11 @@ namespace BossRoom.Client
                     // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
                     // Just shut down networking and switch back to main menu.
                     MLAPI.NetworkManager.Singleton.Shutdown();
+                    if( !DisconnectReason.HasTransitionReason )
+                    {
+                        //disconnect that happened for some other reason than user UI interaction--should display a message.
+                        DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
+                    }
                     SceneManager.LoadScene("MainMenu");
                 }
                 else
@@ -95,7 +159,6 @@ namespace BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public static void StartClient(GameNetPortal portal, string ipaddress, int port)
         {
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -160,10 +223,12 @@ namespace BossRoom.Client
         private static void ConnectClient(GameNetPortal portal)
         {
             var clientGuid = ClientPrefs.GetGuid();
-            //var payload = $"client_guid={clientGuid}\n"; //minimal format where key=value pairs are separated by newlines.
-            //payload += $"client_scene={UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex}\n";
-            //payload += $"player_name={portal.PlayerName}\n";
-			var payload = JsonUtility.ToJson(new ConnectionPayload() {clientGUID = clientGuid, clientScene = SceneManager.GetActiveScene().buildIndex, playerName = portal.PlayerName});
+            var payload = JsonUtility.ToJson(new ConnectionPayload()
+            {
+                clientGUID = clientGuid,
+                clientScene = SceneManager.GetActiveScene().buildIndex,
+                playerName = portal.PlayerName
+            });
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
@@ -171,7 +236,7 @@ namespace BossRoom.Client
             portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! MLAPI will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by [???] (FIXME: GOMPS-79, need to handle transport layer failures too).
+            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:MLAPI GOMPS-79, provide feedback for different transport failures). 
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
         }

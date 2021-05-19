@@ -29,14 +29,14 @@ namespace BossRoom
         [Tooltip("Duration in seconds that this Action takes to play")]
         public float DurationSeconds;
 
-        [Tooltip("Duration in seconds that this Action takes to cooldown, after DurationSeconds has elapsed.")]
-        public float CooldownSeconds;
-
         [Tooltip("Time when the Action should do its \"main thing\" (e.g. when a melee attack should apply damage")]
         public float ExecTimeSeconds;
 
         [Tooltip("How long the effect this Action leaves behind will last, in seconds")]
         public float EffectDurationSeconds;
+
+        [Tooltip("After this Action is successfully started, the server will discard any attempts to perform it again until this amount of time has elapsed.")]
+        public float ReuseTimeSeconds;
 
         [Tooltip("The primary Animation trigger that gets raised when visualizing this Action")]
         public string Anim;
@@ -46,6 +46,9 @@ namespace BossRoom
 
         [Tooltip("The reaction anim to play in response to being hit by this skill")]
         public string ReactAnim;
+
+        [Tooltip("The name of an animator variable used by this action")]
+        public string OtherAnimatorVariable;
 
         [Tooltip("For Actions that can hit multiple enemies, this determines how much damage is done to non-primary targets")]
         public int SplashDamage;
@@ -65,7 +68,7 @@ namespace BossRoom
         [Tooltip("Prefab to spawn that will manage this action's input")]
         public BaseActionInput ActionInput;
 
-        [Tooltip("Is this Action interruptible by other action plays. Generally, actions with short exec times should not be interruptible in this way.")]
+        [Tooltip("Is this Action interruptible by other action-plays or by movement? (Implicitly stops movement when action starts.) Generally, actions with short exec times should not be interruptible in this way.")]
         public bool ActionInterruptible;
 
         [System.Serializable]
@@ -73,7 +76,6 @@ namespace BossRoom
         {
             EntireDuration,
             OnlyDuringExecTime,
-            ExecTimeWithCooldown,
         }
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;

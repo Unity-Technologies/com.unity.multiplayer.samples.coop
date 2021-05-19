@@ -27,6 +27,9 @@ namespace BossRoom
         [Tooltip("Starting Mana of this character class")]
         public int BaseMana;
 
+        [Tooltip("Base movement speed of this character class (in meters/sec)")]
+        public float Speed;
+
         [Tooltip("Set to true if this represents an NPC, as opposed to a player.")]
         public bool IsNpc;
 

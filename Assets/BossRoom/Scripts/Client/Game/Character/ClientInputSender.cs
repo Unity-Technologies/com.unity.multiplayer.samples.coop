@@ -17,10 +17,11 @@ namespace BossRoom.Client
         private const float k_MouseInputRaycastDistance = 100f;
 
         //The movement input rate is capped at 50ms (or 20 fps). This provides a nice balance between responsiveness and
-        //upstream network conservation. This matters when holding down your mouse button to move. 
+        //upstream network conservation. This matters when holding down your mouse button to move.
         private const float k_MoveSendRateSeconds = 0.05f; //20 fps.
 
-        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked). 
+
+        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
 
         private float m_LastSentMove;
 
@@ -34,6 +35,11 @@ namespace BossRoom.Client
         private NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
+        /// This event fires at the time when an action request is sent to the server.
+        /// </summary>
+        public Action<ActionRequestData> ActionInputEvent;
+
+        /// <summary>
         /// This describes how a skill was requested. Skills requested via mouse click will do raycasts to determine their target; skills requested
         /// in other matters will use the stateful target stored in NetworkCharacterState.
         /// </summary>
@@ -44,6 +50,12 @@ namespace BossRoom.Client
             Keyboard,    //skill was triggered via a Keyboard press, implying target should be taken from the active target.
             KeyboardRelease, //represents a released key.
             UI,          //skill was triggered from the UI, and similar to Keyboard, target should be inferred from the active target.
+            UIRelease,   //represents letting go of the mouse-button on a UI button
+        }
+
+        private bool IsReleaseStyle(SkillTriggerStyle style)
+        {
+            return style == SkillTriggerStyle.KeyboardRelease || style == SkillTriggerStyle.UIRelease;
         }
 
         /// <summary>
@@ -87,7 +99,6 @@ namespace BossRoom.Client
 
         public override void NetworkStart()
         {
-            // TODO Don't use NetworkBehaviour for just NetworkStart [GOMPS-81]
             if (!IsClient || !IsOwner)
             {
                 enabled = false;
@@ -115,9 +126,15 @@ namespace BossRoom.Client
             m_MainCamera = Camera.main;
         }
 
-        public void FinishSkill()
+        void FinishSkill()
         {
             m_CurrentSkillInput = null;
+        }
+
+        void SendInput(ActionRequestData action)
+        {
+            ActionInputEvent?.Invoke(action);
+            m_NetworkCharacter.RecvDoActionServerRPC(action);
         }
 
         void FixedUpdate()
@@ -125,21 +142,21 @@ namespace BossRoom.Client
             //play all ActionRequests, in FIFO order.
             for (int i = 0; i < m_ActionRequestCount; ++i)
             {
-                if( m_CurrentSkillInput != null )
+                if (m_CurrentSkillInput != null)
                 {
                     //actions requested while input is active are discarded, except for "Release" requests, which go through.
-                    if (m_ActionRequests[i].TriggerStyle == SkillTriggerStyle.KeyboardRelease )
+                    if (IsReleaseStyle(m_ActionRequests[i].TriggerStyle))
                     {
                         m_CurrentSkillInput.OnReleaseKey();
                     }
                 }
-                else
+                else if (!IsReleaseStyle(m_ActionRequests[i].TriggerStyle))
                 {
                     var actionData = GameDataSource.Instance.ActionDataByType[m_ActionRequests[i].RequestedAction];
                     if (actionData.ActionInput != null)
                     {
                         var skillPlayer = Instantiate(actionData.ActionInput);
-                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, FinishSkill);
+                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, SendInput, FinishSkill);
                         m_CurrentSkillInput = skillPlayer;
                     }
                     else
@@ -151,7 +168,7 @@ namespace BossRoom.Client
 
             m_ActionRequestCount = 0;
 
-            if( m_MoveRequest )
+            if (m_MoveRequest)
             {
                 m_MoveRequest = false;
                 if ( (Time.time - m_LastSentMove) > k_MoveSendRateSeconds)
@@ -178,7 +195,7 @@ namespace BossRoom.Client
         private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
-            
+
             if (targetId != 0)
             {
                 // if a targetId is given, try to find the object
@@ -213,17 +230,21 @@ namespace BossRoom.Client
 
             if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
             {
-                //Don't trigger our move logic for another 500ms. This protects us from moving  just because we clicked on them to target them.
+                //Don't trigger our move logic for a while. This protects us from moving just because we clicked on them to target them.
                 m_LastSentMove = Time.time + k_TargetMoveTimeout;
 
-                m_NetworkCharacter.RecvDoActionServerRPC(playerAction);
+                SendInput(playerAction);
             }
             else if(actionType != ActionType.GeneralTarget )
             {
-                // clicked on nothing... perform a "miss" attack on the spot they clicked on
+                // clicked on nothing... perform an "untargeted" attack on the spot they clicked on.
+                // (Different Actions will deal with this differently. For some, like archer arrows, this will fire an arrow
+                // in the desired direction. For others, like mage's bolts, this will fire a "miss" projectile at the spot clicked on.)
+
                 var data = new ActionRequestData();
                 PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
-                m_NetworkCharacter.RecvDoActionServerRPC(data);
+
+                SendInput(data);
             }
         }
 
@@ -249,7 +270,7 @@ namespace BossRoom.Client
                 NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
             }
 
-            //sanity check that this is indeed a valid target. 
+            //sanity check that this is indeed a valid target.
             if(targetNetObj==null || !ActionUtils.IsValidTarget(targetNetObj.NetworkObjectId))
             {
                 return false;
@@ -261,7 +282,7 @@ namespace BossRoom.Client
                 //Skill1 may be contextually overridden if it was generated from a mouse-click.
                 if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
-                    if (!targetNetState.IsNpc && targetNetState.NetworkLifeState.Value == LifeState.Fainted)
+                    if (!targetNetState.IsNpc && targetNetState.LifeState == LifeState.Fainted)
                     {
                         //right-clicked on a downed ally--change the skill play to Revive.
                         actionType = ActionType.GeneralRevive;
@@ -290,14 +311,20 @@ namespace BossRoom.Client
             //most skill types should implicitly close distance. The ones that don't are explicitly set to false in the following switch.
             resultData.ShouldClose = true;
 
+            // figure out the Direction in case we want to send it
+            Vector3 offset = hitPoint - transform.position;
+            offset.y = 0;
+            Vector3 direction = offset.normalized;
+
             switch (actionInfo.Logic)
             {
                 //for projectile logic, infer the direction from the click position.
                 case ActionLogic.LaunchProjectile:
-                    Vector3 offset = hitPoint - transform.position;
-                    offset.y = 0;
-                    resultData.Direction = offset.normalized;
+                    resultData.Direction = direction;
                     resultData.ShouldClose = false; //why? Because you could be lining up a shot, hoping to hit other people between you and your target. Moving you would be quite invasive.
+                    return;
+                case ActionLogic.Melee:
+                    resultData.Direction = direction;
                     return;
                 case ActionLogic.Target:
                     resultData.ShouldClose = false;
@@ -306,7 +333,10 @@ namespace BossRoom.Client
                     resultData.CancelMovement = true;
                     return;
                 case ActionLogic.RangedFXTargeted:
-                    if (resultData.TargetIds == null) { resultData.Position = hitPoint; }
+                    resultData.Position = hitPoint;
+                    return;
+                case ActionLogic.DashAttack:
+                    resultData.Position = hitPoint;
                     return;
             }
         }
@@ -327,7 +357,7 @@ namespace BossRoom.Client
             Assert.IsTrue(GameDataSource.Instance.ActionDataByType.ContainsKey(action),
                 $"Action {action} must be part of ActionData dictionary!");
 
-            if( m_ActionRequestCount < m_ActionRequests.Length )
+            if (m_ActionRequestCount < m_ActionRequests.Length)
             {
                 m_ActionRequests[m_ActionRequestCount].RequestedAction = action;
                 m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
@@ -340,17 +370,25 @@ namespace BossRoom.Client
         {
             if (Input.GetKeyDown(KeyCode.Alpha1))
             {
-                RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
+                RequestAction(CharacterData.Skill1, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha1))
             {
-                RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(CharacterData.Skill1, SkillTriggerStyle.KeyboardRelease);
             }
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
-                RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
+                RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
             }
             else if (Input.GetKeyUp(KeyCode.Alpha2))
+            {
+                RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
+            }
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
+            }
+            else if (Input.GetKeyUp(KeyCode.Alpha3))
             {
                 RequestAction(CharacterData.Skill3, SkillTriggerStyle.KeyboardRelease);
             }

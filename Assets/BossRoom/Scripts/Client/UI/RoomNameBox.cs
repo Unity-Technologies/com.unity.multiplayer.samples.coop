@@ -4,13 +4,13 @@ using MLAPI.Transports.PhotonRealtime;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.UI;
+using TMPro;
 
 public class RoomNameBox : MonoBehaviour
 {
 
     [SerializeField]
-    Text m_RoomNameText;
+    TextMeshProUGUI m_RoomNameText;
 
     bool m_ConnectionFinished = false;
 
@@ -41,7 +41,10 @@ public class RoomNameBox : MonoBehaviour
         {
             var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
 
-            if (transport is PhotonRealtimeTransport realtimeTransport && string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
+            if (transport != null &&
+                transport is PhotonRealtimeTransport realtimeTransport &&
+                realtimeTransport.Client != null && 
+                string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
             {
                 string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
                 m_RoomNameText.text = $"Room Name: {roomName}";
