@@ -22,7 +22,9 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Audio files for boss sound effects
   * Visual effects and particles for Tank charge skill 
   * Art assets to wave spawner, including animations for ReceiveDamage, Broken (died), and Revive 
-  * Game music  
+  * Added Boss fight theme
+
+* Added audiomixer to Boss Room for separate audio channels and a master mixer. 
 
 * Updated and added various hero abilities:
 
