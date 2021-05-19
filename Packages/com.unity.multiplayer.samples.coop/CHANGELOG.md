@@ -8,7 +8,7 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
 
 ### New features
 
-* Introduced static scene `NetworkObject`s to Boss Room including the following updates:
+* Introduced static scene `NetworkObject`s to to BossRoom scene including the following updates:
 
     * Implemented a `ScriptableObject` based event system to encapsulate events inside assets. These objects include a `GameEvent` (ScriptableObject) and `GameEventListener` (MonoBehaviour) to encapsulate events inside assets, located in the `ServerBossRoomState` prefab which now has a `GameEventListener` component. The event associated to this listener is `BossDefeated`, which the Boss raises when the `LifeState` is Dead in the `RaiseEventOnLifeChange` component.
     * Added two separator `GameObject`s for scene readability: runtime `NetworkObject`s and `NetworkObject`s already placed in the scene.
@@ -24,10 +24,10 @@ It requires and supports Unity v2020.3.8f1 LTS and Unity MLAPI v0.1.0. For addit
   * Added a gear icon for accessing and modifying app settings. 
   * The UI now tracks and displays player has arrived, number of connected players in the lobby, and player status. 
 
+* Added ramp-up animation for hero movement and actions
 * Added F/X and animation assets for the game including:
 
   * Audio files for boss sound effects
-  * Ramp-up animation for hero movement and actions
   * Visual effects and particles for Tank charge skill 
   * Art assets to wave spawner, including animations for ReceiveDamage, Broken (died), and Revive 
   * Game music 
