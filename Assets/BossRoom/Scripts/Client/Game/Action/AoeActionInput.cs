@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.AI;
 
 namespace BossRoom.Visual
 {
@@ -12,42 +13,42 @@ namespace BossRoom.Visual
     public class AoeActionInput : BaseActionInput
     {
         [SerializeField]
-        private GameObject m_InRangeVisualization;
+        GameObject m_InRangeVisualization;
 
         [SerializeField]
-        private GameObject m_OutOfRangeVisualization;
+        GameObject m_OutOfRangeVisualization;
 
         Camera m_Camera;
-        int m_GroundLayerMask;
+
         Vector3 m_Origin;
 
         //The general action system works on MouseDown events (to support Charged Actions), but that means that if we only wait for
         //a mouse up event internally, we will fire as part of the same UI click that started the action input (meaning the user would
         //have to drag her mouse from the button to the firing location). Tracking a mouse-down mouse-up cycle means that a user can
-        //click on the ground separately from the mouse-click that engaged the action (which also makes the UI flow equivalent to the
-        //flow from hitting a number key). 
+        //click on the NavMesh separately from the mouse-click that engaged the action (which also makes the UI flow equivalent to the
+        //flow from hitting a number key).
         bool m_ReceivedMouseDownEvent;
 
-        RaycastHit[] m_UpdateResult = new RaycastHit[1];
+        NavMeshHit m_NavMeshHit;
+
+        // plane that has normal pointing up on y, that is 0 distance units displaced from origin
+        // this is also the same height as the NavMesh baked in-game
+        static readonly Plane k_Plane = new Plane(Vector3.up, 0f);
 
         void Start()
         {
             var radius = GameDataSource.Instance.ActionDataByType[m_ActionType].Radius;
             transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
             m_Camera = Camera.main;
-            m_GroundLayerMask = LayerMask.GetMask("Ground");
             m_Origin = m_PlayerOwner.transform.position;
         }
 
         void Update()
         {
-            if (Physics.RaycastNonAlloc(
-                ray: m_Camera.ScreenPointToRay(Input.mousePosition),
-                results: m_UpdateResult,
-                maxDistance: float.PositiveInfinity,
-                layerMask: m_GroundLayerMask) > 0)
+            if (PlaneRaycast(k_Plane, m_Camera.ScreenPointToRay(Input.mousePosition), out Vector3 pointOnPlane) &&
+                NavMesh.SamplePosition(pointOnPlane, out m_NavMeshHit, 2f, NavMesh.AllAreas))
             {
-                transform.position = m_UpdateResult[0].point;
+                transform.position = m_NavMeshHit.position;
             }
 
             float range = GameDataSource.Instance.ActionDataByType[m_ActionType].Range;
@@ -76,6 +77,31 @@ namespace BossRoom.Visual
                 }
                 Destroy(gameObject);
                 return;
+            }
+        }
+
+        /// <summary>
+        /// Utility method to simulate a raycast to a given plane. Does not involve a Physics-based raycast.
+        /// </summary>
+        /// <remarks> Based on documented example here: https://docs.unity3d.com/ScriptReference/Plane.Raycast.html
+        /// </remarks>
+        /// <param name="plane"></param>
+        /// <param name="ray"></param>
+        /// <param name="pointOnPlane"></param>
+        /// <returns> true if intersection point lies inside NavMesh; false otherwise </returns>
+        static bool PlaneRaycast(Plane plane, Ray ray, out Vector3 pointOnPlane)
+        {
+            // validate that this ray intersects plane
+            if (plane.Raycast(ray, out var enter))
+            {
+                // get the point of intersection
+                pointOnPlane = ray.GetPoint(enter);
+                return true;
+            }
+            else
+            {
+                pointOnPlane = Vector3.zero;
+                return false;
             }
         }
     }
