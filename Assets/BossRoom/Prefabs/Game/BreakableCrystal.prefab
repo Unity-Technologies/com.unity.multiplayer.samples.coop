@@ -84,6 +84,7 @@ MonoBehaviour:
   m_MaxHealth: {fileID: 11400000, guid: 35bb8d80ab89bf64aa87c6e1a7863370, type: 2}
   m_NetworkHealthState: {fileID: 1536483666502863715}
   m_Collider: {fileID: 8991873088713291135}
+  m_SpecialDamageFlags: 0
 --- !u!136 &8991873088713291135
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -111,6 +112,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrokenPrefab: {fileID: 2858583284541929654, guid: a10826c3d0e970f459ad7c6883267d2c, type: 3}
+  m_PrebrokenPrefab: {fileID: 0}
   m_BrokenPrefabPos: {fileID: 2925848032892422867}
   m_UnbrokenGameObjects:
   - {fileID: 2580953892932309097}
@@ -312,6 +314,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: -2088346993707834735, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -2088346993707834735, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 5dc79f6519261e547a9d31b0de849df7, type: 2}
@@ -324,13 +330,25 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 3290009304433194289, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3290009304433194289, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 5dc79f6519261e547a9d31b0de849df7, type: 2}
     - target: {fileID: 4420464326313142980, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4420464326313142980, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: 5dc79f6519261e547a9d31b0de849df7, type: 2}
+    - target: {fileID: 5252780467383862430, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
+      propertyPath: m_CastShadows
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5252780467383862430, guid: c4f463f134352e74fbcead59ab69cd0b, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
