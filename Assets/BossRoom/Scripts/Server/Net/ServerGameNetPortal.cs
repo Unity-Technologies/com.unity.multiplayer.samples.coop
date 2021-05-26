@@ -249,6 +249,7 @@ namespace BossRoom.Server
             // Another hackfix to unblock me since this is now called on the host's client instance as well
             if (connectionPayload == null)
             {
+                callback(false, 0, true, null, null);
                 return;
             }
             int clientScene = connectionPayload.clientScene;
