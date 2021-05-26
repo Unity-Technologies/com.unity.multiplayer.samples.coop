@@ -12,8 +12,7 @@ GameObject:
   - component: {fileID: 8801324764397981686}
   - component: {fileID: 8184890942973508939}
   - component: {fileID: 4897062626467851486}
-  - component: {fileID: 3372118818997572424}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: env_door_crystral_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -96,19 +95,3 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.99753475, y: 3.8718717, z: 1.0420358}
   m_Center: {x: 0.00000070035475, y: 1.9263498, z: 0.00000074505823}
---- !u!208 &3372118818997572424
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1899106884463111546}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.43800002, y: 0.791, z: 0.44400004}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 1
-  m_Center: {x: 0, y: 0.781, z: 0}
-  m_TimeToStationary: 0.5
