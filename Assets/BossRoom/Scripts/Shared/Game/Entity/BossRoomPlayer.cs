@@ -5,7 +5,7 @@ using UnityEngine;
 namespace BossRoom
 {
     /// <summary>
-    /// NetworkBehaviour that represent a player connection and is the "Default Player Prefab" according to MLAPI. This
+    /// NetworkBehaviour that represents a player connection and is the "Default Player Prefab" according to MLAPI. This
     /// NetworkBehaviour will contain several other NetworkBehaviours that should persist throughout the duration of
     /// this connection, meaning it will persist between scenes.
     /// </summary>
@@ -15,7 +15,10 @@ namespace BossRoom
         [SerializeField]
         BossRoomPlayerRuntimeCollection m_BossRoomPlayerRuntimeCollection;
 
-        public static event Action BossRoomPlayerNetworkReadied;
+        /// <summary>
+        /// The callback to invoke once NetworkStart() is fired. This callback is ran on both server and clients.
+        /// </summary>
+        public static event Action BossRoomPlayerNetworkStarted;
 
         void Awake()
         {
@@ -26,9 +29,9 @@ namespace BossRoom
         {
             gameObject.name = "BossRoomPlayer" + OwnerClientId;
 
-            BossRoomPlayerNetworkReadied?.Invoke();
+            BossRoomPlayerNetworkStarted?.Invoke();
 
-            // Note that this is done here on NetworkStart in case this NetworkBehaviour's properties are looked up
+            // Note that this is done here on NetworkStart in case this NetworkBehaviour's properties are accessed
             // when this element is added to the runtime collection. If this was done in OnEnable() there is a chance
             // that OwnerClientID could be its default value (0).
             m_BossRoomPlayerRuntimeCollection.Add(this);

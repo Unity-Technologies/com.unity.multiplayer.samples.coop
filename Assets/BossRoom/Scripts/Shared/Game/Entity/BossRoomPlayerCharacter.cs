@@ -25,6 +25,10 @@ namespace BossRoom
 
         public BossRoomPlayer BossRoomPlayer => m_BossRoomPlayer;
 
+        /// <summary>
+        /// The callback to invoke once this BossRoomPlayerCharacter's associated BossRoomPlayer is set.
+        /// This callback is ran on both server and clients.
+        /// </summary>
         public event Action BossRoomPlayerCharacterNetworkReadied;
 
         public override void NetworkStart()
@@ -33,7 +37,9 @@ namespace BossRoom
 
             if (!TryGetPlayer(out m_BossRoomPlayer))
             {
-                BossRoomPlayer.BossRoomPlayerNetworkReadied += TryGetPlayer;
+                // owning BossRoomPlayer not present yet; this can happen in a late-join scenario
+                // wait until NetworkStart() is fired on matching BossRoomPlayer
+                BossRoomPlayer.BossRoomPlayerNetworkStarted += TryGetPlayer;
             }
         }
 
@@ -42,7 +48,7 @@ namespace BossRoom
             if (TryGetPlayer(out m_BossRoomPlayer))
             {
                 // matching BossRoomPlayer found; unsubscribe from BossRoomPlayer callback
-                BossRoomPlayer.BossRoomPlayerNetworkReadied -= TryGetPlayer;
+                BossRoomPlayer.BossRoomPlayerNetworkStarted -= TryGetPlayer;
             }
         }
 
@@ -62,7 +68,7 @@ namespace BossRoom
 
         void OnDestroy()
         {
-            BossRoomPlayer.BossRoomPlayerNetworkReadied -= TryGetPlayer;
+            BossRoomPlayer.BossRoomPlayerNetworkStarted -= TryGetPlayer;
 
             m_BossRoomPlayerCharacters.Remove(this);
         }
