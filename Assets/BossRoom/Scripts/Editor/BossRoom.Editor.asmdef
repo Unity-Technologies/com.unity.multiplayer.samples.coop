@@ -3,7 +3,8 @@
     "rootNamespace": "",
     "references": [
         "BossRoom.Shared",
-        "Unity.Multiplayer.MLAPI.Runtime"
+        "Unity.Multiplayer.MLAPI.Runtime",
+        "BossRoom.Client"
     ],
     "includePlatforms": [
         "Editor"
