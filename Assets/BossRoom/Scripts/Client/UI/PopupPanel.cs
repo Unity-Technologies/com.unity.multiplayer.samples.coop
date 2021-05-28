@@ -5,7 +5,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using TMPro;
-using BossRoom.Client;
 
 namespace BossRoom.Visual
 {
