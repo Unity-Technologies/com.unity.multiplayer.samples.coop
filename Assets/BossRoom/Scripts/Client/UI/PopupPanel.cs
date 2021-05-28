@@ -45,10 +45,10 @@ namespace BossRoom.Visual
         OnlineMode m_OnlineMode;
 
         [SerializeField]
-        UIRadioButton m_IPRadioButton;
+        Toggle m_IPRadioButton;
 
         [SerializeField]
-        UIRadioButton m_RelayRadioButton;
+        Toggle m_RelayRadioButton;
 
         bool m_EnterAsHost;
 
@@ -106,12 +106,12 @@ namespace BossRoom.Visual
             m_ConfirmationButton.onClick.AddListener(OnConfirmClick);
             m_ConfirmationButton.gameObject.SetActive(true);
 
-            m_IPRadioButton.IsOn = true;
-            IPRadioRadioButtonPressed();
-            m_IPRadioButton.OnPointerUpRaised += IPRadioRadioButtonPressed;
-            m_RelayRadioButton.OnPointerUpRaised += RelayRadioRadioButtonPressed;
             m_IPRadioButton.gameObject.SetActive(true);
             m_RelayRadioButton.gameObject.SetActive(true);
+            m_IPRadioButton.onValueChanged.AddListener(IPRadioRadioButtonPressed);
+            m_RelayRadioButton.onValueChanged.AddListener(RelayRadioRadioButtonPressed);
+            m_RelayRadioButton.isOn = false;
+            m_IPRadioButton.isOn = true;
 
             m_CancelButton.onClick.AddListener(OnCancelClick);
             m_CancelButton.gameObject.SetActive(true);
@@ -124,18 +124,26 @@ namespace BossRoom.Visual
             gameObject.SetActive(true);
         }
 
-        void IPRadioRadioButtonPressed()
+        void IPRadioRadioButtonPressed(bool value)
         {
+            if (!value)
+            {
+                return;
+            }
+
             m_OnlineMode = OnlineMode.IpHost;
             OnOnlineModeDropdownChanged(m_OnlineMode);
-            m_RelayRadioButton.IsOn = false;
         }
 
-        void RelayRadioRadioButtonPressed()
+        void RelayRadioRadioButtonPressed(bool value)
         {
+            if (!value)
+            {
+                return;
+            }
+
             m_OnlineMode = OnlineMode.Relay;
             OnOnlineModeDropdownChanged(m_OnlineMode);
-            m_IPRadioButton.IsOn = false;
         }
 
         private void OnConfirmClick()
@@ -284,8 +292,8 @@ namespace BossRoom.Visual
 
             m_IPRadioButton.gameObject.SetActive(false);
             m_RelayRadioButton.gameObject.SetActive(false);
-            m_IPRadioButton.OnPointerUpRaised -= IPRadioRadioButtonPressed;
-            m_RelayRadioButton.OnPointerUpRaised -= RelayRadioRadioButtonPressed;
+            m_IPRadioButton.onValueChanged.RemoveListener(IPRadioRadioButtonPressed);
+            m_RelayRadioButton.onValueChanged.RemoveListener(RelayRadioRadioButtonPressed);
 
             m_CancelButton.onClick.RemoveListener(OnCancelClick);
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
