@@ -95,7 +95,7 @@ For a deep dive in MLAPI and Boss Room, visit our [doc](https://docs-multiplayer
 
 The project uses the `git-flow` branching strategy, as such:
  - `develop` branch contains all active development
- - `master` branch contains release versions
+ - `main` branch contains release versions
 
 To get the project on your machine you need to clone the repository from GitHub using the following command-line command:
 ```
