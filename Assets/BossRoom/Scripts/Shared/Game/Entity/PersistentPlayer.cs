@@ -10,10 +10,10 @@ namespace BossRoom
     /// this connection, meaning it will persist between scenes.
     /// </summary>
     [RequireComponent(typeof(NetworkObject))]
-    public class BossRoomPlayer : NetworkBehaviour
+    public class PersistentPlayer : NetworkBehaviour
     {
         [SerializeField]
-        BossRoomPlayerRuntimeCollection m_BossRoomPlayerRuntimeCollection;
+        PersistentPlayerRuntimeCollection m_PersistentPlayerRuntimeCollection;
 
         /// <summary>
         /// The callback to invoke once NetworkStart() is fired. This callback is ran on both server and clients.
@@ -34,12 +34,12 @@ namespace BossRoom
             // Note that this is done here on NetworkStart in case this NetworkBehaviour's properties are accessed
             // when this element is added to the runtime collection. If this was done in OnEnable() there is a chance
             // that OwnerClientID could be its default value (0).
-            m_BossRoomPlayerRuntimeCollection.Add(this);
+            m_PersistentPlayerRuntimeCollection.Add(this);
         }
 
         void OnDestroy()
         {
-            m_BossRoomPlayerRuntimeCollection.Remove(this);
+            m_PersistentPlayerRuntimeCollection.Remove(this);
         }
     }
 }
