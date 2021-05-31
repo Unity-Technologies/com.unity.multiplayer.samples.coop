@@ -15,11 +15,6 @@ namespace BossRoom
         [SerializeField]
         PersistentPlayerRuntimeCollection m_PersistentPlayerRuntimeCollection;
 
-        /// <summary>
-        /// The callback to invoke once NetworkStart() is fired. This callback is ran on both server and clients.
-        /// </summary>
-        public static event Action BossRoomPlayerNetworkStarted;
-
         void Awake()
         {
             DontDestroyOnLoad(this);
@@ -28,8 +23,6 @@ namespace BossRoom
         public override void NetworkStart()
         {
             gameObject.name = "BossRoomPlayer" + OwnerClientId;
-
-            BossRoomPlayerNetworkStarted?.Invoke();
 
             // Note that this is done here on NetworkStart in case this NetworkBehaviour's properties are accessed
             // when this element is added to the runtime collection. If this was done in OnEnable() there is a chance
