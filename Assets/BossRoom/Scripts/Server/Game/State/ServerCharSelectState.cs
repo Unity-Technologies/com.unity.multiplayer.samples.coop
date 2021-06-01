@@ -153,6 +153,7 @@ namespace BossRoom.Server
             {
                 NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene -= SceneManager_OnNotifyServerClientLoadedScene;
             }
             if (CharSelectData)
             {
