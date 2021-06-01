@@ -227,7 +227,7 @@ namespace BossRoom.Server
             var clone = Instantiate(m_NetworkedPrefab, m_SpawnPositions[posIdx].position, m_SpawnPositions[posIdx].rotation);
             if (!clone.IsSpawned)
             {
-                clone.Spawn();
+                clone.Spawn(null, true);
             }
 
             if (m_SpawnedEntityDetectDistance > -1)

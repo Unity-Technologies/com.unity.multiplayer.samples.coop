@@ -14,7 +14,7 @@ namespace BossRoom.Client
     GameObject m_FeedbackObj;
     ClientInputSender m_ClientSender;
 
-    private const float HOVER_HEIGHT = .1f;
+    private const float HOVER_HEIGHT = .15f;
 
     // Start is called before the first frame update
     void Start()
