@@ -151,7 +151,7 @@ namespace BossRoom.Server
             base.OnDestroy();
             if (NetworkManager.Singleton)
             {
-                //NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
             }
             if (CharSelectData)
@@ -169,10 +169,12 @@ namespace BossRoom.Server
             }
             else
             {
-                //NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
+                // Cosmin: Question? Should OnNotifyServerClientLoadedScene delegate also cover
+                // When a new client joins in? If yes, then this we will become obsolete for our case here
+                NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
                 // NSS: Suggested Fix, use the OnNotifyServerClientLoadedScene to let you know that the client
                 // is initialized, all scene NetworkObjects have been loaded, and can be considered "ready to send and receive messages".
                 NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += SceneManager_OnNotifyServerClientLoadedScene;
@@ -185,7 +187,7 @@ namespace BossRoom.Server
                 //    var clients = NetworkManager.Singleton.ConnectedClientsList;
                 //    foreach (var net_cl in clients)
                 //    {
-                //        OnClientConnected(net_cl.ClientId);                        
+                //        OnClientConnected(net_cl.ClientId);
                 //    }
                 //}
             }
@@ -197,11 +199,14 @@ namespace BossRoom.Server
             SeatNewPlayer(clientId);
         }
 
-        //private void OnClientConnected(ulong clientId)
-        //{
-        //    
-        //    //StartCoroutine(WaitToSeatNewPlayer(clientId));
-        //}
+        private void OnClientConnected(ulong clientId)
+        {
+
+            // Cosmin: We no longer need a delayed/coroutine to handle this, now that we have OnNotifyServerClientLoadedScene
+            // Implemented at the SDK level, which should correctly cover for this workaround
+            //StartCoroutine(WaitToSeatNewPlayer(clientId));
+            SeatNewPlayer(clientId);
+        }
 
         //private IEnumerator WaitToSeatNewPlayer(ulong clientId)
         //{
