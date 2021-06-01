@@ -33,11 +33,15 @@ namespace BossRoom.Visual
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
+
+            //any disconnect reason set? Show it to the user here. 
+            ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
+            m_ClientNetPortal.DisconnectReason.Clear();
         }
 
         public void OnHostClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the IP to host on", "", "iphost", "Confirm",
+            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select drop down to use relay", "", "iphost", "Confirm",
                 (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
             {
                 m_GameNetPortal.PlayerName = playerName;
@@ -96,14 +100,38 @@ namespace BossRoom.Visual
         /// <param name="status"></param>
         private void OnConnectFinished(ConnectStatus status)
         {
-            if (status != ConnectStatus.Success)
+            ConnectStatusToMessage(status, true);
+        }
+
+        /// <summary>
+        /// Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
+        /// (2) failed connect, (3) disconnect. 
+        /// </summary>
+        /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
+        private void ConnectStatusToMessage(ConnectStatus status, bool connecting)
+        {
+            switch(status)
             {
-                m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Something went wrong", false, true);
-            }
-            else
-            {
-                //Here we want to display that the connection was successful before we load in game.
-                m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now", false, false);
+                case ConnectStatus.Undefined:
+                case ConnectStatus.UserRequestedDisconnect:
+                    break;
+                case ConnectStatus.ServerFull:
+                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections", false, true);
+                    break;
+                case ConnectStatus.Success:
+                    if(connecting) { m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now", false, true); }
+                    break;
+                case ConnectStatus.LoggedInAgain:
+                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account", false, true);
+                    break;
+                case ConnectStatus.GenericDisconnect:
+                    var title = connecting ? "Connection Failed" : "Disconnected From Host";
+                    var text = connecting ? "Something went wrong" : "The connection to the host was lost";
+                    m_ResponsePopup.SetupNotifierDisplay(title, text, false, true);
+                    break;
+                default:
+                    Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
+                    break;
             }
         }
 

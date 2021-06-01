@@ -14,16 +14,25 @@ namespace BossRoom.Server
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
 
+        private ServerGameNetPortal m_ServerNetPortal;
+
         private void Awake()
         {
             CharSelectData = GetComponent<CharSelectData>();
+            m_ServerNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<ServerGameNetPortal>();
         }
 
         private void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
         {
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
-                throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
+            {
+                //TODO-FIXME:MLAPI See note about MLAPI issue 745 in WaitToSeatNowPlayer.
+                //while this workaround is in place, we must simply ignore these update requests from the client.
+                //throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
+                return;
+            }
+
 
             if (CharSelectData.IsLobbyClosed.Value)
             {
@@ -31,13 +40,28 @@ namespace BossRoom.Server
                 return;
             }
 
-            // see if someone has already locked-in that seat! If so, too late... discard this choice
-            foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
+            if ( newSeatIdx ==-1)
             {
-                if (playerInfo.SeatIdx == newSeatIdx && playerInfo.SeatState == CharSelectData.SeatState.LockedIn)
+                // we can't lock in with no seat
+                lockedIn = false;
+            }
+            else
+            {
+                // see if someone has already locked-in that seat! If so, too late... discard this choice
+                foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
                 {
-                    // yep, somebody already locked this choice in. Stop!
-                    return;
+                    if (playerInfo.ClientId != clientId && playerInfo.SeatIdx == newSeatIdx && playerInfo.SeatState == CharSelectData.SeatState.LockedIn)
+                    {
+                        // somebody already locked this choice in. Stop!
+                        // Instead of granting lock request, change this player to Inactive state.
+                        CharSelectData.LobbyPlayers[idx] = new CharSelectData.LobbyPlayerState(clientId,
+                            CharSelectData.LobbyPlayers[idx].PlayerName,
+                            CharSelectData.LobbyPlayers[idx].PlayerNum,
+                            CharSelectData.SeatState.Inactive);
+
+                        // then early out
+                        return;
+                    }
                 }
             }
 
@@ -101,7 +125,7 @@ namespace BossRoom.Server
             SaveLobbyResults();
 
             // Delay a few seconds to give the UI time to react, then switch scenes
-            StartCoroutine(CoroEndLobby());
+            StartCoroutine(WaitToEndLobby());
         }
 
         private void SaveLobbyResults()
@@ -116,7 +140,7 @@ namespace BossRoom.Server
             GameStateRelay.SetRelayObject(lobbyResults);
         }
 
-        private IEnumerator CoroEndLobby()
+        private IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
             MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("BossRoom");
@@ -165,36 +189,16 @@ namespace BossRoom.Server
 
         private void OnClientConnected(ulong clientId)
         {
-            // FIXME: here we work around another MLAPI bug when starting up scenes with in-scene networked objects.
-            // We'd like to immediately give the new client a slot in our lobby, but if we try to send an RPC to the
-            // client-side version of this scene NetworkObject, it will fail. The client's log will show
-            //      "[MLAPI] ClientRPC message received for a non-existent object with id: 1. This message is lost."
-            // If we wait a moment, the object will be assigned its ID (of 1) and everything will work. But there's no
-            // notification to reliably tell us when the server and client are truly initialized.
-            //
-            // Add'l notes: I tried to work around this by having the newly-connected client send an "I'm ready" RPC to the
-            // server, assuming that by the time the server received an RPC, it would be safe to respond. But the client
-            // literally cannot send RPCs yet! If it sends one too quickly after connecting, the server gets a null-reference
-            // exception. (Exception is in either MLAPI.NetworkBehaviour.InvokeServerRPCLocal() or
-            // MLAPI.NetworkBehaviour.OnRemoteServerRPC, depending on whether we're in host mode or a standalone
-            // client, respectively). This actually seems like a separate bug, but probably tied into the same problem.
-
-            //      To repro the bug, comment out this line...
-            StartCoroutine(CoroWorkAroundMlapiBug(clientId));
-            //      ... and uncomment this one:
-            //AssignNewLobbyIndex(clientId);
+            StartCoroutine(WaitToSeatNewPlayer(clientId));
         }
 
-        private IEnumerator CoroWorkAroundMlapiBug(ulong clientId)
+        private IEnumerator WaitToSeatNewPlayer(ulong clientId)
         {
-            var client = NetworkManager.Singleton.ConnectedClients[clientId];
-
-            // for the host-mode client, a single frame of delay seems to be enough;
-            // for networked connections, it often takes longer, so we wait a second.
-            if (IsHost && clientId == NetworkManager.Singleton.LocalClientId)
-                yield return new WaitForFixedUpdate();
-            else
-                yield return new WaitForSeconds(1);
+            //TODO-FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
+            //causing the NetworkList of lobby players to get out of sync.
+            //tracking MLAPI issue: https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/745
+            //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback. 
+            yield return new WaitForSeconds(2.5f);
             SeatNewPlayer(clientId);
         }
 
@@ -231,9 +235,7 @@ namespace BossRoom.Server
                 return;
             }
 
-            // this will be replaced with an auto-generated name
-            string playerName = "Player" + (playerNum + 1);
-
+            string playerName = m_ServerNetPortal.GetPlayerName(clientId,playerNum);
             CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
         }
 

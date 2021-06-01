@@ -2,6 +2,7 @@ using MLAPI.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -15,6 +16,12 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private Light m_SceneLight;
+		
+        [SerializeField]
+        private TextMeshProUGUI m_WinEndMessage;
+
+        [SerializeField]
+        private TextMeshProUGUI m_LoseGameMessage;
 
         [SerializeField]
         private GameObject m_ReplayButton;
@@ -24,11 +31,6 @@ namespace BossRoom.Visual
 
         [SerializeField]
         private PostGameData m_PostGameData;
-
-        [SerializeField]
-        private Sprite m_WinSprite;
-        [SerializeField]
-        private Sprite m_LoseSprite;
 
         [SerializeField]
         private Color m_WinLightColor;
@@ -55,7 +57,14 @@ namespace BossRoom.Visual
 
             OnGameWonChanged(0, m_PostGameData.GameBannerState.Value );
             m_PostGameData.GameBannerState.OnValueChanged += OnGameWonChanged;
+        }
 
+        void OnDestroy()
+        {
+            if( m_PostGameData != null )
+            {
+                m_PostGameData.GameBannerState.OnValueChanged -= OnGameWonChanged;
+            }
         }
 
         //this won't actually change dynamically, but using a callback robustifies us against race
@@ -65,15 +74,15 @@ namespace BossRoom.Visual
             // Set end message and background color based last game outcome
             if (m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Won )
             {
-                m_EndMessage.sprite = m_WinSprite;
                 m_SceneLight.color = m_WinLightColor;
-                m_EndMessage.color = Color.white;
+                m_WinEndMessage.gameObject.SetActive(true);
+                m_LoseGameMessage.gameObject.SetActive(false);
             }
             else if( m_PostGameData.GameBannerState.Value == (byte)PostGameData.BannerState.Lost )
             {
-                m_EndMessage.sprite = m_LoseSprite;
                 m_SceneLight.color = m_LoseLightColor;
-                m_EndMessage.color = Color.white;
+                m_WinEndMessage.gameObject.SetActive(false);
+                m_LoseGameMessage.gameObject.SetActive(true);
             }
         }
 
@@ -88,8 +97,9 @@ namespace BossRoom.Visual
         public void OnMainMenuClicked()
         {
             // Player is leaving this group - leave current network connection first
-            MLAPI.NetworkManager.Singleton.StopClient();
-            MLAPI.NetworkManager.Singleton.Shutdown();
+            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
+            gameNetPortal.RequestDisconnect();
+
             SceneManager.LoadScene("MainMenu");
         }
     }

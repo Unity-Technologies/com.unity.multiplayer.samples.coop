@@ -10,10 +10,12 @@ namespace BossRoom
 {
     public enum ConnectStatus
     {
-        Success,           //client successfully connected. This may also be a successful reconnect.
-        ServerFull,       //can't join, server is already at capacity.
-        MatchStarted,     //can't join, match is already in progress.
-        Unknown,          //can't join, reason unknown.
+        Undefined,
+        Success,                  //client successfully connected. This may also be a successful reconnect.
+        ServerFull,               //can't join, server is already at capacity.
+        LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
+        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user. 
+        GenericDisconnect,        //server disconnected, but no specific reason given.
     }
 
     public enum OnlineMode
@@ -56,10 +58,10 @@ namespace BossRoom
         public GameObject NetworkManagerGO;
 
         /// <summary>
-        /// This synthesizes a general NetworkStart event out of other events provided by MLAPI. This can be removed
-        /// when the NetworkManager starts publishing this event directly.
+        /// This event is fired when MLAPI has reported that it has finished initialization, and is ready for
+        /// business, equivalent to OnServerStarted on the server, and OnClientConnected on the client.
         /// </summary>
-        public event Action NetworkStarted;
+        public event Action NetworkReadied;
 
         /// <summary>
         /// This event contains the game-level results of the ApprovalCheck carried out by the server, and is fired
@@ -68,9 +70,21 @@ namespace BossRoom
         public event Action<ConnectStatus> ConnectFinished;
 
         /// <summary>
+        /// This event relays a ConnectStatus sent from the server to the client. The server will invoke this to provide extra
+        /// context about an upcoming network Disconnect.
+        /// </summary>
+        public event Action<ConnectStatus> DisconnectReasonReceived;
+
+        /// <summary>
         /// raised when a client has changed scenes. Returns the ClientID and the new scene the client has entered, by index.
         /// </summary>
         public event Action<ulong, int> ClientSceneChanged;
+
+        /// <summary>
+        /// This fires in response to GameNetPortal.RequestDisconnect. It's a local signal (not from the network), indicating that
+        /// the user has requested a disconnect. 
+        /// </summary>
+        public event Action UserDisconnectRequested;
 
         public NetworkManager NetManager { get; private set; }
 
@@ -85,23 +99,44 @@ namespace BossRoom
 
             NetManager = NetworkManagerGO.GetComponent<NetworkManager>();
 
-            //because we are not a true NetworkedBehavior, we don't get NetworkStart messages. But we still need to run at that point
-            //where we know if we're a host or client. So we fake a "NetworkManager.OnNetworkStarted" event out of the existing OnServerStarted
-            //and OnClientConnectedCallback events.
-            //FIXME_DMW could this be improved?
-            NetManager.OnServerStarted += NetworkStart;
-            NetManager.OnClientConnectedCallback += (clientId) =>
+            //we synthesize a "NetworkStart" event for the NetworkManager out of existing events. At some point
+            //we expect NetworkManager will expose an event like this itself.
+            NetManager.OnServerStarted += OnNetworkReady;
+            NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
+
+            //we register these without knowing whether we're a client or host. This is because certain messages can be sent super-early,
+            //before we even get our ClientConnected event (if acting as a client). It should be harmless to have server handlers registered
+            //on the client, because (a) nobody will be sending us these messages and (b) even if they did, nobody is listening for those
+            //server message events on the client anyway.
+            //TODO-FIXME:MLAPI Issue 799. We shouldn't really have to worry about getting messages before our ClientConnected callback.
+            RegisterClientMessageHandlers();
+            RegisterServerMessageHandlers();
+        }
+
+        private void OnDestroy()
+        {
+            if( NetManager != null )
             {
-                if (clientId == NetManager.LocalClientId)
-                {
-                    NetworkStart();
-                }
-            };
+                NetManager.OnServerStarted -= OnNetworkReady;
+                NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
+            }
+
+            UnregisterClientMessageHandlers();
+            UnregisterServerMessageHandlers();
+        }
+
+
+        private void ClientNetworkReadyWrapper(ulong clientId)
+        {
+            if (clientId == NetManager.LocalClientId)
+            {
+                OnNetworkReady();
+            }
         }
 
         private void RegisterClientMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("S2C_ConnectResult", (senderClientId, stream) =>
+            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientConnectResult", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -110,11 +145,21 @@ namespace BossRoom
                     ConnectFinished?.Invoke(status);
                 }
             });
+
+            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientSetDisconnectReason", (senderClientId, stream) =>
+            {
+                using (var reader = PooledNetworkReader.Get(stream))
+                {
+                    ConnectStatus status = (ConnectStatus)reader.ReadInt32();
+
+                    DisconnectReasonReceived?.Invoke(status);
+                }
+            });
         }
 
         private void RegisterServerMessageHandlers()
         {
-            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("C2S_SceneChanged", (senderClientId, stream) =>
+            MLAPI.Messaging.CustomMessagingManager.RegisterNamedMessageHandler("ClientToServerSceneChanged", (senderClientId, stream) =>
             {
                 using (var reader = PooledNetworkReader.Get(stream))
                 {
@@ -126,21 +171,24 @@ namespace BossRoom
             });
         }
 
+        private void UnregisterClientMessageHandlers()
+        {
+            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
+            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
+        }
+
+        private void UnregisterServerMessageHandlers()
+        {
+            MLAPI.Messaging.CustomMessagingManager.UnregisterNamedMessageHandler("ClientToServerSceneChanged");
+        }
+
 
         /// <summary>
         /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
         /// </summary>
-        private void NetworkStart()
+        private void OnNetworkReady()
         {
-            if (NetManager.IsClient)
-            {
-                RegisterClientMessageHandlers();
-            }
-            if (NetManager.IsServer)
-            {
-                RegisterServerMessageHandlers();
-            }
             if (NetManager.IsHost)
             {
                 //special host code. This is what kicks off the flow that happens on a regular client
@@ -148,7 +196,7 @@ namespace BossRoom
                 ConnectFinished?.Invoke(ConnectStatus.Success);
             }
 
-            NetworkStarted?.Invoke();
+            NetworkReadied?.Invoke();
         }
 
         /// <summary>
@@ -204,7 +252,7 @@ namespace BossRoom
         /// </summary>
         /// <param name="netId"> id of the client to send to </param>
         /// <param name="status"> the status to pass to the client</param>
-        public void S2CConnectResult(ulong netId, ConnectStatus status)
+        public void ServerToClientConnectResult(ulong netId, ConnectStatus status)
         {
 
             using (var buffer = PooledNetworkBuffer.Get())
@@ -212,12 +260,29 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("S2C_ConnectResult", netId, buffer, NetworkChannel.Internal);
+                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer, NetworkChannel.Internal);
                 }
             }
         }
 
-        public void C2SSceneChanged(int newScene)
+        /// <summary>
+        /// Sends a DisconnectReason to the indicated client. This should only be done on the server, prior to disconnecting the client.
+        /// </summary>
+        /// <param name="netId"> id of the client to send to </param>
+        /// <param name="status"> The reason for the upcoming disconnect.</param>
+        public void ServerToClientSetDisconnectReason(ulong netId, ConnectStatus status)
+        {
+            using (var buffer = PooledNetworkBuffer.Get())
+            {
+                using (var writer = PooledNetworkWriter.Get(buffer))
+                {
+                    writer.WriteInt32((int)status);
+                    MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer, NetworkChannel.Internal);
+                }
+            }
+        }
+
+        public void ClientToServerSceneChanged(int newScene)
         {
             if(NetManager.IsHost)
             {
@@ -230,10 +295,18 @@ namespace BossRoom
                     using (var writer = PooledNetworkWriter.Get(buffer))
                     {
                         writer.WriteInt32(newScene);
-                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("C2S_SceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
+                        MLAPI.Messaging.CustomMessagingManager.SendNamedMessage("ClientToServerSceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// This will disconnect (on the client) or shutdown the server (on the host). 
+        /// </summary>
+        public void RequestDisconnect()
+        {
+            UserDisconnectRequested?.Invoke();
         }
     }
 }

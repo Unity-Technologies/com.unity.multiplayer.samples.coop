@@ -8,8 +8,8 @@ namespace BossRoom.Server
     /// Action that represents an always-hit raybeam-style ranged attack. A particle is shown from caster to target, and then the
     /// target takes damage. (It is not possible to escape the hit; the target ALWAYS takes damage.) This is intended for fairly
     /// swift particles; the time before it's applied is based on a simple distance-check at the attack's start.
-    /// (If no target is provided, it means the user clicked on an empty spot on the map. In that case we still perform an action,
-    /// it just hits nothing.)
+    /// (If no target is provided (because the user clicked on an empty spot on the map) or if the caster doesn't have line of
+    /// sight to the target (because it's behind a wall), we still perform an action, it just hits nothing.
     /// </summary>
     public class FXProjectileTargetedAction : Action
     {
@@ -22,13 +22,21 @@ namespace BossRoom.Server
         public override bool Start()
         {
             m_Target = GetTarget();
-            if (m_Target == null && HasTarget())
-            {
-                // target has disappeared! Abort.
-                return false;
-            }
 
-            Vector3 targetPos = HasTarget() ? m_Target.transform.position : m_Data.Position;
+            // figure out where the player wants us to aim at...
+            Vector3 targetPos = m_Target != null ? m_Target.transform.position : m_Data.Position;
+
+            // then make sure we can actually see that point!
+            if (!ActionUtils.HasLineOfSight(m_Parent.transform.position, targetPos, out Vector3 collidePos))
+            {
+                // we do not have line of sight to the target point. So our target instead becomes the obstruction point
+                m_Target = null;
+                targetPos = collidePos;
+
+                // and update our action data so that when we send it to the clients, it will be up-to-date
+                Data.TargetIds = new ulong[0];
+                Data.Position = targetPos;
+            }
 
             // turn to face our target!
             m_Parent.transform.LookAt(targetPos);
@@ -36,13 +44,15 @@ namespace BossRoom.Server
             // figure out how long the pretend-projectile will be flying to the target
             float distanceToTargetPos = Vector3.Distance(targetPos, m_Parent.transform.position);
             m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed_m_s);
+
+            // tell clients to visualize this action
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
         public override bool Update()
         {
-            if (!m_ImpactedTarget && m_TimeUntilImpact <= (Time.time - TimeStarted))
+            if (!m_ImpactedTarget && m_TimeUntilImpact <= TimeRunning)
             {
                 m_ImpactedTarget = true;
                 if (m_Target != null )
@@ -55,15 +65,10 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
-            // TODO: somehow tell the corresponding FX to abort!
-        }
-
-        /// <summary>
-        /// Are we even supposed to have a target? (If not, we're representing a "missed" bolt that just hits nothing.)
-        /// </summary>
-        private bool HasTarget()
-        {
-            return Data.TargetIds != null && Data.TargetIds.Length > 0;
+            if (!m_ImpactedTarget)
+            {
+                m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+            }
         }
 
         /// <summary>
@@ -79,6 +84,13 @@ namespace BossRoom.Server
             NetworkObject obj;
             if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
             {
+                // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
+                var serverChar = obj.GetComponent<ServerCharacter>();
+                if (serverChar && serverChar.IsNpc == (Description.IsFriendly ^ m_Parent.IsNpc))
+                {
+                    // not a valid target
+                    return null;
+                }
                 return obj.GetComponent<IDamageable>();
             }
             else

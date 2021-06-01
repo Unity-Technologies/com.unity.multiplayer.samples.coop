@@ -33995,6 +33995,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1174684361203981740}
+  - component: {fileID: 8602858633822946138}
   m_Layer: 0
   m_Name: FX_RogueSkill2_Start
   m_TagString: Untagged
@@ -34017,3 +34018,25 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8602858633822946138
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9118517155190035983}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8e80714725b908940a76375b52b8d53b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ParticleSystemsToTurnOffOnShutdown:
+  - {fileID: 3129906498272755377}
+  - {fileID: 9212750067481731332}
+  - {fileID: 4169354517073120067}
+  - {fileID: 6648896786168277270}
+  - {fileID: 905880869769716948}
+  - {fileID: 8990849633590864087}
+  - {fileID: 2812111536181504186}
+  m_AutoShutdownTime: 3
+  m_PostShutdownSelfDestructTime: -1

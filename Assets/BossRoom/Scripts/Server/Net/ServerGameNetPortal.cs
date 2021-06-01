@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using MLAPI.SceneManagement;
@@ -52,7 +53,8 @@ namespace BossRoom.Server
         void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
-            m_Portal.NetworkStarted += NetworkStart;
+            m_Portal.NetworkReadied += OnNetworkReady;
+
             // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
@@ -61,7 +63,21 @@ namespace BossRoom.Server
             m_ClientIDToGuid = new Dictionary<ulong, string>();
         }
 
-        private void NetworkStart()
+        void OnDestroy()
+        {
+            if( m_Portal != null )
+            {
+                m_Portal.NetworkReadied -= OnNetworkReady;
+
+                if( m_Portal.NetManager != null)
+                {
+                    m_Portal.NetManager.ConnectionApprovalCallback -= ApprovalCheck;
+                    m_Portal.NetManager.OnServerStarted -= ServerStartedHandler;
+                }
+            }
+        }
+
+        private void OnNetworkReady()
         {
             if (!m_Portal.NetManager.IsServer)
             {
@@ -69,27 +85,78 @@ namespace BossRoom.Server
             }
             else
             {
+                //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
+                m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
+                m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
+                m_Portal.ClientSceneChanged += OnClientSceneChanged;
+
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
                 NetworkSceneManager.SwitchScene("CharSelect");
-
-                m_Portal.NetManager.OnClientDisconnectCallback += (ulong clientId) =>
-                {
-                    m_ClientSceneMap.Remove(clientId);
-                };
-
-                m_Portal.ClientSceneChanged += (ulong clientId, int sceneIndex) =>
-                {
-                    m_ClientSceneMap[clientId] = sceneIndex;
-                };
 
                 if( m_Portal.NetManager.IsHost)
                 {
                     m_ClientSceneMap[m_Portal.NetManager.LocalClientId] = ServerScene;
                 }
             }
+        }
 
+        /// <summary>
+        /// Handles the case where NetworkManager has told us a client has disconnected. This includes ourselves, if we're the host,
+        /// and the server is stopped."
+        /// </summary>
+        private void OnClientDisconnect(ulong clientId)
+        {
+            m_ClientSceneMap.Remove(clientId);
+            if( m_ClientIDToGuid.TryGetValue(clientId, out var guid ) )
+            {
+                m_ClientIDToGuid.Remove(clientId);
 
+                if( m_ClientData[guid].m_ClientID == clientId )
+                {
+                    //be careful to only remove the ClientData if it is associated with THIS clientId; in a case where a new connection
+                    //for the same GUID kicks the old connection, this could get complicated. In a game that fully supported the reconnect flow,
+                    //we would NOT remove ClientData here, but instead time it out after a certain period, since the whole point of it is
+                    //to remember client information on a per-guid basis after the connection has been lost.
+                    m_ClientData.Remove(guid);
+                }
+            }
+
+            if( clientId == m_Portal.NetManager.LocalClientId )
+            {
+                //the ServerGameNetPortal may be initialized again, which will cause its NetworkStart to be called again.
+                //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
+                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
+                m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
+                m_Portal.ClientSceneChanged -= OnClientSceneChanged;
+            }
+        }
+
+        private void OnClientSceneChanged(ulong clientId, int sceneIndex)
+        {
+            m_ClientSceneMap[clientId] = sceneIndex;
+        }
+
+        /// <summary>
+        /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
+        /// handled in server code). 
+        /// </summary>
+        private void OnUserDisconnectRequest()
+        {
+            if( m_Portal.NetManager.IsServer )
+            {
+                m_Portal.NetManager.StopServer();
+            }
+
+            Clear();
+        }
+
+        private void Clear()
+        {
+            //resets all our runtime state.
+            m_ClientData.Clear();
+            m_ClientIDToGuid.Clear();
+            m_ClientSceneMap.Clear();
         }
 
         /// <summary>
@@ -143,7 +210,15 @@ namespace BossRoom.Server
             return null;
         }
 
-
+        /// <summary>
+        /// Convenience method to get player name from player data
+        /// Returns name in data or default name using playerNum
+        /// </summary>
+        public string GetPlayerName(ulong clientId, int playerNum)
+        {
+            var playerData = GetPlayerData(clientId);
+            return (playerData != null) ? playerData.Value.m_PlayerName : ("Player" + playerNum);
+        }
 
 
         /// <summary>
@@ -172,23 +247,80 @@ namespace BossRoom.Server
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
             int clientScene = connectionPayload.clientScene;
 
-            m_ClientSceneMap[clientId] = clientScene;
+            //a nice addition in the future will be to support rejoining the game and getting your same character back. This will require tracking a map of the GUID
+            //to the player's owned character object, and cleaning that object on a timer, rather than doing so immediately when a connection is lost. 
+            Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
-            //TODO: GOMPS-78. We'll need to save our client guid so that we can handle reconnect.
-            Debug.Log("host ApprovalCheck: client guid was: " + connectionPayload.clientGUID);
+            //TODO: GOMPS-78. We are saving the GUID, but we have more to do to fully support a reconnect flow (where you get your same character back after disconnect/reconnect).
+
+            ConnectStatus gameReturnStatus = ConnectStatus.Success;
+
+            //Test for Duplicate Login. 
+            if( m_ClientData.ContainsKey(connectionPayload.clientGUID))
+            {
+                if( Debug.isDebugBuild )
+                {
+                    Debug.Log($"Client GUID {connectionPayload.clientGUID} already exists. Because this is a debug build, we will still accept the connection");
+                    while( m_ClientData.ContainsKey(connectionPayload.clientGUID)) { connectionPayload.clientGUID += "_Secondary"; }
+                }
+                else
+                {
+                    ulong oldClientId = m_ClientData[connectionPayload.clientGUID].m_ClientID;
+                    StartCoroutine(WaitToDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
+                }
+            }
+
+            //Test for over-capacity Login.
+            if( m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers )
+            {
+                gameReturnStatus = ConnectStatus.ServerFull;
+            }
 
             //Populate our dictionaries with the playerData
-            m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
-            m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
-
-            //TODO: GOMPS-79 handle different error cases.
+            if( gameReturnStatus == ConnectStatus.Success )
+            {
+                m_ClientSceneMap[clientId] = clientScene;
+                m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
+                m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
+            }
 
             callback(false, 0, true, null, null);
 
-            //FIXME_DMW: it is weird to do this after the callback, but the custom message won't be delivered if we call it beforehand.
-            //This creates an "honor system" scenario where it is up to the client to politely leave on failure. Probably
-            //we should add a NetManager.DisconnectClient call directly below this line, when we are rejecting the connection.
-            m_Portal.S2CConnectResult(clientId, ConnectStatus.Success);
+            //TODO:MLAPI: this must be done after the callback for now. In the future we expect MLAPI to allow us to return more information as part of
+            //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
+            //and then manually close down the connection.
+            m_Portal.ServerToClientConnectResult(clientId, gameReturnStatus);
+            if(gameReturnStatus != ConnectStatus.Success )
+            {
+                //TODO-FIXME:MLAPI Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
+                StartCoroutine(WaitToDisconnectClient(clientId, gameReturnStatus));
+            }
+        }
+
+        private IEnumerator WaitToDisconnectClient(ulong clientId, ConnectStatus reason)
+        {
+            m_Portal.ServerToClientSetDisconnectReason(clientId, reason);
+
+            // TODO fix once this is solved: Issue 796 Unity-Technologies/com.unity.multiplayer.mlapi#796
+            // this wait is a workaround to give the client time to receive the above RPC before closing the connection
+            yield return new WaitForSeconds(0); 
+
+            BootClient(clientId);
+        }
+
+        /// <summary>
+        /// This method will summarily remove a player connection, as well as its controlled object.
+        /// </summary>
+        /// <param name="clientId">the ID of the client to boot.</param>
+        public void BootClient(ulong clientId)
+        {
+            var netObj = MLAPI.Spawning.NetworkSpawnManager.GetPlayerNetworkObject(clientId);
+            if( netObj )
+            {
+                //TODO-FIXME:MLAPI Issue #795. Should not need to explicitly despawn player objects.
+                netObj.Despawn(true);
+            }
+            m_Portal.NetManager.DisconnectClient(clientId);
         }
 
         /// <summary>
@@ -202,4 +334,3 @@ namespace BossRoom.Server
 
     }
 }
-

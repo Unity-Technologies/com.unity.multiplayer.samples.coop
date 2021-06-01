@@ -22,7 +22,6 @@ namespace BossRoom.Server
             Windup,     // performing animations prior to actually moving
             Charging,   // running across the screen and hitting characters
             Complete,   // ending action
-            Cooldown,   // time spent after completion
         }
 
         /// <summary>
@@ -78,13 +77,9 @@ namespace BossRoom.Server
             {
                 return ActionStage.Windup;
             }
-            if (timeSoFar < Description.ExecTimeSeconds + Description.DurationSeconds)
+            if (timeSoFar < Description.DurationSeconds)
             {
                 return ActionStage.Charging;
-            }
-            if (timeSoFar < Description.ExecTimeSeconds + Description.DurationSeconds + Description.CooldownSeconds)
-            {
-                return ActionStage.Cooldown;
             }
             return ActionStage.Complete;
         }
@@ -132,9 +127,7 @@ namespace BossRoom.Server
                 if (chanceToStun > 0 && Random.Range(0,1) < chanceToStun)
                 {
                     // we're stunned! No collision behavior for the victim. Stun ourselves and abort.
-                    m_WasStunned = true;
-                    m_Movement.CancelMove();
-                    m_Parent.NetState.RecvCancelAllActionsClientRpc();
+                    StunSelf();
                     return;
                 }
 
@@ -156,22 +149,43 @@ namespace BossRoom.Server
             victimMovement.StartKnockback(m_Parent.transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
         }
 
+        // called by owning class when parent's Collider collides with stuff
         public override void OnCollisionEnter(Collision collision)
         {
-            var actionStage = GetCurrentStage();
             // we only detect other possible victims when we start charging
-            if (actionStage != ActionStage.Charging)
+            if (GetCurrentStage() != ActionStage.Charging)
                 return;
 
-            if (m_CollidedAlready.Contains(collision.collider))
+            Collide(collision.collider);
+        }
+
+        // here we handle colliding with anything (whether a victim or not)
+        private void Collide(Collider collider)
+        {
+            if (m_CollidedAlready.Contains(collider))
                 return; // already hit them!
 
-            m_CollidedAlready.Add(collision.collider);
+            m_CollidedAlready.Add(collider);
 
-            var victim = collision.collider.gameObject.GetComponent<ServerCharacter>();
+            var victim = collider.gameObject.GetComponent<ServerCharacter>();
             if (victim)
             {
                 CollideWithVictim(victim);
+            }
+            else if (!m_WasStunned)
+            {
+                // they aren't a living, breathing victim, but they might still be destructible...
+                var damageable = collider.gameObject.GetComponent<IDamageable>();
+                if (damageable != null)
+                {
+                    damageable.ReceiveHP(this.m_Parent, -Description.SplashDamage);
+
+                    // lastly, a special case: if the trampler runs into certain breakables, they are stunned!
+                    if ((damageable.GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.StunOnTrample) == IDamageable.SpecialDamageFlags.StunOnTrample)
+                    {
+                        StunSelf();
+                    }
+                }
             }
         }
 
@@ -184,13 +198,18 @@ namespace BossRoom.Server
             int numResults = ActionUtils.DetectNearbyEntities(true, true, m_Parent.GetComponent<Collider>(), k_PhysicalTouchDistance, out results);
             for (int i = 0; i < numResults; i++)
             {
-                m_CollidedAlready.Add(results[i].collider);
-                var serverChar = results[i].collider.GetComponent<ServerCharacter>();
-                if (serverChar)
-                {
-                    CollideWithVictim(serverChar);
-                }
+                Collide(results[i].collider);
             }
+        }
+
+        private void StunSelf()
+        {
+            if (!m_WasStunned)
+            {
+                m_Movement.CancelMove();
+                m_Parent.NetState.RecvCancelAllActionsClientRpc();
+            }
+            m_WasStunned = true;
         }
 
         public override bool ChainIntoNewAction(ref ActionRequestData newAction)

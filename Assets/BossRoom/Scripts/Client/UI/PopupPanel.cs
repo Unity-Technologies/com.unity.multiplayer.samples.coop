@@ -4,6 +4,7 @@ using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -13,11 +14,11 @@ namespace BossRoom.Visual
     public class PopupPanel : MonoBehaviour
     {
         [SerializeField]
-        private Text m_TitleText;
+        private TextMeshProUGUI m_TitleText;
         [SerializeField]
-        private Text m_MainText;
+        private TextMeshProUGUI m_MainText;
         [SerializeField]
-        private Text m_SubText;
+        private TextMeshProUGUI m_SubText;
         [SerializeField]
         [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
         private GameObject m_ReconnectingImage;
@@ -33,7 +34,7 @@ namespace BossRoom.Visual
         [SerializeField]
         private Button m_ConfirmationButton;
         [SerializeField]
-        private Text m_ConfirmationText;
+        private TextMeshProUGUI m_ConfirmationText;
         [SerializeField]
         [Tooltip("This Button appears for popups that ask for player inputs")]
         private Button m_CancelButton;
@@ -57,6 +58,8 @@ namespace BossRoom.Visual
         private System.Action<string, int, string, OnlineMode> m_ConfirmFunction;
 
         private const string k_DefaultConfirmText = "OK";
+
+        static readonly char[] k_InputFieldIncludeChars = new[] { '.', '_' };
 
         /// <summary>
         /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
@@ -119,6 +122,45 @@ namespace BossRoom.Visual
             if (portNum <= 0)
                 portNum = m_DefaultPort;
             m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), (OnlineMode)m_OnlineModeDropdown.value);
+        }
+
+        /// <summary>
+        /// Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
+        /// </summary>
+        /// <param name="dirtyString"> string to sanitize. </param>
+        /// <param name="includeChars"> Array of chars to include. </param>
+        /// <returns> Sanitized text string. </returns>
+        static string Sanitize(string dirtyString, char[] includeChars = null)
+        {
+            var result = new StringBuilder(dirtyString.Length);
+            foreach (char c in dirtyString)
+            {
+                if (char.IsLetterOrDigit(c) ||
+                    (includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c)))
+                {
+                    result.Append(c);
+                }
+            }
+
+            return result.ToString();
+        }
+
+        /// <summary>
+        /// Added to the InputField component's OnValueChanged callback for the Room/IP UI text.
+        /// </summary>
+        public void SanitizeInputText()
+        {
+            var inputFieldText = Sanitize(m_InputField.text, k_InputFieldIncludeChars);
+            m_InputField.text = inputFieldText;
+        }
+
+        /// <summary>
+        /// Added to the InputField component's OnValueChanged callback for the Port UI text.
+        /// </summary>
+        public void SanitizePortText()
+        {
+            var inputFieldText = Sanitize(m_PortInputField.text);
+            m_PortInputField.text = inputFieldText;
         }
 
         /// <summary>

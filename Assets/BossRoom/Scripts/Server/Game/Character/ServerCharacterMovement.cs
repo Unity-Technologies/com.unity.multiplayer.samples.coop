@@ -29,9 +29,6 @@ namespace BossRoom.Server
         private MovementState m_MovementState;
         private ServerCharacter m_CharLogic;
 
-        [SerializeField]
-        private float m_MovementSpeed; // TODO [GOMPS-86] this should be assigned based on character definition
-
         // when we are in charging and knockback mode, we use these additional variables
         private float m_ForcedSpeed;
         private float m_SpecialModeDurationRemaining;
@@ -107,7 +104,7 @@ namespace BossRoom.Server
         /// <returns></returns>
         public bool IsPerformingForcedMovement()
         {
-            return m_MovementState == MovementState.Knockback;
+            return m_MovementState == MovementState.Knockback || m_MovementState == MovementState.Charging;
         }
 
         /// <summary>
@@ -128,6 +125,28 @@ namespace BossRoom.Server
             m_MovementState = MovementState.Idle;
         }
 
+        /// <summary>
+        /// Instantly moves the character to a new position. NOTE: this cancels any active movement operation!
+        /// This does not notify the client that the movement occurred due to teleportation, so that needs to
+        /// happen in some other way, such as with the custom action visualization in DashAttackActionFX. (Without
+        /// this, the clients will animate the character moving to the new destination spot, rather than instantly
+        /// appearing in the new spot.)
+        /// </summary>
+        /// <param name="newPosition">new coordinates the character should be at</param>
+        public void Teleport(Vector3 newPosition)
+        {
+            CancelMove();
+            if (!m_NavMeshAgent.Warp(newPosition))
+            {
+                // warping failed! We're off the navmesh somehow. Weird... but we can still teleport
+                Debug.LogWarning($"NavMeshAgent.Warp({newPosition}) failed!", gameObject);
+                transform.position = newPosition;
+            }
+
+            m_Rigidbody.position = transform.position;
+            m_Rigidbody.rotation = transform.rotation;
+        }
+
         private void FixedUpdate()
         {
             PerformMovement();
@@ -136,7 +155,7 @@ namespace BossRoom.Server
             m_NetworkCharacterState.NetworkPosition.Value = transform.position;
             m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
             m_NetworkCharacterState.NetworkMovementSpeed.Value = GetMaxMovementSpeed();
-            m_NetworkCharacterState.VisualMovementSpeed.Value = GetVisualMovementSpeed();
+            m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
         }
 
         private void OnValidate()
@@ -152,7 +171,7 @@ namespace BossRoom.Server
 
         private void OnDestroy()
         {
-            if(m_NavPath != null )
+            if (m_NavPath != null)
             {
                 m_NavPath.Dispose();
             }
@@ -192,7 +211,7 @@ namespace BossRoom.Server
             }
             else
             {
-                var desiredMovementAmount = m_MovementSpeed * Time.fixedDeltaTime;
+                var desiredMovementAmount = GetBaseMovementSpeed() * Time.fixedDeltaTime;
                 movementVector = m_NavPath.MoveAlongPath(desiredMovementAmount);
 
                 // If we didn't move stop moving.
@@ -218,21 +237,38 @@ namespace BossRoom.Server
                 case MovementState.Charging:
                 case MovementState.Knockback:
                     return m_ForcedSpeed;
-            case MovementState.Idle:
-            case MovementState.PathFollowing:
+                case MovementState.Idle:
+                case MovementState.PathFollowing:
                 default:
-                    return m_MovementSpeed;
+                    return GetBaseMovementSpeed();
             }
         }
 
-        private float GetVisualMovementSpeed()
+        /// <summary>
+        /// Retrieves the speed for this character's class.
+        /// </summary>
+        private float GetBaseMovementSpeed()
         {
-            if (m_MovementState == MovementState.Idle || m_MovementState == MovementState.Knockback)
-                return 0;
-            else
-                return 1;
-            // if we had a "movement-slow" special-effect, we could return 0.5 from this function, which would
-            // make the character use the walk animation instead of the run animation
+            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.NetState.CharacterType];
+            Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.NetState.CharacterType}");
+            return characterClass.Speed;
+        }
+
+        /// <summary>
+        /// Determines the appropriate MovementStatus for the character. The
+        /// MovementStatus is used by the client code when animating the character.
+        /// </summary>
+        private MovementStatus GetMovementStatus()
+        {
+            switch (m_MovementState)
+            {
+                case MovementState.Idle:
+                    return MovementStatus.Idle;
+                case MovementState.Knockback:
+                    return MovementStatus.Uncontrolled;
+                default:
+                    return MovementStatus.Normal;
+            }
         }
     }
 }
