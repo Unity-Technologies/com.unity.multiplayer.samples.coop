@@ -1,5 +1,21 @@
 # Multiplayer Samples Co-op Changelog
 
+## [0.2.2] - 2021-06-??
+
+v0.2.2 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
+
+### Fixes
+
+* Updated the Boss Room sample to use the updated MLAPI registry version 0.1.1.
+
+## [0.2.1] - 2021-05-27
+
+v0.2.1 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
+
+### Fixes
+
+* [GitHub 343](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/343) - Fixed parameter exception when connecting to lobby caused by an old MLAPI version. This fix reverts the change until the package is updated.
+
 ## [0.1.0] - 2021-04-07
 
 v0.1.0 is an Early Access release for Multiplayer Samples Co-op.
