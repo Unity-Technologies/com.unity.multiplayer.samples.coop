@@ -1,6 +1,6 @@
 # Multiplayer Samples Co-op Changelog
 
-## [0.2.2] - 2021-06-??
+## [0.2.2] - 2021-06-02
 
 v0.2.2 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
 
