@@ -336,7 +336,10 @@ namespace BossRoom.Server
         private void ServerStartedHandler()
         {
             m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, m_Portal.NetManager.LocalClientId));
-            m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
+            if (!m_ClientIDToGuid.ContainsKey(m_Portal.NetManager.LocalClientId))
+            {
+                m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
+            }            
         }
 
     }

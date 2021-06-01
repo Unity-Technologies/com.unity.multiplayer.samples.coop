@@ -151,7 +151,7 @@ namespace BossRoom.Server
             base.OnDestroy();
             if (NetworkManager.Singleton)
             {
-                //NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
             }
             if (CharSelectData)
@@ -169,7 +169,7 @@ namespace BossRoom.Server
             }
             else
             {
-                //NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+                NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
@@ -197,21 +197,20 @@ namespace BossRoom.Server
             SeatNewPlayer(clientId);
         }
 
-        //private void OnClientConnected(ulong clientId)
-        //{
-        //    
-        //    //StartCoroutine(WaitToSeatNewPlayer(clientId));
-        //}
+        private void OnClientConnected(ulong clientId)
+        {
+            StartCoroutine(WaitToSeatNewPlayer(clientId));
+        }
 
-        //private IEnumerator WaitToSeatNewPlayer(ulong clientId)
-        //{
-        //    //TODO-FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
-        //    //causing the NetworkList of lobby players to get out of sync.
-        //    //tracking MLAPI issue: https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/745
-        //    //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback.
-        //    yield return new WaitForSeconds(2.5f);
-        //    SeatNewPlayer(clientId);
-        //}
+        private IEnumerator WaitToSeatNewPlayer(ulong clientId)
+        {
+            //TODO-FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
+            //causing the NetworkList of lobby players to get out of sync.
+            //tracking MLAPI issue: https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/745
+            //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback.
+            yield return new WaitForSeconds(2.5f);
+            SeatNewPlayer(clientId);
+        }
 
         private int GetAvailablePlayerNum()
         {
