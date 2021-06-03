@@ -4,12 +4,12 @@ using MLAPI;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom
+namespace BossRoom.Client
 {
     /// <summary>
     /// Class designed to only run on a client. Add this to a world-space prefab to display health or name on UI.
     /// </summary>
-    public class UIStateDisplayHandler : MonoBehaviour
+    public class UIStateDisplayHandler : NetworkBehaviour
     {
         [SerializeField]
         bool m_DisplayHealth;
@@ -33,7 +33,11 @@ namespace BossRoom
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
 
-        NetworkCharacterTypeState m_NetworkCharacterTypeState;
+        [SerializeField]
+        CharacterContainer m_CharacterContainer;
+
+        [SerializeField]
+        ClientCharacter m_ClientCharacter;
 
         [SerializeField]
         IntVariable m_BaseHP;
@@ -62,7 +66,7 @@ namespace BossRoom
         // used to compute corld pos based on target and offsets
         private Vector3 m_WorldPos;
 
-        void OnEnable()
+        public override void NetworkStart()
         {
             if (!NetworkManager.Singleton.IsClient)
             {
@@ -79,15 +83,16 @@ namespace BossRoom
 
             Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
             if (m_DisplayHealth)
+            {
                 Assert.IsNotNull(m_NetworkHealthState, "A NetworkHealthState component needs to be attached!");
-            if (m_DisplayName)
-                Assert.IsNotNull(m_NetworkNameState, "A NetworkNameState component needs to be attached!");
+            }
             Assert.IsTrue(m_Camera != null && m_CanvasTransform != null);
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
             if (m_DisplayName)
             {
+                // TODO: Re-implement Names on UI (GOMPS-550)
                 DisplayUIName();
             }
 
@@ -104,21 +109,24 @@ namespace BossRoom
             {
                 // the lines below are added in case a player wanted to display a health bar, since their max HP is
                 // dependent on their respective character class
-                m_NetworkCharacterTypeState = GetComponent<NetworkCharacterTypeState>();
-                if (m_NetworkCharacterTypeState != null)
+                if (m_CharacterContainer && !m_CharacterContainer.CharacterClass.IsNpc)
                 {
-                    m_NetworkCharacterTypeState.CharacterType.OnValueChanged += CharacterTypeChanged;
+                    m_BaseHP = m_CharacterContainer.CharacterClass.BaseHP;
 
-                    // we initialize the health bar with our current character type as well
-                    CharacterTypeChanged(m_NetworkCharacterTypeState.CharacterType.Value,
-                        m_NetworkCharacterTypeState.CharacterType.Value);
+                    if (m_ClientCharacter.ChildVizObject)
+                    {
+                        TrackGraphicsTransform();
+                        DisplayUIHealth();
+                    }
+                    else
+                    {
+                        m_ClientCharacter.CharacterGraphicsSpawned += TrackGraphicsTransform;
+                        m_ClientCharacter.CharacterGraphicsSpawned += DisplayUIHealth;
+                    }
                 }
 
-                if (m_NetworkHealthState != null)
-                {
-                    m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
-                    m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
-                }
+                m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
+                m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
             }
         }
 
@@ -129,29 +137,10 @@ namespace BossRoom
                 return;
             }
 
-            if (m_NetworkCharacterTypeState != null)
-            {
-                m_NetworkCharacterTypeState.CharacterType.OnValueChanged -= CharacterTypeChanged;
-            }
-
             if (m_NetworkHealthState != null)
             {
                 m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
                 m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
-            }
-        }
-
-        void CharacterTypeChanged(CharacterTypeEnum previousValue, CharacterTypeEnum newValue)
-        {
-            var characterClass = GameDataSource.Instance.CharacterDataByType[newValue];
-            if (characterClass)
-            {
-                m_BaseHP = characterClass.BaseHP;
-
-                if (m_NetworkHealthState != null && m_NetworkHealthState.HitPoints.Value > 0)
-                {
-                    DisplayUIHealth();
-                }
             }
         }
 
@@ -205,6 +194,11 @@ namespace BossRoom
             yield return new WaitForSeconds(k_DurationSeconds);
 
             m_UIState.HideHealth();
+        }
+
+        void TrackGraphicsTransform()
+        {
+            m_TransformToTrack = m_ClientCharacter.ChildVizObject.transform;
         }
 
         void LateUpdate()

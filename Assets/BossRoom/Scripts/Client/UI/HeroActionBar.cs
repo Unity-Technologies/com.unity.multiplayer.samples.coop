@@ -2,7 +2,6 @@ using MLAPI;
 using MLAPI.Spawning;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
 using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
 namespace BossRoom.Visual
@@ -244,14 +243,12 @@ namespace BossRoom.Visual
             if (m_NetState.TargetId.Value != 0
                 && NetworkSpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
                 && selection != null
-                && selection.IsPlayerObject
-                && selection.NetworkObjectId != m_NetState.NetworkObjectId)
+                && selection.NetworkObjectId != m_NetState.NetworkObjectId
+                && selection.TryGetComponent(out NetworkCharacterState charState)
+                && !charState.IsNpc)
             {
                 // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
                 // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
-
-                var charState = selection.GetComponent<NetworkCharacterState>();
-                Assert.IsNotNull(charState); // all PlayerObjects should have a NetworkCharacterState component
 
                 bool isAlive = charState.NetworkLifeState.LifeState.Value == LifeState.Alive;
                 UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.GeneralRevive, !isAlive);

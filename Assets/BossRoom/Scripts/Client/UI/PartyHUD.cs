@@ -53,7 +53,8 @@ namespace BossRoom.Visual
             m_PartyIds[0] = netState.NetworkObject.NetworkObjectId;
             SetUIFromSlotData(0, netState);
             // Hero also gets a protrait
-            int appearance = netState.CharacterAppearance.Value;
+            // TODO: Re-implement names on UI (GOMPS-550)
+            int appearance = 0/*netState.CharacterAppearance*/;
             if (appearance < m_PortraitAppearances.Length)
             {
                 m_HeroPortrait.sprite = m_PortraitAppearances[appearance];
@@ -80,8 +81,10 @@ namespace BossRoom.Visual
         /// </summary>
         private string GetPlayerName(ulong netId)
         {
-            var netState = NetworkSpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
-            return netState.Name;
+            // TODO: Re-implement names on UI (GOMPS-550)
+            return string.Empty;
+            /*var netState = NetworkSpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
+            return netState.Name;*/
         }
 
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id

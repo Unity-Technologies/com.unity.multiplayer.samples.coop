@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MLAPI;
 using UnityEngine;
 using MLAPI.SceneManagement;
 
@@ -25,6 +26,9 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerGameNetPortal : MonoBehaviour
     {
+        [SerializeField]
+        NetworkObject m_PersistentPlayer;
+
         private GameNetPortal m_Portal;
 
         /// <summary>
@@ -139,7 +143,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
-        /// handled in server code). 
+        /// handled in server code).
         /// </summary>
         private void OnUserDisconnectRequest()
         {
@@ -248,14 +252,14 @@ namespace BossRoom.Server
             int clientScene = connectionPayload.clientScene;
 
             //a nice addition in the future will be to support rejoining the game and getting your same character back. This will require tracking a map of the GUID
-            //to the player's owned character object, and cleaning that object on a timer, rather than doing so immediately when a connection is lost. 
+            //to the player's owned character object, and cleaning that object on a timer, rather than doing so immediately when a connection is lost.
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
             //TODO: GOMPS-78. We are saving the GUID, but we have more to do to fully support a reconnect flow (where you get your same character back after disconnect/reconnect).
 
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
 
-            //Test for Duplicate Login. 
+            //Test for Duplicate Login.
             if( m_ClientData.ContainsKey(connectionPayload.clientGUID))
             {
                 if( Debug.isDebugBuild )
@@ -284,7 +288,7 @@ namespace BossRoom.Server
                 m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
             }
 
-            callback(false, 0, true, null, null);
+            callback(true, m_PersistentPlayer.PrefabHash, true, Vector3.zero, Quaternion.identity);
 
             //TODO:MLAPI: this must be done after the callback for now. In the future we expect MLAPI to allow us to return more information as part of
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
@@ -303,7 +307,7 @@ namespace BossRoom.Server
 
             // TODO fix once this is solved: Issue 796 Unity-Technologies/com.unity.multiplayer.mlapi#796
             // this wait is a workaround to give the client time to receive the above RPC before closing the connection
-            yield return new WaitForSeconds(0); 
+            yield return new WaitForSeconds(0);
 
             BootClient(clientId);
         }

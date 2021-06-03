@@ -1,8 +1,6 @@
-using System.Collections.Generic;
 using BossRoom.Client;
-using Cinemachine;
-using MLAPI;
 using System;
+using MLAPI;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -11,7 +9,7 @@ namespace BossRoom.Visual
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    public class ClientCharacterVisualization : NetworkBehaviour
+    public class ClientCharacterVisualization : MonoBehaviour
     {
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
@@ -68,10 +66,13 @@ namespace BossRoom.Visual
 
         event Action Destroyed;
 
-        /// <inheritdoc />
-        public override void NetworkStart()
+        public bool IsOwner => m_NetState.IsOwner;
+
+        public ulong NetworkObjectId => m_NetState.NetworkObjectId;
+
+        public void Start()
         {
-            if (!IsClient || transform.parent == null)
+            if (!NetworkManager.Singleton.IsClient || transform.parent == null)
             {
                 enabled = false;
                 return;
@@ -84,6 +85,7 @@ namespace BossRoom.Visual
             Parent = transform.parent;
 
             m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
+
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
@@ -91,9 +93,6 @@ namespace BossRoom.Visual
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
-
-            //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
-            Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
 
             Assert.IsTrue(m_RuntimeObjectsParent && m_RuntimeObjectsParent.Value,
                 "RuntimeObjectsParent transform is not set!");
@@ -104,12 +103,8 @@ namespace BossRoom.Visual
             transform.position = parentMovement.NetworkPosition.Value;
             transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
 
-            // listen for char-select info to change (in practice, this info doesn't
-            // change, but we may not have the values set yet) ...
-            m_NetState.CharacterAppearance.OnValueChanged += OnCharacterAppearanceChanged;
-
             // ...and visualize the current char-select value that we know about
-            OnCharacterAppearanceChanged(0, m_NetState.CharacterAppearance.Value);
+            SetAppearanceSwap();
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
@@ -126,7 +121,7 @@ namespace BossRoom.Visual
                 GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
                 m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
 
-                if (IsLocalPlayer)
+                if (m_NetState.IsOwner)
                 {
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
@@ -259,7 +254,7 @@ namespace BossRoom.Visual
             // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
             if (m_PartyHUD == null) { return; }
 
-            if (IsLocalPlayer)
+            if (m_NetState.IsOwner)
             {
                 this.m_PartyHUD.SetHeroHealth(newValue);
             }
@@ -267,11 +262,6 @@ namespace BossRoom.Visual
             {
                 this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
             }
-        }
-
-        private void OnCharacterAppearanceChanged(int oldValue, int newValue)
-        {
-            SetAppearanceSwap();
         }
 
         private void OnStealthyChanged(bool oldValue, bool newValue)
@@ -296,7 +286,7 @@ namespace BossRoom.Visual
                     }
                 }
 
-                m_CharacterSwapper.SwapToModel(m_NetState.CharacterAppearance.Value, specialMaterialMode);
+                m_CharacterSwapper.SwapToModel(/*m_NetState.CharacterAppearance, */specialMaterialMode);
             }
         }
 
