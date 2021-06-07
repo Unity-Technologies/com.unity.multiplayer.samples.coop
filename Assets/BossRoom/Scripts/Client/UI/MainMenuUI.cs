@@ -34,14 +34,14 @@ namespace BossRoom.Visual
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
-            //any disconnect reason set? Show it to the user here. 
+            //any disconnect reason set? Show it to the user here.
             ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
             m_ClientNetPortal.DisconnectReason.Clear();
         }
 
         public void OnHostClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select drop down to use relay", "", "iphost", "Confirm",
+            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select Relay mode", "Select CONFIRM to host a Relay room <br> or select IP mode", "iphost", "Confirm",
                 (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
             {
                 m_GameNetPortal.PlayerName = playerName;
@@ -105,7 +105,7 @@ namespace BossRoom.Visual
 
         /// <summary>
         /// Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
-        /// (2) failed connect, (3) disconnect. 
+        /// (2) failed connect, (3) disconnect.
         /// </summary>
         /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
         private void ConnectStatusToMessage(ConnectStatus status, bool connecting)
