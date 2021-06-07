@@ -14,7 +14,7 @@ namespace BossRoom
         Success,                  //client successfully connected. This may also be a successful reconnect.
         ServerFull,               //can't join, server is already at capacity.
         LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
-        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user. 
+        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
     }
 
@@ -82,7 +82,7 @@ namespace BossRoom
 
         /// <summary>
         /// This fires in response to GameNetPortal.RequestDisconnect. It's a local signal (not from the network), indicating that
-        /// the user has requested a disconnect. 
+        /// the user has requested a disconnect.
         /// </summary>
         public event Action UserDisconnectRequested;
 
@@ -93,11 +93,14 @@ namespace BossRoom
         /// </summary>
         public string PlayerName;
 
+        void Awake()
+        {
+            NetManager = NetworkManagerGO.GetComponent<NetworkManager>();
+        }
+
         void Start()
         {
             DontDestroyOnLoad(gameObject);
-
-            NetManager = NetworkManagerGO.GetComponent<NetworkManager>();
 
             //we synthesize a "NetworkStart" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
@@ -302,7 +305,7 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// This will disconnect (on the client) or shutdown the server (on the host). 
+        /// This will disconnect (on the client) or shutdown the server (on the host).
         /// </summary>
         public void RequestDisconnect()
         {

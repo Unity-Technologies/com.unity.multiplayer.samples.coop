@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 5202563697772659352}
   - component: {fileID: -5536186819612961332}
   - component: {fileID: 8450381715082006755}
+  - component: {fileID: 596945379875709001}
   m_Layer: 0
   m_Name: PersistentPlayer
   m_TagString: Untagged
@@ -63,6 +64,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PersistentPlayerRuntimeCollection: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
+  m_NetworkNameState: {fileID: 8450381715082006755}
+  m_NetworkCharacterGuidState: {fileID: 596945379875709001}
 --- !u!114 &8450381715082006755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,4 +79,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Name:
+    m_InternalValue: 
+--- !u!114 &596945379875709001
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4927145850774787080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ebe9bfd21e47445488dfd84b4e0c9884, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CharacterGuidArray:
     m_InternalValue: 
