@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using MLAPI.Serialization.Pooled;
 using MLAPI.Transports;
 using MLAPI;
@@ -14,7 +15,7 @@ namespace BossRoom
         Success,                  //client successfully connected. This may also be a successful reconnect.
         ServerFull,               //can't join, server is already at capacity.
         LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
-        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user. 
+        UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
     }
 
@@ -82,7 +83,7 @@ namespace BossRoom
 
         /// <summary>
         /// This fires in response to GameNetPortal.RequestDisconnect. It's a local signal (not from the network), indicating that
-        /// the user has requested a disconnect. 
+        /// the user has requested a disconnect.
         /// </summary>
         public event Action UserDisconnectRequested;
 
@@ -199,6 +200,36 @@ namespace BossRoom
             NetworkReadied?.Invoke();
         }
 
+        public void StartServer(string ip, int port, bool isDedicated)
+        {
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
+            switch (chosenTransport)
+            {
+                case LiteNetLibTransport liteNetLibTransport:
+                    liteNetLibTransport.Address = ip;
+                    liteNetLibTransport.Port = (ushort)port;
+                    break;
+                case MLAPI.Transports.UNET.UNetTransport unetTransport:
+                    unetTransport.ConnectAddress = ip;
+                    unetTransport.ServerListenPort = port;
+                    break;
+                default:
+                    throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
+            }
+
+            if (isDedicated)
+            {
+                NetManager.StartServer();
+            }
+            else
+            {
+                NetManager.StartHost();
+            }
+        }
+
         /// <summary>
         /// Initializes host mode on this client. Call this and then other clients should connect to us!
         /// </summary>
@@ -209,25 +240,12 @@ namespace BossRoom
         /// <param name="port">The port to connect to. </param>
         public void StartHost(string ipaddress, int port)
         {
-            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+            StartServer(ipaddress, port, false);
+        }
 
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
-            switch (chosenTransport)
-            {
-                case LiteNetLibTransport liteNetLibTransport:
-                    liteNetLibTransport.Address = ipaddress;
-                    liteNetLibTransport.Port = (ushort)port;
-                    break;
-                case MLAPI.Transports.UNET.UNetTransport unetTransport:
-                    unetTransport.ConnectAddress = ipaddress;
-                    unetTransport.ServerListenPort = port;
-                    break;
-                default:
-                    throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
-            }
-
-            NetManager.StartHost();
+        public void StartDedicatedServer(string ip, int port)
+        {
+            StartServer(ip, port, true);
         }
 
         public void StartRelayHost(string roomName)
@@ -302,7 +320,7 @@ namespace BossRoom
         }
 
         /// <summary>
-        /// This will disconnect (on the client) or shutdown the server (on the host). 
+        /// This will disconnect (on the client) or shutdown the server (on the host).
         /// </summary>
         public void RequestDisconnect()
         {

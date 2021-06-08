@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -34,9 +36,14 @@ namespace BossRoom.Visual
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
-            //any disconnect reason set? Show it to the user here. 
+            //any disconnect reason set? Show it to the user here.
             ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
             m_ClientNetPortal.DisconnectReason.Clear();
+
+            if (Environment.GetCommandLineArgs().Contains("-dedicatedServer"))
+            {
+                m_GameNetPortal.StartDedicatedServer("127.0.0.1", k_ConnectPort);
+            }
         }
 
         public void OnHostClicked()
@@ -105,7 +112,7 @@ namespace BossRoom.Visual
 
         /// <summary>
         /// Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
-        /// (2) failed connect, (3) disconnect. 
+        /// (2) failed connect, (3) disconnect.
         /// </summary>
         /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
         private void ConnectStatusToMessage(ConnectStatus status, bool connecting)
