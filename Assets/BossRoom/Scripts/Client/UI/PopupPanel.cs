@@ -40,8 +40,14 @@ namespace BossRoom.Visual
         private Button m_CancelButton;
         [SerializeField]
         private NameDisplay m_NameDisplay;
+
+        OnlineMode m_OnlineMode;
+
         [SerializeField]
-        private Dropdown m_OnlineModeDropdown;
+        Toggle m_IPRadioButton;
+
+        [SerializeField]
+        Toggle m_RelayRadioButton;
 
         bool m_EnterAsHost;
 
@@ -99,10 +105,12 @@ namespace BossRoom.Visual
             m_ConfirmationButton.onClick.AddListener(OnConfirmClick);
             m_ConfirmationButton.gameObject.SetActive(true);
 
-            m_OnlineModeDropdown.gameObject.SetActive(true);
-            m_OnlineModeDropdown.value = 0;
-            OnOnlineModeDropdownChanged(0);
-            m_OnlineModeDropdown.onValueChanged.AddListener(OnOnlineModeDropdownChanged);
+            m_IPRadioButton.gameObject.SetActive(true);
+            m_RelayRadioButton.gameObject.SetActive(true);
+            m_IPRadioButton.onValueChanged.AddListener(IPRadioRadioButtonPressed);
+            m_RelayRadioButton.onValueChanged.AddListener(RelayRadioRadioButtonPressed);
+            m_RelayRadioButton.isOn = false;
+            m_IPRadioButton.isOn = true;
 
             m_CancelButton.onClick.AddListener(OnCancelClick);
             m_CancelButton.gameObject.SetActive(true);
@@ -115,13 +123,35 @@ namespace BossRoom.Visual
             gameObject.SetActive(true);
         }
 
+        void IPRadioRadioButtonPressed(bool value)
+        {
+            if (!value)
+            {
+                return;
+            }
+
+            m_OnlineMode = OnlineMode.IpHost;
+            OnOnlineModeDropdownChanged(m_OnlineMode);
+        }
+
+        void RelayRadioRadioButtonPressed(bool value)
+        {
+            if (!value)
+            {
+                return;
+            }
+
+            m_OnlineMode = OnlineMode.Relay;
+            OnOnlineModeDropdownChanged(m_OnlineMode);
+        }
+
         private void OnConfirmClick()
         {
             int portNum = 0;
             int.TryParse(m_PortInputField.text, out portNum);
             if (portNum <= 0)
                 portNum = m_DefaultPort;
-            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), (OnlineMode)m_OnlineModeDropdown.value);
+            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), m_OnlineMode);
         }
 
         /// <summary>
@@ -175,12 +205,12 @@ namespace BossRoom.Visual
         /// <summary>
         /// Called when the user selects a different online mode from the dropdown.
         /// </summary>
-        private void OnOnlineModeDropdownChanged(int value)
+        private void OnOnlineModeDropdownChanged(OnlineMode value)
         {
             // activate this so that it is always activated unless entering as relay host
             m_InputField.gameObject.SetActive(true);
 
-            if (value == 0)
+            if (value == OnlineMode.IpHost)
             {
                 // Ip host
                 m_MainText.text = m_IpHostMainText;
@@ -259,8 +289,10 @@ namespace BossRoom.Visual
             m_CancelButton.gameObject.SetActive(false);
             m_NameDisplay.gameObject.SetActive(false);
 
-            m_OnlineModeDropdown.gameObject.SetActive(false);
-            m_OnlineModeDropdown.onValueChanged.RemoveListener(OnOnlineModeDropdownChanged);
+            m_IPRadioButton.gameObject.SetActive(false);
+            m_RelayRadioButton.gameObject.SetActive(false);
+            m_IPRadioButton.onValueChanged.RemoveListener(IPRadioRadioButtonPressed);
+            m_RelayRadioButton.onValueChanged.RemoveListener(RelayRadioRadioButtonPressed);
 
             m_CancelButton.onClick.RemoveListener(OnCancelClick);
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
