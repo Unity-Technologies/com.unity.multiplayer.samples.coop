@@ -153,7 +153,7 @@ namespace BossRoom.Server
             {
                 NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene -= SceneManager_OnNotifyServerClientLoadedScene;
+                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene -= OnNotifyServerClientLoadedScene;
             }
             if (CharSelectData)
             {
@@ -174,18 +174,19 @@ namespace BossRoom.Server
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
                 NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += SceneManager_OnNotifyServerClientLoadedScene;
+                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += OnNotifyServerClientLoadedScene;
             }
         }
 
-        private void SceneManager_OnNotifyServerClientLoadedScene(MLAPI.SceneManagement.SceneSwitchProgress progress, ulong clientId)
+        private void OnNotifyServerClientLoadedScene(MLAPI.SceneManagement.SceneSwitchProgress progress, ulong clientId)
         {
+            // When the client finishes loading the Lobby Map, we will need to Seat it
             SeatNewPlayer(clientId);
         }
 
         private void OnClientConnected(ulong clientId)
         {
-            // When the client client first connects to the server we will need to Seat it
+            // When the client first connects to the server we will need to Seat it
             SeatNewPlayer(clientId);
         }
 
