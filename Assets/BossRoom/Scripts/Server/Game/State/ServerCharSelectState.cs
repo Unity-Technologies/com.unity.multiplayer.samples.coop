@@ -173,28 +173,11 @@ namespace BossRoom.Server
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
-                // Cosmin: Question? Should OnNotifyServerClientLoadedScene delegate also cover
-                // When a new client joins in? If yes, then this we will become obsolete for our case here
                 NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-                // NSS: Suggested Fix, use the OnNotifyServerClientLoadedScene to let you know that the client
-                // is initialized, all scene NetworkObjects have been loaded, and can be considered "ready to send and receive messages".
                 NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += SceneManager_OnNotifyServerClientLoadedScene;
-
-                //if (IsHost)
-                //{
-                //    // host doesn't get an OnClientConnected()
-                //    // and other clients could be connects from last game
-                //    // So look for any existing connections to do intiial setup
-                //    var clients = NetworkManager.Singleton.ConnectedClientsList;
-                //    foreach (var net_cl in clients)
-                //    {
-                //        OnClientConnected(net_cl.ClientId);
-                //    }
-                //}
             }
         }
 
-        // NSS: Suggested Fix
         private void SceneManager_OnNotifyServerClientLoadedScene(MLAPI.SceneManagement.SceneSwitchProgress progress, ulong clientId)
         {
             SeatNewPlayer(clientId);
@@ -202,22 +185,9 @@ namespace BossRoom.Server
 
         private void OnClientConnected(ulong clientId)
         {
-
-            // Cosmin: We no longer need a delayed/coroutine to handle this, now that we have OnNotifyServerClientLoadedScene
-            // Implemented at the SDK level, which should correctly cover for this workaround
-            //StartCoroutine(WaitToSeatNewPlayer(clientId));
+            // When the client client first connects to the server we will need to Seat it
             SeatNewPlayer(clientId);
         }
-
-        //private IEnumerator WaitToSeatNewPlayer(ulong clientId)
-        //{
-        //    //TODO-FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
-        //    //causing the NetworkList of lobby players to get out of sync.
-        //    //tracking MLAPI issue: https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/745
-        //    //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback.
-        //    yield return new WaitForSeconds(2.5f);
-        //    SeatNewPlayer(clientId);
-        //}
 
         private int GetAvailablePlayerNum()
         {
