@@ -207,7 +207,7 @@ namespace BossRoom
             m_UIState.HideHealth();
         }
 
-        void LateUpdate()
+        void Update()
         {
             if (m_UIStateActive && m_TransformToTrack)
             {

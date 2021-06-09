@@ -4,6 +4,7 @@ using Cinemachine;
 using MLAPI;
 using System;
 using UnityEngine;
+using UnityEngine.Animations;
 using UnityEngine.Assertions;
 
 namespace BossRoom.Visual
@@ -91,6 +92,13 @@ namespace BossRoom.Visual
             m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
+            m_NetState.NetworkPosition.OnValueChanged += OnPositionChanged;
+            OnPositionChanged(m_NetState.NetworkPosition.Value, m_NetState.NetworkPosition.Value);
+
+            // m_NetState.NetworkPosition.OnValueChanged += (value, newValue) =>
+            // {
+            //     posInterp.AddValue(Time.time, value);
+            // };
 
             //we want to follow our parent on a spring, which means it can't be directly in the transform hierarchy.
             Parent.GetComponent<ClientCharacter>().ChildVizObject = this;
@@ -331,9 +339,23 @@ namespace BossRoom.Visual
             }
         }
 
+        // VisualUtils.PositionInterpolation posInterp = new VisualUtils.PositionInterpolation();
+        Vector3 m_LerpStartPos;
+        Vector3 m_LerpEndPos;
+        float m_LerpTime;
+
+        private void OnPositionChanged(Vector3 old, Vector3 latest)
+        {
+            m_LerpEndPos = latest;
+            m_LerpStartPos = transform.position;
+            m_LerpTime = 0;
+        }
+        public AnimationCurve LerpSpeedOverDistance = AnimationCurve.Constant(0, 10, 5); // todo figure out why magic value 5 works well
+
 
         void Update()
         {
+            // posInterp.AddValue(Time.time, Parent.transform.position);
             if (Parent == null)
             {
                 // since we aren't in the transform hierarchy, we have to explicitly die when our parent dies.
@@ -341,7 +363,24 @@ namespace BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+            Debug.DrawLine(transform.position, transform.position + Vector3.up, Color.magenta, 10f, false);
+            Debug.DrawLine(Parent.transform.position, Parent.transform.position + Vector3.up, Color.green, 10f, false);
+
+            // m_SmoothedSpeed = GameDataSource.Instance.CharacterDataByType[m_NetState.CharacterType].Speed;
+            // var newPos = posInterp.GetValueForTime(Time.time);
+            // if (!float.IsNaN(newPos.x))
+            // {
+            //     transform.position = newPos;
+            // }
+            // VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+
+            var speedToLerp = LerpSpeedOverDistance.Evaluate(Vector3.Distance(transform.position, m_LerpEndPos)); // variable lerp time depending on distance
+            m_LerpTime += Time.unscaledDeltaTime * speedToLerp;
+            if ((transform.position - m_LerpEndPos).sqrMagnitude < 0.1f)
+            {
+                m_LerpTime = 1f;
+            }
+            transform.position = Vector3.Lerp(m_LerpStartPos, m_LerpEndPos, m_LerpTime);
 
             if (m_ClientVisualsAnimator)
             {

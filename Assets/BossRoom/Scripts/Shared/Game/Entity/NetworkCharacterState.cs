@@ -3,6 +3,7 @@ using MLAPI.Messaging;
 using MLAPI.NetworkVariable;
 using System;
 using UnityEngine;
+using Action = System.Action;
 
 namespace BossRoom
 {
@@ -46,7 +47,8 @@ namespace BossRoom
         /// The networked position of this Character. This reflects the authoritative position on the server.
         /// </summary>
         public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3(
-            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
+            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.SyncChannel });
+        // new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
 
         /// <summary>
         /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
@@ -287,6 +289,14 @@ namespace BossRoom
         public void RecvStopChargingUpClientRpc(float percentCharged)
         {
             OnStopChargingUpClient?.Invoke(percentCharged);
+        }
+
+        public event Action OnKill;
+
+        [ServerRpc]
+        public void KillServerRpc()
+        {
+            OnKill?.Invoke();
         }
     }
 }

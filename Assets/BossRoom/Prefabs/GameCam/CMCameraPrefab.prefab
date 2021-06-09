@@ -119,7 +119,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PositionMode: 0
   m_RotationMode: 0
-  m_UpdateMethod: 2
+  m_UpdateMethod: 0
   m_Targets: []
 --- !u!1 &1676734516695783277
 GameObject:
@@ -145,7 +145,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1676734516695783277}
-  m_LocalRotation: {x: 0.3985757, y: 0.3097298, z: -0.14506967, w: 0.8509757}
+  m_LocalRotation: {x: 0.3985757, y: 0.3097298, z: -0.14506969, w: 0.8509757}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:

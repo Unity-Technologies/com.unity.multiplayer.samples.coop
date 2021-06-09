@@ -63,6 +63,10 @@ namespace BossRoom.Server
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
+                NetState.OnKill += () =>
+                {
+                    GetComponent<ServerCharacter>().ReceiveHP(null, -5000);
+                };
                 NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
 
                 NetState.ApplyCharacterData();

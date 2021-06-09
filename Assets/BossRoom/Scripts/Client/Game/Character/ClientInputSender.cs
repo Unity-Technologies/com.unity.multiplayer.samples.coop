@@ -184,6 +184,18 @@ namespace BossRoom.Client
                     }
                 }
             }
+
+            if (Input.GetKeyUp("k"))
+            {
+                var allCharacters = GameObject.FindObjectsOfType<NetworkCharacterState>();
+                foreach (var character in allCharacters)
+                {
+                    if (character.CharacterData.CharacterType == CharacterTypeEnum.Imp)
+                    {
+                        character.KillServerRpc();
+                    }
+                }
+            }
         }
 
         /// <summary>
