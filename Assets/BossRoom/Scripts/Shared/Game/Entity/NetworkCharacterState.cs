@@ -47,7 +47,7 @@ namespace BossRoom
         /// The networked position of this Character. This reflects the authoritative position on the server.
         /// </summary>
         public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3(
-            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.SyncChannel });
+            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.SyncChannel }); // todo how come this works, even with clumsy's out of order at 50%?
         // new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
 
         /// <summary>
