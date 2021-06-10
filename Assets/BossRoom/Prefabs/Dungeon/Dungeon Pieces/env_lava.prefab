@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 6923725348669878280}
   - component: {fileID: 693260371752435667}
   - component: {fileID: 5873753617113076559}
-  - component: {fileID: -5429331838157890601}
   m_Layer: 0
   m_Name: env_lava
   m_TagString: Untagged
@@ -82,18 +81,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &-5429331838157890601
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2412353032341473334}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1352ed2586fb334b801adf6c79951b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ScrollX: 0.01
-  ScrollY: 0.01
-  m_Renderer: {fileID: 5873753617113076559}

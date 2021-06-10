@@ -416,13 +416,13 @@ MonoBehaviour:
     m_Bits: 1
   m_PlayerProximityValidationTimestep: 2
   m_SpawnedEntityDetectDistance: 30
-  m_DetectStealthyPlayers: 1
   m_NumberOfWaves: 2
   m_SpawnsPerWave: 2
   m_TimeBetweenSpawns: 0.5
   m_TimeBetweenWaves: 5
   m_RestartDelay: 10
   m_ProximityDistance: 30
+  m_DetectStealthyPlayers: 1
   m_MinSpawnCap: 2
   m_MaxSpawnCap: 10
   m_SpawnCapIncreasePerPlayer: 1
@@ -467,6 +467,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrokenPrefab: {fileID: 0}
+  m_PrebrokenPrefab: {fileID: 0}
   m_BrokenPrefabPos: {fileID: 8727022540156222958}
   m_UnbrokenGameObjects:
   - {fileID: 6584753279329625147}
@@ -484,7 +485,6 @@ GameObject:
   - component: {fileID: 1531522552714620413}
   - component: {fileID: 3943268755573492112}
   - component: {fileID: 3497474028888812730}
-  - component: {fileID: 7734344107871346949}
   m_Layer: 0
   m_Name: Plane (2)
   m_TagString: Untagged
@@ -555,20 +555,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!64 &7734344107871346949
-MeshCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6584753279329625147}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 4
-  m_Convex: 0
-  m_CookingOptions: 30
-  m_Mesh: {fileID: 10209, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!1 &6585344981094142531
 GameObject:
   m_ObjectHideFlags: 0
