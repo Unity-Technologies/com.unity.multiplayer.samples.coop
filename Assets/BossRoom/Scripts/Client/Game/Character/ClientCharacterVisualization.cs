@@ -3,6 +3,7 @@ using BossRoom.Client;
 using Cinemachine;
 using MLAPI;
 using System;
+using System.ComponentModel.Design;
 using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.Assertions;
@@ -93,6 +94,7 @@ namespace BossRoom.Visual
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
             m_NetState.NetworkPosition.OnValueChanged += OnPositionChanged;
+            m_NetState.NetworkRotationY.OnValueChanged += OnRotationChanged;
             OnPositionChanged(m_NetState.NetworkPosition.Value, m_NetState.NetworkPosition.Value);
 
             // m_NetState.NetworkPosition.OnValueChanged += (value, newValue) =>
@@ -340,14 +342,23 @@ namespace BossRoom.Visual
         }
 
         Vector3 m_LerpStartPos;
+        Quaternion m_LerpStartRot;
         Vector3 m_LerpEndPos;
+        Quaternion m_LerpEndRot;
         float m_PosLerpTime;
+        float m_RotLerpTime;
 
         private void OnPositionChanged(Vector3 old, Vector3 latest)
         {
             m_LerpEndPos = latest;
             m_LerpStartPos = transform.position;
             m_PosLerpTime = 0;
+        }
+        private void OnRotationChanged(float old, float latest)
+        {
+            m_LerpEndRot = Quaternion.Euler(0, latest, 0);;
+            m_LerpStartRot = transform.rotation;
+            m_RotLerpTime = 0;
         }
 
         static void DrawDebugLineInBuild(Vector3 position)
@@ -384,13 +395,15 @@ namespace BossRoom.Visual
             //     transform.position = newPos;
             // }
             // VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+            float maxInterpolateTime = 0.2f; // todo config
 
             // var speedToLerp = LerpSpeedOverDistance.Evaluate(Vector3.Distance(transform.position, m_LerpEndPos)); // variable lerp time depending on distance
-            m_PosLerpTime += Time.deltaTime;// * speedToLerp;
-            float maxInterpolateTime = 0.2f; // todo config
+            m_PosLerpTime += Time.deltaTime;
             transform.position = Vector3.Lerp(m_LerpStartPos, m_LerpEndPos, m_PosLerpTime / maxInterpolateTime);
             // DrawDebugLineInBuild(transform.position);
             // Debug.DrawLine(Parent.transform.position, Parent.transform.position + Vector3.up, Color.green, 10f, false);
+            m_RotLerpTime += Time.deltaTime;
+            transform.rotation = Quaternion.Slerp(m_LerpStartRot, m_LerpEndRot, m_RotLerpTime / maxInterpolateTime);
 
             if (m_ClientVisualsAnimator)
             {
