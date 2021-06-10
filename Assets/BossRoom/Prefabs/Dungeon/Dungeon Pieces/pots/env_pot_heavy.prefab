@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 445632146649864073}
   - component: {fileID: 7463718357983197496}
   - component: {fileID: 3496288370208538997}
-  m_Layer: 6
+  m_Layer: 8
   m_Name: env_pot_heavy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
