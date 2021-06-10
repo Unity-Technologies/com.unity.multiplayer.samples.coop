@@ -242,7 +242,7 @@ namespace BossRoom.Visual
 
             // special case: when we have a player selected, we change the meaning of the basic action
             if (m_NetState.TargetId.Value != 0
-                && NetworkSpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
+                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
                 && selection != null
                 && selection.IsPlayerObject
                 && selection.NetworkObjectId != m_NetState.NetworkObjectId)

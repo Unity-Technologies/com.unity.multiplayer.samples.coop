@@ -42,7 +42,7 @@ namespace BossRoom.Server
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                NetworkObject initialTarget = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
                 if (initialTarget)
                 {
                     // face our target, if we had one

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
@@ -80,7 +81,7 @@ namespace BossRoom.Visual
         /// </summary>
         private string GetPlayerName(ulong netId)
         {
-            var netState = NetworkSpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
+            var netState = NetworkManager.Singleton.SpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
             return netState.Name;
         }
 

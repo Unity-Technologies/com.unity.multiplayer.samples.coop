@@ -94,18 +94,18 @@ namespace BossRoom
 
         protected virtual void OnApplicationQuit()
         {
-            if (!isActiveAndEnabled)
+            if (!isActiveAndEnabled || !NetworkManager.Singleton)
                 return;
 
-            if (IsHost)
+            if (NetworkManager.Singleton.IsHost)
             {
                 NetworkManager.Singleton.StopHost();
             }
-            else if (IsClient)
+            else if (NetworkManager.Singleton.IsClient)
             {
                 NetworkManager.Singleton.StopClient();
             }
-            else if (IsServer)
+            else if (NetworkManager.Singleton.IsServer)
             {
                 NetworkManager.Singleton.StopServer();
             }

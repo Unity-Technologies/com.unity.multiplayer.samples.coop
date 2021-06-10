@@ -58,7 +58,7 @@ namespace BossRoom.Server
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
-                NetworkObject initialTarget = NetworkSpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
                 if (initialTarget)
                 {
                     // snap to face our target! This is the direction we'll attack in

@@ -29,7 +29,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &409269882
 MonoBehaviour:
@@ -81,7 +81,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6885944472713585796
 MonoBehaviour:
@@ -135,9 +135,9 @@ Transform:
   m_LocalPosition: {x: 0, y: 1, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1092014798135837016}
   - {fileID: 5355783542964773244}
   - {fileID: 409269881}
+  - {fileID: 1861090270400447367}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c0e18361257a9f409d6064bac74e732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IpHostTransport: {fileID: 7898291372908163337}
+  m_IpHostTransport: {fileID: 7738483995325753316}
   m_RelayTransport: {fileID: 409269882}
 --- !u!114 &5436007408952557924
 MonoBehaviour:
@@ -172,7 +172,7 @@ MonoBehaviour:
   LogLevel: 1
   NetworkConfig:
     ProtocolVersion: 0
-    NetworkTransport: {fileID: 7898291372908163337}
+    NetworkTransport: {fileID: 7738483995325753316}
     RegisteredScenes:
     - MainMenu
     - CharSelect
@@ -180,24 +180,43 @@ MonoBehaviour:
     - PostGame
     - Startup
     AllowRuntimeSceneChanges: 1
+    PlayerPrefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
     NetworkPrefabs:
-    - Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
-      PlayerPrefab: 1
-    - Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
-      PlayerPrefab: 0
-    - Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
-      PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a, type: 3}
-      PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c, type: 3}
-      PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb, type: 3}
-      PlayerPrefab: 0
-    - Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2, type: 3}
-      PlayerPrefab: 0
-    PlayerPrefabHash:
-      id: 0
-    CreatePlayerPrefab: 0
+    - Override: 0
+      Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
     ReceiveTickrate: 0
     NetworkTickIntervalSec: 0.05
     MaxReceiveEventsPerTickRate: 1000
@@ -211,21 +230,14 @@ MonoBehaviour:
     EnsureNetworkVariableLengthSafety: 0
     EnableSceneManagement: 1
     ForceSamePrefabs: 0
-    UsePrefabSync: 0
-    RecycleNetworkIds: 0
+    RecycleNetworkIds: 1
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
     EnableMessageBuffering: 1
     MessageBufferTimeout: 20
     EnableNetworkLogs: 1
-  references:
-    version: 1
-    00000000:
-      type: {class: NullableBoolSerializable, ns: MLAPI.Configuration, asm: Unity.Multiplayer.MLAPI.Runtime}
-      data:
-        Value: 1897319656204293034
---- !u!1 &6889060209805043266
+--- !u!1 &7311172147761373013
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -233,36 +245,36 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 1092014798135837016}
-  - component: {fileID: 7898291372908163337}
+  - component: {fileID: 1861090270400447367}
+  - component: {fileID: 7738483995325753316}
   m_Layer: 0
-  m_Name: UnetTransport
+  m_Name: UnetTransport2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &1092014798135837016
+--- !u!4 &1861090270400447367
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6889060209805043266}
+  m_GameObject: {fileID: 7311172147761373013}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 0
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &7898291372908163337
+--- !u!114 &7738483995325753316
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6889060209805043266}
+  m_GameObject: {fileID: 7311172147761373013}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: b84c2d8dfe509a34fb59e2b81f8e1319, type: 3}

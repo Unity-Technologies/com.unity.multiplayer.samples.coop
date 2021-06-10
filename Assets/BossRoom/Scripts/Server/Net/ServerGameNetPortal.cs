@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using MLAPI;
 using UnityEngine;
 using MLAPI.SceneManagement;
 
@@ -92,7 +93,7 @@ namespace BossRoom.Server
 
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
-                NetworkSceneManager.SwitchScene("CharSelect");
+                NetworkManager.Singleton.SceneManager.SwitchScene("CharSelect");
 
                 if( m_Portal.NetManager.IsHost)
                 {
@@ -139,7 +140,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
-        /// handled in server code). 
+        /// handled in server code).
         /// </summary>
         private void OnUserDisconnectRequest()
         {
@@ -245,17 +246,23 @@ namespace BossRoom.Server
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
+            // Another hackfix to unblock me since this is now called on the host's client instance as well
+            if (connectionPayload == null)
+            {
+                callback(false, 0, true, null, null);
+                return;
+            }
             int clientScene = connectionPayload.clientScene;
 
             //a nice addition in the future will be to support rejoining the game and getting your same character back. This will require tracking a map of the GUID
-            //to the player's owned character object, and cleaning that object on a timer, rather than doing so immediately when a connection is lost. 
+            //to the player's owned character object, and cleaning that object on a timer, rather than doing so immediately when a connection is lost.
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
             //TODO: GOMPS-78. We are saving the GUID, but we have more to do to fully support a reconnect flow (where you get your same character back after disconnect/reconnect).
 
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
 
-            //Test for Duplicate Login. 
+            //Test for Duplicate Login.
             if( m_ClientData.ContainsKey(connectionPayload.clientGUID))
             {
                 if( Debug.isDebugBuild )
@@ -303,7 +310,7 @@ namespace BossRoom.Server
 
             // TODO fix once this is solved: Issue 796 Unity-Technologies/com.unity.multiplayer.mlapi#796
             // this wait is a workaround to give the client time to receive the above RPC before closing the connection
-            yield return new WaitForSeconds(0); 
+            yield return new WaitForSeconds(0);
 
             BootClient(clientId);
         }
@@ -314,7 +321,7 @@ namespace BossRoom.Server
         /// <param name="clientId">the ID of the client to boot.</param>
         public void BootClient(ulong clientId)
         {
-            var netObj = MLAPI.Spawning.NetworkSpawnManager.GetPlayerNetworkObject(clientId);
+            var netObj = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
             if( netObj )
             {
                 //TODO-FIXME:MLAPI Issue #795. Should not need to explicitly despawn player objects.

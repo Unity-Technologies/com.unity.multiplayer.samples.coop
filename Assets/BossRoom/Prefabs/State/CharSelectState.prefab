@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3565665953789623676}
+  - component: {fileID: 1092063945021251778}
   - component: {fileID: 3565665953789623675}
   - component: {fileID: 3565665953789623674}
   - component: {fileID: 3565665953789623673}
-  - component: {fileID: 1092063945021251778}
   m_Layer: 0
   m_Name: CharSelectState
   m_TagString: Untagged
@@ -34,6 +34,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1092063945021251778
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3565665953789623672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
 --- !u!114 &3565665953789623675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,6 +95,7 @@ MonoBehaviour:
     Color: {r: 0.99607843, g: 0.6745098, b: 0.03137255, a: 1}
   - Indicator: {fileID: 8070130267694257472, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
     Color: {r: 0.19215687, g: 0.03137255, b: 0.9882353, a: 1}
+  m_NumPlayersText: {fileID: 0}
   m_UIElementsForNoSeatChosen: []
   m_UIElementsForSeatChosen: []
   m_UIElementsForLobbyEnding: []
@@ -116,20 +132,3 @@ MonoBehaviour:
     CharacterArtIdx: 7
   - Class: 3
     CharacterArtIdx: 6
---- !u!114 &1092063945021251778
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3565665953789623672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 9664049137678660408
-  PrefabHashGenerator: CharSelectState
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0

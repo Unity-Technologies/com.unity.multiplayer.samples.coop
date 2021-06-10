@@ -108,7 +108,7 @@ namespace BossRoom.Server
 
                 bool didSpawn = DoInitialSpawnIfPossible();
 
-                if (!didSpawn && InitialSpawnDone && NetworkSpawnManager.GetPlayerNetworkObject(clientId) == null)
+                if (!didSpawn && InitialSpawnDone && NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId) == null)
                 {
                     //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                     //(either because multiple people are late-joining at once, or because some dynamic entities are
@@ -145,7 +145,7 @@ namespace BossRoom.Server
         private MLAPI.NetworkVariable.NetworkVariable<LifeState>.OnValueChangedDelegate GetLifeStateEvent(ulong id)
         {
             //this is all a little paranoid, because during shutdown it's not always obvious what state is still valid.
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject netObj) && netObj != null)
+            if (NetworkManager != null && NetworkManager.SpawnManager != null && NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject netObj) && netObj != null)
             {
                 var netState = netObj.GetComponent<NetworkCharacterState>();
                 return netState != null ? netState.NetworkLifeState.LifeState.OnValueChanged : null;
@@ -227,7 +227,7 @@ namespace BossRoom.Server
             yield return new WaitForSeconds(wait);
 
             GameStateRelay.SetRelayObject(gameWon);
-            MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("PostGame");
+            NetworkManager.Singleton.SceneManager.SwitchScene("PostGame");
         }
     }
 }

@@ -82,7 +82,7 @@ namespace BossRoom.Server
             }
 
             NetworkObject obj;
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out obj) && obj != null)
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var serverChar = obj.GetComponent<ServerCharacter>();

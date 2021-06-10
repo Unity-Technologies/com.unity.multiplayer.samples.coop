@@ -143,7 +143,7 @@ namespace BossRoom.Server
         private IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
-            MLAPI.SceneManagement.NetworkSceneManager.SwitchScene("BossRoom");
+            NetworkManager.SceneManager.SwitchScene("BossRoom");
         }
 
         protected override void OnDestroy()
@@ -153,6 +153,7 @@ namespace BossRoom.Server
             {
                 NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene -= OnNotifyServerClientLoadedScene;
             }
             if (CharSelectData)
             {
@@ -169,36 +170,23 @@ namespace BossRoom.Server
             }
             else
             {
-                NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
-                if (IsHost)
-                {
-                    // host doesn't get an OnClientConnected()
-                    // and other clients could be connects from last game
-                    // So look for any existing connections to do intiial setup
-                    var clients = NetworkManager.Singleton.ConnectedClientsList;
-                    foreach (var net_cl in clients)
-                    {
-                        OnClientConnected(net_cl.ClientId);
-                    }
-                }
+                NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += OnNotifyServerClientLoadedScene;
             }
+        }
+
+        private void OnNotifyServerClientLoadedScene(MLAPI.SceneManagement.SceneSwitchProgress progress, ulong clientId)
+        {
+            // When the client finishes loading the Lobby Map, we will need to Seat it
+            SeatNewPlayer(clientId);
         }
 
         private void OnClientConnected(ulong clientId)
         {
-            StartCoroutine(WaitToSeatNewPlayer(clientId));
-        }
-
-        private IEnumerator WaitToSeatNewPlayer(ulong clientId)
-        {
-            //TODO-FIXME:MLAPI We are receiving NetworkVar updates too early on the client when doing this immediately on client connection,
-            //causing the NetworkList of lobby players to get out of sync.
-            //tracking MLAPI issue: https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/issues/745
-            //When issue is resolved, we should be able to call SeatNewPlayer directly in the client connection callback. 
-            yield return new WaitForSeconds(2.5f);
+            // When the client first connects to the server we will need to Seat it
             SeatNewPlayer(clientId);
         }
 
