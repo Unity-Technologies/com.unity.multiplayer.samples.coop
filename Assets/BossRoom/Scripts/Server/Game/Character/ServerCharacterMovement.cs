@@ -1,4 +1,5 @@
 using MLAPI;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
@@ -67,8 +68,11 @@ namespace BossRoom.Server
         /// <param name="position">Position in world space to path to. </param>
         public void SetMovementTarget(Vector3 position)
         {
-            m_MovementState = MovementState.PathFollowing;
-            m_NavPath.SetTargetPosition(position);
+            if ((position - transform.position).sqrMagnitude > 0.1f) // todo config or const
+            {
+                m_MovementState = MovementState.PathFollowing;
+                m_NavPath.SetTargetPosition(position);
+            }
         }
 
         public void StartForwardCharge(float speed, float duration)

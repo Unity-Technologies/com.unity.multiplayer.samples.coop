@@ -339,19 +339,32 @@ namespace BossRoom.Visual
             }
         }
 
-        // VisualUtils.PositionInterpolation posInterp = new VisualUtils.PositionInterpolation();
         Vector3 m_LerpStartPos;
         Vector3 m_LerpEndPos;
-        float m_LerpTime;
+        float m_PosLerpTime;
 
         private void OnPositionChanged(Vector3 old, Vector3 latest)
         {
             m_LerpEndPos = latest;
             m_LerpStartPos = transform.position;
-            m_LerpTime = 0;
+            m_PosLerpTime = 0;
         }
-        public AnimationCurve LerpSpeedOverDistance = AnimationCurve.Constant(0, 10, 5); // todo figure out why magic value 5 works well
 
+        static void DrawDebugLineInBuild(Vector3 position)
+        {
+#if DEVELOPMENT_BUILD
+            LineRenderer l;
+            var newGO = new GameObject();
+            l = newGO.AddComponent<LineRenderer>();
+            var selfDestruct = newGO.AddComponent<TimedSelfDestruct>();
+            selfDestruct.lifespanSeconds = 10f;
+            l.startWidth = 0.05f;
+            l.endWidth = 0.05f;
+            l.useWorldSpace = true;
+            l.SetPosition(0, position);
+            l.SetPosition(1, position + Vector3.up);
+#endif
+        }
 
         void Update()
         {
@@ -363,8 +376,6 @@ namespace BossRoom.Visual
                 return;
             }
 
-            Debug.DrawLine(transform.position, transform.position + Vector3.up, Color.magenta, 10f, false);
-            Debug.DrawLine(Parent.transform.position, Parent.transform.position + Vector3.up, Color.green, 10f, false);
 
             // m_SmoothedSpeed = GameDataSource.Instance.CharacterDataByType[m_NetState.CharacterType].Speed;
             // var newPos = posInterp.GetValueForTime(Time.time);
@@ -374,13 +385,12 @@ namespace BossRoom.Visual
             // }
             // VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
 
-            var speedToLerp = LerpSpeedOverDistance.Evaluate(Vector3.Distance(transform.position, m_LerpEndPos)); // variable lerp time depending on distance
-            m_LerpTime += Time.unscaledDeltaTime * speedToLerp;
-            if ((transform.position - m_LerpEndPos).sqrMagnitude < 0.1f)
-            {
-                m_LerpTime = 1f;
-            }
-            transform.position = Vector3.Lerp(m_LerpStartPos, m_LerpEndPos, m_LerpTime);
+            // var speedToLerp = LerpSpeedOverDistance.Evaluate(Vector3.Distance(transform.position, m_LerpEndPos)); // variable lerp time depending on distance
+            m_PosLerpTime += Time.deltaTime;// * speedToLerp;
+            float maxInterpolateTime = 0.2f; // todo config
+            transform.position = Vector3.Lerp(m_LerpStartPos, m_LerpEndPos, m_PosLerpTime / maxInterpolateTime);
+            // DrawDebugLineInBuild(transform.position);
+            // Debug.DrawLine(Parent.transform.position, Parent.transform.position + Vector3.up, Color.green, 10f, false);
 
             if (m_ClientVisualsAnimator)
             {

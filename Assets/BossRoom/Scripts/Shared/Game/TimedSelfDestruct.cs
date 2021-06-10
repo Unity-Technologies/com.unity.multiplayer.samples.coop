@@ -22,6 +22,12 @@ namespace BossRoom
         [SerializeField]
         private float m_LifespanSeconds;
 
+        public float lifespanSeconds
+        {
+            get => m_LifespanSeconds;
+            set => m_LifespanSeconds = value;
+        }
+
         private void Start()
         {
             Destroy(gameObject, m_LifespanSeconds);
