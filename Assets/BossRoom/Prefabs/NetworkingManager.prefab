@@ -49,7 +49,7 @@ MonoBehaviour:
   m_ChannelIdCodesStartRange: 130
   m_AttachSupportLogger: 0
   m_BatchMode: 1
-  m_SendQueueBatchSize: 4096
+  m_SendQueueBatchSize: 8192
   m_BatchedTransportEventCode: 129
   m_KickEventCode: 130
 --- !u!1 &3591499506183471245
