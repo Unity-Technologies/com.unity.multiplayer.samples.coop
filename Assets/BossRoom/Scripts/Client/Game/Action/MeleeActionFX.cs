@@ -39,7 +39,7 @@ namespace BossRoom.Visual
             // (don't wait until impact, because the particles need to start sooner!)
             if (Data.TargetIds != null
                 && Data.TargetIds.Length > 0
-                && NetworkSpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
+                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
                 && targetNetworkObj != null)
             {
                 float padRange = Description.Range + k_RangePadding;
@@ -100,9 +100,9 @@ namespace BossRoom.Visual
             m_ImpactPlayed = true;
 
             //Is my original target still in range? Then definitely get him!
-            if (Data.TargetIds != null && Data.TargetIds.Length > 0 && NetworkSpawnManager.SpawnedObjects.ContainsKey(Data.TargetIds[0]))
+            if (Data.TargetIds != null && Data.TargetIds.Length > 0 && NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(Data.TargetIds[0]))
             {
-                NetworkObject originalTarget = NetworkSpawnManager.SpawnedObjects[Data.TargetIds[0]];
+                NetworkObject originalTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[Data.TargetIds[0]];
                 float padRange = Description.Range + k_RangePadding;
 
                 if ((m_Parent.transform.position - originalTarget.transform.position).sqrMagnitude < (padRange * padRange))

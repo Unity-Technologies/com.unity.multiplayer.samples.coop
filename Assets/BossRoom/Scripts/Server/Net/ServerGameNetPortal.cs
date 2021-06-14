@@ -96,7 +96,7 @@ namespace BossRoom.Server
 
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
-                NetworkSceneManager.SwitchScene("CharSelect");
+                NetworkManager.Singleton.SceneManager.SwitchScene("CharSelect");
 
                 if( m_Portal.NetManager.IsHost)
                 {
@@ -249,6 +249,12 @@ namespace BossRoom.Server
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
+            // Another hackfix to unblock me since this is now called on the host's client instance as well
+            if (connectionPayload == null)
+            {
+                callback(true, null, true, null, null);
+                return;
+            }
             int clientScene = connectionPayload.clientScene;
 
             //a nice addition in the future will be to support rejoining the game and getting your same character back. This will require tracking a map of the GUID
@@ -288,7 +294,7 @@ namespace BossRoom.Server
                 m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
             }
 
-            callback(true, m_PersistentPlayer.PrefabHash, true, Vector3.zero, Quaternion.identity);
+            callback(true, null, true, Vector3.zero, Quaternion.identity);
 
             //TODO:MLAPI: this must be done after the callback for now. In the future we expect MLAPI to allow us to return more information as part of
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
@@ -318,7 +324,7 @@ namespace BossRoom.Server
         /// <param name="clientId">the ID of the client to boot.</param>
         public void BootClient(ulong clientId)
         {
-            var netObj = MLAPI.Spawning.NetworkSpawnManager.GetPlayerNetworkObject(clientId);
+            var netObj = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
             if( netObj )
             {
                 //TODO-FIXME:MLAPI Issue #795. Should not need to explicitly despawn player objects.

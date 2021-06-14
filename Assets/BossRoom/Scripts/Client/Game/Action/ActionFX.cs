@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using MLAPI;
 
 namespace BossRoom.Visual
 {
@@ -16,7 +17,7 @@ namespace BossRoom.Visual
         public const string k_DefaultHitReact = "HitReact1";
 
         /// <summary>
-        /// True if this actionFX began running immediately, prior to getting a confirmation from the server. 
+        /// True if this actionFX began running immediately, prior to getting a confirmation from the server.
         /// </summary>
         public bool Anticipated { get; protected set; }
 
@@ -87,7 +88,7 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Should this ActionFX be created anticipatively on the owning client? 
+        /// Should this ActionFX be created anticipatively on the owning client?
         /// </summary>
         /// <param name="parent">The ActionVisualization that would be playing this ActionFX.</param>
         /// <param name="data">The request being sent to the server</param>
@@ -99,12 +100,12 @@ namespace BossRoom.Visual
             var actionDescription = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
 
             //for actions with ShouldClose set, we check our range locally. If we are out of range, we shouldn't anticipate, as we will
-            //need to execute a ChaseAction (synthesized on the server) prior to actually playing the skill. 
+            //need to execute a ChaseAction (synthesized on the server) prior to actually playing the skill.
             bool isTargetEligible = true;
             if( data.ShouldClose == true )
             {
                 ulong targetId = (data.TargetIds != null && data.TargetIds.Length > 0) ? data.TargetIds[0] : 0;
-                if( MLAPI.Spawning.NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out MLAPI.NetworkObject networkObject ) )
+                if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject networkObject ) )
                 {
                     float rangeSquared = actionDescription.Range * actionDescription.Range;
                     isTargetEligible = (networkObject.transform.position - parent.Parent.transform.position).sqrMagnitude < rangeSquared;
@@ -112,7 +113,7 @@ namespace BossRoom.Visual
             }
 
             //at present all Actionts anticipate except for the Target action, which runs a single instance on the client and is
-            //responsible for action anticipation on its own. 
+            //responsible for action anticipation on its own.
             return isTargetEligible && actionDescription.Logic != ActionLogic.Target;
         }
 
@@ -129,7 +130,7 @@ namespace BossRoom.Visual
         public virtual void OnStoppedChargingUp(float finalChargeUpPercentage) { }
 
         /// <summary>
-        /// Utility function that instantiates all the graphics in the Spawns list. 
+        /// Utility function that instantiates all the graphics in the Spawns list.
         /// If parentToOrigin is true, the new graphics are parented to the origin Transform.
         /// If false, they are positioned/oriented the same way but are not parented.
         /// </summary>
@@ -158,7 +159,7 @@ namespace BossRoom.Visual
             var graphicsGO = GameObject.Instantiate(prefab, origin.transform.position, origin.transform.rotation, (parentToOrigin ? origin.transform : null));
             return graphicsGO.GetComponent<SpecialFXGraphic>();
         }
-		
+
         /// <summary>
         /// Called when the action is being "anticipated" on the client. For example, if you are the owner of a tank and you swing your hammer,
         /// you get this call immediately on the client, before the server round-trip.

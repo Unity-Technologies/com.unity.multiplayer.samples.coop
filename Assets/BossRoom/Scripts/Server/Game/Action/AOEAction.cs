@@ -62,7 +62,7 @@ public class AoeAction : Action
             if (enemy != null)
             {
                 // make the target "flinch", assuming they're a living enemy
-                var networkObject = NetworkSpawnManager.SpawnedObjects[enemy.NetworkObjectId];
+                var networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[enemy.NetworkObjectId];
                 if (networkObject)
                 {
                     var state = networkObject.GetComponent<NetworkCharacterState>();

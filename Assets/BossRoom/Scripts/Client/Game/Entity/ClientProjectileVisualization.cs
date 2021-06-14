@@ -56,7 +56,7 @@ namespace BossRoom.Visual
             //For the moment we play some particles (optionally), and cause the target to animate a hit-react.
 
             NetworkObject targetNetObject;
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
             {
                 if (m_OnHitParticlePrefab)
                 {

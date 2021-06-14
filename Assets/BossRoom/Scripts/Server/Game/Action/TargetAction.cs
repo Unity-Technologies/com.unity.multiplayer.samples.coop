@@ -65,7 +65,7 @@ namespace BossRoom.Server
         /// <param name="targetId"></param>
         private void FaceTarget(ulong targetId)
         {
-            if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject targetObject))
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject targetObject))
             {
                 Vector3 diff = targetObject.transform.position - m_Parent.transform.position;
 

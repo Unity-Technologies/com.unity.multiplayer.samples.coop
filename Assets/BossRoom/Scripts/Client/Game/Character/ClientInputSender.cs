@@ -203,7 +203,7 @@ namespace BossRoom.Client
             {
                 // if a targetId is given, try to find the object
                 NetworkObject targetNetObj;
-                if (NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj))
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj))
                 {
                     hitTransform = targetNetObj.transform;
                 }
@@ -270,7 +270,7 @@ namespace BossRoom.Client
             if (!targetNetObj && actionType != ActionType.GeneralTarget)
             {
                 ulong targetId = m_NetworkCharacter.TargetId.Value;
-                NetworkSpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
             }
 
             //sanity check that this is indeed a valid target.

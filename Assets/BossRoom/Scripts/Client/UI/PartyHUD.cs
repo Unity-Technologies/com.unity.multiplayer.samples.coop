@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
@@ -83,7 +84,7 @@ namespace BossRoom.Visual
         {
             // TODO: Re-implement names on UI (GOMPS-550)
             return string.Empty;
-            /*var netState = NetworkSpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
+            /*var netState = NetworkManager.Singleton.SpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
             return netState.Name;*/
         }
 

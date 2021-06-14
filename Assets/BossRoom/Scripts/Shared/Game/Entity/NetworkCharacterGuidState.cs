@@ -22,6 +22,12 @@ namespace BossRoom
 
         void OnValueChanged(byte[] previousValue, byte[] newValue)
         {
+            if (newValue == null || newValue.Length == 0)
+            {
+                // not a valid Guid
+                return;
+            }
+
             var characterGuid = new Guid(newValue);
 
             CharacterGuidChanged?.Invoke(characterGuid);
