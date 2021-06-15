@@ -100,7 +100,7 @@ namespace BossRoom
 
             NetManager = NetworkManagerGO.GetComponent<NetworkManager>();
 
-            //we synthesize a "NetworkStart" event for the NetworkManager out of existing events. At some point
+            //we synthesize a "OnNetworkSpawn" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
             NetManager.OnServerStarted += OnNetworkReady;
             NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
@@ -203,7 +203,7 @@ namespace BossRoom
 
         /// <summary>
         /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
-        /// on the host). It is named to match NetworkBehaviour.NetworkStart, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
+        /// on the host). It is named to match NetworkBehaviour.OnNetworkSpawn, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
         /// </summary>
         private void OnNetworkReady()
         {

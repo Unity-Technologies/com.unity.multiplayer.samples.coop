@@ -144,9 +144,9 @@ namespace BossRoom.Client
                 Instance = null;
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
-            base.NetworkStart();
+            base.OnNetworkSpawn();
             if (!IsClient)
             {
                 enabled = false;

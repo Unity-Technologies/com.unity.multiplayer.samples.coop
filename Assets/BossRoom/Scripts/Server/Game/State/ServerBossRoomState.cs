@@ -59,9 +59,9 @@ namespace BossRoom.Server
             return returnValue;
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
-            base.NetworkStart();
+            base.OnNetworkSpawn();
 
             if (!IsServer)
             {

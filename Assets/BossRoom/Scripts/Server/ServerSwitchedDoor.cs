@@ -19,14 +19,14 @@ public class ServerSwitchedDoor : NetworkBehaviour
     {
         m_NetworkDoorState = GetComponent<NetworkDoorState>();
 
-        // don't let Update() run until after NetworkStart()
+        // don't let Update() run until after OnNetworkSpawn()
         enabled = false;
 
         if (m_SwitchesThatOpenThisDoor.Count == 0)
             Debug.LogError("Door has no switches and can never be opened!", gameObject);
     }
 
-    public override void NetworkStart()
+    public override void OnNetworkSpawn()
     {
         enabled = IsServer;
     }

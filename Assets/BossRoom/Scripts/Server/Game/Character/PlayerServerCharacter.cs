@@ -23,7 +23,7 @@ namespace BossRoom.Server
         [SerializeField]
         ServerCharacter m_CachedServerCharacter;
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if( !IsServer )
             {

@@ -20,7 +20,7 @@ public class ClientFloorSwitchVisualization : NetworkBehaviour
         m_FloorSwitchState = GetComponent<NetworkFloorSwitchState>();
     }
 
-    public override void NetworkStart()
+    public override void OnNetworkSpawn()
     {
         m_FloorSwitchState.IsSwitchedOn.OnValueChanged += OnFloorSwitchStateChanged;
     }

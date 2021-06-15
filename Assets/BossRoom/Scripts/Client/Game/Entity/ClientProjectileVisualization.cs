@@ -17,7 +17,7 @@ namespace BossRoom.Visual
 
         private float m_SmoothedSpeed;
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsClient || transform.parent == null)
             {

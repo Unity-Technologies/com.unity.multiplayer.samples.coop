@@ -97,7 +97,7 @@ namespace BossRoom.Client
         /// </summary>
         CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType];
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsClient || !IsOwner)
             {

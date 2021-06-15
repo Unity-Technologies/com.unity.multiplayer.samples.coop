@@ -69,7 +69,7 @@ namespace BossRoom.Visual
         event Action Destroyed;
 
         /// <inheritdoc />
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsClient || transform.parent == null)
             {

@@ -23,9 +23,9 @@ namespace BossRoom.Client
             portalGO.GetComponent<ClientGameNetPortal>().DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
-            base.NetworkStart();
+            base.OnNetworkSpawn();
             if (!IsClient)
             {
                 enabled = false;

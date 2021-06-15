@@ -54,7 +54,7 @@ namespace BossRoom.Server
             }
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsServer) { enabled = false; }
             else
