@@ -8,11 +8,11 @@
       "hash": "3f0350ae57befd5ea7deabb1db310eb77704f58e"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#3f0350ae57befd5ea7deabb1db310eb77704f58e",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#e47ee18972b110a689c23d6ffc0e5994d18e9eb2",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "3f0350ae57befd5ea7deabb1db310eb77704f58e"
+      "hash": "e47ee18972b110a689c23d6ffc0e5994d18e9eb2"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
