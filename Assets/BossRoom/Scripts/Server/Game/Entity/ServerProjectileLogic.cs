@@ -81,8 +81,6 @@ namespace BossRoom.Server
             m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Ground" });
             m_BlockerMask = LayerMask.GetMask(new[] { "Default", "Ground" });
             m_NPCLayer = LayerMask.NameToLayer("NPCs");
-
-            RefreshNetworkState();
         }
 
         private void FixedUpdate()
@@ -102,15 +100,6 @@ namespace BossRoom.Server
             {
                 DetectCollisions();
             }
-
-            RefreshNetworkState();
-        }
-
-        private void RefreshNetworkState()
-        {
-            m_NetState.NetworkPosition.Value = transform.position;
-            m_NetState.NetworkRotationY.Value = transform.eulerAngles.y;
-            m_NetState.NetworkMovementSpeed.Value = m_ProjectileInfo.Speed_m_s;
         }
 
         private void DetectCollisions()

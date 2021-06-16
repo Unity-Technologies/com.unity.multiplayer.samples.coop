@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2059489347505585154}
-  - component: {fileID: 3502399447191095046}
   - component: {fileID: 8403335067046434128}
+  - component: {fileID: 3502399447191095046}
+  - component: {fileID: -3511301982335683285}
   - component: {fileID: 144087972406990258}
-  - component: {fileID: 2323743718044421326}
   - component: {fileID: 1392226273213099329}
   m_Layer: 7
   m_Name: ChargedArrow2
@@ -36,6 +36,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &8403335067046434128
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2842198241268549130}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.2
+  m_Center: {x: 0, y: 0, z: 0.6}
 --- !u!114 &3502399447191095046
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -51,19 +64,29 @@ MonoBehaviour:
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
---- !u!135 &8403335067046434128
-SphereCollider:
+--- !u!114 &-3511301982335683285
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2842198241268549130}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.2
-  m_Center: {x: 0, y: 0, z: 0.6}
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformAuthority: 0
+  FixedSendsPerSecond: 50
+  InterpolatePosition: 1
+  SnapDistance: 10
+  InterpolateServer: 1
+  MinMeters: 0.15
+  MinDegrees: 1.5
+  MinSize: 0.15
+  Channel: 6
+  m_UseLocal:
+    m_InternalValue: 0
 --- !u!114 &144087972406990258
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -78,18 +101,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_NetState: {fileID: 1392226273213099329}
   m_OurCollider: {fileID: 8403335067046434128}
---- !u!114 &2323743718044421326
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2842198241268549130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 797d92969c575574d868e069887e8486, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &1392226273213099329
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -102,8 +113,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f1775357f78b684294a25ef49f1a97d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SourceAction:
-    m_InternalValue: 0
 --- !u!1001 &9068228851964018290
 PrefabInstance:
   m_ObjectHideFlags: 0
