@@ -54,8 +54,6 @@ namespace BossRoom.Server
                 return;
             }
 
-            m_NetworkCharacterState.InitNetworkPositionAndRotationY(transform.position, transform.rotation.eulerAngles.y);
-
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
             m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
@@ -151,10 +149,6 @@ namespace BossRoom.Server
         {
             PerformMovement();
 
-            // Send new position values to the client
-            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
-            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
-            m_NetworkCharacterState.NetworkMovementSpeed.Value = GetMaxMovementSpeed();
             m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
         }
 
