@@ -34,7 +34,7 @@ namespace BossRoom.Client
         NetworkHealthState m_NetworkHealthState;
 
         [SerializeField]
-        CharacterContainer m_CharacterContainer;
+        CharacterClassContainer m_CharacterClassContainer;
 
         [SerializeField]
         ClientCharacter m_ClientCharacter;
@@ -109,20 +109,13 @@ namespace BossRoom.Client
             {
                 // the lines below are added in case a player wanted to display a health bar, since their max HP is
                 // dependent on their respective character class
-                if (m_CharacterContainer && !m_CharacterContainer.CharacterClass.IsNpc)
+                if (m_CharacterClassContainer && !m_CharacterClassContainer.CharacterClass.IsNpc)
                 {
-                    m_BaseHP = m_CharacterContainer.CharacterClass.BaseHP;
+                    m_BaseHP = m_CharacterClassContainer.CharacterClass.BaseHP;
 
-                    if (m_ClientCharacter.ChildVizObject)
-                    {
-                        TrackGraphicsTransform();
-                        DisplayUIHealth();
-                    }
-                    else
-                    {
-                        m_ClientCharacter.CharacterGraphicsSpawned += TrackGraphicsTransform;
-                        m_ClientCharacter.CharacterGraphicsSpawned += DisplayUIHealth;
-                    }
+                    m_TransformToTrack = m_ClientCharacter.ChildVizObject.transform;
+
+                    DisplayUIHealth();
                 }
 
                 m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
@@ -194,11 +187,6 @@ namespace BossRoom.Client
             yield return new WaitForSeconds(k_DurationSeconds);
 
             m_UIState.HideHealth();
-        }
-
-        void TrackGraphicsTransform()
-        {
-            m_TransformToTrack = m_ClientCharacter.ChildVizObject.transform;
         }
 
         void LateUpdate()

@@ -57,10 +57,9 @@ MonoBehaviour:
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
   m_NetworkNameState: {fileID: 0}
   m_NetworkHealthState: {fileID: 7751377510591478590}
-  m_CharacterContainer: {fileID: 5230418375993597025}
+  m_CharacterClassContainer: {fileID: 5230418375993597025}
   m_ClientCharacter: {fileID: 2292431908892550450}
   m_BaseHP: {fileID: 0}
-  m_TransformToTrack: {fileID: 0}
   m_VerticalWorldOffset: 2.2
   m_VerticalScreenOffset: 20
 --- !u!114 &3481187672596608374
@@ -88,7 +87,23 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331c67f15523ad7419792662b9768f44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CharacterContainer: {fileID: 5230418375993597025}
+  m_CharacterClassContainer: {fileID: 5230418375993597025}
+--- !u!114 &6940323159316181846
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6009713983291384756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7bb02fcdd8d85034794f2a32382009e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ClientCharacter: {fileID: 2292431908892550450}
+  m_CharacterClassContainer: {fileID: 5230418375993597025}
+  m_NetworkGuidState: {fileID: 2466014342928185240}
+  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
 --- !u!1001 &7831782662127126385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -163,6 +178,10 @@ PrefabInstance:
     - target: {fileID: 4600110157238723790, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: PrefabHash
       value: 1946294289364405461
+      objectReference: {fileID: 0}
+    - target: {fileID: 4600110157238723790, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
       objectReference: {fileID: 0}
     - target: {fileID: 4600110157238723790, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: PrefabHashGenerator

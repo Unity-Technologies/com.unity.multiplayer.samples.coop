@@ -6,14 +6,14 @@ using UnityEngine;
 namespace BossRoom
 {
     /// <summary>
-    /// NetworkBehaviour component to send/receive Character GUIDs from server to clients.
+    /// NetworkBehaviour component to send/receive GUIDs from server to clients.
     /// </summary>
-    public class NetworkCharacterGuidState : NetworkBehaviour
+    public class NetworkGuidState : NetworkBehaviour
     {
         [HideInInspector]
         public NetworkVariable<byte[]> CharacterGuidArray = new NetworkVariable<byte[]>(new byte[0]);
 
-        public event Action<Guid> CharacterGuidChanged;
+        public event Action<Guid> GuidChanged;
 
         void Awake()
         {
@@ -28,9 +28,9 @@ namespace BossRoom
                 return;
             }
 
-            var characterGuid = new Guid(newValue);
+            var guid = new Guid(newValue);
 
-            CharacterGuidChanged?.Invoke(characterGuid);
+            GuidChanged?.Invoke(guid);
         }
     }
 }

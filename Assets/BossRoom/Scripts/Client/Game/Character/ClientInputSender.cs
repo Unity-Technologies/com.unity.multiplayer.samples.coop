@@ -93,12 +93,12 @@ namespace BossRoom.Client
         public event Action<Vector3> ClientMoveEvent;
 
         [SerializeField]
-        CharacterContainer m_CharacterContainer;
+        CharacterClassContainer m_CharacterClassContainer;
 
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
-        CharacterClass CharacterData => m_CharacterContainer.CharacterClass;
+        CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
 
         public override void NetworkStart()
         {

@@ -17,7 +17,8 @@ MonoBehaviour:
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
   m_NetworkNameState: {fileID: 0}
   m_NetworkHealthState: {fileID: 827948680237315002}
-  m_CharacterContainer: {fileID: 2916423788378445029}
+  m_CharacterClassContainer: {fileID: 2916423788378445029}
+  m_ClientCharacter: {fileID: 9169118397563301302}
   m_BaseHP: {fileID: 11400000, guid: 95633dc134a4e654f863831b22b5681a, type: 2}
   m_TransformToTrack: {fileID: 6486568539699693356}
   m_VerticalWorldOffset: 2.2
@@ -108,6 +109,10 @@ PrefabInstance:
       value: 15588270132579523469
       objectReference: {fileID: 0}
     - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
+    - target: {fileID: 3288448142974003546, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: PrefabHashGenerator
       value: Imp
       objectReference: {fileID: 0}
@@ -195,6 +200,17 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 3288448142974003547, guid: 64cfd098f62285f42918875fef849e88, type: 3}
   m_PrefabInstance: {fileID: 2173896227866280545}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &9169118397563301302 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 6995351927119310807, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+  m_PrefabInstance: {fileID: 2173896227866280545}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3713729372785093424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae9a06a3585027044ababe9f9cb7b8e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &827948680237315002 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 1537501989561463259, guid: 64cfd098f62285f42918875fef849e88, type: 3}

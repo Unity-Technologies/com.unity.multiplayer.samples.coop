@@ -24,7 +24,7 @@ namespace BossRoom.Server
         // TODO: Remove this as a PC's Character GUID will come from CharSelect scene (GOMPS-550)
         [SerializeField]
         [Tooltip("Make sure these are included in the NetworkManager's list of prefabs!")]
-        Character[] m_Characters;
+        Avatar[] m_Avatars;
 
         [SerializeField]
         [Tooltip("A collection of locations for spawning players")]
@@ -187,10 +187,10 @@ namespace BossRoom.Server
                 Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation, m_RuntimeNetworkObjectsParent.Value) :
                 Instantiate(m_PlayerPrefab, m_RuntimeNetworkObjectsParent.Value);
 
-            if (newPlayer.TryGetComponent(out NetworkCharacterGuidState networkCharacterDefinition))
+            if (newPlayer.TryGetComponent(out NetworkGuidState networkCharacterDefinition))
             {
                 networkCharacterDefinition.CharacterGuidArray.Value =
-                    m_Characters[lobbyResults.Appearance].Guid.ToByteArray();
+                    m_Avatars[lobbyResults.Appearance].Guid.ToByteArray();
             }
 
             var netState = newPlayer.GetComponent<NetworkCharacterState>();

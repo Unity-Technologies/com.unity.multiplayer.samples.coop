@@ -19,11 +19,11 @@ namespace BossRoom
         NetworkNameState m_NetworkNameState;
 
         [SerializeField]
-        NetworkCharacterGuidState m_NetworkCharacterGuidState;
+        NetworkGuidState m_NetworkGuidState;
 
         public NetworkNameState NetworkNameState => m_NetworkNameState;
 
-        public NetworkCharacterGuidState NetworkCharacterGuidState => m_NetworkCharacterGuidState;
+        public NetworkGuidState NetworkGuidState => m_NetworkGuidState;
 
         void Awake()
         {

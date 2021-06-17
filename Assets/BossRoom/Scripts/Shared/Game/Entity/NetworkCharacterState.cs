@@ -118,17 +118,17 @@ namespace BossRoom
         public bool CanPerformActions => LifeState == LifeState.Alive;
 
         [SerializeField]
-        CharacterContainer m_CharacterContainer;
+        CharacterClassContainer m_CharacterClassContainer;
 
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
-        public CharacterClass CharacterData => m_CharacterContainer.CharacterClass;
+        public CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
 
         /// <summary>
         /// Character Type. This value is populated during character selection.
         /// </summary>
-        public CharacterTypeEnum CharacterType => m_CharacterContainer.CharacterClass.CharacterType;
+        public CharacterTypeEnum CharacterType => m_CharacterClassContainer.CharacterClass.CharacterType;
 
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.

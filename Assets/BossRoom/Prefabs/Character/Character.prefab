@@ -54,9 +54,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 17033050231420302466
-  PrefabHashGenerator: Character
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
 --- !u!114 &4600110157238723777
@@ -73,7 +71,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_NetworkHealthState: {fileID: 514105321093282895}
   m_NetworkLifeState: {fileID: -5107732197415868221}
-  m_CharacterContainer: {fileID: -6618539813679097072}
+  m_CharacterClassContainer: {fileID: -6618539813679097072}
 --- !u!114 &4600110157238723779
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -177,7 +175,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae9a06a3585027044ababe9f9cb7b8e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_CharacterContainer: {fileID: 0}
+  m_CharacterClassContainer: {fileID: -6618539813679097072}
 --- !u!114 &514105321093282895
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,4 +218,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_CharacterClass: {fileID: 0}
   m_NetworkCharacterGuidState: {fileID: 0}
-  m_CharacterRegistry: {fileID: 0}
+  m_AvatarRegistry: {fileID: 0}

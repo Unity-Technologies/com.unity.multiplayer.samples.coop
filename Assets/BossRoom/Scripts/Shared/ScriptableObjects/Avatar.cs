@@ -9,7 +9,7 @@ namespace BossRoom
     /// </summary>
     [CreateAssetMenu]
     [Serializable]
-    public class Character : GuidScriptableObject
+    public class Avatar : GuidScriptableObject
     {
         public CharacterClass CharacterClass;
 

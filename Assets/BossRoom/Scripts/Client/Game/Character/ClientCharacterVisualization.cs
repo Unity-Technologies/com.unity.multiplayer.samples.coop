@@ -106,9 +106,6 @@ namespace BossRoom.Visual
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
 
-            // ...and visualize the current char-select value that we know about
-            SetAppearanceSwap();
-
             // sync our animator to the most up to date version received from server
             SyncEntryAnimation(m_NetState.LifeState);
 
