@@ -224,20 +224,6 @@ namespace BossRoom.Server
             m_Rigidbody.rotation = transform.rotation;
         }
 
-        private float GetMaxMovementSpeed()
-        {
-            switch (m_MovementState)
-            {
-                case MovementState.Charging:
-                case MovementState.Knockback:
-                    return m_ForcedSpeed;
-                case MovementState.Idle:
-                case MovementState.PathFollowing:
-                default:
-                    return GetBaseMovementSpeed();
-            }
-        }
-
         /// <summary>
         /// Retrieves the speed for this character's class.
         /// </summary>
