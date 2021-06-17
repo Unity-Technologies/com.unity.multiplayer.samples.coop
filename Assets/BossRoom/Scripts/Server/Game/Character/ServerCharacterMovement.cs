@@ -169,7 +169,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_NavPath != null)
             {

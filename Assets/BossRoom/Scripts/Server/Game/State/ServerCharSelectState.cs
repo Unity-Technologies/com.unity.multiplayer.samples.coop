@@ -146,9 +146,8 @@ namespace BossRoom.Server
             NetworkManager.SceneManager.SwitchScene("BossRoom");
         }
 
-        protected override void OnDestroy()
+        public override void OnNetworkDespawn()
         {
-            base.OnDestroy();
             if (NetworkManager.Singleton)
             {
                 NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
@@ -163,7 +162,6 @@ namespace BossRoom.Server
 
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
             if (!IsServer)
             {
                 enabled = false;

@@ -32,7 +32,7 @@ namespace BossRoom.Server
             m_NetworkLifeState.LifeState.OnValueChanged += LifeStateChanged;
         }
 
-        void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             m_NetworkLifeState.LifeState.OnValueChanged -= LifeStateChanged;
         }

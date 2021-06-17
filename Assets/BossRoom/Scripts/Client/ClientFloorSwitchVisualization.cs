@@ -25,7 +25,7 @@ public class ClientFloorSwitchVisualization : NetworkBehaviour
         m_FloorSwitchState.IsSwitchedOn.OnValueChanged += OnFloorSwitchStateChanged;
     }
 
-    private void OnDestroy()
+    public override void OnNetworkDespawn()
     {
         if (m_FloorSwitchState)
         {

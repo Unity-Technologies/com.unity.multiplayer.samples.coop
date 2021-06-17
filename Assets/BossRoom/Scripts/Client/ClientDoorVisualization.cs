@@ -42,7 +42,7 @@ public class ClientDoorVisualization : NetworkBehaviour
         }
     }
 
-    private void OnDestroy()
+    public override void OnNetworkDespawn()
     {
         if (m_DoorState)
         {

@@ -32,8 +32,6 @@ namespace BossRoom.Server
 
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
-
             if (!IsServer)
             {
                 // these commands don't work on the client

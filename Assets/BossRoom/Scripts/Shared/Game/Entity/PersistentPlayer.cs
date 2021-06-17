@@ -30,7 +30,7 @@ namespace BossRoom
             m_PersistentPlayerRuntimeCollection.Add(this);
         }
 
-        void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             m_PersistentPlayerRuntimeCollection.Remove(this);
         }

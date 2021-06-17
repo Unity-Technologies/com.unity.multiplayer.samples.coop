@@ -130,9 +130,8 @@ namespace BossRoom.Client
             UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
         }
 
-        protected override void OnDestroy()
+        public override void OnNetworkDespawn()
         {
-            base.OnDestroy();
             if (CharSelectData)
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;

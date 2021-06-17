@@ -57,7 +57,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_NetState)
             {

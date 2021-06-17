@@ -189,7 +189,7 @@ namespace BossRoom.Visual
                     break;
             }
         }
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_NetState)
             {

@@ -59,7 +59,7 @@ namespace BossRoom.Server
             MaintainState();
         }
 
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_CoroDormant != null)
                 StopCoroutine(m_CoroDormant);

@@ -120,10 +120,8 @@ namespace BossRoom.Server
             }
         }
 
-        protected override void OnDestroy()
+        public override void OnNetworkDespawn()
         {
-            base.OnDestroy();
-
             foreach (ulong id in m_HeroIds)
             {
                 var heroLife = GetLifeStateEvent(id);

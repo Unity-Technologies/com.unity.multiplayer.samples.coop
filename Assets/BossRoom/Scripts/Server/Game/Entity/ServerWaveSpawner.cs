@@ -100,8 +100,6 @@ namespace BossRoom.Server
 
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
-
             if (!IsServer)
             {
                 enabled = false;
@@ -151,7 +149,7 @@ namespace BossRoom.Server
             m_WatchForPlayers = null;
         }
 
-        void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             StopWaveSpawning();
         }

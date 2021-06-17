@@ -75,7 +75,7 @@ namespace BossRoom.Server
             }
         }
 
-        public void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (NetState)
             {
