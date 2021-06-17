@@ -33,31 +33,8 @@ namespace BossRoom
     /// Contains all NetworkVariables and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
     [RequireComponent(typeof(NetworkHealthState), typeof(NetworkLifeState))]
-    public class NetworkCharacterState : NetworkBehaviour, INetMovement, ITargetable
+    public class NetworkCharacterState : NetworkBehaviour, ITargetable
     {
-        public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY)
-        {
-            NetworkPosition.Value = initPosition;
-            NetworkRotationY.Value = initRotationY;
-        }
-
-        /// <summary>
-        /// The networked position of this Character. This reflects the authoritative position on the server.
-        /// </summary>
-        public NetworkVariableVector3 NetworkPosition { get; } = new NetworkVariableVector3(
-            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
-
-        /// <summary>
-        /// The networked rotation of this Character. This reflects the authoritative rotation on the server.
-        /// </summary>
-        public NetworkVariableFloat NetworkRotationY { get; } = new NetworkVariableFloat(
-            new NetworkVariableSettings() { SendNetworkChannel = MLAPI.Transports.NetworkChannel.PositionUpdate });
-
-        /// <summary>
-        /// The speed that the character is currently allowed to move, according to the server.
-        /// </summary>
-        public NetworkVariableFloat NetworkMovementSpeed { get; } = new NetworkVariableFloat();
-
         /// Indicates how the character's movement should be depicted.
         public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
 
