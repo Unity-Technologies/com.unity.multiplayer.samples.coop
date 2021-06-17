@@ -100,9 +100,7 @@ namespace BossRoom.Visual
             transform.SetParent(m_RuntimeObjectsParent.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
-            var parentMovement = Parent.GetComponent<INetMovement>();
-            transform.position = parentMovement.NetworkPosition.Value;
-            transform.rotation = Quaternion.Euler(0, parentMovement.NetworkRotationY.Value, 0);
+            transform.SetPositionAndRotation(Parent.position, Parent.rotation);
 
             // listen for char-select info to change (in practice, this info doesn't
             // change, but we may not have the values set yet) ...

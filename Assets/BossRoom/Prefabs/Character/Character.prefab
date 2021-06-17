@@ -17,11 +17,11 @@ GameObject:
   - component: {fileID: -3542424572169399493}
   - component: {fileID: 6970334877957368017}
   - component: {fileID: 4602672899881656135}
-  - component: {fileID: 7690172137830037487}
   - component: {fileID: -909640835356089789}
   - component: {fileID: 514105321093282895}
   - component: {fileID: 4462343263575301329}
   - component: {fileID: -5107732197415868221}
+  - component: {fileID: 8540079631724274481}
   m_Layer: 3
   m_Name: Character
   m_TagString: Player
@@ -169,18 +169,6 @@ MonoBehaviour:
   m_BrainEnabled: 1
   m_KilledDestroyDelaySeconds: 3
   m_StartingAction: 0
---- !u!114 &7690172137830037487
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4600110157238723781}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 797d92969c575574d868e069887e8486, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-909640835356089789
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -234,4 +222,27 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_LifeState:
+    m_InternalValue: 0
+--- !u!114 &8540079631724274481
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600110157238723781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransformAuthority: 0
+  FixedSendsPerSecond: 50
+  InterpolatePosition: 1
+  SnapDistance: 10
+  InterpolateServer: 1
+  MinMeters: 0.15
+  MinDegrees: 1.5
+  MinSize: 0.15
+  Channel: 6
+  m_UseLocal:
     m_InternalValue: 0

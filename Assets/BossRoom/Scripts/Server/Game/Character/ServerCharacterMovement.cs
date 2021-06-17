@@ -54,8 +54,6 @@ namespace BossRoom.Server
                 return;
             }
 
-            m_NetworkCharacterState.InitNetworkPositionAndRotationY(transform.position, transform.rotation.eulerAngles.y);
-
             // On the server enable navMeshAgent and initialize
             m_NavMeshAgent.enabled = true;
             m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
@@ -151,10 +149,6 @@ namespace BossRoom.Server
         {
             PerformMovement();
 
-            // Send new position values to the client
-            m_NetworkCharacterState.NetworkPosition.Value = transform.position;
-            m_NetworkCharacterState.NetworkRotationY.Value = transform.rotation.eulerAngles.y;
-            m_NetworkCharacterState.NetworkMovementSpeed.Value = GetMaxMovementSpeed();
             m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
         }
 
@@ -228,20 +222,6 @@ namespace BossRoom.Server
             // After moving adjust the position of the dynamic rigidbody.
             m_Rigidbody.position = transform.position;
             m_Rigidbody.rotation = transform.rotation;
-        }
-
-        private float GetMaxMovementSpeed()
-        {
-            switch (m_MovementState)
-            {
-                case MovementState.Charging:
-                case MovementState.Knockback:
-                    return m_ForcedSpeed;
-                case MovementState.Idle:
-                case MovementState.PathFollowing:
-                default:
-                    return GetBaseMovementSpeed();
-            }
         }
 
         /// <summary>
