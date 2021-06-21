@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI;
@@ -7,6 +8,8 @@ using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
 using Photon.Realtime;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
 
 namespace BossRoom.Client
 {
@@ -219,6 +222,70 @@ namespace BossRoom.Client
             failMessage = String.Empty;
             return true;
         }
+
+        public static bool StartClientUnityRelayMode(GameNetPortal portal, string joinCode, out string failMessage)
+        {
+
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case MLAPI.Transports.UTPTransport utp:
+                    Debug.Log($"Setting Unity Relay client with join code {joinCode}");
+                    Task t = Task.Run( () => {UnityServices.Initialize();});
+                    if (!t.Wait(30000))
+                    {
+                        Debug.Log("UnityServices.Initialize did not finish within 30 seconds");
+                    }
+                    Debug.Log(AuthenticationService.Instance);
+                    if (!AuthenticationService.Instance.IsSignedIn)
+                    {
+                        Task t2 = Task.Run( () => {AuthenticationService.Instance.SignInAnonymouslyAsync();});
+                        t2.Wait(30000);
+                        var playerId = AuthenticationService.Instance.PlayerId;
+                        Debug.Log(playerId);
+                    }
+
+                    utp.SetRelayJoinCode(joinCode);
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+            }
+
+            ConnectClient(portal);
+
+            failMessage = String.Empty;
+            return true;
+        }
+
+        public async static void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
+        {
+
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case MLAPI.Transports.UTPTransport utp:
+                    Debug.Log($"Setting Unity Relay client with join code {joinCode}");
+                    await UnityServices.Initialize();
+                    Debug.Log(AuthenticationService.Instance);
+                    if (!AuthenticationService.Instance.IsSignedIn)
+                    {
+                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                        var playerId = AuthenticationService.Instance.PlayerId;
+                        Debug.Log(playerId);
+                    }
+
+                    utp.SetRelayJoinCode(joinCode);
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+            }
+
+            ConnectClient(portal);
+        }        
 
         private static void ConnectClient(GameNetPortal portal)
         {

@@ -17,6 +17,9 @@ public class TransportPicker : MonoBehaviour
     [SerializeField]
     NetworkTransport m_RelayTransport;
 
+    [SerializeField]
+    NetworkTransport m_UnityRelayTransport;
+
     /// <summary>
     /// The transport used when hosting the game on an IP address.
     /// </summary>
@@ -27,6 +30,11 @@ public class TransportPicker : MonoBehaviour
     /// </summary>
     public NetworkTransport RelayTransport => m_RelayTransport;
 
+    /// <summary>
+    /// The transport used when hosting the game over a unity relay server.
+    /// </summary>
+    public NetworkTransport UnityRelayTransport => m_UnityRelayTransport;
+
     void OnValidate()
     {
         Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UNetTransport || m_IpHostTransport as LiteNetLibTransport),
@@ -34,5 +42,8 @@ public class TransportPicker : MonoBehaviour
 
         Assert.IsTrue(m_RelayTransport == null || (m_RelayTransport as PhotonRealtimeTransport), "" +
             "Relay transport must be PhotonRealtimeTransport");
+
+        // Assert.IsTrue(m_UnityRelayTransport == null || (m_UnityRelayTransport as UTPTransport), "" +
+        //     "Relay transport must be PhotonRealtimeTransport");
     }
 }

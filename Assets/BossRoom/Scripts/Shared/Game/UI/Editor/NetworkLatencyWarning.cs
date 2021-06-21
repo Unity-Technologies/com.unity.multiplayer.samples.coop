@@ -35,6 +35,7 @@ namespace BossRoom.Scripts.Editor
                         break;
                     #endif
                     case MLAPI.Transports.UNET.UNetTransport unetTransport:
+                    case MLAPI.Transports.UTPTransport utp:
                     case PhotonRealtimeTransport photonTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;

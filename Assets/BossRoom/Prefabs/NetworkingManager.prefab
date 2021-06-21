@@ -52,6 +52,55 @@ MonoBehaviour:
   m_SendQueueBatchSize: 8192
   m_BatchedTransportEventCode: 129
   m_KickEventCode: 130
+--- !u!1 &3147140705963931936
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1110954318183479886}
+  - component: {fileID: 3854258989132416087}
+  m_Layer: 0
+  m_Name: UnityRelayTransport
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1110954318183479886
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3147140705963931936}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 5436007408952557925}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3854258989132416087
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3147140705963931936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6960e84d07fb87f47956e7a81d71c4e6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ProtocolType: 1
+  m_MessageBufferSize: 1024
+  m_ServerAddress: 127.0.0.1
+  m_ServerPort: 7777
+  m_RelayMaxPlayers: 10
+  m_RelayServer: https://relay-allocations.cloud.unity3d.com
 --- !u!1 &3591499506183471245
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,6 +187,7 @@ Transform:
   - {fileID: 5355783542964773244}
   - {fileID: 409269881}
   - {fileID: 1861090270400447367}
+  - {fileID: 1110954318183479886}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -155,6 +205,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_IpHostTransport: {fileID: 7738483995325753316}
   m_RelayTransport: {fileID: 409269882}
+  m_UnityRelayTransport: {fileID: 0}
 --- !u!114 &5436007408952557924
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -49,10 +49,14 @@ namespace BossRoom.Visual
         [SerializeField]
         Toggle m_RelayRadioButton;
 
+        [SerializeField]
+        Toggle m_UnityRelayRadioButton;
+
         bool m_EnterAsHost;
 
         string m_IpHostMainText;
         string m_RelayMainText;
+        string m_UnityRelayMainText;
 
         string m_DefaultIpInput;
         int m_DefaultPort;
@@ -76,12 +80,13 @@ namespace BossRoom.Visual
         /// <param name="titleText">The Title String at the top of the panel</param>
         /// <param name="ipHostMainText">The text just below the title text. Displays information about how to connect for IpHost mode.</param>
         /// <param name="relayMainText">The text just below the title text. Displays information about how to connect for Relay mode</param>
+        /// <param name="unityRelayMainText">The text just below the title text. Displays information about how to connect for Unity Relay mode</param>
         /// <param name="inputFieldText">the text displayed within the input field if empty</param>
         /// <param name="confirmationText"> Text to display on the confirmation button</param>
         /// <param name="confirmCallback">  The delegate to invoke when the player confirms.  It sends what the player input.</param>
         /// <param name="defaultIpInput">The default Ip value to show in the input field.</param>
         /// <param name="defaultPortInput">The default Port# to show in the port-input field.</param>
-        public void SetupEnterGameDisplay(bool enterAsHost, string titleText, string ipHostMainText, string relayMainText, string inputFieldText,
+        public void SetupEnterGameDisplay(bool enterAsHost, string titleText, string ipHostMainText, string relayMainText, string unityRelayMainText, string inputFieldText,
             string confirmationText, System.Action<string, int, string, OnlineMode> confirmCallback, string defaultIpInput = "", int defaultPortInput = 0)
         {
             //Clear any previous settings of the Panel first
@@ -94,6 +99,7 @@ namespace BossRoom.Visual
 
             m_IpHostMainText = ipHostMainText;
             m_RelayMainText = relayMainText;
+            m_UnityRelayMainText = unityRelayMainText;
 
             m_TitleText.text = titleText;
             m_SubText.text = string.Empty;
@@ -110,6 +116,9 @@ namespace BossRoom.Visual
             m_IPRadioButton.onValueChanged.AddListener(IPRadioRadioButtonPressed);
             m_RelayRadioButton.onValueChanged.AddListener(RelayRadioRadioButtonPressed);
             m_RelayRadioButton.isOn = false;
+            m_UnityRelayRadioButton.gameObject.SetActive(true);
+            m_UnityRelayRadioButton.onValueChanged.AddListener(UnityRelayRadioRadioButtonPressed);
+            m_UnityRelayRadioButton.isOn = false;
             m_IPRadioButton.isOn = true;
 
             m_CancelButton.onClick.AddListener(OnCancelClick);
@@ -142,6 +151,17 @@ namespace BossRoom.Visual
             }
 
             m_OnlineMode = OnlineMode.Relay;
+            OnOnlineModeDropdownChanged(m_OnlineMode);
+        }
+
+        void UnityRelayRadioRadioButtonPressed(bool value)
+        {
+            if (!value)
+            {
+                return;
+            }
+
+            m_OnlineMode = OnlineMode.UnityRelay;
             OnOnlineModeDropdownChanged(m_OnlineMode);
         }
 
@@ -218,7 +238,7 @@ namespace BossRoom.Visual
                 m_PortInputField.gameObject.SetActive(true);
                 m_PortInputField.text = m_DefaultPort.ToString();
             }
-            else
+            else if (value == OnlineMode.Relay)
             {
                 if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
                 {
@@ -255,8 +275,45 @@ namespace BossRoom.Visual
                 m_PortInputField.gameObject.SetActive(false);
                 m_PortInputField.text = "";
             }
-        }
+            else if (value == OnlineMode.UnityRelay)
+            {
+                m_MainText.text = m_UnityRelayMainText;
+                // if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
+                // {
+                //     if (Application.isEditor)
+                //     {
+                //         // If there is no photon app id set tell the user they need to install
+                //         SetupNotifierDisplay(
+                //             "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
+                //             "to setup Photon Realtime and use relay mode.", false, true);
+                //     }
+                //     else
+                //     {
+                //         // If there is no photon app id set tell the user they need to install
+                //         SetupNotifierDisplay(
+                //             "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project " +
+                //             "by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
+                //     }
+                //     return;
+                // }
 
+                // // Relay
+                // m_MainText.text = m_RelayMainText;
+
+                // if (m_EnterAsHost)
+                // {
+                //     m_InputField.text = GenerateRandomRoomKey();
+                //     m_InputField.gameObject.SetActive(false);
+                // }
+                // else
+                // {
+                //     m_InputField.text = "";
+                // }
+
+                // m_PortInputField.gameObject.SetActive(false);
+                // m_PortInputField.text = "";
+            }
+        }
         /// <summary>
         /// Generates a random room key to use as a default value.
         /// </summary>
@@ -291,8 +348,10 @@ namespace BossRoom.Visual
 
             m_IPRadioButton.gameObject.SetActive(false);
             m_RelayRadioButton.gameObject.SetActive(false);
+            m_UnityRelayRadioButton.gameObject.SetActive(false);
             m_IPRadioButton.onValueChanged.RemoveListener(IPRadioRadioButtonPressed);
             m_RelayRadioButton.onValueChanged.RemoveListener(RelayRadioRadioButtonPressed);
+            m_UnityRelayRadioButton.onValueChanged.RemoveListener(UnityRelayRadioRadioButtonPressed);
 
             m_CancelButton.onClick.RemoveListener(OnCancelClick);
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);

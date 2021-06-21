@@ -3,7 +3,10 @@
     "rootNamespace": "",
     "references": [
         "Unity.Multiplayer.MLAPI.Runtime",
-        "BossRoom.Shared"
+        "BossRoom.Shared",
+        "Unity.Multiplayer.Transport.UTP",
+        "Unity.Services.Core",
+        "Unity.Services.Authentication"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

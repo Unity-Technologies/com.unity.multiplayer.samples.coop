@@ -25,6 +25,9 @@ public class RoomNameBox : MonoBehaviour
             case PhotonRealtimeTransport realtimeTransport:
                 m_RoomNameText.text = $"Loading room key...";
                 break;
+            case UTPTransport utp:
+                m_RoomNameText.text = $"Loading join code...";
+                break;
             default:
                 // RoomName should only be displayed when using relay.
                 Destroy(gameObject);
@@ -48,6 +51,13 @@ public class RoomNameBox : MonoBehaviour
             {
                 string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
                 m_RoomNameText.text = $"Room Name: {roomName}";
+                m_ConnectionFinished = true;
+            }
+            else if (transport != null &&
+                transport is UTPTransport utp &&
+                !string.IsNullOrEmpty(utp.RelayJoinCode))
+            {
+                m_RoomNameText.text = utp.RelayJoinCode;
                 m_ConnectionFinished = true;
             }
         }

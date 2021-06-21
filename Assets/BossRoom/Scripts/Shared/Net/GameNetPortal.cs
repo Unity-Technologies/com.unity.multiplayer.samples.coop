@@ -6,6 +6,8 @@ using MLAPI;
 using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 
 namespace BossRoom
 {
@@ -23,6 +25,7 @@ namespace BossRoom
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
         Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
+        UnityRelay = 2, // The server is hosted over a Unity Relay server and clients join by entering a join code.
     }
 
     [Serializable]
@@ -257,6 +260,31 @@ namespace BossRoom
             {
                 case PhotonRealtimeTransport photonRealtimeTransport:
                     photonRealtimeTransport.RoomName = roomName;
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+            }
+
+            NetManager.StartHost();
+        }
+
+        public async void StartUnityRelayHost()
+        {
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case MLAPI.Transports.UTPTransport utp:
+                    Debug.Log("Setting up UTP relay host");
+                    await UnityServices.Initialize();
+                    if (!AuthenticationService.Instance.IsSignedIn)
+                    {
+                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                        var playerId = AuthenticationService.Instance.PlayerId;
+                        Debug.Log(playerId);
+                    }
+                    Debug.Log(utp.RelayJoinCode);
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");

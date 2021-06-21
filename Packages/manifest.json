@@ -10,7 +10,11 @@
     "com.unity.ide.visualstudio": "2.0.7",
     "com.unity.ide.vscode": "1.2.3",
     "com.unity.learn.iet-framework": "1.2.1",
-    "com.unity.multiplayer.mlapi": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#develop",
+    "com.unity.multiplayer.mlapi": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#feature/initial-relay-utp",
+    "com.unity.multiplayer.transport.utp": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.transport.utp#feature/initial-relay-utp",
+    "com.unity.transport": "ssh://git@github.cds.internal.unity3d.com/unity/com.unity.transport.git#2072e916e11d7ba8e9269200f0c812ad1d5ea981",
+    "com.unity.services.authentication": "0.5.0-preview",
+    "com.unity.services.relay": "0.0.1-preview.5",
     "com.unity.postprocessing": "2.3.0",
     "com.unity.test-framework": "1.1.24",
     "com.unity.textmeshpro": "3.0.1",
@@ -47,5 +51,18 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "scopedRegistries": [
+    {
+      "name": "Internal Unity Registry",
+      "url": "https://artifactory.prd.it.unity3d.com/artifactory/api/npm/upm-candidates",
+      "scopes": [
+        "com.unity.services",
+        "com.unity.remote-config",
+        "com.unity.remote-config-runtime",
+        "com.unity.collections",
+        "com.unity.jobs"
+      ]
+    }
+  ]  
 }

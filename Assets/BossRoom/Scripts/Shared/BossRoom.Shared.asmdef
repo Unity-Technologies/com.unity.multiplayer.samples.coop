@@ -5,7 +5,10 @@
         "Unity.Multiplayer.MLAPI.Runtime",
         "Photon Realtime MLAPI Transport",
         "LiteNetLib MLAPI Transport",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.Multiplayer.Transport.UTP",
+        "Unity.Services.Core",
+        "Unity.Services.Authentication"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
