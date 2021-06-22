@@ -1,8 +1,8 @@
 {
   "MonoBehaviour": {
     "Version": 3,
-    "EnableBurstCompilation": true,
-    "EnableOptimisations": true,
+    "EnableBurstCompilation": false,
+    "EnableOptimisations": false,
     "EnableSafetyChecks": false,
     "EnableDebugInAllBuilds": false,
     "UsePlatformSDKLinker": false,
