@@ -284,7 +284,6 @@ namespace BossRoom
                         var playerId = AuthenticationService.Instance.PlayerId;
                         Debug.Log(playerId);
                     }
-                    Debug.Log(utp.RelayJoinCode);
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");

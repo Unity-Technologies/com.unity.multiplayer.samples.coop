@@ -129,7 +129,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.mlapi": {
-      "version": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#feature/initial-relay-utp",
+      "version": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#7f07d714b4c0edf707bd49248306d1d0ed6c576d",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -137,7 +137,7 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "ea48b1f2684140c5d4e5c2302971b3fb47bc8fc1"
+      "hash": "7f07d714b4c0edf707bd49248306d1d0ed6c576d"
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
@@ -156,7 +156,7 @@
       }
     },
     "com.unity.multiplayer.transport.utp": {
-      "version": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.transport.utp#f07a1646acfda4504351c0fcbdd80a36f246dde1",
+      "version": "ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.transport.utp#7f07d714b4c0edf707bd49248306d1d0ed6c576d",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -164,7 +164,7 @@
         "com.unity.transport": "0.8.0-preview.5",
         "com.unity.jobs": "0.10.0-preview.18"
       },
-      "hash": "f07a1646acfda4504351c0fcbdd80a36f246dde1"
+      "hash": "7f07d714b4c0edf707bd49248306d1d0ed6c576d"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",
@@ -263,7 +263,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "ssh://git@github.cds.internal.unity3d.com/unity/com.unity.transport.git#1f936137880a2fcb423ffabac77266ab49fe2417",
+      "version": "ssh://git@github.cds.internal.unity3d.com/unity/com.unity.transport.git#45e5dd6400b6bfa9c930ef4893807c7157e99b6c",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -271,7 +271,7 @@
         "com.unity.burst": "1.5.1",
         "com.unity.mathematics": "1.2.1"
       },
-      "hash": "1f936137880a2fcb423ffabac77266ab49fe2417"
+      "hash": "45e5dd6400b6bfa9c930ef4893807c7157e99b6c"
     },
     "com.unity.ugui": {
       "version": "1.0.0",
