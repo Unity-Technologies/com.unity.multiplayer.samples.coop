@@ -233,20 +233,6 @@ namespace BossRoom.Client
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-                    Task t = Task.Run( () => {UnityServices.Initialize();});
-                    if (!t.Wait(30000))
-                    {
-                        Debug.Log("UnityServices.Initialize did not finish within 30 seconds");
-                    }
-                    Debug.Log(AuthenticationService.Instance);
-                    if (!AuthenticationService.Instance.IsSignedIn)
-                    {
-                        Task t2 = Task.Run( () => {AuthenticationService.Instance.SignInAnonymouslyAsync();});
-                        t2.Wait(30000);
-                        var playerId = AuthenticationService.Instance.PlayerId;
-                        Debug.Log(playerId);
-                    }
-
                     utp.SetRelayJoinCode(joinCode);
                     break;
                 default:
@@ -269,15 +255,7 @@ namespace BossRoom.Client
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-                    await UnityServices.Initialize();
-                    Debug.Log(AuthenticationService.Instance);
-                    if (!AuthenticationService.Instance.IsSignedIn)
-                    {
-                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                        var playerId = AuthenticationService.Instance.PlayerId;
-                        Debug.Log(playerId);
-                    }
-
+                    
                     utp.SetRelayJoinCode(joinCode);
                     break;
                 default:

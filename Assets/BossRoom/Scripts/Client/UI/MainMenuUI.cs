@@ -1,6 +1,12 @@
 using BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
+using UnityEngine.UI;
+
+using System;
+using TMPro;
 
 namespace BossRoom.Visual
 {
@@ -18,13 +24,18 @@ namespace BossRoom.Visual
 
         private Client.ClientGameNetPortal m_ClientNetPortal;
 
+        [SerializeField]
+        private TextMeshProUGUI m_SigninButtonText;
+
         /// <summary>
         /// This will get more sophisticated as we move to a true relay model.
         /// </summary>
         private const int k_ConnectPort = 9998;
 
-        void Start()
+        async void Start()
         {
+            await UnityServices.Initialize();
+
             // Find the game Net Portal by tag - it should have been created by Startup
             GameObject GamePortalGO = GameObject.FindGameObjectWithTag("GameNetPortal");
             Assert.IsNotNull("No GameNetPortal found, Did you start the game from the Startup scene?");
@@ -37,6 +48,35 @@ namespace BossRoom.Visual
             //any disconnect reason set? Show it to the user here.
             ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
             m_ClientNetPortal.DisconnectReason.Clear();
+        }
+
+        public async void OnSignInClicked()
+        {
+            if (AuthenticationService.Instance.IsSignedIn)
+            {
+                AuthenticationService.Instance.SignOut();
+                m_SigninButtonText.text = "Sign In";
+            }
+            else
+            {
+                m_ResponsePopup.SetupNotifierDisplay("Signing in", "Signing in anonymously...", true, false);
+
+                try
+                {
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                }
+                catch (Exception e)
+                {
+                    Debug.Log("Error signing in");
+                    Debug.Log(e);
+                    m_ResponsePopup.SetupNotifierDisplay("Signing in", "Error signing in.", false, true);
+                    return;
+                }
+
+                m_ResponsePopup.SetupNotifierDisplay("Signing in", $"Signed in as {AuthenticationService.Instance.PlayerId}", false, true);
+
+                m_SigninButtonText.text = "Sign Out";
+            }
         }
 
         public void OnHostClicked()

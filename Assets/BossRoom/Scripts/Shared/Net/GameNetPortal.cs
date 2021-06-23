@@ -277,13 +277,7 @@ namespace BossRoom
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log("Setting up UTP relay host");
-                    await UnityServices.Initialize();
-                    if (!AuthenticationService.Instance.IsSignedIn)
-                    {
-                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                        var playerId = AuthenticationService.Instance.PlayerId;
-                        Debug.Log(playerId);
-                    }
+                    
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
