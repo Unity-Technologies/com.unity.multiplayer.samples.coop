@@ -2664,7 +2664,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 64.1
+  m_fontSize: 66.3
   m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2713,9 +2713,29 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 6702871171647363811}
     m_Modifications:
+    - target: {fileID: 1982309448160183326, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
+      propertyPath: m_text
+      value: RELAY
+      objectReference: {fileID: 0}
+    - target: {fileID: 1982309448160183326, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
+      propertyPath: m_fontSize
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 1982309448160183326, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 24
+      objectReference: {fileID: 0}
     - target: {fileID: 4518466638098578806, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: -7
+      objectReference: {fileID: 0}
+    - target: {fileID: 4771694444546913468, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
+      propertyPath: m_fontSize
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 4771694444546913468, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
+      propertyPath: m_fontSizeBase
+      value: 24
       objectReference: {fileID: 0}
     - target: {fileID: 6512949122037871174, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
       propertyPath: m_Pivot.x

@@ -278,40 +278,19 @@ namespace BossRoom.Visual
             else if (value == OnlineMode.UnityRelay)
             {
                 m_MainText.text = m_UnityRelayMainText;
-                // if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
-                // {
-                //     if (Application.isEditor)
-                //     {
-                //         // If there is no photon app id set tell the user they need to install
-                //         SetupNotifierDisplay(
-                //             "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
-                //             "to setup Photon Realtime and use relay mode.", false, true);
-                //     }
-                //     else
-                //     {
-                //         // If there is no photon app id set tell the user they need to install
-                //         SetupNotifierDisplay(
-                //             "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project " +
-                //             "by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
-                //     }
-                //     return;
-                // }
+                if (m_EnterAsHost)
+                {
+                    m_InputField.text = GenerateRandomRoomKey();
+                    m_InputField.gameObject.SetActive(false);
+                }
+                else
+                {
+                    m_InputField.text = "";
+                    m_InputFieldPlaceholderText.text = "Join Code";
+                }
 
-                // // Relay
-                // m_MainText.text = m_RelayMainText;
-
-                // if (m_EnterAsHost)
-                // {
-                //     m_InputField.text = GenerateRandomRoomKey();
-                //     m_InputField.gameObject.SetActive(false);
-                // }
-                // else
-                // {
-                //     m_InputField.text = "";
-                // }
-
-                // m_PortInputField.gameObject.SetActive(false);
-                // m_PortInputField.text = "";
+                m_PortInputField.gameObject.SetActive(false);
+                m_PortInputField.text = "";
             }
         }
         /// <summary>

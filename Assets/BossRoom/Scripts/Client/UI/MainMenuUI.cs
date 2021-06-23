@@ -41,7 +41,7 @@ namespace BossRoom.Visual
 
         public void OnHostClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select Relay mode", "Select CONFIRM to host a Relay room <br> or select IP mode", "Select CONFIRM to host a Unity Relay room <br> or select IP mode", "iphost", "Confirm",
+            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select another mode", "Select CONFIRM to host a Relay room <br> or select another mode", "Select CONFIRM to host a Unity Relay room <br> or select another mode", "iphost", "Confirm",
                 (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
             {
                 m_GameNetPortal.PlayerName = playerName;
