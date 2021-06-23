@@ -277,7 +277,7 @@ namespace BossRoom
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log("Setting up UTP relay host");
-                    
+                    Debug.Log("Signed in? " + AuthenticationService.Instance.IsSignedIn);
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
