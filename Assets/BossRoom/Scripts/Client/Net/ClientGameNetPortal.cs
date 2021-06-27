@@ -172,6 +172,10 @@ namespace BossRoom.Client
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;
+                case UTPTransport utpTransport:
+                    utpTransport.Address = ipaddress;
+                    utpTransport.Port = (ushort)port;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
             }
@@ -236,7 +240,7 @@ namespace BossRoom.Client
             portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! MLAPI will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:MLAPI GOMPS-79, provide feedback for different transport failures). 
+            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:MLAPI GOMPS-79, provide feedback for different transport failures).
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
         }

@@ -7,7 +7,8 @@
         "Cinemachine",
         "Photon Realtime MLAPI Transport",
         "LiteNetLib MLAPI Transport",
-        "Unity.TextMeshPro"
+        "Unity.TextMeshPro",
+        "Unity.Multiplayer.Transport.UTP"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

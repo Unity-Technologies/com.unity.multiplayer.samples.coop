@@ -241,6 +241,10 @@ namespace BossRoom
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ServerListenPort = port;
                     break;
+                case UTPTransport utpTransport:
+                    utpTransport.Address = ipaddress;
+                    utpTransport.Port = (ushort)port;
+                    break;
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
             }
