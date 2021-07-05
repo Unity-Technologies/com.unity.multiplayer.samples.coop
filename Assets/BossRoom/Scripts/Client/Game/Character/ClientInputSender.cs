@@ -97,6 +97,12 @@ namespace BossRoom.Client
         /// </summary>
         CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType];
 
+        bool m_IsLocalClient;
+
+        public static event Action<ClientInputSender> LocalClientReadied;
+
+        public static event Action LocalClientRemoved;
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient || !IsOwner)
@@ -109,15 +115,17 @@ namespace BossRoom.Client
             k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
             k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
 
-            // find the hero action UI bar
-            GameObject actionUIobj = GameObject.FindGameObjectWithTag("HeroActionBar");
-            actionUIobj.GetComponent<Visual.HeroActionBar>().RegisterInputSender(this);
+            m_IsLocalClient = true;
+            LocalClientReadied?.Invoke(this);
+        }
 
-            // find the emote bar to track its buttons
-            GameObject emoteUIobj = GameObject.FindGameObjectWithTag("HeroEmoteBar");
-            emoteUIobj.GetComponent<Visual.HeroEmoteBar>().RegisterInputSender(this);
-            // once connected to the emote bar, hide it
-            emoteUIobj.SetActive(false);
+        public override void OnNetworkDespawn()
+        {
+            if (m_IsLocalClient)
+            {
+                m_IsLocalClient = false;
+                LocalClientRemoved?.Invoke();
+            }
         }
 
         void Awake()
@@ -393,19 +401,19 @@ namespace BossRoom.Client
                 RequestAction(CharacterData.Skill3, SkillTriggerStyle.KeyboardRelease);
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha4))
+            if (Input.GetKeyDown(KeyCode.Alpha5))
             {
                 RequestAction(ActionType.Emote1, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha5))
+            if (Input.GetKeyDown(KeyCode.Alpha6))
             {
                 RequestAction(ActionType.Emote2, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha6))
+            if (Input.GetKeyDown(KeyCode.Alpha7))
             {
                 RequestAction(ActionType.Emote3, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha7))
+            if (Input.GetKeyDown(KeyCode.Alpha8))
             {
                 RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
             }
