@@ -21,7 +21,7 @@ namespace BossRoom.Client
             m_Rigidbody = GetComponent<Rigidbody>(); //this may be null.
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (IsServer)
             {

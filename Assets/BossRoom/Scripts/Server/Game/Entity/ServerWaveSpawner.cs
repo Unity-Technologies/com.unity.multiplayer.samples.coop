@@ -81,7 +81,7 @@ namespace BossRoom.Server
         // cache array of RaycastHit as it will be reused for player visibility
         RaycastHit[] m_Hit;
 
-        // indicates whether NetworkStart() has been called on us yet
+        // indicates whether OnNetworkSpawn() has been called on us yet
         bool m_IsStarted;
 
         // are we currently spawning stuff?
@@ -98,10 +98,8 @@ namespace BossRoom.Server
             m_Transform = transform;
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
-            base.NetworkStart();
-
             if (!IsServer)
             {
                 enabled = false;
@@ -151,7 +149,7 @@ namespace BossRoom.Server
             m_WatchForPlayers = null;
         }
 
-        void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             StopWaveSpawning();
         }

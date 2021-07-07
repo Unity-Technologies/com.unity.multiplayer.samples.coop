@@ -59,9 +59,9 @@ namespace BossRoom.Server
             return returnValue;
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
-            base.NetworkStart();
+            base.OnNetworkSpawn();
 
             if (!IsServer)
             {
@@ -120,10 +120,8 @@ namespace BossRoom.Server
             }
         }
 
-        protected override void OnDestroy()
+        public override void OnNetworkDespawn()
         {
-            base.OnDestroy();
-
             foreach (ulong id in m_HeroIds)
             {
                 var heroLife = GetLifeStateEvent(id);

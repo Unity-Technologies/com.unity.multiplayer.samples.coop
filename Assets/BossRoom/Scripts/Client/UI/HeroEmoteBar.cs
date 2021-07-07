@@ -1,3 +1,6 @@
+using System;
+using BossRoom.Client;
+using MLAPI;
 using UnityEngine;
 using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
@@ -9,9 +12,25 @@ namespace BossRoom.Visual
     /// </summary>
     public class HeroEmoteBar : MonoBehaviour
     {
-        private Client.ClientInputSender m_InputSender;
+        ClientInputSender m_InputSender;
 
-        public void RegisterInputSender(Client.ClientInputSender inputSender)
+        void Start()
+        {
+            var localPlayerObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+            if (localPlayerObject &&
+                localPlayerObject.TryGetComponent(out ClientInputSender clientInputSender))
+            {
+                RegisterInputSender(clientInputSender);
+            }
+            else
+            {
+                ClientInputSender.LocalClientReadied += RegisterInputSender;
+            }
+
+            ClientInputSender.LocalClientRemoved += DeregisterInputSender;
+        }
+
+        void RegisterInputSender(ClientInputSender inputSender)
         {
             if (m_InputSender != null)
             {
@@ -19,6 +38,19 @@ namespace BossRoom.Visual
             }
 
             m_InputSender = inputSender;
+
+            gameObject.SetActive(false);
+        }
+
+        void DeregisterInputSender()
+        {
+            m_InputSender = null;
+        }
+
+        void OnDestroy()
+        {
+            ClientInputSender.LocalClientReadied -= RegisterInputSender;
+            ClientInputSender.LocalClientRemoved -= DeregisterInputSender;
         }
 
         public void OnButtonClicked(int buttonIndex)

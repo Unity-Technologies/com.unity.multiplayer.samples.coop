@@ -130,9 +130,8 @@ namespace BossRoom.Client
             UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
         }
 
-        protected override void OnDestroy()
+        public override void OnNetworkDespawn()
         {
-            base.OnDestroy();
             if (CharSelectData)
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
@@ -144,9 +143,8 @@ namespace BossRoom.Client
                 Instance = null;
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
-            base.NetworkStart();
             if (!IsClient)
             {
                 enabled = false;

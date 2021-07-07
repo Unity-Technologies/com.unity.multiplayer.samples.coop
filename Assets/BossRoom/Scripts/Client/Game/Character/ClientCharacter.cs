@@ -11,7 +11,7 @@ namespace BossRoom.Client
         /// </summary>
         public BossRoom.Visual.ClientCharacterVisualization ChildVizObject { get; set; }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsClient) { this.enabled = false; }
         }

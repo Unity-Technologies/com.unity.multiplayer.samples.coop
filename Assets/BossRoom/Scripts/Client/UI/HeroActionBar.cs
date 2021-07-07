@@ -1,6 +1,7 @@
+using System;
 using MLAPI;
-using MLAPI.Spawning;
 using System.Collections.Generic;
+using BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
 using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
@@ -125,7 +126,7 @@ namespace BossRoom.Visual
         /// inputSender and self-initialize.
         /// </summary>
         /// <param name="inputSender"></param>
-        public void RegisterInputSender(Client.ClientInputSender inputSender)
+        void RegisterInputSender(ClientInputSender inputSender)
         {
             if (m_InputSender != null)
             {
@@ -138,6 +139,18 @@ namespace BossRoom.Visual
             UpdateAllActionButtons();
         }
 
+        void DeregisterInputSender()
+        {
+            m_InputSender = null;
+            if (m_NetState)
+            {
+                m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;
+            }
+            m_NetState = null;
+
+            ClientInputSender.LocalClientRemoved -= DeregisterInputSender;
+        }
+
         void Awake()
         {
             m_ButtonInfo = new Dictionary<ActionButtonType, ActionButtonInfo>()
@@ -147,6 +160,21 @@ namespace BossRoom.Visual
                 [ActionButtonType.Special2] = new ActionButtonInfo(ActionButtonType.Special2, m_SpecialAction2Button, this),
                 [ActionButtonType.EmoteBar] = new ActionButtonInfo(ActionButtonType.EmoteBar, m_EmoteBarButton, this),
             };
+        }
+
+        void Start()
+        {
+            var localPlayerObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
+            if (localPlayerObject && localPlayerObject.TryGetComponent(out ClientInputSender clientInputSender))
+            {
+                RegisterInputSender(clientInputSender);
+            }
+            else
+            {
+                ClientInputSender.LocalClientReadied += RegisterInputSender;
+            }
+
+            ClientInputSender.LocalClientRemoved += DeregisterInputSender;
         }
 
         void OnEnable()
@@ -167,6 +195,9 @@ namespace BossRoom.Visual
 
         void OnDestroy()
         {
+            ClientInputSender.LocalClientReadied -= RegisterInputSender;
+            ClientInputSender.LocalClientRemoved -= DeregisterInputSender;
+
             if (m_NetState)
             {
                 m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;

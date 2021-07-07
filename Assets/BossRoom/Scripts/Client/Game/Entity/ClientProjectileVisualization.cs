@@ -17,7 +17,7 @@ namespace BossRoom.Visual
 
         private float m_SmoothedSpeed;
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsClient || transform.parent == null)
             {
@@ -31,7 +31,7 @@ namespace BossRoom.Visual
             m_NetState.HitEnemyEvent += OnEnemyHit;
         }
 
-        void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if( m_NetState != null )
             {
