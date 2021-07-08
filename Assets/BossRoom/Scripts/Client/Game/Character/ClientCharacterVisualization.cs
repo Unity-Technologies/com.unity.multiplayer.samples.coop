@@ -281,7 +281,7 @@ namespace BossRoom.Visual
                     }
                 }
 
-                m_CharacterSwapper.SwapToModel(/*m_NetState.CharacterAppearance, */specialMaterialMode);
+                m_CharacterSwapper.SwapToModel(specialMaterialMode);
             }
         }
 

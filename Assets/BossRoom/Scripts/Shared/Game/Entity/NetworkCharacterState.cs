@@ -112,7 +112,7 @@ namespace BossRoom
         /// </summary>
         public event Action<Vector3> ReceivedClientInput;
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             HitPoints = CharacterData.BaseHP.Value;
         }

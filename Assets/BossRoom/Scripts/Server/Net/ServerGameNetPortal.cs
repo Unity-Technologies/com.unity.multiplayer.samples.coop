@@ -59,7 +59,7 @@ namespace BossRoom.Server
             m_Portal = GetComponent<GameNetPortal>();
             m_Portal.NetworkReadied += OnNetworkReady;
 
-            // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
+            // we add ApprovalCheck callback BEFORE OnNetworkSpawn to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
             m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
@@ -128,7 +128,7 @@ namespace BossRoom.Server
 
             if( clientId == m_Portal.NetManager.LocalClientId )
             {
-                //the ServerGameNetPortal may be initialized again, which will cause its NetworkStart to be called again.
+                //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;

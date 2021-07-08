@@ -27,7 +27,7 @@ namespace BossRoom.Visual
 
         private GameObject m_CurrentBrokenVisualization;
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsClient)
             {
@@ -57,7 +57,7 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_NetState)
             {

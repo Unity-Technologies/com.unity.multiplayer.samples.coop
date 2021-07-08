@@ -66,7 +66,7 @@ namespace BossRoom.Client
         // used to compute corld pos based on target and offsets
         private Vector3 m_WorldPos;
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!NetworkManager.Singleton.IsClient)
             {

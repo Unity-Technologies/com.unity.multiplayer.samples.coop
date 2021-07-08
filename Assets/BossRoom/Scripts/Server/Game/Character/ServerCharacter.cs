@@ -50,7 +50,7 @@ namespace BossRoom.Server
             m_ActionPlayer = new ActionPlayer(this);
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsServer) { enabled = false; }
             else
@@ -74,7 +74,7 @@ namespace BossRoom.Server
             }
         }
 
-        public void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (NetState)
             {

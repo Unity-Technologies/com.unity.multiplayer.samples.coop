@@ -58,7 +58,7 @@ namespace BossRoom.Server
 
         /// <summary>
         /// Set everything up based on provided projectile information.
-        /// (Note that this is called before NetworkStart(), so don't try to do any network stuff here.)
+        /// (Note that this is called before OnNetworkSpawn(), so don't try to do any network stuff here.)
         /// </summary>
         public void Initialize(ulong creatorsNetworkObjectId, in ActionDescription.ProjectileInfo projectileInfo)
         {
@@ -66,7 +66,7 @@ namespace BossRoom.Server
             m_ProjectileInfo = projectileInfo;
         }
 
-        public override void NetworkStart(Stream stream)
+        public override void OnNetworkSpawn(Stream stream)
         {
             if (!IsServer)
             {
@@ -85,7 +85,7 @@ namespace BossRoom.Server
 
         private void FixedUpdate()
         {
-            if (!m_Started) { return; } //don't do anything before NetworkStart has run.
+            if (!m_Started) { return; } //don't do anything before OnNetworkSpawn has run.
 
             Vector3 displacement = transform.forward * (m_ProjectileInfo.Speed_m_s * Time.fixedDeltaTime);
             transform.position += displacement;

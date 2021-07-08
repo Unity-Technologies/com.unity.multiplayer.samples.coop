@@ -46,7 +46,7 @@ namespace BossRoom
         ClientRpcParams m_PongClientParams;
 
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             bool isClientOnly = IsClient && !IsServer;
             if (!IsOwner && isClientOnly) // we don't want to track player ghost stats, only our own
@@ -151,7 +151,7 @@ namespace BossRoom
             LastRTT = rttSum / m_MaxWindowSize;
         }
 
-        void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_TextStat != null)
             {
