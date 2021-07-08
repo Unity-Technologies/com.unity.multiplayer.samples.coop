@@ -37,6 +37,13 @@ namespace BossRoom.Client
                 Debug.LogError("Avatar not found!");
             }
 
+            if (m_ClientCharacter.ChildVizObject)
+            {
+                // we may receive a NetworkVariable's OnValueChanged callback more than once as a client
+                // this makes sure we don't spawn a duplicate graphics GameObject
+                return;
+            }
+
             m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
 
             // spawn avatar graphics GameObject
