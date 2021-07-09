@@ -10,7 +10,7 @@ namespace BossRoom.Client
     /// AvatarRegistry, if possible. Once fetched, the Graphics GameObject is spawned.
     /// </summary>
     [RequireComponent(typeof(NetworkAvatarGuidState))]
-    public class ClientAvatarGuidHandler : NetworkBehaviour
+    public class ClientAvatarGuidHandler : MonoBehaviour
     {
         [SerializeField]
         ClientCharacter m_ClientCharacter;
