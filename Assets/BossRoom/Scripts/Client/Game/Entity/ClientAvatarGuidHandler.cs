@@ -9,7 +9,7 @@ namespace BossRoom.Client
     /// Client-side component that awaits a state change on an avatar's Guid, and fetches matching Avatar from the
     /// AvatarRegistry, if possible. Once fetched, the Graphics GameObject is spawned.
     /// </summary>
-    [RequireComponent(typeof(NetworkGuidState))]
+    [RequireComponent(typeof(NetworkAvatarGuidState))]
     public class ClientAvatarGuidHandler : NetworkBehaviour
     {
         [SerializeField]
@@ -19,14 +19,14 @@ namespace BossRoom.Client
         CharacterClassContainer m_CharacterClassContainer;
 
         [SerializeField]
-        NetworkGuidState m_NetworkGuidState;
+        NetworkAvatarGuidState m_NetworkAvatarGuidState;
 
         [SerializeField]
         AvatarRegistry m_AvatarRegistry;
 
         void Awake()
         {
-            m_NetworkGuidState.GuidChanged += RegisterAvatar;
+            m_NetworkAvatarGuidState.GuidChanged += RegisterAvatar;
         }
 
         void RegisterAvatar(Guid guid)
@@ -35,6 +35,7 @@ namespace BossRoom.Client
             if (!m_AvatarRegistry.TryGetAvatar(guid, out Avatar avatar))
             {
                 Debug.LogError("Avatar not found!");
+                return;
             }
 
             if (m_ClientCharacter.ChildVizObject)
@@ -48,9 +49,16 @@ namespace BossRoom.Client
 
             // spawn avatar graphics GameObject
             var graphicsGameObject = Instantiate(avatar.Graphics, transform);
-            graphicsGameObject.name = "AvatarGraphics" + OwnerClientId;
 
             m_ClientCharacter.ChildVizObject = graphicsGameObject.GetComponent<ClientCharacterVisualization>();
+        }
+
+        void OnDestroy()
+        {
+            if (m_NetworkAvatarGuidState)
+            {
+                m_NetworkAvatarGuidState.GuidChanged -= RegisterAvatar;
+            }
         }
     }
 }

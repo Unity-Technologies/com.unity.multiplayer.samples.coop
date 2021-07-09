@@ -100,12 +100,6 @@ namespace BossRoom.Client
         /// </summary>
         CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
 
-        bool m_IsLocalClient;
-
-        public static event Action<ClientInputSender> LocalClientReadied;
-
-        public static event Action LocalClientRemoved;
-
         public override void OnNetworkSpawn()
         {
             if (!IsClient || !IsOwner)
@@ -117,18 +111,6 @@ namespace BossRoom.Client
 
             k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
             k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
-
-            m_IsLocalClient = true;
-            LocalClientReadied?.Invoke(this);
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            if (m_IsLocalClient)
-            {
-                m_IsLocalClient = false;
-                LocalClientRemoved?.Invoke();
-            }
         }
 
         void Awake()

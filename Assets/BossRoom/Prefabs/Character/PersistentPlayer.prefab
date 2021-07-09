@@ -46,9 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 12297659883188266025
-  PrefabHashGenerator: PersistentPlayer
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
 --- !u!114 &-5536186819612961332
@@ -65,7 +63,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PersistentPlayerRuntimeCollection: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
   m_NetworkNameState: {fileID: 8450381715082006755}
-  m_NetworkCharacterGuidState: {fileID: 596945379875709001}
+  m_NetworkAvatarGuidState: {fileID: 596945379875709001}
 --- !u!114 &8450381715082006755
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -92,5 +90,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe9bfd21e47445488dfd84b4e0c9884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CharacterGuidArray:
+  AvatarGuidArray:
     m_InternalValue: 

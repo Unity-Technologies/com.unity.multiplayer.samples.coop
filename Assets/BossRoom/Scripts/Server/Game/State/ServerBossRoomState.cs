@@ -185,9 +185,9 @@ namespace BossRoom.Server
                 Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation, m_RuntimeNetworkObjectsParent.Value) :
                 Instantiate(m_PlayerPrefab, m_RuntimeNetworkObjectsParent.Value);
 
-            if (newPlayer.TryGetComponent(out NetworkGuidState networkCharacterDefinition))
+            if (newPlayer.TryGetComponent(out NetworkAvatarGuidState networkCharacterDefinition))
             {
-                networkCharacterDefinition.CharacterGuidArray.Value =
+                networkCharacterDefinition.AvatarGuidArray.Value =
                     m_Avatars[lobbyResults.Appearance].Guid.ToByteArray();
             }
 

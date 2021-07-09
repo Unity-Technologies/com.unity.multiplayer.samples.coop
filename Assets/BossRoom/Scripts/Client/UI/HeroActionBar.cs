@@ -121,12 +121,16 @@ namespace BossRoom.Visual
         Dictionary<ActionButtonType, ActionButtonInfo> m_ButtonInfo;
 
         /// <summary>
-        /// Called during startup by the ClientInputSender. In response, we cache the provided
-        /// inputSender and self-initialize.
+        /// Cache the input sender from a <see cref="ClientPlayerAvatar"/> and self-initialize.
         /// </summary>
-        /// <param name="inputSender"></param>
-        void RegisterInputSender(ClientInputSender inputSender)
+        /// <param name="clientPlayerAvatar"></param>
+        void RegisterInputSender(ClientPlayerAvatar clientPlayerAvatar)
         {
+            if (!clientPlayerAvatar.TryGetComponent(out ClientInputSender inputSender))
+            {
+                Debug.LogError("ClientInputSender not found on ClientPlayerAvatar!", clientPlayerAvatar);
+            }
+
             if (m_InputSender != null)
             {
                 Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
@@ -146,8 +150,6 @@ namespace BossRoom.Visual
                 m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;
             }
             m_NetState = null;
-
-            ClientInputSender.LocalClientRemoved -= DeregisterInputSender;
         }
 
         void Awake()
@@ -159,21 +161,9 @@ namespace BossRoom.Visual
                 [ActionButtonType.Special2] = new ActionButtonInfo(ActionButtonType.Special2, m_SpecialAction2Button, this),
                 [ActionButtonType.EmoteBar] = new ActionButtonInfo(ActionButtonType.EmoteBar, m_EmoteBarButton, this),
             };
-        }
 
-        void Start()
-        {
-            var localPlayerObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-            if (localPlayerObject && localPlayerObject.TryGetComponent(out ClientInputSender clientInputSender))
-            {
-                RegisterInputSender(clientInputSender);
-            }
-            else
-            {
-                ClientInputSender.LocalClientReadied += RegisterInputSender;
-            }
-
-            ClientInputSender.LocalClientRemoved += DeregisterInputSender;
+            ClientPlayerAvatar.LocalClientSpawned += RegisterInputSender;
+            ClientPlayerAvatar.LocalClientDespawned += DeregisterInputSender;
         }
 
         void OnEnable()
@@ -194,8 +184,8 @@ namespace BossRoom.Visual
 
         void OnDestroy()
         {
-            ClientInputSender.LocalClientReadied -= RegisterInputSender;
-            ClientInputSender.LocalClientRemoved -= DeregisterInputSender;
+            ClientPlayerAvatar.LocalClientSpawned -= RegisterInputSender;
+            ClientPlayerAvatar.LocalClientDespawned -= DeregisterInputSender;
 
             if (m_NetState)
             {

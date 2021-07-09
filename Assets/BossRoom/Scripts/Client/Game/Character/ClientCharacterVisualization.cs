@@ -109,6 +109,8 @@ namespace BossRoom.Visual
 
             if (!m_NetState.IsNpc)
             {
+                name = "AvatarGraphics" + m_NetState.OwnerClientId;
+
                 // track health for heroes
                 m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
 

@@ -14,24 +14,19 @@ namespace BossRoom.Visual
     {
         ClientInputSender m_InputSender;
 
-        void Start()
+        void Awake()
         {
-            var localPlayerObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-            if (localPlayerObject &&
-                localPlayerObject.TryGetComponent(out ClientInputSender clientInputSender))
-            {
-                RegisterInputSender(clientInputSender);
-            }
-            else
-            {
-                ClientInputSender.LocalClientReadied += RegisterInputSender;
-            }
-
-            ClientInputSender.LocalClientRemoved += DeregisterInputSender;
+            ClientPlayerAvatar.LocalClientSpawned += RegisterInputSender;
+            ClientPlayerAvatar.LocalClientDespawned += DeregisterInputSender;
         }
 
-        void RegisterInputSender(ClientInputSender inputSender)
+        void RegisterInputSender(ClientPlayerAvatar clientPlayerAvatar)
         {
+            if (!clientPlayerAvatar.TryGetComponent(out ClientInputSender inputSender))
+            {
+                Debug.LogError("ClientInputSender not found on ClientPlayerAvatar!", clientPlayerAvatar);
+            }
+
             if (m_InputSender != null)
             {
                 Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
@@ -49,8 +44,8 @@ namespace BossRoom.Visual
 
         void OnDestroy()
         {
-            ClientInputSender.LocalClientReadied -= RegisterInputSender;
-            ClientInputSender.LocalClientRemoved -= DeregisterInputSender;
+            ClientPlayerAvatar.LocalClientSpawned -= RegisterInputSender;
+            ClientPlayerAvatar.LocalClientDespawned -= DeregisterInputSender;
         }
 
         public void OnButtonClicked(int buttonIndex)

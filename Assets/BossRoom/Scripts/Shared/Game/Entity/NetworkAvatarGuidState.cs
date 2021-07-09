@@ -8,16 +8,16 @@ namespace BossRoom
     /// <summary>
     /// NetworkBehaviour component to send/receive GUIDs from server to clients.
     /// </summary>
-    public class NetworkGuidState : NetworkBehaviour
+    public class NetworkAvatarGuidState : NetworkBehaviour
     {
         [HideInInspector]
-        public NetworkVariable<byte[]> CharacterGuidArray = new NetworkVariable<byte[]>(new byte[0]);
+        public NetworkVariable<byte[]> AvatarGuidArray = new NetworkVariable<byte[]>(new byte[0]);
 
         public event Action<Guid> GuidChanged;
 
         void Awake()
         {
-            CharacterGuidArray.OnValueChanged += OnValueChanged;
+            AvatarGuidArray.OnValueChanged += OnValueChanged;
         }
 
         void OnValueChanged(byte[] previousValue, byte[] newValue)
