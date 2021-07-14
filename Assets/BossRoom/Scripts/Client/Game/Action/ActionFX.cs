@@ -81,6 +81,7 @@ namespace BossRoom.Visual
                 case ActionLogic.Stunned:
                 case ActionLogic.LaunchProjectile:
                 case ActionLogic.Revive:
+                case ActionLogic.Pickup:
                 case ActionLogic.Emote: return new AnimationOnlyActionFX(ref data, parent);
 
                 default: throw new System.NotImplementedException();

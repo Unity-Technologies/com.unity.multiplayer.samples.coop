@@ -101,7 +101,7 @@ namespace BossRoom.Server
         /// that this is used for both "buffs" (positive gameplay benefits) and "debuffs" (gameplay penalties).
         /// </summary>
         /// <remarks>
-        /// In a more complex game with lots of buffs and debuffs, this function might be replaced by a separate 
+        /// In a more complex game with lots of buffs and debuffs, this function might be replaced by a separate
         /// BuffRegistry component. This would let you add fancier features, such as defining which effects
         /// "stack" with other ones, and could provide a UI that lists which are affecting each character
         /// and for how long.
@@ -174,6 +174,7 @@ namespace BossRoom.Server
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction(parent, ref data);
                 case ActionLogic.StealthMode: return new StealthModeAction(parent, ref data);
                 case ActionLogic.DashAttack: return new DashAttackAction(parent, ref data);
+                case ActionLogic.Pickup: return new PickupAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

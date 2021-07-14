@@ -418,6 +418,11 @@ namespace BossRoom.Client
                 RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
             }
 
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                RequestAction(ActionType.Pickup, SkillTriggerStyle.Keyboard);
+            }
+
             if ( !EventSystem.current.IsPointerOverGameObject() && m_CurrentSkillInput == null)
             {
                 //IsPointerOverGameObject() is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,

@@ -26,6 +26,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CachedServerCharacter: {fileID: 6012286037226018870}
+--- !u!114 &-52736397905517490
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6009713983291384756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a1936c933bb765f479c89b871245c340, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Collider: {fileID: 867943974282506144}
 --- !u!114 &2576537793715222015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -47,6 +60,19 @@ MonoBehaviour:
   m_TransformToTrack: {fileID: 1327663231359497221}
   m_VerticalWorldOffset: 2.2
   m_VerticalScreenOffset: 20
+--- !u!114 &3239146913368286460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6009713983291384756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f7b1d5206e3ced547a1fca6b858a3e48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ServerPickup: {fileID: -52736397905517490}
 --- !u!114 &3481187672596608374
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,6 +190,10 @@ PrefabInstance:
       value: 1897319656204293034
       objectReference: {fileID: 0}
     - target: {fileID: 4600110157238723790, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
+    - target: {fileID: 4600110157238723790, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: PrefabHashGenerator
       value: Player
       objectReference: {fileID: 0}
@@ -221,6 +251,11 @@ GameObject:
 --- !u!4 &6009713983291384766 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4600110157238723791, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
+  m_PrefabInstance: {fileID: 7831782662127126385}
+  m_PrefabAsset: {fileID: 0}
+--- !u!136 &867943974282506144 stripped
+CapsuleCollider:
+  m_CorrespondingSourceObject: {fileID: 6970334877957368017, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
   m_PrefabInstance: {fileID: 7831782662127126385}
   m_PrefabAsset: {fileID: 0}
 --- !u!114 &6012286037226018870 stripped
