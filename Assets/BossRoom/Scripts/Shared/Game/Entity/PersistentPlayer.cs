@@ -15,6 +15,16 @@ namespace BossRoom
         [SerializeField]
         PersistentPlayerRuntimeCollection m_PersistentPlayerRuntimeCollection;
 
+        [SerializeField]
+        NetworkNameState m_NetworkNameState;
+
+        [SerializeField]
+        NetworkAvatarGuidState m_NetworkAvatarGuidState;
+
+        public NetworkNameState NetworkNameState => m_NetworkNameState;
+
+        public NetworkAvatarGuidState NetworkAvatarGuidState => m_NetworkAvatarGuidState;
+
         void Awake()
         {
             DontDestroyOnLoad(this);

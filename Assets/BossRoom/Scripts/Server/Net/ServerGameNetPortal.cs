@@ -26,6 +26,9 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerGameNetPortal : MonoBehaviour
     {
+        [SerializeField]
+        NetworkObject m_PersistentPlayer;
+
         private GameNetPortal m_Portal;
 
         /// <summary>
@@ -249,7 +252,7 @@ namespace BossRoom.Server
             // Another hackfix to unblock me since this is now called on the host's client instance as well
             if (connectionPayload == null)
             {
-                callback(false, 0, true, null, null);
+                callback(true, null, true, null, null);
                 return;
             }
             int clientScene = connectionPayload.clientScene;
@@ -291,7 +294,7 @@ namespace BossRoom.Server
                 m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
             }
 
-            callback(false, 0, true, null, null);
+            callback(true, null, true, Vector3.zero, Quaternion.identity);
 
             //TODO:MLAPI: this must be done after the callback for now. In the future we expect MLAPI to allow us to return more information as part of
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,

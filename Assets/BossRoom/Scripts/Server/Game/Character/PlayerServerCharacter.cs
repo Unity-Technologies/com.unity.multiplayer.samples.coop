@@ -25,14 +25,11 @@ namespace BossRoom.Server
 
         public override void OnNetworkSpawn()
         {
-            if( !IsServer )
+            if (!IsServer)
             {
                 enabled = false;
             }
-        }
 
-        void OnEnable()
-        {
             s_ActivePlayers.Add(m_CachedServerCharacter);
         }
 
@@ -47,7 +44,6 @@ namespace BossRoom.Server
         /// </summary>
         public static List<ServerCharacter> GetPlayerServerCharacters()
         {
-
             return s_ActivePlayers;
         }
     }

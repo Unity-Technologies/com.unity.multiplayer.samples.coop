@@ -1,21 +1,23 @@
+using System;
 using UnityEngine;
 
 namespace BossRoom.Client
 {
-    [RequireComponent(typeof(BossRoom.NetworkCharacterState))]
+    [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacter : MLAPI.NetworkBehaviour
     {
         /// <summary>
-        /// The Vizualization GameObject isn't in the same transform hierarchy as the object, but it registers itself here
+        /// The Visualization GameObject isn't in the same transform hierarchy as the object, but it registers itself here
         /// so that the visual GameObject can be found from a NetworkObjectId.
         /// </summary>
-        public BossRoom.Visual.ClientCharacterVisualization ChildVizObject { get; set; }
+        public Visual.ClientCharacterVisualization ChildVizObject { get; set; }
 
         public override void OnNetworkSpawn()
         {
-            if (!IsClient) { this.enabled = false; }
+            if (!IsClient)
+            {
+                enabled = false;
+            }
         }
-
     }
-
 }

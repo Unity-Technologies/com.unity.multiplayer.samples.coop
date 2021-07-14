@@ -1135,9 +1135,7 @@ MonoBehaviour:
   m_CharacterSwapper: {fileID: 0}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
   m_RuntimeObjectsParent: {fileID: 11400000, guid: deda38c596e7fbd4386b9d8f9b7bb4b5, type: 2}
-  TargetReticule: {fileID: 0}
-  ReticuleFriendlyMat: {fileID: 0}
-  ReticuleHostileMat: {fileID: 0}
+  m_CharacterClass: {fileID: 11400000, guid: fa81aca63f2fce545a3b9e046b6e42e7, type: 2}
 --- !u!114 &8005647249789065143
 MonoBehaviour:
   m_ObjectHideFlags: 0

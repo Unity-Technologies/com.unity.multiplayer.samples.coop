@@ -227,15 +227,17 @@ namespace BossRoom.Client
             m_LastSeatSelected = seatIdx;
             if (state == CharSelectData.SeatState.Inactive)
             {
-                m_InSceneCharacter.gameObject.SetActive(false);
+                // TODO: Re-implement CharSelect preview (GOMPS-550)
+                //m_InSceneCharacter.gameObject.SetActive(false);
                 m_ClassInfoBox.ConfigureForNoSelection();
             }
             else
             {
                 if ( seatIdx != -1 )
                 {
-                    m_InSceneCharacter.gameObject.SetActive(true);
-                    m_InSceneCharacter.SwapToModel(CharSelectData.LobbySeatConfigurations[seatIdx].CharacterArtIdx);
+                    // TODO: Re-implement CharSelect preview (GOMPS-550)
+                    //m_InSceneCharacter.gameObject.SetActive(true);
+                    //m_InSceneCharacter.SwapToModel(CharSelectData.LobbySeatConfigurations[seatIdx].CharacterArtIdx);
                     m_ClassInfoBox.ConfigureForClass(CharSelectData.LobbySeatConfigurations[seatIdx].Class);
                 }
                 if (state == CharSelectData.SeatState.LockedIn && !m_HasLocalPlayerLockedIn)
@@ -349,7 +351,8 @@ namespace BossRoom.Client
                 case LobbyMode.ChooseSeat:
                     if ( m_LastSeatSelected == -1)
                     {
-                        m_InSceneCharacter.gameObject.SetActive(false);
+                        // TODO: Re-implement CharSelect preview (GOMPS-550)
+                        //m_InSceneCharacter.gameObject.SetActive(false);
                         m_ClassInfoBox.ConfigureForNoSelection();
                     }
                     break;

@@ -1,9 +1,11 @@
+using System;
 using MLAPI;
 using MLAPI.Spawning;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Random = UnityEngine.Random;
 
 namespace BossRoom.Server
 {
@@ -18,6 +20,11 @@ namespace BossRoom.Server
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_PlayerPrefab;
+
+        // TODO: Remove this as a PC's Character GUID will come from CharSelect scene (GOMPS-550)
+        [SerializeField]
+        [Tooltip("Make sure these are included in the NetworkManager's list of prefabs!")]
+        Avatar[] m_Avatars;
 
         [SerializeField]
         [Tooltip("A collection of locations for spawning players")]
@@ -108,7 +115,9 @@ namespace BossRoom.Server
 
                 bool didSpawn = DoInitialSpawnIfPossible();
 
-                if (!didSpawn && InitialSpawnDone && NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId) == null)
+                if (!didSpawn && InitialSpawnDone &&
+                    !PlayerServerCharacter.GetPlayerServerCharacters().Find(
+                        player => player.OwnerClientId == clientId))
                 {
                     //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                     //(either because multiple people are late-joining at once, or because some dynamic entities are
@@ -170,23 +179,29 @@ namespace BossRoom.Server
             Assert.IsTrue(m_RuntimeNetworkObjectsParent && m_RuntimeNetworkObjectsParent.Value,
                 "RuntimeNetworkObjectsParent transform is not set!");
 
-            var newPlayer = spawnPoint != null ?
+            var lobbyResults = GetLobbyResultsForClient(clientId);
+
+            NetworkObject newPlayer = spawnPoint != null ?
                 Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation, m_RuntimeNetworkObjectsParent.Value) :
                 Instantiate(m_PlayerPrefab, m_RuntimeNetworkObjectsParent.Value);
+
+            if (newPlayer.TryGetComponent(out NetworkAvatarGuidState networkCharacterDefinition))
+            {
+                networkCharacterDefinition.AvatarGuidArray.Value =
+                    m_Avatars[lobbyResults.Appearance].Guid.ToByteArray();
+            }
 
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
             netState.NetworkLifeState.LifeState.OnValueChanged += OnHeroLifeStateChanged;
             m_HeroIds.Add(netState.NetworkObjectId);
 
-            var lobbyResults = GetLobbyResultsForClient(clientId);
+            // TODO: Re-implement names on UI (GOMPS-550)
+            /*string playerName = m_ServerNetPortal.GetPlayerName(clientId, lobbyResults.PlayerNumber);
 
-            string playerName = m_ServerNetPortal.GetPlayerName(clientId, lobbyResults.PlayerNumber);
-
-            netState.SetCharacterType(lobbyResults.Class, lobbyResults.Appearance);
-            netState.Name = playerName;
+            netState.Name = playerName;*/
 
             // spawn players characters with destroyWithScene = true
-            newPlayer.SpawnAsPlayerObject(clientId, null, true);
+            newPlayer.SpawnWithOwnership(clientId, null, true);
         }
 
         // Every time a player's life state changes we check to see if game is over

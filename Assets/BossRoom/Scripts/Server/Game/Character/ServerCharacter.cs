@@ -48,10 +48,6 @@ namespace BossRoom.Server
 
             NetState = GetComponent<NetworkCharacterState>();
             m_ActionPlayer = new ActionPlayer(this);
-            if (IsNpc)
-            {
-                m_AIBrain = new AIBrain(this, m_ActionPlayer);
-            }
         }
 
         public override void OnNetworkSpawn()
@@ -65,7 +61,10 @@ namespace BossRoom.Server
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
 
-                NetState.ApplyCharacterData();
+                if (NetState.IsNpc)
+                {
+                    m_AIBrain = new AIBrain(this, m_ActionPlayer);
+                }
 
                 if (m_StartingAction != ActionType.None)
                 {

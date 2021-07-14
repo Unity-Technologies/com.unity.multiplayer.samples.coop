@@ -92,16 +92,13 @@ namespace BossRoom.Client
 
         public event Action<Vector3> ClientMoveEvent;
 
+        [SerializeField]
+        CharacterClassContainer m_CharacterClassContainer;
+
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
-        CharacterClass CharacterData => GameDataSource.Instance.CharacterDataByType[m_NetworkCharacter.CharacterType];
-
-        bool m_IsLocalClient;
-
-        public static event Action<ClientInputSender> LocalClientReadied;
-
-        public static event Action LocalClientRemoved;
+        CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
 
         public override void OnNetworkSpawn()
         {
@@ -114,18 +111,6 @@ namespace BossRoom.Client
 
             k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
             k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
-
-            m_IsLocalClient = true;
-            LocalClientReadied?.Invoke(this);
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            if (m_IsLocalClient)
-            {
-                m_IsLocalClient = false;
-                LocalClientRemoved?.Invoke();
-            }
         }
 
         void Awake()

@@ -3,7 +3,6 @@ using MLAPI;
 using System.Collections.Generic;
 using BossRoom.Client;
 using UnityEngine;
-using UnityEngine.Assertions;
 using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
 namespace BossRoom.Visual
@@ -122,12 +121,16 @@ namespace BossRoom.Visual
         Dictionary<ActionButtonType, ActionButtonInfo> m_ButtonInfo;
 
         /// <summary>
-        /// Called during startup by the ClientInputSender. In response, we cache the provided
-        /// inputSender and self-initialize.
+        /// Cache the input sender from a <see cref="ClientPlayerAvatar"/> and self-initialize.
         /// </summary>
-        /// <param name="inputSender"></param>
-        void RegisterInputSender(ClientInputSender inputSender)
+        /// <param name="clientPlayerAvatar"></param>
+        void RegisterInputSender(ClientPlayerAvatar clientPlayerAvatar)
         {
+            if (!clientPlayerAvatar.TryGetComponent(out ClientInputSender inputSender))
+            {
+                Debug.LogError("ClientInputSender not found on ClientPlayerAvatar!", clientPlayerAvatar);
+            }
+
             if (m_InputSender != null)
             {
                 Debug.LogWarning($"Multiple ClientInputSenders in scene? Discarding sender belonging to {m_InputSender.gameObject.name} and adding it for {inputSender.gameObject.name} ");
@@ -147,8 +150,6 @@ namespace BossRoom.Visual
                 m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;
             }
             m_NetState = null;
-
-            ClientInputSender.LocalClientRemoved -= DeregisterInputSender;
         }
 
         void Awake()
@@ -160,21 +161,9 @@ namespace BossRoom.Visual
                 [ActionButtonType.Special2] = new ActionButtonInfo(ActionButtonType.Special2, m_SpecialAction2Button, this),
                 [ActionButtonType.EmoteBar] = new ActionButtonInfo(ActionButtonType.EmoteBar, m_EmoteBarButton, this),
             };
-        }
 
-        void Start()
-        {
-            var localPlayerObject = NetworkManager.Singleton.SpawnManager.GetLocalPlayerObject();
-            if (localPlayerObject && localPlayerObject.TryGetComponent(out ClientInputSender clientInputSender))
-            {
-                RegisterInputSender(clientInputSender);
-            }
-            else
-            {
-                ClientInputSender.LocalClientReadied += RegisterInputSender;
-            }
-
-            ClientInputSender.LocalClientRemoved += DeregisterInputSender;
+            ClientPlayerAvatar.LocalClientSpawned += RegisterInputSender;
+            ClientPlayerAvatar.LocalClientDespawned += DeregisterInputSender;
         }
 
         void OnEnable()
@@ -195,8 +184,8 @@ namespace BossRoom.Visual
 
         void OnDestroy()
         {
-            ClientInputSender.LocalClientReadied -= RegisterInputSender;
-            ClientInputSender.LocalClientRemoved -= DeregisterInputSender;
+            ClientPlayerAvatar.LocalClientSpawned -= RegisterInputSender;
+            ClientPlayerAvatar.LocalClientDespawned -= DeregisterInputSender;
 
             if (m_NetState)
             {
@@ -275,14 +264,12 @@ namespace BossRoom.Visual
             if (m_NetState.TargetId.Value != 0
                 && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
                 && selection != null
-                && selection.IsPlayerObject
-                && selection.NetworkObjectId != m_NetState.NetworkObjectId)
+                && selection.NetworkObjectId != m_NetState.NetworkObjectId
+                && selection.TryGetComponent(out NetworkCharacterState charState)
+                && !charState.IsNpc)
             {
                 // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
                 // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
-
-                var charState = selection.GetComponent<NetworkCharacterState>();
-                Assert.IsNotNull(charState); // all PlayerObjects should have a NetworkCharacterState component
 
                 bool isAlive = charState.NetworkLifeState.LifeState.Value == LifeState.Alive;
                 UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.GeneralRevive, !isAlive);

@@ -56,7 +56,8 @@ namespace BossRoom
     ///
     public class GameNetPortal : MonoBehaviour
     {
-        public GameObject NetworkManagerGO;
+        [SerializeField]
+        NetworkManager m_NetworkManager;
 
         /// <summary>
         /// This event is fired when MLAPI has reported that it has finished initialization, and is ready for
@@ -87,7 +88,7 @@ namespace BossRoom
         /// </summary>
         public event Action UserDisconnectRequested;
 
-        public NetworkManager NetManager { get; private set; }
+        public NetworkManager NetManager => m_NetworkManager;
 
         /// <summary>
         /// the name of the player chosen at game start
@@ -97,8 +98,6 @@ namespace BossRoom
         void Start()
         {
             DontDestroyOnLoad(gameObject);
-
-            NetManager = NetworkManagerGO.GetComponent<NetworkManager>();
 
             //we synthesize a "OnNetworkSpawn" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
