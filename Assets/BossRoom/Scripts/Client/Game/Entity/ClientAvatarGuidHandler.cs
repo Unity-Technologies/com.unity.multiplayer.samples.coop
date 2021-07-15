@@ -24,6 +24,12 @@ namespace BossRoom.Client
         [SerializeField]
         AvatarRegistry m_AvatarRegistry;
 
+        Avatar m_Avatar;
+
+        public Avatar RegisteredAvatar => m_Avatar;
+
+        public event Action AvatarGraphicsSpawned;
+
         void Awake()
         {
             m_NetworkAvatarGuidState.GuidChanged += RegisterAvatar;
@@ -45,12 +51,16 @@ namespace BossRoom.Client
                 return;
             }
 
+            m_Avatar = avatar;
+
             m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
 
             // spawn avatar graphics GameObject
             var graphicsGameObject = Instantiate(avatar.Graphics, transform);
 
             m_ClientCharacter.ChildVizObject = graphicsGameObject.GetComponent<ClientCharacterVisualization>();
+
+            AvatarGraphicsSpawned?.Invoke();
         }
 
         void OnDestroy()

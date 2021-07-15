@@ -35,6 +35,9 @@ namespace BossRoom
     [RequireComponent(typeof(NetworkHealthState), typeof(NetworkLifeState))]
     public class NetworkCharacterState : NetworkBehaviour, ITargetable
     {
+        [SerializeField]
+        NetworkCharacterStateRuntimeCollection m_NetworkCharacters;
+
         /// Indicates how the character's movement should be depicted.
         public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
 
@@ -115,6 +118,19 @@ namespace BossRoom
         public override void OnNetworkSpawn()
         {
             HitPoints = CharacterData.BaseHP.Value;
+
+            if (m_NetworkCharacters)
+            {
+                m_NetworkCharacters.Add(this);
+            }
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (m_NetworkCharacters)
+            {
+                m_NetworkCharacters.Remove(this);
+            }
         }
 
         /// <summary>

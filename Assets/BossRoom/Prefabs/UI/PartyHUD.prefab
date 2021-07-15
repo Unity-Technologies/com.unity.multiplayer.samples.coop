@@ -512,6 +512,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e31ad038966e0f4d9de73015f8bd8a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PlayerAvatars: {fileID: 11400000, guid: f8d8b28c5d3e3794db2ed832b2293724, type: 2}
   m_HeroPortrait: {fileID: 5210474332450112926}
   m_AllyPanel:
   - {fileID: 5210474332398139193}
@@ -548,20 +549,6 @@ MonoBehaviour:
   - {fileID: 4497871128696616115}
   - {fileID: 9145956832894960546}
   - {fileID: 503053204761307703}
-  m_PortraitAppearances:
-  - {fileID: 21300000, guid: 816417aff2fe2e444a055e4c8bd3cbc0, type: 3}
-  - {fileID: 21300000, guid: 0df68ec30ffb84543882e4a2b026caee, type: 3}
-  - {fileID: 21300000, guid: 94f6a790aff553d4ab8c9c243412023c, type: 3}
-  - {fileID: 21300000, guid: f69b90ed162b0584b8c989ba5bdd268f, type: 3}
-  - {fileID: 21300000, guid: 3deeeda2d4bbab248b53d86205131eec, type: 3}
-  - {fileID: 21300000, guid: 70182dc50bb8e854882af20d372ec422, type: 3}
-  - {fileID: 21300000, guid: 9781ab5273dea1c4e94c1ab8d4d18b31, type: 3}
-  - {fileID: 21300000, guid: bb7d37d2a40813048883c2696e975eac, type: 3}
-  m_ClassSymbols:
-  - {fileID: 21300000, guid: 276e272d29e17bd49abbcb6deda9c561, type: 3}
-  - {fileID: 21300000, guid: 42531d2bb6967fa4397cb7694a913fdd, type: 3}
-  - {fileID: 21300000, guid: 9568190e1cc16a3418bb1f69426609a7, type: 3}
-  - {fileID: 21300000, guid: f6c6dc000734f6f4b940b6a575fbc043, type: 3}
 --- !u!1 &5210474333185111494
 GameObject:
   m_ObjectHideFlags: 0

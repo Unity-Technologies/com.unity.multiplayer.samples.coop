@@ -15,16 +15,17 @@ namespace BossRoom.Server
     public class ServerBossRoomState : GameStateBehaviour
     {
         [SerializeField]
+        AvatarRegistry m_AvatarRegistry;
+
+        [SerializeField]
+        TransformVariable m_NetworkGameStateTransform;
+
+        [SerializeField]
         TransformVariable m_RuntimeNetworkObjectsParent;
 
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_PlayerPrefab;
-
-        // TODO: Remove this as a PC's Character GUID will come from CharSelect scene (GOMPS-550)
-        [SerializeField]
-        [Tooltip("Make sure these are included in the NetworkManager's list of prefabs!")]
-        Avatar[] m_Avatars;
 
         [SerializeField]
         [Tooltip("A collection of locations for spawning players")]
@@ -33,8 +34,6 @@ namespace BossRoom.Server
         private List<Transform> m_PlayerSpawnPointsList = null;
 
         public override GameState ActiveState { get { return GameState.BossRoom; } }
-
-        private LobbyResults m_LobbyResults;
 
         private GameNetPortal m_NetPortal;
         private ServerGameNetPortal m_ServerNetPortal;
@@ -52,40 +51,21 @@ namespace BossRoom.Server
         //the lifetime of the ServerBossRoomState).
         private List<ulong> m_HeroIds = new List<ulong>();
 
-        public LobbyResults.CharSelectChoice GetLobbyResultsForClient(ulong clientId)
-        {
-            LobbyResults.CharSelectChoice returnValue;
-            if (!m_LobbyResults.Choices.TryGetValue(clientId, out returnValue))
-            {
-                // We don't know about this client ID! That probably means they joined the game late, after the lobby was closed.
-                // We don't yet handle this scenario well (e.g. showing them a "wait for next game" screen, maybe?),
-                // so for now we just let them join. We'll pretend that they made them some generic character choices.
-                returnValue = new LobbyResults.CharSelectChoice(-1, CharacterTypeEnum.Tank, 0);
-                m_LobbyResults.Choices[clientId] = returnValue;
-            }
-            return returnValue;
-        }
-
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
-
             if (!IsServer)
             {
                 enabled = false;
             }
             else
             {
+                // reset win state
+                SetWinState(WinState.Invalid);
+
                 m_NetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
                 m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
 
                 m_NetPortal.ClientSceneChanged += OnClientSceneChanged;
-
-                // retrieve the lobby state info so that the players we're about to spawn can query it
-                var o = GameStateRelay.GetRelayObject();
-                if (o != null && o.GetType() != typeof(LobbyResults))
-                    throw new System.Exception("No LobbyResults found!");
-                m_LobbyResults = (LobbyResults)o;
 
                 DoInitialSpawnIfPossible();
             }
@@ -93,18 +73,19 @@ namespace BossRoom.Server
 
         private bool DoInitialSpawnIfPossible()
         {
-            if (m_ServerNetPortal.AreAllClientsInServerScene() && !InitialSpawnDone && m_NetPortal.NetManager.ConnectedClientsList.Count == m_LobbyResults.Choices.Count)
+            if (m_ServerNetPortal.AreAllClientsInServerScene() &&
+                !InitialSpawnDone/* &&
+                m_NetPortal.NetManager.ConnectedClientsList.Count == m_LobbyResults.Choices.Count*/)
             {
                 InitialSpawnDone = true;
-                foreach (var kvp in m_LobbyResults.Choices)
+                foreach (var kvp in NetworkManager.ConnectedClients)
                 {
-                    SpawnPlayer(kvp.Key);
+                    SpawnPlayer(kvp.Key, false);
                 }
                 return true;
             }
             return false;
         }
-
 
         private void OnClientSceneChanged(ulong clientId, int sceneIndex)
         {
@@ -123,7 +104,7 @@ namespace BossRoom.Server
                     //(either because multiple people are late-joining at once, or because some dynamic entities are
                     //getting spawned while joining. But that's not something we can fully address by changes in
                     //ServerBossRoomState.
-                    SpawnPlayer(clientId);
+                    SpawnPlayer(clientId, true);
                 }
 
             }
@@ -160,7 +141,7 @@ namespace BossRoom.Server
             return null;
         }
 
-        private void SpawnPlayer(ulong clientId)
+        private void SpawnPlayer(ulong clientId, bool lateJoin)
         {
             Transform spawnPoint = null;
 
@@ -179,26 +160,43 @@ namespace BossRoom.Server
             Assert.IsTrue(m_RuntimeNetworkObjectsParent && m_RuntimeNetworkObjectsParent.Value,
                 "RuntimeNetworkObjectsParent transform is not set!");
 
-            var lobbyResults = GetLobbyResultsForClient(clientId);
+            var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
 
             NetworkObject newPlayer = spawnPoint != null ?
                 Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation, m_RuntimeNetworkObjectsParent.Value) :
                 Instantiate(m_PlayerPrefab, m_RuntimeNetworkObjectsParent.Value);
 
-            if (newPlayer.TryGetComponent(out NetworkAvatarGuidState networkCharacterDefinition))
+            Assert.IsTrue(playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer),
+                $"Matching persistent PersistentPlayer for client {clientId} not found!");
+
+            // pass character type from persistent player to avatar
+            Assert.IsTrue(newPlayer.TryGetComponent(out NetworkAvatarGuidState networkCharacterDefinition),
+                $"NetworkCharacterGuidState not found on player avatar!");
+
+            // if joining late, assign a random character to the persistent player
+            if (lateJoin)
             {
-                networkCharacterDefinition.AvatarGuidArray.Value =
-                    m_Avatars[lobbyResults.Appearance].Guid.ToByteArray();
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
+                    m_AvatarRegistry.GetRandomAvatar().Guid.ToByteArray();
+            }
+
+            var avatarGuid = new Guid(persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value);
+            Assert.IsTrue(m_AvatarRegistry.TryGetAvatar(avatarGuid, out Avatar avatar),
+                "Character not found from CharacterRegistry!");
+
+            networkCharacterDefinition.AvatarGuidArray.Value =
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value;
+
+            // pass name from persistent player to avatar
+            if (newPlayer.TryGetComponent(out NetworkNameState networkNameState))
+            {
+                networkNameState.Name.Value = persistentPlayer.NetworkNameState.Name.Value;
             }
 
             var netState = newPlayer.GetComponent<NetworkCharacterState>();
+
             netState.NetworkLifeState.LifeState.OnValueChanged += OnHeroLifeStateChanged;
             m_HeroIds.Add(netState.NetworkObjectId);
-
-            // TODO: Re-implement names on UI (GOMPS-550)
-            /*string playerName = m_ServerNetPortal.GetPlayerName(clientId, lobbyResults.PlayerNumber);
-
-            netState.Name = playerName;*/
 
             // spawn players characters with destroyWithScene = true
             newPlayer.SpawnWithOwnership(clientId, null, true);
@@ -234,12 +232,22 @@ namespace BossRoom.Server
             StartCoroutine(CoroGameOver(k_WinDelay, true));
         }
 
+        void SetWinState(WinState winState)
+        {
+            if (m_NetworkGameStateTransform && m_NetworkGameStateTransform.Value &&
+                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkGameState networkGameState))
+            {
+                networkGameState.NetworkWinState.winState.Value = winState;
+            }
+        }
+
         private IEnumerator CoroGameOver(float wait, bool gameWon)
         {
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
 
-            GameStateRelay.SetRelayObject(gameWon);
+            SetWinState(gameWon ? WinState.Win : WinState.Loss);
+
             NetworkManager.Singleton.SceneManager.SwitchScene("PostGame");
         }
     }

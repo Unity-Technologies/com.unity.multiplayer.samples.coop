@@ -130,14 +130,18 @@ namespace BossRoom.Server
 
         private void SaveLobbyResults()
         {
-            LobbyResults lobbyResults = new LobbyResults();
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
-                lobbyResults.Choices[playerInfo.ClientId] = new LobbyResults.CharSelectChoice(playerInfo.PlayerNum,
-                    CharSelectData.LobbySeatConfigurations[playerInfo.SeatIdx].Class,
-                    CharSelectData.LobbySeatConfigurations[playerInfo.SeatIdx].CharacterArtIdx);
+                var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(playerInfo.ClientId);
+
+                if (playerNetworkObject &&
+                    playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+                {
+                    // pass avatar GUID to PersistentPlayer
+                    persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
+                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToByteArray();
+                }
             }
-            GameStateRelay.SetRelayObject(lobbyResults);
         }
 
         private IEnumerator WaitToEndLobby()

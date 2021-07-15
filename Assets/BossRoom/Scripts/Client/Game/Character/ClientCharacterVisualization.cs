@@ -64,8 +64,6 @@ namespace BossRoom.Visual
 
         int m_HitStateTriggerID;
 
-        event Action Destroyed;
-
         public bool IsOwner => m_NetState.IsOwner;
 
         public ulong NetworkObjectId => m_NetState.NetworkObjectId;
@@ -111,42 +109,17 @@ namespace BossRoom.Visual
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
 
-                // track health for heroes
-                m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
-
-                // find the emote bar to track its buttons
-                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
-                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
-
                 if (m_NetState.IsOwner)
                 {
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
-                    m_PartyHUD.SetHeroData(m_NetState);
 
                     if (Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
                         inputSender.ActionInputEvent += OnActionInput;
                         inputSender.ClientMoveEvent += OnMoveInput;
                     }
-                }
-                else
-                {
-                    m_PartyHUD.SetAllyData(m_NetState);
-
-                    // getting our parent's NetworkObjectID for PartyHUD removal on Destroy
-                    var parentNetworkObjectID = m_NetState.NetworkObjectId;
-
-                    // once this object is destroyed, remove this ally from the PartyHUD UI
-                    // NOTE: architecturally this will be refactored
-                    Destroyed += () =>
-                    {
-                        if (m_PartyHUD != null)
-                        {
-                            m_PartyHUD.RemoveAlly(parentNetworkObjectID);
-                        }
-                    };
                 }
             }
         }
@@ -199,8 +172,6 @@ namespace BossRoom.Visual
                     sender.ClientMoveEvent -= OnMoveInput;
                 }
             }
-
-            Destroyed?.Invoke();
         }
 
         private void OnPerformHitReaction()
@@ -246,21 +217,6 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnHealthChanged(int previousValue, int newValue)
-        {
-            // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
-            if (m_PartyHUD == null) { return; }
-
-            if (m_NetState.IsOwner)
-            {
-                this.m_PartyHUD.SetHeroHealth(newValue);
-            }
-            else
-            {
-                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
-            }
-        }
-
         private void OnStealthyChanged(bool oldValue, bool newValue)
         {
             SetAppearanceSwap();
@@ -288,9 +244,8 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Returns the value we should set the Animator's "Speed" variable, given current
-        /// gameplay conditions.
-        /// </remarks>
+        /// Returns the value we should set the Animator's "Speed" variable, given current gameplay conditions.
+        /// </summary>
         private float GetVisualMovementSpeed()
         {
             Assert.IsNotNull(m_VisualizationConfiguration);
