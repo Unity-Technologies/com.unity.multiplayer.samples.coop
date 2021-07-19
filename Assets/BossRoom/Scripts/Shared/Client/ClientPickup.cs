@@ -1,5 +1,4 @@
 using System;
-using MLAPI.Messaging;
 using UnityEngine;
 
 namespace BossRoom
@@ -14,14 +13,8 @@ namespace BossRoom
         {
             if (Input.GetKeyDown(KeyCode.KeypadEnter))
             {
-                PickupServerRpc();
+                m_ServerPickup.Pickup();
             }
-        }
-
-        [ServerRpc]
-        void PickupServerRpc()
-        {
-            m_ServerPickup.Pickup();
         }
     }
 }
