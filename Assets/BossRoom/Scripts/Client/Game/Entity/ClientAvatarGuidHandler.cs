@@ -1,6 +1,5 @@
 using System;
 using BossRoom.Visual;
-using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Client
@@ -28,7 +27,7 @@ namespace BossRoom.Client
 
         public Avatar RegisteredAvatar => m_Avatar;
 
-        public event Action AvatarGraphicsSpawned;
+        public event Action<GameObject> AvatarGraphicsSpawned;
 
         void Awake()
         {
@@ -58,9 +57,9 @@ namespace BossRoom.Client
             // spawn avatar graphics GameObject
             var graphicsGameObject = Instantiate(avatar.Graphics, transform);
 
-            m_ClientCharacter.ChildVizObject = graphicsGameObject.GetComponent<ClientCharacterVisualization>();
+            m_ClientCharacter.SetCharacterVisualization(graphicsGameObject.GetComponent<ClientCharacterVisualization>());
 
-            AvatarGraphicsSpawned?.Invoke();
+            AvatarGraphicsSpawned?.Invoke(graphicsGameObject);
         }
 
         void OnDestroy()

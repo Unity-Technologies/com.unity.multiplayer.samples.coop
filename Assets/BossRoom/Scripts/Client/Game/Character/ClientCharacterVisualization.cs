@@ -57,9 +57,6 @@ namespace BossRoom.Visual
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
-        /// Player characters need to report health changes and chracter info to the PartyHUD
-        PartyHUD m_PartyHUD;
-
         float m_SmoothedSpeed;
 
         int m_HitStateTriggerID;

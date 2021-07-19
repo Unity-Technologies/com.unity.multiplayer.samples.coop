@@ -15,7 +15,7 @@ namespace BossRoom.Visual
     public class PartyHUD : MonoBehaviour
     {
         [SerializeField]
-        NetworkCharacterStateRuntimeCollection m_PlayerAvatars;
+        ClientPlayerAvatarRuntimeCollection m_PlayerAvatars;
 
         [SerializeField]
         private Image m_HeroPortrait;
@@ -40,6 +40,8 @@ namespace BossRoom.Visual
 
         NetworkCharacterState m_OwnedCharacterState;
 
+        ClientPlayerAvatar m_OwnedPlayerAvatar;
+
         private Dictionary<ulong, NetworkCharacterState> m_TrackedAllies = new Dictionary<ulong, NetworkCharacterState>();
 
         private Client.ClientInputSender m_ClientSender;
@@ -53,50 +55,57 @@ namespace BossRoom.Visual
             m_PlayerAvatars.ItemRemoved += PlayerAvatarRemoved;
         }
 
-        void PlayerAvatarAdded(NetworkCharacterState networkCharacterState)
+        void PlayerAvatarAdded(ClientPlayerAvatar clientPlayerAvatar)
         {
-            if (networkCharacterState.IsOwner)
+            if (clientPlayerAvatar.IsOwner)
             {
-                SetHeroData(networkCharacterState);
+                SetHeroData(clientPlayerAvatar);
             }
             else
             {
-                SetAllyData(networkCharacterState);
+                SetAllyData(clientPlayerAvatar);
             }
         }
 
-        void PlayerAvatarRemoved(NetworkCharacterState networkCharacterState)
+        void PlayerAvatarRemoved(ClientPlayerAvatar clientPlayerAvatar)
         {
-            if (m_OwnedCharacterState == networkCharacterState)
+            if (m_OwnedPlayerAvatar == clientPlayerAvatar)
             {
                 RemoveHero();
             }
-            else if (m_TrackedAllies.ContainsKey(networkCharacterState.NetworkObjectId))
+            else if (m_TrackedAllies.ContainsKey(clientPlayerAvatar.NetworkObjectId))
             {
-                RemoveAlly(networkCharacterState.NetworkObjectId);
-                m_TrackedAllies.Remove(networkCharacterState.NetworkObjectId);
+                RemoveAlly(clientPlayerAvatar.NetworkObjectId);
+                m_TrackedAllies.Remove(clientPlayerAvatar.NetworkObjectId);
             }
         }
 
-        void SetHeroData(NetworkCharacterState netState)
+        void SetHeroData(ClientPlayerAvatar clientPlayerAvatar)
         {
+            Debug.Assert(clientPlayerAvatar.TryGetComponent(out NetworkCharacterState networkCharacterState),
+                "NetworkCharacterState component not found on ClientPlayerAvatar",
+                clientPlayerAvatar);
+
+            m_OwnedPlayerAvatar = clientPlayerAvatar;
+            m_OwnedCharacterState = networkCharacterState;
+
             // Hero is always our slot 0
-            m_PartyIds[0] = netState.NetworkObject.NetworkObjectId;
+            m_PartyIds[0] = m_OwnedCharacterState.NetworkObject.NetworkObjectId;
 
             // set hero portrait
-            if (netState.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+            if (m_OwnedCharacterState.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
             {
                 m_HeroPortrait.sprite = clientAvatarGuidHandler.RegisteredAvatar.Portrait;
             }
 
-            SetUIFromSlotData(0, netState);
+            SetUIFromSlotData(0, m_OwnedCharacterState);
 
-            netState.HealthState.HitPoints.OnValueChanged += SetHeroHealth;
+            m_OwnedCharacterState.HealthState.HitPoints.OnValueChanged += SetHeroHealth;
 
             // plus we track their target
-            netState.TargetId.OnValueChanged += OnHeroSelectionChanged;
+            m_OwnedCharacterState.TargetId.OnValueChanged += OnHeroSelectionChanged;
 
-            m_ClientSender = netState.GetComponent<ClientInputSender>();
+            m_ClientSender = m_OwnedCharacterState.GetComponent<ClientInputSender>();
         }
 
         void SetHeroHealth(int previousValue, int newValue)
@@ -114,9 +123,13 @@ namespace BossRoom.Visual
         }
 
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id
-        void SetAllyData(NetworkCharacterState netState)
+        void SetAllyData(ClientPlayerAvatar clientPlayerAvatar)
         {
-            ulong id = netState.NetworkObjectId;
+            Debug.Assert(clientPlayerAvatar.TryGetComponent(out NetworkCharacterState networkCharacterState),
+                "NetworkCharacterState component not found on ClientPlayerAvatar",
+                clientPlayerAvatar);
+
+            ulong id = networkCharacterState.NetworkObjectId;
             int slot = FindOrAddAlly(id);
             // do nothing if not in a slot
             if (slot == -1)
@@ -124,14 +137,14 @@ namespace BossRoom.Visual
                 return;
             }
 
-            SetUIFromSlotData(slot, netState);
+            SetUIFromSlotData(slot, networkCharacterState);
 
-            netState.HealthState.HitPoints.OnValueChanged += (int previousValue, int newValue) =>
+            networkCharacterState.HealthState.HitPoints.OnValueChanged += (int previousValue, int newValue) =>
             {
                 SetAllyHealth(id, newValue);
             };
 
-            m_TrackedAllies.Add(netState.NetworkObjectId, netState);
+            m_TrackedAllies.Add(networkCharacterState.NetworkObjectId, networkCharacterState);
         }
 
         void SetUIFromSlotData(int slot, NetworkCharacterState netState)

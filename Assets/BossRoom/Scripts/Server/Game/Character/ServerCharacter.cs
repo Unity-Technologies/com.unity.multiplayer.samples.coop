@@ -71,6 +71,8 @@ namespace BossRoom.Server
                     var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
                     PlayAction(ref startingAction);
                 }
+
+                NetState.HitPoints = NetState.CharacterData.BaseHP.Value;
             }
         }
 

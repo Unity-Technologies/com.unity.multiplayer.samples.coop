@@ -71,7 +71,6 @@ MonoBehaviour:
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
   m_NetworkNameState: {fileID: -8197545831548902967}
   m_NetworkHealthState: {fileID: 7751377510591478590}
-  m_CharacterClassContainer: {fileID: 5230418375993597025}
   m_ClientCharacter: {fileID: 2292431908892550450}
   m_BaseHP: {fileID: 0}
   m_TransformToTrack: {fileID: 0}
@@ -115,6 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b9cdcc3c2393a2745a733ffa279642ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PlayerAvatars: {fileID: 11400000, guid: 13c227b8a2f5f5f4a8c252835aaf648f, type: 2}
 --- !u!114 &6940323159316181846
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,7 +173,7 @@ PrefabInstance:
     - target: {fileID: 4600110157238723777, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacters
       value: 
-      objectReference: {fileID: 11400000, guid: f8d8b28c5d3e3794db2ed832b2293724, type: 2}
+      objectReference: {fileID: 0}
     - target: {fileID: 4600110157238723777, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_CharacterDefinition
       value: 

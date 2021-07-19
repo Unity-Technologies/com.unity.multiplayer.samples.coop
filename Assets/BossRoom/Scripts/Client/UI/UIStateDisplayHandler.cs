@@ -37,6 +37,8 @@ namespace BossRoom.Client
         [SerializeField]
         ClientCharacter m_ClientCharacter;
 
+        ClientAvatarGuidHandler m_ClientAvatarGuidHandler;
+
         [SerializeField]
         IntVariable m_BaseHP;
 
@@ -89,17 +91,17 @@ namespace BossRoom.Client
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
             // if PC, find our graphics transform and update health through callbacks, if displayed
-            if (TryGetComponent(out ClientAvatarGuidHandler avatarGuidHandler))
+            if (TryGetComponent(out m_ClientAvatarGuidHandler))
             {
-                m_BaseHP = avatarGuidHandler.RegisteredAvatar.CharacterClass.BaseHP;
+                m_BaseHP = m_ClientAvatarGuidHandler.RegisteredAvatar.CharacterClass.BaseHP;
 
                 if (m_ClientCharacter.ChildVizObject)
                 {
-                    TrackGraphicsTransform();
+                    TrackGraphicsTransform(m_ClientCharacter.ChildVizObject.gameObject);
                 }
                 else
                 {
-                    avatarGuidHandler.AvatarGraphicsSpawned += TrackGraphicsTransform;
+                    m_ClientAvatarGuidHandler.AvatarGraphicsSpawned += TrackGraphicsTransform;
                 }
 
                 if (m_DisplayHealth)
@@ -131,6 +133,11 @@ namespace BossRoom.Client
             {
                 m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
                 m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
+            }
+
+            if (m_ClientAvatarGuidHandler)
+            {
+                m_ClientAvatarGuidHandler.AvatarGraphicsSpawned -= TrackGraphicsTransform;
             }
         }
 
@@ -186,9 +193,9 @@ namespace BossRoom.Client
             m_UIState.HideHealth();
         }
 
-        void TrackGraphicsTransform()
+        void TrackGraphicsTransform(GameObject graphicsGameObject)
         {
-            m_TransformToTrack = m_ClientCharacter.ChildVizObject.transform;
+            m_TransformToTrack = graphicsGameObject.transform;
         }
 
         void LateUpdate()
