@@ -173,8 +173,8 @@ namespace BossRoom.Client
                     unetTransport.ConnectPort = port;
                     break;
                 case UTPTransport utpTransport:
-                    utpTransport.Address = ipaddress;
-                    utpTransport.Port = (ushort)port;
+                    // utpTransport.Address = ipaddress;
+                    // utpTransport.Port = (ushort)port;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
