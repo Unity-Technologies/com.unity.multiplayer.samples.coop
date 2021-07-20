@@ -38,8 +38,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a1936c933bb765f479c89b871245c340, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_ClientPickup: {fileID: 3239146913368286460}
   m_Collider: {fileID: 867943974282506144}
-  m_Animator: {fileID: 1205479890502643974}
 --- !u!114 &2576537793715222015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +74,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ServerPickup: {fileID: -52736397905517490}
+  m_Animator: {fileID: 1205479890502643974}
 --- !u!114 &3481187672596608374
 MonoBehaviour:
   m_ObjectHideFlags: 0
