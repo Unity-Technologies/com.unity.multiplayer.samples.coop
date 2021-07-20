@@ -19,7 +19,7 @@ namespace BossRoom.Server
         [SerializeField]
         LifeState m_RaiseCondition;
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {
@@ -32,7 +32,7 @@ namespace BossRoom.Server
             m_NetworkLifeState.LifeState.OnValueChanged += LifeStateChanged;
         }
 
-        void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             m_NetworkLifeState.LifeState.OnValueChanged -= LifeStateChanged;
         }

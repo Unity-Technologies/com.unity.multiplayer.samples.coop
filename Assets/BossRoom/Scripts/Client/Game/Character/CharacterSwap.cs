@@ -75,7 +75,7 @@ namespace BossRoom.Client
         }
 
         [SerializeField]
-        private CharacterModelSet[] m_CharacterModels;
+        CharacterModelSet m_CharacterModel;
 
         /// <summary>
         /// Reference to our shared-characters' animator.
@@ -130,40 +130,22 @@ namespace BossRoom.Client
         /// <summary>
         /// Swap the visuals of the character to the index passed in.
         /// </summary>
-        /// <param name="modelIndex">Zero-based array index of the model</param>
         /// <param name="specialMaterialMode">Special Material to apply to all body parts</param>
-        public void SwapToModel(int modelIndex, SpecialMaterialMode specialMaterialMode = SpecialMaterialMode.None)
+        public void SwapToModel(SpecialMaterialMode specialMaterialMode = SpecialMaterialMode.None)
         {
-            Assert.IsTrue(modelIndex < m_CharacterModels.Length);
-
             ClearOverrideMaterial();
 
-            for (int i = 0; i < m_CharacterModels.Length; i++)
+            if (m_CharacterModel.specialFx)
             {
-                m_CharacterModels[i].SetFullActive(i == modelIndex);
-                if (m_CharacterModels[i].specialFx)
-                {
-                    // Disable all the specialFx; we'll turn the correct one on after the loop.
-                    // "Why not just turn on the specialFx right here?" you ask.
-                    // Because the same specialFx object is used for both the male and female
-                    // version of each class, so if we tried to turn them on/off here, we'd end up
-                    // turning it both on AND off each time through the loop! (With 50/50 odds
-                    // that it ends in the state we want it to be.)
-                    m_CharacterModels[i].specialFx.enabled = false;
-                }
-            }
-
-            if (m_CharacterModels[modelIndex].specialFx)
-            {
-                m_CharacterModels[modelIndex].specialFx.enabled = true;
+                m_CharacterModel.specialFx.enabled = true;
             }
 
             if (m_Animator)
             {
                 // plug in the correct animator override... or plug the original non - overridden version back in!
-                if (m_CharacterModels[modelIndex].animatorOverrides)
+                if (m_CharacterModel.animatorOverrides)
                 {
-                    m_Animator.runtimeAnimatorController = m_CharacterModels[modelIndex].animatorOverrides;
+                    m_Animator.runtimeAnimatorController = m_CharacterModel.animatorOverrides;
                 }
                 else
                 {
@@ -175,10 +157,10 @@ namespace BossRoom.Client
             switch (specialMaterialMode)
             {
                 case SpecialMaterialMode.StealthySelf:
-                    SetOverrideMaterial(modelIndex, m_StealthySelfMaterial);
+                    SetOverrideMaterial(m_StealthySelfMaterial);
                     break;
                 case SpecialMaterialMode.StealthyOther:
-                    SetOverrideMaterial(modelIndex, m_StealthyOtherMaterial);
+                    SetOverrideMaterial(m_StealthyOtherMaterial);
                     break;
             }
         }
@@ -195,15 +177,15 @@ namespace BossRoom.Client
             m_OriginalMaterials.Clear();
         }
 
-        private void SetOverrideMaterial(int modelIdx, Material overrideMaterial)
+        private void SetOverrideMaterial(Material overrideMaterial)
         {
             ClearOverrideMaterial(); // just sanity-checking; this should already have been called!
-            foreach (var bodypart in m_CharacterModels[modelIdx].GetAllBodyParts())
+            foreach (var bodyPart in m_CharacterModel.GetAllBodyParts())
             {
-                if (bodypart)
+                if (bodyPart)
                 {
-                    m_OriginalMaterials[bodypart] = bodypart.material;
-                    bodypart.material = overrideMaterial;
+                    m_OriginalMaterials[bodyPart] = bodyPart.material;
+                    bodyPart.material = overrideMaterial;
                 }
             }
         }

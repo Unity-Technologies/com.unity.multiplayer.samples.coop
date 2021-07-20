@@ -11,7 +11,7 @@ namespace BossRoom.Server
     /// nearby. It has one or more "breakable bits". When all the breakable elements are broken,
     /// the portal becomes dormant for a fixed amount of time, before repairing its breakables
     /// and starting up again.
-    /// 
+    ///
     /// The actual monster-spawning logic is managed by a ServerWaveSpawner component.
     /// </summary>
     /// <remarks>
@@ -43,7 +43,7 @@ namespace BossRoom.Server
             m_State = GetComponent<NetworkBreakableState>();
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {
@@ -59,7 +59,7 @@ namespace BossRoom.Server
             MaintainState();
         }
 
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_CoroDormant != null)
                 StopCoroutine(m_CoroDormant);

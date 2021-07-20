@@ -26,6 +26,9 @@ namespace BossRoom.Server
     /// </summary>
     public class ServerGameNetPortal : MonoBehaviour
     {
+        [SerializeField]
+        NetworkObject m_PersistentPlayer;
+
         private GameNetPortal m_Portal;
 
         /// <summary>
@@ -56,7 +59,7 @@ namespace BossRoom.Server
             m_Portal = GetComponent<GameNetPortal>();
             m_Portal.NetworkReadied += OnNetworkReady;
 
-            // we add ApprovalCheck callback BEFORE NetworkStart to avoid spurious MLAPI warning:
+            // we add ApprovalCheck callback BEFORE OnNetworkSpawn to avoid spurious MLAPI warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
             m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
@@ -125,7 +128,7 @@ namespace BossRoom.Server
 
             if( clientId == m_Portal.NetManager.LocalClientId )
             {
-                //the ServerGameNetPortal may be initialized again, which will cause its NetworkStart to be called again.
+                //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
@@ -249,7 +252,7 @@ namespace BossRoom.Server
             // Another hackfix to unblock me since this is now called on the host's client instance as well
             if (connectionPayload == null)
             {
-                callback(false, 0, true, null, null);
+                callback(true, null, true, null, null);
                 return;
             }
             int clientScene = connectionPayload.clientScene;
@@ -291,7 +294,7 @@ namespace BossRoom.Server
                 m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
             }
 
-            callback(false, 0, true, null, null);
+            callback(true, null, true, Vector3.zero, Quaternion.identity);
 
             //TODO:MLAPI: this must be done after the callback for now. In the future we expect MLAPI to allow us to return more information as part of
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,

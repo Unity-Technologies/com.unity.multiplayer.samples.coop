@@ -137,7 +137,7 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "376ed36b3f80a6a00242cb08d5163c01032a4b35"
+      "hash": "be0ca068be30f6bf2a7f9aad515c2541331068f8"
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",

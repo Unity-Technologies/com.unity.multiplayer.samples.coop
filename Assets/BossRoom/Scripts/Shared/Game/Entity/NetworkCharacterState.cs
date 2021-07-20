@@ -32,8 +32,7 @@ namespace BossRoom
     /// <summary>
     /// Contains all NetworkVariables and RPCs of a character. This component is present on both client and server objects.
     /// </summary>
-    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkCharacterTypeState),
-        typeof(NetworkLifeState))]
+    [RequireComponent(typeof(NetworkHealthState), typeof(NetworkLifeState))]
     public class NetworkCharacterState : NetworkBehaviour, ITargetable
     {
         /// Indicates how the character's movement should be depicted.
@@ -69,12 +68,6 @@ namespace BossRoom
             set { m_NetworkHealthState.HitPoints.Value = value; }
         }
 
-        /// <summary>
-        /// Current Mana. This value is populated at startup time from CharacterClass data.
-        /// </summary>
-        [HideInInspector]
-        public NetworkVariableInt Mana;
-
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
@@ -101,52 +94,28 @@ namespace BossRoom
         /// </summary>
         public bool CanPerformActions => LifeState == LifeState.Alive;
 
+        [SerializeField]
+        CharacterClassContainer m_CharacterClassContainer;
+
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
-        public CharacterClass CharacterData
-        {
-            get
-            {
-                return GameDataSource.Instance.CharacterDataByType[CharacterType];
-            }
-        }
-
-        [SerializeField]
-        NetworkCharacterTypeState m_NetworkCharacterTypeState;
+        public CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
 
         /// <summary>
         /// Character Type. This value is populated during character selection.
         /// </summary>
-        public CharacterTypeEnum CharacterType
-        {
-            get { return m_NetworkCharacterTypeState.CharacterType.Value; }
-            set { m_NetworkCharacterTypeState.CharacterType.Value = value; }
-        }
-
-        [SerializeField]
-        NetworkNameState m_NetworkNameState;
-
-        /// <summary>
-        /// Current nametag. This value is populated at startup time from CharacterClass data.
-        /// </summary>
-        public string Name
-        {
-            get { return m_NetworkNameState.Name.Value; }
-            set { m_NetworkNameState.Name.Value = value; }
-        }
-
-        /// <summary>
-        /// This is an int rather than an enum because it is a "place-marker" for a more complicated system. Ultimately we would like
-        /// PCs to represent their appearance via a struct of appearance options (so they can mix-and-match different ears, head, face, etc).
-        /// </summary>
-        [Tooltip("Value between 0-7. ClientCharacterVisualization will use this to set up the model (for PCs).")]
-        public NetworkVariableInt CharacterAppearance;
+        public CharacterTypeEnum CharacterType => m_CharacterClassContainer.CharacterClass.CharacterType;
 
         /// <summary>
         /// Gets invoked when inputs are received from the client which own this networked character.
         /// </summary>
         public event Action<Vector3> ReceivedClientInput;
+
+        public override void OnNetworkSpawn()
+        {
+            HitPoints = CharacterData.BaseHP.Value;
+        }
 
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
@@ -156,18 +125,6 @@ namespace BossRoom
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
             ReceivedClientInput?.Invoke(movementTarget);
-        }
-
-        public void SetCharacterType(CharacterTypeEnum playerType, int playerAppearance)
-        {
-            CharacterType = playerType;
-            CharacterAppearance.Value = playerAppearance;
-        }
-
-        public void ApplyCharacterData()
-        {
-            HitPoints = CharacterData.BaseHP.Value;
-            Mana.Value = CharacterData.BaseMana;
         }
 
         // ACTION SYSTEM

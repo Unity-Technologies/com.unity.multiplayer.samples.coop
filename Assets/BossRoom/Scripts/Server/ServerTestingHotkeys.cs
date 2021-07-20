@@ -30,10 +30,8 @@ namespace BossRoom.Server
         [Tooltip("Key that the Host can press to quit the game")]
         KeyCode m_InstantQuitKeyCode = KeyCode.Q;
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
-            base.NetworkStart();
-
             if (!IsServer)
             {
                 // these commands don't work on the client

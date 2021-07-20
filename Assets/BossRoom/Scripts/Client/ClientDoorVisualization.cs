@@ -27,7 +27,7 @@ public class ClientDoorVisualization : NetworkBehaviour
         m_DoorState = GetComponent<NetworkDoorState>();
     }
 
-    public override void NetworkStart()
+    public override void OnNetworkSpawn()
     {
         if (!IsClient)
         {
@@ -42,7 +42,7 @@ public class ClientDoorVisualization : NetworkBehaviour
         }
     }
 
-    private void OnDestroy()
+    public override void OnNetworkDespawn()
     {
         if (m_DoorState)
         {
