@@ -150,20 +150,6 @@ namespace BossRoom.Server
             NetworkManager.SceneManager.SwitchScene("BossRoom");
         }
 
-        public override void OnNetworkDespawn()
-        {
-            if (NetworkManager.Singleton)
-            {
-                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
-                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene -= OnNotifyServerClientLoadedScene;
-            }
-            if (CharSelectData)
-            {
-                CharSelectData.OnClientChangedSeat -= OnClientChangedSeat;
-            }
-        }
-
         public override void OnNetworkSpawn()
         {
             if (!IsServer)
@@ -179,6 +165,36 @@ namespace BossRoom.Server
                 NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += OnNotifyServerClientLoadedScene;
             }
         }
+
+        public override void OnNetworkDespawn()
+        {
+            DeregisterCallbacks();
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            DeregisterCallbacks();
+        }
+
+        void DeregisterCallbacks()
+        {
+            if (NetworkManager.Singleton)
+            {
+                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+                if (NetworkManager.Singleton.SceneManager != null)
+                {
+                    NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene -= OnNotifyServerClientLoadedScene;
+                }
+            }
+            if (CharSelectData)
+            {
+                CharSelectData.OnClientChangedSeat -= OnClientChangedSeat;
+            }
+        }
+
 
         private void OnNotifyServerClientLoadedScene(MLAPI.SceneManagement.SceneSwitchProgress progress, ulong clientId)
         {
