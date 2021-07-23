@@ -367,8 +367,10 @@ namespace BossRoom.Client
                 case LobbyMode.ChooseSeat:
                     if ( m_LastSeatSelected == -1)
                     {
-                        // TODO: Re-implement CharSelect preview (GOMPS-550)
-                        //m_InSceneCharacter.gameObject.SetActive(false);
+                        if (m_CurrentCharacterGraphics)
+                        {
+                            m_CurrentCharacterGraphics.gameObject.SetActive(false);
+                        }
                         m_ClassInfoBox.ConfigureForNoSelection();
                     }
                     break;
