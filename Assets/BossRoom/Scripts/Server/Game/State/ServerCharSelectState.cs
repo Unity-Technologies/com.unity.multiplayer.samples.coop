@@ -11,6 +11,15 @@ namespace BossRoom.Server
     [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
+        [SerializeField]
+        NetworkObject m_LobbyPlayerPrefab;
+
+        [SerializeField]
+        PersistentPlayerRuntimeCollection m_PersistentPlayers;
+
+        [SerializeField]
+        LobbyPlayerRuntimeCollection m_LobbyPlayers;
+
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
 
@@ -112,11 +121,20 @@ namespace BossRoom.Server
         /// </summary>
         private void CloseLobbyIfReady()
         {
-            foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
+            foreach (var lobbyPlayer in m_LobbyPlayers.Items)
+            {
+                if (lobbyPlayer.NetworkLobbyState.ServerCharacterSelection.Value == -1)
+                {
+                    // found a player without a server-verified character selection; not ready to close lobby yet
+                    return;
+                }
+            }
+
+            /*foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
                 if (playerInfo.SeatState != CharSelectData.SeatState.LockedIn)
                     return; // nope, at least one player isn't locked in yet!
-            }
+            }*/
 
             // everybody's ready at the same time! Lock it down!
             CharSelectData.IsLobbyClosed.Value = true;
@@ -130,7 +148,20 @@ namespace BossRoom.Server
 
         private void SaveLobbyResults()
         {
-            foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
+            foreach (var lobbyPlayer in m_LobbyPlayers.Items)
+            {
+                var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(lobbyPlayer.OwnerClientId);
+
+                if (playerNetworkObject &&
+                    playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+                {
+                    // pass avatar GUID to PersistentPlayer
+                    persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
+                        CharSelectData.AvatarConfiguration[lobbyPlayer.NetworkLobbyState.ServerCharacterSelection.Value].Guid.ToByteArray();
+                }
+            }
+
+            /*foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
                 var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(playerInfo.ClientId);
 
@@ -141,7 +172,7 @@ namespace BossRoom.Server
                     persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
                         CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToByteArray();
                 }
-            }
+            }*/
         }
 
         private IEnumerator WaitToEndLobby()
@@ -158,12 +189,97 @@ namespace BossRoom.Server
             }
             else
             {
-                NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
+                foreach (var persistentPlayer in m_PersistentPlayers.Items)
+                {
+                    PersistentPlayerAdded(persistentPlayer);
+                }
+
+                if (m_PersistentPlayers)
+                {
+                    m_PersistentPlayers.ItemAdded += PersistentPlayerAdded;
+                }
+
+                CharSelectData.ClientSeatConfirmed += ClientSeatConfirmed;
+
+                /*NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
                 NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += OnNotifyServerClientLoadedScene;
+                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += OnNotifyServerClientLoadedScene;*/
             }
+        }
+
+        void PersistentPlayerAdded(PersistentPlayer persistentPlayer)
+        {
+            if (m_LobbyPlayers.TryGetPlayer(persistentPlayer.OwnerClientId, out LobbyPlayer lobbyPlayer))
+            {
+                // already added to dictionary
+                return;
+            }
+
+            int playerNumber = -1;
+
+            for (int i = 0; i < 8; i++)
+            {
+                var foundIndex = false;
+                foreach (var value in m_LobbyPlayers.Items)
+                {
+                    if (value.NetworkLobbyState.LobbyNumber.Value == i)
+                    {
+                        foundIndex = true;
+                        break;
+                    }
+                }
+
+                if (foundIndex)
+                {
+                    continue;
+                }
+
+                playerNumber = i;
+                break;
+            }
+
+            var clientID = persistentPlayer.OwnerClientId;
+            StartCoroutine(WaitToSpawn(clientID, playerNumber));
+        }
+
+        IEnumerator WaitToSpawn(ulong clientID, int playerNumber)
+        {
+            yield return new WaitForSeconds(1f);
+
+            var lobbyPlayerNetworkObject = Instantiate(m_LobbyPlayerPrefab);
+
+            // spawn lobby players characters with destroyWithScene = true
+            lobbyPlayerNetworkObject.SpawnWithOwnership(clientID, null, true);
+
+            if (lobbyPlayerNetworkObject.TryGetComponent(out LobbyPlayer spawnedLobbyPlayer))
+            {
+                spawnedLobbyPlayer.NetworkLobbyState.LobbyNumber.Value = playerNumber;
+            }
+        }
+
+        void ClientSeatConfirmed(ulong clientID, int seatID, bool isLockedIn)
+        {
+            if (!m_LobbyPlayers.TryGetPlayer(clientID, out LobbyPlayer lobbyPlayer))
+            {
+                return;
+            }
+
+            if (isLockedIn)
+            {
+                if (lobbyPlayer.NetworkLobbyState.ClientCharacterSelection.Value == seatID)
+                {
+                    // player is indeed holding this seat, confirm it
+                    lobbyPlayer.NetworkLobbyState.ServerCharacterSelection.Value = seatID;
+                }
+            }
+            else
+            {
+                lobbyPlayer.NetworkLobbyState.ServerCharacterSelection.Value = -1;
+            }
+
+            CloseLobbyIfReady();
         }
 
         public override void OnNetworkDespawn()
@@ -194,7 +310,6 @@ namespace BossRoom.Server
                 CharSelectData.OnClientChangedSeat -= OnClientChangedSeat;
             }
         }
-
 
         private void OnNotifyServerClientLoadedScene(MLAPI.SceneManagement.SceneSwitchProgress progress, ulong clientId)
         {

@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Client
 {
@@ -15,6 +16,12 @@ namespace BossRoom.Client
     [RequireComponent(typeof(CharSelectData))]
     public class ClientCharSelectState : GameStateBehaviour
     {
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
+
+        [SerializeField]
+        LobbyPlayerRuntimeCollection m_LobbyPlayers;
+
         /// <summary>
         /// Reference to the scene's state object so that UI can access state
         /// </summary>
@@ -119,16 +126,38 @@ namespace BossRoom.Client
             };
         }
 
-        protected override void Start()
+        public override void OnNetworkSpawn()
         {
-            base.Start();
-            for (int i = 0; i < m_PlayerSeats.Count; ++i)
+            if (!IsClient)
             {
-                m_PlayerSeats[i].Initialize(i);
+                enabled = false;
             }
+            else
+            {
+                for (int i = 0; i < m_PlayerSeats.Count; ++i)
+                {
+                    m_PlayerSeats[i].Initialize(i);
+                }
 
-            ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
-            UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
+                ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
+                UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
+
+                if (m_LobbyPlayers)
+                {
+                    // initialize with current players, if new come in they will be tracked via the callback below
+                    foreach (var lobbyPlayer in m_LobbyPlayers.Items)
+                    {
+                        RegisterPlayerCallback(lobbyPlayer);
+                    }
+
+                    m_LobbyPlayers.ItemAdded += RegisterPlayerCallback;
+                }
+
+                CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
+                /*CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
+                CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
+                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;*/
+            }
         }
 
         public override void OnNetworkDespawn()
@@ -144,19 +173,154 @@ namespace BossRoom.Client
                 Instance = null;
         }
 
-        public override void OnNetworkSpawn()
+        protected override void OnDestroy()
         {
-            if (!IsClient)
+            base.OnDestroy();
+
+            if (m_LobbyPlayers)
             {
-                enabled = false;
+                m_LobbyPlayers.ItemAdded -= RegisterPlayerCallback;
+            }
+        }
+
+        void RegisterPlayerCallback(LobbyPlayer lobbyPlayer)
+        {
+            var clientID = lobbyPlayer.OwnerClientId;
+
+            // TODO: unsubscribe from these
+
+            if (lobbyPlayer.OwnerClientId == NetworkManager.Singleton.LocalClientId)
+            {
+                lobbyPlayer.NetworkLobbyState.LobbyNumber.OnValueChanged += LocalPlayerNumberAssigned;
+            }
+
+            lobbyPlayer.NetworkLobbyState.ClientCharacterSelection.OnValueChanged += (previousValue, newValue) =>
+            {
+                PlayerSeatChanged(clientID, previousValue, newValue);
+            };
+
+            lobbyPlayer.NetworkLobbyState.ServerCharacterSelection.OnValueChanged += (previousValue, newValue) =>
+            {
+                PlayerSeatConfirmed(clientID, previousValue, newValue);
+            };
+
+            // initialize with current values
+            PlayerSeatChanged(lobbyPlayer.OwnerClientId, -1, lobbyPlayer.NetworkLobbyState.ClientCharacterSelection.Value);
+
+            PlayerSeatConfirmed(lobbyPlayer.OwnerClientId, -1, lobbyPlayer.NetworkLobbyState.ServerCharacterSelection.Value);
+        }
+
+        void LocalPlayerNumberAssigned(int previousValue, int newValue)
+        {
+            m_CanvasGroup.interactable = true;
+        }
+
+        void PlayerSeatChanged(ulong clientID, int previousValue, int newValue)
+        {
+            if (!m_LobbyPlayers.TryGetPlayer(clientID, out var lobbyPlayer))
+            {
+                // player not part of persistent player runtime collection?
+                return;
+            }
+
+            var playerNumber = lobbyPlayer.NetworkLobbyState.LobbyNumber.Value;
+
+            if (previousValue != -1)
+            {
+                var otherPlayerSharedSeat = false;
+                foreach (var otherLobbyPlayer in m_LobbyPlayers.Items)
+                {
+                    var otherLobbyPlayerSeat = otherLobbyPlayer.NetworkLobbyState.ClientCharacterSelection.Value;
+                    if (otherLobbyPlayerSeat == previousValue)
+                    {
+                        otherPlayerSharedSeat = true;
+
+                        // one important rule: do not modify a seat that has already been confirmed by server
+                        if (otherLobbyPlayer.NetworkLobbyState.ServerCharacterSelection.Value == previousValue)
+                        {
+                            break;
+                        }
+
+                        // another user found that shared this character selection
+                        // for simplicity, the first shared user found will take visual preference
+                        // in theory all players may share a character selection, so the first encountered will be used
+                        m_PlayerSeats[previousValue].SetState(
+                            CharSelectData.SeatState.Active,
+                            otherLobbyPlayer.NetworkLobbyState.LobbyNumber.Value,
+                            string.Empty,
+                            otherLobbyPlayer.OwnerClientId);
+                        break;
+                    }
+                }
+
+                // no other player found sharing this seat; safe to just disable
+                if (!otherPlayerSharedSeat)
+                {
+                    m_PlayerSeats[previousValue].SetState(
+                        CharSelectData.SeatState.Inactive,
+                        -1,
+                        string.Empty,
+                        0);
+                }
+            }
+
+            if (newValue == -1)
+            {
+                // do nothing; a player's selection may have been overriden by server
+                return;
+            }
+
+            m_PlayerSeats[newValue].SetState(
+                CharSelectData.SeatState.Active,
+                playerNumber,
+                string.Empty,
+                clientID);
+        }
+
+        void PlayerSeatConfirmed(ulong clientID, int previousValue, int newValue)
+        {
+            if (!m_LobbyPlayers.TryGetPlayer(clientID, out var lobbyPlayer))
+            {
+                // player not part of persistent player runtime collection?
+                return;
+            }
+
+            if (previousValue == -1 && newValue == -1)
+            {
+                // do nothing
+                return;
+            }
+
+            var seatIndex = -1;
+            CharSelectData.SeatState seatState;
+            if (newValue >= 0)
+            {
+                seatState = CharSelectData.SeatState.LockedIn;
+                seatIndex = newValue;
             }
             else
             {
-                CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
-                CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
-                CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
+                seatState = CharSelectData.SeatState.Active;
+                seatIndex = previousValue;
             }
+
+            if (seatState == CharSelectData.SeatState.LockedIn)
+            {
+                // if a lobby player is locking in, remove local player from selection, if applicable
+                m_LobbyPlayers.TryGetPlayer(NetworkManager.LocalClientId, out var localPlayer);
+
+                if (localPlayer &&
+                    clientID != NetworkManager.Singleton.LocalClientId &&
+                    localPlayer.NetworkLobbyState.ClientCharacterSelection.Value == newValue)
+                {
+                    localPlayer.NetworkLobbyState.ClientCharacterSelection.Value = -1;
+                    UpdateCharacterSelection(CharSelectData.SeatState.Inactive, -1);
+                }
+            }
+
+            var playerNumber = lobbyPlayer.NetworkLobbyState.LobbyNumber.Value;
+
+            m_PlayerSeats[seatIndex].SetState(seatState, playerNumber, string.Empty, clientID);
         }
 
         /// <summary>
@@ -306,7 +470,7 @@ namespace BossRoom.Client
             // now actually update the seats in the UI
             for (int i = 0; i < m_PlayerSeats.Count; ++i)
             {
-                m_PlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNum, curSeats[i].PlayerName);
+                //m_PlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNum, curSeats[i].PlayerName);
             }
         }
 
@@ -403,7 +567,33 @@ namespace BossRoom.Client
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
         {
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
+            if (!m_LobbyPlayers.TryGetPlayer(NetworkManager.Singleton.LocalClientId, out LobbyPlayer lobbyPlayer))
+            {
+                // bad
+                return;
+            }
+
+            if (lobbyPlayer.NetworkLobbyState.ServerCharacterSelection.Value != -1)
+            {
+                // already locked in for another character; do nothing
+                return;
+            }
+
+            var localPlayerNumber = GetLocalPlayerNumber();
+
+            m_PlayerSeats[seatIdx].SetState(CharSelectData.SeatState.Active, localPlayerNumber, "Me",
+                NetworkManager.Singleton.LocalClientId);
+
+            lobbyPlayer.NetworkLobbyState.ClientCharacterSelection.Value = seatIdx;
+
+            UpdateCharacterSelection(CharSelectData.SeatState.Active, seatIdx);
+        }
+
+        int GetLocalPlayerNumber()
+        {
+            Assert.IsTrue(m_LobbyPlayers.TryGetPlayer(NetworkManager.Singleton.LocalClientId, out LobbyPlayer lobbyPlayer));
+
+            return lobbyPlayer.NetworkLobbyState.LobbyNumber.Value;
         }
 
         /// <summary>
@@ -411,8 +601,23 @@ namespace BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            // request to lock in or unlock if already locked in
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn );
+            // TODO block input if waiting for validation OR if seat is -1
+
+            var seatIndex = -1;
+            if (m_LobbyPlayers.TryGetPlayer(NetworkManager.Singleton.LocalClientId, out LobbyPlayer lobbyPlayer))
+            {
+                seatIndex = lobbyPlayer.NetworkLobbyState.ClientCharacterSelection.Value;
+            }
+
+            if (seatIndex == -1)
+            {
+                // no seat chosen yet; do nothing
+                return;
+            }
+
+            var isLockedIn = lobbyPlayer.NetworkLobbyState.ServerCharacterSelection.Value == -1;
+
+            CharSelectData.ConfirmSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIndex, isLockedIn);
         }
 
         /// <summary>

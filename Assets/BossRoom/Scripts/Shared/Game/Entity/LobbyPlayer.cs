@@ -4,26 +4,22 @@ using UnityEngine;
 
 namespace BossRoom
 {
+    // TODO FIX
     /// <summary>
     /// NetworkBehaviour that represents a player connection and is the "Default Player Prefab" according to MLAPI. This
     /// NetworkBehaviour will contain several other NetworkBehaviours that should persist throughout the duration of
     /// this connection, meaning it will persist between scenes.
     /// </summary>
     [RequireComponent(typeof(NetworkObject))]
-    public class PersistentPlayer : NetworkBehaviour
+    public class LobbyPlayer : NetworkBehaviour
     {
         [SerializeField]
-        PersistentPlayerRuntimeCollection m_PersistentPlayerRuntimeCollection;
+        LobbyPlayerRuntimeCollection m_LobbyPlayers;
 
         [SerializeField]
-        NetworkNameState m_NetworkNameState;
+        NetworkLobbyState m_NetworkLobbyState;
 
-        [SerializeField]
-        NetworkAvatarGuidState m_NetworkAvatarGuidState;
-
-        public NetworkNameState NetworkNameState => m_NetworkNameState;
-
-        public NetworkAvatarGuidState NetworkAvatarGuidState => m_NetworkAvatarGuidState;
+        public NetworkLobbyState NetworkLobbyState => m_NetworkLobbyState;
 
         void Awake()
         {
@@ -32,27 +28,27 @@ namespace BossRoom
 
         public override void OnNetworkSpawn()
         {
-            gameObject.name = "PersistentPlayer" + OwnerClientId;
+            gameObject.name = "LobbyPlayer" + OwnerClientId;
 
             // Note that this is done here on OnNetworkSpawn in case this NetworkBehaviour's properties are accessed
             // when this element is added to the runtime collection. If this was done in OnEnable() there is a chance
             // that OwnerClientID could be its default value (0).
-            m_PersistentPlayerRuntimeCollection.Add(this);
+            m_LobbyPlayers.Add(this);
         }
 
         public override void OnNetworkDespawn()
         {
-            DeregisterPersistentPlayer();
+            DeregisterLobbyPlayer();
         }
 
         void OnDestroy()
         {
-            DeregisterPersistentPlayer();
+            DeregisterLobbyPlayer();
         }
 
-        void DeregisterPersistentPlayer()
+        void DeregisterLobbyPlayer()
         {
-            m_PersistentPlayerRuntimeCollection.Remove(this);
+            m_LobbyPlayers.Remove(this);
         }
     }
 }

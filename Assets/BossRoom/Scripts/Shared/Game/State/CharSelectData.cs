@@ -1,12 +1,7 @@
-
 using MLAPI;
 using MLAPI.Messaging;
 using MLAPI.Serialization;
-using MLAPI.NetworkVariable;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
 using MLAPI.NetworkVariable.Collections;
 using UnityEngine;
 
@@ -125,6 +120,20 @@ namespace BossRoom
         public void ChangeSeatServerRpc(ulong clientId, int seatIdx, bool lockedIn)
         {
             OnClientChangedSeat?.Invoke(clientId, seatIdx, lockedIn);
+        }
+
+        /// <summary>
+        /// Server notification when a client requests a different lobby-seat, or locks in their seat choice
+        /// </summary>
+        public event Action<ulong, int, bool> ClientSeatConfirmed;
+
+        /// <summary>
+        /// RPC to notify the server that a client has locked in a character selection.
+        /// </summary>
+        [ServerRpc(RequireOwnership =false)]
+        public void ConfirmSeatServerRpc(ulong clientId, int seatIdx, bool lockedIn)
+        {
+            ClientSeatConfirmed?.Invoke(clientId, seatIdx, lockedIn);
         }
     }
 }

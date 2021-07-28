@@ -39,21 +39,30 @@ namespace BossRoom.Client
         // playerNumber of who is sitting in this seat right now. 0-based; e.g. this is 0 for Player 1, 1 for Player 2, etc. Meaningless when m_State is Inactive (and in that case it is set to -1 for clarity)
         private int m_PlayerNumber;
 
+        ulong? m_ClientID;
+
         // the last SeatState we were assigned
         private CharSelectData.SeatState m_State;
 
         // once this is true, we're never clickable again!
         private bool m_IsDisabled;
 
+        public int SeatIndex => m_SeatIndex;
+
+        public int PlayerNumber => m_PlayerNumber;
+
+        public ulong? ClientID => m_ClientID;
+
         public void Initialize(int seatIndex)
         {
             m_SeatIndex = seatIndex;
             m_State = CharSelectData.SeatState.Inactive;
             m_PlayerNumber = -1;
+            m_ClientID = null;
             ConfigureStateGraphics();
         }
 
-        public void SetState(CharSelectData.SeatState state, int playerIndex, string playerName)
+        public void SetState(CharSelectData.SeatState state, int playerIndex, string playerName, ulong clientID)
         {
             if (state == m_State && playerIndex == m_PlayerNumber)
                 return; // no actual changes
@@ -61,6 +70,7 @@ namespace BossRoom.Client
             m_State = state;
             m_PlayerNumber = playerIndex;
             m_PlayerNameHolder.text = playerName;
+            m_ClientID = clientID;
             if (m_State == CharSelectData.SeatState.Inactive)
                 m_PlayerNumber = -1;
             ConfigureStateGraphics();
@@ -118,7 +128,7 @@ namespace BossRoom.Client
                 m_InactiveStateVisuals.SetActive(false);
                 m_PlayerNumberHolder.sprite = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Indicator;
                 m_ActiveStateVisuals.SetActive(true);
-               
+
                 m_PlayerNameHolder.gameObject.SetActive(true);
                 m_PlayerNameHolder.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
                 m_Button.interactable = m_IsDisabled ? false : true;

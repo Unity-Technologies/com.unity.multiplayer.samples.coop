@@ -10,7 +10,13 @@ namespace BossRoom
     /// </summary>
     public class NetworkCharacterTypeState : NetworkBehaviour
     {
-        [Tooltip("NPCs should set this value in their prefab. For players, this value is set at runtime.")]
-        public NetworkVariable<CharacterTypeEnum> CharacterType = new NetworkVariable<CharacterTypeEnum>();
+        NetworkVariableInt m_CharacterType = new NetworkVariableInt(
+            new NetworkVariableSettings()
+            {
+                WritePermission = NetworkVariablePermission.OwnerOnly
+            },
+            -1);
+
+        public NetworkVariableInt CharacterType => m_CharacterType;
     }
 }

@@ -62,6 +62,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ae93287066a264d92939aa957cf227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_LobbyPlayerPrefab: {fileID: 7930984189155921618, guid: 7af5dc8f77f33c14d800315edc44acd2, type: 3}
+  m_PersistentPlayers: {fileID: 11400000, guid: 23c3465e22da67c4e812c4faf3adb1cb, type: 2}
+  m_LobbyPlayers: {fileID: 11400000, guid: f317afdabd522174a9f3aaab2978b920, type: 2}
 --- !u!114 &3565665953789623674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +77,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eca1f4b442326cc4d9be3975746b8cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_LobbyPlayers: {fileID: 11400000, guid: f317afdabd522174a9f3aaab2978b920, type: 2}
   m_AnimationTriggerOnCharSelect: BeginRevive
   m_AnimationTriggerOnCharChosen: BeginRevive
   m_PlayerSeats: []
