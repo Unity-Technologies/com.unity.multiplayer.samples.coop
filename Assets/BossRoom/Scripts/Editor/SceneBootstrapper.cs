@@ -12,31 +12,12 @@ namespace BossRoom.Scripts.Editor
     [InitializeOnLoad]
     public class SceneBootstrapper
     {
-        const string k_BootstrapSceneKey = "BootstrapScene";
-        const string k_PreviousSceneKey = "PreviousScene";
         const string k_LoadBootstrapSceneKey = "LoadBootstrapScene";
 
         const string k_LoadBootstrapSceneOnPlay = "Boss Room/Load Bootstrap Scene On Play";
         const string k_DoNotLoadBootstrapSceneOnPlay = "Boss Room/Don't Load Bootstrap Scene On Play";
 
-        static string BootstrapScene
-        {
-            get
-            {
-                if (!EditorPrefs.HasKey(k_BootstrapSceneKey))
-                {
-                    EditorPrefs.SetString(k_BootstrapSceneKey, EditorBuildSettings.scenes[0].path);
-                }
-                return EditorPrefs.GetString(k_BootstrapSceneKey, EditorBuildSettings.scenes[0].path);
-            }
-            set => EditorPrefs.SetString(k_BootstrapSceneKey, value);
-        }
-
-        static string PreviousScene
-        {
-            get => EditorPrefs.GetString(k_PreviousSceneKey);
-            set => EditorPrefs.SetString(k_PreviousSceneKey, value);
-        }
+        const string k_StartupScenePath = "Assets/BossRoom/Scenes/Startup.unity";
 
         static bool LoadBootstrapScene
         {
@@ -48,12 +29,16 @@ namespace BossRoom.Scripts.Editor
                 }
                 return EditorPrefs.GetBool(k_LoadBootstrapSceneKey, true);
             }
-            set => EditorPrefs.SetBool(k_LoadBootstrapSceneKey, value);
-        }
+            set
+            {
+                // if value has changed, update playModeStartScene accordingly
+                if (value != LoadBootstrapScene)
+                {
+                    SetPlayModeStartScene(value ? k_StartupScenePath : null);
+                }
 
-        static SceneBootstrapper()
-        {
-            EditorApplication.playModeStateChanged += EditorApplicationOnplayModeStateChanged;
+                EditorPrefs.SetBool(k_LoadBootstrapSceneKey, value);
+            }
         }
 
         [MenuItem(k_LoadBootstrapSceneOnPlay, true)]
@@ -80,43 +65,25 @@ namespace BossRoom.Scripts.Editor
             LoadBootstrapScene = false;
         }
 
-        static void EditorApplicationOnplayModeStateChanged(PlayModeStateChange obj)
+        static SceneBootstrapper()
         {
-            if (!LoadBootstrapScene)
+            SetPlayModeStartScene(LoadBootstrapScene ? k_StartupScenePath : null);
+        }
+
+        static void SetPlayModeStartScene(string scenePath)
+        {
+            SceneAsset sceneAsset = null;
+            if (!string.IsNullOrEmpty(scenePath))
             {
-                return;
-            }
+                sceneAsset = AssetDatabase.LoadAssetAtPath<SceneAsset>(scenePath);
 
-            if (obj == PlayModeStateChange.ExitingEditMode)
-            {
-                // cache previous scene so we return to this scene after play session, if possible
-                PreviousScene = EditorSceneManager.GetActiveScene().path;
-
-                if (EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo())
+                if (sceneAsset == null)
                 {
-                    // user either hit "Save" or "Don't Save"; open bootstrap scene
-
-                    if (!string.IsNullOrEmpty(BootstrapScene) &&
-                        System.Array.Exists(EditorBuildSettings.scenes, scene => scene.path == BootstrapScene))
-                    {
-                        // scene is included in build settings; open it
-                        EditorSceneManager.OpenScene(BootstrapScene);
-                    }
-                }
-                else
-                {
-                    // user either hit "Cancel" or exited window; don't open bootstrap scene & return to editor
-
-                    EditorApplication.isPlaying = false;
+                    Debug.LogError("Could not find scene asset at: " + scenePath);
                 }
             }
-            else if (obj == PlayModeStateChange.EnteredEditMode)
-            {
-                if (!string.IsNullOrEmpty(PreviousScene))
-                {
-                    EditorSceneManager.OpenScene(PreviousScene);
-                }
-            }
+
+            EditorSceneManager.playModeStartScene = sceneAsset;
         }
     }
 }
