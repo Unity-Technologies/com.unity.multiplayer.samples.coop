@@ -80,7 +80,10 @@ namespace BossRoom.Visual
 
         private void Awake()
         {
-            m_Animator = GetComponent<Animator>();
+            if (!transform.parent.TryGetComponent<Animator>(out m_Animator))
+            {
+                m_Animator = GetComponent<Animator>();
+            }
             Debug.Assert(m_Animator, "AnimatorTriggeredSpecialFX needs to be on the same GameObject as the Animator it works with!", gameObject);
             Debug.Assert(m_AudioSources != null && m_AudioSources.Length > 0, "No AudioSource plugged into AnimatorTriggeredSpecialFX!", gameObject);
         }
@@ -283,7 +286,7 @@ namespace BossRoom.Visual
             Animator animator = fx.GetComponent<Animator>();
             if (!animator)
             {
-                // should be impossible because we explicitly RequireComponent the Animator 
+                // should be impossible because we explicitly RequireComponent the Animator
                 EditorUtility.DisplayDialog("Error", "No Animator found on this GameObject!?", "OK");
                 return;
             }
@@ -359,7 +362,7 @@ namespace BossRoom.Visual
             Debug.Assert(animator.runtimeAnimatorController); // already pre-checked
 
             // we need the AnimatorController, but there's no direct way to retrieve it from the Animator, because
-            // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why 
+            // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why
             // AnimatorController is in the UnityEditor namespace.) But this *isn't* runtime, so when we retrieve the
             // runtime controller, it will actually be a reference to our real AnimatorController.
             AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;

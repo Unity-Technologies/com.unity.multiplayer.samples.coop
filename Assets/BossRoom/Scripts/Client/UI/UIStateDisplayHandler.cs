@@ -91,18 +91,19 @@ namespace BossRoom.Client
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
             // if PC, find our graphics transform and update health through callbacks, if displayed
-            if (TryGetComponent(out m_ClientAvatarGuidHandler))
+            if (TryGetComponent(out NetworkCharacterTypeState networkCharacterTypeState)/*TryGetComponent(out m_ClientAvatarGuidHandler)*/)
             {
-                m_BaseHP = m_ClientAvatarGuidHandler.RegisteredAvatar.CharacterClass.BaseHP;
+                m_BaseHP = GameDataSource.Instance.CharacterDataByType[networkCharacterTypeState.CharacterType.Value].BaseHP;
+                /*m_BaseHP = m_ClientAvatarGuidHandler.RegisteredAvatar.CharacterClass.BaseHP;*/
 
-                if (m_ClientCharacter.ChildVizObject)
+                /*if (m_ClientCharacter.ChildVizObject)
                 {
                     TrackGraphicsTransform(m_ClientCharacter.ChildVizObject.gameObject);
                 }
                 else
                 {
                     m_ClientAvatarGuidHandler.AvatarGraphicsSpawned += TrackGraphicsTransform;
-                }
+                }*/
 
                 if (m_DisplayHealth)
                 {

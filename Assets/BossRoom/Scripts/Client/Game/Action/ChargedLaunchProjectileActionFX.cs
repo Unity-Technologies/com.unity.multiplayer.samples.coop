@@ -28,7 +28,7 @@ namespace BossRoom.Visual
         public override bool Start()
         {
             base.Start();
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            TrySetTrigger(Description.Anim);
 
             m_Graphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
             return true;
@@ -43,7 +43,7 @@ namespace BossRoom.Visual
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+                TrySetTrigger(Description.Anim2);
             }
 
             if (!m_ChargeEnded)

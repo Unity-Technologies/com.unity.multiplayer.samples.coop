@@ -9,7 +9,7 @@ namespace BossRoom.Visual
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    public class ClientCharacterVisualization : MonoBehaviour
+    public class ClientCharacterVisualization : NetworkBehaviour
     {
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
@@ -61,23 +61,51 @@ namespace BossRoom.Visual
 
         int m_HitStateTriggerID;
 
-        public bool IsOwner => m_NetState.IsOwner;
+        [SerializeField]
+        ClientPlayerAvatarRuntimeCollection m_ClientPlayerAvatars;
 
-        public ulong NetworkObjectId => m_NetState.NetworkObjectId;
-
-        public void Start()
+        public override void OnNetworkSpawn()
         {
-            if (!NetworkManager.Singleton.IsClient || transform.parent == null)
+            if (!IsClient /* || transform.parent == null*/)
             {
                 enabled = false;
                 return;
             }
 
+            if (m_ClientPlayerAvatars)
+            {
+                if (m_ClientPlayerAvatars.TryGetPlayer(OwnerClientId, out ClientPlayerAvatar clientPlayerAvatar))
+                {
+                    RegisterParent(clientPlayerAvatar.transform);
+                }
+                else
+                {
+                    m_ClientPlayerAvatars.ItemAdded += TryRegisterPlayer;
+                    enabled = false;
+                }
+            }
+            else
+            {
+                RegisterParent(transform.parent);
+            }
+        }
+
+        void TryRegisterPlayer(ClientPlayerAvatar clientPlayerAvatar)
+        {
+            if (clientPlayerAvatar.OwnerClientId == OwnerClientId)
+            {
+                m_ClientPlayerAvatars.ItemAdded -= TryRegisterPlayer;
+                RegisterParent(clientPlayerAvatar.transform);
+            }
+        }
+
+        void RegisterParent(Transform parentTransform)
+        {
             m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
 
             m_ActionViz = new ActionVisualization(this);
 
-            Parent = transform.parent;
+            Parent = parentTransform/*transform.parent*/;
 
             m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
 
@@ -89,12 +117,17 @@ namespace BossRoom.Visual
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
 
-            Assert.IsTrue(m_RuntimeObjectsParent && m_RuntimeObjectsParent.Value,
+            /*Assert.IsTrue(m_RuntimeObjectsParent && m_RuntimeObjectsParent.Value,
                 "RuntimeObjectsParent transform is not set!");
-            transform.SetParent(m_RuntimeObjectsParent.Value);
+            transform.SetParent(m_RuntimeObjectsParent.Value);*/
 
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(Parent.position, Parent.rotation);
+
+            if (m_CharacterSwapper == null)
+            {
+                m_CharacterSwapper = GetComponentInChildren<CharacterSwap>();
+            }
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
@@ -119,6 +152,8 @@ namespace BossRoom.Visual
                     }
                 }
             }
+
+            enabled = true;
         }
 
         private void OnActionInput(ActionRequestData data)
@@ -130,7 +165,8 @@ namespace BossRoom.Visual
         {
             if (!IsAnimating())
             {
-                OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
+                // TODO revisit?
+                //OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
             }
         }
 

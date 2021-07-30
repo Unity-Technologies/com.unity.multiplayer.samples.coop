@@ -87,6 +87,7 @@ MonoBehaviour:
   m_NetworkGameStateTransform: {fileID: 11400000, guid: 07bddcdf06738e74cb79d30065ff96af, type: 2}
   m_RuntimeNetworkObjectsParent: {fileID: 11400000, guid: 777947e430fc5cb4ba60df7eed45a515, type: 2}
   m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
+  m_AvatarAnimatorRootPrefab: {fileID: 2574213410342668577, guid: 33420595c8704be4389a6a4119d934e8, type: 3}
   m_PlayerSpawnPoints:
   - {fileID: 6319832178442273571}
   - {fileID: 374135395555381814}

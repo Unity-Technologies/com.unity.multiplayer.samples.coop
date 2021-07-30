@@ -1,5 +1,6 @@
 using System;
 using BossRoom.Visual;
+using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Client
@@ -9,13 +10,10 @@ namespace BossRoom.Client
     /// AvatarRegistry, if possible. Once fetched, the Graphics GameObject is spawned.
     /// </summary>
     [RequireComponent(typeof(NetworkAvatarGuidState))]
-    public class ClientAvatarGuidHandler : MonoBehaviour
+    public class ClientAvatarGuidHandler : NetworkBehaviour
     {
         [SerializeField]
-        ClientCharacter m_ClientCharacter;
-
-        [SerializeField]
-        CharacterClassContainer m_CharacterClassContainer;
+        ClientPlayerAvatarRuntimeCollection m_ClientPlayerAvatars;
 
         [SerializeField]
         NetworkAvatarGuidState m_NetworkAvatarGuidState;
@@ -29,21 +27,51 @@ namespace BossRoom.Client
 
         public event Action<GameObject> AvatarGraphicsSpawned;
 
-        void Awake()
+        ClientPlayerAvatar m_ClientPlayerAvatar;
+
+        public override void OnNetworkSpawn()
         {
-            m_NetworkAvatarGuidState.GuidChanged += RegisterAvatar;
+            if (m_ClientPlayerAvatars.TryGetPlayer(OwnerClientId, out var clientPlayerAvatar))
+            {
+                TryRegisterClientPlayerAvatar(clientPlayerAvatar);
+            }
+            else
+            {
+                m_ClientPlayerAvatars.ItemAdded += TryRegisterClientPlayerAvatar;
+            }
+        }
+
+        void TryRegisterClientPlayerAvatar(ClientPlayerAvatar clientPlayerAvatar)
+        {
+            if (clientPlayerAvatar.OwnerClientId == OwnerClientId)
+            {
+                m_ClientPlayerAvatar = clientPlayerAvatar;
+
+                if (m_NetworkAvatarGuidState.AvatarGuidArray.Value != null ||
+                    m_NetworkAvatarGuidState.AvatarGuidArray.Value.Length == 16)
+                {
+                    // not a valid Guid
+                    RegisterAvatar(new Guid(m_NetworkAvatarGuidState.AvatarGuidArray.Value));
+                }
+                else
+                {
+                    // TODO unsubscribe
+                    m_NetworkAvatarGuidState.GuidChanged += RegisterAvatar;
+                }
+            }
         }
 
         void RegisterAvatar(Guid guid)
         {
             // based on the Guid received, Avatar is fetched from AvatarRegistry
-            if (!m_AvatarRegistry.TryGetAvatar(guid, out Avatar avatar))
+            if (!m_AvatarRegistry.TryGetAvatar(guid, out var avatar))
             {
                 Debug.LogError("Avatar not found!");
                 return;
             }
 
-            if (m_ClientCharacter.ChildVizObject)
+            if (m_ClientPlayerAvatar.TryGetComponent(out ClientCharacter clientCharacter) &&
+                clientCharacter.ChildVizObject)
             {
                 // we may receive a NetworkVariable's OnValueChanged callback more than once as a client
                 // this makes sure we don't spawn a duplicate graphics GameObject
@@ -52,12 +80,15 @@ namespace BossRoom.Client
 
             m_Avatar = avatar;
 
-            m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
+            var animatorParent = GetComponentInChildren<Animator>();
 
             // spawn avatar graphics GameObject
-            var graphicsGameObject = Instantiate(avatar.Graphics, transform);
+            var graphicsGameObject = Instantiate(avatar.Graphics, animatorParent.transform);
 
-            m_ClientCharacter.SetCharacterVisualization(graphicsGameObject.GetComponent<ClientCharacterVisualization>());
+            clientCharacter.SetCharacterVisualization(graphicsGameObject.GetComponent<ClientCharacterVisualization>());
+
+            animatorParent.Rebind();
+            animatorParent.Update(0f);
 
             AvatarGraphicsSpawned?.Invoke(graphicsGameObject);
         }

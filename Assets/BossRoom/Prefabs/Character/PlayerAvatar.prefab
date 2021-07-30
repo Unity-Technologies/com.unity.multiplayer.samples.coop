@@ -40,20 +40,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CachedServerCharacter: {fileID: 6012286037226018870}
---- !u!114 &2466014342928185240
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6009713983291384756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ebe9bfd21e47445488dfd84b4e0c9884, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AvatarGuidArray:
-    m_InternalValue: 
 --- !u!114 &2576537793715222015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,7 +101,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PlayerAvatars: {fileID: 11400000, guid: 13c227b8a2f5f5f4a8c252835aaf648f, type: 2}
---- !u!114 &6940323159316181846
+--- !u!114 &5376279765473172793
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -124,13 +110,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 6009713983291384756}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7bb02fcdd8d85034794f2a32382009e3, type: 3}
+  m_Script: {fileID: 11500000, guid: 082f826a48a1017479079f944dff718f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ClientCharacter: {fileID: 2292431908892550450}
-  m_CharacterClassContainer: {fileID: 5230418375993597025}
-  m_NetworkAvatarGuidState: {fileID: 2466014342928185240}
-  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
+  CharacterType:
+    m_InternalValue: 4
 --- !u!1001 &7831782662127126385
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -145,7 +129,11 @@ PrefabInstance:
     - target: {fileID: -6618539813679097072, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacterGuidState
       value: 
-      objectReference: {fileID: 2466014342928185240}
+      objectReference: {fileID: 0}
+    - target: {fileID: -6618539813679097072, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
+      propertyPath: m_NetworkCharacterTypeState
+      value: 
+      objectReference: {fileID: 5376279765473172793}
     - target: {fileID: -909640835356089789, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_CharacterContainer
       value: 
@@ -153,11 +141,11 @@ PrefabInstance:
     - target: {fileID: -909640835356089789, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacterGuidState
       value: 
-      objectReference: {fileID: 2466014342928185240}
+      objectReference: {fileID: 0}
     - target: {fileID: -909640835356089789, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacterDefinition
       value: 
-      objectReference: {fileID: 2466014342928185240}
+      objectReference: {fileID: 0}
     - target: {fileID: 514105321093282895, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -177,7 +165,7 @@ PrefabInstance:
     - target: {fileID: 4600110157238723777, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_CharacterDefinition
       value: 
-      objectReference: {fileID: 2466014342928185240}
+      objectReference: {fileID: 0}
     - target: {fileID: 4600110157238723777, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkNameTagState
       value: 
@@ -185,7 +173,7 @@ PrefabInstance:
     - target: {fileID: 4600110157238723777, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacterGuidState
       value: 
-      objectReference: {fileID: 2466014342928185240}
+      objectReference: {fileID: 0}
     - target: {fileID: 4600110157238723777, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacterTypeState
       value: 
@@ -193,7 +181,7 @@ PrefabInstance:
     - target: {fileID: 4600110157238723777, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacterDefinition
       value: 
-      objectReference: {fileID: 2466014342928185240}
+      objectReference: {fileID: 0}
     - target: {fileID: 4600110157238723779, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_Enabled
       value: 1
@@ -201,7 +189,7 @@ PrefabInstance:
     - target: {fileID: 4600110157238723779, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacterDefinition
       value: 
-      objectReference: {fileID: 2466014342928185240}
+      objectReference: {fileID: 0}
     - target: {fileID: 4600110157238723781, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_Name
       value: PlayerAvatar
@@ -269,7 +257,7 @@ PrefabInstance:
     - target: {fileID: 4602672899881656135, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_NetworkCharacterDefinition
       value: 
-      objectReference: {fileID: 2466014342928185240}
+      objectReference: {fileID: 0}
     - target: {fileID: 7690172137830037487, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_Enabled
       value: 1

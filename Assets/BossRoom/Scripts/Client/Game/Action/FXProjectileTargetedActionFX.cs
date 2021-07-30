@@ -43,7 +43,7 @@ namespace BossRoom.Visual
 
         private void PlayFireAnim()
         {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            TrySetTrigger(Description.Anim);
         }
 
         public override bool Update()
@@ -86,7 +86,10 @@ namespace BossRoom.Visual
             if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
             {
                 var hitReact = !string.IsNullOrEmpty(Description.ReactAnim) ? Description.ReactAnim : k_DefaultHitReact;
-                clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
+                if (clientCharacter.IsOwnedByServer)
+                {
+                    clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
+                }
             }
         }
 

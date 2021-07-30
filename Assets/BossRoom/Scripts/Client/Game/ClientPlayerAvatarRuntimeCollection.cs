@@ -9,5 +9,19 @@ namespace BossRoom.Client
     [CreateAssetMenu]
     public class ClientPlayerAvatarRuntimeCollection : RuntimeCollection<ClientPlayerAvatar>
     {
+        public bool TryGetPlayer(ulong clientID, out ClientPlayerAvatar clientPlayerAvatar)
+        {
+            for (int i = 0; i < Items.Count; i++)
+            {
+                if (clientID == Items[i].OwnerClientId)
+                {
+                    clientPlayerAvatar = Items[i];
+                    return true;
+                }
+            }
+
+            clientPlayerAvatar = null;
+            return false;
+        }
     }
 }

@@ -91,7 +91,7 @@ namespace BossRoom.Visual
 
         private void PlayAnim()
         {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            TrySetTrigger(Description.Anim);
         }
 
         private void PlayHitReact()
@@ -112,7 +112,8 @@ namespace BossRoom.Visual
                         string hitAnim = Description.ReactAnim;
                         if(string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
                         var clientChar = originalTarget.GetComponent<Client.ClientCharacter>();
-                        if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
+                        if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator &&
+                            clientChar.IsOwnedByServer)
                         {
                             clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);
                         }

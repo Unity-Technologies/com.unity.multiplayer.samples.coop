@@ -170,6 +170,28 @@ namespace BossRoom.Visual
             Anticipated = true;
             TimeStarted = UnityEngine.Time.time;
         }
+
+        protected bool TrySetTrigger(string triggerName)
+        {
+            if (m_Parent.IsOwnedByServer)
+            {
+                m_Parent.OurAnimator.SetTrigger(triggerName);
+                return true;
+            }
+
+            return false;
+        }
+
+        protected bool TryResetTrigger(string triggerName)
+        {
+            if (m_Parent.IsOwnedByServer)
+            {
+                TryResetTrigger(triggerName);
+                return true;
+            }
+
+            return false;
+        }
     }
 }
 

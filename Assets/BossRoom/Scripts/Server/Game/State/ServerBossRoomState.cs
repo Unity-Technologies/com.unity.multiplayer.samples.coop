@@ -28,6 +28,10 @@ namespace BossRoom.Server
         private NetworkObject m_PlayerPrefab;
 
         [SerializeField]
+        [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
+        NetworkObject m_AvatarAnimatorRootPrefab;
+
+        [SerializeField]
         [Tooltip("A collection of locations for spawning players")]
         private Transform[] m_PlayerSpawnPoints;
 
@@ -169,9 +173,9 @@ namespace BossRoom.Server
             Assert.IsTrue(playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer),
                 $"Matching persistent PersistentPlayer for client {clientId} not found!");
 
-            // pass character type from persistent player to avatar
+            /*// pass character type from persistent player to avatar
             Assert.IsTrue(newPlayer.TryGetComponent(out NetworkAvatarGuidState networkCharacterDefinition),
-                $"NetworkCharacterGuidState not found on player avatar!");
+                $"NetworkCharacterGuidState not found on player avatar!");*/
 
             // if joining late, assign a random character to the persistent player
             if (lateJoin)
@@ -184,8 +188,8 @@ namespace BossRoom.Server
             Assert.IsTrue(m_AvatarRegistry.TryGetAvatar(avatarGuid, out Avatar avatar),
                 "Character not found from CharacterRegistry!");
 
-            networkCharacterDefinition.AvatarGuidArray.Value =
-                persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value;
+            /*networkCharacterDefinition.AvatarGuidArray.Value =
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value;*/
 
             // pass name from persistent player to avatar
             if (newPlayer.TryGetComponent(out NetworkNameState networkNameState))
@@ -198,8 +202,29 @@ namespace BossRoom.Server
             netState.NetworkLifeState.LifeState.OnValueChanged += OnHeroLifeStateChanged;
             m_HeroIds.Add(netState.NetworkObjectId);
 
-            // spawn players characters with destroyWithScene = true
+            // pass networked character type to avatar
+            if (newPlayer.TryGetComponent(out NetworkCharacterTypeState networkCharacterTypeState))
+            {
+                networkCharacterTypeState.CharacterType.Value = avatar.CharacterClass.CharacterType;
+            }
+
+            // spawn avatar with destroyWithScene = true
             newPlayer.SpawnWithOwnership(clientId, null, true);
+
+            // spawn avatar graphics
+            var graphicsClone = Instantiate(m_AvatarAnimatorRootPrefab);
+
+            var graphicsNetworkObject = graphicsClone.GetComponent<NetworkObject>();
+
+            if (graphicsNetworkObject.TryGetComponent(out NetworkAvatarGuidState networkAvatarGuidState))
+            {
+                networkAvatarGuidState.AvatarGuidArray.Value = avatarGuid.ToByteArray();
+            }
+
+            //Instantiate(avatar.Graphics, graphicsNetworkObject.transform);
+
+            graphicsNetworkObject.SpawnWithOwnership(clientId, null, true);
+
         }
 
         // Every time a player's life state changes we check to see if game is over

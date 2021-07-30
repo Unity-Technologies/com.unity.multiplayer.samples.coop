@@ -45,7 +45,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3736552308919084700}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Avatar: {fileID: 9000000, guid: 2115c4661f55eff45a5a0f91fc0a12f0, type: 3}
   m_Controller: {fileID: 9100000, guid: 81ba9d484ee6d174a8aeb3af411babc4, type: 2}
   m_CullingMode: 0
@@ -63,7 +63,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3736552308919084700}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 9520a47fc61d5ab4ca99cdac2d574909, type: 3}
   m_Name: 
@@ -72,6 +72,7 @@ MonoBehaviour:
   m_CharacterSwapper: {fileID: 579958722332811098}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
   m_RuntimeObjectsParent: {fileID: 11400000, guid: deda38c596e7fbd4386b9d8f9b7bb4b5, type: 2}
+  m_ClientPlayerAvatars: {fileID: 11400000, guid: 13c227b8a2f5f5f4a8c252835aaf648f, type: 2}
 --- !u!114 &579958722332811098
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -99,119 +100,6 @@ MonoBehaviour:
     shoulderLeft: {fileID: 0}
     specialFx: {fileID: 0}
     animatorOverrides: {fileID: 0}
-  m_CharacterModels:
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gearRightHand: {fileID: 0}
-    gearLeftHand: {fileID: 0}
-    handRight: {fileID: 0}
-    handLeft: {fileID: 0}
-    shoulderRight: {fileID: 0}
-    shoulderLeft: {fileID: 0}
-    specialFx: {fileID: 0}
-    animatorOverrides: {fileID: 22100000, guid: c84cdd5b9f976074b8545c42342d2ce0, type: 2}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gearRightHand: {fileID: 0}
-    gearLeftHand: {fileID: 0}
-    handRight: {fileID: 0}
-    handLeft: {fileID: 0}
-    shoulderRight: {fileID: 0}
-    shoulderLeft: {fileID: 0}
-    specialFx: {fileID: 0}
-    animatorOverrides: {fileID: 22100000, guid: c84cdd5b9f976074b8545c42342d2ce0, type: 2}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gearRightHand: {fileID: 0}
-    gearLeftHand: {fileID: 0}
-    handRight: {fileID: 0}
-    handLeft: {fileID: 0}
-    shoulderRight: {fileID: 0}
-    shoulderLeft: {fileID: 0}
-    specialFx: {fileID: 0}
-    animatorOverrides: {fileID: 22100000, guid: a264cfb5b89b3054d83727922fcf312c, type: 2}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gearRightHand: {fileID: 0}
-    gearLeftHand: {fileID: 0}
-    handRight: {fileID: 0}
-    handLeft: {fileID: 0}
-    shoulderRight: {fileID: 0}
-    shoulderLeft: {fileID: 0}
-    specialFx: {fileID: 0}
-    animatorOverrides: {fileID: 22100000, guid: a264cfb5b89b3054d83727922fcf312c, type: 2}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gearRightHand: {fileID: 0}
-    gearLeftHand: {fileID: 0}
-    handRight: {fileID: 0}
-    handLeft: {fileID: 0}
-    shoulderRight: {fileID: 0}
-    shoulderLeft: {fileID: 0}
-    specialFx: {fileID: 0}
-    animatorOverrides: {fileID: 22100000, guid: 2c3286578a51645449e8926f958438a7, type: 2}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gearRightHand: {fileID: 0}
-    gearLeftHand: {fileID: 0}
-    handRight: {fileID: 0}
-    handLeft: {fileID: 0}
-    shoulderRight: {fileID: 0}
-    shoulderLeft: {fileID: 0}
-    specialFx: {fileID: 0}
-    animatorOverrides: {fileID: 22100000, guid: 2c3286578a51645449e8926f958438a7, type: 2}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gearRightHand: {fileID: 0}
-    gearLeftHand: {fileID: 0}
-    handRight: {fileID: 0}
-    handLeft: {fileID: 0}
-    shoulderRight: {fileID: 0}
-    shoulderLeft: {fileID: 0}
-    specialFx: {fileID: 0}
-    animatorOverrides: {fileID: 22100000, guid: 59250e4e9e5786b408633dbbdb2cecff, type: 2}
-  - ears: {fileID: 0}
-    head: {fileID: 0}
-    mouth: {fileID: 0}
-    hair: {fileID: 0}
-    eyes: {fileID: 0}
-    torso: {fileID: 0}
-    gearRightHand: {fileID: 0}
-    gearLeftHand: {fileID: 0}
-    handRight: {fileID: 0}
-    handLeft: {fileID: 0}
-    shoulderRight: {fileID: 0}
-    shoulderLeft: {fileID: 0}
-    specialFx: {fileID: 0}
-    animatorOverrides: {fileID: 22100000, guid: 59250e4e9e5786b408633dbbdb2cecff, type: 2}
   m_Animator: {fileID: 4199396739699390757}
   m_StealthySelfMaterial: {fileID: 2100000, guid: 3a999e4944c72a84c830c337bdb6348b, type: 2}
   m_StealthyOtherMaterial: {fileID: 2100000, guid: f3b8028a3fb2d3a42b5a0c73fc01b6f0, type: 2}
