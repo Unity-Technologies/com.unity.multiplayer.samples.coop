@@ -65,7 +65,7 @@ namespace BossRoom.Visual
                 }
 
                 var clientChar = targetNetObject.GetComponent<Client.ClientCharacter>();
-                if(clientChar && clientChar.IsOwnedByServer)
+                if(NetworkManager.Singleton.IsHost)
                 {
                     clientChar.ChildVizObject.OurAnimator.SetTrigger(ActionFX.k_DefaultHitReact);
                 }

@@ -1,13 +1,11 @@
 using MLAPI;
 using System.Collections.Generic;
-using System.IO;
-using MLAPI.Spawning;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
 
-    public class ServerProjectileLogic : MLAPI.NetworkBehaviour
+    public class ServerProjectileLogic : NetworkBehaviour
     {
         private bool m_Started = false;
 
@@ -66,7 +64,7 @@ namespace BossRoom.Server
             m_ProjectileInfo = projectileInfo;
         }
 
-        public override void OnNetworkSpawn(Stream stream)
+        public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {

@@ -173,7 +173,7 @@ namespace BossRoom.Visual
 
         protected bool TrySetTrigger(string triggerName)
         {
-            if (m_Parent.IsOwnedByServer)
+            if (NetworkManager.Singleton.IsHost)
             {
                 m_Parent.OurAnimator.SetTrigger(triggerName);
                 return true;
@@ -184,7 +184,7 @@ namespace BossRoom.Visual
 
         protected bool TryResetTrigger(string triggerName)
         {
-            if (m_Parent.IsOwnedByServer)
+            if (NetworkManager.Singleton.IsHost)
             {
                 TryResetTrigger(triggerName);
                 return true;

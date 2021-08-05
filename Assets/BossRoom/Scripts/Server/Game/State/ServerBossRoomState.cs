@@ -209,7 +209,7 @@ namespace BossRoom.Server
             }
 
             // spawn avatar with destroyWithScene = true
-            newPlayer.SpawnWithOwnership(clientId, null, true);
+            newPlayer.SpawnWithOwnership(clientId, true);
 
             // spawn avatar graphics
             var graphicsClone = Instantiate(m_AvatarAnimatorRootPrefab);
@@ -223,7 +223,7 @@ namespace BossRoom.Server
 
             //Instantiate(avatar.Graphics, graphicsNetworkObject.transform);
 
-            graphicsNetworkObject.SpawnWithOwnership(clientId, null, true);
+            graphicsNetworkObject.SpawnWithOwnership(clientId, true);
 
         }
 

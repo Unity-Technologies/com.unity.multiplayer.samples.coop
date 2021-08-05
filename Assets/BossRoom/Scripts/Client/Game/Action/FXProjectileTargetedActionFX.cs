@@ -86,10 +86,7 @@ namespace BossRoom.Visual
             if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
             {
                 var hitReact = !string.IsNullOrEmpty(Description.ReactAnim) ? Description.ReactAnim : k_DefaultHitReact;
-                if (clientCharacter.IsOwnedByServer)
-                {
-                    clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
-                }
+                TrySetTrigger(hitReact);
             }
         }
 
