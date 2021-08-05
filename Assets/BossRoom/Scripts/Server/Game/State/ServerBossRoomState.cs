@@ -73,9 +73,7 @@ namespace BossRoom.Server
 
         private bool DoInitialSpawnIfPossible()
         {
-            if (m_ServerNetPortal.AreAllClientsInServerScene() &&
-                !InitialSpawnDone/* &&
-                m_NetPortal.NetManager.ConnectedClientsList.Count == m_LobbyResults.Choices.Count*/)
+            if (m_ServerNetPortal.AreAllClientsInServerScene() && !InitialSpawnDone)
             {
                 InitialSpawnDone = true;
                 foreach (var kvp in NetworkManager.ConnectedClients)
