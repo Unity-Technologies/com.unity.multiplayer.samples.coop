@@ -280,7 +280,7 @@ namespace BossRoom
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log("Setting up UTP relay host");
-                    await UnityServices.Initialize();
+                    await UnityServices.InitializeAsync();
                     if (!AuthenticationService.Instance.IsSignedIn)
                     {
                         await AuthenticationService.Instance.SignInAnonymouslyAsync();

@@ -237,7 +237,7 @@ namespace BossRoom.Client
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-                    Task t = Task.Run( () => {UnityServices.Initialize();});
+                    Task t = Task.Run( () => {UnityServices.InitializeAsync();});
                     if (!t.Wait(30000))
                     {
                         Debug.Log("UnityServices.Initialize did not finish within 30 seconds");
@@ -273,7 +273,7 @@ namespace BossRoom.Client
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-                    await UnityServices.Initialize();
+                    await UnityServices.InitializeAsync();
                     Debug.Log(AuthenticationService.Instance);
                     if (!AuthenticationService.Instance.IsSignedIn)
                     {
@@ -289,7 +289,7 @@ namespace BossRoom.Client
             }
 
             ConnectClient(portal);
-        }        
+        }
 
         private static void ConnectClient(GameNetPortal portal)
         {
