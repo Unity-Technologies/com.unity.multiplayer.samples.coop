@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 347284043}
-  - component: {fileID: 347284044}
+  - component: {fileID: 5486862276979889515}
   m_Layer: 0
   m_Name: UTP
   m_TagString: Untagged
@@ -31,7 +31,7 @@ Transform:
   m_Father: {fileID: 5436007408952557925}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &347284044
+--- !u!114 &5486862276979889515
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -40,11 +40,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 347284042}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fc5ef7b69296d69458910681f29471e6, type: 3}
+  m_Script: {fileID: 11500000, guid: 6960e84d07fb87f47956e7a81d71c4e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Port: 7777
-  Address: 127.0.0.1
+  m_ProtocolType: 1
+  m_MessageBufferSize: 9999
+  m_ServerAddress: 127.0.0.1
+  m_ServerPort: 7777
+  m_RelayMaxPlayers: 10
+  m_RelayServer: https://relay-allocations.cloud.unity3d.com
 --- !u!1 &409269880
 GameObject:
   m_ObjectHideFlags: 0
@@ -97,55 +101,6 @@ MonoBehaviour:
   m_SendQueueBatchSize: 8192
   m_BatchedTransportEventCode: 129
   m_KickEventCode: 130
---- !u!1 &3147140705963931936
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1110954318183479886}
-  - component: {fileID: 3854258989132416087}
-  m_Layer: 0
-  m_Name: UnityRelayTransport
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1110954318183479886
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3147140705963931936}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3854258989132416087
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3147140705963931936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6960e84d07fb87f47956e7a81d71c4e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_ProtocolType: 1
-  m_MessageBufferSize: 1024
-  m_ServerAddress: 127.0.0.1
-  m_ServerPort: 7777
-  m_RelayMaxPlayers: 10
-  m_RelayServer: https://relay-allocations.cloud.unity3d.com
 --- !u!1 &3591499506183471245
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,7 +188,6 @@ Transform:
   - {fileID: 409269881}
   - {fileID: 1861090270400447367}
   - {fileID: 347284043}
-  - {fileID: 1110954318183479886}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -249,7 +203,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c0e18361257a9f409d6064bac74e732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IpHostTransport: {fileID: 347284044}
+  m_IpHostTransport: {fileID: 0}
   m_RelayTransport: {fileID: 409269882}
   m_UnityRelayTransport: {fileID: 0}
 --- !u!114 &5436007408952557924
@@ -269,7 +223,7 @@ MonoBehaviour:
   LogLevel: 1
   NetworkConfig:
     ProtocolVersion: 0
-    NetworkTransport: {fileID: 347284044}
+    NetworkTransport: {fileID: 0}
     RegisteredScenes:
     - MainMenu
     - CharSelect
@@ -277,48 +231,40 @@ MonoBehaviour:
     - PostGame
     - Startup
     AllowRuntimeSceneChanges: 1
-    PlayerPrefab: {fileID: 4927145850774787080, guid: 1d3f5528d25661949890bcd7f47fe81a,
-      type: 3}
+    PlayerPrefab: {fileID: 4927145850774787080, guid: 1d3f5528d25661949890bcd7f47fe81a, type: 3}
     NetworkPrefabs:
     - Override: 0
-      Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef,
-        type: 3}
+      Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded,
-        type: 3}
+      Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7,
-        type: 3}
+      Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a,
-        type: 3}
+      Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c,
-        type: 3}
+      Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb,
-        type: 3}
+      Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2,
-        type: 3}
+      Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2, type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
