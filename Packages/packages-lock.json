@@ -139,7 +139,11 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
+<<<<<<< HEAD
       "hash": "6322bbb3ad300109789915218fa1d85f69241252"
+=======
+      "hash": "8914ab6e84fbb23042b1d3918122b2af6ce32b18"
+>>>>>>> feature/adding-UTP
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
@@ -166,7 +170,11 @@
         "com.unity.transport": "0.9.0-preview.3",
         "com.unity.jobs": "0.10.0-preview.18"
       },
+<<<<<<< HEAD
       "hash": "6322bbb3ad300109789915218fa1d85f69241252"
+=======
+      "hash": "8914ab6e84fbb23042b1d3918122b2af6ce32b18"
+>>>>>>> feature/adding-UTP
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",
@@ -282,6 +290,13 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "com.veriorpies.parrelsync": {
+      "version": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "bb3d5067e49e403d8b8ba15c036d313b4dd2c696"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

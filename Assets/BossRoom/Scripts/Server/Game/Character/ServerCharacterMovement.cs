@@ -45,7 +45,7 @@ namespace BossRoom.Server
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {
@@ -163,7 +163,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_NavPath != null)
             {

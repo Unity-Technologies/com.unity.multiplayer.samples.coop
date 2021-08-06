@@ -155,7 +155,7 @@ namespace BossRoom.Client
         /// </summary>
         /// <remarks>
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
-        /// yet initialized its client and server GNP-Logic objects yet (which it does in NetworkStart, based on the role that the current player is performing).
+        /// yet initialized its client and server GNP-Logic objects yet (which it does in OnNetworkSpawn, based on the role that the current player is performing).
         /// </remarks>
         /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
@@ -174,6 +174,10 @@ namespace BossRoom.Client
                 case UNetTransport unetTransport:
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
+                    break;
+                case UTPTransport utpTransport:
+                    // utpTransport.Address = ipaddress;
+                    // utpTransport.Port = (ushort)port;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
@@ -303,7 +307,7 @@ namespace BossRoom.Client
             portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! MLAPI will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:MLAPI GOMPS-79, provide feedback for different transport failures). 
+            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:MLAPI GOMPS-79, provide feedback for different transport failures).
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
         }

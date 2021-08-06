@@ -32,7 +32,7 @@ namespace BossRoom.Server
             m_State = GetComponent<NetworkBreakableState>();
         }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {

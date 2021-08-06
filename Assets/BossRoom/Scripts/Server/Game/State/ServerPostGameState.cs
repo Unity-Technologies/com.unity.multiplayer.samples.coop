@@ -6,7 +6,7 @@ namespace BossRoom.Server
 {
 
     /// <summary>
-    /// The ServerPostGameState contains logic for 
+    /// The ServerPostGameState contains logic for
     /// </summary>
     [RequireComponent(typeof(PostGameData))]
     public class ServerPostGameState : GameStateBehaviour
@@ -16,9 +16,9 @@ namespace BossRoom.Server
 
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
-        public override void NetworkStart()
+        public override void OnNetworkSpawn()
         {
-            base.NetworkStart();
+            base.OnNetworkSpawn();
             if (!IsServer)
             {
                 enabled = false;
