@@ -1,5 +1,5 @@
+using Unity.Netcode;
 using UnityEngine;
-using MLAPI;
 
 [RequireComponent(typeof(NetworkManager))]
 public class NetworkingManagerHUD : MonoBehaviour

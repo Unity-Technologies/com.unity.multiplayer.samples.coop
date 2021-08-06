@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using MLAPI;
+using Unity.Netcode;
 
 namespace BossRoom.Visual
 {

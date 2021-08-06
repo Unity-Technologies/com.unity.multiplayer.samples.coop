@@ -1,10 +1,9 @@
-using MLAPI;
-using MLAPI.NetworkVariable.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Unity.Netcode;
 
 namespace BossRoom.Client
 {

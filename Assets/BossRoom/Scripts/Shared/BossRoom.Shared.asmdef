@@ -2,7 +2,7 @@
     "name": "BossRoom.Shared",
     "rootNamespace": "",
     "references": [
-        "Unity.Multiplayer.MLAPI.Runtime",
+        "Unity.Netcode.Runtime",
         "Photon Realtime MLAPI Transport",
         "LiteNetLib MLAPI Transport",
         "Unity.TextMeshPro"

@@ -1,18 +1,18 @@
 {
   "dependencies": {
     "com.mlapi.contrib.transport.litenetlib": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#3f0350ae57befd5ea7deabb1db310eb77704f58e",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#temp/lnl-develop",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "3f0350ae57befd5ea7deabb1db310eb77704f58e"
+      "hash": "6c5d6e36fa182fdad7cce5c3976ed430327e8f55"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#e47ee18972b110a689c23d6ffc0e5994d18e9eb2",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#temp/lnl-develop",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e47ee18972b110a689c23d6ffc0e5994d18e9eb2"
+      "hash": "46fed6057bc79103e75446eca7b0f69b65ccf16e"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -101,7 +101,7 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "be0ca068be30f6bf2a7f9aad515c2541331068f8"
+      "hash": "d89e2f2fe2e8e64ee4b510ff58cbf330a8656f89"
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",

@@ -1,12 +1,11 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using MLAPI;
-using MLAPI.Transports;
 using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
-using MLAPI.Transports.UNET;
 using Photon.Realtime;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UNET;
 
 namespace BossRoom.Client
 {
@@ -121,7 +120,7 @@ namespace BossRoom.Client
         {
             // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
             //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
-            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient && !MLAPI.NetworkManager.Singleton.IsHost )
+            if ( !NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsHost )
             {
                 SceneManager.sceneLoaded -= OnSceneLoaded;
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
@@ -132,7 +131,7 @@ namespace BossRoom.Client
                 {
                     // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
                     // Just shut down networking and switch back to main menu.
-                    MLAPI.NetworkManager.Singleton.Shutdown();
+                    NetworkManager.Singleton.Shutdown();
                     if( !DisconnectReason.HasTransitionReason )
                     {
                         //disconnect that happened for some other reason than user UI interaction--should display a message.

@@ -1,10 +1,10 @@
-using System;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BossRoom.Client
 {
     [RequireComponent(typeof(NetworkCharacterState))]
-    public class ClientCharacter : MLAPI.NetworkBehaviour
+    public class ClientCharacter : NetworkBehaviour
     {
         /// <summary>
         /// The Visualization GameObject isn't in the same transform hierarchy as the object, but it registers itself here

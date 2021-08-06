@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BossRoom.Client
@@ -7,7 +8,7 @@ namespace BossRoom.Client
     /// This is part of a temporary movement system that will be replaced once MLAPI can drive movement
     /// internally.
     /// </summary>
-    public class ClientGenericMovement : MLAPI.NetworkBehaviour
+    public class ClientGenericMovement : NetworkBehaviour
     {
         private INetMovement m_MovementSource;
         private Rigidbody m_Rigidbody;

@@ -1,8 +1,6 @@
-using System;
-using MLAPI;
-using MLAPI.Spawning;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using Random = UnityEngine.Random;
@@ -149,7 +147,7 @@ namespace BossRoom.Server
         /// <summary>
         /// Helper method for OnDestroy that gets the NetworkLifeState.OnValueChanged event for a NetworkObjectId, or null if it doesn't exist.
         /// </summary>
-        private MLAPI.NetworkVariable.NetworkVariable<LifeState>.OnValueChangedDelegate GetLifeStateEvent(ulong id)
+        private NetworkVariable<LifeState>.OnValueChangedDelegate GetLifeStateEvent(ulong id)
         {
             //this is all a little paranoid, because during shutdown it's not always obvious what state is still valid.
             if (NetworkManager != null && NetworkManager.SpawnManager != null && NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject netObj) && netObj != null)
@@ -201,7 +199,7 @@ namespace BossRoom.Server
             netState.Name = playerName;*/
 
             // spawn players characters with destroyWithScene = true
-            newPlayer.SpawnWithOwnership(clientId, null, true);
+            newPlayer.SpawnWithOwnership(clientId, true);
         }
 
         // Every time a player's life state changes we check to see if game is over

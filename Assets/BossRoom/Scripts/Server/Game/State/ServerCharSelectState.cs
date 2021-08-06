@@ -1,6 +1,5 @@
-using MLAPI;
-using MLAPI.Messaging;
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BossRoom.Server
@@ -176,7 +175,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnNotifyServerClientLoadedScene(MLAPI.SceneManagement.SceneSwitchProgress progress, ulong clientId)
+        private void OnNotifyServerClientLoadedScene(SceneSwitchProgress progress, ulong clientId)
         {
             // When the client finishes loading the Lobby Map, we will need to Seat it
             SeatNewPlayer(clientId);
