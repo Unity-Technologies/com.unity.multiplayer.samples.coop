@@ -131,7 +131,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.multiplayer.mlapi": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#feature/initial-relay-utp",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -139,7 +139,7 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "6322bbb3ad300109789915218fa1d85f69241252"
+      "hash": "4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e"
     },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
@@ -158,7 +158,7 @@
       }
     },
     "com.unity.multiplayer.transport.utp": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.transport.utp#feature/initial-relay-utp",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.transport.utp#4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -166,7 +166,7 @@
         "com.unity.transport": "0.9.0-preview.3",
         "com.unity.jobs": "0.10.0-preview.18"
       },
-      "hash": "6322bbb3ad300109789915218fa1d85f69241252"
+      "hash": "4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",
