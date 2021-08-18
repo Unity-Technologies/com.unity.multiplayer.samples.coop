@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using BossRoom.Client;
+using UnityEngine.Assertions;
 
 namespace BossRoom.Visual
 {
@@ -82,9 +83,11 @@ namespace BossRoom.Visual
 
         void SetHeroData(ClientPlayerAvatar clientPlayerAvatar)
         {
-            Debug.Assert(clientPlayerAvatar.TryGetComponent(out NetworkCharacterState networkCharacterState),
-                "NetworkCharacterState component not found on ClientPlayerAvatar",
-                clientPlayerAvatar);
+            var networkCharacterStateExists =
+                clientPlayerAvatar.TryGetComponent(out NetworkCharacterState networkCharacterState);
+
+            Assert.IsTrue(networkCharacterStateExists,
+                "NetworkCharacterState component not found on ClientPlayerAvatar");
 
             m_OwnedPlayerAvatar = clientPlayerAvatar;
             m_OwnedCharacterState = networkCharacterState;
@@ -125,9 +128,11 @@ namespace BossRoom.Visual
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id
         void SetAllyData(ClientPlayerAvatar clientPlayerAvatar)
         {
-            Debug.Assert(clientPlayerAvatar.TryGetComponent(out NetworkCharacterState networkCharacterState),
-                "NetworkCharacterState component not found on ClientPlayerAvatar",
-                clientPlayerAvatar);
+            var networkCharacterStateExists =
+                clientPlayerAvatar.TryGetComponent(out NetworkCharacterState networkCharacterState);
+
+            Assert.IsTrue(networkCharacterStateExists,
+                "NetworkCharacterState component not found on ClientPlayerAvatar");
 
             ulong id = networkCharacterState.NetworkObjectId;
             int slot = FindOrAddAlly(id);
