@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "6c5d6e36fa182fdad7cce5c3976ed430327e8f55"
+      "hash": "46fed6057bc79103e75446eca7b0f69b65ccf16e"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
       "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#temp/lnl-develop",
@@ -92,24 +92,13 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.multiplayer.mlapi": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#develop",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.modules.ai": "1.0.0",
-        "com.unity.modules.animation": "1.0.0",
-        "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
-      },
-      "hash": "d89e2f2fe2e8e64ee4b510ff58cbf330a8656f89"
-    },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
         "com.unity.learn.iet-framework": "1.2.1",
-        "com.unity.multiplayer.mlapi": "0.0.1-preview.1",
+        "com.unity.netcode.gameobjects": "0.2.0",
         "com.unity.test-framework": "1.1.19",
         "com.unity.modules.ai": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
@@ -118,6 +107,17 @@
         "com.unity.modules.physics2d": "1.0.0",
         "com.unity.modules.ui": "1.0.0"
       }
+    },
+    "com.unity.netcode.gameobjects": {
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.gameobjects#develop",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.ai": "1.0.0",
+        "com.unity.modules.animation": "1.0.0",
+        "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
+      },
+      "hash": "43d4494ccd21cd554b6d7ac552dd962e1d27635d"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",
