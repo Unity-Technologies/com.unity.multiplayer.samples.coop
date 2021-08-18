@@ -14,8 +14,6 @@
     "com.unity.multiplayer.transport.utp": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.transport.utp#4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e",
     "com.unity.postprocessing": "2.3.0",
     "com.unity.services.authentication": "1.0.0-pre.4",
-    "com.unity.services.relay": "1.0.0-preview.1",
-    "com.unity.test-framework": "1.1.26",
     "com.unity.services.relay": "1.0.0-pre.3",
     "com.unity.test-framework": "1.1.27",
     "com.unity.textmeshpro": "3.0.6",
