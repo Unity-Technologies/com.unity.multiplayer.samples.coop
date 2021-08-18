@@ -1,3 +1,4 @@
+using BossRoom;
 using MLAPI;
 using MLAPI.Transports;
 using MLAPI.Transports.PhotonRealtime;
@@ -46,18 +47,17 @@ public class RoomNameBox : MonoBehaviour
 
             if (transport != null &&
                 transport is PhotonRealtimeTransport realtimeTransport &&
-                realtimeTransport.Client != null && 
+                realtimeTransport.Client != null &&
                 string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
             {
                 string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
                 m_RoomNameText.text = $"Room Name: {roomName}";
                 m_ConnectionFinished = true;
             }
-            else if (transport != null &&
-                transport is UTPTransport utp &&
-                !string.IsNullOrEmpty(utp.RelayJoinCode))
+            else if (transport != null && transport is UTPTransport utp &&
+            !string.IsNullOrEmpty(RelayJoinCodeThing.RelayJoinCode))
             {
-                m_RoomNameText.text = utp.RelayJoinCode;
+                m_RoomNameText.text = RelayJoinCodeThing.RelayJoinCode;
                 m_ConnectionFinished = true;
             }
         }

@@ -280,12 +280,29 @@ namespace BossRoom
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log("Setting up UTP relay host");
+                    // TODO: This needs to be removed ?
+                   // Unity.Services.Relay.RelayService.Configuration.BasePath = "https://relay-allocations-stg.services.api.unity.com";
                     await UnityServices.InitializeAsync();
                     if (!AuthenticationService.Instance.IsSignedIn)
                     {
                         await AuthenticationService.Instance.SignInAnonymouslyAsync();
                         var playerId = AuthenticationService.Instance.PlayerId;
                         Debug.Log(playerId);
+                        // we now need to get the joinCode?
+                        var serverRelayUtilityTask = RelayUtility.AllocateRelayServerAndGetJoinCode(10);
+                        await serverRelayUtilityTask;
+                        if (serverRelayUtilityTask.IsFaulted)
+                        {
+                            throw new Exception($"Failed to allocate on relay server {serverRelayUtilityTask.Exception?.Message}");
+                        }
+
+                        // we now have the info from the relay service
+                        var (ipv4address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
+
+                        RelayJoinCodeThing.RelayJoinCode = joinCode;
+
+                        // we now need to set the RelayCode somewhere :P
+                        utp.SetRelayServerData(ipv4address, port, allocationIdBytes, key, connectionData);
                     }
                     break;
                 default:

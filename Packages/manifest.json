@@ -16,6 +16,8 @@
     "com.unity.services.authentication": "1.0.0-pre.4",
     "com.unity.services.relay": "1.0.0-preview.1",
     "com.unity.test-framework": "1.1.26",
+    "com.unity.services.relay": "1.0.0-pre.3",
+    "com.unity.test-framework": "1.1.27",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.4.8",
     "com.unity.ugui": "1.0.0",

@@ -249,9 +249,19 @@ namespace BossRoom.Client
                         t2.Wait(30000);
                         var playerId = AuthenticationService.Instance.PlayerId;
                         Debug.Log(playerId);
+
+                        var clientRelayUtilityTask = RelayUtility.JoinRelayServerFromJoinCode(joinCode);
+                        clientRelayUtilityTask.Wait(30000);
+                        if (clientRelayUtilityTask.IsFaulted)
+                        {
+                            throw new Exception($"Failed to allocate on relay server {clientRelayUtilityTask.Exception?.Message}");
+                        }
+
+                        var (ipv4address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+
+                        utp.SetRelayServerData(ipv4address, port, allocationIdBytes, key, connectionData, hostConnectionData);
                     }
 
-                    utp.SetRelayJoinCode(joinCode);
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
@@ -273,6 +283,8 @@ namespace BossRoom.Client
             {
                 case MLAPI.Transports.UTPTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
+                   // Unity.Services.Relay.RelayService.Configuration.BasePath = "https://relay-allocations-stg.services.api.unity.com";
+
                     await UnityServices.InitializeAsync();
                     Debug.Log(AuthenticationService.Instance);
                     if (!AuthenticationService.Instance.IsSignedIn)
@@ -282,7 +294,16 @@ namespace BossRoom.Client
                         Debug.Log(playerId);
                     }
 
-                    utp.SetRelayJoinCode(joinCode);
+                    var clientRelayUtilityTask = RelayUtility.JoinRelayServerFromJoinCode(joinCode);
+                    await clientRelayUtilityTask;
+                    if (clientRelayUtilityTask.IsFaulted)
+                    {
+                        throw new Exception($"Failed to allocate on relay server {clientRelayUtilityTask.Exception?.Message}");
+                    }
+
+                    var (ipv4address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+
+                    utp.SetRelayServerData(ipv4address, port, allocationIdBytes, key, connectionData, hostConnectionData);
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
