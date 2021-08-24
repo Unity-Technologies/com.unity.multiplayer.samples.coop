@@ -1,18 +1,18 @@
 {
   "dependencies": {
     "com.mlapi.contrib.transport.litenetlib": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#3f0350ae57befd5ea7deabb1db310eb77704f58e",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#temp/lnl-develop",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "3f0350ae57befd5ea7deabb1db310eb77704f58e"
+      "hash": "46fed6057bc79103e75446eca7b0f69b65ccf16e"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#e47ee18972b110a689c23d6ffc0e5994d18e9eb2",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#temp/lnl-develop",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "e47ee18972b110a689c23d6ffc0e5994d18e9eb2"
+      "hash": "46fed6057bc79103e75446eca7b0f69b65ccf16e"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -130,24 +130,13 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.multiplayer.mlapi": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.mlapi#4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.modules.ai": "1.0.0",
-        "com.unity.modules.animation": "1.0.0",
-        "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
-      },
-      "hash": "4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e"
-    },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
       "depth": 0,
       "source": "embedded",
       "dependencies": {
         "com.unity.learn.iet-framework": "1.2.1",
-        "com.unity.multiplayer.mlapi": "0.0.1-preview.1",
+        "com.unity.netcode.gameobjects": "0.2.0",
         "com.unity.test-framework": "1.1.19",
         "com.unity.modules.ai": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
@@ -157,16 +146,27 @@
         "com.unity.modules.ui": "1.0.0"
       }
     },
-    "com.unity.multiplayer.transport.utp": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.multiplayer.transport.utp#4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e",
+    "com.unity.netcode.adapter.utp": {
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.adapter.utp#feature/initial-relay-utp",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.multiplayer.mlapi": "0.1.0",
+        "com.unity.netcode.gameobjects": "0.0.1-preview.1",
         "com.unity.transport": "0.9.0-preview.3",
         "com.unity.jobs": "0.10.0-preview.18"
       },
-      "hash": "4cd203c6d7e9c25f9a53fdb942c0f71a6b2b412e"
+      "hash": "731b6143198bd2e45d22c0d50c4de17836e0e087"
+    },
+    "com.unity.netcode.gameobjects": {
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.gameobjects#develop",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.modules.ai": "1.0.0",
+        "com.unity.modules.animation": "1.0.0",
+        "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
+      },
+      "hash": "fd44d53a0aa72406fe66fb3805d36feb509ddb51"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",
@@ -210,7 +210,7 @@
       "url": "https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-candidates"
     },
     "com.unity.services.relay": {
-      "version": "1.0.0-preview.1",
+      "version": "1.0.0-pre.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -232,7 +232,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.26",
+      "version": "1.1.27",
       "depth": 0,
       "source": "registry",
       "dependencies": {
