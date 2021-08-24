@@ -147,7 +147,7 @@
       }
     },
     "com.unity.netcode.adapter.utp": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.adapter.utp#feature/initial-relay-utp",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#feature/initial-relay-utp",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -156,24 +156,6 @@
         "com.unity.jobs": "0.10.0-preview.18"
       },
       "hash": "731b6143198bd2e45d22c0d50c4de17836e0e087"
-    },
-    "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.gameobjects#develop",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.modules.ai": "1.0.0",
-        "com.unity.modules.animation": "1.0.0",
-        "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
-      },
-      "hash": "fd44d53a0aa72406fe66fb3805d36feb509ddb51"
-    },
-    "com.unity.nuget.mono-cecil": {
-      "version": "1.10.1-preview.1",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
       "version": "2.0.0",
