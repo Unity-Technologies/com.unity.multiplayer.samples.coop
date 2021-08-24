@@ -89,7 +89,7 @@ namespace BossRoom.Visual
         public void OnPlayAgainClicked()
         {
             // this should only ever be called by the Host - so just go ahead and switch scenes
-            NetworkManager.Singleton.SceneManager.SwitchScene("CharSelect");
+            NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
 
             // FUTURE: could be improved to better support a dedicated server architecture
         }

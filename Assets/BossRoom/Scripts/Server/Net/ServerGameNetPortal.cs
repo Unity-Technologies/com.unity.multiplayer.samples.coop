@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 namespace BossRoom.Server
 {
@@ -94,7 +95,7 @@ namespace BossRoom.Server
 
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
-                NetworkManager.Singleton.SceneManager.SwitchScene("CharSelect");
+                NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
 
                 if( m_Portal.NetManager.IsHost)
                 {

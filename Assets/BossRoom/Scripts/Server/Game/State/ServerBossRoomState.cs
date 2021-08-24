@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 namespace BossRoom.Server
@@ -238,7 +239,7 @@ namespace BossRoom.Server
             yield return new WaitForSeconds(wait);
 
             GameStateRelay.SetRelayObject(gameWon);
-            NetworkManager.Singleton.SceneManager.SwitchScene("PostGame");
+            NetworkManager.Singleton.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
         }
     }
 }

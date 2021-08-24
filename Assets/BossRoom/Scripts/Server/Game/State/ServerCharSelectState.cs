@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BossRoom.Server
 {
@@ -142,7 +143,7 @@ namespace BossRoom.Server
         private IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
-            NetworkManager.SceneManager.SwitchScene("BossRoom");
+            NetworkManager.SceneManager.LoadScene("BossRoom", LoadSceneMode.Single);
         }
 
         public override void OnNetworkDespawn()
@@ -151,7 +152,7 @@ namespace BossRoom.Server
             {
                 NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene -= OnNotifyServerClientLoadedScene;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
             if (CharSelectData)
             {
@@ -171,14 +172,16 @@ namespace BossRoom.Server
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
                 NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += OnNotifyServerClientLoadedScene;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
             }
         }
 
-        private void OnNotifyServerClientLoadedScene(SceneSwitchProgress progress, ulong clientId)
+        private void OnSceneEvent(SceneEvent sceneEvent)
         {
+            // We need to filter out the event that are not a client has finished loading the scene
+            if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
             // When the client finishes loading the Lobby Map, we will need to Seat it
-            SeatNewPlayer(clientId);
+            SeatNewPlayer(sceneEvent.ClientId);
         }
 
         private void OnClientConnected(ulong clientId)
