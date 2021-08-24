@@ -1,8 +1,4 @@
-using MLAPI;
-using MLAPI.NetworkVariable;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using Unity.Netcode;
 
 /// <summary>
 /// Describes the state of a floor-switch (a/k/a "pressure plate")

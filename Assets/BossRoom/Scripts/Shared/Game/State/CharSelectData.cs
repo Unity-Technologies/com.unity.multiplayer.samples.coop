@@ -1,13 +1,6 @@
 
-using MLAPI;
-using MLAPI.Messaging;
-using MLAPI.Serialization;
-using MLAPI.NetworkVariable;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using MLAPI.NetworkVariable.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BossRoom
@@ -107,7 +100,7 @@ namespace BossRoom
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
         /// </summary>
-        public MLAPI.NetworkVariable.NetworkVariableBool IsLobbyClosed { get; } = new MLAPI.NetworkVariable.NetworkVariableBool(false);
+        public NetworkVariableBool IsLobbyClosed { get; } = new NetworkVariableBool(false);
 
         /// <summary>
         /// Client notification when the server has assigned this client a player Index (from 0 to 7);

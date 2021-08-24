@@ -1,10 +1,10 @@
 using System;
 using UnityEngine;
 using UnityEngine.UI;
-using MLAPI;
-using MLAPI.Transports;
 using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UNET;
 using UnityEngine.Assertions;
 
 namespace BossRoom.Scripts.Editor
@@ -34,8 +34,7 @@ namespace BossRoom.Scripts.Editor
                             liteNetLibTransport.SimulateMaxLatency > 0;
                         break;
                     #endif
-                    case MLAPI.Transports.UNET.UNetTransport unetTransport:
-                    case UTPTransport utpTransport:
+                    case UNetTransport unetTransport:
                     case PhotonRealtimeTransport photonTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;

@@ -1,9 +1,8 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using MLAPI;
 using UnityEngine;
-using MLAPI.SceneManagement;
+using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 namespace BossRoom.Server
 {
@@ -96,7 +95,7 @@ namespace BossRoom.Server
 
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
-                NetworkManager.Singleton.SceneManager.SwitchScene("CharSelect");
+                NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
 
                 if( m_Portal.NetManager.IsHost)
                 {
@@ -239,7 +238,7 @@ namespace BossRoom.Server
         /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
         /// <param name="clientId">This is the clientId that MLAPI assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="callback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        private void ApprovalCheck(byte[] connectionData, ulong clientId, MLAPI.NetworkManager.ConnectionApprovedDelegate callback)
+        private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback)
         {
             if (connectionData.Length > k_MaxConnectPayload)
             {
