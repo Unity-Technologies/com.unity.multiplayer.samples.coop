@@ -1,5 +1,5 @@
 using BossRoom;
-using Photon.Realtime;
+using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.Assertions;
 using TMPro;

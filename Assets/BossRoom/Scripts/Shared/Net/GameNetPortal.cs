@@ -277,7 +277,7 @@ namespace BossRoom
 
             switch (chosenTransport)
             {
-                case MLAPI.Transports.UTPTransport utp:
+                case UTPTransport utp:
                     Debug.Log("Setting up UTP relay host");
                     // TODO: This needs to be removed ?
                    // Unity.Services.Relay.RelayService.Configuration.BasePath = "https://relay-allocations-stg.services.api.unity.com";

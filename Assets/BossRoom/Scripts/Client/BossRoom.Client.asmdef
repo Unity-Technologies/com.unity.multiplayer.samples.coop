@@ -10,7 +10,8 @@
         "Unity.TextMeshPro",
         "Unity.Multiplayer.Transport.UTP",
         "Unity.Services.Core",
-        "Unity.Services.Authentication"
+        "Unity.Services.Authentication",
+        "Unity.Netcode.Adapater.UTP"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

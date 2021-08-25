@@ -2,11 +2,13 @@
     "name": "BossRoom.Server",
     "rootNamespace": "",
     "references": [
-    	"Unity.Netcode.Runtime",
+        "Unity.Netcode.Runtime",
         "BossRoom.Shared",
         "Unity.Multiplayer.Transport.UTP",
         "Unity.Services.Core",
-        "Unity.Services.Authentication"
+        "Unity.Services.Authentication",
+        "Unity.Services.Relay",
+        "Unity.Netcode.Adapater.UTP"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -8,7 +8,9 @@
         "Unity.TextMeshPro",
         "Unity.Multiplayer.Transport.UTP",
         "Unity.Services.Core",
-        "Unity.Services.Authentication"
+        "Unity.Services.Authentication",
+        "Unity.Services.Relay",
+        "Unity.Netcode.Adapater.UTP"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
