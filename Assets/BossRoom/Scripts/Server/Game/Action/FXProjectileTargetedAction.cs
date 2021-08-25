@@ -1,6 +1,7 @@
 using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 namespace BossRoom.Server
 {

@@ -1,6 +1,6 @@
 using MLAPI;
 using UnityEngine;
-
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 namespace BossRoom.Server
 {
@@ -59,7 +59,8 @@ namespace BossRoom.Server
                 m_Launched = true;
 
                 var projectileInfo = GetProjectileInfo();
-                GameObject projectile = Object.Instantiate(projectileInfo.ProjectilePrefab);
+                NetworkObject networkProjectile = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab);
+                GameObject projectile = networkProjectile.gameObject;
 
                 // point the projectile the same way we're facing
                 projectile.transform.forward = m_Parent.transform.forward;

@@ -35,6 +35,7 @@ namespace BossRoom.Visual
         {
             if( m_NetState != null )
             {
+                transform.parent = m_Parent;
                 m_NetState.HitEnemyEvent -= OnEnemyHit;
             }
         }

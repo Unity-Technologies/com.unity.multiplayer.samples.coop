@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5885657935768561843}
   - component: {fileID: 6904436661957702281}
+  - component: {fileID: -1799776900304088304}
   m_Layer: 0
   m_Name: fx_magebolt
   m_TagString: Untagged
@@ -52,15 +53,23 @@ MonoBehaviour:
   - {fileID: 1397666064616585489}
   m_TargetMissedGraphics:
   - {fileID: 739000835040427345}
-  m_ShowTheseOnTargetImpact:
-  - {fileID: 1397666064616585489}
-  m_HideTheseOnTargetImpact:
-  - {fileID: 5366033291647406573}
-  m_ShowTheseOnFloorImpact:
-  - {fileID: 739000835040427345}
-  m_HideTheseOnFloorImpact:
-  - {fileID: 5366033291647406573}
   m_PostImpactDurationSeconds: 3
+--- !u!114 &-1799776900304088304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 765690034209705780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!108 &1971963935719761392
 Light:
   m_ObjectHideFlags: 0

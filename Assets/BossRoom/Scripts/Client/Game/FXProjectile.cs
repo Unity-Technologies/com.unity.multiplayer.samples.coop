@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 /// <summary>
 /// Logic that handles an FX-based pretend-missile.
@@ -65,7 +66,7 @@ public class FXProjectile : MonoBehaviour
         }
         else if (m_Age >= m_FlightDuration + m_PostImpactDurationSeconds)
         {
-            Destroy(gameObject);
+            NetworkObjectPool.Singleton.ReturnGameObject(gameObject);
         }
     }
 

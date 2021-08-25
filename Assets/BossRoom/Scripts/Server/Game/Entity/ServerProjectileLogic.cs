@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using MLAPI.Spawning;
 using UnityEngine;
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 namespace BossRoom.Server
 {
@@ -92,8 +93,10 @@ namespace BossRoom.Server
 
             if (m_DestroyAtSec < Time.fixedTime)
             {
-                // Time to go away.
-                Destroy(gameObject);
+                // Time return to the pool whence it came.
+                NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
+                NetworkObjectPool.Singleton.ReturnNetworkObject(networkObject, m_ProjectileInfo.ProjectilePrefab);
+                networkObject.Despawn();
             }
 
             if (!m_IsDead)

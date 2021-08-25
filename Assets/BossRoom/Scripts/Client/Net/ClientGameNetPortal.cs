@@ -7,6 +7,7 @@ using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using MLAPI.Transports.UNET;
 using Photon.Realtime;
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 namespace BossRoom.Client
 {
@@ -82,6 +83,10 @@ namespace BossRoom.Client
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
+            if (scene.buildIndex == 3)
+            {
+                NetworkObjectPool.Singleton.InitializePool();
+            }
             m_Portal.ClientToServerSceneChanged(SceneManager.GetActiveScene().buildIndex);
         }
 

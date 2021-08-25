@@ -1,6 +1,7 @@
 using MLAPI;
 using MLAPI.Spawning;
 using UnityEngine;
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 namespace BossRoom.Visual
 {
@@ -128,7 +129,7 @@ namespace BossRoom.Visual
 
         private FXProjectile SpawnAndInitializeProjectile()
         {
-            var projectileGO = Object.Instantiate(Description.Projectiles[0].ProjectilePrefab, m_Parent.transform.position, m_Parent.transform.rotation, null);
+            var projectileGO = NetworkObjectPool.Singleton.GetNetworkObject(Description.Projectiles[0].ProjectilePrefab, m_Parent.transform.position, m_Parent.transform.rotation);
 
             var projectile = projectileGO.GetComponent<FXProjectile>();
             if (!projectile)
