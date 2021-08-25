@@ -187,7 +187,7 @@ namespace BossRoom.Server
         private void OnClientConnected(ulong clientId)
         {
             // When the client first connects to the server we will need to Seat it
-            SeatNewPlayer(clientId);
+            //SeatNewPlayer(clientId);
         }
 
         private int GetAvailablePlayerNum()
