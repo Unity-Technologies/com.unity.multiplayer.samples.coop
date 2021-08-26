@@ -36,6 +36,7 @@ namespace BossRoom.Scripts.Editor
                     #endif
                     case UNetTransport unetTransport:
                     case PhotonRealtimeTransport photonTransport:
+                    case UTPTransport utpTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
                     default:
