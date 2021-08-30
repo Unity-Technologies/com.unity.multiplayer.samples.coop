@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7151198093957655792}
   - component: {fileID: 8733560682400390412}
   - component: {fileID: 8650150679972978578}
+  - component: {fileID: 8832603988129587271}
   m_Layer: 0
   m_Name: NetworkGameState
   m_TagString: Untagged
@@ -77,3 +78,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   winState:
     m_InternalValue: 0
+--- !u!114 &8832603988129587271
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 576565557002701866}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7598968fc3503a4499941ba23cc04000, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_TransformVariable: {fileID: 11400000, guid: 07bddcdf06738e74cb79d30065ff96af, type: 2}

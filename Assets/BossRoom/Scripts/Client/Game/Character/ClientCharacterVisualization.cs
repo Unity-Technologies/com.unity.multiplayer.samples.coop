@@ -20,9 +20,6 @@ namespace BossRoom.Visual
         [SerializeField]
         private VisualizationConfiguration m_VisualizationConfiguration;
 
-        [SerializeField]
-        TransformVariable m_RuntimeObjectsParent;
-
         /// <summary>
         /// Returns a reference to the active Animator for this visualization
         /// </summary>
@@ -48,6 +45,8 @@ namespace BossRoom.Visual
         /// (We don't have an actual transform parent because we're on a top-level GameObject.)
         /// </summary>
         public Transform Parent { get; private set; }
+
+        PhysicsWrapper m_PhysicsWrapper;
 
         public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
 
@@ -81,6 +80,8 @@ namespace BossRoom.Visual
 
             m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
 
+            PhysicsWrapper.TryGetPhysicsWrapper(m_NetState.NetworkObjectId, out m_PhysicsWrapper);
+
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
@@ -89,12 +90,8 @@ namespace BossRoom.Visual
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
 
-            Assert.IsTrue(m_RuntimeObjectsParent && m_RuntimeObjectsParent.Value,
-                "RuntimeObjectsParent transform is not set!");
-            transform.SetParent(m_RuntimeObjectsParent.Value);
-
             // sync our visualization position & rotation to the most up to date version received from server
-            transform.SetPositionAndRotation(Parent.position, Parent.rotation);
+            transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
@@ -280,7 +277,7 @@ namespace BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+            VisualUtils.SmoothMove(transform, m_PhysicsWrapper.Transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
 
             if (m_ClientVisualsAnimator)
             {

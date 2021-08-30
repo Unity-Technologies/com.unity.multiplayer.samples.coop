@@ -10,7 +10,7 @@ namespace BossRoom.Visual
         private void Start()
         {
             // get our particle near the right spot!
-            transform.position = m_PlayerOwner.transform.position;
+            transform.position = m_Origin;
 
             m_StartTime = Time.time;
             // right now we only support "untargeted" charged attacks.

@@ -1,14 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
 using MLAPI;
 using UnityEngine;
 
 namespace BossRoom.Server
 {
-    [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
-    public class ServerCharacter : NetworkBehaviour, IDamageable
+    public class ServerCharacter : NetworkBehaviour
     {
-        public NetworkCharacterState NetState { get; private set; }
+        [SerializeField]
+        NetworkCharacterState m_NetworkCharacterState;
+
+        public NetworkCharacterState NetState => m_NetworkCharacterState;
 
         /// <summary>
         /// Returns true if this Character is an NPC.
@@ -39,14 +40,21 @@ namespace BossRoom.Server
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
-        // Cached component reference
-        private ServerCharacterMovement m_Movement;
+        [SerializeField]
+        DamageReceiver m_DamageReceiver;
+
+        [SerializeField]
+        ServerCharacterMovement m_Movement;
+
+        public ServerCharacterMovement Movement => m_Movement;
+
+        [SerializeField]
+        PhysicsWrapper m_PhysicsWrapper;
+
+        public PhysicsWrapper physicsWrapper => m_PhysicsWrapper;
 
         private void Awake()
         {
-            m_Movement = GetComponent<ServerCharacterMovement>();
-
-            NetState = GetComponent<NetworkCharacterState>();
             m_ActionPlayer = new ActionPlayer(this);
         }
 
@@ -55,11 +63,11 @@ namespace BossRoom.Server
             if (!IsServer) { enabled = false; }
             else
             {
-                NetState = GetComponent<NetworkCharacterState>();
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+                m_DamageReceiver.damageReceived += ReceiveHP;
 
                 if (NetState.IsNpc)
                 {
@@ -84,6 +92,11 @@ namespace BossRoom.Server
                 NetState.ReceivedClientInput -= OnClientMoveRequest;
                 NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
+            }
+
+            if (m_DamageReceiver)
+            {
+                m_DamageReceiver.damageReceived -= ReceiveHP;
             }
         }
 
@@ -251,16 +264,6 @@ namespace BossRoom.Server
         private void OnStoppedChargingUp()
         {
             m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
-        }
-
-        public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()
-        {
-            return IDamageable.SpecialDamageFlags.None;
-        }
-
-        public bool IsDamageable()
-        {
-            return NetState.NetworkLifeState.LifeState.Value == LifeState.Alive;
         }
 
         /// <summary>

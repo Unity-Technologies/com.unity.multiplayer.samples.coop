@@ -21,9 +21,6 @@ namespace BossRoom.Server
         TransformVariable m_NetworkGameStateTransform;
 
         [SerializeField]
-        TransformVariable m_RuntimeNetworkObjectsParent;
-
-        [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_PlayerPrefab;
 
@@ -155,14 +152,17 @@ namespace BossRoom.Server
             spawnPoint = m_PlayerSpawnPointsList[index];
             m_PlayerSpawnPointsList.RemoveAt(index);
 
-            Assert.IsTrue(m_RuntimeNetworkObjectsParent && m_RuntimeNetworkObjectsParent.Value,
-                "RuntimeNetworkObjectsParent transform is not set!");
-
             var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
 
-            NetworkObject newPlayer = spawnPoint != null ?
-                Instantiate(m_PlayerPrefab, spawnPoint.position, spawnPoint.rotation, m_RuntimeNetworkObjectsParent.Value) :
-                Instantiate(m_PlayerPrefab, m_RuntimeNetworkObjectsParent.Value);
+            var newPlayer = Instantiate(m_PlayerPrefab, Vector3.zero, Quaternion.identity);
+
+            var physicsTransform = newPlayer.GetComponent<ServerCharacter>().physicsWrapper.Transform;
+
+            if (spawnPoint != null)
+            {
+                // workaround; position of child transform not currently synced on spawn message
+                StartCoroutine(WaitToReposition(physicsTransform, spawnPoint.position, spawnPoint.rotation));
+            }
 
             var persistentPlayerExists = playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer);
             Assert.IsTrue(persistentPlayerExists,
@@ -198,6 +198,12 @@ namespace BossRoom.Server
 
             // spawn players characters with destroyWithScene = true
             newPlayer.SpawnWithOwnership(clientId, null, true);
+        }
+
+        static IEnumerator WaitToReposition(Transform moveTransform, Vector3 newPosition, Quaternion newRotation)
+        {
+            yield return new WaitForSeconds(1.5f);
+            moveTransform.SetPositionAndRotation(newPosition, newRotation);
         }
 
         // Every time a player's life state changes we check to see if game is over

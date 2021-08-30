@@ -24,7 +24,7 @@ public class AoeAction : Action
 
     public override bool Start()
     {
-        float distanceAway = Vector3.Distance(m_Parent.transform.position, Data.Position);
+        float distanceAway = Vector3.Distance(m_Parent.physicsWrapper.Transform.position, Data.Position);
         if (distanceAway > Description.Range+k_MaxDistanceDivergence)
         {
             // Due to latency, it's possible for the client side click check to be out of date with the server driven position. Doing a final check server side to make sure.

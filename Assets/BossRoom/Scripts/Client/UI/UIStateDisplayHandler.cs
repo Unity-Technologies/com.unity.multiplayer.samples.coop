@@ -106,8 +106,8 @@ namespace BossRoom.Client
 
                 if (m_DisplayHealth)
                 {
-                    m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
-                    m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
+                    m_NetworkHealthState.hitPointsReplenished += DisplayUIHealth;
+                    m_NetworkHealthState.hitPointsDepleted += RemoveUIHealth;
                 }
             }
 
@@ -131,8 +131,8 @@ namespace BossRoom.Client
 
             if (m_NetworkHealthState != null)
             {
-                m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
-                m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
+                m_NetworkHealthState.hitPointsReplenished -= DisplayUIHealth;
+                m_NetworkHealthState.hitPointsDepleted -= RemoveUIHealth;
             }
 
             if (m_ClientAvatarGuidHandler)

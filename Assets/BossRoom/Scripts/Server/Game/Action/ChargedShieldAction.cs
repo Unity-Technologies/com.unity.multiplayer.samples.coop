@@ -46,7 +46,7 @@ namespace BossRoom.Server
                 if (initialTarget)
                 {
                     // face our target, if we had one
-                    m_Parent.transform.LookAt(initialTarget.transform.position);
+                    m_Parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
                 }
             }
 
