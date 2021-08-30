@@ -5,5 +5,5 @@ using Unity.Netcode;
 /// </summary>
 public class NetworkDoorState : NetworkBehaviour
 {
-    public NetworkVariableBool IsOpen { get; } = new NetworkVariableBool();
+    public NetworkVariable<bool> IsOpen { get; } = new NetworkVariable<bool>();
 }

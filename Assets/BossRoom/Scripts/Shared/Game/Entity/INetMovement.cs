@@ -13,17 +13,17 @@ namespace BossRoom
         /// <summary>
         /// The current transform position of this entity.
         /// </summary>
-        public NetworkVariableVector3 NetworkPosition { get; }
+        public NetworkVariable<Vector3> NetworkPosition { get; }
 
         /// <summary>
         /// The networked rotation of this entity. This reflects the authorative rotation on the server.
         /// </summary>
-        public NetworkVariableFloat NetworkRotationY { get; }
+        public NetworkVariable<float> NetworkRotationY { get; }
 
         /// <summary>
         /// The current speed of this entity in m/s.
         /// </summary>
-        public NetworkVariableFloat NetworkMovementSpeed { get; }
+        public NetworkVariable<float> NetworkMovementSpeed { get; }
 
         public void InitNetworkPositionAndRotationY(Vector3 initPosition, float initRotationY);
     }

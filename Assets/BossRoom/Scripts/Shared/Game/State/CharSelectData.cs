@@ -85,22 +85,22 @@ namespace BossRoom
             }
         }
 
-        private NetworkList<LobbyPlayerState> m_LobbyPlayers;
+        private NetworkVariableLobbyState m_LobbyPlayers;
 
         private void Awake()
         {
-            m_LobbyPlayers = new NetworkList<LobbyPlayerState>();
+            m_LobbyPlayers = new NetworkVariableLobbyState(k_MaxLobbyPlayers);
         }
 
         /// <summary>
         /// Current state of all players in the lobby.
         /// </summary>
-        public NetworkList<LobbyPlayerState> LobbyPlayers { get { return m_LobbyPlayers; } }
+        public NetworkVariableLobbyState LobbyPlayers { get { return m_LobbyPlayers; } }
 
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
         /// </summary>
-        public NetworkVariableBool IsLobbyClosed { get; } = new NetworkVariableBool(false);
+        public NetworkVariable<bool> IsLobbyClosed { get; } = new NetworkVariable<bool>(false);
 
         /// <summary>
         /// Client notification when the server has assigned this client a player Index (from 0 to 7);

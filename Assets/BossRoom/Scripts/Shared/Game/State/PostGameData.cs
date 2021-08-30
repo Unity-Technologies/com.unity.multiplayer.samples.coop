@@ -22,6 +22,6 @@ namespace BossRoom
         /// <summary>
         /// When this is true, the players have defeated the Boss and deserve a victory message
         /// </summary>
-        public NetworkVariableByte GameBannerState { get; } = new NetworkVariableByte((byte)BannerState.Unset);
+        public NetworkVariable<byte> GameBannerState { get; } = new NetworkVariable<byte>((byte)BannerState.Unset);
     }
 }

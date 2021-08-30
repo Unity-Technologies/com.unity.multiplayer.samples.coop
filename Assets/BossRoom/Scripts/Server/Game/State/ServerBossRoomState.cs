@@ -187,7 +187,7 @@ namespace BossRoom.Server
             if (newPlayer.TryGetComponent(out NetworkAvatarGuidState networkCharacterDefinition))
             {
                 networkCharacterDefinition.AvatarGuidArray.Value =
-                    m_Avatars[lobbyResults.Appearance].Guid.ToByteArray();
+                    m_Avatars[lobbyResults.Appearance].Guid;
             }
 
             var netState = newPlayer.GetComponent<NetworkCharacterState>();

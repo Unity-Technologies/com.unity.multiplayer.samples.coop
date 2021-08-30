@@ -5,5 +5,5 @@ using Unity.Netcode;
 /// </summary>
 public class NetworkFloorSwitchState : NetworkBehaviour
 {
-    public NetworkVariableBool IsSwitchedOn { get; } = new NetworkVariableBool();
+    public NetworkVariable<bool> IsSwitchedOn { get; } = new NetworkVariable<bool>();
 }
