@@ -255,7 +255,7 @@ Light:
   m_Shape: 0
   m_Color: {r: 0.9137255, g: 0.1870887, b: 0, a: 1}
   m_Intensity: 2.13
-  m_Range: 17.75
+  m_Range: 12.48
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -296,7 +296,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -382,11 +382,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 10832509785548470301
-  PrefabHashGenerator: EnemySpawner
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &4844841199312666291
 MonoBehaviour:
   m_ObjectHideFlags: 0

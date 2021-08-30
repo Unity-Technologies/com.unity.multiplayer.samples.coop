@@ -50,11 +50,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 18298031947863545144
-  PrefabHashGenerator: BreakableCrystal
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &7561466626167410996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,6 +147,8 @@ MonoBehaviour:
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
   m_NetworkNameState: {fileID: 0}
   m_NetworkHealthState: {fileID: 1536483666502863715}
+  m_CharacterClassContainer: {fileID: 0}
+  m_ClientCharacter: {fileID: 0}
   m_BaseHP: {fileID: 11400000, guid: 35bb8d80ab89bf64aa87c6e1a7863370, type: 2}
   m_TransformToTrack: {fileID: 2925848032892422867}
   m_VerticalWorldOffset: 0
@@ -191,7 +192,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4457111245660246774}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
