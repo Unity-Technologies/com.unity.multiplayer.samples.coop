@@ -89,7 +89,7 @@ namespace BossRoom.Server
                 DoInitialSpawnIfPossible();
             }
         }
-
+        
         private bool DoInitialSpawnIfPossible()
         {
             if (m_ServerNetPortal.AreAllClientsInServerScene() && !InitialSpawnDone && m_NetPortal.NetManager.ConnectedClientsList.Count == m_LobbyResults.Choices.Count)

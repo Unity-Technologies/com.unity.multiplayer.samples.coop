@@ -112,6 +112,7 @@ namespace BossRoom
 
         public override void OnNetworkSpawn()
         {
+            if (!IsServer) return;
             HitPoints = CharacterData.BaseHP.Value;
         }
 

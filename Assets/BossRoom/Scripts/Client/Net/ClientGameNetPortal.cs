@@ -74,14 +74,7 @@ namespace BossRoom.Client
                     //only do this if a pure client, so as not to overlap with host behavior in ServerGameNetPortal.
                     m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 }
-
-                SceneManager.sceneLoaded += OnSceneLoaded;
             }
-        }
-
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            m_Portal.ClientToServerSceneChanged(SceneManager.GetActiveScene().buildIndex);
         }
 
         /// <summary>
@@ -122,7 +115,6 @@ namespace BossRoom.Client
             //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
             if ( !NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsHost )
             {
-                SceneManager.sceneLoaded -= OnSceneLoaded;
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
 
                 //On a client disconnect we want to take them back to the main menu.

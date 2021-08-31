@@ -9,12 +9,12 @@ using UnityEngine;
 namespace BossRoom
 {
     [Serializable]
-    public class NetworkVariableLobbyState : NetworkVariableBase, IEnumerable<CharSelectData.LobbyPlayerState>
+    public class NetworkVariableLobbyState : NetworkVariableBase, IEnumerable, IEnumerator
     {
         /// <summary>
         /// Delegate type for lobby changed event
-        /// <param name="lobby">The latest lobby version</param>
         /// </summary>
+        /// <param name="lobby">The latest lobby version</param>
         public delegate void OnLobbyChangedDelegate(ArraySegment<CharSelectData.LobbyPlayerState> lobby);
 
         /// <summary>
@@ -43,6 +43,8 @@ namespace BossRoom
 
         private CharSelectData.LobbyPlayerState[] m_PlayerStates;
 
+        private int m_Position = -1;
+
         /// <summary>
         /// Get the number of player in the lobby
         /// </summary>
@@ -70,6 +72,7 @@ namespace BossRoom
             SetDirty(true);
             m_HasChangedValue[i] = true;
             m_PlayerStates[i] = state;
+            OnLobbyChanged?.Invoke(new ArraySegment<CharSelectData.LobbyPlayerState>(m_PlayerStates, 0, m_PlayerCount));
         }
 
         /// <summary>
@@ -161,6 +164,8 @@ namespace BossRoom
             {
                 m_PlayerStates[i].NetworkSerialize(reader.Serializer);
             }
+
+            OnLobbyChanged?.Invoke(new ArraySegment<CharSelectData.LobbyPlayerState>(m_PlayerStates, 0, m_PlayerCount));
         }
 
         /// <summary>
@@ -185,24 +190,41 @@ namespace BossRoom
             {
                 SetDirty(true);
             }
+
+            OnLobbyChanged?.Invoke(new ArraySegment<CharSelectData.LobbyPlayerState>(m_PlayerStates, 0, m_PlayerCount));
         }
 
         /// <summary>
         /// Retrieve an enumerator from the array
         /// </summary>
         /// <returns>An enumerator on the array</returns>
-        public IEnumerator<CharSelectData.LobbyPlayerState> GetEnumerator()
+        public IEnumerator GetEnumerator()
         {
-            return (IEnumerator<CharSelectData.LobbyPlayerState>)m_PlayerStates.GetEnumerator();
+            Reset();
+            return this;
         }
 
         /// <summary>
-        /// Retrieve an enumerator from the array
+        /// Move to the next position
         /// </summary>
-        /// <returns>An enumerator on the array</returns>
-        IEnumerator IEnumerable.GetEnumerator()
+        /// <returns>False if out of bounds, true otherwise</returns>
+        public bool MoveNext()
         {
-            return GetEnumerator();
+            m_Position++;
+            return (m_Position < m_PlayerCount);
         }
+
+        /// <summary>
+        /// Reset the enumerator to the first position
+        /// </summary>
+        public void Reset()
+        {
+            m_Position = -1;
+        }
+
+        /// <summary>
+        /// Get the Current value pointed by the Iterator
+        /// </summary>
+        public object Current => m_PlayerStates[m_Position];
     }
 }
