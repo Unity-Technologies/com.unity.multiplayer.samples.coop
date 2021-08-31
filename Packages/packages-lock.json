@@ -117,7 +117,7 @@
       "dependencies": {
         "com.unity.profiling.core": "1.0.0-pre.1"
       },
-      "hash": "76d5788822b4d353c6662fba81641eceb3f6392d"
+      "hash": "60de2983fde0f2b8549014456d9bdaa43a5e3fd7"
     },
     "com.unity.netcode.gameobjects": {
       "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.gameobjects#develop",
@@ -128,7 +128,7 @@
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
       },
-      "hash": "b5f761cfc5ef4e46144705e278ddc68cfa5b8737"
+      "hash": "49997da9191ee84fd437c5549783ccfd3220305f"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",
@@ -188,7 +188,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.5.6",
+      "version": "1.6.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
