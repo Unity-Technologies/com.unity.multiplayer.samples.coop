@@ -1,59 +1,50 @@
 using MLAPI;
 using UnityEngine;
 
-/// <summary>
-/// Represents a door in the client. The visuals of the door animate as
-/// "opening" and "closing", but for physics purposes this is an illusion:
-/// whenever the door is open on the server, the door's physics are disabled,
-/// and vice versa.
-/// </summary>
-[RequireComponent(typeof(NetworkDoorState))]
-public class ClientDoorVisualization : NetworkBehaviour
+namespace BossRoom.Client
 {
-    [SerializeField]
-    [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]
-    private GameObject m_PhysicsObject;
-
-    [SerializeField]
-    private Animator m_Animator;
-
-    [SerializeField]
-    private string m_AnimatorDoorOpenBoolVarName = "IsOpen";
-
-    private NetworkDoorState m_DoorState;
-
-    private void Awake()
+    /// <summary>
+    /// Represents a door in the client. The visuals of the door animate as
+    /// "opening" and "closing", but for physics purposes this is an illusion:
+    /// whenever the door is open on the server, the door's physics are disabled,
+    /// and vice versa.
+    /// </summary>
+    [RequireComponent(typeof(NetworkDoorState))]
+    public class ClientDoorVisualization : NetworkBehaviour
     {
-        m_DoorState = GetComponent<NetworkDoorState>();
-    }
+        [SerializeField]
+        [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]
+        GameObject m_PhysicsObject;
 
-    public override void OnNetworkSpawn()
-    {
-        if (!IsClient)
+        [SerializeField]
+        NetworkDoorState m_DoorState;
+
+        public override void OnNetworkSpawn()
         {
-            enabled = false;
+            if (!IsClient)
+            {
+                enabled = false;
+            }
+            else
+            {
+                m_DoorState.IsOpen.OnValueChanged += OnDoorStateChanged;
+
+                // initialize visuals based on current server state (or else we default to "closed")
+                OnDoorStateChanged(false, m_DoorState.IsOpen.Value);
+            }
         }
-        else
+
+        public override void OnNetworkDespawn()
         {
-            m_DoorState.IsOpen.OnValueChanged += OnDoorStateChanged;
-
-            // initialize visuals based on current server state (or else we default to "closed")
-            OnDoorStateChanged(false, m_DoorState.IsOpen.Value);
+            if (m_DoorState)
+            {
+                m_DoorState.IsOpen.OnValueChanged -= OnDoorStateChanged;
+            }
         }
-    }
 
-    public override void OnNetworkDespawn()
-    {
-        if (m_DoorState)
+        void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
         {
-            m_DoorState.IsOpen.OnValueChanged -= OnDoorStateChanged;
+            m_PhysicsObject.SetActive(!isDoorOpen);
         }
     }
-
-    private void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
-    {
-        m_PhysicsObject.SetActive(!isDoorOpen);
-        m_Animator.SetBool(m_AnimatorDoorOpenBoolVarName, isDoorOpen);
-    }
-
 }
