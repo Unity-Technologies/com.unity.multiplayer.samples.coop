@@ -31,10 +31,21 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
             if (_instance != null && _instance != this)
             {
                 Destroy(this.gameObject);
-            } else {
-                _instance = this;
-                DontDestroyOnLoad(this);
             }
+            else
+            {
+                _instance = this;
+            }
+        }
+
+        public void Start()
+        {
+            InitializePool();
+        }
+
+        public void OnDestroy()
+        {
+            pooledObjects.Clear();
         }
 
         public void OnValidate()

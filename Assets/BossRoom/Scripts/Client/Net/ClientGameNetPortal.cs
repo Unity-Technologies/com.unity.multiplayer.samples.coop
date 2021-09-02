@@ -37,6 +37,8 @@ namespace BossRoom.Client
         /// </summary>
         public event Action NetworkTimedOut;
 
+        public string m_MainSceneName = "BossRoom";
+
         void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
@@ -83,10 +85,6 @@ namespace BossRoom.Client
 
         private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            if (scene.buildIndex == 3)
-            {
-                NetworkObjectPool.Singleton.InitializePool();
-            }
             m_Portal.ClientToServerSceneChanged(SceneManager.GetActiveScene().buildIndex);
         }
 

@@ -95,7 +95,6 @@ namespace BossRoom.Server
             {
                 // Time return to the pool whence it came.
                 NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
-                NetworkObjectPool.Singleton.ReturnNetworkObject(networkObject, m_ProjectileInfo.ProjectilePrefab);
                 networkObject.Despawn();
             }
 
