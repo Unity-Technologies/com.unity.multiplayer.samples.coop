@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 1256422740313371527}
   - component: {fileID: 1256422740313371526}
   - component: {fileID: 7365211438608992303}
-  m_Layer: 12
+  - component: {fileID: -3001577887299381963}
+  m_Layer: 6
   m_Name: PickupPot
-  m_TagString: Untagged
+  m_TagString: Heavy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -62,6 +63,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.9166098, y: 2.0842423, z: 1.91661}
   m_Center: {x: 0.00000017881393, y: 1.0421212, z: 0.00000059604645}
+--- !u!114 &-3001577887299381963
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1256422740313371525}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ea33e69e2ecc5ac408843539e2be4c57, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5650858351102908367
 PrefabInstance:
   m_ObjectHideFlags: 0

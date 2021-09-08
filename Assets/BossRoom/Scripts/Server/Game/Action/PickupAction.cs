@@ -7,21 +7,37 @@ namespace BossRoom.Server
     {
         RaycastHit[] m_RaycastHits = new RaycastHit[1];
 
+        const string k_HeavyTag = "Heavy";
+
         public PickupAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
         }
 
         public override bool Start()
         {
-            var numResults = Physics.BoxCastNonAlloc(m_Parent.transform.position, m_Parent.GetComponent<Collider>().bounds.extents,
-                m_Parent.transform.forward, m_RaycastHits, Quaternion.identity, Description.Range, 1 << LayerMask.NameToLayer("Heavy"));
+            var pickupState = m_Parent.GetComponentInChildren<NetworkPickupState>();
+            if (pickupState)
+            {
+                pickupState.transform.SetParent(null);
+                Data.TargetIds = null;
+                m_Parent.NetState.RecvDoActionClientRPC(Data);
+                return false;
+            }
 
-            if (numResults == 0 || !m_RaycastHits[0].collider.TryGetComponent(out NetworkObject heavyNetworkObject))
+            var numResults = Physics.BoxCastNonAlloc(m_Parent.transform.position, m_Parent.GetComponent<Collider>().bounds.extents,
+                m_Parent.transform.forward, m_RaycastHits, Quaternion.identity, Description.Range, 1 << LayerMask.NameToLayer("NPCs"));
+
+            // collider must contain "Heavy" tag
+            if (numResults == 0 || !m_RaycastHits[0].collider.TryGetComponent(out NetworkObject heavyNetworkObject) ||
+                !m_RaycastHits[0].collider.gameObject.CompareTag(k_HeavyTag))
             {
                 return false;
             }
 
-            heavyNetworkObject.TrySetParent(m_Parent.transform);
+            if (!heavyNetworkObject.TrySetParent(m_Parent.transform))
+            {
+                return false;
+            }
 
             Data.TargetIds = new ulong[] { heavyNetworkObject.NetworkObjectId };
 
@@ -37,8 +53,7 @@ namespace BossRoom.Server
 
         public override bool Update()
         {
-            return true;
+            return ActionConclusion.Stop;
         }
-
     }
 }
