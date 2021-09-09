@@ -27,7 +27,7 @@ namespace BossRoom.Server
             Vector3 targetPos = m_Target != null ? m_Target.transform.position : m_Data.Position;
 
             // then make sure we can actually see that point!
-            if (!ActionUtils.HasLineOfSight(m_Parent.transform.position, targetPos, out Vector3 collidePos))
+            if (!ActionUtils.HasLineOfSight(m_Parent.physicsWrapper.Transform.position, targetPos, out Vector3 collidePos))
             {
                 // we do not have line of sight to the target point. So our target instead becomes the obstruction point
                 m_Target = null;
@@ -39,10 +39,10 @@ namespace BossRoom.Server
             }
 
             // turn to face our target!
-            m_Parent.transform.LookAt(targetPos);
+            m_Parent.physicsWrapper.Transform.LookAt(targetPos);
 
             // figure out how long the pretend-projectile will be flying to the target
-            float distanceToTargetPos = Vector3.Distance(targetPos, m_Parent.transform.position);
+            float distanceToTargetPos = Vector3.Distance(targetPos, m_Parent.physicsWrapper.Transform.position);
             m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed_m_s);
 
             // tell clients to visualize this action
@@ -91,7 +91,15 @@ namespace BossRoom.Server
                     // not a valid target
                     return null;
                 }
-                return obj.GetComponent<IDamageable>();
+
+                if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var physicsWrapper))
+                {
+                    return physicsWrapper.DamageCollider.GetComponent<IDamageable>();
+                }
+                else
+                {
+                    return obj.GetComponent<IDamageable>();
+                }
             }
             else
             {

@@ -14,10 +14,10 @@ namespace BossRoom
         public NetworkVariableInt HitPoints = new NetworkVariableInt();
 
         // public subscribable event to be invoked when HP has been fully depleted
-        public event Action HitPointsDepleted;
+        public event Action hitPointsDepleted;
 
         // public subscribable event to be invoked when HP has been replenished
-        public event Action HitPointsReplenished;
+        public event Action hitPointsReplenished;
 
         void OnEnable()
         {
@@ -34,12 +34,12 @@ namespace BossRoom
             if (previousValue > 0 && newValue <= 0)
             {
                 // newly reached 0 HP
-                HitPointsDepleted?.Invoke();
+                hitPointsDepleted?.Invoke();
             }
             else if (previousValue <= 0 && newValue > 0)
             {
                 // newly revived
-                HitPointsReplenished?.Invoke();
+                hitPointsReplenished?.Invoke();
             }
         }
     }

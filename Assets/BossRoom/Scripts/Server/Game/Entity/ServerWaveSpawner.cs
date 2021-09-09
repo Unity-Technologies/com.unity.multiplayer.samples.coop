@@ -227,7 +227,6 @@ namespace BossRoom.Server
             {
                 clone.Spawn(null, true);
             }
-
             if (m_SpawnedEntityDetectDistance > -1)
             {
                 // need to override the spawned creature's detection range (if they even have a detection range!)
@@ -291,7 +290,7 @@ namespace BossRoom.Server
                     continue;
                 }
 
-                var playerPosition = serverCharacter.transform.position;
+                var playerPosition = serverCharacter.physicsWrapper.Transform.position;
                 var direction = playerPosition - spawnerPosition;
 
                 if (direction.sqrMagnitude > squaredProximityDistance)

@@ -13,17 +13,26 @@ namespace BossRoom
     {
         public List<T> Items = new List<T>();
 
+        public event Action<T> ItemAdded;
+
+        public event Action<T> ItemRemoved;
+
         public void Add(T item)
         {
             if (!Items.Contains(item))
             {
                 Items.Add(item);
+                ItemAdded?.Invoke(item);
             }
         }
 
         public void Remove(T item)
         {
-            Items.Remove(item);
+            if (Items.Contains(item))
+            {
+                Items.Remove(item);
+                ItemRemoved?.Invoke(item);
+            }
         }
     }
 }

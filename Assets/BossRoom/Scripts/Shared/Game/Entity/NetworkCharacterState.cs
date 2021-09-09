@@ -112,11 +112,6 @@ namespace BossRoom
         /// </summary>
         public event Action<Vector3> ReceivedClientInput;
 
-        public override void OnNetworkSpawn()
-        {
-            HitPoints = CharacterData.BaseHP.Value;
-        }
-
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
         /// </summary>

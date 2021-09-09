@@ -27,7 +27,7 @@ namespace BossRoom.Server
 
             if (Data.TargetIds == null || Data.TargetIds.Length == 0) { return false; }
 
-            m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
+            m_Movement = m_Parent.Movement;
 
             m_Parent.NetState.TargetId.Value = TargetId;
 
@@ -65,14 +65,25 @@ namespace BossRoom.Server
         /// <param name="targetId"></param>
         private void FaceTarget(ulong targetId)
         {
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject targetObject))
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetObject))
             {
-                Vector3 diff = targetObject.transform.position - m_Parent.transform.position;
+                Vector3 targetObjectPosition;
+
+                if (targetObject.TryGetComponent(out ServerCharacter serverCharacter))
+                {
+                    targetObjectPosition = serverCharacter.physicsWrapper.Transform.position;
+                }
+                else
+                {
+                    targetObjectPosition = targetObject.transform.position;
+                }
+
+                Vector3 diff = targetObjectPosition - m_Parent.physicsWrapper.Transform.position;
 
                 diff.y = 0;
                 if (diff != Vector3.zero)
                 {
-                    m_Parent.transform.forward = diff;
+                    m_Parent.physicsWrapper.Transform.forward = diff;
                 }
             }
         }

@@ -27,7 +27,7 @@ namespace BossRoom.Server
     public class ServerGameNetPortal : MonoBehaviour
     {
         [SerializeField]
-        NetworkObject m_PersistentPlayer;
+        NetworkObject m_GameState;
 
         private GameNetPortal m_Portal;
 
@@ -163,10 +163,6 @@ namespace BossRoom.Server
             m_ClientSceneMap.Clear();
         }
 
-        /// <summary>
-        /// </summary>
-        /// <param name="clientId"> guid of the client whose data is requested</param>
-        /// <returns>Player data struct matching the given ID</returns>
         public bool AreAllClientsInServerScene()
         {
             foreach( var kvp in m_ClientSceneMap )
@@ -175,16 +171,6 @@ namespace BossRoom.Server
             }
 
             return true;
-        }
-
-        /// <summary>
-        /// Returns true if the given client is currently in the server scene.
-        /// </summary>
-        /// <param name="clientId"></param>
-        /// <returns></returns>
-        public bool IsClientInServerScene(ulong clientId)
-        {
-            return m_ClientSceneMap.TryGetValue(clientId, out int clientScene) && clientScene == ServerScene;
         }
 
         /// <summary>
@@ -296,6 +282,8 @@ namespace BossRoom.Server
 
             callback(true, null, true, Vector3.zero, Quaternion.identity);
 
+            AssignPlayerName(clientId, connectionPayload.playerName);
+
             //TODO:MLAPI: this must be done after the callback for now. In the future we expect MLAPI to allow us to return more information as part of
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
             //and then manually close down the connection.
@@ -338,9 +326,27 @@ namespace BossRoom.Server
         /// </summary>
         private void ServerStartedHandler()
         {
-            m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, m_Portal.NetManager.LocalClientId));
-            m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
+            m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, NetworkManager.Singleton.LocalClientId));
+            m_ClientIDToGuid.Add(NetworkManager.Singleton.LocalClientId, "host_guid");
+
+            AssignPlayerName(NetworkManager.Singleton.LocalClientId, m_Portal.PlayerName);
+
+            // server spawns game state
+            var gameState = Instantiate(m_GameState);
+
+            gameState.Spawn();
         }
 
+        static void AssignPlayerName(ulong clientId, string playerName)
+        {
+            // get this client's player NetworkObject
+            var networkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
+
+            // update client's name
+            if (networkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+            {
+                persistentPlayer.NetworkNameState.Name.Value = playerName;
+            }
+        }
     }
 }

@@ -63,13 +63,12 @@ namespace BossRoom.Client
             m_Checkmark.SetActive(lockedIn);
         }
 
-        public void ConfigureForClass(CharacterTypeEnum characterType)
+        public void ConfigureForClass(CharacterClass characterClass)
         {
             m_HideWhenNoClassSelected.SetActive(true);
 
             m_Checkmark.SetActive(m_IsLockedIn);
 
-            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[characterType];
             m_ClassLabel.text = characterClass.DisplayedName;
             m_ClassBanner.sprite = characterClass.ClassBannerLit;
 

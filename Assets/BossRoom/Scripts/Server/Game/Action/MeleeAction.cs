@@ -48,7 +48,7 @@ namespace BossRoom.Server
             // snap to face the right direction
             if( Data.Direction != Vector3.zero )
             {
-                m_Parent.transform.forward = Data.Direction;
+                m_Parent.physicsWrapper.Transform.forward = Data.Direction;
             }
 
             m_Parent.NetState.RecvDoActionClientRPC(Data);
@@ -76,7 +76,7 @@ namespace BossRoom.Server
         /// <returns></returns>
         private IDamageable DetectFoe(ulong foeHint = 0)
         {
-            return GetIdealMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.GetComponent<Collider>(), Description.Range, foeHint);
+            return GetIdealMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.physicsWrapper.DamageCollider, Description.Range, foeHint);
         }
 
         /// <summary>

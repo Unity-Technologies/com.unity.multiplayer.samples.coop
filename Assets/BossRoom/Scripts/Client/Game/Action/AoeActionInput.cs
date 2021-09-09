@@ -20,8 +20,6 @@ namespace BossRoom.Visual
 
         Camera m_Camera;
 
-        Vector3 m_Origin;
-
         //The general action system works on MouseDown events (to support Charged Actions), but that means that if we only wait for
         //a mouse up event internally, we will fire as part of the same UI click that started the action input (meaning the user would
         //have to drag her mouse from the button to the firing location). Tracking a mouse-down mouse-up cycle means that a user can
@@ -40,7 +38,6 @@ namespace BossRoom.Visual
             var radius = GameDataSource.Instance.ActionDataByType[m_ActionType].Radius;
             transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
             m_Camera = Camera.main;
-            m_Origin = m_PlayerOwner.transform.position;
         }
 
         void Update()
