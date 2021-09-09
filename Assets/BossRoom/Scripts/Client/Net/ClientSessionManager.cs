@@ -1,60 +1,41 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using MLAPI;
 using UnityEngine;
-using MLAPI.SceneManagement;
+using UnityEngine.SceneManagement;
+using MLAPI;
+using MLAPI.Transports;
+using MLAPI.Transports.LiteNetLib;
+using MLAPI.Transports.PhotonRealtime;
+using MLAPI.Transports.UNET;
+using Photon.Realtime;
 
 namespace BossRoom.Client
 {
+    /// <summary>
+    /// Client side logic for a GameNetPortal. Contains implementations for all of GameNetPortal's S2C RPCs.
+    /// </summary>
+    [RequireComponent(typeof(GameNetPortal))]
     public class ClientSessionManager : MonoBehaviour
     {
-        public GameNetPortal m_Portal;
+        private GameNetPortal m_Portal;
 
-        private ClientGameNetPortal m_ClientGameNetPortal;
-
-        private HashSet<ulong> m_ClientIDs = new HashSet<ulong>();
-
-        // Start is called before the first frame update
         void Start()
         {
-            if (m_Portal == null)
-            {
-                gameObject.SetActive(false);
-                return;
-            }
+            m_Portal = GetComponent<GameNetPortal>();
 
-            m_ClientGameNetPortal = m_Portal.GetComponent<ClientGameNetPortal>();
-
-            m_Portal.NetManager.OnClientConnectedCallback += OnClientConnected;
-            m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnected;
-
-            DontDestroyOnLoad(this);
+            m_Portal.ClientSceneChanged += ClientSceneChanged;
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
-            m_Portal.NetManager.OnClientConnectedCallback -= OnClientConnected;
-            m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnected;
+            if (m_Portal != null)
+            {
+                m_Portal.ClientSceneChanged -= ClientSceneChanged;
+            }
         }
 
-        private void OnClientConnected(ulong clientID)
+        private void ClientSceneChanged(ulong clientID, int sceneIndex)
         {
-            if (!m_ClientIDs.Contains(clientID))
-            {
-                m_ClientIDs.Add(clientID);
-                return;
-            }
 
-            
-        }
-
-        private void OnClientDisconnected(ulong clientID)
-        {
-            if (m_ClientIDs.Contains(clientID))
-            {
-                m_ClientIDs.Remove(clientID);
-            }
         }
     }
 }
