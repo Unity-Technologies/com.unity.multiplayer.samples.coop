@@ -1,4 +1,5 @@
 using System.Collections;
+using BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -33,10 +34,9 @@ namespace BossRoom.Client
         NetworkHealthState m_NetworkHealthState;
 
         [SerializeField]
-        CharacterClassContainer m_CharacterClassContainer;
-
-        [SerializeField]
         ClientCharacter m_ClientCharacter;
+
+        ClientAvatarGuidHandler m_ClientAvatarGuidHandler;
 
         [SerializeField]
         IntVariable m_BaseHP;
@@ -62,7 +62,7 @@ namespace BossRoom.Client
 
         Vector3 m_VerticalOffset;
 
-        // used to compute corld pos based on target and offsets
+        // used to compute world position based on target and offsets
         private Vector3 m_WorldPos;
 
         public override void OnNetworkSpawn()
@@ -89,36 +89,35 @@ namespace BossRoom.Client
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
+            // if PC, find our graphics transform and update health through callbacks, if displayed
+            if (TryGetComponent(out m_ClientAvatarGuidHandler))
+            {
+                m_BaseHP = m_ClientAvatarGuidHandler.RegisteredAvatar.CharacterClass.BaseHP;
+
+                if (m_ClientCharacter.ChildVizObject)
+                {
+                    TrackGraphicsTransform(m_ClientCharacter.ChildVizObject.gameObject);
+                }
+                else
+                {
+                    m_ClientAvatarGuidHandler.AvatarGraphicsSpawned += TrackGraphicsTransform;
+                }
+
+                if (m_DisplayHealth)
+                {
+                    m_NetworkHealthState.hitPointsReplenished += DisplayUIHealth;
+                    m_NetworkHealthState.hitPointsDepleted += RemoveUIHealth;
+                }
+            }
+
             if (m_DisplayName)
             {
-                // TODO: Re-implement Names on UI (GOMPS-550)
                 DisplayUIName();
             }
 
-            if (!m_DisplayHealth)
-            {
-                return;
-            }
-
-            if (m_BaseHP != null)
+            if (m_DisplayHealth)
             {
                 DisplayUIHealth();
-            }
-            else
-            {
-                // the lines below are added in case a player wanted to display a health bar, since their max HP is
-                // dependent on their respective character class
-                if (m_CharacterClassContainer && !m_CharacterClassContainer.CharacterClass.IsNpc)
-                {
-                    m_BaseHP = m_CharacterClassContainer.CharacterClass.BaseHP;
-
-                    m_TransformToTrack = m_ClientCharacter.ChildVizObject.transform;
-
-                    DisplayUIHealth();
-                }
-
-                m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
-                m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
             }
         }
 
@@ -131,8 +130,13 @@ namespace BossRoom.Client
 
             if (m_NetworkHealthState != null)
             {
-                m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
-                m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
+                m_NetworkHealthState.hitPointsReplenished -= DisplayUIHealth;
+                m_NetworkHealthState.hitPointsDepleted -= RemoveUIHealth;
+            }
+
+            if (m_ClientAvatarGuidHandler)
+            {
+                m_ClientAvatarGuidHandler.AvatarGraphicsSpawned -= TrackGraphicsTransform;
             }
         }
 
@@ -186,6 +190,11 @@ namespace BossRoom.Client
             yield return new WaitForSeconds(k_DurationSeconds);
 
             m_UIState.HideHealth();
+        }
+
+        void TrackGraphicsTransform(GameObject graphicsGameObject)
+        {
+            m_TransformToTrack = graphicsGameObject.transform;
         }
 
         void LateUpdate()

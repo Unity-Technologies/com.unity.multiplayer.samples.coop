@@ -61,7 +61,7 @@ namespace BossRoom.Server
                 if (initialTarget)
                 {
                     // snap to face our target! This is the direction we'll attack in
-                    m_Parent.transform.LookAt(initialTarget.transform.position);
+                    m_Parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
                 }
             }
 
@@ -145,7 +145,7 @@ namespace BossRoom.Server
             }
 
             var victimMovement = victim.GetComponent<ServerCharacterMovement>();
-            victimMovement.StartKnockback(m_Parent.transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
+            victimMovement.StartKnockback(m_Parent.physicsWrapper.Transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
         }
 
         // called by owning class when parent's Collider collides with stuff

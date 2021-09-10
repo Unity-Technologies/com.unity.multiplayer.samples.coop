@@ -22,35 +22,6 @@ namespace BossRoom
             LobbyFull,
         }
 
-        [Serializable]
-        public struct LobbySeatConfiguration
-        {
-            public CharacterTypeEnum Class;
-            public int CharacterArtIdx;
-            public LobbySeatConfiguration(CharacterTypeEnum charClass, int artIdx)
-            {
-                Class = charClass;
-                CharacterArtIdx = artIdx;
-            }
-        }
-
-        /// <summary>
-        /// Indicates which class and appearance is used for each "seat" in the lobby.
-        /// Note: this must match up with the order of classes/appearances in the lobby UI elements!
-        /// </summary>
-        [SerializeField]
-        public LobbySeatConfiguration[] LobbySeatConfigurations = new LobbySeatConfiguration[]
-        {
-            new LobbySeatConfiguration(CharacterTypeEnum.Tank, 0),
-            new LobbySeatConfiguration(CharacterTypeEnum.Archer, 2),
-            new LobbySeatConfiguration(CharacterTypeEnum.Mage, 4),
-            new LobbySeatConfiguration(CharacterTypeEnum.Rogue, 6),
-            new LobbySeatConfiguration(CharacterTypeEnum.Tank, 1),
-            new LobbySeatConfiguration(CharacterTypeEnum.Archer, 3),
-            new LobbySeatConfiguration(CharacterTypeEnum.Mage, 5),
-            new LobbySeatConfiguration(CharacterTypeEnum.Rogue, 7),
-        };
-
         public const int k_MaxLobbyPlayers = 8;
 
         /// <summary>
@@ -86,6 +57,8 @@ namespace BossRoom
         }
 
         private NetworkVariableLobbyState m_LobbyPlayers;
+
+        public Avatar[] AvatarConfiguration;
 
         private void Awake()
         {

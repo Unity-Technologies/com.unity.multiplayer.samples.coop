@@ -1,16 +1,20 @@
 using Unity.Netcode;
 using UnityEngine;
+using BossRoom.Visual;
 
 namespace BossRoom.Client
 {
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacter : NetworkBehaviour
     {
+        [SerializeField]
+        ClientCharacterVisualization m_ClientCharacterVisualization;
+
         /// <summary>
         /// The Visualization GameObject isn't in the same transform hierarchy as the object, but it registers itself here
         /// so that the visual GameObject can be found from a NetworkObjectId.
         /// </summary>
-        public Visual.ClientCharacterVisualization ChildVizObject { get; set; }
+        public ClientCharacterVisualization ChildVizObject => m_ClientCharacterVisualization;
 
         public override void OnNetworkSpawn()
         {
@@ -18,6 +22,11 @@ namespace BossRoom.Client
             {
                 enabled = false;
             }
+        }
+
+        public void SetCharacterVisualization(ClientCharacterVisualization clientCharacterVisualization)
+        {
+            m_ClientCharacterVisualization = clientCharacterVisualization;
         }
     }
 }
