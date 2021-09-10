@@ -113,6 +113,11 @@ namespace BossRoom.Client
 
         private void Awake()
         {
+            if (!m_Animator.enabled)
+            {
+                m_Animator = transform.parent.GetComponent<Animator>();
+            }
+
             if (m_Animator)
             {
                 m_OriginalController = m_Animator.runtimeAnimatorController;

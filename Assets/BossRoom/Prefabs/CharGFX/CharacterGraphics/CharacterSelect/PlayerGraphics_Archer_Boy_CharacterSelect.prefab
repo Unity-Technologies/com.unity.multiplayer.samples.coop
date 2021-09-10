@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: PlayerGraphics_Archer_Boy_CharacterSelect
       objectReference: {fileID: 0}
+    - target: {fileID: 2950036362190399201, guid: 29d0c8c1a1c40274d97718c37b8b1426, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3037349535683109858, guid: 29d0c8c1a1c40274d97718c37b8b1426, type: 3}
       propertyPath: m_RootOrder
       value: 0

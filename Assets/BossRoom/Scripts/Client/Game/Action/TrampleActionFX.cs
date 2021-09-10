@@ -7,11 +7,11 @@ namespace BossRoom.Visual
 
     /// <summary>
     /// The visual part of a TrampleAction. See TrampleAction.cs for more about this action type.
-    /// 
+    ///
     /// TrampleActionFX can include a visual "cue" object which is placed at the attacker's feet.
     /// If used, the object should have a SpecialFXGraphic component on it, which is used to cleanly
     /// shut down the graphics.
-    /// 
+    ///
     /// Note: unlike most ActionFX, this is NOT responsible for triggering hit-react animations on
     /// the trampled victims. The TrampleAction triggers these directly when it determines a collision.
     /// </summary>
@@ -46,7 +46,7 @@ namespace BossRoom.Visual
             // start the animation sequence!
             if (!string.IsNullOrEmpty(Description.Anim))
             {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim);
+                m_Parent.TrySetTrigger(Description.Anim);
             }
             return true;
         }
@@ -78,7 +78,7 @@ namespace BossRoom.Visual
 
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+                m_Parent.TrySetTrigger(Description.Anim2);
             }
         }
     }

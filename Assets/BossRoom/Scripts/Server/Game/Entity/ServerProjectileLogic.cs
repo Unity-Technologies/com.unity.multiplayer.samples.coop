@@ -66,7 +66,7 @@ namespace BossRoom.Server
             m_ProjectileInfo = projectileInfo;
         }
 
-        public override void OnNetworkSpawn(Stream stream)
+        public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {

@@ -15,6 +15,9 @@ namespace BossRoom.Client
         ClientCharacter m_ClientCharacter;
 
         [SerializeField]
+        Animator m_GraphicsAnimator;
+
+        [SerializeField]
         CharacterClassContainer m_CharacterClassContainer;
 
         [SerializeField]
@@ -24,6 +27,8 @@ namespace BossRoom.Client
         AvatarRegistry m_AvatarRegistry;
 
         Avatar m_Avatar;
+
+        public Animator graphicsAnimator => m_GraphicsAnimator;
 
         public Avatar RegisteredAvatar => m_Avatar;
 
@@ -55,9 +60,12 @@ namespace BossRoom.Client
             m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
 
             // spawn avatar graphics GameObject
-            var graphicsGameObject = Instantiate(avatar.Graphics, transform);
+            var graphicsGameObject = Instantiate(avatar.Graphics, m_GraphicsAnimator.transform);
 
             m_ClientCharacter.SetCharacterVisualization(graphicsGameObject.GetComponent<ClientCharacterVisualization>());
+
+            m_GraphicsAnimator.Rebind();
+            m_GraphicsAnimator.Update(0f);
 
             AvatarGraphicsSpawned?.Invoke(graphicsGameObject);
         }

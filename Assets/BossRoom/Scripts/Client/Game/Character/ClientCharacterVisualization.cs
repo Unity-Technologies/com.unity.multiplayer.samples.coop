@@ -64,6 +64,8 @@ namespace BossRoom.Visual
 
         public ulong NetworkObjectId => m_NetState.NetworkObjectId;
 
+        static bool IsServer => NetworkManager.Singleton.LocalClientId == NetworkManager.Singleton.ServerClientId;
+
         public void Start()
         {
             if (!NetworkManager.Singleton.IsClient || transform.parent == null)
@@ -76,11 +78,17 @@ namespace BossRoom.Visual
 
             m_ActionViz = new ActionVisualization(this);
 
-            Parent = transform.parent;
+            m_NetState = GetComponentInParent<NetworkCharacterState>();
 
-            m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
+            Parent = m_NetState.transform;
 
-            PhysicsWrapper.TryGetPhysicsWrapper(m_NetState.NetworkObjectId, out m_PhysicsWrapper);
+            if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+            {
+                m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
+            }
+
+            m_PhysicsWrapper = m_NetState.GetComponentInChildren<PhysicsWrapper>();
+            //PhysicsWrapper.TryGetPhysicsWrapper(m_NetState.NetworkObjectId, out m_PhysicsWrapper);
 
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
@@ -127,7 +135,7 @@ namespace BossRoom.Visual
         {
             if (!IsAnimating())
             {
-                OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
+                TrySetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID, true);
             }
         }
 
@@ -141,10 +149,10 @@ namespace BossRoom.Visual
             switch (lifeState)
             {
                 case LifeState.Dead: // ie. NPCs already dead
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.EntryDeathTriggerID);
+                    TrySetTrigger(m_VisualizationConfiguration.EntryDeathTriggerID);
                     break;
                 case LifeState.Fainted: // ie. PCs already fainted
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.EntryFaintedTriggerID);
+                    TrySetTrigger(m_VisualizationConfiguration.EntryFaintedTriggerID);
                     break;
             }
         }
@@ -170,7 +178,7 @@ namespace BossRoom.Visual
 
         private void OnPerformHitReaction()
         {
-            m_ClientVisualsAnimator.SetTrigger(m_HitStateTriggerID);
+            TrySetTrigger(m_HitStateTriggerID);
         }
 
         private void PerformActionFX(ActionRequestData data)
@@ -198,13 +206,13 @@ namespace BossRoom.Visual
             switch (newValue)
             {
                 case LifeState.Alive:
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
+                    TrySetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
                     break;
                 case LifeState.Fainted:
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
+                    TrySetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
                     break;
                 case LifeState.Dead:
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
+                    TrySetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
@@ -282,7 +290,7 @@ namespace BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
+                TrySetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
             }
 
             m_ActionViz.Update();
@@ -313,5 +321,44 @@ namespace BossRoom.Visual
             return false;
         }
 
+        public void TrySetTrigger(string anim, bool anticipated = false)
+        {
+            if (IsServer || anticipated)
+            {
+                OurAnimator.SetTrigger(anim);
+            }
+        }
+
+        void TrySetTrigger(int id, bool anticipated = false)
+        {
+            if (IsServer || anticipated)
+            {
+                OurAnimator.SetTrigger(id);
+            }
+        }
+
+        public void TryResetTrigger(string anim, bool anticipated = false)
+        {
+            if (IsServer || anticipated)
+            {
+                OurAnimator.ResetTrigger(anim);
+            }
+        }
+
+        public void TrySetInteger(string anim, int value)
+        {
+            if (IsServer)
+            {
+                OurAnimator.SetInteger(anim, value);
+            }
+        }
+
+        void TrySetFloat(int id, float value)
+        {
+            if (IsServer)
+            {
+                OurAnimator.SetFloat(id, value);
+            }
+        }
     }
 }

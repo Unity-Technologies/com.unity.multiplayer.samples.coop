@@ -42,16 +42,16 @@ namespace BossRoom.Visual
             return true;
         }
 
-        private void PlayAnim()
+        private void PlayAnim(bool anticipated = false)
         {
             // because this action can be visually started and stopped as often and as quickly as the player wants, it's possible
             // for several copies of this action to be playing at once. This can lead to situations where several
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            m_Parent.OurAnimator.ResetTrigger(Description.Anim2);
+            m_Parent.TryResetTrigger(Description.Anim2, anticipated);
 
             // raise the start trigger to start the animation loop!
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            m_Parent.TrySetTrigger(Description.Anim, anticipated);
         }
 
         private bool IsChargingUp()
@@ -73,13 +73,13 @@ namespace BossRoom.Visual
                 {
                     m_ChargeGraphics.Shutdown();
                 }
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+                m_Parent.TrySetTrigger(Description.Anim2);
             }
 
             if (m_ShieldGraphics)
             {
                 m_ShieldGraphics.Shutdown();
-                m_Parent.OurAnimator.SetInteger(Description.OtherAnimatorVariable, m_Parent.OurAnimator.GetInteger(Description.OtherAnimatorVariable) - 1);
+                m_Parent.TrySetInteger(Description.OtherAnimatorVariable, m_Parent.OurAnimator.GetInteger(Description.OtherAnimatorVariable) - 1);
             }
         }
 
@@ -88,7 +88,7 @@ namespace BossRoom.Visual
             if (!IsChargingUp()) { return; }
 
             m_StoppedChargingUpTime = Time.time;
-            m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+            m_Parent.TrySetTrigger(Description.Anim2);
             if (m_ChargeGraphics)
             {
                 m_ChargeGraphics.Shutdown();
@@ -104,14 +104,14 @@ namespace BossRoom.Visual
                 // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.
                 // So each active copy of the charge-up increments the invincibility counter, and the animator controller
                 // knows anything greater than zero means we shouldn't show hit-reacts.
-                m_Parent.OurAnimator.SetInteger(Description.OtherAnimatorVariable, m_Parent.OurAnimator.GetInteger(Description.OtherAnimatorVariable) + 1);
+                m_Parent.TrySetInteger(Description.OtherAnimatorVariable, m_Parent.OurAnimator.GetInteger(Description.OtherAnimatorVariable) + 1);
             }
         }
 
         public override void AnticipateAction()
         {
             base.AnticipateAction();
-            PlayAnim();
+            PlayAnim(true);
         }
 
     }

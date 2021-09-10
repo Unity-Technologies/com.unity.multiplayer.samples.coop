@@ -197,7 +197,7 @@ namespace BossRoom.Server
             m_HeroIds.Add(netState.NetworkObjectId);
 
             // spawn players characters with destroyWithScene = true
-            newPlayer.SpawnWithOwnership(clientId, null, true);
+            newPlayer.SpawnWithOwnership(clientId, true);
         }
 
         static IEnumerator WaitToReposition(Transform moveTransform, Vector3 newPosition, Quaternion newRotation)

@@ -48,9 +48,9 @@ namespace BossRoom.Visual
             return true;
         }
 
-        private void PlayFireAnim()
+        private void PlayFireAnim(bool anticipated = false)
         {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            m_Parent.TrySetTrigger(Description.Anim, anticipated);
         }
 
         public override bool Update()
@@ -93,7 +93,7 @@ namespace BossRoom.Visual
             if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
             {
                 var hitReact = !string.IsNullOrEmpty(Description.ReactAnim) ? Description.ReactAnim : k_DefaultHitReact;
-                clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
+                clientCharacter.ChildVizObject.TrySetTrigger(hitReact);
             }
         }
 
@@ -151,7 +151,7 @@ namespace BossRoom.Visual
         public override void AnticipateAction()
         {
             base.AnticipateAction();
-            PlayFireAnim();
+            PlayFireAnim(true);
 
             // see if this is going to be a "miss" because the player tried to click through a wall. If so,
             // we change our data in the same way that the server will (changing our target point to the spot on the wall)

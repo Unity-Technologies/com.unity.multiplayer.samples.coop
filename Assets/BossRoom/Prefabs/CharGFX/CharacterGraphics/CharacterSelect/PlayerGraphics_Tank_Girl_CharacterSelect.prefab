@@ -63,6 +63,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8511200453111303230, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 9187479739242730375, guid: b87361d084178644cab2510090411db8, type: 3}
       propertyPath: m_Name
       value: PlayerGraphics_Tank_Girl_CharacterSelect

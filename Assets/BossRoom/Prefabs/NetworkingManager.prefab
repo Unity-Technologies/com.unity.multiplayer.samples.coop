@@ -102,7 +102,7 @@ MonoBehaviour:
   ReconnectDelay: 0.5
   MaxConnectAttempts: 10
   channels: []
-  MessageBufferSize: 5120
+  MessageBufferSize: 8192
   SimulatePacketLossChance: 0
   SimulateMinLatency: 80
   SimulateMaxLatency: 120
@@ -153,7 +153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c0e18361257a9f409d6064bac74e732, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_IpHostTransport: {fileID: 7738483995325753316}
+  m_IpHostTransport: {fileID: 6885944472713585796}
   m_RelayTransport: {fileID: 409269882}
 --- !u!114 &5436007408952557924
 MonoBehaviour:
@@ -172,7 +172,7 @@ MonoBehaviour:
   LogLevel: 1
   NetworkConfig:
     ProtocolVersion: 0
-    NetworkTransport: {fileID: 7738483995325753316}
+    NetworkTransport: {fileID: 6885944472713585796}
     RegisteredScenes:
     - MainMenu
     - CharSelect
@@ -223,10 +223,7 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
-    ReceiveTickrate: 0
-    NetworkTickIntervalSec: 0.05
-    MaxReceiveEventsPerTickRate: 1000
-    EventTickrate: 30
+    TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
     ConnectionData: 
@@ -240,7 +237,6 @@ MonoBehaviour:
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
-    EnableMessageBuffering: 1
     MessageBufferTimeout: 20
     EnableNetworkLogs: 1
 --- !u!1 &7311172147761373013
