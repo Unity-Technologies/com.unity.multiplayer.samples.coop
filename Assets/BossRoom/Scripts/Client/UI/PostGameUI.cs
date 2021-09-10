@@ -50,9 +50,9 @@ namespace BossRoom.Visual
             }
 
             if (m_NetworkGameStateTransform && m_NetworkGameStateTransform.Value &&
-                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkWinState networkWinState))
+                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkGameState networkGameState))
             {
-                SetPostGameUI(networkWinState.winState.Value);
+                SetPostGameUI(networkGameState.NetworkWinState.winState.Value);
             }
         }
 

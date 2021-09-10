@@ -14,19 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Name:
     m_InternalValue: 
---- !u!114 &-7498966184644655384
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6009713983291384756}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2d0d8ed0724e1404d9d0afcd9b8b5ee2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_FeedbackPrefab: {fileID: 9137928905311479176, guid: 5d22c1d86e0e5604cbe14004bf924827, type: 3}
 --- !u!114 &2466014342928185240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -39,8 +26,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe9bfd21e47445488dfd84b4e0c9884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AvatarGuidArray:
-    m_InternalValue: 
 --- !u!114 &2576537793715222015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -132,6 +117,19 @@ MonoBehaviour:
   m_CharacterClassContainer: {fileID: 5230418375993597025}
   m_NetworkAvatarGuidState: {fileID: 2466014342928185240}
   m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
+--- !u!114 &7232939173259361562
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6009713983291384756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 119ee2e9b25694aa9b2f80b9a3d22c6e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_FeedbackPrefab: {fileID: 9137928905311479176, guid: 5d22c1d86e0e5604cbe14004bf924827, type: 3}
 --- !u!1001 &7831782662127126385
 PrefabInstance:
   m_ObjectHideFlags: 0

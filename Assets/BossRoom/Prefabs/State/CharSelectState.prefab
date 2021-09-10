@@ -76,29 +76,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_AnimationTriggerOnCharSelect: BeginRevive
   m_AnimationTriggerOnCharChosen: BeginRevive
-  m_PlayerSeats: []
+  m_PlayerSeats:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   m_IdentifiersForEachPlayerNumber:
-  - Indicator: {fileID: 7073677062034491875, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 4efd4bc875cf78440a2bba2df426df59, type: 3}
     Color: {r: 1, g: 0.9607843, b: 0.03529412, a: 1}
-  - Indicator: {fileID: 2282546892015797016, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: eb78c7426de84ba4fb581a39bd47e1ea, type: 3}
     Color: {r: 1, g: 0.25490198, b: 0.25882354, a: 1}
-  - Indicator: {fileID: -6047367336175053643, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 9f3c077482954fd47ac14f226b754aa4, type: 3}
     Color: {r: 0.40392157, g: 0.6901961, b: 1, a: 1}
-  - Indicator: {fileID: -1584123350094214546, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 354c9edfa39e18f4a8b4bbeab8afa08b, type: 3}
     Color: {r: 0, g: 1, b: 0.3882353, a: 1}
-  - Indicator: {fileID: -2491859787077907965, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 96e799a96c02bea4bb1664c70d61a7fa, type: 3}
     Color: {r: 0.5882353, g: 0.03137255, b: 0.99215686, a: 1}
-  - Indicator: {fileID: -7344767057168477063, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 9e74ea5f2c75a624e9d29ced68c1faa6, type: 3}
     Color: {r: 0, g: 0.72156864, b: 0.7137255, a: 1}
-  - Indicator: {fileID: -720397744737086521, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 4587568254b46b74382b2e5db4111e2e, type: 3}
     Color: {r: 0.99607843, g: 0.6745098, b: 0.03137255, a: 1}
-  - Indicator: {fileID: 8070130267694257472, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 5e0531f7cad04b346bf05685f3b9a846, type: 3}
     Color: {r: 0.19215687, g: 0.03137255, b: 0.9882353, a: 1}
   m_NumPlayersText: {fileID: 0}
-  m_UIElementsForNoSeatChosen: []
-  m_UIElementsForSeatChosen: []
-  m_UIElementsForLobbyEnding: []
-  m_UIElementsForFatalError: []
+  m_UIElementsForNoSeatChosen:
+  - {fileID: 0}
+  - {fileID: 0}
+  m_UIElementsForSeatChosen:
+  - {fileID: 0}
+  - {fileID: 0}
+  m_UIElementsForLobbyEnding:
+  - {fileID: 0}
+  m_UIElementsForFatalError:
+  - {fileID: 0}
   m_ClassInfoBox: {fileID: 0}
   m_FatalLobbyErrorText: {fileID: 0}
   m_FatalErrorLobbyFullMsg: 'Error: lobby is full! You cannot play.'

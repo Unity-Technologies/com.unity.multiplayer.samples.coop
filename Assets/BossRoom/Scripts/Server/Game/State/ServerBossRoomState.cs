@@ -238,9 +238,9 @@ namespace BossRoom.Server
         void SetWinState(WinState winState)
         {
             if (m_NetworkGameStateTransform && m_NetworkGameStateTransform.Value &&
-                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkWinState networkWinState))
+                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkGameState networkGameState))
             {
-                networkWinState.winState.Value = winState;
+                networkGameState.NetworkWinState.winState.Value = winState;
             }
         }
 
