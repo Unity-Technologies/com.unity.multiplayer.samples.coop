@@ -8,6 +8,8 @@ namespace BossRoom.Server
     {
         public event Action<ServerCharacter, int> damageReceived;
 
+        public event Action<Collision> collisionEntered;
+
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
@@ -24,6 +26,11 @@ namespace BossRoom.Server
         public bool IsDamageable()
         {
             return m_NetworkLifeState.LifeState.Value == LifeState.Alive;
+        }
+
+        void OnCollisionEnter(Collision other)
+        {
+            collisionEntered?.Invoke(other);
         }
     }
 }

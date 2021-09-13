@@ -68,6 +68,7 @@ namespace BossRoom.Server
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
                 m_DamageReceiver.damageReceived += ReceiveHP;
+                m_DamageReceiver.collisionEntered += CollisionEntered;
 
                 if (NetState.IsNpc)
                 {
@@ -97,6 +98,7 @@ namespace BossRoom.Server
             if (m_DamageReceiver)
             {
                 m_DamageReceiver.damageReceived -= ReceiveHP;
+                m_DamageReceiver.collisionEntered -= CollisionEntered;
             }
         }
 
@@ -253,7 +255,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void CollisionEntered(Collision collision)
         {
             if (m_ActionPlayer != null)
             {
