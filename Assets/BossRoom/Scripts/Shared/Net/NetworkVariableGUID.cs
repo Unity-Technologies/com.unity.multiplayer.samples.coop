@@ -5,6 +5,11 @@ using UnityEngine;
 
 namespace BossRoom
 {
+    /// <summary>
+    /// NetworkVariableGUID represents a GUID on the Network.
+    /// We cannot use NetworkVariable<GUID> or NetworkVariable<byte[]> because
+    /// those two types are managed and thus cannot be used in a standard generic NetworkVariable.
+    /// </summary>
     [Serializable]
     public class NetworkVariableGUID : NetworkVariableBase
     {

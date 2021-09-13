@@ -8,6 +8,11 @@ using UnityEngine;
 
 namespace BossRoom
 {
+    /// <summary>
+    /// NetworkVariableLobbyState represents a LobbyState on the Network.
+    /// We cannot use a standard struct and encapsulate it in a NetworkVariable<>
+    /// because a LobbyState contains a string which is managed making the whole struct managed too.
+    /// </summary>
     [Serializable]
     public class NetworkVariableLobbyState : NetworkVariableBase, IEnumerable, IEnumerator
     {
