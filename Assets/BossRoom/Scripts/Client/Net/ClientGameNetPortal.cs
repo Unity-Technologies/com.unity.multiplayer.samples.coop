@@ -85,7 +85,7 @@ namespace BossRoom.Client
             if( m_Portal.NetManager.IsClient )
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
-                m_Portal.NetManager.StopClient();
+                m_Portal.NetManager.Shutdown();
             }
         }
 

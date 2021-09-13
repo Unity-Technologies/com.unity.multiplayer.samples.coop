@@ -261,7 +261,7 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer, NetworkChannel.Internal);
+                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer);
                 }
             }
         }
@@ -278,7 +278,7 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer, NetworkChannel.Internal);
+                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer);
                 }
             }
         }

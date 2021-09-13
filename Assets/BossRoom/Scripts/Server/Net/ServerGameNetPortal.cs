@@ -148,7 +148,7 @@ namespace BossRoom.Server
         {
             if( m_Portal.NetManager.IsServer )
             {
-                m_Portal.NetManager.StopServer();
+                m_Portal.NetManager.Shutdown();
             }
 
             Clear();

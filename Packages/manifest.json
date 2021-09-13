@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.mlapi.contrib.transport.litenetlib": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#temp/lnl-develop",
-    "com.mlapi.contrib.transport.photon-realtime": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#temp/lnl-develop",
+    "com.mlapi.contrib.transport.litenetlib": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#develop",
+    "com.mlapi.contrib.transport.photon-realtime": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#develop",
     "com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#bb3d5067e49e403d8b8ba15c036d313b4dd2c696",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation.components": "https://github.com/Unity-Technologies/NavMeshComponents.git#package",
@@ -12,7 +12,7 @@
     "com.unity.ide.vscode": "1.2.3",
     "com.unity.learn.iet-framework": "1.2.1",
     "com.unity.multiplayer.tools": "git+ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.tools.git#develop",
-    "com.unity.netcode.gameobjects": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.gameobjects#develop",
+    "com.unity.netcode.gameobjects": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
     "com.unity.postprocessing": "3.1.1",
     "com.unity.test-framework": "1.1.27",
     "com.unity.textmeshpro": "3.0.6",
