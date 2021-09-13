@@ -20,7 +20,7 @@ namespace BossRoom
             m_UIName.Initialize(networkedName);
         }
 
-        public void DisplayHealth(NetworkVariableInt networkedHealth, int maxValue)
+        public void DisplayHealth(NetworkVariable<int> networkedHealth, int maxValue)
         {
             m_UIHealth.gameObject.SetActive(true);
             m_UIHealth.Initialize(networkedHealth, maxValue);

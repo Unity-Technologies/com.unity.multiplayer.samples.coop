@@ -22,11 +22,18 @@ namespace BossRoom.Visual
         // the enemy we're aiming at
         private NetworkObject m_Target;
 
+        Transform m_TargetTransform;
+
         public override bool Start()
         {
             bool wasAnticipated = Anticipated;
             base.Start();
             m_Target = GetTarget();
+
+            if (m_Target && PhysicsWrapper.TryGetPhysicsWrapper(m_Target.NetworkObjectId, out var physicsWrapper))
+            {
+                m_TargetTransform = physicsWrapper.Transform;
+            }
 
             if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
@@ -50,7 +57,7 @@ namespace BossRoom.Visual
             if (TimeRunning >= Description.ExecTimeSeconds && m_Projectile == null)
             {
                 // figure out how long the pretend-projectile will be flying to the target
-                var targetPos = m_Target ? m_Target.transform.position : m_Data.Position;
+                var targetPos = m_TargetTransform ? m_TargetTransform.position : m_Data.Position;
                 var initialDistance = Vector3.Distance(targetPos, m_Parent.transform.position);
                 m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed_m_s;
 
@@ -136,7 +143,7 @@ namespace BossRoom.Visual
             }
 
             // now that we have our projectile, initialize it so it'll fly at the target appropriately
-            projectile.Initialize(m_Parent.transform.position, m_Target != null ? m_Target.transform : null, m_Data.Position, m_ProjectileDuration);
+            projectile.Initialize(m_Parent.transform.position, m_TargetTransform, m_Data.Position, m_ProjectileDuration);
             return projectile;
         }
 

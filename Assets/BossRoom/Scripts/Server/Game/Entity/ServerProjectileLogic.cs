@@ -130,7 +130,7 @@ namespace BossRoom.Server
                     }
 
                     //all NPC layer entities should have one of these.
-                    var targetNetObj = m_CollisionCache[i].GetComponent<NetworkObject>();
+                    var targetNetObj = m_CollisionCache[i].GetComponentInParent<NetworkObject>();
                     if (targetNetObj)
                     {
                         m_NetState.RecvHitEnemyClientRPC(targetNetObj.NetworkObjectId);
@@ -140,7 +140,7 @@ namespace BossRoom.Server
                         NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
-                        targetNetObj.GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
+                        m_CollisionCache[i].GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
                     }
 
                     if (m_IsDead)

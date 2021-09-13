@@ -76,7 +76,7 @@ namespace BossRoom.Server
             {
                 // to help the clients visually keep track of who's in what seat, we'll "kick out" any other players
                 // who were also in that seat. (Those players didn't click "Ready!" fast enough, somebody else took their seat!)
-                for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
+                for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
                 {
                     if (CharSelectData.LobbyPlayers[i].SeatIdx == newSeatIdx && i != idx)
                     {
@@ -98,7 +98,7 @@ namespace BossRoom.Server
         /// </summary>
         private int FindLobbyPlayerIdx(ulong clientId)
         {
-            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == clientId)
                     return i;
@@ -130,14 +130,18 @@ namespace BossRoom.Server
 
         private void SaveLobbyResults()
         {
-            LobbyResults lobbyResults = new LobbyResults();
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
-                lobbyResults.Choices[playerInfo.ClientId] = new LobbyResults.CharSelectChoice(playerInfo.PlayerNum,
-                    CharSelectData.LobbySeatConfigurations[playerInfo.SeatIdx].Class,
-                    CharSelectData.LobbySeatConfigurations[playerInfo.SeatIdx].CharacterArtIdx);
+                var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(playerInfo.ClientId);
+
+                if (playerNetworkObject &&
+                    playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+                {
+                    // pass avatar GUID to PersistentPlayer
+                    persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
+                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid;
+                }
             }
-            GameStateRelay.SetRelayObject(lobbyResults);
         }
 
         private IEnumerator WaitToEndLobby()
@@ -150,7 +154,6 @@ namespace BossRoom.Server
         {
             if (NetworkManager.Singleton)
             {
-                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
                 NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
@@ -171,7 +174,6 @@ namespace BossRoom.Server
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
-                NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
             }
         }
@@ -182,12 +184,6 @@ namespace BossRoom.Server
             if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
             // When the client finishes loading the Lobby Map, we will need to Seat it
             SeatNewPlayer(sceneEvent.ClientId);
-        }
-
-        private void OnClientConnected(ulong clientId)
-        {
-            // When the client first connects to the server we will need to Seat it
-            //SeatNewPlayer(clientId);
         }
 
         private int GetAvailablePlayerNum()
@@ -230,7 +226,7 @@ namespace BossRoom.Server
         private void OnClientDisconnectCallback(ulong clientId)
         {
             // clear this client's PlayerNumber and any associated visuals (so other players know they're gone).
-            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == clientId)
                 {

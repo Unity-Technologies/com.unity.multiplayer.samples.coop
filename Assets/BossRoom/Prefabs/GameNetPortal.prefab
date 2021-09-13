@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ba4a1d598313d94a81a08ceae147b57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkManagerGO: {fileID: 0}
+  m_NetworkManager: {fileID: 0}
   PlayerName: 
 --- !u!114 &5062837533140207353
 MonoBehaviour:
@@ -72,3 +72,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PersistentPlayer: {fileID: 5202563697772659352, guid: 1d3f5528d25661949890bcd7f47fe81a, type: 3}
+  m_GameState: {fileID: 7151198093957655792, guid: 3af96a32a84bcf74d9538fa7af973c97, type: 3}

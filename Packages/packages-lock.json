@@ -136,6 +136,15 @@
         "com.unity.modules.ui": "1.0.0"
       }
     },
+    "com.unity.multiplayer.tools": {
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#develop",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.profiling.core": "1.0.0-pre.1"
+      },
+      "hash": "2d2a271706ce954c0dc5e40175b261031ab51614"
+    },
     "com.unity.netcode.adapter.utp": {
       "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#feature/initial-relay-utp",
       "depth": 0,
@@ -173,8 +182,17 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.postprocessing": {
-      "version": "2.3.0",
+      "version": "3.1.1",
       "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.modules.physics": "1.0.0"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.profiling.core": {
+      "version": "1.0.0-pre.1",
+      "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
@@ -272,6 +290,13 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
+    },
+    "com.veriorpies.parrelsync": {
+      "version": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#bb3d5067e49e403d8b8ba15c036d313b4dd2c696",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "bb3d5067e49e403d8b8ba15c036d313b4dd2c696"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",

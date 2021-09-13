@@ -5,6 +5,7 @@ using MLAPI.Transports.PhotonRealtime;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 
@@ -110,6 +111,11 @@ namespace BossRoom
             // In order to avoid a race condition in the initialization of the NetworkManager
             StartCoroutine(InitializeMessageHandlers());
         }
+        private void OnSceneEvent(SceneEvent sceneEvent)
+        {
+            if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
+            ClientSceneChanged?.Invoke(sceneEvent.ClientId, SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex);
+        }
 
         private void OnDestroy()
         {
@@ -122,7 +128,6 @@ namespace BossRoom
                 if (NetManager.CustomMessagingManager != null)
                 {
                     UnregisterClientMessageHandlers();
-                    UnregisterServerMessageHandlers();
                 }
             }
         }
@@ -133,6 +138,7 @@ namespace BossRoom
             if (clientId == NetManager.LocalClientId)
             {
                 OnNetworkReady();
+                NetManager.SceneManager.OnSceneEvent += OnSceneEvent;
             }
         }
 
@@ -148,7 +154,6 @@ namespace BossRoom
             //TODO-FIXME:MLAPI Issue 799. We shouldn't really have to worry about getting messages before our ClientConnected callback.
 
             RegisterClientMessageHandlers();
-            RegisterServerMessageHandlers();
 
             yield return null;
         }
@@ -176,31 +181,11 @@ namespace BossRoom
             });
         }
 
-        private void RegisterServerMessageHandlers()
-        {
-            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler("ClientToServerSceneChanged", (senderClientId, stream) =>
-            {
-                using (var reader = PooledNetworkReader.Get(stream))
-                {
-                    int sceneIndex = reader.ReadInt32();
-
-                    ClientSceneChanged?.Invoke(senderClientId, sceneIndex);
-                }
-
-            });
-        }
-
         private void UnregisterClientMessageHandlers()
         {
             NetManager.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
             NetManager.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
         }
-
-        private void UnregisterServerMessageHandlers()
-        {
-            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler("ClientToServerSceneChanged");
-        }
-
 
         /// <summary>
         /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
@@ -324,7 +309,7 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer, NetworkChannel.Internal);
+                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer);
                 }
             }
         }
@@ -341,26 +326,7 @@ namespace BossRoom
                 using (var writer = PooledNetworkWriter.Get(buffer))
                 {
                     writer.WriteInt32((int)status);
-                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer, NetworkChannel.Internal);
-                }
-            }
-        }
-
-        public void ClientToServerSceneChanged(int newScene)
-        {
-            if(NetManager.IsHost)
-            {
-                ClientSceneChanged?.Invoke(NetManager.ServerClientId, newScene);
-            }
-            else if(NetManager.IsConnectedClient)
-            {
-                using (var buffer = PooledNetworkBuffer.Get())
-                {
-                    using (var writer = PooledNetworkWriter.Get(buffer))
-                    {
-                        writer.WriteInt32(newScene);
-                        NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ClientToServerSceneChanged", NetManager.ServerClientId, buffer, NetworkChannel.Internal);
-                    }
+                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer);
                 }
             }
         }

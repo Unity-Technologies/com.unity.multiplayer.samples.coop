@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace BossRoom.Visual
 {
@@ -43,7 +44,17 @@ namespace BossRoom.Visual
             {
                 float padRange = Description.Range + k_RangePadding;
 
-                if ((m_Parent.transform.position - targetNetworkObj.transform.position).sqrMagnitude < (padRange * padRange))
+                Vector3 targetPosition;
+                if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var physicsWrapper))
+                {
+                    targetPosition = physicsWrapper.Transform.position;
+                }
+                else
+                {
+                    targetPosition = targetNetworkObj.transform.position;
+                }
+
+                if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
                     // target is in range! Play the graphics
                     m_SpawnedGraphics = InstantiateSpecialFXGraphics(targetNetworkObj.transform, true);
@@ -99,18 +110,30 @@ namespace BossRoom.Visual
             m_ImpactPlayed = true;
 
             //Is my original target still in range? Then definitely get him!
-            if (Data.TargetIds != null && Data.TargetIds.Length > 0 && NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(Data.TargetIds[0]))
+            if (Data.TargetIds != null &&
+                Data.TargetIds.Length > 0 &&
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
+                && targetNetworkObj != null)
             {
-                NetworkObject originalTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[Data.TargetIds[0]];
                 float padRange = Description.Range + k_RangePadding;
 
-                if ((m_Parent.transform.position - originalTarget.transform.position).sqrMagnitude < (padRange * padRange))
+                Vector3 targetPosition;
+                if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var movementContainer))
                 {
-                    if( originalTarget.NetworkObjectId != m_Parent.NetworkObjectId )
+                    targetPosition = movementContainer.Transform.position;
+                }
+                else
+                {
+                    targetPosition = targetNetworkObj.transform.position;
+                }
+
+                if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                {
+                    if (targetNetworkObj.NetworkObjectId != m_Parent.NetworkObjectId)
                     {
                         string hitAnim = Description.ReactAnim;
                         if(string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
-                        var clientChar = originalTarget.GetComponent<Client.ClientCharacter>();
+                        var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
                         if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
                         {
                             clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);

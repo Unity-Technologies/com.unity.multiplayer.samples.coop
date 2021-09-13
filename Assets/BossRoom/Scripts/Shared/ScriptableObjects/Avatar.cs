@@ -16,5 +16,7 @@ namespace BossRoom
         public GameObject Graphics;
 
         public GameObject GraphicsCharacterSelect;
+
+        public Sprite Portrait;
     }
 }

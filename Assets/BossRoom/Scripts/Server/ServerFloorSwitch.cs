@@ -8,28 +8,28 @@ namespace BossRoom.Server
     /// Server-side logic for a floor switch (a/k/a "pressure plate").
     /// This script should be attached to a physics trigger.
     /// </summary>
-    [RequireComponent(typeof(Collider))]
-    [RequireComponent(typeof(NetworkFloorSwitchState))]
+    [RequireComponent(typeof(Collider)), RequireComponent(typeof(NetworkFloorSwitchState))]
     public class ServerFloorSwitch : NetworkBehaviour
     {
+        [SerializeField]
+        Animator m_Animator;
+
+        [SerializeField]
         Collider m_Collider;
+
+        [SerializeField]
         NetworkFloorSwitchState m_FloorSwitchState;
-        int m_CachedPlayerLayerIdx;
 
         List<Collider> m_RelevantCollidersInTrigger = new List<Collider>();
 
+        const string k_AnimatorPressedDownBoolVarName = "IsPressed";
+
+        [SerializeField, HideInInspector]
+        int m_AnimatorPressedDownBoolVarID;
+
         void Awake()
         {
-            m_Collider = GetComponent<Collider>();
             m_Collider.isTrigger = true;
-
-            m_FloorSwitchState = GetComponent<NetworkFloorSwitchState>();
-
-            m_CachedPlayerLayerIdx = LayerMask.NameToLayer("PCs");
-            if (m_CachedPlayerLayerIdx == -1)
-            {
-                Debug.LogError("Project does not have a layer named 'PCs'");
-            }
         }
 
         public override void OnNetworkSpawn()
@@ -38,26 +38,21 @@ namespace BossRoom.Server
             {
                 enabled = false;
             }
-        }
 
-        bool IsColliderAbleToTriggerSwitch(Component otherCollider)
-        {
-            return otherCollider.gameObject.layer == m_CachedPlayerLayerIdx;
+            FloorSwitchStateChanged(false, m_FloorSwitchState.IsSwitchedOn.Value);
+
+            m_FloorSwitchState.IsSwitchedOn.OnValueChanged += FloorSwitchStateChanged;
         }
 
         void OnTriggerEnter(Collider other)
         {
-            if (IsColliderAbleToTriggerSwitch(other))
-            {
-                m_RelevantCollidersInTrigger.Add(other);
-                m_FloorSwitchState.IsSwitchedOn.Value = true;
-            }
+            // no need to check for layer; layer matrix has been configured to only allow FloorSwitch x PC interactions
+            m_RelevantCollidersInTrigger.Add(other);
         }
 
         void OnTriggerExit(Collider other)
         {
             m_RelevantCollidersInTrigger.Remove(other);
-            m_FloorSwitchState.IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
         }
 
         void FixedUpdate()
@@ -67,6 +62,16 @@ namespace BossRoom.Server
             // because its reference will become null. So here we remove any nulls and see if we're still active.
             m_RelevantCollidersInTrigger.RemoveAll(col => col == null);
             m_FloorSwitchState.IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
+        }
+
+        void FloorSwitchStateChanged(bool previousValue, bool newValue)
+        {
+            m_Animator.SetBool(m_AnimatorPressedDownBoolVarID, newValue);
+        }
+
+        void OnValidate()
+        {
+            m_AnimatorPressedDownBoolVarID = Animator.StringToHash(k_AnimatorPressedDownBoolVarName);
         }
     }
 }

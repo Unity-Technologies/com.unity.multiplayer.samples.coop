@@ -20,9 +20,6 @@ namespace BossRoom.Visual
         [SerializeField]
         private VisualizationConfiguration m_VisualizationConfiguration;
 
-        [SerializeField]
-        TransformVariable m_RuntimeObjectsParent;
-
         /// <summary>
         /// Returns a reference to the active Animator for this visualization
         /// </summary>
@@ -49,6 +46,8 @@ namespace BossRoom.Visual
         /// </summary>
         public Transform Parent { get; private set; }
 
+        PhysicsWrapper m_PhysicsWrapper;
+
         public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
 
         private NetworkCharacterState m_NetState;
@@ -57,14 +56,9 @@ namespace BossRoom.Visual
 
         private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
 
-        /// Player characters need to report health changes and chracter info to the PartyHUD
-        PartyHUD m_PartyHUD;
-
         float m_SmoothedSpeed;
 
         int m_HitStateTriggerID;
-
-        event Action Destroyed;
 
         public bool IsOwner => m_NetState.IsOwner;
 
@@ -86,6 +80,8 @@ namespace BossRoom.Visual
 
             m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
 
+            PhysicsWrapper.TryGetPhysicsWrapper(m_NetState.NetworkObjectId, out m_PhysicsWrapper);
+
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
@@ -94,12 +90,8 @@ namespace BossRoom.Visual
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
 
-            Assert.IsTrue(m_RuntimeObjectsParent && m_RuntimeObjectsParent.Value,
-                "RuntimeObjectsParent transform is not set!");
-            transform.SetParent(m_RuntimeObjectsParent.Value);
-
             // sync our visualization position & rotation to the most up to date version received from server
-            transform.SetPositionAndRotation(Parent.position, Parent.rotation);
+            transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
@@ -111,42 +103,17 @@ namespace BossRoom.Visual
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
 
-                // track health for heroes
-                m_NetState.HealthState.HitPoints.OnValueChanged += OnHealthChanged;
-
-                // find the emote bar to track its buttons
-                GameObject partyHUDobj = GameObject.FindGameObjectWithTag("PartyHUD");
-                m_PartyHUD = partyHUDobj.GetComponent<Visual.PartyHUD>();
-
                 if (m_NetState.IsOwner)
                 {
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
-                    m_PartyHUD.SetHeroData(m_NetState);
 
                     if (Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
                         inputSender.ActionInputEvent += OnActionInput;
                         inputSender.ClientMoveEvent += OnMoveInput;
                     }
-                }
-                else
-                {
-                    m_PartyHUD.SetAllyData(m_NetState);
-
-                    // getting our parent's NetworkObjectID for PartyHUD removal on Destroy
-                    var parentNetworkObjectID = m_NetState.NetworkObjectId;
-
-                    // once this object is destroyed, remove this ally from the PartyHUD UI
-                    // NOTE: architecturally this will be refactored
-                    Destroyed += () =>
-                    {
-                        if (m_PartyHUD != null)
-                        {
-                            m_PartyHUD.RemoveAlly(parentNetworkObjectID);
-                        }
-                    };
                 }
             }
         }
@@ -199,8 +166,6 @@ namespace BossRoom.Visual
                     sender.ClientMoveEvent -= OnMoveInput;
                 }
             }
-
-            Destroyed?.Invoke();
         }
 
         private void OnPerformHitReaction()
@@ -246,21 +211,6 @@ namespace BossRoom.Visual
             }
         }
 
-        private void OnHealthChanged(int previousValue, int newValue)
-        {
-            // don't do anything if party HUD goes away - can happen as Dungeon scene is destroyed
-            if (m_PartyHUD == null) { return; }
-
-            if (m_NetState.IsOwner)
-            {
-                this.m_PartyHUD.SetHeroHealth(newValue);
-            }
-            else
-            {
-                this.m_PartyHUD.SetAllyHealth(m_NetState.NetworkObjectId, newValue);
-            }
-        }
-
         private void OnStealthyChanged(bool oldValue, bool newValue)
         {
             SetAppearanceSwap();
@@ -288,9 +238,8 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Returns the value we should set the Animator's "Speed" variable, given current
-        /// gameplay conditions.
-        /// </remarks>
+        /// Returns the value we should set the Animator's "Speed" variable, given current gameplay conditions.
+        /// </summary>
         private float GetVisualMovementSpeed()
         {
             Assert.IsNotNull(m_VisualizationConfiguration);
@@ -328,7 +277,7 @@ namespace BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+            VisualUtils.SmoothMove(transform, m_PhysicsWrapper.Transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
 
             if (m_ClientVisualsAnimator)
             {
