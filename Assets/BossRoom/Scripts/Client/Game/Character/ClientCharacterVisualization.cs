@@ -104,9 +104,6 @@ namespace BossRoom.Visual
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
 
-            // sync our animator to the most up to date version received from server
-            SyncEntryAnimation(m_NetState.LifeState);
-
             if (!m_NetState.IsNpc)
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
@@ -139,23 +136,6 @@ namespace BossRoom.Visual
             }
         }
 
-        /// <summary>
-        /// The switch to certain LifeStates fires an animation on an NPC/PC. This bypasses that initial animation
-        /// and sends an NPC/PC to their eventual looping animation. This is necessary for mid-game player connections.
-        /// </summary>
-        /// <param name="lifeState"> The last LifeState received by server. </param>
-        void SyncEntryAnimation(LifeState lifeState)
-        {
-            switch (lifeState)
-            {
-                case LifeState.Dead: // ie. NPCs already dead
-                    TrySetTrigger(m_VisualizationConfiguration.EntryDeathTriggerID);
-                    break;
-                case LifeState.Fainted: // ie. PCs already fainted
-                    TrySetTrigger(m_VisualizationConfiguration.EntryFaintedTriggerID);
-                    break;
-            }
-        }
         private void OnDestroy()
         {
             if (m_NetState)
