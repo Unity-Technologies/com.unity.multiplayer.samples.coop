@@ -136,15 +136,6 @@
         "com.unity.modules.ui": "1.0.0"
       }
     },
-    "com.unity.multiplayer.tools": {
-      "version": "git+ssh://git@github.com/Unity-Technologies/com.unity.multiplayer.tools.git#develop",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.profiling.core": "1.0.0-pre.1"
-      },
-      "hash": "2d2a271706ce954c0dc5e40175b261031ab51614"
-    },
     "com.unity.netcode.gameobjects": {
       "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
       "depth": 0,
@@ -178,13 +169,6 @@
       "dependencies": {
         "com.unity.modules.physics": "1.0.0"
       },
-      "url": "https://packages.unity.com"
-    },
-    "com.unity.profiling.core": {
-      "version": "1.0.0-pre.1",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.settings-manager": {
