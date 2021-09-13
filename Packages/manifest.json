@@ -1,7 +1,7 @@
 {
   "dependencies": {
-    "com.mlapi.contrib.transport.litenetlib": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#temp/lnl-develop",
-    "com.mlapi.contrib.transport.photon-realtime": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#temp/lnl-develop",
+    "com.mlapi.contrib.transport.litenetlib": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#develop",
+    "com.mlapi.contrib.transport.photon-realtime": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#develop",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation.components": "https://github.com/Unity-Technologies/NavMeshComponents.git#package",
     "com.unity.cinemachine": "2.6.3",
@@ -10,7 +10,7 @@
     "com.unity.ide.visualstudio": "2.0.9",
     "com.unity.ide.vscode": "1.2.3",
     "com.unity.learn.iet-framework": "1.2.1",
-"com.unity.netcode.gameobjects": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.gameobjects#feature/initial-relay-utp",
+    "com.unity.netcode.gameobjects": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#feature/initial-relay-utp",
     "com.unity.netcode.adapter.utp": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#feature/initial-relay-utp",
     "com.unity.postprocessing": "2.3.0",
     "com.unity.services.authentication": "1.0.0-pre.4",

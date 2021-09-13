@@ -1,18 +1,18 @@
 {
   "dependencies": {
     "com.mlapi.contrib.transport.litenetlib": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#temp/lnl-develop",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "46fed6057bc79103e75446eca7b0f69b65ccf16e"
+      "hash": "5c7e201f3c52d4d57a688f64947bfff967737c75"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#temp/lnl-develop",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "46fed6057bc79103e75446eca7b0f69b65ccf16e"
+      "hash": "5c7e201f3c52d4d57a688f64947bfff967737c75"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -30,8 +30,8 @@
       "hash": "0fc6f532e4f47d66d173314efcb906bc7cf0d00f"
     },
     "com.unity.burst": {
-      "version": "1.5.3",
-      "depth": 3,
+      "version": "1.5.5",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.2.1"
@@ -55,11 +55,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collections": {
-      "version": "1.0.0-pre.3",
-      "depth": 2,
+      "version": "1.0.0-pre.5",
+      "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.burst": "1.5.3",
+        "com.unity.burst": "1.5.4",
         "com.unity.test-framework": "1.1.22"
       },
       "url": "https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-candidates"
@@ -103,16 +103,6 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.jobs": {
-      "version": "0.10.0-preview.18",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.collections": "0.17.0-preview.18",
-        "com.unity.mathematics": "1.2.1"
-      },
-      "url": "https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-candidates"
-    },
     "com.unity.learn.iet-framework": {
       "version": "1.2.1",
       "depth": 0,
@@ -152,21 +142,21 @@
       "source": "git",
       "dependencies": {
         "com.unity.netcode.gameobjects": "0.0.1-preview.1",
-        "com.unity.transport": "0.9.0-preview.3",
-        "com.unity.jobs": "0.10.0-preview.18"
+        "com.unity.transport": "1.0.0-pre.4"
       },
-      "hash": "bbf28d3d5d65907dcd8b1c665f3eb6e0395407fb"
+      "hash": "7ba5ed6811e051dcb94051bd2b174526f9c445d8"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi.git?path=/com.unity.netcode.gameobjects#feature/initial-relay-utp",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#feature/initial-relay-utp",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.modules.ai": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
-        "com.unity.nuget.mono-cecil": "1.10.1-preview.1"
+        "com.unity.nuget.mono-cecil": "1.10.1-preview.1",
+        "com.unity.collections": "1.0.0-pre.5"
       },
-      "hash": "bbf28d3d5d65907dcd8b1c665f3eb6e0395407fb"
+      "hash": "7ba5ed6811e051dcb94051bd2b174526f9c445d8"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",
@@ -264,12 +254,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "0.9.0-preview.3",
+      "version": "1.0.0-pre.4",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.collections": "1.0.0-pre.3",
-        "com.unity.burst": "1.5.1",
+        "com.unity.collections": "1.0.0-pre.5",
+        "com.unity.burst": "1.5.5",
         "com.unity.mathematics": "1.2.1"
       },
       "url": "https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-candidates"
