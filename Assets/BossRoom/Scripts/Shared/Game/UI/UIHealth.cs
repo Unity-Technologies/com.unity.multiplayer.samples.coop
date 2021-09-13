@@ -1,4 +1,4 @@
-using MLAPI.NetworkVariable;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,9 +12,9 @@ namespace BossRoom
         [SerializeField]
         Slider m_HitPointsSlider;
 
-        NetworkVariableInt m_NetworkedHealth;
+        NetworkVariable<int> m_NetworkedHealth;
 
-        public void Initialize(NetworkVariableInt networkedHealth, int maxValue)
+        public void Initialize(NetworkVariable<int> networkedHealth, int maxValue)
         {
             m_NetworkedHealth = networkedHealth;
 

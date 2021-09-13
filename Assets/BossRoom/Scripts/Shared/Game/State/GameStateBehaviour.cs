@@ -1,4 +1,4 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BossRoom
@@ -38,7 +38,10 @@ namespace BossRoom
         /// <summary>
         /// Does this GameState persist across multiple scenes?
         /// </summary>
-        public virtual bool Persists { get { return false; } }
+        public virtual bool Persists
+        {
+            get { return false; }
+        }
 
         /// <summary>
         /// What GameState this represents. Server and client specializations of a state should always return the same enum.
@@ -97,21 +100,7 @@ namespace BossRoom
             if (!isActiveAndEnabled || !NetworkManager.Singleton)
                 return;
 
-            if (NetworkManager.Singleton.IsHost)
-            {
-                NetworkManager.Singleton.StopHost();
-            }
-            else if (NetworkManager.Singleton.IsClient)
-            {
-                NetworkManager.Singleton.StopClient();
-            }
-            else if (NetworkManager.Singleton.IsServer)
-            {
-                NetworkManager.Singleton.StopServer();
-            }
+            NetworkManager.Singleton.Shutdown();
         }
-
     }
-
 }
-

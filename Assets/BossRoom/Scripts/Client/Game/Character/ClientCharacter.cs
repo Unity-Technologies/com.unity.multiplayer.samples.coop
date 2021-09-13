@@ -1,11 +1,11 @@
-using System;
+using Unity.Netcode;
 using UnityEngine;
 using BossRoom.Visual;
 
 namespace BossRoom.Client
 {
     [RequireComponent(typeof(NetworkCharacterState))]
-    public class ClientCharacter : MLAPI.NetworkBehaviour
+    public class ClientCharacter : NetworkBehaviour
     {
         [SerializeField]
         ClientCharacterVisualization m_ClientCharacterVisualization;

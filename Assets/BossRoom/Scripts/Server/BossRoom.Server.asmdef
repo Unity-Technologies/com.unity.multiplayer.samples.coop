@@ -2,7 +2,7 @@
     "name": "BossRoom.Server",
     "rootNamespace": "",
     "references": [
-        "Unity.Multiplayer.MLAPI.Runtime",
+        "Unity.Netcode.Runtime",
         "BossRoom.Shared"
     ],
     "includePlatforms": [],

@@ -1,5 +1,4 @@
-using MLAPI;
-using MLAPI.NetworkVariable;
+using Unity.Netcode;
 
 namespace BossRoom
 {
@@ -11,7 +10,7 @@ namespace BossRoom
         /// <summary>
         /// Is the item broken or not?
         /// </summary>
-        public NetworkVariableBool IsBroken;
+        public NetworkVariable<bool> IsBroken;
 
         public bool IsNpc { get { return true;  } }
 

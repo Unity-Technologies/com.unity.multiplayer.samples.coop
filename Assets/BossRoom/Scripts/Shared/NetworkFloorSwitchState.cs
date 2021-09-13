@@ -1,6 +1,4 @@
-using MLAPI;
-using MLAPI.NetworkVariable;
-using UnityEngine;
+using Unity.Netcode;
 
 namespace BossRoom
 {
@@ -9,6 +7,6 @@ namespace BossRoom
     /// </summary>
     public class NetworkFloorSwitchState : NetworkBehaviour
     {
-        public NetworkVariableBool IsSwitchedOn { get; } = new NetworkVariableBool();
+        public NetworkVariable<bool> IsSwitchedOn { get; } = new NetworkVariable<bool>();
     }
 }

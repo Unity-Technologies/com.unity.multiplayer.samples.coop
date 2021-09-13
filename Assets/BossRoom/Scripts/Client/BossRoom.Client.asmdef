@@ -2,7 +2,7 @@
     "name": "BossRoom.Client",
     "rootNamespace": "",
     "references": [
-        "Unity.Multiplayer.MLAPI.Runtime",
+        "Unity.Netcode.Runtime",
         "BossRoom.Shared",
         "Cinemachine",
         "Photon Realtime MLAPI Transport",

@@ -1,5 +1,6 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace BossRoom.Server
 {
@@ -46,16 +47,16 @@ namespace BossRoom.Server
             if (m_SpawnEnemyKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnEnemyKeyCode))
             {
                 var newEnemy = Instantiate(m_EnemyPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, null, true);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
             }
             if (m_SpawnBossKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnBossKeyCode))
             {
                 var newEnemy = Instantiate(m_BossPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, null, true);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
             }
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
-                NetworkManager.SceneManager.SwitchScene("PostGame");
+                NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
             }
         }
     }

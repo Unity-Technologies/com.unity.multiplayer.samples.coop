@@ -1,6 +1,5 @@
 using System;
-using MLAPI;
-using MLAPI.NetworkVariable;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace BossRoom
@@ -11,7 +10,7 @@ namespace BossRoom
     public class NetworkAvatarGuidState : NetworkBehaviour
     {
         [HideInInspector]
-        public NetworkVariable<byte[]> AvatarGuidArray = new NetworkVariable<byte[]>(new byte[0]);
+        public NetworkVariable<NetworkGuid> AvatarGuidArray = new NetworkVariable<NetworkGuid>();
 
         public event Action<Guid> GuidChanged;
 
@@ -20,17 +19,15 @@ namespace BossRoom
             AvatarGuidArray.OnValueChanged += OnValueChanged;
         }
 
-        void OnValueChanged(byte[] previousValue, byte[] newValue)
+        void OnValueChanged(NetworkGuid oldValue, NetworkGuid newValue)
         {
-            if (newValue == null || newValue.Length == 0)
+            if (newValue.ToGuid().Equals(Guid.Empty))
             {
                 // not a valid Guid
                 return;
             }
 
-            var guid = new Guid(newValue);
-
-            GuidChanged?.Invoke(guid);
+            GuidChanged?.Invoke(newValue.ToGuid());
         }
     }
 }

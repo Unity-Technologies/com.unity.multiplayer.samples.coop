@@ -1,11 +1,10 @@
 using System;
-using MLAPI;
-using MLAPI.NetworkVariable.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Unity.Netcode;
 
 namespace BossRoom.Client
 {
@@ -138,7 +137,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnLobbyChanged -= OnLobbyPlayerStateChanged;
             }
             if (Instance == this)
                 Instance = null;
@@ -155,7 +154,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnLobbyChanged += OnLobbyPlayerStateChanged;
             }
         }
 
@@ -170,7 +169,7 @@ namespace BossRoom.Client
 
         private void UpdatePlayerCount()
         {
-            int count = CharSelectData.LobbyPlayers.Count;
+            int count = CharSelectData.LobbyPlayers.PlayerCount;
             var pstr = (count > 1) ? "players" : "player";
             m_NumPlayersText.text = "<b>" + count + "</b> " + pstr +" connected";
         }
@@ -178,14 +177,14 @@ namespace BossRoom.Client
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
-        private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> lobbyArray )
+        private void OnLobbyPlayerStateChanged(ArraySegment<CharSelectData.LobbyPlayerState> lobbyArray )
         {
             UpdateSeats();
             UpdatePlayerCount();
 
             // now let's find our local player in the list and update the character/info box appropriately
             int localPlayerIdx = -1;
-            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == NetworkManager.Singleton.LocalClientId)
                 {

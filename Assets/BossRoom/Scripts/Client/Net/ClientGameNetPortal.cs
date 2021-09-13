@@ -1,12 +1,11 @@
 using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using MLAPI;
-using MLAPI.Transports;
 using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
-using MLAPI.Transports.UNET;
 using Photon.Realtime;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UNET;
 
 namespace BossRoom.Client
 {
@@ -75,14 +74,7 @@ namespace BossRoom.Client
                     //only do this if a pure client, so as not to overlap with host behavior in ServerGameNetPortal.
                     m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 }
-
-                SceneManager.sceneLoaded += OnSceneLoaded;
             }
-        }
-
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            m_Portal.ClientToServerSceneChanged(SceneManager.GetActiveScene().buildIndex);
         }
 
         /// <summary>
@@ -93,7 +85,7 @@ namespace BossRoom.Client
             if( m_Portal.NetManager.IsClient )
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
-                m_Portal.NetManager.StopClient();
+                m_Portal.NetManager.Shutdown();
             }
         }
 
@@ -121,9 +113,8 @@ namespace BossRoom.Client
         {
             // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
             //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
-            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient && !MLAPI.NetworkManager.Singleton.IsHost )
+            if ( !NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsHost )
             {
-                SceneManager.sceneLoaded -= OnSceneLoaded;
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
 
                 //On a client disconnect we want to take them back to the main menu.
@@ -132,7 +123,7 @@ namespace BossRoom.Client
                 {
                     // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
                     // Just shut down networking and switch back to main menu.
-                    MLAPI.NetworkManager.Singleton.Shutdown();
+                    NetworkManager.Singleton.Shutdown();
                     if( !DisconnectReason.HasTransitionReason )
                     {
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
