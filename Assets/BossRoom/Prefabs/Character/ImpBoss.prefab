@@ -138,10 +138,26 @@ PrefabInstance:
       propertyPath: m_CharacterClass
       value: 
       objectReference: {fileID: 11400000, guid: 1fdbcd02edb11484a91de118f5ef44b3, type: 2}
+    - target: {fileID: 5448876330215689433, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6995351927119310807, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_ClientCharacterVisualization
       value: 
       objectReference: {fileID: 5970403413429264330}
+    - target: {fileID: 7629562350973231512, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_Height
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629562350973231512, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_Radius
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7629562350973231512, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_Center.y
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 8273023854864590149, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_Height
       value: 8
