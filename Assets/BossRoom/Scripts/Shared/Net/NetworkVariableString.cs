@@ -6,6 +6,10 @@ using UnityEngine;
 
 namespace BossRoom
 {
+    /// <summary>
+    /// NetworkVariableString represents a String on the network.
+    /// A string being a managed type we cannot wrap it in a NetworkVariable<>.
+    /// </summary>
     [Serializable]
     public class NetworkVariableString : NetworkVariableBase, IComparable<string>, IEquatable<string>
     {

@@ -178,7 +178,7 @@ namespace BossRoom.Server
             if (lateJoin)
             {
                 persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
-                    m_AvatarRegistry.GetRandomAvatar().Guid;
+                    m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
             }
 
             networkAvatarGuidState.AvatarGuidArray.Value =

@@ -39,14 +39,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.cinemachine": {
-      "version": "2.6.3",
+      "version": "2.7.4",
       "depth": 0,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.collab-proxy": {
-      "version": "1.5.7",
+      "version": "1.7.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -79,16 +79,16 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "2.0.7",
+      "version": "3.0.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.test-framework": "1.1.1"
+        "com.unity.ext.nunit": "1.0.6"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.visualstudio": {
-      "version": "2.0.9",
+      "version": "2.0.11",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -146,17 +146,17 @@
       "hash": "2d2a271706ce954c0dc5e40175b261031ab51614"
     },
     "com.unity.netcode.adapter.utp": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#feature/initial-relay-utp",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.netcode.gameobjects": "0.0.1-preview.1",
         "com.unity.transport": "1.0.0-pre.4"
       },
-      "hash": "7ba5ed6811e051dcb94051bd2b174526f9c445d8"
+      "hash": "46dfe4a2fbbc0656d7e4bfef2474dddf7beb2168"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#feature/initial-relay-utp",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -165,7 +165,7 @@
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1",
         "com.unity.collections": "1.0.0-pre.5"
       },
-      "hash": "7ba5ed6811e051dcb94051bd2b174526f9c445d8"
+      "hash": "46dfe4a2fbbc0656d7e4bfef2474dddf7beb2168"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",

@@ -10,7 +10,7 @@ namespace BossRoom
     public class NetworkAvatarGuidState : NetworkBehaviour
     {
         [HideInInspector]
-        public NetworkVariableGUID AvatarGuidArray = new NetworkVariableGUID();
+        public NetworkVariable<NetworkGuid> AvatarGuidArray = new NetworkVariable<NetworkGuid>();
 
         public event Action<Guid> GuidChanged;
 
@@ -19,15 +19,15 @@ namespace BossRoom
             AvatarGuidArray.OnValueChanged += OnValueChanged;
         }
 
-        void OnValueChanged(Guid oldValue, Guid newValue)
+        void OnValueChanged(NetworkGuid oldValue, NetworkGuid newValue)
         {
-            if (newValue.Equals(Guid.Empty))
+            if (newValue.ToGuid().Equals(Guid.Empty))
             {
                 // not a valid Guid
                 return;
             }
 
-            GuidChanged?.Invoke(newValue);
+            GuidChanged?.Invoke(newValue.ToGuid());
         }
     }
 }

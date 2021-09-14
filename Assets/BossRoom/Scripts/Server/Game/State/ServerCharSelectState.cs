@@ -139,7 +139,7 @@ namespace BossRoom.Server
                 {
                     // pass avatar GUID to PersistentPlayer
                     persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
-                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid;
+                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToNetworkGuid();
                 }
             }
         }
