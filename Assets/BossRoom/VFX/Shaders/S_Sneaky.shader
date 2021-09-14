@@ -1,5 +1,5 @@
 // Made with Amplify Shader Editor
-// Available at the Unity Asset Store - http://u3d.as/y3X 
+// Available at the Unity Asset Store - http://u3d.as/y3X
 Shader "S_Sneaky"
 {
 	Properties
@@ -37,7 +37,7 @@ Shader "S_Sneaky"
 		#define SAMPLE_TEXTURE2D(tex,samplerTex,coord) tex2D(tex,coord)
 		#endif//ASE Sampling Macros
 
-		#pragma surface surf Unlit alpha:fade keepalpha noshadow 
+		#pragma surface surf Unlit alpha:fade keepalpha noshadow
 		struct Input
 		{
 			float4 screenPos;

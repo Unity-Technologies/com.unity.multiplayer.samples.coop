@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_Flame
-  m_Shader: {fileID: 4800000, guid: 537e4fafa9661eb4aa1223442d96ed08, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 798777296cb5a224295c90cb705670b8, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
@@ -19,6 +19,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_1af9833e728b4400be472f11e114bf95:
+        m_Texture: {fileID: 2800000, guid: 27964659a7d4fef44ba88a7b6967fa31, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_da35baa1803f46aa8b034df23477decd:
+        m_Texture: {fileID: 2800000, guid: 09ff3236ed6851c44b22b13107c206f5, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Alpha:
         m_Texture: {fileID: 2800000, guid: 865559a32be6ebc4e90ea6c572b55a0d, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -59,7 +67,26 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - BOOLEAN_425B96BCB9AF43239914EBD2372A14B2: 0
+    - ENUM_BAC0A286840D4B63BB8BBA3A8D411E7A: 0
+    - Vector1_1: 0.6
+    - Vector1_22c28b9cbc644219a74499230c081668: 0.307
+    - Vector1_7a91de8e44d24835b49d68664bbe892f: 2
+    - Vector1_fc24d2cc110c4d90bf8fe0e6d625f6fa: 0.199
+    - Vector1_fc24d2cc110c4d90bf8fe0e6d625f6fa_1: 0.44
     - _AlphaCutoff: 0.5
     - _BlendColor: 0.22
     - _CenterAmount: 0.307
@@ -83,6 +110,11 @@ Material:
     - _Speed: 1
     - __dirty: 0
     m_Colors:
+    - Color_9195cb73a727450cbc963d9e3025d795: {r: 31.999996, g: 14.240836, b: 3.0157065, a: 1}
+    - Color_fc6bbeba4e8c458bbeb642f2f0b0c048: {r: 20.02094, g: 1.7591621, b: 0.75392663, a: 1}
+    - Vector4_e771ca002e644c0c89285d39e4dd8e2a: {r: 1, g: 0.5, b: 0, a: -0.5}
+    - Vector4_e771ca002e644c0c89285d39e4dd8e2a_1: {r: 0.5, g: 1, b: 0, a: -1}
+    - Vector4_e771ca002e644c0c89285d39e4dd8e2a_2: {r: 1, g: 1, b: 0, a: 0}
     - _CenterColor: {r: 31.999996, g: 14.240836, b: 3.0157065, a: 1}
     - _Color_1: {r: 0, g: 1.0368443, b: 4, a: 1}
     - _Color_2: {r: 0, g: 1.2795371, b: 3.9999995, a: 1}
