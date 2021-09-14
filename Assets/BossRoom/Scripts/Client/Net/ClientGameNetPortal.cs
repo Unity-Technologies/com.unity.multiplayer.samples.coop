@@ -166,9 +166,9 @@ namespace BossRoom.Client
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;
-                case UTPTransport utpTransport:
-                    // utpTransport.Address = ipaddress;
-                    // utpTransport.Port = (ushort)port;
+                case UnityTransport UnityTransport:
+                    // UnityTransport.Address = ipaddress;
+                    // UnityTransport.Port = (ushort)port;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
@@ -226,7 +226,7 @@ namespace BossRoom.Client
 
             switch (chosenTransport)
             {
-                case UTPTransport utp:
+                case UnityTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
                     Task t = Task.Run( () => {UnityServices.InitializeAsync();});
                     if (!t.Wait(30000))
@@ -272,7 +272,7 @@ namespace BossRoom.Client
 
             switch (chosenTransport)
             {
-                case UTPTransport utp:
+                case UnityTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
                    // Unity.Services.Relay.RelayService.Configuration.BasePath = "https://relay-allocations-stg.services.api.unity.com";
 

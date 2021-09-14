@@ -36,13 +36,13 @@ public class TransportPicker : MonoBehaviour
 
     void OnValidate()
     {
-        Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UNetTransport || m_IpHostTransport as LiteNetLibTransport || m_IpHostTransport as UTPTransport),
+        Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UNetTransport || m_IpHostTransport as LiteNetLibTransport || m_IpHostTransport as UnityTransport),
             "IpHost transport must be either Unet or LiteNetLib transport or UTP.");
 
         Assert.IsTrue(m_RelayTransport == null || (m_RelayTransport as PhotonRealtimeTransport), "" +
             "Relay transport must be PhotonRealtimeTransport");
 
-        // Assert.IsTrue(m_UnityRelayTransport == null || (m_UnityRelayTransport as UTPTransport), "" +
+        // Assert.IsTrue(m_UnityRelayTransport == null || (m_UnityRelayTransport as UnityTransport), "" +
         //     "Relay transport must be PhotonRealtimeTransport");
     }
 }

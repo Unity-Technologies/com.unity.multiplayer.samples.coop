@@ -227,9 +227,9 @@ namespace BossRoom
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ServerListenPort = port;
                     break;
-                case UTPTransport utpTransport:
-                    // utpTransport. = ipaddress;
-                    // utpTransport. = (ushort)port;
+                case UnityTransport UnityTransport:
+                    // UnityTransport. = ipaddress;
+                    // UnityTransport. = (ushort)port;
                     break;
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
@@ -262,7 +262,7 @@ namespace BossRoom
 
             switch (chosenTransport)
             {
-                case UTPTransport utp:
+                case UnityTransport utp:
                     Debug.Log("Setting up UTP relay host");
                     // TODO: This needs to be removed ?
                    // Unity.Services.Relay.RelayService.Configuration.BasePath = "https://relay-allocations-stg.services.api.unity.com";

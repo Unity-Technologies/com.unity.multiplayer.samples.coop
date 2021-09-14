@@ -24,7 +24,7 @@ public class RoomNameBox : MonoBehaviour
             case PhotonRealtimeTransport realtimeTransport:
                 m_RoomNameText.text = $"Loading room key...";
                 break;
-            case UTPTransport utp:
+            case UnityTransport utp:
                 m_RoomNameText.text = $"Loading join code...";
                 break;
             default:
@@ -52,7 +52,7 @@ public class RoomNameBox : MonoBehaviour
                 m_RoomNameText.text = $"Room Name: {roomName}";
                 m_ConnectionFinished = true;
             }
-            else if (transport != null && transport is UTPTransport utp &&
+            else if (transport != null && transport is UnityTransport utp &&
             !string.IsNullOrEmpty(RelayJoinCodeThing.RelayJoinCode))
             {
                 m_RoomNameText.text = RelayJoinCodeThing.RelayJoinCode;
