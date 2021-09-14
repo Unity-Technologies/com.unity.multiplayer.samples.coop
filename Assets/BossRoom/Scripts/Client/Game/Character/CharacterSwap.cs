@@ -110,8 +110,10 @@ namespace BossRoom.Client
         /// </summary>
         private Dictionary<Renderer, Material> m_OriginalMaterials = new Dictionary<Renderer, Material>();
 
-        private void Awake()
+        public void Initialize(Animator animator)
         {
+            m_Animator = animator;
+
             if (m_Animator)
             {
                 m_OriginalController = m_Animator.runtimeAnimatorController;

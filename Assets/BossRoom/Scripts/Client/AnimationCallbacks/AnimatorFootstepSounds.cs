@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace BossRoom.Visual
@@ -6,7 +7,7 @@ namespace BossRoom.Visual
     /// Plays one of a few sound effects, on a loop, based on a variable in an Animator.
     /// We use this to play footstep sounds.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// For this project we're using a few looped footstep sounds, choosing between them
     /// based on the animated speed. This method has good performance versus a more complicated
@@ -61,6 +62,11 @@ namespace BossRoom.Visual
         [SerializeField]
         [Tooltip("If the speed variable is between WalkSpeedThreshold and this, we're running. (Higher than this means no sound)")]
         private float m_RunSpeedThreshold = 1.2f;
+
+        public void SetAnimator(Animator animator)
+        {
+            m_Animator = animator;
+        }
 
         private void Update()
         {

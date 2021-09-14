@@ -57,7 +57,7 @@ namespace BossRoom.Visual
                 if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
                     // target is in range! Play the graphics
-                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(targetNetworkObj.transform, true);
+                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
                 }
             }
             return true;
@@ -99,9 +99,9 @@ namespace BossRoom.Visual
             }
         }
 
-        private void PlayAnim()
+        private void PlayAnim(bool anticipated = false)
         {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            m_Parent.TrySetTrigger(Description.Anim, anticipated);
         }
 
         private void PlayHitReact()
@@ -136,7 +136,7 @@ namespace BossRoom.Visual
                         var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
                         if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
                         {
-                            clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);
+                            clientChar.ChildVizObject.TrySetTrigger(hitAnim);
                         }
                     }
                 }
@@ -152,7 +152,7 @@ namespace BossRoom.Visual
 
             //note: because the hit-react is driven from the animation, this means we can anticipatively trigger a hit-react too. That
             //will make combat feel responsive, but of course the actual damage won't be applied until the server tells us about it.
-            PlayAnim();
+            PlayAnim(true);
         }
     }
 }

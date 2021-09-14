@@ -159,8 +159,7 @@ namespace BossRoom.Server
 
             if (spawnPoint != null)
             {
-                // workaround; position of child transform not currently synced on spawn message
-                StartCoroutine(WaitToReposition(physicsTransform, spawnPoint.position, spawnPoint.rotation));
+                physicsTransform.SetPositionAndRotation(spawnPoint.position, spawnPoint.rotation);
             }
 
             var persistentPlayerExists = playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer);

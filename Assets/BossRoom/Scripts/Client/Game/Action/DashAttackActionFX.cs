@@ -4,7 +4,7 @@ namespace BossRoom.Visual
 {
     /// <summary>
     /// Visualization of a DashAttackAction. See DashAttackAction.cs for more info.
-    /// 
+    ///
     /// From the server's point of view, the dash attack is just a delayed teleport, followed by a melee attack.
     /// But on the client, we visualize this as the character dashing across the screen. The dashing begins after
     /// ExecTimeSeconds have elapsed.
@@ -38,15 +38,15 @@ namespace BossRoom.Visual
             return true;
         }
 
-        private void PlayStartAnim()
+        private void PlayStartAnim(bool anticipated = false)
         {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
+            m_Parent.TrySetTrigger(Description.Anim, anticipated);
         }
 
         public override void AnticipateAction()
         {
             base.AnticipateAction();
-            PlayStartAnim();
+            PlayStartAnim(true);
         }
 
         public override bool Update()
@@ -78,7 +78,7 @@ namespace BossRoom.Visual
             // Anim2 contains the name of the end-loop-sequence trigger
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+                m_Parent.TrySetTrigger(Description.Anim2);
             }
         }
 
@@ -87,7 +87,7 @@ namespace BossRoom.Visual
             // OtherAnimatorVariable contains the name of the cancelation trigger
             if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
             {
-                m_Parent.OurAnimator.SetTrigger(Description.OtherAnimatorVariable);
+                m_Parent.TrySetTrigger(Description.OtherAnimatorVariable);
             }
         }
 
