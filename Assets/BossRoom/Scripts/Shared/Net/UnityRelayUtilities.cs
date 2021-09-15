@@ -17,13 +17,13 @@ namespace BossRoom
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
                 joinCode)> AllocateRelayServerAndGetJoinCode(int maxConnections, string region = null)
         {
-            Response<AllocateResponseBody> allocationResponse;
-            Response<JoinCodeResponseBody> createJoinCodeResponse;
+            Allocation allocation;
+            string joinCode;
+
             try
             {
-                allocationResponse =
-                    await RelayService.AllocationsApiClient.CreateAllocationAsync(
-                        new CreateAllocationRequest(new AllocationRequest(maxConnections)));
+                allocation = await Relay.Instance.CreateAllocationAsync(maxConnections, region);
+
             }
             catch
             {
@@ -31,16 +31,12 @@ namespace BossRoom
                 throw;
             }
 
-            var allocation = allocationResponse.Result.Data.Allocation;
-
             Debug.Log($"server: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}");
             Debug.Log($"server: {allocation.AllocationId}");
 
             try
             {
-                createJoinCodeResponse = await RelayService.AllocationsApiClient.CreateJoincodeAsync(
-                    new CreateJoincodeRequest(
-                        new JoinCodeRequest(allocationResponse.Result.Data.Allocation.AllocationId)));
+                joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
             }
             catch
             {
@@ -49,19 +45,17 @@ namespace BossRoom
             }
 
             return (allocation.RelayServer.IpV4, (ushort) allocation.RelayServer.Port, allocation.AllocationIdBytes,
-                allocation.ConnectionData, allocation.Key, createJoinCodeResponse.Result.Data.JoinCode);
+                allocation.ConnectionData, allocation.Key, joinCode);
         }
 
         async public static
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[]
                 hostConnectionData, byte[] key)> JoinRelayServerFromJoinCode(string joinCode)
         {
-            Response<JoinResponseBody> joinResponse;
+            JoinAllocation allocation;
             try
             {
-                joinResponse =
-                    await RelayService.AllocationsApiClient.JoinRelayAsync(
-                        new JoinRelayRequest(new JoinRequest(joinCode)));
+                allocation = await Relay.Instance.JoinAllocationAsync(joinCode);
             }
             catch
             {
@@ -69,7 +63,6 @@ namespace BossRoom
                 throw;
             }
 
-            var allocation = joinResponse.Result.Data.Allocation;
 
             Debug.Log($"client: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}");
             Debug.Log($"host: {allocation.HostConnectionData[0]} {allocation.HostConnectionData[1]}");
