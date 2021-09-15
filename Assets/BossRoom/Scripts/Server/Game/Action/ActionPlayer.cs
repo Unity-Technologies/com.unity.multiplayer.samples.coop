@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using BlockingMode = BossRoom.ActionDescription.BlockingModeType;
+using BlockingMode = Unity.Multiplayer.Samples.BossRoom.ActionDescription.BlockingModeType;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Class responsible for playing back action inputs from user.

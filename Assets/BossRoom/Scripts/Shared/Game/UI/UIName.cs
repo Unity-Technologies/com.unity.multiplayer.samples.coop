@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using Unity.Netcode;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// UI object that visually represents an object's name. Visuals are updated when NetworkVariable is modified.

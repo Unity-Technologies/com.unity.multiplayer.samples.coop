@@ -1,8 +1,8 @@
-using BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Provides backing logic for all of the UI that runs in the MainMenu stage.

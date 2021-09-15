@@ -1,7 +1,7 @@
 using UnityEngine;
 
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Simple class to play game theme on scene load

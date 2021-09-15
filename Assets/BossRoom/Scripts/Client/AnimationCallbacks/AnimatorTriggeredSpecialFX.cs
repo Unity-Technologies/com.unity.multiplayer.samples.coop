@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEditor.Animations;
 #endif
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Instantiates and maintains graphics prefabs and sound effects. They're triggered by entering
@@ -231,7 +231,7 @@ namespace BossRoom.Visual
     /// </summary>
     [CustomEditor(typeof(AnimatorTriggeredSpecialFX))]
     [CanEditMultipleObjects]
-    public class AnimatorTriggeredSpecialFXEditor : Editor
+    public class AnimatorTriggeredSpecialFXEditor : UnityEditor.Editor
     {
         private GUIStyle m_ErrorStyle = null;
         public override void OnInspectorGUI()
@@ -283,7 +283,7 @@ namespace BossRoom.Visual
             Animator animator = fx.GetComponent<Animator>();
             if (!animator)
             {
-                // should be impossible because we explicitly RequireComponent the Animator 
+                // should be impossible because we explicitly RequireComponent the Animator
                 EditorUtility.DisplayDialog("Error", "No Animator found on this GameObject!?", "OK");
                 return;
             }
@@ -359,7 +359,7 @@ namespace BossRoom.Visual
             Debug.Assert(animator.runtimeAnimatorController); // already pre-checked
 
             // we need the AnimatorController, but there's no direct way to retrieve it from the Animator, because
-            // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why 
+            // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why
             // AnimatorController is in the UnityEditor namespace.) But this *isn't* runtime, so when we retrieve the
             // runtime controller, it will actually be a reference to our real AnimatorController.
             AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;

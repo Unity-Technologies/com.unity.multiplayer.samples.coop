@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// This class provides some additional context for the connection managed by the ClientGameNetPortal. If a disconnect occurrs, or is expected to occur, client

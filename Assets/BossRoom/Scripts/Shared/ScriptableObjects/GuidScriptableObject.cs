@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// ScriptableObject that stores a GUID for unique identification. The population of this field is implemented

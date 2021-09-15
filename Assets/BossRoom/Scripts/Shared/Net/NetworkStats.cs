@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// This utility help showing Network statistics at runtime.
     ///
@@ -63,7 +63,7 @@ namespace BossRoom
         // Creating a UI text object and add it to NetworkOverlay canvas
         void CreateNetworkStatsText()
         {
-            Assert.IsNotNull(Scripts.Editor.NetworkOverlay.Instance,
+            Assert.IsNotNull(Editor.NetworkOverlay.Instance,
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
             string hostType = IsHost ? "Host" : IsClient ? "Client" : "Unknown";
@@ -83,7 +83,7 @@ namespace BossRoom
             textComponent.resizeTextForBestFit = true;
 
             var rectTransform = rootGO.GetComponent<RectTransform>();
-            Scripts.Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
+            Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
         }
 
         void FixedUpdate()

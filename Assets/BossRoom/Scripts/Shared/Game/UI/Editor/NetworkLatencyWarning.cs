@@ -7,7 +7,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Scripts.Editor
+namespace Unity.Multiplayer.Samples.BossRoom.Editor
 {
     public class NetworkLatencyWarning : MonoBehaviour
     {
@@ -59,7 +59,7 @@ namespace BossRoom.Scripts.Editor
         // Creating a UI text object and add it to NetworkOverlay canvas
         void CreateLatencyText()
         {
-            Assert.IsNotNull(Scripts.Editor.NetworkOverlay.Instance,
+            Assert.IsNotNull(NetworkOverlay.Instance,
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
             var statUI = new GameObject("UI Latency Warning Text");

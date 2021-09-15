@@ -30,7 +30,7 @@ public class RoomNameBox : MonoBehaviour
         }
     }
 
-    // This update loop exists because there is currently a bug in MLAPI which runs client connected callbacks before the transport has
+    // This update loop exists because there is currently a bug in Netcode for GameObjects which runs client connected callbacks before the transport has
     // fully finished the asynchronous connection. That's why are loading the character select screen too early and need this update loop to
     // update the room key once we are fully connected to the Photon cloud.
     void Update()
@@ -41,7 +41,7 @@ public class RoomNameBox : MonoBehaviour
 
             if (transport != null &&
                 transport is PhotonRealtimeTransport realtimeTransport &&
-                realtimeTransport.Client != null && 
+                realtimeTransport.Client != null &&
                 string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
             {
                 string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";

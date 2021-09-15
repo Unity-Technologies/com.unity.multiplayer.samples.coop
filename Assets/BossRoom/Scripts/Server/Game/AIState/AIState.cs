@@ -1,4 +1,4 @@
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
 
     /// <summary>
