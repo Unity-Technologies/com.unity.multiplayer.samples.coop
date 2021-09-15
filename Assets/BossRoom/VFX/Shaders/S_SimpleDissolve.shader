@@ -109,7 +109,7 @@ Shader "Custom/S_SimpleDissolve"
 			#ifdef _HASDYNAMICDISSOLVE_ON
 				float staticSwitch61 = i.uv2_tex4coord2.w;
 			#else
-				float staticSwitch61 = temp_output_ 16_0;
+				float staticSwitch61 = temp_output_16_0;
 			#endif
 			float temp_output_55_0 = ( ( tex2DNode48.r + 1.0 ) * staticSwitch61 );
 			#ifdef _STEPSUBTRACT_ON
@@ -123,7 +123,6 @@ Shader "Custom/S_SimpleDissolve"
 				float staticSwitch44 = smoothstepResult7;
 			#endif
 			float temp_output_41_0 = ( ( _Color.a * staticSwitch13 ) * staticSwitch44 );
-
 			float2 uv_MaskTexture = i.uv_texcoord * _MaskTexture_ST.xy + _MaskTexture_ST.zw;
 			#ifdef _HASMASK_ON
 				float staticSwitch72 = ( temp_output_41_0 * saturate( pow( ( SAMPLE_TEXTURE2D( _MaskTexture, sampler_MaskTexture, uv_MaskTexture ).r * _MaskIntenicty ) , _MaskPower ) ) );

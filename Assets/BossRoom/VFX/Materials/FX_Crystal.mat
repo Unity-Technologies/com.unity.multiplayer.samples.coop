@@ -80,7 +80,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Emissive_Strength: 0.04
+    - Emissive_Strength: 0.2
     - Metallic: 0.685
     - Smoothness: 0.782
     - Vector1_35a25956798941978ad5a95ee3c0447b: 0

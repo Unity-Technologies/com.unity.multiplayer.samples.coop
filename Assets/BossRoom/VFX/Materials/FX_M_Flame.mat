@@ -10,7 +10,7 @@ Material:
   m_Name: FX_M_Flame
   m_Shader: {fileID: -6465566751694194690, guid: 798777296cb5a224295c90cb705670b8, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
-  m_LightmapFlags: 0
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -87,6 +87,7 @@ Material:
     - Vector1_7a91de8e44d24835b49d68664bbe892f: 2
     - Vector1_fc24d2cc110c4d90bf8fe0e6d625f6fa: 0.199
     - Vector1_fc24d2cc110c4d90bf8fe0e6d625f6fa_1: 0.44
+    - Vector1_fc24d2cc110c4d90bf8fe0e6d625f6fa_2: 0.021
     - _AlphaCutoff: 0.5
     - _BlendColor: 0.22
     - _CenterAmount: 0.307
