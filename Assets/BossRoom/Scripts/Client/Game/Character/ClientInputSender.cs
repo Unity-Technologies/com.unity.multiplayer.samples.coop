@@ -334,6 +334,7 @@ namespace BossRoom.Client
                     resultData.ShouldClose = false;
                     return;
                 case ActionLogic.Emote:
+                case ActionLogic.PickUp:
                     resultData.CancelMovement = true;
                     return;
                 case ActionLogic.RangedFXTargeted:
@@ -412,6 +413,11 @@ namespace BossRoom.Client
             if (Input.GetKeyDown(KeyCode.Alpha8))
             {
                 RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                RequestAction(ActionType.PickUp, SkillTriggerStyle.Keyboard);
             }
 
             if ( !EventSystem.current.IsPointerOverGameObject() && m_CurrentSkillInput == null)

@@ -78,6 +78,8 @@ namespace BossRoom.Visual
                 case ActionLogic.StealthMode: return new StealthModeActionFX(ref data, parent);
                 case ActionLogic.DashAttack: return new DashAttackActionFX(ref data, parent);
 
+                case ActionLogic.PickUp: return new PickUpActionFX(ref data, parent);
+
                 case ActionLogic.Stunned:
                 case ActionLogic.LaunchProjectile:
                 case ActionLogic.Revive:
