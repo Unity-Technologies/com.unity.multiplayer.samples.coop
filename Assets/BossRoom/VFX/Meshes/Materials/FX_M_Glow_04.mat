@@ -98,6 +98,7 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _Switch_Alpha: 1
+    - _UseAlpha: 1
     - _Use_alpha: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
