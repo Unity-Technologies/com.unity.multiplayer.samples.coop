@@ -1,3 +1,4 @@
+using System;
 using BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -17,6 +18,25 @@ namespace BossRoom.Visual
         private GameNetPortal m_GameNetPortal;
 
         private Client.ClientGameNetPortal m_ClientNetPortal;
+
+        private static MainMenuUI s_Instance = null;
+
+        /// <summary>
+        /// Small singleton getter, for easy access across other classes, this should be safe,
+        /// as it is not touching any aspect of networking
+        /// </summary>
+        public static MainMenuUI Instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = FindObjectOfType<MainMenuUI>();
+                }
+
+                return s_Instance;
+            }
+        }
 
         /// <summary>
         /// This will get more sophisticated as we move to a true relay model.
@@ -87,11 +107,6 @@ namespace BossRoom.Visual
                     case OnlineMode.UnityRelay:
                         Debug.Log($"Unity Relay Client, join code {connectInput}");
                         ClientGameNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, connectInput);
-                        // if (ClientGameNetPortal.StartClientUnityRelayMode(m_GameNetPortal, connectInput, out string failMessage2) == false)
-                        // {
-                        //     m_ResponsePopup.SetupNotifierDisplay("Connection Failed", failMessage2, false, true);
-                        //     return;
-                        // }
                         break;
                 }
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
@@ -151,6 +166,18 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
+        /// This should allow us to push a message pop up for connection responses from within other classes
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        /// <param name="displayImage"></param>
+        /// <param name="displayConfirmation"></param>
+        public void PushConnectionResponsePopup(string title, string message, bool displayImage, bool displayConfirmation)
+        {
+            m_ResponsePopup.SetupNotifierDisplay(title, message, displayImage, displayConfirmation);
+        }
+
+        /// <summary>
         /// Invoked when the client sent a connection request to the server and didn't hear back at all.
         /// This should create a UI letting the player know that something went wrong and to try again
         /// </summary>
@@ -163,6 +190,9 @@ namespace BossRoom.Visual
         {
             m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
+
+            // Release this instance as soon as we are destroyed
+            s_Instance = null;
         }
     }
 }

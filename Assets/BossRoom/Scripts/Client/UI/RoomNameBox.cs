@@ -7,9 +7,7 @@ using Unity.Netcode;
 
 public class RoomNameBox : MonoBehaviour
 {
-
-    [SerializeField]
-    TextMeshProUGUI m_RoomNameText;
+    [SerializeField] TextMeshProUGUI m_RoomNameText;
 
     bool m_ConnectionFinished = false;
 
@@ -53,13 +51,11 @@ public class RoomNameBox : MonoBehaviour
                 m_ConnectionFinished = true;
             }
             else if (transport != null && transport is UnityTransport utp &&
-            !string.IsNullOrEmpty(RelayJoinCodeThing.RelayJoinCode))
+                     !string.IsNullOrEmpty(RelayJoinCode.Code))
             {
-                m_RoomNameText.text = RelayJoinCodeThing.RelayJoinCode;
+                m_RoomNameText.text = RelayJoinCode.Code;
                 m_ConnectionFinished = true;
             }
         }
-
-
     }
 }

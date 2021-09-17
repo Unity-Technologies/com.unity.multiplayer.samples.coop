@@ -41,8 +41,5 @@ public class TransportPicker : MonoBehaviour
 
         Assert.IsTrue(m_RelayTransport == null || (m_RelayTransport as PhotonRealtimeTransport), "" +
             "Relay transport must be PhotonRealtimeTransport");
-
-        // Assert.IsTrue(m_UnityRelayTransport == null || (m_UnityRelayTransport as UnityTransport), "" +
-        //     "Relay transport must be PhotonRealtimeTransport");
     }
 }

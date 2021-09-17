@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI.Transports.LiteNetLib;
@@ -166,7 +167,8 @@ namespace BossRoom.Client
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;
-                case UnityTransport UnityTransport:
+                case UnityTransport unityTransport:
+                    // TODO: once this is exposed in the adapter we will be able to change it
                     // UnityTransport.Address = ipaddress;
                     // UnityTransport.Port = (ushort)port;
                     break;
@@ -198,7 +200,6 @@ namespace BossRoom.Client
             var region = splits[0];
             var roomName = splits[1];
 
-
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -218,7 +219,7 @@ namespace BossRoom.Client
             return true;
         }
 
-        public static bool StartClientUnityRelayMode(GameNetPortal portal, string joinCode, out string failMessage)
+        public static async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
         {
 
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
@@ -228,53 +229,6 @@ namespace BossRoom.Client
             {
                 case UnityTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-                    Task t = Task.Run( () => {UnityServices.InitializeAsync();});
-                    if (!t.Wait(30000))
-                    {
-                        Debug.Log("UnityServices.Initialize did not finish within 30 seconds");
-                    }
-                    Debug.Log(AuthenticationService.Instance);
-                    if (!AuthenticationService.Instance.IsSignedIn)
-                    {
-                        Task t2 = Task.Run( () => {AuthenticationService.Instance.SignInAnonymouslyAsync();});
-                        t2.Wait(30000);
-                        var playerId = AuthenticationService.Instance.PlayerId;
-                        Debug.Log(playerId);
-
-                        var clientRelayUtilityTask = RelayUtility.JoinRelayServerFromJoinCode(joinCode);
-                        clientRelayUtilityTask.Wait(30000);
-                        if (clientRelayUtilityTask.IsFaulted)
-                        {
-                            throw new Exception($"Failed to allocate on relay server {clientRelayUtilityTask.Exception?.Message}");
-                        }
-
-                        var (ipv4address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
-
-                        utp.SetRelayServerData(ipv4address, port, allocationIdBytes, key, connectionData, hostConnectionData);
-                    }
-
-                    break;
-                default:
-                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
-            }
-
-            ConnectClient(portal);
-
-            failMessage = String.Empty;
-            return true;
-        }
-
-        public async static void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
-        {
-
-            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            switch (chosenTransport)
-            {
-                case UnityTransport utp:
-                    Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-                   // Unity.Services.Relay.RelayService.Configuration.BasePath = "https://relay-allocations-stg.services.api.unity.com";
 
                     await UnityServices.InitializeAsync();
                     Debug.Log(AuthenticationService.Instance);
@@ -285,16 +239,23 @@ namespace BossRoom.Client
                         Debug.Log(playerId);
                     }
 
-                    var clientRelayUtilityTask = RelayUtility.JoinRelayServerFromJoinCode(joinCode);
-                    await clientRelayUtilityTask;
-                    if (clientRelayUtilityTask.IsFaulted)
+                    try
                     {
-                        throw new Exception($"Failed to allocate on relay server {clientRelayUtilityTask.Exception?.Message}");
+                        var clientRelayUtilityTask =  RelayUtility.JoinRelayServerFromJoinCode(joinCode);
+                        await clientRelayUtilityTask;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
+                    }
+                    catch (Exception e)
+                    {
+                        var menuUI = MainMenuUI.Instance;
+                        if (menuUI)
+                        {
+                            menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
+                        }
+                        throw;
                     }
 
-                    var (ipv4address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
-
-                    utp.SetRelayServerData(ipv4address, port, allocationIdBytes, key, connectionData, hostConnectionData);
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");

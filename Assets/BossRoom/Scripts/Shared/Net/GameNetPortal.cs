@@ -98,6 +98,11 @@ namespace BossRoom
         /// </summary>
         public string PlayerName;
 
+        /// <summary>
+        /// How many connections we create a Unity relay allocation for
+        /// </summary>
+        private const int k_MaxUnityRelayConnections = 8;
+
         void Start()
         {
             DontDestroyOnLoad(gameObject);
@@ -263,30 +268,35 @@ namespace BossRoom
             switch (chosenTransport)
             {
                 case UnityTransport utp:
-                    Debug.Log("Setting up UTP relay host");
-                    // TODO: This needs to be removed ?
-                   // Unity.Services.Relay.RelayService.Configuration.BasePath = "https://relay-allocations-stg.services.api.unity.com";
+                    Debug.Log("Setting up Unity Relay host");
+
                     await UnityServices.InitializeAsync();
                     if (!AuthenticationService.Instance.IsSignedIn)
                     {
                         await AuthenticationService.Instance.SignInAnonymouslyAsync();
                         var playerId = AuthenticationService.Instance.PlayerId;
                         Debug.Log(playerId);
+                    }
+
+                    try
+                    {
                         // we now need to get the joinCode?
-                        var serverRelayUtilityTask = RelayUtility.AllocateRelayServerAndGetJoinCode(10);
+                        var serverRelayUtilityTask =
+                            RelayUtility.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
                         await serverRelayUtilityTask;
-                        if (serverRelayUtilityTask.IsFaulted)
-                        {
-                            throw new Exception($"Failed to allocate on relay server {serverRelayUtilityTask.Exception?.Message}");
-                        }
-
                         // we now have the info from the relay service
-                        var (ipv4address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
+                            serverRelayUtilityTask.Result;
 
-                        RelayJoinCodeThing.RelayJoinCode = joinCode;
+                        RelayJoinCode.Code = joinCode;
 
                         // we now need to set the RelayCode somewhere :P
-                        utp.SetRelayServerData(ipv4address, port, allocationIdBytes, key, connectionData);
+                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogErrorFormat($"{e.Message}");
+                        throw;
                     }
                     break;
                 default:

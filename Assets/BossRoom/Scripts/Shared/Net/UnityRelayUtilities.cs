@@ -7,13 +7,14 @@ using Unity.Services.Relay.Models;
 
 namespace BossRoom
 {
-    public static class RelayJoinCodeThing
+    public static class RelayJoinCode
     {
-        public static string RelayJoinCode = String.Empty;
+        public static string Code = string.Empty;
     }
-    public class RelayUtility
+
+    public static class RelayUtility
     {
-        async public static
+        public static async
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
                 joinCode)> AllocateRelayServerAndGetJoinCode(int maxConnections, string region = null)
         {
@@ -23,12 +24,10 @@ namespace BossRoom
             try
             {
                 allocation = await Relay.Instance.CreateAllocationAsync(maxConnections, region);
-
             }
-            catch
+            catch (Exception exception)
             {
-                Debug.LogError("Relay create allocation request failed");
-                throw;
+                throw new Exception($"Creating allocation request has failed: \n {exception.Message}");
             }
 
             Debug.Log($"server: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}");
@@ -38,17 +37,16 @@ namespace BossRoom
             {
                 joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
             }
-            catch
+            catch (Exception exception)
             {
-                Debug.LogError("Relay create join code request failed");
-                throw;
+                throw new Exception($"Creating join code request has failed: \n {exception.Message}");
             }
 
-            return (allocation.RelayServer.IpV4, (ushort) allocation.RelayServer.Port, allocation.AllocationIdBytes,
+            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.Key, joinCode);
         }
 
-        async public static
+        public static async
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[]
                 hostConnectionData, byte[] key)> JoinRelayServerFromJoinCode(string joinCode)
         {
@@ -57,18 +55,16 @@ namespace BossRoom
             {
                 allocation = await Relay.Instance.JoinAllocationAsync(joinCode);
             }
-            catch
+            catch (Exception exception)
             {
-                Debug.LogError("Relay create join code request failed");
-                throw;
+                throw new Exception($"Creating join code request has failed: \n {exception.Message}");
             }
-
 
             Debug.Log($"client: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}");
             Debug.Log($"host: {allocation.HostConnectionData[0]} {allocation.HostConnectionData[1]}");
             Debug.Log($"client: {allocation.AllocationId}");
 
-            return (allocation.RelayServer.IpV4, (ushort) allocation.RelayServer.Port, allocation.AllocationIdBytes,
+            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.HostConnectionData, allocation.Key);
         }
     }
