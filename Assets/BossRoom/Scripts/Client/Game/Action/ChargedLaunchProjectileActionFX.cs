@@ -26,7 +26,6 @@ namespace BossRoom.Visual
         public override bool Start()
         {
             base.Start();
-            m_Parent.TrySetTrigger(Description.Anim);
 
             m_Graphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
             return true;
@@ -39,11 +38,6 @@ namespace BossRoom.Visual
 
         public override void Cancel()
         {
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.TrySetTrigger(Description.Anim2);
-            }
-
             if (!m_ChargeEnded)
             {
                 foreach (var graphic in m_Graphics)

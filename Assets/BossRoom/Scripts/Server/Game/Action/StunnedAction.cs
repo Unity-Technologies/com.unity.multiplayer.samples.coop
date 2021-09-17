@@ -2,7 +2,7 @@ namespace BossRoom.Server
 {
     /// <summary>
     /// Action that plays while a character is Stunned. The character does nothing... just sits there.
-    /// 
+    ///
     /// If desired, we can make the character take extra damage from attacks while stunned!
     /// The 'Amount' field of our ActionDescription is used as a multiplier on damage suffered.
     /// (Set it to 1 if you don't want to take more damage while stunned... set it to 2 to take double damage,
@@ -16,7 +16,7 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
             return true;
         }
 
@@ -33,5 +33,12 @@ namespace BossRoom.Server
             }
         }
 
+        public override void Cancel()
+        {
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+            }
+        }
     }
 }

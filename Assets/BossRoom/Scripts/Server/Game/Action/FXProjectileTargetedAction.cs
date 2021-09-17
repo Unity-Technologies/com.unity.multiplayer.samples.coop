@@ -44,6 +44,7 @@ namespace BossRoom.Server
             float distanceToTargetPos = Vector3.Distance(targetPos, m_Parent.physicsWrapper.Transform.position);
             m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed_m_s);
 
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
             // tell clients to visualize this action
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;

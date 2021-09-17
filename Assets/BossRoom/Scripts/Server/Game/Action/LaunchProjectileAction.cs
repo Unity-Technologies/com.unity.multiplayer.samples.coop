@@ -17,7 +17,8 @@ namespace BossRoom.Server
         {
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
             m_Parent.physicsWrapper.Transform.forward = Data.Direction;
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
             return true;
         }
 
@@ -77,6 +78,14 @@ namespace BossRoom.Server
         {
             //make sure this happens.
             LaunchProjectile();
+        }
+
+        public override void Cancel()
+        {
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+            }
         }
     }
 }

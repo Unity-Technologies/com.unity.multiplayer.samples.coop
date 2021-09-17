@@ -53,6 +53,11 @@ namespace BossRoom.Server
 
         public PhysicsWrapper physicsWrapper => m_PhysicsWrapper;
 
+        [SerializeField]
+        ServerAnimationHandler m_ServerAnimationHandler;
+
+        public ServerAnimationHandler serverAnimationHandler => m_ServerAnimationHandler;
+
         private void Awake()
         {
             m_ActionPlayer = new ActionPlayer(this);
@@ -189,6 +194,8 @@ namespace BossRoom.Server
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
+
+                serverAnimationHandler.animator.SetTrigger("HitReact1");
             }
 
             NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);

@@ -8,40 +8,20 @@ namespace BossRoom.Visual
     {
         public AnimationOnlyActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
-        public override bool Start()
+        private void PlayStartAnim()
         {
-            if (!Anticipated)
-            {
-                PlayStartAnim();
-            }
-
-            base.Start();
-            return true;
-        }
-
-        private void PlayStartAnim(bool anticipated = false)
-        {
-            m_Parent.TrySetTrigger(Description.Anim, anticipated);
+            m_Parent.OurAnimator.SetTrigger(Description.Anim);
         }
 
         public override void AnticipateAction()
         {
             base.AnticipateAction();
-            PlayStartAnim(true);
+            PlayStartAnim();
         }
 
         public override bool Update()
         {
             return ActionConclusion.Continue;
         }
-
-        public override void Cancel()
-        {
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.TrySetTrigger(Description.Anim2);
-            }
-        }
-
     }
 }

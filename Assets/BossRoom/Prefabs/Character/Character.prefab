@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: -6618539813679097072}
   - component: {fileID: 7420593339233078707}
   - component: {fileID: 4058497248645145345}
+  - component: {fileID: 350177175035117514}
   m_Layer: 3
   m_Name: Character
   m_TagString: Player
@@ -143,6 +144,7 @@ MonoBehaviour:
   m_DamageReceiver: {fileID: 1855969081593386876}
   m_Movement: {fileID: 324656297602094545}
   m_PhysicsWrapper: {fileID: 4058497248645145345}
+  m_ServerAnimationHandler: {fileID: 350177175035117514}
 --- !u!114 &4058497248645145345
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -157,6 +159,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Transform: {fileID: 6479125009090019661}
   m_DamageCollider: {fileID: 8905185955776261132}
+--- !u!114 &350177175035117514
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4600110157238723781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 162844b92fe5b9a469bf0cd049b43138, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Animator: {fileID: 0}
+  m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
+  m_NetworkLifeState: {fileID: -5107732197415868221}
 --- !u!1 &8690326290994660422
 GameObject:
   m_ObjectHideFlags: 0

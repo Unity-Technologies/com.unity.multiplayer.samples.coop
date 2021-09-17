@@ -14,6 +14,8 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
             return true;
@@ -37,6 +39,11 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+            }
+
             EndStealth();
         }
 

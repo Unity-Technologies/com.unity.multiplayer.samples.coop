@@ -51,6 +51,7 @@ namespace BossRoom.Server
                 m_Parent.physicsWrapper.Transform.forward = Data.Direction;
             }
 
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }

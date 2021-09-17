@@ -64,8 +64,6 @@ namespace BossRoom.Visual
 
         public ulong NetworkObjectId => m_NetState.NetworkObjectId;
 
-        static bool IsServer => NetworkManager.Singleton.LocalClientId == NetworkManager.Singleton.ServerClientId;
-
         public void Start()
         {
             if (!NetworkManager.Singleton.IsClient || transform.parent == null)
@@ -99,8 +97,6 @@ namespace BossRoom.Visual
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
-            m_NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
-            m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
 
@@ -122,7 +118,11 @@ namespace BossRoom.Visual
 
                     if (Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
-                        inputSender.ActionInputEvent += OnActionInput;
+                        // TODO: revisit; anticipated actions would play twice on the host
+                        if (!NetworkManager.Singleton.IsServer)
+                        {
+                            inputSender.ActionInputEvent += OnActionInput;
+                        }
                         inputSender.ClientMoveEvent += OnMoveInput;
                     }
                 }
@@ -138,7 +138,7 @@ namespace BossRoom.Visual
         {
             if (!IsAnimating())
             {
-                TrySetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
+                OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
             }
         }
 
@@ -149,8 +149,6 @@ namespace BossRoom.Visual
                 m_NetState.DoActionEventClient -= PerformActionFX;
                 m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
                 m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
-                m_NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
-                m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
 
@@ -160,11 +158,6 @@ namespace BossRoom.Visual
                     sender.ClientMoveEvent -= OnMoveInput;
                 }
             }
-        }
-
-        private void OnPerformHitReaction()
-        {
-            TrySetTrigger(m_HitStateTriggerID);
         }
 
         private void PerformActionFX(ActionRequestData data)
@@ -185,24 +178,6 @@ namespace BossRoom.Visual
         private void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
             m_ActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
-        }
-
-        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
-        {
-            switch (newValue)
-            {
-                case LifeState.Alive:
-                    TrySetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
-                    break;
-                case LifeState.Fainted:
-                    TrySetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
-                    break;
-                case LifeState.Dead:
-                    TrySetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
-            }
         }
 
         private void OnStealthyChanged(bool oldValue, bool newValue)
@@ -276,7 +251,7 @@ namespace BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                TrySetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
+                OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
             }
 
             m_ActionViz.Update();
@@ -307,44 +282,12 @@ namespace BossRoom.Visual
             return false;
         }
 
-        public void TrySetTrigger(string anim, bool anticipated = false)
-        {
-            if (IsServer || anticipated)
-            {
-                OurAnimator.SetTrigger(anim);
-            }
-        }
-
-        void TrySetTrigger(int id, bool anticipated = false)
-        {
-            if (IsServer || anticipated)
-            {
-                OurAnimator.SetTrigger(id);
-            }
-        }
-
-        public void TryResetTrigger(string anim, bool anticipated = false)
-        {
-            if (IsServer || anticipated)
-            {
-                OurAnimator.ResetTrigger(anim);
-            }
-        }
-
-        public void TrySetInteger(string anim, int value)
-        {
-            if (IsServer)
-            {
-                OurAnimator.SetInteger(anim, value);
-            }
-        }
-
-        void TrySetFloat(int id, float value)
+        /*void TrySetFloat(int id, float value)
         {
             if (IsServer)
             {
                 OurAnimator.SetFloat(id, value);
             }
-        }
+        }*/
     }
 }

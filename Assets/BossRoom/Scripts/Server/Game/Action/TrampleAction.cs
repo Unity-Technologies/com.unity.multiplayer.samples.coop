@@ -75,6 +75,17 @@ namespace BossRoom.Server
                 }
             }
 
+            // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.ResetTrigger(Description.Anim2);
+            }
+            // start the animation sequence!
+            if (!string.IsNullOrEmpty(Description.Anim))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+            }
+
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
@@ -150,8 +161,7 @@ namespace BossRoom.Server
                 {
                     damage = Description.SplashDamage;
                 }
-                victim.NetState.RecvPerformHitReactionClientRPC();
-                victim.ReceiveHP(this.m_Parent, -damage);
+                victim.ReceiveHP(m_Parent, -damage);
             }
 
             var victimMovement = victim.Movement;
@@ -235,5 +245,12 @@ namespace BossRoom.Server
             return false;
         }
 
+        public override void Cancel()
+        {
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+            }
+        }
     }
 }

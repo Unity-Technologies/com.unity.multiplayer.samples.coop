@@ -28,11 +28,6 @@ namespace BossRoom.Visual
 
         public override bool Start()
         {
-            if( !Anticipated)
-            {
-                PlayAnim();
-            }
-
             base.Start();
 
             // we can optionally have special particles that should play on the target. If so, add them now.
@@ -99,15 +94,20 @@ namespace BossRoom.Visual
             }
         }
 
-        private void PlayAnim(bool anticipated = false)
+        private void PlayAnim()
         {
-            m_Parent.TrySetTrigger(Description.Anim, anticipated);
+            m_Parent.OurAnimator.SetTrigger(Description.Anim);
         }
 
         private void PlayHitReact()
         {
             if (m_ImpactPlayed) { return; }
             m_ImpactPlayed = true;
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
 
             //Is my original target still in range? Then definitely get him!
             if (Data.TargetIds != null &&
@@ -136,7 +136,7 @@ namespace BossRoom.Visual
                         var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
                         if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
                         {
-                            clientChar.ChildVizObject.TrySetTrigger(hitAnim);
+                            clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);
                         }
                     }
                 }
@@ -152,7 +152,7 @@ namespace BossRoom.Visual
 
             //note: because the hit-react is driven from the animation, this means we can anticipatively trigger a hit-react too. That
             //will make combat feel responsive, but of course the actual damage won't be applied until the server tells us about it.
-            PlayAnim(true);
+            PlayAnim();
         }
     }
 }

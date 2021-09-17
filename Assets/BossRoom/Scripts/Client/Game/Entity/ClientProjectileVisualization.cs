@@ -62,12 +62,6 @@ namespace BossRoom.Visual
                     // show an impact graphic
                     Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
                 }
-
-                var clientChar = targetNetObject.GetComponent<Client.ClientCharacter>();
-                if(clientChar)
-                {
-                    clientChar.ChildVizObject.TrySetTrigger(ActionFX.k_DefaultHitReact);
-                }
             }
         }
     }
