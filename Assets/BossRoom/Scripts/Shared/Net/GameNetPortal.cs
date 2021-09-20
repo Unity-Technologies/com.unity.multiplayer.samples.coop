@@ -270,16 +270,16 @@ namespace BossRoom
                 case UnityTransport utp:
                     Debug.Log("Setting up Unity Relay host");
 
-                    await UnityServices.InitializeAsync();
-                    if (!AuthenticationService.Instance.IsSignedIn)
-                    {
-                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                        var playerId = AuthenticationService.Instance.PlayerId;
-                        Debug.Log(playerId);
-                    }
-
                     try
                     {
+                        await UnityServices.InitializeAsync();
+                        if (!AuthenticationService.Instance.IsSignedIn)
+                        {
+                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                            var playerId = AuthenticationService.Instance.PlayerId;
+                            Debug.Log(playerId);
+                        }
+
                         // we now need to get the joinCode?
                         var serverRelayUtilityTask =
                             RelayUtility.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
@@ -298,6 +298,7 @@ namespace BossRoom
                         Debug.LogErrorFormat($"{e.Message}");
                         throw;
                     }
+
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");

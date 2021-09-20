@@ -229,18 +229,18 @@ namespace BossRoom.Client
             {
                 case UnityTransport utp:
                     Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-
-                    await UnityServices.InitializeAsync();
-                    Debug.Log(AuthenticationService.Instance);
-                    if (!AuthenticationService.Instance.IsSignedIn)
-                    {
-                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                        var playerId = AuthenticationService.Instance.PlayerId;
-                        Debug.Log(playerId);
-                    }
-
                     try
                     {
+                        await UnityServices.InitializeAsync();
+                        Debug.Log(AuthenticationService.Instance);
+
+                        if (!AuthenticationService.Instance.IsSignedIn)
+                        {
+                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                            var playerId = AuthenticationService.Instance.PlayerId;
+                            Debug.Log(playerId);
+                        }
+
                         var clientRelayUtilityTask =  RelayUtility.JoinRelayServerFromJoinCode(joinCode);
                         await clientRelayUtilityTask;
                         var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
