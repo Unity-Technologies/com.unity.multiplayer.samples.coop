@@ -3,7 +3,11 @@
     "rootNamespace": "",
     "references": [
         "Unity.Netcode.Runtime",
-        "BossRoom.Shared"
+        "BossRoom.Shared",
+        "Unity.Services.Core",
+        "Unity.Services.Authentication",
+        "Unity.Services.Relay",
+        "Unity.Netcode.Adapter.UTP"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

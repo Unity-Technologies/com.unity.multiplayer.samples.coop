@@ -6,6 +6,8 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 
 namespace BossRoom
 {
@@ -23,6 +25,7 @@ namespace BossRoom
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
         Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
+        UnityRelay = 2, // The server is hosted over a Unity Relay server and clients join by entering a join code.
     }
 
     [Serializable]
@@ -94,6 +97,11 @@ namespace BossRoom
         /// the name of the player chosen at game start
         /// </summary>
         public string PlayerName;
+
+        /// <summary>
+        /// How many connections we create a Unity relay allocation for
+        /// </summary>
+        private const int k_MaxUnityRelayConnections = 8;
 
         void Start()
         {
@@ -224,6 +232,10 @@ namespace BossRoom
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ServerListenPort = port;
                     break;
+                case UnityTransport UnityTransport:
+                    // UnityTransport. = ipaddress;
+                    // UnityTransport. = (ushort)port;
+                    break;
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
             }
@@ -240,6 +252,53 @@ namespace BossRoom
             {
                 case PhotonRealtimeTransport photonRealtimeTransport:
                     photonRealtimeTransport.RoomName = roomName;
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+            }
+
+            NetManager.StartHost();
+        }
+
+        public async void StartUnityRelayHost()
+        {
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case UnityTransport utp:
+                    Debug.Log("Setting up Unity Relay host");
+
+                    try
+                    {
+                        await UnityServices.InitializeAsync();
+                        if (!AuthenticationService.Instance.IsSignedIn)
+                        {
+                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                            var playerId = AuthenticationService.Instance.PlayerId;
+                            Debug.Log(playerId);
+                        }
+
+                        // we now need to get the joinCode?
+                        var serverRelayUtilityTask =
+                            RelayUtility.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
+                        await serverRelayUtilityTask;
+                        // we now have the info from the relay service
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
+                            serverRelayUtilityTask.Result;
+
+                        RelayJoinCode.Code = joinCode;
+
+                        // we now need to set the RelayCode somewhere :P
+                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogErrorFormat($"{e.Message}");
+                        throw;
+                    }
+
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");

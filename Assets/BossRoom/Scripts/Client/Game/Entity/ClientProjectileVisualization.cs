@@ -64,7 +64,7 @@ namespace BossRoom.Visual
                 }
 
                 var clientChar = targetNetObject.GetComponent<Client.ClientCharacter>();
-                if(clientChar)
+                if (clientChar && clientChar.ChildVizObject)
                 {
                     clientChar.ChildVizObject.OurAnimator.SetTrigger(ActionFX.k_DefaultHitReact);
                 }

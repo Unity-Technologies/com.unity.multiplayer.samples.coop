@@ -1,3 +1,4 @@
+using BossRoom;
 using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -6,9 +7,7 @@ using Unity.Netcode;
 
 public class RoomNameBox : MonoBehaviour
 {
-
-    [SerializeField]
-    TextMeshProUGUI m_RoomNameText;
+    [SerializeField] TextMeshProUGUI m_RoomNameText;
 
     bool m_ConnectionFinished = false;
 
@@ -22,6 +21,9 @@ public class RoomNameBox : MonoBehaviour
         {
             case PhotonRealtimeTransport realtimeTransport:
                 m_RoomNameText.text = $"Loading room key...";
+                break;
+            case UnityTransport utp:
+                m_RoomNameText.text = $"Loading join code...";
                 break;
             default:
                 // RoomName should only be displayed when using relay.
@@ -41,15 +43,19 @@ public class RoomNameBox : MonoBehaviour
 
             if (transport != null &&
                 transport is PhotonRealtimeTransport realtimeTransport &&
-                realtimeTransport.Client != null && 
+                realtimeTransport.Client != null &&
                 string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
             {
                 string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
                 m_RoomNameText.text = $"Room Name: {roomName}";
                 m_ConnectionFinished = true;
             }
+            else if (transport != null && transport is UnityTransport utp &&
+                     !string.IsNullOrEmpty(RelayJoinCode.Code))
+            {
+                m_RoomNameText.text = RelayJoinCode.Code;
+                m_ConnectionFinished = true;
+            }
         }
-
-
     }
 }
