@@ -36,6 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                     #endif
                     case UNetTransport unetTransport:
                     case PhotonRealtimeTransport photonTransport:
+                    case UnityTransport UnityTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
                     default:

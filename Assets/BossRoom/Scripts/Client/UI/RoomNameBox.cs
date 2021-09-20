@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.BossRoom;
 using MLAPI.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -6,9 +7,7 @@ using Unity.Netcode;
 
 public class RoomNameBox : MonoBehaviour
 {
-
-    [SerializeField]
-    TextMeshProUGUI m_RoomNameText;
+    [SerializeField] TextMeshProUGUI m_RoomNameText;
 
     bool m_ConnectionFinished = false;
 
@@ -22,6 +21,9 @@ public class RoomNameBox : MonoBehaviour
         {
             case PhotonRealtimeTransport realtimeTransport:
                 m_RoomNameText.text = $"Loading room key...";
+                break;
+            case UnityTransport utp:
+                m_RoomNameText.text = $"Loading join code...";
                 break;
             default:
                 // RoomName should only be displayed when using relay.
@@ -48,8 +50,12 @@ public class RoomNameBox : MonoBehaviour
                 m_RoomNameText.text = $"Room Name: {roomName}";
                 m_ConnectionFinished = true;
             }
+            else if (transport != null && transport is UnityTransport utp &&
+                     !string.IsNullOrEmpty(RelayJoinCode.Code))
+            {
+                m_RoomNameText.text = RelayJoinCode.Code;
+                m_ConnectionFinished = true;
+            }
         }
-
-
     }
 }

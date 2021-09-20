@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI.Transports.LiteNetLib;
@@ -6,6 +7,8 @@ using MLAPI.Transports.PhotonRealtime;
 using Photon.Realtime;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -163,6 +166,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;
+                case UnityTransport unityTransport:
+                    // TODO: once this is exposed in the adapter we will be able to change it
+                    // UnityTransport.Address = ipaddress;
+                    // UnityTransport.Port = (ushort)port;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
             }
@@ -191,7 +199,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var region = splits[0];
             var roomName = splits[1];
 
-
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -209,6 +216,51 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             failMessage = String.Empty;
             return true;
+        }
+
+        public static async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
+        {
+
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case UnityTransport utp:
+                    Debug.Log($"Setting Unity Relay client with join code {joinCode}");
+                    try
+                    {
+                        await UnityServices.InitializeAsync();
+                        Debug.Log(AuthenticationService.Instance);
+
+                        if (!AuthenticationService.Instance.IsSignedIn)
+                        {
+                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                            var playerId = AuthenticationService.Instance.PlayerId;
+                            Debug.Log(playerId);
+                        }
+
+                        var clientRelayUtilityTask =  RelayUtility.JoinRelayServerFromJoinCode(joinCode);
+                        await clientRelayUtilityTask;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
+                    }
+                    catch (Exception e)
+                    {
+                        var menuUI = MainMenuUI.Instance;
+                        if (menuUI)
+                        {
+                            menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
+                        }
+                        throw;
+                    }
+
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+            }
+
+            ConnectClient(portal);
         }
 
         private static void ConnectClient(GameNetPortal portal)
