@@ -51,6 +51,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: f49b376c80eb1524ba9f7f12697c3aee, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: f49b376c80eb1524ba9f7f12697c3aee, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
         m_Texture: {fileID: 2800000, guid: 8dc9ba9843603b54db8b77d51c94a1b4, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -109,14 +113,16 @@ Material:
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _UVSec: 0
+    - _UseAlpha: 1
     - _ZWrite: 1
     m_Colors:
     - Color_acca830da4044b5fa948c859784be316: {r: 0.553, g: 0.511, b: 1, a: 1}
     - Vector4_1f7562654797436e96becd4b67df1223: {r: 1, g: 1, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.504, g: 0.5866666, b: 1, a: 1}
     - _EmissionColor: {r: 0.00052513264, g: 0.00052513264, b: 0.00052513264, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _MainTextureTilingOffset: {r: 1, g: 1, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []

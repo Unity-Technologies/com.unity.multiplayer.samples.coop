@@ -379,13 +379,33 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Boss_Head
+    second: {fileID: 2100000, guid: 3091d04ea639b8c48bbdd46bf02f2875, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Boss_Torso
+    second: {fileID: 2100000, guid: b1c69213cc9aee34d96c07efb32c22d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Enemy_Eyes_sheet
+    second: {fileID: 2100000, guid: 6ad0d134720fa434484b249c9074eeb0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Enemy_Mouth_sheet
+    second: {fileID: 2100000, guid: a9b71f18744318a4896a6260c48c6aa0, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Hair_Mage_Boy
     second: {fileID: 2100000, guid: 49d9ff892ff2c1c4396b1cfbb7ea4b6b, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Hair_Rogue_Boy
-    second: {fileID: 2100000, guid: d3e900e03cd1d9047b85f2fbeacc0653, type: 2}
+    second: {fileID: 2100000, guid: 51238b61d7696bb44950aabe9857b5a3, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -405,47 +425,67 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Head_Archer_Boy
-    second: {fileID: 2100000, guid: 42a178aaf1a58094bbfc1e8bbca924a2, type: 2}
+    second: {fileID: 2100000, guid: 9bbeafbf860e64744a97f8241827f4c5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Head_Archer_Girl
+    second: {fileID: 2100000, guid: 59aeea6b3cff1b745b6c534ac1bc2bc6, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Head_Mage_Boy
-    second: {fileID: 2100000, guid: 509b13d69137f33419970d7ffc027c73, type: 2}
+    second: {fileID: 2100000, guid: 9cf6125c2d8fdf840b37abb1300e86c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Head_Mage_Girl
+    second: {fileID: 2100000, guid: b6fb463aaf42fa442b15fc3288716f4c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Head_Rogue_Boy
-    second: {fileID: 2100000, guid: 1875beed4e1ae6043bfb69bd7ead3f9f, type: 2}
+    second: {fileID: 2100000, guid: 5690537b3cf4ec9478a74ed32803892a, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Head_Rogue_Girl
-    second: {fileID: 2100000, guid: 0566665be6bd31c4f9c169820c846a78, type: 2}
+    second: {fileID: 2100000, guid: 59aeea6b3cff1b745b6c534ac1bc2bc6, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Head_Tank_Boy
-    second: {fileID: 2100000, guid: 1db6f55842239274a8903b94a299fdab, type: 2}
+    second: {fileID: 2100000, guid: e651fc5f771a1f14ca51bf87895c3a34, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Head_Tank_Girl
-    second: {fileID: 2100000, guid: 368baa5f0ec5dea429f188fb1ba76cb7, type: 2}
+    second: {fileID: 2100000, guid: c842f1ddcf77bba4fbcd9e5b201a8f5c, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Hero_Eyes_sheet
-    second: {fileID: 2100000, guid: be7bb6483da667348847aab1ffdbf28a, type: 2}
+    second: {fileID: 2100000, guid: 83e9907752fa0454aabda2854e946e5d, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Hero_Mouth_sheet
-    second: {fileID: 2100000, guid: 3b8a43885903f934fb93ed2110b48132, type: 2}
+    second: {fileID: 2100000, guid: 71e6e99818013f84f91038ec53cbf5a7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Imp
+    second: {fileID: 2100000, guid: 96b9bdf113bb571429304e360eb36f7b, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Imp_head
+    second: {fileID: 2100000, guid: a45d29b968f5fdb4ba2ecc2663c4b196, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Torso_Archer
-    second: {fileID: 2100000, guid: 32e1fe11a397fe6468c0167ab5d92632, type: 2}
+    second: {fileID: 2100000, guid: 3f18e7390c775ad4c99b67a567332785, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -454,23 +494,33 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Torso_Mage_Boy [Mage_Torso_Boy]
+    second: {fileID: 2100000, guid: aec61333b49ad744bbf3aa0ea94672a1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Torso_Mage_Girl
+    second: {fileID: 2100000, guid: 21a336530765c4348be349939e333ad7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Torso_Rogue
-    second: {fileID: 2100000, guid: 0ff52550ec51425478d16fac3184c0e1, type: 2}
+    second: {fileID: 2100000, guid: 2a8c13481190f9744a67d67139f52502, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Torso_Tank
-    second: {fileID: 2100000, guid: 80250ce70276334418738053b5745d65, type: 2}
+    second: {fileID: 2100000, guid: abddd49720c2f2343b18e942d69bce73, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Weapons_Archer
-    second: {fileID: 2100000, guid: 19f2eaeef29997c4fb18da8b5aa909dc, type: 2}
+    second: {fileID: 2100000, guid: ef0f7694aa14e254dbd6872108345c34, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Weapons_Mage
-    second: {fileID: 2100000, guid: b0cf3b72e77339a498c6f18750784854, type: 2}
+    second: {fileID: 2100000, guid: e6e8b1415e538b346a6dd968d755e33f, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -479,8 +529,13 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Weapons_Rogue [Rogue_Weapon_Boy]
+    second: {fileID: 2100000, guid: c06f413592f04d04f8e8853a6580ebe5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Weapons_Tank
-    second: {fileID: 2100000, guid: 9463ab27402eb524f83a42e7b08978de, type: 2}
+    second: {fileID: 2100000, guid: 82b6dde08fd32d54a8b4f253df78a31a, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

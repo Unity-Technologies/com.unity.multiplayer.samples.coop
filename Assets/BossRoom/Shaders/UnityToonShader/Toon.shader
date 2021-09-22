@@ -28,6 +28,7 @@ Shader "Roystan/Toon"
 			{
 				//"LightMode" = "ForwardBase"
 				"PassFlags" = "OnlyDirectional"
+				"RenderPipeline" = "UniversalPipeline"
 			}
 
 			CGPROGRAM

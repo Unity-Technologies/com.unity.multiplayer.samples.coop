@@ -101,6 +101,7 @@ Material:
     - _SrcBlend: 1
     - _Switch_Alpha: 1
     - _UVSec: 0
+    - _UseAlpha: 1
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
@@ -109,4 +110,5 @@ Material:
     - _Color: {r: 2.9960785, g: 2.9960785, b: 2.9960785, a: 1}
     - _Color0: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainTextureTilingOffset: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_TorchFire
-  m_Shader: {fileID: -6465566751694194690, guid: 98d049a5b372986479d42cfc7e88f269, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: e794910c37cc42c4085536d4b0d33e0f, type: 3}
   m_ShaderKeywords: _HASTEXTUREDISSOLVE_ON _STEPSUBTRACT_ON _VERTEXAOPACITY_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
@@ -28,7 +28,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_ebc59c3a4789414dbc640714ca8cd838:
-        m_Texture: {fileID: 2800000, guid: 27964659a7d4fef44ba88a7b6967fa31, type: 3}
+        m_Texture: {fileID: 2800000, guid: 60781adef564aeb439a036d89cc5545e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -99,13 +99,13 @@ Material:
     - Boolean_3d21c72f19314834bd7b68bd1945e5ed: 1
     - Boolean_3f723681939f4ad0be5abc28767056a0: 0
     - Boolean_b14a61a83cf04832bfc5e28ac9dc002f: 1
-    - Boolean_b2d3c01bbc4040b69679a702e03700d7: 1
+    - Boolean_b2d3c01bbc4040b69679a702e03700d7: 0
     - Boolean_e207d7c3c7c54fe9a2fedb5c72933240: 1
     - Boolean_e207d7c3c7c54fe9a2fedb5c72933240_1: 0
     - Boolean_ebca1713bc2a4fcea5fa60c01ccce53f: 0
     - Vector1_1: 0.15
     - Vector1_49a02738d71c4444862d3f695e709242: 1
-    - Vector1_ffa04a928dac4de2b4be502e4caee4d3: 30.07
+    - Vector1_ffa04a928dac4de2b4be502e4caee4d3: 1
     - Vector1_ffa04a928dac4de2b4be502e4caee4d3_1: 1
     - _BumpScale: 1
     - _ChangeMasktoX: 0
@@ -140,7 +140,7 @@ Material:
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
-    - Color_1808cb51d9804f419fb05b86068c676a: {r: 1, g: 1, b: 1, a: 1}
+    - Color_1808cb51d9804f419fb05b86068c676a: {r: 2.1185474, g: 2.1185474, b: 2.1185474, a: 1}
     - Vector4_1: {r: 1, g: 1, b: 0, a: 0}
     - Vector4_1d8f01040b1f48af90ee158d67035434: {r: 1, g: 1, b: 0, a: 0}
     - Vector4_2: {r: 1, g: 1, b: 0, a: 0}

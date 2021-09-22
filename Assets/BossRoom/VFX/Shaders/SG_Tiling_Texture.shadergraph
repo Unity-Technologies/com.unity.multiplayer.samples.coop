@@ -5643,7 +5643,7 @@
         "m_Id": "7a6edb7126954a8196743e52776d2b6b"
     },
     "m_SurfaceType": 1,
-    "m_AlphaMode": 1,
+    "m_AlphaMode": 0,
     "m_TwoSided": false,
     "m_AlphaClip": false,
     "m_CustomEditorGUI": ""

@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_Ice
-  m_Shader: {fileID: 4800000, guid: a6bfc36e57bbc80459d4fa05df336432, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 726a76293c22ee04ab5948804a43a5fa, type: 3}
   m_ShaderKeywords: _USEZMASK_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 0
@@ -39,6 +39,18 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
     - _Cutoff: 0.5
     - _Dissolve: 3
@@ -49,6 +61,7 @@ Material:
     - _Fresnel: 0.87
     - _FresnelPower: 0.3
     - _Hardness: 0.5
+    - _MaskClipValue: 0.5
     - _MaskSoft: 1.21
     - _Opacity: 1
     - _Power: 2.38

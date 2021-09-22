@@ -8,8 +8,8 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_Slash_01
-  m_Shader: {fileID: 4800000, guid: 78fb75433c6f4b245b507d09dbdbabb6, type: 3}
-  m_ShaderKeywords: _CUSTOMDATA_ON _SLASHUVCLAMP_ON
+  m_Shader: {fileID: -6465566751694194690, guid: 7efde22a7d967994c95b83f0da282e47, type: 3}
+  m_ShaderKeywords: _DISSOLVE_TYPE_SLIDER _DIS_TYPE_DISSOLVETEXRED
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -59,6 +59,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 1bd0b0bcaa21eea49849851de7a331a8, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SlashTexture:
+        m_Texture: {fileID: 2800000, guid: 1bd0b0bcaa21eea49849851de7a331a8, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _tex4coord:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -67,7 +71,20 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Vector1_3cbfebc165a44c1597f9873e810eb1b3: 1.5
     - _BlendMode: 0
     - _BumpScale: 1
     - _CullMode: 0
@@ -92,5 +109,6 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Tint: {r: 2.9960785, g: 2.9960785, b: 2.9960785, a: 1}
+    - _Slash: {r: 0, g: 0.01, b: 0, a: 0}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

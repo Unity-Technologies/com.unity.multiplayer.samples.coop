@@ -98,6 +98,7 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _Switch_Alpha: 0
+    - _UseAlpha: 0
     - _Use_alpha: 1
     - _WorkflowMode: 1
     - _ZWrite: 1
@@ -106,8 +107,9 @@ Material:
     - Color_acca830da4044b5fa948c859784be316: {r: 2.2264152, g: 2.1949093, b: 2.1949093, a: 1}
     - Vector4_1f7562654797436e96becd4b67df1223: {r: 1, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 2.2264152, g: 2.1949093, b: 2.1949093, a: 1}
+    - _Color: {r: 766.9961, g: 758.9647, b: 758.9647, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainTextureTilingOffset: {r: 1, g: 1, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []
 --- !u!114 &8601509238882469189
