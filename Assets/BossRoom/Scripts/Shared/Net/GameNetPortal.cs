@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public enum ConnectStatus
     {
@@ -43,9 +43,9 @@ namespace BossRoom
     /// </summary>
     ///
     /// <remarks>
-    /// Why is there a C2S_ConnectFinished event here? How is that different from the "ApprovalCheck" logic that MLAPI optionally runs
-    /// when establishing a new client connection?
-    /// MLAPI's ApprovalCheck logic doesn't offer a way to return rich data. We need to know certain things directly upon logging in, such as
+    /// Why is there a C2S_ConnectFinished event here? How is that different from the "ApprovalCheck" logic that Netcode
+    /// for GameObjects (Netcode) optionally runs when establishing a new client connection?
+    /// Netcode's ApprovalCheck logic doesn't offer a way to return rich data. We need to know certain things directly upon logging in, such as
     /// whether the game-layer even wants us to join (we could fail because the server is full, or some other non network related reason), and also
     /// what BossRoomState to transition to. We do this with a Custom Named Message, which fires on the server immediately after the approval check delegate
     /// has run.
@@ -63,7 +63,7 @@ namespace BossRoom
         NetworkManager m_NetworkManager;
 
         /// <summary>
-        /// This event is fired when MLAPI has reported that it has finished initialization, and is ready for
+        /// This event is fired when Netcode has reported that it has finished initialization, and is ready for
         /// business, equivalent to OnServerStarted on the server, and OnClientConnected on the client.
         /// </summary>
         public event Action NetworkReadied;
@@ -156,7 +156,7 @@ namespace BossRoom
             //before we even get our ClientConnected event (if acting as a client). It should be harmless to have server handlers registered
             //on the client, because (a) nobody will be sending us these messages and (b) even if they did, nobody is listening for those
             //server message events on the client anyway.
-            //TODO-FIXME:MLAPI Issue 799. We shouldn't really have to worry about getting messages before our ClientConnected callback.
+            //TODO-FIXME:Netcode Issue 799. We shouldn't really have to worry about getting messages before our ClientConnected callback.
 
             RegisterClientMessageHandlers();
 

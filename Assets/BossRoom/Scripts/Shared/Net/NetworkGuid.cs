@@ -1,7 +1,7 @@
 using System;
 using Unity.Netcode;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public struct NetworkGuid : INetworkSerializable
     {

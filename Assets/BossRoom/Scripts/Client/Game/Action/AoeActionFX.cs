@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// Final step in the AoE action flow. Please see AoEActionInput for the first step and more details on overall flow
     public class AoeActionFX : ActionFX

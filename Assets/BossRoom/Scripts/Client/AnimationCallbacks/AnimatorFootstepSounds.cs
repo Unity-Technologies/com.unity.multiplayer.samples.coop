@@ -1,12 +1,12 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Plays one of a few sound effects, on a loop, based on a variable in an Animator.
     /// We use this to play footstep sounds.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// For this project we're using a few looped footstep sounds, choosing between them
     /// based on the animated speed. This method has good performance versus a more complicated

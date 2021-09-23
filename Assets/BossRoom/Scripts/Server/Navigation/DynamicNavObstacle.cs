@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     [DefaultExecutionOrder(10000)] // The enable/disable triggers have to be called after the triggers from NavMeshObstacle which update the nav mesh.
     [RequireComponent(typeof(NavMeshObstacle))]

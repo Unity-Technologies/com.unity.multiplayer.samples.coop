@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Controls one of the eight "seats" on the character-select screen (the boxes along the bottom).
@@ -118,7 +118,7 @@ namespace BossRoom.Client
                 m_InactiveStateVisuals.SetActive(false);
                 m_PlayerNumberHolder.sprite = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Indicator;
                 m_ActiveStateVisuals.SetActive(true);
-               
+
                 m_PlayerNameHolder.gameObject.SetActive(true);
                 m_PlayerNameHolder.color = ClientCharSelectState.Instance.m_IdentifiersForEachPlayerNumber[m_PlayerNumber].Color;
                 m_Button.interactable = m_IsDisabled ? false : true;

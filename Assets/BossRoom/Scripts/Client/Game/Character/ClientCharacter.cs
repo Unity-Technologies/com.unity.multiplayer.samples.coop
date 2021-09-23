@@ -1,8 +1,8 @@
 using Unity.Netcode;
 using UnityEngine;
-using BossRoom.Visual;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacter : NetworkBehaviour

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public abstract class BaseActionInput : MonoBehaviour
     {

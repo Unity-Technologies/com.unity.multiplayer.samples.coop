@@ -1,15 +1,13 @@
 {
-    "name": "BossRoom.Server",
+    "name": "Unity.Multiplayer.Samples.BossRoom.Editor",
     "rootNamespace": "",
     "references": [
-        "Unity.Netcode.Runtime",
-        "BossRoom.Shared",
-        "Unity.Services.Core",
-        "Unity.Services.Authentication",
-        "Unity.Services.Relay",
-        "Unity.Netcode.Adapter.UTP"
+        "Unity.Multiplayer.Samples.BossRoom.Shared",
+        "Unity.Netcode.Runtime"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// This controls the tooltip popup -- the little text blurb that appears when you hover your mouse

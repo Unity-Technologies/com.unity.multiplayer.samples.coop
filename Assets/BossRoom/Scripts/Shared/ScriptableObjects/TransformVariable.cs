@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// A ScriptableObject which contains a reference to a Transform component. This can be used to remove dependencies

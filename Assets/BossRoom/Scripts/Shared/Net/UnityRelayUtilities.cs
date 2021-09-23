@@ -5,7 +5,7 @@ using Unity.Services.Relay;
 using Unity.Services.Relay.Allocations;
 using Unity.Services.Relay.Models;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public static class RelayJoinCode
     {

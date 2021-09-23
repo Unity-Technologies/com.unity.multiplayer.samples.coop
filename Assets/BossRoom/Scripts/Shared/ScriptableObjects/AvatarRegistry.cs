@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// This ScriptableObject will be the container for all possible Avatars inside BossRoom.

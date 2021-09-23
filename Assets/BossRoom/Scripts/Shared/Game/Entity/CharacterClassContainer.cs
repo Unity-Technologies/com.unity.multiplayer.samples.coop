@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// The source of truth for a PC/NPCs CharacterClass.

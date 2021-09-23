@@ -1,6 +1,5 @@
 using System;
-using System.Threading.Tasks;
-using BossRoom.Visual;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI.Transports.LiteNetLib;
@@ -11,7 +10,7 @@ using Unity.Netcode.Transports.UNET;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client side logic for a GameNetPortal. Contains implementations for all of GameNetPortal's S2C RPCs.
@@ -95,7 +94,7 @@ namespace BossRoom.Client
 
         private void OnConnectFinished(ConnectStatus status)
         {
-            //on success, there is nothing to do (the MLAPI scene management system will take us to the next scene).
+            //on success, there is nothing to do (the Netcode for GameObjects (Netcode) scene management system will take us to the next scene).
             //on failure, we must raise an event so that the UI layer can display something.
             Debug.Log("RecvConnectFinished Got status: " + status);
 
@@ -279,8 +278,8 @@ namespace BossRoom.Client
             portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
             portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
-            //and...we're off! MLAPI will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:MLAPI GOMPS-79, provide feedback for different transport failures).
+            //and...we're off! Netcode will establish a socket connection to the host.
+            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:Netcode GOMPS-79, provide feedback for different transport failures).
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
         }
