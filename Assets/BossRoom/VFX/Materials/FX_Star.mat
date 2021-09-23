@@ -12,7 +12,7 @@ Material:
   m_ShaderKeywords: _DISSOLVETYPE_SLIDER _DISSOLVETYPE_UV _DISSOLVE_TYPE_SLIDER _DISSOLVE_UV
     _DISTYPE_UV _DIS_TYPE_UV
   m_LightmapFlags: 0
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}

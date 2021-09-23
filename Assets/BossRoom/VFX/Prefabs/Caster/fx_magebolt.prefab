@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 765690034209705780}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 19.832695, y: 20.74684, z: 25.456272}
+  m_LocalPosition: {x: 7.83, y: 17.1, z: 25.456272}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 5366033291647406569}
@@ -183,21 +183,9 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 5885657935768561843}
     m_Modifications:
-    - target: {fileID: 6231754142360194708, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.g
-      value: 0.199
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754142360194708, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.r
-      value: 0.62453127
-      objectReference: {fileID: 0}
     - target: {fileID: 6231754143511276770, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
       propertyPath: m_Name
       value: (PROJECTILE) FX_Caster_attack1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754143511276770, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_IsActive
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6231754143511276774, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
       propertyPath: m_RootOrder
@@ -242,50 +230,6 @@ PrefabInstance:
     - target: {fileID: 6231754143511276774, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754143850965959, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.g
-      value: 0.17699999
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754143850965959, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.r
-      value: 0.62459636
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754143850965959, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key1.b
-      value: 0.48235294
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754143850965959, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key1.g
-      value: 0.03424705
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754143850965959, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key1.r
-      value: 0.28885275
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754144185744800, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.b
-      value: 0.894
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754144185744800, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.g
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754144185744800, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key0.r
-      value: 0.47782776
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754144185744800, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key1.b
-      value: 0.624
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754144185744800, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key1.g
-      value: 0.17721602
-      objectReference: {fileID: 0}
-    - target: {fileID: 6231754144185744800, guid: d4ea496f570c98343bc11c49aad52544, type: 3}
-      propertyPath: m_Parameters.colorGradient.key1.r
-      value: 0.42974615
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d4ea496f570c98343bc11c49aad52544, type: 3}

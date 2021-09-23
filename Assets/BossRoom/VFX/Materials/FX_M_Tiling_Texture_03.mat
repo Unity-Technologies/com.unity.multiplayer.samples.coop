@@ -11,7 +11,7 @@ Material:
   m_Shader: {fileID: -6465566751694194690, guid: 0cefb6ee4cd470a4d80ba840257bdab2, type: 3}
   m_ShaderKeywords: _CHANGEMASKTOX_ON _HASMASK_ON
   m_LightmapFlags: 2
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}

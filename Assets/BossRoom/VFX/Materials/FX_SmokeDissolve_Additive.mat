@@ -10,10 +10,10 @@ Material:
   m_Name: FX_SmokeDissolve_Additive
   m_Shader: {fileID: -6465566751694194690, guid: 5d29e5b8a08dd994aae83e406b3ffb62, type: 3}
   m_ShaderKeywords: ENUM_77760446580F4017ADC8BE0606DB8FC3_DISSOLVETEXRED ENUM_EA0A9A53583345159A94335DDBDA8082_CUSTOM
-    _DISSOLVETYPE_CUSTOM _DISSOLVETYPE_UV _DISSOLVE_UV _DISTYPE_DISSOLVETEXRED _INVERTDISSOLVE_ON
-    _KEYWORD0_ON
+    _DISSOLVETYPE_CUSTOM _DISSOLVETYPE_UV _DISSOLVE_UV _DISTYPE_DISSOLVETEXRED _DIS_TYPE_DISSOLVETEXRED
+    _INVERTDISSOLVE_ON _KEYWORD0_ON
   m_LightmapFlags: 0
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -102,6 +102,8 @@ Material:
     - _BumpScale: 1
     - _Cull: 2
     - _Cutoff: 0.5
+    - _DISSOLVE_TYPE: 0
+    - _DIS_TYPE: 3
     - _DetailNormalMapScale: 1
     - _DisType: 3
     - _Dissolve: 0
@@ -113,6 +115,7 @@ Material:
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _InvertDissolve: 1
+    - _MaskClipValue: 0.5
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -134,5 +137,5 @@ Material:
     - _Fresnel: {r: 0, g: 3, b: 5, a: 0}
     - _FresnelColor: {r: 0, g: 0, b: 0, a: 0}
     - _Panner: {r: 0, g: 0, b: 0, a: 0}
-    - _Tint: {r: 0.7264151, g: 0.7264151, b: 0.7264151, a: 1}
+    - _Tint: {r: 0.20803954, g: 0.20803954, b: 0.20803954, a: 1}
   m_BuildTextureStacks: []

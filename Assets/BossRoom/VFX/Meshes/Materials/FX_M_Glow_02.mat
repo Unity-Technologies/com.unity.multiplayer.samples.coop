@@ -8,10 +8,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_Glow_02
-  m_Shader: {fileID: -6465566751694194690, guid: 92805c84615a06441a1dbd0c9d0ac1d8, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: a9ba79dc821093a4c9041bcede85096b, type: 3}
   m_ShaderKeywords: _ALPHAPREMULTIPLY_ON _COLORADDSUBDIFF_ON
   m_LightmapFlags: 4
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -103,6 +103,7 @@ Material:
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
+    - _InvFade: 1
     - _LightingEnabled: 0
     - _Metallic: 0
     - _Mode: 0
@@ -136,11 +137,13 @@ Material:
     - _BaseColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
-    - _Color: {r: 766.9961, g: 766.9961, b: 766.9961, a: 1}
+    - _Color: {r: 1.3041189, g: 1.3041189, b: 1.3041189, a: 1}
     - _ColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainTextureTilingOffset: {r: 1, g: 1, b: 0, a: 0}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _TintColor: {r: 0.638, g: 0.638, b: 0.638, a: 0.5}
   m_BuildTextureStacks: []
 --- !u!114 &8601509238882469189
 MonoBehaviour:

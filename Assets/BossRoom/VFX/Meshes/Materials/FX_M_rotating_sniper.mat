@@ -11,7 +11,7 @@ Material:
   m_Shader: {fileID: -6465566751694194690, guid: 92805c84615a06441a1dbd0c9d0ac1d8, type: 3}
   m_ShaderKeywords: _SWITCH_ALPHA_ON _USE_ALPHA_ON
   m_LightmapFlags: 2
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -107,7 +107,7 @@ Material:
     - Color_acca830da4044b5fa948c859784be316: {r: 4.3736787, g: 6.056549, b: 4.1995883, a: 1}
     - Vector4_1f7562654797436e96becd4b67df1223: {r: 1, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 4.3736787, g: 6.056549, b: 4.1995883, a: 1}
+    - _Color: {r: 2.164706, g: 2.9960785, b: 2.0862746, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
   m_BuildTextureStacks: []

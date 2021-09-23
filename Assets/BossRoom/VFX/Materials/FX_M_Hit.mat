@@ -11,7 +11,7 @@ Material:
   m_Shader: {fileID: -6465566751694194690, guid: a9ba79dc821093a4c9041bcede85096b, type: 3}
   m_ShaderKeywords: _SWITCH_ALPHA_ON
   m_LightmapFlags: 2
-  m_EnableInstancingVariants: 0
+  m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
   stringTagMap: {}
@@ -109,6 +109,7 @@ Material:
     - _TransShadow: 0.9
     - _Translucency: 1
     - _UVSec: 0
+    - _UseAlpha: 1
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
@@ -119,4 +120,5 @@ Material:
     - _Color0: {r: 1, g: 1, b: 1, a: 0.78039217}
     - _Color1: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainTextureTilingOffset: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
