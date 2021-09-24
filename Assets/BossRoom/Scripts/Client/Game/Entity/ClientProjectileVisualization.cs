@@ -1,8 +1,7 @@
-using MLAPI;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     public class ClientProjectileVisualization : NetworkBehaviour
     {
@@ -65,7 +64,7 @@ namespace BossRoom.Visual
                 }
 
                 var clientChar = targetNetObject.GetComponent<Client.ClientCharacter>();
-                if(clientChar)
+                if (clientChar && clientChar.ChildVizObject)
                 {
                     clientChar.ChildVizObject.OurAnimator.SetTrigger(ActionFX.k_DefaultHitReact);
                 }

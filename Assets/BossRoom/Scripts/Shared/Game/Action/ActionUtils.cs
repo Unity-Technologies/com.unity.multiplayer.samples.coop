@@ -1,8 +1,7 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
-using MLAPI.Spawning;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public static class ActionUtils
     {

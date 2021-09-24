@@ -1,10 +1,10 @@
-using MLAPI;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// ServerEnemyPortal is a stationary dungeon element that spawns monsters when a player is

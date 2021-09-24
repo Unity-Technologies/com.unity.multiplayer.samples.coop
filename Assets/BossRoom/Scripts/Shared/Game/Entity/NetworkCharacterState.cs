@@ -1,10 +1,8 @@
-using MLAPI;
-using MLAPI.Messaging;
-using MLAPI.NetworkVariable;
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public enum LifeState
     {
@@ -41,7 +39,7 @@ namespace BossRoom
         /// <summary>
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
         /// </summary>
-        public NetworkVariableBool IsStealthy { get; } = new NetworkVariableBool();
+        public NetworkVariable<bool> IsStealthy { get; } = new NetworkVariable<bool>();
 
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
@@ -57,7 +55,7 @@ namespace BossRoom
         /// <summary>
         /// The active target of this character.
         /// </summary>
-        public NetworkVariableULong TargetId { get; } = new NetworkVariableULong();
+        public NetworkVariable<ulong> TargetId { get; } = new NetworkVariable<ulong>();
 
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.
@@ -114,6 +112,7 @@ namespace BossRoom
 
         public override void OnNetworkSpawn()
         {
+            if (!IsServer) return;
             HitPoints = CharacterData.BaseHP.Value;
         }
 

@@ -1,7 +1,7 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public enum GameState
     {
@@ -20,7 +20,7 @@ namespace BossRoom
     /// A: There is a 1-to-many relationship between states and scenes. That is, every scene corresponds to exactly one state,
     ///    but a single state can exist in multiple scenes.
     /// Q: How do state transitions happen?
-    /// A: They are driven implicitly by calling MLAPI.SceneManagement.NetworkSceneManager.SwitchScene in server code. This is
+    /// A: They are driven implicitly by calling NetworkManager.SceneManager.LoadScene in server code. This is
     ///    important, because if state transitions were driven separately from scene transitions, then states that cared what
     ///    scene they ran in would need to carefully synchronize their logic to scene loads.
     /// Q: How many GameStateBehaviours are there?
@@ -38,7 +38,10 @@ namespace BossRoom
         /// <summary>
         /// Does this GameState persist across multiple scenes?
         /// </summary>
-        public virtual bool Persists { get { return false; } }
+        public virtual bool Persists
+        {
+            get { return false; }
+        }
 
         /// <summary>
         /// What GameState this represents. Server and client specializations of a state should always return the same enum.
@@ -97,21 +100,7 @@ namespace BossRoom
             if (!isActiveAndEnabled || !NetworkManager.Singleton)
                 return;
 
-            if (NetworkManager.Singleton.IsHost)
-            {
-                NetworkManager.Singleton.StopHost();
-            }
-            else if (NetworkManager.Singleton.IsClient)
-            {
-                NetworkManager.Singleton.StopClient();
-            }
-            else if (NetworkManager.Singleton.IsServer)
-            {
-                NetworkManager.Singleton.StopServer();
-            }
+            NetworkManager.Singleton.Shutdown();
         }
-
     }
-
 }
-

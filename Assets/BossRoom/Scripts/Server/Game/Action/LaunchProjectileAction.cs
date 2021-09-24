@@ -1,8 +1,8 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
 
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Action responsible for creating a projectile object.
@@ -16,7 +16,7 @@ namespace BossRoom.Server
         public override bool Start()
         {
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
-            m_Parent.transform.forward = Data.Direction;
+            m_Parent.physicsWrapper.Transform.forward = Data.Direction;
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
@@ -62,11 +62,11 @@ namespace BossRoom.Server
                 GameObject projectile = Object.Instantiate(projectileInfo.ProjectilePrefab);
 
                 // point the projectile the same way we're facing
-                projectile.transform.forward = m_Parent.transform.forward;
+                projectile.transform.forward = m_Parent.physicsWrapper.Transform.forward;
 
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
                 //where it appears next to the player.
-                projectile.transform.position = m_Parent.transform.localToWorldMatrix.MultiplyPoint(projectile.transform.position);
+                projectile.transform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(projectile.transform.position);
                 projectile.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkObjectId, in projectileInfo);
 
                 projectile.GetComponent<NetworkObject>().Spawn();

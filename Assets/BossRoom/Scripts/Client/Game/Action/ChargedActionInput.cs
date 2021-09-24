@@ -1,7 +1,6 @@
-using System.Collections;
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     public class ChargedActionInput : BaseActionInput
     {
@@ -10,7 +9,7 @@ namespace BossRoom.Visual
         private void Start()
         {
             // get our particle near the right spot!
-            transform.position = m_PlayerOwner.transform.position;
+            transform.position = m_Origin;
 
             m_StartTime = Time.time;
             // right now we only support "untargeted" charged attacks.

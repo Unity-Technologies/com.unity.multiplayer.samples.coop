@@ -1,13 +1,11 @@
-using MLAPI;
-using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Causes the attacker to teleport near a target spot, then perform a melee attack. The client
-    /// visualization moves the character locally beforehand, making the character appear to dash to the 
+    /// visualization moves the character locally beforehand, making the character appear to dash to the
     /// destination spot.
     ///
     /// After the ExecTime has elapsed, the character is immune to damage until the action ends.
@@ -32,10 +30,10 @@ namespace BossRoom.Server
         public override bool Start()
         {
             // remember the exact spot we'll stop.
-            m_TargetSpot = ActionUtils.GetTeleportDestination(m_Parent.transform, Data.Position, true, Description.Range, Description.Range);
+            m_TargetSpot = ActionUtils.GetTeleportDestination(m_Parent.physicsWrapper.Transform, Data.Position, true, Description.Range, Description.Range);
 
             // snap to face our destination. This ensures the client visualization faces the right way while "pretending" to dash
-            m_Parent.transform.LookAt(m_TargetSpot);
+            m_Parent.physicsWrapper.Transform.LookAt(m_TargetSpot);
 
             // tell clients to visualize this action
             m_Parent.NetState.RecvDoActionClientRPC(Data);
@@ -51,7 +49,7 @@ namespace BossRoom.Server
         public override void End()
         {
             // we're done, time to teleport!
-            m_Parent.GetComponent<ServerCharacterMovement>().Teleport(m_TargetSpot);
+            m_Parent.Movement.Teleport(m_TargetSpot);
 
             // and then swing!
             PerformMeleeAttack();
@@ -78,7 +76,7 @@ namespace BossRoom.Server
         {
             // perform a typical melee-hit. But note that we are using the Radius field for range, not the Range field!
             IDamageable foe = MeleeAction.GetIdealMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc,
-                                                            m_Parent.GetComponent<Collider>(),
+                                                            m_Parent.physicsWrapper.DamageCollider,
                                                             Description.Radius,
                                                             (Data.TargetIds != null && Data.TargetIds.Length > 0 ? Data.TargetIds[0] : 0));
 

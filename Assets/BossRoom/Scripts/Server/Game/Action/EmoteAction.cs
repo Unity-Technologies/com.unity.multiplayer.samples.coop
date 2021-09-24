@@ -1,7 +1,6 @@
 using System;
-using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class EmoteAction : Action
     {

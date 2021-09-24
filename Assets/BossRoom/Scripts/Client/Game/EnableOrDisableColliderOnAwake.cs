@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     public class EnableOrDisableColliderOnAwake : MonoBehaviour
     {

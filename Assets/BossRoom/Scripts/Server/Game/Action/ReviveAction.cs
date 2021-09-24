@@ -1,9 +1,8 @@
-using MLAPI;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class ReviveAction : Action
     {

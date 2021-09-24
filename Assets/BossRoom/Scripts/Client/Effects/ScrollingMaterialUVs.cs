@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     public class ScrollingMaterialUVs : MonoBehaviour
     {

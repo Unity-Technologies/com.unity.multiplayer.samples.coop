@@ -1,12 +1,12 @@
-using MLAPI;
-using MLAPI.NetworkVariable.Collections;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Unity.Netcode;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client specialization of the Character Select game state. Mainly controls the UI during character-select.
@@ -21,15 +21,6 @@ namespace BossRoom.Client
 
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
-
-        [Header("Configuration of in-Scene Character")]
-        [SerializeField]
-        [Tooltip("Reference to dummy character model in the char-select screen")]
-        private CharacterSwap m_InSceneCharacter;
-
-        [SerializeField]
-        [Tooltip("Reference to dummy character model in the char-select screen")]
-        private Animator m_InSceneCharacterAnimator;
 
         [SerializeField]
         [Tooltip("This is triggered when the player chooses a character")]
@@ -87,8 +78,17 @@ namespace BossRoom.Client
         [Tooltip("Error message text when lobby is full")]
         private string m_FatalErrorLobbyFullMsg = "Error: lobby is full! You cannot play.";
 
+        [SerializeField]
+        Transform m_CharacterGraphicsParent;
+
         private int m_LastSeatSelected = -1;
         private bool m_HasLocalPlayerLockedIn = false;
+
+        GameObject m_CurrentCharacterGraphics;
+
+        Animator m_CurrentCharacterGraphicsAnimator;
+
+        Dictionary<Guid, GameObject> m_SpawnedCharacterGraphics = new Dictionary<Guid, GameObject>();
 
         /// <summary>
         /// Conceptual modes or stages that the lobby can be in. We don't actually
@@ -137,7 +137,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnLobbyChanged -= OnLobbyPlayerStateChanged;
             }
             if (Instance == this)
                 Instance = null;
@@ -154,7 +154,7 @@ namespace BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnLobbyChanged += OnLobbyPlayerStateChanged;
             }
         }
 
@@ -169,7 +169,7 @@ namespace BossRoom.Client
 
         private void UpdatePlayerCount()
         {
-            int count = CharSelectData.LobbyPlayers.Count;
+            int count = CharSelectData.LobbyPlayers.PlayerCount;
             var pstr = (count > 1) ? "players" : "player";
             m_NumPlayersText.text = "<b>" + count + "</b> " + pstr +" connected";
         }
@@ -177,14 +177,14 @@ namespace BossRoom.Client
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
-        private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> lobbyArray )
+        private void OnLobbyPlayerStateChanged(ArraySegment<CharSelectData.LobbyPlayerState> lobbyArray )
         {
             UpdateSeats();
             UpdatePlayerCount();
 
             // now let's find our local player in the list and update the character/info box appropriately
             int localPlayerIdx = -1;
-            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == NetworkManager.Singleton.LocalClientId)
                 {
@@ -227,24 +227,39 @@ namespace BossRoom.Client
             m_LastSeatSelected = seatIdx;
             if (state == CharSelectData.SeatState.Inactive)
             {
-                // TODO: Re-implement CharSelect preview (GOMPS-550)
-                //m_InSceneCharacter.gameObject.SetActive(false);
+                if (m_CurrentCharacterGraphics)
+                {
+                    m_CurrentCharacterGraphics.SetActive(false);
+                }
+
                 m_ClassInfoBox.ConfigureForNoSelection();
             }
             else
             {
-                if ( seatIdx != -1 )
+                if (seatIdx != -1)
                 {
-                    // TODO: Re-implement CharSelect preview (GOMPS-550)
-                    //m_InSceneCharacter.gameObject.SetActive(true);
-                    //m_InSceneCharacter.SwapToModel(CharSelectData.LobbySeatConfigurations[seatIdx].CharacterArtIdx);
-                    m_ClassInfoBox.ConfigureForClass(CharSelectData.LobbySeatConfigurations[seatIdx].Class);
+                    // change character preview when selecting a new seat
+                    if (isNewSeat)
+                    {
+                        var selectedCharacterGraphics = GetCharacterGraphics(CharSelectData.AvatarConfiguration[seatIdx]);
+
+                        if (m_CurrentCharacterGraphics)
+                        {
+                            m_CurrentCharacterGraphics.SetActive(false);
+                        }
+
+                        selectedCharacterGraphics.SetActive(true);
+                        m_CurrentCharacterGraphics = selectedCharacterGraphics;
+                        m_CurrentCharacterGraphicsAnimator = m_CurrentCharacterGraphics.GetComponent<Animator>();
+
+                        m_ClassInfoBox.ConfigureForClass(CharSelectData.AvatarConfiguration[seatIdx].CharacterClass);
+                    }
                 }
                 if (state == CharSelectData.SeatState.LockedIn && !m_HasLocalPlayerLockedIn)
                 {
                     // the local player has locked in their seat choice! Rearrange the UI appropriately
                     // the character should act excited
-                    m_InSceneCharacterAnimator.SetTrigger(m_AnimationTriggerOnCharChosen);
+                    m_CurrentCharacterGraphicsAnimator.SetTrigger(m_AnimationTriggerOnCharChosen);
                     ConfigureUIForLobbyMode(CharSelectData.IsLobbyClosed.Value ? LobbyMode.LobbyEnding : LobbyMode.SeatChosen);
                     m_HasLocalPlayerLockedIn = true;
                 }
@@ -260,7 +275,7 @@ namespace BossRoom.Client
                 }
                 else if (state == CharSelectData.SeatState.Active && isNewSeat)
                 {
-                    m_InSceneCharacterAnimator.SetTrigger(m_AnimationTriggerOnCharSelect);
+                    m_CurrentCharacterGraphicsAnimator.SetTrigger(m_AnimationTriggerOnCharSelect);
                 }
             }
         }
@@ -351,8 +366,10 @@ namespace BossRoom.Client
                 case LobbyMode.ChooseSeat:
                     if ( m_LastSeatSelected == -1)
                     {
-                        // TODO: Re-implement CharSelect preview (GOMPS-550)
-                        //m_InSceneCharacter.gameObject.SetActive(false);
+                        if (m_CurrentCharacterGraphics)
+                        {
+                            m_CurrentCharacterGraphics.gameObject.SetActive(false);
+                        }
                         m_ClassInfoBox.ConfigureForNoSelection();
                     }
                     break;
@@ -409,21 +426,22 @@ namespace BossRoom.Client
             SceneManager.LoadScene("MainMenu");
         }
 
+        GameObject GetCharacterGraphics(Avatar avatar)
+        {
+            if (!m_SpawnedCharacterGraphics.TryGetValue(avatar.Guid, out GameObject characterGraphics))
+            {
+                characterGraphics = Instantiate(avatar.GraphicsCharacterSelect, m_CharacterGraphicsParent);
+                m_SpawnedCharacterGraphics.Add(avatar.Guid, characterGraphics);
+            }
+
+            return characterGraphics;
+        }
 
 #if UNITY_EDITOR
         private void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
-                if (!m_InSceneCharacter)
-                {
-                    Debug.LogWarning("In Scene Character not set!");
-                }
-                else if (m_InSceneCharacterAnimator == null)
-                {
-                    m_InSceneCharacterAnimator = m_InSceneCharacter.GetComponent<Animator>();
-                }
-
                 while (m_PlayerSeats.Count < CharSelectData.k_MaxLobbyPlayers)
                 {
                     m_PlayerSeats.Add(null);

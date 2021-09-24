@@ -1,7 +1,4 @@
-using MLAPI;
-using MLAPI.Spawning;
-
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Used for simple Actions that only need to play a few animations (one at startup and optionally

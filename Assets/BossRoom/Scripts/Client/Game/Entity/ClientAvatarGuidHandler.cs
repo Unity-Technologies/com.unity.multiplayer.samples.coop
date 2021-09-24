@@ -1,9 +1,8 @@
 using System;
-using BossRoom.Visual;
-using MLAPI;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client-side component that awaits a state change on an avatar's Guid, and fetches matching Avatar from the
@@ -23,6 +22,12 @@ namespace BossRoom.Client
 
         [SerializeField]
         AvatarRegistry m_AvatarRegistry;
+
+        Avatar m_Avatar;
+
+        public Avatar RegisteredAvatar => m_Avatar;
+
+        public event Action<GameObject> AvatarGraphicsSpawned;
 
         void Awake()
         {
@@ -45,12 +50,16 @@ namespace BossRoom.Client
                 return;
             }
 
+            m_Avatar = avatar;
+
             m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
 
             // spawn avatar graphics GameObject
             var graphicsGameObject = Instantiate(avatar.Graphics, transform);
 
-            m_ClientCharacter.ChildVizObject = graphicsGameObject.GetComponent<ClientCharacterVisualization>();
+            m_ClientCharacter.SetCharacterVisualization(graphicsGameObject.GetComponent<ClientCharacterVisualization>());
+
+            AvatarGraphicsSpawned?.Invoke(graphicsGameObject);
         }
 
         void OnDestroy()

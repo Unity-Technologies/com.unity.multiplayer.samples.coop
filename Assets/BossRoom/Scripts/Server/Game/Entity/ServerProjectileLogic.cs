@@ -1,13 +1,12 @@
-using MLAPI;
 using System.Collections.Generic;
 using System.IO;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
 
-    public class ServerProjectileLogic : MLAPI.NetworkBehaviour
+    public class ServerProjectileLogic : NetworkBehaviour
     {
         private bool m_Started = false;
 
@@ -66,7 +65,7 @@ namespace BossRoom.Server
             m_ProjectileInfo = projectileInfo;
         }
 
-        public override void OnNetworkSpawn(Stream stream)
+        public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {
@@ -131,7 +130,7 @@ namespace BossRoom.Server
                     }
 
                     //all NPC layer entities should have one of these.
-                    var targetNetObj = m_CollisionCache[i].GetComponent<NetworkObject>();
+                    var targetNetObj = m_CollisionCache[i].GetComponentInParent<NetworkObject>();
                     if (targetNetObj)
                     {
                         m_NetState.RecvHitEnemyClientRPC(targetNetObj.NetworkObjectId);
@@ -141,7 +140,7 @@ namespace BossRoom.Server
                         NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
-                        targetNetObj.GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
+                        m_CollisionCache[i].GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
                     }
 
                     if (m_IsDead)

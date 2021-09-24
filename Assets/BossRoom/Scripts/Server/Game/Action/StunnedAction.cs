@@ -1,10 +1,8 @@
-using UnityEngine;
-
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Action that plays while a character is Stunned. The character does nothing... just sits there.
-    /// 
+    ///
     /// If desired, we can make the character take extra damage from attacks while stunned!
     /// The 'Amount' field of our ActionDescription is used as a multiplier on damage suffered.
     /// (Set it to 1 if you don't want to take more damage while stunned... set it to 2 to take double damage,

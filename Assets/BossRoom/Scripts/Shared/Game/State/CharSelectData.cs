@@ -1,16 +1,9 @@
 
-using MLAPI;
-using MLAPI.Messaging;
-using MLAPI.Serialization;
-using MLAPI.NetworkVariable;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.IO;
-using MLAPI.NetworkVariable.Collections;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Common data and RPCs for the CharSelect stage.
@@ -28,35 +21,6 @@ namespace BossRoom
         {
             LobbyFull,
         }
-
-        [Serializable]
-        public struct LobbySeatConfiguration
-        {
-            public CharacterTypeEnum Class;
-            public int CharacterArtIdx;
-            public LobbySeatConfiguration(CharacterTypeEnum charClass, int artIdx)
-            {
-                Class = charClass;
-                CharacterArtIdx = artIdx;
-            }
-        }
-
-        /// <summary>
-        /// Indicates which class and appearance is used for each "seat" in the lobby.
-        /// Note: this must match up with the order of classes/appearances in the lobby UI elements!
-        /// </summary>
-        [SerializeField]
-        public LobbySeatConfiguration[] LobbySeatConfigurations = new LobbySeatConfiguration[]
-        {
-            new LobbySeatConfiguration(CharacterTypeEnum.Tank, 0),
-            new LobbySeatConfiguration(CharacterTypeEnum.Archer, 2),
-            new LobbySeatConfiguration(CharacterTypeEnum.Mage, 4),
-            new LobbySeatConfiguration(CharacterTypeEnum.Rogue, 6),
-            new LobbySeatConfiguration(CharacterTypeEnum.Tank, 1),
-            new LobbySeatConfiguration(CharacterTypeEnum.Archer, 3),
-            new LobbySeatConfiguration(CharacterTypeEnum.Mage, 5),
-            new LobbySeatConfiguration(CharacterTypeEnum.Rogue, 7),
-        };
 
         public const int k_MaxLobbyPlayers = 8;
 
@@ -92,22 +56,24 @@ namespace BossRoom
             }
         }
 
-        private NetworkList<LobbyPlayerState> m_LobbyPlayers;
+        private NetworkVariableLobbyState m_LobbyPlayers;
+
+        public Avatar[] AvatarConfiguration;
 
         private void Awake()
         {
-            m_LobbyPlayers = new NetworkList<LobbyPlayerState>();
+            m_LobbyPlayers = new NetworkVariableLobbyState(k_MaxLobbyPlayers);
         }
 
         /// <summary>
         /// Current state of all players in the lobby.
         /// </summary>
-        public NetworkList<LobbyPlayerState> LobbyPlayers { get { return m_LobbyPlayers; } }
+        public NetworkVariableLobbyState LobbyPlayers { get { return m_LobbyPlayers; } }
 
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).
         /// </summary>
-        public MLAPI.NetworkVariable.NetworkVariableBool IsLobbyClosed { get; } = new MLAPI.NetworkVariable.NetworkVariableBool(false);
+        public NetworkVariable<bool> IsLobbyClosed { get; } = new NetworkVariable<bool>(false);
 
         /// <summary>
         /// Client notification when the server has assigned this client a player Index (from 0 to 7);

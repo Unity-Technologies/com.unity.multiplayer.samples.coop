@@ -1,9 +1,8 @@
-using System;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Events;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// This class implements the IGameEventListener interface and exposes a GameEvent that we can populate within the

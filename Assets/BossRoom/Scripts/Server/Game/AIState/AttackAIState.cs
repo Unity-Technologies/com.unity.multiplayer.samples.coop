@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class AttackAIState : AIState
     {
@@ -113,13 +113,13 @@ namespace BossRoom.Server
         /// <returns></returns>
         private ServerCharacter ChooseFoe()
         {
-            Vector3 myPosition = m_Brain.GetMyServerCharacter().transform.position;
+            Vector3 myPosition = m_Brain.GetMyServerCharacter().physicsWrapper.Transform.position;
 
             float closestDistanceSqr = int.MaxValue;
             ServerCharacter closestFoe = null;
             foreach (var foe in m_Brain.GetHatedEnemies())
             {
-                float distanceSqr = (myPosition - foe.transform.position).sqrMagnitude;
+                float distanceSqr = (myPosition - foe.physicsWrapper.Transform.position).sqrMagnitude;
                 if (distanceSqr < closestDistanceSqr)
                 {
                     closestDistanceSqr = distanceSqr;

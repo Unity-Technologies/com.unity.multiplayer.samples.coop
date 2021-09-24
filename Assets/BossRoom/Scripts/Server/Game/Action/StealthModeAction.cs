@@ -1,8 +1,4 @@
-using MLAPI;
-using MLAPI.Spawning;
-using UnityEngine;
-
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Causes the character to become hidden to enemies and other players. Notes:

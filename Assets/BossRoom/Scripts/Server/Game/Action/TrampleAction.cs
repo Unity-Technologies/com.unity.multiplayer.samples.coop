@@ -1,9 +1,8 @@
-using MLAPI;
 using System.Collections.Generic;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// This represents a "charge-across-the-screen" attack. The character deals damage to every enemy hit.
@@ -54,15 +53,25 @@ namespace BossRoom.Server
         public override bool Start()
         {
             m_PreviousStage = ActionStage.Windup;
-            m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
+            m_Movement = m_Parent.Movement;
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
                 NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
                 if (initialTarget)
                 {
+                    Vector3 lookAtPosition;
+                    if (PhysicsWrapper.TryGetPhysicsWrapper(initialTarget.NetworkObjectId, out var physicsWrapper))
+                    {
+                        lookAtPosition = physicsWrapper.Transform.position;
+                    }
+                    else
+                    {
+                        lookAtPosition = initialTarget.transform.position;
+                    }
+
                     // snap to face our target! This is the direction we'll attack in
-                    m_Parent.transform.LookAt(initialTarget.transform.position);
+                    m_Parent.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
@@ -145,8 +154,8 @@ namespace BossRoom.Server
                 victim.ReceiveHP(this.m_Parent, -damage);
             }
 
-            var victimMovement = victim.GetComponent<ServerCharacterMovement>();
-            victimMovement.StartKnockback(m_Parent.transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
+            var victimMovement = victim.Movement;
+            victimMovement.StartKnockback(m_Parent.physicsWrapper.Transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
         }
 
         // called by owning class when parent's Collider collides with stuff
@@ -167,7 +176,7 @@ namespace BossRoom.Server
 
             m_CollidedAlready.Add(collider);
 
-            var victim = collider.gameObject.GetComponent<ServerCharacter>();
+            var victim = collider.gameObject.GetComponentInParent<ServerCharacter>();
             if (victim)
             {
                 CollideWithVictim(victim);
@@ -195,7 +204,7 @@ namespace BossRoom.Server
             // So when we start charging across the screen, we check to see what's already touching us
             // (or close enough) and treat that like a collision.
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectNearbyEntities(true, true, m_Parent.GetComponent<Collider>(), k_PhysicalTouchDistance, out results);
+            int numResults = ActionUtils.DetectNearbyEntities(true, true, m_Parent.physicsWrapper.DamageCollider, k_PhysicalTouchDistance, out results);
             for (int i = 0; i < numResults; i++)
             {
                 Collide(results[i].collider);

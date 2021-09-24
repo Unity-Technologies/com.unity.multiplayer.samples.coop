@@ -1,14 +1,16 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using MLAPI;
-using MLAPI.Transports;
 using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
-using MLAPI.Transports.UNET;
 using Photon.Realtime;
+using Unity.Netcode;
+using Unity.Netcode.Transports.UNET;
+using Unity.Services.Core;
+using Unity.Services.Authentication;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client side logic for a GameNetPortal. Contains implementations for all of GameNetPortal's S2C RPCs.
@@ -75,14 +77,7 @@ namespace BossRoom.Client
                     //only do this if a pure client, so as not to overlap with host behavior in ServerGameNetPortal.
                     m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 }
-
-                SceneManager.sceneLoaded += OnSceneLoaded;
             }
-        }
-
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
-            m_Portal.ClientToServerSceneChanged(SceneManager.GetActiveScene().buildIndex);
         }
 
         /// <summary>
@@ -93,13 +88,13 @@ namespace BossRoom.Client
             if( m_Portal.NetManager.IsClient )
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
-                m_Portal.NetManager.StopClient();
+                m_Portal.NetManager.Shutdown();
             }
         }
 
         private void OnConnectFinished(ConnectStatus status)
         {
-            //on success, there is nothing to do (the MLAPI scene management system will take us to the next scene).
+            //on success, there is nothing to do (the Netcode for GameObjects (Netcode) scene management system will take us to the next scene).
             //on failure, we must raise an event so that the UI layer can display something.
             Debug.Log("RecvConnectFinished Got status: " + status);
 
@@ -121,9 +116,8 @@ namespace BossRoom.Client
         {
             // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
             //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
-            if ( !MLAPI.NetworkManager.Singleton.IsConnectedClient && !MLAPI.NetworkManager.Singleton.IsHost )
+            if ( !NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsHost )
             {
-                SceneManager.sceneLoaded -= OnSceneLoaded;
                 m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
 
                 //On a client disconnect we want to take them back to the main menu.
@@ -132,7 +126,7 @@ namespace BossRoom.Client
                 {
                     // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
                     // Just shut down networking and switch back to main menu.
-                    MLAPI.NetworkManager.Singleton.Shutdown();
+                    NetworkManager.Singleton.Shutdown();
                     if( !DisconnectReason.HasTransitionReason )
                     {
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
@@ -172,6 +166,11 @@ namespace BossRoom.Client
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;
                     break;
+                case UnityTransport unityTransport:
+                    // TODO: once this is exposed in the adapter we will be able to change it
+                    // UnityTransport.Address = ipaddress;
+                    // UnityTransport.Port = (ushort)port;
+                    break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
             }
@@ -200,7 +199,6 @@ namespace BossRoom.Client
             var region = splits[0];
             var roomName = splits[1];
 
-
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -220,6 +218,51 @@ namespace BossRoom.Client
             return true;
         }
 
+        public static async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
+        {
+
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case UnityTransport utp:
+                    Debug.Log($"Setting Unity Relay client with join code {joinCode}");
+                    try
+                    {
+                        await UnityServices.InitializeAsync();
+                        Debug.Log(AuthenticationService.Instance);
+
+                        if (!AuthenticationService.Instance.IsSignedIn)
+                        {
+                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                            var playerId = AuthenticationService.Instance.PlayerId;
+                            Debug.Log(playerId);
+                        }
+
+                        var clientRelayUtilityTask =  RelayUtility.JoinRelayServerFromJoinCode(joinCode);
+                        await clientRelayUtilityTask;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
+                    }
+                    catch (Exception e)
+                    {
+                        var menuUI = MainMenuUI.Instance;
+                        if (menuUI)
+                        {
+                            menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
+                        }
+                        throw;
+                    }
+
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+            }
+
+            ConnectClient(portal);
+        }
+
         private static void ConnectClient(GameNetPortal portal)
         {
             var clientGuid = ClientPrefs.GetGuid();
@@ -235,8 +278,8 @@ namespace BossRoom.Client
             portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
             portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
-            //and...we're off! MLAPI will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:MLAPI GOMPS-79, provide feedback for different transport failures).
+            //and...we're off! Netcode will establish a socket connection to the host.
+            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:Netcode GOMPS-79, provide feedback for different transport failures).
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
         }

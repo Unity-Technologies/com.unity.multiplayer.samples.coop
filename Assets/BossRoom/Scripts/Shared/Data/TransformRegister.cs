@@ -1,7 +1,6 @@
-using System;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Class which registers a transform to an associated TransformVariable ScriptableObject.

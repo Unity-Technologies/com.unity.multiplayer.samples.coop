@@ -1,8 +1,8 @@
-using MLAPI.Serialization;
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// List of all Actions supported in the game.

@@ -1,9 +1,7 @@
-using System;
-using MLAPI;
-using MLAPI.NetworkVariable;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// MonoBehaviour containing only one NetworkVariable of type LifeState which represents this object's life state.

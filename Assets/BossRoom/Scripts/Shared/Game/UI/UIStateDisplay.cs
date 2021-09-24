@@ -1,8 +1,7 @@
-using System;
-using MLAPI.NetworkVariable;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Class containing references to UI children that we can display. Both are disabled by default on prefab.
@@ -21,7 +20,7 @@ namespace BossRoom
             m_UIName.Initialize(networkedName);
         }
 
-        public void DisplayHealth(NetworkVariableInt networkedHealth, int maxValue)
+        public void DisplayHealth(NetworkVariable<int> networkedHealth, int maxValue)
         {
             m_UIHealth.gameObject.SetActive(true);
             m_UIHealth.Initialize(networkedHealth, maxValue);

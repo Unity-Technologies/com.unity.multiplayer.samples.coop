@@ -1,9 +1,9 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public enum MovementState
     {
@@ -16,17 +16,25 @@ namespace BossRoom.Server
     /// <summary>
     /// Component responsible for moving a character on the server side based on inputs.
     /// </summary>
-    [RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent), typeof(ServerCharacter)), RequireComponent(typeof(Rigidbody))]
+    /*[RequireComponent(typeof(NetworkCharacterState), typeof(NavMeshAgent), typeof(ServerCharacter)), RequireComponent(typeof(Rigidbody))]*/
     public class ServerCharacterMovement : NetworkBehaviour
     {
-        private NavMeshAgent m_NavMeshAgent;
-        private Rigidbody m_Rigidbody;
-        private NetworkCharacterState m_NetworkCharacterState;
+        [SerializeField]
+        NavMeshAgent m_NavMeshAgent;
+
+        [SerializeField]
+        Rigidbody m_Rigidbody;
+
+        [SerializeField]
+        NetworkCharacterState m_NetworkCharacterState;
+
         private NavigationSystem m_NavigationSystem;
 
         private DynamicNavPath m_NavPath;
 
         private MovementState m_MovementState;
+
+        [SerializeField]
         private ServerCharacter m_CharLogic;
 
         // when we are in charging and knockback mode, we use these additional variables
@@ -38,10 +46,6 @@ namespace BossRoom.Server
 
         private void Awake()
         {
-            m_NavMeshAgent = GetComponent<NavMeshAgent>();
-            m_NetworkCharacterState = GetComponent<NetworkCharacterState>();
-            m_CharLogic = GetComponent<ServerCharacter>();
-            m_Rigidbody = GetComponent<Rigidbody>();
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
         }
 

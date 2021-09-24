@@ -1,0 +1,24 @@
+{
+    "name": "Unity.Multiplayer.Samples.BossRoom.Client",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Netcode.Runtime",
+        "Unity.Multiplayer.Samples.BossRoom.Shared",
+        "Cinemachine",
+        "Photon Realtime MLAPI Transport",
+        "LiteNetLib MLAPI Transport",
+        "Unity.TextMeshPro",
+        "Unity.Services.Core",
+        "Unity.Services.Authentication",
+        "Unity.Netcode.Adapter.UTP"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

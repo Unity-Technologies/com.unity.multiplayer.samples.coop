@@ -1,8 +1,6 @@
-using MLAPI;
 using System.Collections.Generic;
-using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// The visual aspect of a ChargedLaunchProjectileAction.
