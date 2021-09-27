@@ -12,6 +12,7 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
     /// Object Pool for networked objects, used for controlling how objects are spawned by Netcode. Netcode by default will allocate new memory when spawning new
     /// objects. With this Networked Pool, we're using custom spawning to reuse objects.
     /// Boss Room uses this for projectiles. In theory it should use this for imps too, but we wanted to show vanilla spawning vs pooled spawning.
+    /// Hooks to NetworkManager's prefab handler to intercept object spawning and do custom actions
     /// </summary>
     public class NetworkObjectPool : MonoBehaviour
     {
