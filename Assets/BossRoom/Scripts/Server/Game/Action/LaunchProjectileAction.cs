@@ -59,6 +59,7 @@ namespace BossRoom.Server
                 m_Launched = true;
 
                 var projectileInfo = GetProjectileInfo();
+                // Uses pooling server side for projectiles. PooledPrefabInstanceHandler will handle client side pooling automatically
                 NetworkObject networkProjectile = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab);
                 GameObject projectile = networkProjectile.gameObject;
 
