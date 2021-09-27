@@ -136,7 +136,7 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
                 ReturnNetworkObject(go.GetComponent<NetworkObject>(), prefab);
             }
 
-            // Register MLAPI Spawn handlers
+            // Register Netcode Spawn handlers
             m_NetworkManager.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
         }
 
