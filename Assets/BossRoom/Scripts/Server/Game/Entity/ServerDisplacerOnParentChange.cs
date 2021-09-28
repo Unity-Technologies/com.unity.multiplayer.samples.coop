@@ -2,7 +2,7 @@ using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class ServerDisplacerOnParentChange : NetworkBehaviour
     {
