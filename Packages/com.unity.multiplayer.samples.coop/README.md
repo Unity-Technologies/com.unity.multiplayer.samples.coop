@@ -1,16 +1,16 @@
 ![Banner](Documentation/Images/Banner.png)
-# Boss Room - co-op multiplayer RPG built with Unity MLAPI
+# Boss Room - co-op multiplayer RPG built with Unity Netcode for GameObjects
 
 | 🛑  IMPORTANT - Early Access 🛑  | 
 | -- |
-| Boss Room: Small Scale Co-op Sample is built on top of the MLAPI package. The MLAPI package  is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
+| Boss Room: Small Scale Co-op Sample is built on top of the Netcode for GameObjects (Netcode) package. The Netcode package is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
 
-Boss Room is a fully functional co-op multiplayer RPG made with Unity MLAPI. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
+Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
 
 Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 > __IMPORTANT__:
-> - Boss Room supports those platforms supported by MLAPI (Windows and Mac).
+> - Boss Room supports those platforms supported by Netcode (Windows and Mac).
 > - Boss Room is compatible with Unity 2020.3 and later.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
 
@@ -67,7 +67,7 @@ To play over internet, we need to build an executable that is shared between all
 
 It is possible to connect between multiple instances of the same executable OR between executables and the editor that produced said executable.
 
-Running the game over internet currently requires setting up a [Photon Transport for MLAPI](https://github.com/Unity-Technologies/mlapi-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.
+Running the game over internet currently requires setting up a [Photon Transport for Netcode](https://github.com/Unity-Technologies/multiplayer-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.
 
 > Checkout our Photon-Realtime setup guide, here:
 > [Boss Room Photon Setup Guide](Documentation/Photon-Realtime/Readme.md)
@@ -89,13 +89,13 @@ For an overview of the project's architecture please check out our [ARCHITECTURE
 
 ---------------
 
-For a deep dive in MLAPI and Boss Room, visit our [doc](https://docs-multiplayer.unity3d.com/) and [Learn](https://docs-multiplayer.unity3d.com/docs/learn/introduction) sections.
+For a deep dive in Unity Netcode and Boss Room, visit our [doc](https://docs-multiplayer.unity3d.com/) and [Learn](https://docs-multiplayer.unity3d.com/docs/learn/introduction) sections.
 
 ## Contributing
 
 The project uses the `git-flow` branching strategy, as such:
  - `develop` branch contains all active development
- - `master` branch contains release versions
+ - `main` branch contains release versions
 
 To get the project on your machine you need to clone the repository from GitHub using the following command-line command:
 ```
@@ -107,6 +107,6 @@ git clone https://github.com/Unity-Technologies/com.unity.multiplayer.samples.co
 
 Please check out [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on submitting issues and PRs to BossRoom!
 
-For futher discussion points and to connect with the team, join us on the MLAPI by Unity Discord Server - Channel #dev-samples
+For further discussion points and to connect with the team, join us on the Unity Multiplayer Networking Discord Server - Channel #dev-samples
 
 [![Discord](https://img.shields.io/discord/449263083769036810.svg?label=discord&logo=discord&color=informational)](https://discord.gg/FM8SE9E)

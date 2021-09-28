@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// De-parents the boss's helmet when he is defeated. This prevents the helmet from jittering during the
@@ -12,7 +12,7 @@ namespace BossRoom.Visual
     /// The animation in the FBX keeps the helmet staying stationary, but it moves in-game due to animation
     /// compression and floating-point round off. Since the helmet is parented deep in the transform hierarchy,
     /// it's difficult to keep the helmet precisely still while all of its parent transforms are moving around wildly.
-    /// 
+    ///
     /// We could get rid of the majority of the jiggle by disabling animation-compression on the FBX, but that could
     /// adversely impact performance. Since this is a special case, we deal with it via this special-case script.
     /// </remarks>

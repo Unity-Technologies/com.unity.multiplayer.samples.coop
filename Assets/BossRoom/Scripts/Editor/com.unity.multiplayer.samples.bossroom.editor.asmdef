@@ -1,13 +1,13 @@
 {
-    "name": "BossRoom.Shared",
+    "name": "Unity.Multiplayer.Samples.BossRoom.Editor",
     "rootNamespace": "",
     "references": [
-        "Unity.Netcode.Runtime",
-        "Photon Realtime MLAPI Transport",
-        "LiteNetLib MLAPI Transport",
-        "Unity.TextMeshPro"
+        "Unity.Multiplayer.Samples.BossRoom.Shared",
+        "Unity.Netcode.Runtime"
     ],
-    "includePlatforms": [],
+    "includePlatforms": [
+        "Editor"
+    ],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -1,6 +1,6 @@
 using Unity.Netcode;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Shared Network logic for breakable items.

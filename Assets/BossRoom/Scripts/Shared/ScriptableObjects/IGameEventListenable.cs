@@ -1,4 +1,4 @@
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// This class is designed to work hand in hand with the GameEvent class, which is a ScriptableObject container

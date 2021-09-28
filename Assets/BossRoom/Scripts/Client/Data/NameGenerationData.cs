@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Data storage of all the valid strings used to create a player's name.

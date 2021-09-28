@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Generic interface for damageable objects in the game. This includes ServerCharacter, as well as other things like

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     [CreateAssetMenu]
     public class IntVariable : ScriptableObject

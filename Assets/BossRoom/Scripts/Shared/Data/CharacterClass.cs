@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Data representation of a Character, containing such things as its starting HP and Mana, and what attacks it can do.

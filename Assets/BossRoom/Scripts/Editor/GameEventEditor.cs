@@ -1,7 +1,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Editor
+namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
 {
     /// <summary>
     /// Custom inspector class for GameEvent ScriptableObject class. Overriding OnInspectorGUI() to add debugging

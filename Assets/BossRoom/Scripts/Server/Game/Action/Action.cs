@@ -1,7 +1,7 @@
 using UnityEngine;
-using BlockingMode = BossRoom.ActionDescription.BlockingModeType;
+using BlockingMode = Unity.Multiplayer.Samples.BossRoom.ActionDescription.BlockingModeType;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// The abstract parent class that all Actions derive from.

@@ -6,8 +6,10 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public enum ConnectStatus
     {
@@ -23,6 +25,7 @@ namespace BossRoom
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
         Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
+        UnityRelay = 2, // The server is hosted over a Unity Relay server and clients join by entering a join code.
     }
 
     [Serializable]
@@ -40,9 +43,9 @@ namespace BossRoom
     /// </summary>
     ///
     /// <remarks>
-    /// Why is there a C2S_ConnectFinished event here? How is that different from the "ApprovalCheck" logic that MLAPI optionally runs
-    /// when establishing a new client connection?
-    /// MLAPI's ApprovalCheck logic doesn't offer a way to return rich data. We need to know certain things directly upon logging in, such as
+    /// Why is there a C2S_ConnectFinished event here? How is that different from the "ApprovalCheck" logic that Netcode
+    /// for GameObjects (Netcode) optionally runs when establishing a new client connection?
+    /// Netcode's ApprovalCheck logic doesn't offer a way to return rich data. We need to know certain things directly upon logging in, such as
     /// whether the game-layer even wants us to join (we could fail because the server is full, or some other non network related reason), and also
     /// what BossRoomState to transition to. We do this with a Custom Named Message, which fires on the server immediately after the approval check delegate
     /// has run.
@@ -60,7 +63,7 @@ namespace BossRoom
         NetworkManager m_NetworkManager;
 
         /// <summary>
-        /// This event is fired when MLAPI has reported that it has finished initialization, and is ready for
+        /// This event is fired when Netcode has reported that it has finished initialization, and is ready for
         /// business, equivalent to OnServerStarted on the server, and OnClientConnected on the client.
         /// </summary>
         public event Action NetworkReadied;
@@ -94,6 +97,11 @@ namespace BossRoom
         /// the name of the player chosen at game start
         /// </summary>
         public string PlayerName;
+
+        /// <summary>
+        /// How many connections we create a Unity relay allocation for
+        /// </summary>
+        private const int k_MaxUnityRelayConnections = 8;
 
         void Start()
         {
@@ -148,7 +156,7 @@ namespace BossRoom
             //before we even get our ClientConnected event (if acting as a client). It should be harmless to have server handlers registered
             //on the client, because (a) nobody will be sending us these messages and (b) even if they did, nobody is listening for those
             //server message events on the client anyway.
-            //TODO-FIXME:MLAPI Issue 799. We shouldn't really have to worry about getting messages before our ClientConnected callback.
+            //TODO-FIXME:Netcode Issue 799. We shouldn't really have to worry about getting messages before our ClientConnected callback.
 
             RegisterClientMessageHandlers();
 
@@ -224,6 +232,10 @@ namespace BossRoom
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ServerListenPort = port;
                     break;
+                case UnityTransport UnityTransport:
+                    // UnityTransport. = ipaddress;
+                    // UnityTransport. = (ushort)port;
+                    break;
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
             }
@@ -240,6 +252,53 @@ namespace BossRoom
             {
                 case PhotonRealtimeTransport photonRealtimeTransport:
                     photonRealtimeTransport.RoomName = roomName;
+                    break;
+                default:
+                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+            }
+
+            NetManager.StartHost();
+        }
+
+        public async void StartUnityRelayHost()
+        {
+            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            switch (chosenTransport)
+            {
+                case UnityTransport utp:
+                    Debug.Log("Setting up Unity Relay host");
+
+                    try
+                    {
+                        await UnityServices.InitializeAsync();
+                        if (!AuthenticationService.Instance.IsSignedIn)
+                        {
+                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                            var playerId = AuthenticationService.Instance.PlayerId;
+                            Debug.Log(playerId);
+                        }
+
+                        // we now need to get the joinCode?
+                        var serverRelayUtilityTask =
+                            RelayUtility.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
+                        await serverRelayUtilityTask;
+                        // we now have the info from the relay service
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
+                            serverRelayUtilityTask.Result;
+
+                        RelayJoinCode.Code = joinCode;
+
+                        // we now need to set the RelayCode somewhere :P
+                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);
+                    }
+                    catch (Exception e)
+                    {
+                        Debug.LogErrorFormat($"{e.Message}");
+                        throw;
+                    }
+
                     break;
                 default:
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");

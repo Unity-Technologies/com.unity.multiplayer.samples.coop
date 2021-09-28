@@ -2,7 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Action responsible for creating a projectile object.

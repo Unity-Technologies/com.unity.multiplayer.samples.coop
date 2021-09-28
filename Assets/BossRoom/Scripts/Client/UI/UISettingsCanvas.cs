@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Controls the special Canvas that has the settings icon and the settings window.

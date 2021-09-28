@@ -1,12 +1,12 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// This is a temporary abstraction for different shared network states that all handle movement. This
     /// way a single client-side component can be used to update the local client transform. This can be dispensed with
-    /// once MLAPI handles client-side movement internally.
+    /// once Netcode for GameObjects handles client-side movement internally.
     /// </summary>
     public interface INetMovement
     {
