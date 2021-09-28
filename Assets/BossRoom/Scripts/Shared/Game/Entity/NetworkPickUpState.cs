@@ -3,7 +3,7 @@ using Unity.Netcode;
 namespace BossRoom
 {
     /// <summary>
-    /// Shared Network logic for breakable items.
+    /// Shared Network logic for targetable, NPC, pickup objects.
     /// </summary>
     public class NetworkPickUpState : NetworkBehaviour, ITargetable
     {

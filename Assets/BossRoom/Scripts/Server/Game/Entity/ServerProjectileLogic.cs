@@ -140,7 +140,10 @@ namespace BossRoom.Server
                         NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
-                        m_CollisionCache[i].GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
+                        if (m_CollisionCache[i].TryGetComponent(out IDamageable damageable))
+                        {
+                            damageable.ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
+                        }
                     }
 
                     if (m_IsDead)
