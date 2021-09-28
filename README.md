@@ -91,6 +91,10 @@ For an overview of the project's architecture please check out our [ARCHITECTURE
 
 For a deep dive in Unity Netcode and Boss Room, visit our [doc](https://docs-multiplayer.unity3d.com/) and [Learn](https://docs-multiplayer.unity3d.com/docs/learn/introduction) sections.
 
+##Bite-size Samples
+This repository contains a collection of bitesize sample projects and games that showcase different sub-features of NGO. You can review these samples with documentation to understand APIs and features better.
+- [Our various bitesize samples](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize)
+
 ## Contributing
 
 The project uses the `git-flow` branching strategy, as such:
