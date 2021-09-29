@@ -62,7 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 if (!OnTrySetParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId]))
                 {
-                    //Error message
+                    Debug.LogError($"Failed to parent NetworkObject with ID: {networkObjectId}");
                 }
             }
         }
@@ -73,7 +73,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 if (!OnTryRemoveParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId]))
                 {
-                    // Error message
+                    Debug.LogError($"Failed to deparent NetworkObject with ID: {networkObjectId}");
                 }
             }
         }
@@ -87,7 +87,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 {
                     if (!TryRemoveParent(child))
                     {
-                        //Error message
+                        Debug.LogError($"Failed to deparent NetworkObject with ID: {child.NetworkObjectId}");
                     }
                 }
             }
