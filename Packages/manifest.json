@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "com.mlapi.contrib.transport.litenetlib": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#develop",
-    "com.mlapi.contrib.transport.photon-realtime": "file:/Users/samuel.bellomo/Documents/production/mlapi-community-contributions/Transports/com.mlapi.contrib.transport.photon-realtime",
+    "com.mlapi.contrib.transport.photon-realtime": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#sam/feature/photon-transport-fixes-with-latest-netcode",
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.ai.navigation.components": "https://github.com/Unity-Technologies/NavMeshComponents.git#package",
     "com.unity.cinemachine": "2.7.4",

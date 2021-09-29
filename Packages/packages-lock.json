@@ -8,10 +8,11 @@
       "hash": "5c7e201f3c52d4d57a688f64947bfff967737c75"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "file:/Users/samuel.bellomo/Documents/production/mlapi-community-contributions/Transports/com.mlapi.contrib.transport.photon-realtime",
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#sam/feature/photon-transport-fixes-with-latest-netcode",
       "depth": 0,
-      "source": "local",
-      "dependencies": {}
+      "source": "git",
+      "dependencies": {},
+      "hash": "ec26148aabd8c348770913a63a2cbcf30593d0f5"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
