@@ -3,6 +3,14 @@ using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
+    /// <summary>
+    /// This class temporarily allows NetworkObjects to be parented to children of NetworkObjects, since Netcode for
+    /// GameObjects currently expects NetworkObjects to be parented to other NetworkObjects.
+    /// <remarks>
+    /// To enable a NetworkObject to be parented to this NetworkBehaviour, make sure its "Auto Object Parent Sync"
+    /// field is toggled off.
+    /// </remarks>
+    /// </summary>
     public class CustomParentingHandler : NetworkBehaviour
     {
         public bool preserveWorldSpace = true;
@@ -18,6 +26,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 m_NetworkObjectChildren.OnListChanged += NetworkObjectChildrenOnListChanged;
             }
             base.OnNetworkSpawn();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            m_NetworkObjectChildren.OnListChanged -= NetworkObjectChildrenOnListChanged;
         }
 
         void NetworkObjectChildrenOnListChanged(NetworkListEvent<ulong> changeEvent)
