@@ -4,6 +4,12 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
+    /// <summary>
+    /// Component to simply play a raising/descending animation when this NetworkObject's parent NetworkObject changes.
+    /// </summary>
+    /// <remarks>
+    /// This script will likely be refactored and/or removed removed with a NetworkAnimator-based solution.
+    /// </remarks>
     public class ServerDisplacerOnParentChange : NetworkBehaviour
     {
         const float k_PickUpAnimationLength = 1f;
@@ -39,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var start = local ? transform.localPosition.y : transform.position.y;
 
             var progress = 0f;
-            float duration = 0f;
+            var duration = 0f;
 
             while (progress < 1f)
             {

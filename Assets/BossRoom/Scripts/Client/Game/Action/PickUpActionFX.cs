@@ -3,7 +3,7 @@ using UnityEngine;
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
-    /// The TargetActionFX runs persistently on the local player, and will attach target reticules to the player's active target.
+    /// Complimentary FX class for the Pickup Action class. Plays a "Pickup" or "Drop" animation.
     /// </summary>
     public class PickUpActionFX : ActionFX
     {

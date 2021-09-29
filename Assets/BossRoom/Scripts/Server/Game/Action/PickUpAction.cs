@@ -3,6 +3,10 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
+    /// <summary>
+    /// Action for picking up "Heavy" items. For simplicity, this class will perform both the pickup (reparenting) of a
+    /// NetworkObject, as well as the drop (deparenting).
+    /// </summary>
     public class PickUpAction : Action
     {
         RaycastHit[] m_RaycastHits = new RaycastHit[1];
@@ -21,13 +25,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override bool Start()
         {
             // first, check if a pot has already been parented; if so, drop it
-            var serverDisplacer = m_Parent.physicsWrapper.Transform.GetComponentInChildren<ServerDisplacerOnParentChange>();
-            if (serverDisplacer)
+            if (m_CustomParentingHandler.hasChildren)
             {
-                if (m_CustomParentingHandler.TryRemoveParent(serverDisplacer.NetworkObject))
+                // find parented children NetworkObjects
+                var serverDisplacers =
+                    m_Parent.physicsWrapper.Transform.GetComponentsInChildren<ServerDisplacerOnParentChange>();
+
+                // we shouldn't ever have multiple children NetworkObjects; however, still deparent all children
+                foreach (var serverDisplacer in serverDisplacers)
                 {
-                    serverDisplacer.NetworkObjectParentChanged(null);
+                    if (m_CustomParentingHandler.TryRemoveParent(serverDisplacer.NetworkObject))
+                    {
+                        serverDisplacer.NetworkObjectParentChanged(null);
+                    }
                 }
+
                 Data.TargetIds = null;
 
                 m_Parent.NetState.RecvDoActionClientRPC(Data);
@@ -49,14 +61,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return false;
             }
 
+            // found a suitable collider; try to child this NetworkObject
             if (!m_CustomParentingHandler.TrySetParent(heavyNetworkObject))
             {
                 return false;
             }
 
-            if (heavyNetworkObject.TryGetComponent(out serverDisplacer))
+            if (heavyNetworkObject.TryGetComponent(out ServerDisplacerOnParentChange serverDisplacerOnParentChange))
             {
-                serverDisplacer.NetworkObjectParentChanged(m_Parent.NetworkObject);
+                serverDisplacerOnParentChange.NetworkObjectParentChanged(m_Parent.NetworkObject);
             }
 
             Data.TargetIds = new ulong[] { heavyNetworkObject.NetworkObjectId };

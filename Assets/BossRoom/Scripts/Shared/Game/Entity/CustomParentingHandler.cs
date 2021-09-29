@@ -7,20 +7,22 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         public bool preserveWorldSpace = true;
 
-        NetworkList<ulong> m_MyNetworkObjectChildren = new NetworkList<ulong>();
+        NetworkList<ulong> m_NetworkObjectChildren = new NetworkList<ulong>();
+
+        public bool hasChildren => m_NetworkObjectChildren.Count > 0;
 
         public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {
-                m_MyNetworkObjectChildren.OnListChanged += MyNetworkObjectChildren_OnListChanged;
+                m_NetworkObjectChildren.OnListChanged += NetworkObjectChildrenOnListChanged;
             }
             base.OnNetworkSpawn();
         }
 
-        private void MyNetworkObjectChildren_OnListChanged(NetworkListEvent<ulong> changeEvent)
+        void NetworkObjectChildrenOnListChanged(NetworkListEvent<ulong> changeEvent)
         {
-            switch( changeEvent.Type )
+            switch (changeEvent.Type)
             {
                 case NetworkListEvent<ulong>.EventType.Add:
                     {
@@ -41,7 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        private void AddChildNetworkObject(ulong networkObjectId)
+        void AddChildNetworkObject(ulong networkObjectId)
         {
             if (NetworkManager.SpawnManager.SpawnedObjects.ContainsKey(networkObjectId))
             {
@@ -52,25 +54,25 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        private void RemoveChildNetworkObject(ulong networkObjectId)
+        void RemoveChildNetworkObject(ulong networkObjectId)
         {
             if (NetworkManager.SpawnManager.SpawnedObjects.ContainsKey(networkObjectId))
             {
-                if(!OnTryRemoveParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId]))
+                if (!OnTryRemoveParent(NetworkManager.SpawnManager.SpawnedObjects[networkObjectId]))
                 {
                     // Error message
                 }
             }
         }
 
-        private void RemoveAllChildren()
+        void RemoveAllChildren()
         {
             var children = GetComponentsInChildren<NetworkObject>();
             foreach (var child in children)
             {
                 if (child.transform.parent == transform)
                 {
-                    if(!TryRemoveParent(child))
+                    if (!TryRemoveParent(child))
                     {
                         //Error message
                     }
@@ -78,19 +80,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        private bool ValidateParenting(NetworkObject child, bool shouldParent)
+        bool ValidateParenting(NetworkObject child, bool shouldParent)
         {
             if (shouldParent)
             {
-                return IsServer ? !m_MyNetworkObjectChildren.Contains(child.NetworkObjectId) : m_MyNetworkObjectChildren.Contains(child.NetworkObjectId);
+                return IsServer ? !m_NetworkObjectChildren.Contains(child.NetworkObjectId) : m_NetworkObjectChildren.Contains(child.NetworkObjectId);
             }
             else
             {
-                return IsServer ? m_MyNetworkObjectChildren.Contains(child.NetworkObjectId) : !m_MyNetworkObjectChildren.Contains(child.NetworkObjectId);
+                return IsServer ? m_NetworkObjectChildren.Contains(child.NetworkObjectId) : !m_NetworkObjectChildren.Contains(child.NetworkObjectId);
             }
         }
 
-        private bool OnTrySetParent(NetworkObject childToParent)
+        bool OnTrySetParent(NetworkObject childToParent)
         {
             if (!childToParent.AutoObjectParentSync && ValidateParenting(childToParent,true))
             {
@@ -107,7 +109,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 var result = OnTrySetParent(childToParent);
                 if (result)
                 {
-                    m_MyNetworkObjectChildren.Add(childToParent.NetworkObjectId);
+                    m_NetworkObjectChildren.Add(childToParent.NetworkObjectId);
                 }
 
                 return result;
@@ -115,7 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             return false;
         }
 
-        private bool OnTryRemoveParent(NetworkObject childToRemove)
+        bool OnTryRemoveParent(NetworkObject childToRemove)
         {
             if (!childToRemove.AutoObjectParentSync && ValidateParenting(childToRemove, false))
             {
@@ -132,7 +134,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 var result = OnTryRemoveParent(childToRemove);
                 if (result)
                 {
-                    m_MyNetworkObjectChildren.Remove(childToRemove.NetworkObjectId);
+                    m_NetworkObjectChildren.Remove(childToRemove.NetworkObjectId);
                 }
 
                 return result;
