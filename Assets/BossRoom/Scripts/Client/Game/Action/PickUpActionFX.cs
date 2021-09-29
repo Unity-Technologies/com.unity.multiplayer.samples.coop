@@ -17,13 +17,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             if (Data.TargetIds != null && Data.TargetIds.Length > 0)
             {
+                if (!string.IsNullOrEmpty(Description.Anim2))
+                {
+                    m_Parent.OurAnimator.ResetTrigger(Description.Anim2);
+                }
+
                 // pickup
-                m_Parent.OurAnimator.SetTrigger(Description.Anim);
+                if (!string.IsNullOrEmpty(Description.Anim))
+                {
+                    m_Parent.OurAnimator.SetTrigger(Description.Anim);
+                }
             }
             else
             {
+                if (!string.IsNullOrEmpty(Description.Anim))
+                {
+                    m_Parent.OurAnimator.ResetTrigger(Description.Anim);
+                }
+
                 // drop
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+                if (!string.IsNullOrEmpty(Description.Anim2))
+                {
+                    m_Parent.OurAnimator.SetTrigger(Description.Anim2);
+                }
             }
 
             return true;
