@@ -8,11 +8,10 @@
       "hash": "5c7e201f3c52d4d57a688f64947bfff967737c75"
     },
     "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#develop",
+      "version": "file:/Users/samuel.bellomo/Documents/production/mlapi-community-contributions/Transports/com.mlapi.contrib.transport.photon-realtime",
       "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "5c7e201f3c52d4d57a688f64947bfff967737c75"
+      "source": "local",
+      "dependencies": {}
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -142,21 +141,20 @@
       "source": "git",
       "dependencies": {
         "com.unity.netcode.gameobjects": "0.0.1-preview.1",
-        "com.unity.transport": "1.0.0-pre.4"
+        "com.unity.transport": "1.0.0-pre.5"
       },
-      "hash": "46dfe4a2fbbc0656d7e4bfef2474dddf7beb2168"
+      "hash": "8a1f1f8a4ef55e44102c9b1d6bdfcc8cdad54873"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
+      "version": "file:/Users/samuel.bellomo/Documents/production/com.unity.multiplayer.mlapi/com.unity.netcode.gameobjects",
       "depth": 0,
-      "source": "git",
+      "source": "local",
       "dependencies": {
         "com.unity.modules.ai": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1",
         "com.unity.collections": "1.0.0-pre.5"
-      },
-      "hash": "46dfe4a2fbbc0656d7e4bfef2474dddf7beb2168"
+      }
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",
@@ -224,6 +222,22 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
+    "com.unity.sysroot": {
+      "version": "0.1.19-preview",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.sysroot.linux-x86_64": {
+      "version": "0.1.14-preview",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.sysroot": "0.1.18-preview"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.test-framework": {
       "version": "1.1.27",
       "depth": 0,
@@ -256,8 +270,18 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.unity.toolchain.macos-x86_64-linux-x86_64": {
+      "version": "0.1.22-preview",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.sysroot": "0.1.19-preview",
+        "com.unity.sysroot.linux-x86_64": "0.1.14-preview"
+      },
+      "url": "https://packages.unity.com"
+    },
     "com.unity.transport": {
-      "version": "1.0.0-pre.4",
+      "version": "1.0.0-pre.5",
       "depth": 1,
       "source": "registry",
       "dependencies": {

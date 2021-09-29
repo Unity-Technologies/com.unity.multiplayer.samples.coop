@@ -137,7 +137,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnLobbyChanged -= OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
             }
             if (Instance == this)
                 Instance = null;
@@ -154,7 +154,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
                 CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnLobbyChanged += OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
             }
         }
 
@@ -169,7 +169,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void UpdatePlayerCount()
         {
-            int count = CharSelectData.LobbyPlayers.PlayerCount;
+            int count = CharSelectData.LobbyPlayers.Count;
             var pstr = (count > 1) ? "players" : "player";
             m_NumPlayersText.text = "<b>" + count + "</b> " + pstr +" connected";
         }
@@ -177,14 +177,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
-        private void OnLobbyPlayerStateChanged(ArraySegment<CharSelectData.LobbyPlayerState> lobbyArray )
+        private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> changeEvent)
         {
             UpdateSeats();
             UpdatePlayerCount();
 
             // now let's find our local player in the list and update the character/info box appropriately
             int localPlayerIdx = -1;
-            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == NetworkManager.Singleton.LocalClientId)
                 {

@@ -8,10 +8,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public ulong FirstHalf;
         public ulong SecondHalf;
 
-        public void NetworkSerialize(NetworkSerializer serializer)
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
-            serializer.Serialize(ref FirstHalf);
-            serializer.Serialize(ref SecondHalf);
+            serializer.SerializeValue(ref FirstHalf);
+            serializer.SerializeValue(ref SecondHalf);
         }
     }
 

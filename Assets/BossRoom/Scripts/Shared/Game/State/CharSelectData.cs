@@ -1,7 +1,6 @@
-
 using System;
+using Unity.Collections;
 using Unity.Netcode;
-using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -10,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public class CharSelectData : NetworkBehaviour
     {
-        public enum SeatState
+        public enum SeatState : byte
         {
             Inactive,
             Active,
@@ -25,50 +24,108 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public const int k_MaxLobbyPlayers = 8;
 
         /// <summary>
-        /// Describes one of players in the lobby, and their current character-select status.
+        /// Describes one of the players in the lobby, and their current character-select status.
         /// </summary>
-        public struct LobbyPlayerState : INetworkSerializable
+        public struct LobbyPlayerState : INetworkSerializable, IEquatable<LobbyPlayerState>
         {
             public ulong ClientId;
-            public string PlayerName;
+
+            private FixedPlayerName m_PlayerName; // I'm sad there's no 256Bytes fixed list :(
+            // private byte[] m_PlayerName;
+
             public int PlayerNum; // this player's assigned "P#". (0=P1, 1=P2, etc.)
             public int SeatIdx; // the latest seat they were in. -1 means none
-            public SeatState SeatState;
             public float LastChangeTime;
+
+            public SeatState SeatState;
+
 
             public LobbyPlayerState(ulong clientId, string name, int playerNum, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
             {
                 ClientId = clientId;
-                PlayerName = name;
                 PlayerNum = playerNum;
                 SeatState = state;
                 SeatIdx = seatIdx;
                 LastChangeTime = lastChangeTime;
+                m_PlayerName = new FixedPlayerName();
+
+                PlayerName = name;
             }
-            public void NetworkSerialize(NetworkSerializer serializer)
+
+            public string PlayerName
             {
-                serializer.Serialize(ref ClientId);
-                serializer.Serialize(ref PlayerName);
-                serializer.Serialize(ref PlayerNum);
-                serializer.Serialize(ref SeatState);
-                serializer.Serialize(ref SeatIdx);
-                serializer.Serialize(ref LastChangeTime);
+                get
+                {
+                    return m_PlayerName;
+                }
+                set
+                {
+                    m_PlayerName = value;
+                }
+            }
+            // public string GetPlayerName()
+            // {
+            //
+            // }
+            // public void SetPlayerName(string value)
+            // {
+            //
+            // }
+
+            public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+            {
+                serializer.SerializeValue(ref ClientId);
+                serializer.SerializeValue(ref m_PlayerName);
+                // serializer.SerializeValue(ref PlayerName);
+                serializer.SerializeValue(ref PlayerNum);
+                serializer.SerializeValue(ref SeatState);
+                serializer.SerializeValue(ref SeatIdx);
+                serializer.SerializeValue(ref LastChangeTime);
+            }
+
+            public bool Equals(LobbyPlayerState other)
+            {
+                return ClientId == other.ClientId &&
+                       m_PlayerName.Equals(other.m_PlayerName) &&
+                       PlayerNum == other.PlayerNum &&
+                       SeatIdx == other.SeatIdx &&
+                       LastChangeTime.Equals(other.LastChangeTime) &&
+                       SeatState == other.SeatState;
+            }
+
+            public override bool Equals(object obj)
+            {
+                return obj is LobbyPlayerState other && Equals(other);
+            }
+
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    var hashCode = ClientId.GetHashCode();
+                    hashCode = (hashCode * 397) ^ m_PlayerName.GetHashCode();
+                    hashCode = (hashCode * 397) ^ PlayerNum;
+                    hashCode = (hashCode * 397) ^ SeatIdx;
+                    hashCode = (hashCode * 397) ^ LastChangeTime.GetHashCode();
+                    hashCode = (hashCode * 397) ^ (int) SeatState;
+                    return hashCode;
+                }
             }
         }
 
-        private NetworkVariableLobbyState m_LobbyPlayers;
+        private NetworkList<LobbyPlayerState> m_LobbyPlayers;
 
         public Avatar[] AvatarConfiguration;
 
         private void Awake()
         {
-            m_LobbyPlayers = new NetworkVariableLobbyState(k_MaxLobbyPlayers);
+            m_LobbyPlayers = new NetworkList<LobbyPlayerState>();
         }
 
         /// <summary>
         /// Current state of all players in the lobby.
         /// </summary>
-        public NetworkVariableLobbyState LobbyPlayers { get { return m_LobbyPlayers; } }
+        public NetworkList<LobbyPlayerState> LobbyPlayers { get { return m_LobbyPlayers; } }
 
         /// <summary>
         /// When this becomes true, the lobby is closed and in process of terminating (switching to gameplay).

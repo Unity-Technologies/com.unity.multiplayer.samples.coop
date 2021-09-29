@@ -286,7 +286,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             //TODO:Netcode: this must be done after the callback for now. In the future we expect Netcode to allow us to return more information as part of
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
             //and then manually close down the connection.
-            m_Portal.ServerToClientConnectResult(clientId, gameReturnStatus);
+            m_Portal.SendServerToClientConnectResult(clientId, gameReturnStatus);
             if(gameReturnStatus != ConnectStatus.Success )
             {
                 //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
@@ -296,7 +296,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private IEnumerator WaitToDisconnectClient(ulong clientId, ConnectStatus reason)
         {
-            m_Portal.ServerToClientSetDisconnectReason(clientId, reason);
+            m_Portal.SendServerToClientSetDisconnectReason(clientId, reason);
 
             // TODO fix once this is solved: Issue 796 Unity-Technologies/com.unity.netcode.gameobjects#796
             // this wait is a workaround to give the client time to receive the above RPC before closing the connection

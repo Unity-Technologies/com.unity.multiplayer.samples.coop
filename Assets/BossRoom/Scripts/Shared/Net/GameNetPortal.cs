@@ -56,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// your character, you need a persistent identifier for your own client install. We solve that by generating a random GUID and storing it
     /// in player prefs, so it persists across sessions of the game.
     /// </remarks>
-    ///
+    // todo this should be refactored to 2 classes and should be renamed connection manager or something more clear like this.
     public class GameNetPortal : MonoBehaviour
     {
         [SerializeField]
@@ -103,6 +103,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private const int k_MaxUnityRelayConnections = 8;
 
+        // Instance of GameNetPortal placed in scene. There should only be one at once
+        public static GameNetPortal Instance;
+
+        private void Awake()
+        {
+            Debug.Assert(Instance == null);
+            Instance = this;
+        }
+
         void Start()
         {
             DontDestroyOnLoad(gameObject);
@@ -111,11 +120,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             //we expect NetworkManager will expose an event like this itself.
             NetManager.OnServerStarted += OnNetworkReady;
             NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
-
-            // Start a coroutine here that will wait for CustomMessageManager to be properly initialized
-            // In order to avoid a race condition in the initialization of the NetworkManager
-            StartCoroutine(InitializeMessageHandlers());
         }
+
         private void OnSceneEvent(SceneEvent sceneEvent)
         {
             if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
@@ -128,15 +134,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 NetManager.OnServerStarted -= OnNetworkReady;
                 NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
-
-                // Only unregister the Client/Server message handlers if the CustomMessagingManager is not null
-                if (NetManager.CustomMessagingManager != null)
-                {
-                    UnregisterClientMessageHandlers();
-                }
             }
-        }
 
+            Instance = null;
+        }
 
         private void ClientNetworkReadyWrapper(ulong clientId)
         {
@@ -147,49 +148,35 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        IEnumerator InitializeMessageHandlers()
+
+        private abstract class ConnectResultMessage : INetworkMessage
         {
-            // Wait here in case either NetworkManager.Singleton or the CustomMessaging Manager hasn't been initialized yet
-            yield return new WaitUntil(() => NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null);
+            public ConnectStatus status;
 
-            //we register these without knowing whether we're a client or host. This is because certain messages can be sent super-early,
-            //before we even get our ClientConnected event (if acting as a client). It should be harmless to have server handlers registered
-            //on the client, because (a) nobody will be sending us these messages and (b) even if they did, nobody is listening for those
-            //server message events on the client anyway.
-            //TODO-FIXME:Netcode Issue 799. We shouldn't really have to worry about getting messages before our ClientConnected callback.
+            public static void Receive(FastBufferReader reader, in NetworkContext context) {}
 
-            RegisterClientMessageHandlers();
-
-            yield return null;
+            public void Serialize(FastBufferWriter writer)
+            {
+                writer.WriteValueSafe(status);
+            }
         }
 
-        private void RegisterClientMessageHandlers()
+        private class ServerToClientConnectResult : ConnectResultMessage
         {
-            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientConnectResult", (senderClientId, stream) =>
+            public new static void Receive(FastBufferReader reader, in NetworkContext context)
             {
-                using (var reader = PooledNetworkReader.Get(stream))
-                {
-                    ConnectStatus status = (ConnectStatus)reader.ReadInt32();
-
-                    ConnectFinished?.Invoke(status);
-                }
-            });
-
-            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler("ServerToClientSetDisconnectReason", (senderClientId, stream) =>
-            {
-                using (var reader = PooledNetworkReader.Get(stream))
-                {
-                    ConnectStatus status = (ConnectStatus)reader.ReadInt32();
-
-                    DisconnectReasonReceived?.Invoke(status);
-                }
-            });
+                reader.ReadValue(out ConnectStatus status);
+                Instance.ConnectFinished?.Invoke(status);
+            }
         }
 
-        private void UnregisterClientMessageHandlers()
+        private class ServerToClientSetDisconnectReason : ConnectResultMessage
         {
-            NetManager.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientConnectResult");
-            NetManager.CustomMessagingManager.UnregisterNamedMessageHandler("ServerToClientSetDisconnectReason");
+            public new static void Receive(FastBufferReader reader, in NetworkContext context)
+            {
+                reader.ReadValue(out ConnectStatus status);
+                Instance.DisconnectReasonReceived?.Invoke(status);
+            }
         }
 
         /// <summary>
@@ -221,7 +208,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
-            //DMW_NOTE: non-portable. We need to be updated when moving to UTP transport.
+            // Note: In most cases, this switch case shouldn't be necessary. It becomes necessary when having to deal with multiple transports like this
+            // sample does, since current Transport API doesn't expose these fields.
             switch (chosenTransport)
             {
                 case LiteNetLibTransport liteNetLibTransport:
@@ -308,38 +296,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
-        /// Responsible for the Server->Client RPC's of the connection result.
+        /// Responsible for the Server->Client custom message of the connection result.
         /// </summary>
-        /// <param name="netId"> id of the client to send to </param>
+        /// <param name="clientID"> id of the client to send to </param>
         /// <param name="status"> the status to pass to the client</param>
-        public void ServerToClientConnectResult(ulong netId, ConnectStatus status)
+        public void SendServerToClientConnectResult(ulong clientID, ConnectStatus status)
         {
-
-            using (var buffer = PooledNetworkBuffer.Get())
-            {
-                using (var writer = PooledNetworkWriter.Get(buffer))
-                {
-                    writer.WriteInt32((int)status);
-                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientConnectResult", netId, buffer);
-                }
-            }
+            NetworkManager.Singleton.SendMessage(new ServerToClientConnectResult() {status = status}, NetworkDelivery.Reliable, clientID);
         }
 
         /// <summary>
         /// Sends a DisconnectReason to the indicated client. This should only be done on the server, prior to disconnecting the client.
         /// </summary>
-        /// <param name="netId"> id of the client to send to </param>
+        /// <param name="clientID"> id of the client to send to </param>
         /// <param name="status"> The reason for the upcoming disconnect.</param>
-        public void ServerToClientSetDisconnectReason(ulong netId, ConnectStatus status)
+        public void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
         {
-            using (var buffer = PooledNetworkBuffer.Get())
-            {
-                using (var writer = PooledNetworkWriter.Get(buffer))
-                {
-                    writer.WriteInt32((int)status);
-                    NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage("ServerToClientSetDisconnectReason", netId, buffer);
-                }
-            }
+            NetworkManager.Singleton.SendMessage(new ServerToClientSetDisconnectReason() {status = status}, NetworkDelivery.Reliable, clientID);
         }
 
         /// <summary>

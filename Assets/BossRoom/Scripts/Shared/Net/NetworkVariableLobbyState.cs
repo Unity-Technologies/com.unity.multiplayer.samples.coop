@@ -3,16 +3,53 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
+    public struct LobbyState : INetworkSerializable
+    {
+        private const int k_MaxSize = 8;
+        private byte m_HasChangedValueBitfield;
+
+        private bool[] m_HasChangedValue
+        {
+            get
+            {
+                bool[] toReturn = new bool[k_MaxSize];
+                for (int i = 0; i < k_MaxSize; i++)
+                {
+                    toReturn[i] = (m_HasChangedValueBitfield & (1 << i)) != 0;
+                }
+
+                return toReturn;
+            }
+            set
+            {
+                for (int i = 0; i < k_MaxSize; i++)
+                {
+                    if (value[i]) { m_HasChangedValueBitfield = (byte)(m_HasChangedValueBitfield | (1 << i)); }
+                    else { m_HasChangedValueBitfield = (byte)(m_HasChangedValueBitfield & ~(1 << i)); }
+                }
+            }
+        }
+
+        private FixedList4096Bytes<CharSelectData.LobbyPlayerState> m_PlayerStates;
+        public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
+        {
+            serializer.SerializeValue(ref m_HasChangedValueBitfield);
+            serializer.SerializeValue(ref m_PlayerStates);
+        }
+    }
     /// <summary>
     /// NetworkVariableLobbyState represents a LobbyState on the Network.
     /// We cannot use a standard struct and encapsulate it in a NetworkVariable<>
     /// because a LobbyState contains a string which is managed making the whole struct managed too.
     /// </summary>
+    ///
+    /*
     [Serializable]
     public class NetworkVariableLobbyState : NetworkVariableBase, IEnumerable, IEnumerator
     {
@@ -232,4 +269,5 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         public object Current => m_PlayerStates[m_Position];
     }
+    */
 }

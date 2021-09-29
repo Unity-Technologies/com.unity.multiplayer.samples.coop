@@ -9,7 +9,8 @@
         "Unity.Services.Core",
         "Unity.Services.Authentication",
         "Unity.Services.Relay",
-        "Unity.Netcode.Adapter.UTP"
+        "Unity.Netcode.Adapter.UTP",
+        "Unity.Collections"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

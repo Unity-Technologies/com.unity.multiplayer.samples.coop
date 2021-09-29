@@ -76,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 // to help the clients visually keep track of who's in what seat, we'll "kick out" any other players
                 // who were also in that seat. (Those players didn't click "Ready!" fast enough, somebody else took their seat!)
-                for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
+                for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
                 {
                     if (CharSelectData.LobbyPlayers[i].SeatIdx == newSeatIdx && i != idx)
                     {
@@ -98,7 +98,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private int FindLobbyPlayerIdx(ulong clientId)
         {
-            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == clientId)
                     return i;
@@ -226,7 +226,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void OnClientDisconnectCallback(ulong clientId)
         {
             // clear this client's PlayerNumber and any associated visuals (so other players know they're gone).
-            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == clientId)
                 {
