@@ -129,7 +129,7 @@ namespace BossRoom.Visual
 
         private FXProjectile SpawnAndInitializeProjectile()
         {
-            var projectileGO = NetworkObjectPool.Singleton.GetNetworkObject(Description.Projectiles[0].ProjectilePrefab, m_Parent.transform.position, m_Parent.transform.rotation);
+            var projectileGO = Object.Instantiate(Description.Projectiles[0].ProjectilePrefab, m_Parent.transform.position, m_Parent.transform.rotation, null);
 
             var projectile = projectileGO.GetComponent<FXProjectile>();
             if (!projectile)

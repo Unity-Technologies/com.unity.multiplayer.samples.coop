@@ -47,5 +47,3 @@ MonoBehaviour:
   PooledPrefabsList:
   - Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a, type: 3}
     PrewarmCount: 5
-  - Prefab: {fileID: 765690034209705780, guid: 28c5ae0155a675f4480b7f3e329a7504, type: 3}
-    PrewarmCount: 5

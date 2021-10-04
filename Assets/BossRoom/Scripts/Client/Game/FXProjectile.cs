@@ -66,7 +66,7 @@ public class FXProjectile : MonoBehaviour
         }
         else if (m_Age >= m_FlightDuration + m_PostImpactDurationSeconds)
         {
-            NetworkObjectPool.Singleton.ReturnGameObject(gameObject);
+            Destroy(gameObject);
         }
     }
 
