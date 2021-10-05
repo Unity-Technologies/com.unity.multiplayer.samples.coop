@@ -5,10 +5,14 @@ using UnityEngine.SceneManagement;
 using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using Photon.Realtime;
+
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
+
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
+
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -37,6 +41,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// time from the host.
         /// </summary>
         public event Action NetworkTimedOut;
+
+        public string m_MainSceneName = "BossRoom";
 
         void Start()
         {
@@ -78,6 +84,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 }
             }
+        }
+
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+        {
+            //m_Portal.Client(SceneManager.GetActiveScene().buildIndex);
         }
 
         /// <summary>
