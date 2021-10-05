@@ -8,7 +8,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// Component to simply play a raising/descending animation when this NetworkObject's parent NetworkObject changes.
     /// </summary>
     /// <remarks>
-    /// This script will likely be refactored and/or removed removed with a NetworkAnimator-based solution.
+    /// Currently, Netcode for GameObjects' (Netcode) NetworkAnimator component does not support animations that apply
+    /// Root Motion. This script is a workaround and will be refactored when Root Motion-based animations are supported.
     /// </remarks>
     public class ServerDisplacerOnParentChange : NetworkBehaviour
     {
