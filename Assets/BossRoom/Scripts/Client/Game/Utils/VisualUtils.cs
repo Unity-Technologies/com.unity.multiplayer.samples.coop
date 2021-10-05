@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Repository for visualization-related utility functions.

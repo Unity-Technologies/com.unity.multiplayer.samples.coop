@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
 
     /// <summary>

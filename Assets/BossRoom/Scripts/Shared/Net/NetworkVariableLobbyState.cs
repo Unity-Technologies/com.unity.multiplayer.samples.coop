@@ -6,7 +6,7 @@ using System.Threading;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// NetworkVariableLobbyState represents a LobbyState on the Network.

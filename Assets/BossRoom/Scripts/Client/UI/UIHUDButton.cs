@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Provides logic for a UI HUD Button to slightly shrink scale on pointer down.

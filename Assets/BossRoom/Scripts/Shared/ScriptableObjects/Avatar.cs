@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// This ScriptableObject defines a Player Character for BossRoom. It defines its CharacterClass field for

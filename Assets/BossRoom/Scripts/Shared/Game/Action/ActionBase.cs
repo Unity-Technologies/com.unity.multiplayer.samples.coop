@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Abstract base class containing some common members shared by Action (server) and ActionFX (client visual)

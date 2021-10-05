@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Responsible for storing of all of the pieces of a character, and swapping the pieces out en masse when asked to.

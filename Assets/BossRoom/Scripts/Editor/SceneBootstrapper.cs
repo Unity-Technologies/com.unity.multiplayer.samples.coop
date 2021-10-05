@@ -2,7 +2,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Editor
+namespace Unity.Multiplayer.Samples.BossRoom.Editor
 {
     /// <summary>
     /// Class that permits auto-loading a bootstrap scene when the editor switches play state. This class is

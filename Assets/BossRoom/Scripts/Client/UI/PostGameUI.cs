@@ -4,7 +4,7 @@ using UnityEngine.UI;
 using TMPro;
 using Unity.Netcode;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Provides backing logic for all of the UI that runs in the PostGame stage.

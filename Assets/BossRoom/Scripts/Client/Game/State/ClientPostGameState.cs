@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client state-logic for post-game screen. (We don't actually need to do anything here

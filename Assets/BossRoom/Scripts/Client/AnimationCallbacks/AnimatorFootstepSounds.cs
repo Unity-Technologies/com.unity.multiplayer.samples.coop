@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Plays one of a few sound effects, on a loop, based on a variable in an Animator.

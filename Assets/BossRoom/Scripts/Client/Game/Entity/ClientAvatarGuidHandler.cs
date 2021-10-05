@@ -1,8 +1,8 @@
 using System;
-using BossRoom.Visual;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client-side component that awaits a state change on an avatar's Guid, and fetches matching Avatar from the

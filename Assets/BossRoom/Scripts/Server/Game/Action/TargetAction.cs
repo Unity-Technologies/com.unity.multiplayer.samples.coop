@@ -1,7 +1,7 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// The "Target" Action is not a skill, but rather the result of a user left-clicking an enemy. This

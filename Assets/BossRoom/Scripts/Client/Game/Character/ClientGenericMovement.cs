@@ -1,12 +1,12 @@
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Generic movement object that updates transforms based on the state of an INetMovement source.
-    /// This is part of a temporary movement system that will be replaced once MLAPI can drive movement
-    /// internally.
+    /// This is part of a temporary movement system that will be replaced once Netcode for GameObjects can drive
+    /// movement internally.
     /// </summary>
     public class ClientGenericMovement : NetworkBehaviour
     {

@@ -4,7 +4,7 @@ using System.IO;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// NetworkVariableString represents a String on the network.

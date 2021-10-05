@@ -1,10 +1,10 @@
-using BossRoom.Client;
 using System;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.

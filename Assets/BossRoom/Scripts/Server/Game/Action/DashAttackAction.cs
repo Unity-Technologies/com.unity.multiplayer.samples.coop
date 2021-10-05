@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Causes the attacker to teleport near a target spot, then perform a melee attack. The client

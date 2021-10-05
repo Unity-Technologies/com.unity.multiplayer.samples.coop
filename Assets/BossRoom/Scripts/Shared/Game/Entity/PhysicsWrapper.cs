@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using MLAPI;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Wrapper class for direct references to components relevant to physics.

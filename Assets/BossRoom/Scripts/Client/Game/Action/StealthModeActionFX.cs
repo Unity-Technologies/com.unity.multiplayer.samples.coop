@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Graphics for the rogue's StealthModeAction. Note that this is only part of the visual-effects for this action!

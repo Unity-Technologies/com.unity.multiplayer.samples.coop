@@ -1,4 +1,4 @@
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Action that plays while a character is Stunned. The character does nothing... just sits there.

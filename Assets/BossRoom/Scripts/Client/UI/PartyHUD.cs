@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Provides logic for the Party HUD with information on the player and allies

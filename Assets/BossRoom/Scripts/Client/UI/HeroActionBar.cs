@@ -1,10 +1,10 @@
 using System.Collections.Generic;
-using BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
-using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
+using SkillTriggerStyle = Unity.Multiplayer.Samples.BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Provides logic for a Hero Action Bar with attack, skill buttons and a button to open emotes panel

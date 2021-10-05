@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Server specialization of core BossRoom game logic.

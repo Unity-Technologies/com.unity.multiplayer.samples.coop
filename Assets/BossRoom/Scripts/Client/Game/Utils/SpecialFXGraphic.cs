@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Utility script attached to special-effects prefabs. These prefabs are
@@ -19,11 +19,11 @@ namespace BossRoom.Visual
     ///
     /// Note that whichever mode is used, Shutdown() may be called prematurely by whoever owns this graphic
     /// in the case of aborted actions.
-    /// 
+    ///
     /// Once Shutdown() is called (one way or another), the object self-destructs after the particles end
     /// (or after a specific additional amount of time).
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// When a particle system ends, it usually needs to stick around for a little while
     /// to let the last remaining particles finish rendering. Shutdown() turns off particles,
@@ -133,7 +133,7 @@ namespace BossRoom.Visual
     /// particle systems in a SpecialFXGraphic (so we don't have to manually maintain the list).
     /// </summary>
     [CustomEditor(typeof(SpecialFXGraphic))]
-    public class SpecialFXGraphicEditor : Editor
+    public class SpecialFXGraphicEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

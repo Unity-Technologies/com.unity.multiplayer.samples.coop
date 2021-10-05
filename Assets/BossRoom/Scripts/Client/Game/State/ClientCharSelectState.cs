@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.Netcode;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client specialization of the Character Select game state. Mainly controls the UI during character-select.

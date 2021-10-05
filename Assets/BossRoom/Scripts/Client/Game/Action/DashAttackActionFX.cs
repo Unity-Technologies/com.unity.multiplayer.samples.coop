@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Visualization of a DashAttackAction. See DashAttackAction.cs for more info.

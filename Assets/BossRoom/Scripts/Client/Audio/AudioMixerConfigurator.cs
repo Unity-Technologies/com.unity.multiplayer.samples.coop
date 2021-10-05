@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Initializes the game's AudioMixer to use volumes stored in preferences. Provides
@@ -23,7 +23,7 @@ namespace BossRoom.Client
         /// <summary>
         /// The audio sliders use a value between 0.0001 and 1, but the mixer works in decibels -- by default, -80 to 0.
         /// To convert, we use log10(slider) multiplied by 20. Why 20? because log10(.0001)*20=-80, which is the
-        /// bottom range for our mixer, meaning it's disabled. 
+        /// bottom range for our mixer, meaning it's disabled.
         /// </summary>
         private const float k_VolumeLog10Multiplier = 20;
 
