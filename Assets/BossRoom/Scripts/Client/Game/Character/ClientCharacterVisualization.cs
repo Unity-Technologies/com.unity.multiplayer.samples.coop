@@ -82,6 +82,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
             {
+                // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
+                // following are temporary workarounds to initialize certain components with the Animator component on
+                // the PlayerAvatar prefab. Future refactorings will enable this functionality.
+
                 m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
 
                 m_CharacterSwapper.Initialize(m_ClientVisualsAnimator);
