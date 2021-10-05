@@ -125,7 +125,9 @@ namespace BossRoom.Server
                     //for the same GUID kicks the old connection, this could get complicated. In a game that fully supported the reconnect flow,
                     //we would NOT remove ClientData here, but instead time it out after a certain period, since the whole point of it is
                     //to remember client information on a per-guid basis after the connection has been lost.
-                    m_ClientData.Remove(guid);
+                    var character = PlayerServerCharacter.GetPlayerServerCharacters().Find(
+                        player => player.OwnerClientId == clientId);
+                    m_ClientData[m_ClientIDToGuid[clientId]] = new SessionPlayerData(clientId, m_ClientIDToGuid[clientId], m_Portal.PlayerName, character.transform.position, character.transform.rotation.eulerAngles, false);
                 }
             }
 
@@ -268,5 +270,10 @@ namespace BossRoom.Server
             m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
         }
 
+        public void UpdatePlayer(ulong clientId, string name, Vector3 position, Vector3 rotation)
+        {
+            var guid = m_ClientIDToGuid[clientId];
+            m_ClientData[guid] = new SessionPlayerData(clientId, guid, name, position, rotation, true);
+        }
     }
 }
