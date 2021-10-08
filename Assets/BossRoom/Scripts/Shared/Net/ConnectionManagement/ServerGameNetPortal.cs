@@ -1,5 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
@@ -56,7 +58,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
-            m_Portal.NetworkReadied += OnNetworkReady;
 
             // we add ApprovalCheck callback BEFORE OnNetworkSpawn to avoid spurious Netcode for GameObjects (Netcode)
             // warning: "No ConnectionApproval callback defined. Connection approval will timeout"
@@ -70,8 +71,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if( m_Portal != null )
             {
-                m_Portal.NetworkReadied -= OnNetworkReady;
-
                 if( m_Portal.NetManager != null)
                 {
                     m_Portal.NetManager.ConnectionApprovalCallback -= ApprovalCheck;
@@ -80,7 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private void OnNetworkReady()
+        public void OnNetworkReady()
         {
             if (!m_Portal.NetManager.IsServer)
             {
@@ -89,9 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             else
             {
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
-                m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
-                m_Portal.ClientSceneChanged += OnClientSceneChanged;
 
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
@@ -129,13 +126,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
-                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
-                m_Portal.ClientSceneChanged -= OnClientSceneChanged;
             }
         }
 
-        private void OnClientSceneChanged(ulong clientId, int sceneIndex)
+        public void OnClientSceneChanged(ulong clientId, int sceneIndex)
         {
             m_ClientSceneMap[clientId] = sceneIndex;
         }
@@ -144,13 +139,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
         /// handled in server code).
         /// </summary>
-        private void OnUserDisconnectRequest()
+        public void OnUserDisconnectRequest()
         {
-            if( m_Portal.NetManager.IsServer )
-            {
-                m_Portal.NetManager.Shutdown();
-            }
-
             Clear();
         }
 
@@ -286,7 +276,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             //TODO:Netcode: this must be done after the callback for now. In the future we expect Netcode to allow us to return more information as part of
             //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
             //and then manually close down the connection.
-            m_Portal.SendServerToClientConnectResult(clientId, gameReturnStatus);
+            SendServerToClientConnectResult(clientId, gameReturnStatus);
             if(gameReturnStatus != ConnectStatus.Success )
             {
                 //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
@@ -294,9 +284,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
+        /// <summary>
+        /// Sends a DisconnectReason to the indicated client. This should only be done on the server, prior to disconnecting the client.
+        /// </summary>
+        /// <param name="clientID"> id of the client to send to </param>
+        /// <param name="status"> The reason for the upcoming disconnect.</param>
+        public void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
+        {
+            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            writer.WriteValueSafe(status);
+            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
+        }
+
+        /// <summary>
+        /// Responsible for the Server->Client custom message of the connection result.
+        /// </summary>
+        /// <param name="clientID"> id of the client to send to </param>
+        /// <param name="status"> the status to pass to the client</param>
+        public void SendServerToClientConnectResult(ulong clientID, ConnectStatus status)
+        {
+            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            writer.WriteValueSafe(status);
+            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientConnectResult_CustomMessage), clientID, writer);
+        }
+
         private IEnumerator WaitToDisconnectClient(ulong clientId, ConnectStatus reason)
         {
-            m_Portal.SendServerToClientSetDisconnectReason(clientId, reason);
+            SendServerToClientSetDisconnectReason(clientId, reason);
 
             // TODO fix once this is solved: Issue 796 Unity-Technologies/com.unity.netcode.gameobjects#796
             // this wait is a workaround to give the client time to receive the above RPC before closing the connection

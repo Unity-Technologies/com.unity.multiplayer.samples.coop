@@ -4,6 +4,7 @@ using MLAPI.Transports.LiteNetLib;
 using MLAPI.Transports.PhotonRealtime;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine;
@@ -58,28 +59,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// your character, you need a persistent identifier for your own client install. We solve that by generating a random GUID and storing it
     /// in player prefs, so it persists across sessions of the game.
     /// </remarks>
-    // todo this should be refactored to 2 classes and should be renamed connection manager or something more clear like this.
+    // todo this should be refactored to 2 classes and should be renamed connection manager or something more clear like that.
     public class GameNetPortal : MonoBehaviour
     {
         [SerializeField]
         NetworkManager m_NetworkManager;
-
-        /// <summary>
-        /// This event is fired when Netcode has reported that it has finished initialization, and is ready for
-        /// business, equivalent to OnServerStarted on the server, and OnClientConnected on the client.
-        /// </summary>
-        public event Action NetworkReadied;
-
-        /// <summary>
-        /// raised when a client has changed scenes. Returns the ClientID and the new scene the client has entered, by index.
-        /// </summary>
-        public event Action<ulong, int> ClientSceneChanged;
-
-        /// <summary>
-        /// This fires in response to GameNetPortal.RequestDisconnect. It's a local signal (not from the network), indicating that
-        /// the user has requested a disconnect.
-        /// </summary>
-        public event Action UserDisconnectRequested;
 
         public NetworkManager NetManager => m_NetworkManager;
 
@@ -96,12 +80,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
         // Instance of GameNetPortal placed in scene. There should only be one at once
         public static GameNetPortal Instance;
         private ClientGameNetPortal m_ClientPortal;
+        private ServerGameNetPortal m_ServerPortal;
 
         private void Awake()
         {
             Debug.Assert(Instance == null);
             Instance = this;
             m_ClientPortal = GetComponent<ClientGameNetPortal>();
+            m_ServerPortal = GetComponent<ServerGameNetPortal>();
         }
 
         void Start()
@@ -117,7 +103,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         private void OnSceneEvent(SceneEvent sceneEvent)
         {
             if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
-            ClientSceneChanged?.Invoke(sceneEvent.ClientId, SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex);
+
+            m_ServerPortal.OnClientSceneChanged(sceneEvent.ClientId, SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex);
         }
 
         private void OnDestroy()
@@ -140,37 +127,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-
-        // private abstract class ConnectResultMessage : INetworkMessage
-        // {
-        //     public ConnectStatus status;
-        //
-        //     public static void Receive(FastBufferReader reader, in NetworkContext context) {}
-        //
-        //     public void Serialize(FastBufferWriter writer)
-        //     {
-        //         writer.WriteValueSafe(status);
-        //     }
-        // }
-        //
-        // private class ServerToClientConnectResult : ConnectResultMessage
-        // {
-        //     public new static void Receive(FastBufferReader reader, in NetworkContext context)
-        //     {
-        //         reader.ReadValueSafe(out ConnectStatus status);
-        //         Instance.ConnectFinished?.Invoke(status);
-        //     }
-        // }
-        //
-        // private class ServerToClientSetDisconnectReason : ConnectResultMessage
-        // {
-        //     public new static void Receive(FastBufferReader reader, in NetworkContext context)
-        //     {
-        //         reader.ReadValueSafe(out ConnectStatus status);
-        //         Instance.DisconnectReasonReceived?.Invoke(status);
-        //     }
-        // }
-
         /// <summary>
         /// This method runs when NetworkManager has started up (following a succesful connect on the client, or directly after StartHost is invoked
         /// on the host). It is named to match NetworkBehaviour.OnNetworkSpawn, and serves the same role, even though GameNetPortal itself isn't a NetworkBehaviour.
@@ -185,7 +141,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 // ConnectFinished?.Invoke(ConnectStatus.Success);
             }
 
-            NetworkReadied?.Invoke();
+            m_ClientPortal.OnNetworkReady();
+            m_ServerPortal.OnNetworkReady();
         }
 
         /// <summary>
@@ -290,38 +247,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
-        /// Responsible for the Server->Client custom message of the connection result.
-        /// </summary>
-        /// <param name="clientID"> id of the client to send to </param>
-        /// <param name="status"> the status to pass to the client</param>
-        public void SendServerToClientConnectResult(ulong clientID, ConnectStatus status)
-        {
-            // todo add jira bug, null ref if you use default constructor for FastBufferWriter
-            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
-            writer.WriteValueSafe(status);
-            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientConnectResult), clientID, writer);
-        }
-
-
-        /// <summary>
-        /// Sends a DisconnectReason to the indicated client. This should only be done on the server, prior to disconnecting the client.
-        /// </summary>
-        /// <param name="clientID"> id of the client to send to </param>
-        /// <param name="status"> The reason for the upcoming disconnect.</param>
-        public void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
-        {
-            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
-            writer.WriteValueSafe(status);
-            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason), clientID, writer);
-        }
-
-
-        /// <summary>
         /// This will disconnect (on the client) or shutdown the server (on the host).
+        /// It's a local signal (not from the network), indicating that the user has requested a disconnect.
         /// </summary>
         public void RequestDisconnect()
         {
-            UserDisconnectRequested?.Invoke();
+            m_ClientPortal.OnUserDisconnectRequest();
+            m_ServerPortal.OnUserDisconnectRequest();
+            NetManager.Shutdown();
         }
     }
 }

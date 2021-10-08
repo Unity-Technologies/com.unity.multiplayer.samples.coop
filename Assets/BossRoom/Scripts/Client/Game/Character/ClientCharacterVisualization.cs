@@ -277,7 +277,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, m_PhysicsWrapper.Transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+            // NetworkTransform is interpolated, updating visual using authoritative value here
+            transform.position = m_PhysicsWrapper.Transform.position;
+            transform.rotation = m_PhysicsWrapper.Transform.rotation;
 
             if (m_ClientVisualsAnimator)
             {

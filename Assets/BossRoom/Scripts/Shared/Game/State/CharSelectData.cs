@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             LobbyFull,
         }
 
-        public const int k_MaxLobbyPlayers = 2;
+        public const int k_MaxLobbyPlayers = 8;
 
         /// <summary>
         /// Describes one of the players in the lobby, and their current character-select status.

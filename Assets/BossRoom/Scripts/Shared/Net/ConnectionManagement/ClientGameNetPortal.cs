@@ -49,7 +49,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             m_Portal = GetComponent<GameNetPortal>();
 
-            m_Portal.NetworkReadied += OnNetworkReady;
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
 
@@ -57,8 +56,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             if( m_Portal != null )
             {
-                m_Portal.NetworkReadied -= OnNetworkReady;
-
                 if( m_Portal.NetManager != null )
                 {
                     m_Portal.NetManager.OnClientDisconnectCallback -= OnDisconnectOrTimeout;
@@ -66,40 +63,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null)
                 {
-                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult));
-                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason));
+                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult_CustomMessage));
+                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage));
                 }
             }
 
             Instance = null;
         }
 
-        private void OnNetworkReady()
+        public void OnNetworkReady()
         {
             if (!m_Portal.NetManager.IsClient)
             {
                 enabled = false;
-            }
-            else
-            {
-                // O__O if adding any event registrations in this block, please add unregistrations in the OnClientDisconnect method.
-                if(!m_Portal.NetManager.IsHost )
-                {
-                    //only do this if a pure client, so as not to overlap with host behavior in ServerGameNetPortal.
-                    m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
-                }
             }
         }
 
         /// <summary>
         /// Invoked when the user has requested a disconnect via the UI, e.g. when hitting "Return to Main Menu" in the post-game scene.
         /// </summary>
-        private void OnUserDisconnectRequest()
+        public void OnUserDisconnectRequest()
         {
             if( m_Portal.NetManager.IsClient )
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
-                m_Portal.NetManager.Shutdown();
             }
         }
 
@@ -129,8 +116,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
             if ( !NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsHost )
             {
-                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
-
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().name != "MainMenu")
@@ -295,18 +280,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             portal.NetManager.StartClient();
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
-            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult), ReceiveServerToClientConnectResult);
-            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason), ReceiveServerToClientSetDisconnectReason);
-
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult_CustomMessage), ReceiveServerToClientConnectResult_CustomMessage);
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), ReceiveServerToClientSetDisconnectReason_CustomMessage);
         }
 
-        public static void ReceiveServerToClientConnectResult(ulong clientID, FastBufferReader reader)
+        public static void ReceiveServerToClientConnectResult_CustomMessage(ulong clientID, FastBufferReader reader)
         {
             reader.ReadValueSafe(out ConnectStatus status);
             Instance.OnConnectFinished(status);
         }
 
-        public static void ReceiveServerToClientSetDisconnectReason(ulong clientID, FastBufferReader reader)
+        public static void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
         {
             reader.ReadValueSafe(out ConnectStatus status);
             Instance.OnDisconnectReasonReceived(status);
