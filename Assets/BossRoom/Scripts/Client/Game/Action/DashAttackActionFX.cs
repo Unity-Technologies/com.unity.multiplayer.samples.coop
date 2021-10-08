@@ -67,7 +67,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 float dashDuration = Description.DurationSeconds - Description.ExecTimeSeconds;
                 float dashElapsed = TimeRunning - Description.ExecTimeSeconds;
                 Vector3 currentPos = Vector3.Lerp(m_StartPos, m_EndPos, dashElapsed / dashDuration);
-                m_Parent.transform.position = currentPos;
+                // m_Parent.transform.position = currentPos;
             }
 
             return ActionConclusion.Continue;

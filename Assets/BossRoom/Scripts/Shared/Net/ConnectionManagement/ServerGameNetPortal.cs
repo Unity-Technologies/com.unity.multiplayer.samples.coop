@@ -300,7 +300,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             // TODO fix once this is solved: Issue 796 Unity-Technologies/com.unity.netcode.gameobjects#796
             // this wait is a workaround to give the client time to receive the above RPC before closing the connection
-            yield return new WaitForSeconds(0);
+            yield return new WaitForSeconds(2);
 
             BootClient(clientId);
         }

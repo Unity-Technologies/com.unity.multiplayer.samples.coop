@@ -188,8 +188,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private void OnDestroy()
         {
-            m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
-            m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
+            if (m_ClientNetPortal != null)
+            {
+                m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
+                m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
+            }
 
             // Release this instance as soon as we are destroyed
             s_Instance = null;

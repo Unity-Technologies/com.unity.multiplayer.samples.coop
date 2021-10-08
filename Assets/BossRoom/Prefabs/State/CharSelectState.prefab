@@ -115,7 +115,7 @@ MonoBehaviour:
   - {fileID: 0}
   m_ClassInfoBox: {fileID: 0}
   m_FatalLobbyErrorText: {fileID: 0}
-  m_FatalErrorLobbyFullMsg: 'Error: lobby is full! You cannot play.'
+  m_FatalErrorLobbyFullMsg: 'Error: lobby is full! You cannot play. '
   m_CharacterGraphicsParent: {fileID: 0}
 --- !u!114 &3565665953789623673
 MonoBehaviour:

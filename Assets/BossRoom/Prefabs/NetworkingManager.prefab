@@ -45,10 +45,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ProtocolType: 0
   m_MessageBufferSize: 9999
+  m_ReciveQueueSize: 1024
+  m_SendQueueSize: 1024
+  m_SendQueueBatchSize: 4096
   m_ServerAddress: 127.0.0.1
   m_ServerPort: 7777
-  m_RelayMaxPlayers: 10
-  m_RelayServer: https://relay-allocations.cloud.unity3d.com
 --- !u!1 &409269880
 GameObject:
   m_ObjectHideFlags: 0
@@ -95,7 +96,7 @@ MonoBehaviour:
   m_NickName: 
   m_RoomName: 
   m_MaxPlayers: 16
-  m_ChannelIdCodesStartRange: 130
+  m_NetworkDeliveryEventCodesStartRange: 130
   m_AttachSupportLogger: 0
   m_BatchMode: 1
   m_SendQueueBatchSize: 8192
@@ -146,10 +147,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ProtocolType: 1
   m_MessageBufferSize: 9999
+  m_ReciveQueueSize: 1024
+  m_SendQueueSize: 1024
+  m_SendQueueBatchSize: 4096
   m_ServerAddress: 127.0.0.1
   m_ServerPort: 7777
-  m_RelayMaxPlayers: 10
-  m_RelayServer: https://relay-allocations.cloud.unity3d.com
 --- !u!1 &3591499506183471245
 GameObject:
   m_ObjectHideFlags: 0
@@ -199,7 +201,6 @@ MonoBehaviour:
   DisconnectTimeout: 5
   ReconnectDelay: 0.5
   MaxConnectAttempts: 10
-  channels: []
   MessageBufferSize: 5120
   SimulatePacketLossChance: 0
   SimulateMinLatency: 80
@@ -274,14 +275,6 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 5486862276979889515}
-    RegisteredScenes:
-    - MainMenu
-    - CharSelect
-    - BossRoom
-    - PostGame
-    - Startup
-    - 
-    AllowRuntimeSceneChanges: 1
     PlayerPrefab: {fileID: 4927145850774787080, guid: 1d3f5528d25661949890bcd7f47fe81a, type: 3}
     NetworkPrefabs:
     - Override: 0
@@ -324,16 +317,12 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
-    ReceiveTickrate: 0
-    NetworkTickIntervalSec: 0.05
-    MaxReceiveEventsPerTickRate: 1000
-    EventTickrate: 30
+    TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
     ConnectionData: 
     EnableTimeResync: 0
     TimeResyncInterval: 30
-    EnableNetworkVariable: 1
     EnsureNetworkVariableLengthSafety: 0
     EnableSceneManagement: 1
     ForceSamePrefabs: 0
@@ -341,7 +330,6 @@ MonoBehaviour:
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
-    EnableMessageBuffering: 1
     MessageBufferTimeout: 20
     EnableNetworkLogs: 1
 --- !u!1 &7311172147761373013
@@ -393,10 +381,4 @@ MonoBehaviour:
   ConnectAddress: 127.0.0.1
   ConnectPort: 7777
   ServerListenPort: 7777
-  ServerWebsocketListenPort: 8887
-  SupportWebsocket: 0
-  Channels: []
-  UseMLAPIRelay: 0
-  MLAPIRelayAddress: 184.72.104.138
-  MLAPIRelayPort: 8888
   MessageSendMode: 0

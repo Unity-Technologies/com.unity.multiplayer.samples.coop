@@ -1,6 +1,7 @@
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
@@ -134,12 +135,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(playerInfo.ClientId);
 
-                if (playerNetworkObject &&
-                    playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+                if (playerNetworkObject && playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
                 {
                     // pass avatar GUID to PersistentPlayer
+                    Debug.Log("Assigning guid value NetworkBehaviour:GameStateBehaviour:ServerCharSelectState:SaveLobbyResults");
                     persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
-                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToNetworkGuid();
+                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToNetworkGuid(); // it'd be great to simplify this with something like a NetworkScriptableObjects :(
                 }
             }
         }
@@ -213,9 +214,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             int playerNum = GetAvailablePlayerNum();
             if (playerNum == -1)
             {
+                Debug.Assert(false, "we shouldn't be here, connection approval should have refused this connection already", this);
                 // we ran out of seats... there was no room!
-                CharSelectData.FatalLobbyErrorClientRpc(CharSelectData.FatalLobbyError.LobbyFull,
-                    new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } });
+                // CharSelectData.FatalLobbyErrorClientRpc(CharSelectData.FatalLobbyError.LobbyFull,
+                //     new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } });
                 return;
             }
 

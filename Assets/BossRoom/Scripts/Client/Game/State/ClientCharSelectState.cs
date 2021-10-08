@@ -135,7 +135,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (CharSelectData)
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
-                CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
+                // CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
                 CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
             }
@@ -152,7 +152,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             else
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
-                CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
+                // CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
                 CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
             }
@@ -320,23 +320,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        /// <summary>
-        /// Called by server when there is a fatal error
-        /// </summary>
-        /// <param name="error"></param>
-        private void OnFatalLobbyError(CharSelectData.FatalLobbyError error)
-        {
-            switch (error)
-            {
-                case CharSelectData.FatalLobbyError.LobbyFull:
-                    m_FatalLobbyErrorText.text = m_FatalErrorLobbyFullMsg;
-                    break;
-                default:
-                    throw new System.Exception($"Unknown fatal lobby error {error}");
-            }
-
-            ConfigureUIForLobbyMode(LobbyMode.FatalError);
-        }
+        // /// <summary>
+        // /// Called by server when there is a fatal error
+        // /// </summary>
+        // /// <param name="error"></param>
+        // private void OnFatalLobbyError(CharSelectData.FatalLobbyError error)
+        // {
+        //     switch (error)
+        //     {
+        //         case CharSelectData.FatalLobbyError.LobbyFull:
+        //             m_FatalLobbyErrorText.text = m_FatalErrorLobbyFullMsg;
+        //             break;
+        //         default:
+        //             throw new System.Exception($"Unknown fatal lobby error {error}");
+        //     }
+        //
+        //     ConfigureUIForLobbyMode(LobbyMode.FatalError);
+        // }
 
         /// <summary>
         /// Turns on the UI elements for a specified "lobby mode", and turns off UI elements for all other modes.

@@ -1,5 +1,5 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+// using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI.Transports.LiteNetLib;
@@ -18,6 +18,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     [RequireComponent(typeof(GameNetPortal))]
     public class ClientGameNetPortal : MonoBehaviour
     {
+        public static ClientGameNetPortal Instance;
         private GameNetPortal m_Portal;
 
         /// <summary>
@@ -38,13 +39,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public event Action NetworkTimedOut;
 
+        private void Awake()
+        {
+            Debug.Assert(Instance == null);
+            Instance = this;
+        }
+
         void Start()
         {
             m_Portal = GetComponent<GameNetPortal>();
 
             m_Portal.NetworkReadied += OnNetworkReady;
-            m_Portal.ConnectFinished += OnConnectFinished;
-            m_Portal.DisconnectReasonReceived += OnDisconnectReasonReceived;
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
         }
 
@@ -53,14 +58,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if( m_Portal != null )
             {
                 m_Portal.NetworkReadied -= OnNetworkReady;
-                m_Portal.ConnectFinished -= OnConnectFinished;
-                m_Portal.DisconnectReasonReceived -= OnDisconnectReasonReceived;
 
                 if( m_Portal.NetManager != null )
                 {
                     m_Portal.NetManager.OnClientDisconnectCallback -= OnDisconnectOrTimeout;
                 }
+
+                if (NetworkManager.Singleton.CustomMessagingManager != null)
+                {
+                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult));
+                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason));
+                }
             }
+
+            Instance = null;
+
         }
 
         private void OnNetworkReady()
@@ -92,7 +104,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        private void OnConnectFinished(ConnectStatus status)
+        public void OnConnectFinished(ConnectStatus status)
         {
             //on success, there is nothing to do (the Netcode for GameObjects (Netcode) scene management system will take us to the next scene).
             //on failure, we must raise an event so that the UI layer can display something.
@@ -168,8 +180,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     break;
                 case UnityTransport unityTransport:
                     // TODO: once this is exposed in the adapter we will be able to change it
-                    // UnityTransport.Address = ipaddress;
-                    // UnityTransport.Port = (ushort)port;
+                    unityTransport.SetConnectionData(ipaddress, (ushort) port);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
@@ -247,11 +258,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     }
                     catch (Exception e)
                     {
-                        var menuUI = MainMenuUI.Instance;
-                        if (menuUI)
-                        {
-                            menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
-                        }
+                        // todo sam move outside of this before this is merged. Add a comment in my PR if I forgot about this
+                        // var menuUI = MainMenuUI.Instance;
+                        // if (menuUI)
+                        // {
+                        //     menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
+                        // }
                         throw;
                     }
 
@@ -282,6 +294,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:Netcode GOMPS-79, provide feedback for different transport failures).
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
+
+            // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult), ReceiveServerToClientConnectResult);
+            NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason), ReceiveServerToClientSetDisconnectReason);
+
+        }
+
+        public static void ReceiveServerToClientConnectResult(ulong clientID, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out ConnectStatus status);
+            Instance.OnConnectFinished(status);
+        }
+
+        public static void ReceiveServerToClientSetDisconnectReason(ulong clientID, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out ConnectStatus status);
+            Instance.OnDisconnectReasonReceived(status);
         }
     }
 }

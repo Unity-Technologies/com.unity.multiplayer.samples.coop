@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             LobbyFull,
         }
 
-        public const int k_MaxLobbyPlayers = 8;
+        public const int k_MaxLobbyPlayers = 2;
 
         /// <summary>
         /// Describes one of the players in the lobby, and their current character-select status.
@@ -148,20 +148,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
             OnAssignedPlayerNumber?.Invoke(idx);
         }
 
-        /// <summary>
-        /// Client notification when the server has told us that we cannot participate.
-        /// (Client should display an appropriate error and terminate)
-        /// </summary>
-        public event Action<FatalLobbyError> OnFatalLobbyError;
+        // /// <summary>
+        // /// Client notification when the server has told us that we cannot participate.
+        // /// (Client should display an appropriate error and terminate)
+        // /// </summary>
+        // public event Action<FatalLobbyError> OnFatalLobbyError;
 
-        /// <summary>
-        /// RPC to tell a client that they cannot participate in the game due to a fatal error.
-        /// </summary>
-        [ClientRpc]
-        public void FatalLobbyErrorClientRpc(FatalLobbyError error, ClientRpcParams clientParams=default)
-        {
-            OnFatalLobbyError?.Invoke(error);
-        }
+        // /// <summary>
+        // /// RPC to tell a client that they cannot participate in the game due to a fatal error.
+        // /// </summary>
+        // [ClientRpc]
+        // public void FatalLobbyErrorClientRpc(FatalLobbyError error, ClientRpcParams clientParams=default)
+        // {
+        //     OnFatalLobbyError?.Invoke(error);
+        // }
 
         /// <summary>
         /// Server notification when a client requests a different lobby-seat, or locks in their seat choice
