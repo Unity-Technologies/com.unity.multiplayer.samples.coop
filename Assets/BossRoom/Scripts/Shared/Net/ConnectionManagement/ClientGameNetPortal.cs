@@ -64,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     m_Portal.NetManager.OnClientDisconnectCallback -= OnDisconnectOrTimeout;
                 }
 
-                if (NetworkManager.Singleton.CustomMessagingManager != null)
+                if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null)
                 {
                     NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult));
                     NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason));
@@ -72,7 +72,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             Instance = null;
-
         }
 
         private void OnNetworkReady()
