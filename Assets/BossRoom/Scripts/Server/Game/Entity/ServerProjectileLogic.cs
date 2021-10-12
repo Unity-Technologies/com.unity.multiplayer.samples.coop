@@ -91,6 +91,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (m_DestroyAtSec < Time.fixedTime)
             {
+                // Resetting its properties before returning to the pool
+                m_HitTargets = new List<GameObject>();
+                m_IsDead = false;
                 // Time return to the pool whence it came.
                 NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
                 NetworkObjectPool.Singleton.ReturnNetworkObject(networkObject, m_ProjectileInfo.ProjectilePrefab);
@@ -110,15 +113,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             for (int i = 0; i < numCollisions; i++)
             {
                 int layerTest = 1 << m_CollisionCache[i].gameObject.layer;
-                //Debug.Log(m_CollisionCache.Length);
-                //if ((layerTest & m_BlockerMask) != 0)
-                //{
-                //    //hit a wall; leave it for a couple of seconds.
-                //    //m_ProjectileInfo.Speed_m_s = 0;
-                //    m_IsDead = true;
-                //    m_DestroyAtSec = Time.fixedTime;
-                //    return;
-                //}
+                if ((layerTest & m_BlockerMask) != 0)
+                {
+                    //hit a wall; leave it for a couple of seconds.
+                    m_ProjectileInfo.Speed_m_s = 0;
+                    m_IsDead = true;
+                    m_DestroyAtSec = Time.fixedTime + k_WallLingerSec;
+                    return;
+                }
 
                 if (m_CollisionCache[i].gameObject.layer == m_NPCLayer && !m_HitTargets.Contains(m_CollisionCache[i].gameObject))
                 {

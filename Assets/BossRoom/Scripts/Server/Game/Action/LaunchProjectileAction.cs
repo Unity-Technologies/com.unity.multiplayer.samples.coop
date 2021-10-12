@@ -68,7 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
                 //where it appears next to the player.
-                no.transform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
+                no.transform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position) + Vector3.up;
 
                 no.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkObjectId, projectileInfo);
 
