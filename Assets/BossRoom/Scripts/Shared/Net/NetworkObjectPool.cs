@@ -226,7 +226,6 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
             var netObject = m_Pool.GetNetworkObject(m_Prefab, position, rotation);
             netObject.gameObject.SetActive(true);
             return netObject;
-            //throw new NotImplementedException();
         }
 
         void INetworkPrefabInstanceHandler.Destroy(NetworkObject networkObject)
