@@ -80,7 +80,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-
         /// <summary>
         /// Invoked when the user has requested a disconnect via the UI, e.g. when hitting "Return to Main Menu" in the post-game scene.
         /// </summary>

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using UnityEngine;
-using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 /// <summary>
 /// Logic that handles an FX-based pretend-missile.
