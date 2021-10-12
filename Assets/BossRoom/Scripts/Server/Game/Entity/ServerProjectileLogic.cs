@@ -75,6 +75,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             m_Started = true;
 
+            m_HitTargets = new List<GameObject>();
+            m_IsDead = false;
+
             m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
 
             m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Ground" });
@@ -91,9 +94,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (m_DestroyAtSec < Time.fixedTime)
             {
-                // Resetting its properties before returning to the pool
-                m_HitTargets = new List<GameObject>();
-                m_IsDead = false;
                 // Time return to the pool whence it came.
                 NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
                 NetworkObjectPool.Singleton.ReturnNetworkObject(networkObject, m_ProjectileInfo.ProjectilePrefab);

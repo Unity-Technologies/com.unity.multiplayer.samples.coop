@@ -61,14 +61,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 var projectileInfo = GetProjectileInfo();
                 //GameObject projectile = Object.Instantiate(projectileInfo.ProjectilePrefab);
 
-                NetworkObject no = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab);
+                NetworkObject no = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab, projectileInfo.ProjectilePrefab.transform.position, projectileInfo.ProjectilePrefab.transform.rotation);
                 //GameObject projectile = no.gameObject;
                 // point the projectile the same way we're facing
                 no.transform.forward = m_Parent.physicsWrapper.Transform.forward;
 
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
                 //where it appears next to the player.
-                no.transform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position) + Vector3.up;
+                no.transform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
 
                 no.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkObjectId, projectileInfo);
 
