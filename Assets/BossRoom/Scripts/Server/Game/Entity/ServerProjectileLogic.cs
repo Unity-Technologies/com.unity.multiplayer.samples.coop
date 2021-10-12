@@ -94,7 +94,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (m_DestroyAtSec < Time.fixedTime)
             {
-                // Time return to the pool whence it came.
+                // Time to return to the pool from whence it came.
                 NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
                 NetworkObjectPool.Singleton.ReturnNetworkObject(networkObject, m_ProjectileInfo.ProjectilePrefab);
                 networkObject.Despawn();
