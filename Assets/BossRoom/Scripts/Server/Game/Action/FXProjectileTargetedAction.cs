@@ -1,6 +1,5 @@
 using Unity.Netcode;
 using UnityEngine;
-using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
