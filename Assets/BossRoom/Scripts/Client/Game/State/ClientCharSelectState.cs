@@ -136,7 +136,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (CharSelectData)
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
-                CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
                 CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
             }
 
@@ -155,7 +154,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             else
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
-                CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
                 CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
             }
         }
