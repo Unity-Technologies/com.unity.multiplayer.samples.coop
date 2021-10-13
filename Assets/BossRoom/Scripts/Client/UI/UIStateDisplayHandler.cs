@@ -198,7 +198,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_TransformToTrack = graphicsGameObject.transform;
         }
 
-        void LateUpdate()
+        void Update()
         {
             if (m_UIStateActive && m_TransformToTrack)
             {

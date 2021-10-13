@@ -32,6 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private const int k_TimeoutDuration = 10;
 
         public event Action<ConnectStatus> ConnectFinished;
+        public event Action<string> OnUnityRelayJoinFailed; // todo put UI code as its own assembly so code can reference it. In theory, UI should be consumed by everyone
 
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
@@ -213,9 +214,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             return true;
         }
 
-        public static async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
+        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
         {
-
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -242,7 +242,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     }
                     catch (Exception e)
                     {
-                        // todo sam move outside of this before this is merged. Add a comment in my PR if I forgot about this
+                        OnUnityRelayJoinFailed(e.Message);
+                        // todo remove the above callback and get the below uncommented when UI is its own assembly
                         // var menuUI = MainMenuUI.Instance;
                         // if (menuUI)
                         // {

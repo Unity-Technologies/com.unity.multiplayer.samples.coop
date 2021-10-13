@@ -138,7 +138,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 //special host code. This is what kicks off the flow that happens on a regular client
                 //when it has finished connecting successfully. A dedicated server would remove this.
                 m_ClientPortal.OnConnectFinished(ConnectStatus.Success);
-                // ConnectFinished?.Invoke(ConnectStatus.Success);
             }
 
             m_ClientPortal.OnNetworkReady();
@@ -172,8 +171,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     break;
                 case UnityTransport unityTransport:
                     unityTransport.SetConnectionData(ipaddress, (ushort) port);
-                    // UnityTransport. = ipaddress;
-                    // UnityTransport. = (ushort)port;
                     break;
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
@@ -182,7 +179,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetManager.StartHost();
         }
 
-        public void StartRelayHost(string roomName)
+        public void StartPhotonRelayHost(string roomName)
         {
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -220,12 +217,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
                         }
 
                         // we now need to get the joinCode?
-                        var serverRelayUtilityTask =
-                            RelayUtility.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
+                        var serverRelayUtilityTask = RelayUtility.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
                         await serverRelayUtilityTask;
                         // we now have the info from the relay service
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
-                            serverRelayUtilityTask.Result;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
 
                         RelayJoinCode.Code = joinCode;
 

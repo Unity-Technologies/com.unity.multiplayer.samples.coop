@@ -52,6 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ClientNetPortal = GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
+            m_ClientNetPortal.OnUnityRelayJoinFailed += OnRelayJoinFailed;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
             //any disconnect reason set? Show it to the user here.
@@ -68,7 +69,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 switch (onlineMode)
                 {
                     case OnlineMode.Relay:
-                        m_GameNetPortal.StartRelayHost(connectInput);
+                        m_GameNetPortal.StartPhotonRelayHost(connectInput);
                         break;
 
                     case OnlineMode.IpHost:
@@ -106,7 +107,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                     case OnlineMode.UnityRelay:
                         Debug.Log($"Unity Relay Client, join code {connectInput}");
-                        ClientGameNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, connectInput);
+                        m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, connectInput);
                         break;
                 }
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
@@ -186,12 +187,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Unable to Reach Host/Server", false, true, "Please try again");
         }
 
+        private void OnRelayJoinFailed(string message)
+        {
+            PushConnectionResponsePopup("Unity Relay: Join Failed", $"{message}", true, true);
+        }
+
         private void OnDestroy()
         {
             if (m_ClientNetPortal != null)
             {
                 m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
                 m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
+                m_ClientNetPortal.OnUnityRelayJoinFailed -= OnRelayJoinFailed;
             }
 
             // Release this instance as soon as we are destroyed
