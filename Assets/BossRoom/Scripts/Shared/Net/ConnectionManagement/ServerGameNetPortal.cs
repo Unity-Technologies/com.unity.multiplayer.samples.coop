@@ -213,54 +213,75 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </remarks>
         /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
-        /// <param name="callback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback)
+        /// <param name="connectionApprovedCallback">The delegate we must invoke to signal that the connection was approved or not. </param>
+        private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
             if (connectionData.Length > k_MaxConnectPayload)
             {
-                callback(false, 0, false, null, null);
+                connectionApprovedCallback(false, 0, false, null, null);
                 return;
+            }
+
+            // todo sam, validate with Cosmin, the below seems like a pretty bad security issue
+            // Another hackfix to unblock me since this is now called on the host's client instance as well
+            if (clientId == NetworkManager.Singleton.LocalClientId)
+            {
+                connectionApprovedCallback(true, null, true, null, null);
+                return;
+            }
+
+            ConnectStatus gameReturnStatus = ConnectStatus.Success;
+
+            //Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
+            // on invalid users trying to connect
+            // todo this is currently still spending too much time server side.
+            if (m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers)
+            {
+                gameReturnStatus = ConnectStatus.ServerFull;
+                if (gameReturnStatus != ConnectStatus.Success)
+                {
+                    //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
+                    SendServerToClientConnectResult(clientId, gameReturnStatus);
+                    SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+                    StartCoroutine(WaitToDisconnect(clientId));
+                    return;
+                }
             }
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
-            // Another hackfix to unblock me since this is now called on the host's client instance as well
-            if (connectionPayload == null)
-            {
-                callback(true, null, true, null, null);
-                return;
-            }
+
             int clientScene = connectionPayload.clientScene;
 
-            //a nice addition in the future will be to support rejoining the game and getting your same character back. This will require tracking a map of the GUID
-            //to the player's owned character object, and cleaning that object on a timer, rather than doing so immediately when a connection is lost.
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
-            //TODO: GOMPS-78. We are saving the GUID, but we have more to do to fully support a reconnect flow (where you get your same character back after disconnect/reconnect).
-
-            ConnectStatus gameReturnStatus = ConnectStatus.Success;
-
             //Test for Duplicate Login.
-            if( m_ClientData.ContainsKey(connectionPayload.clientGUID))
+            if (m_ClientData.ContainsKey(connectionPayload.clientGUID))
             {
-                if( Debug.isDebugBuild )
+                if (Debug.isDebugBuild)
                 {
                     Debug.Log($"Client GUID {connectionPayload.clientGUID} already exists. Because this is a debug build, we will still accept the connection");
-                    while( m_ClientData.ContainsKey(connectionPayload.clientGUID)) { connectionPayload.clientGUID += "_Secondary"; }
+                    while (m_ClientData.ContainsKey(connectionPayload.clientGUID)) { connectionPayload.clientGUID += "_Secondary"; }
                 }
                 else
                 {
                     ulong oldClientId = m_ClientData[connectionPayload.clientGUID].m_ClientID;
                     // kicking old client to leave only current
-                    StartCoroutine(WaitToDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
+                    SendServerToClientSetDisconnectReason(oldClientId, ConnectStatus.LoggedInAgain);
+
+                    StartCoroutine(WaitToDisconnect(clientId));
+
+                    // StartCoroutine(WaitToDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
                 }
             }
 
-            //Test for over-capacity Login.
-            if( m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers )
-            {
-                gameReturnStatus = ConnectStatus.ServerFull;
-            }
+
+
+            //TODO:Netcode: this must be done after the callback for now. In the future we expect Netcode to allow us to return more information as part of
+            //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
+            //and then manually close down the connection.
+            SendServerToClientConnectResult(clientId, gameReturnStatus);
+
 
             //Populate our dictionaries with the playerData
             if( gameReturnStatus == ConnectStatus.Success )
@@ -270,19 +291,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
             }
 
-            callback(true, null, true, Vector3.zero, Quaternion.identity);
+            connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
+            // connection approbal will create a player object for you
             AssignPlayerName(clientId, connectionPayload.playerName);
+        }
 
-            //TODO:Netcode: this must be done after the callback for now. In the future we expect Netcode to allow us to return more information as part of
-            //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
-            //and then manually close down the connection.
-            SendServerToClientConnectResult(clientId, gameReturnStatus);
-            if(gameReturnStatus != ConnectStatus.Success )
-            {
-                //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
-                StartCoroutine(WaitToDisconnectClient(clientId, gameReturnStatus));
-            }
+        private IEnumerator WaitToDisconnect(ulong clientId)
+        {
+            yield return new WaitForSeconds(0.5f);
+            m_Portal.NetManager.DisconnectClient(clientId);
         }
 
         /// <summary>
@@ -307,17 +325,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientConnectResult_CustomMessage), clientID, writer);
-        }
-
-        private IEnumerator WaitToDisconnectClient(ulong clientId, ConnectStatus reason)
-        {
-            SendServerToClientSetDisconnectReason(clientId, reason);
-
-            // TODO fix once this is solved: Issue 796 Unity-Technologies/com.unity.netcode.gameobjects#796
-            // this wait is a workaround to give the client time to receive the above RPC before closing the connection
-            yield return new WaitForSeconds(2);
-
-            m_Portal.NetManager.DisconnectClient(clientId);
         }
 
         /// <summary>
