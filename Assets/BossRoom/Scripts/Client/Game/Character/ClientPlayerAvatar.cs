@@ -38,8 +38,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             RemoveNetworkCharacter();
         }
 
-        void OnDestroy()
+        public override void OnDestroy()
         {
+            base.OnDestroy();
             RemoveNetworkCharacter();
         }
 

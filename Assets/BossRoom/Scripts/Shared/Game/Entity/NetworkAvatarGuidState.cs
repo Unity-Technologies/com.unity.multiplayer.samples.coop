@@ -21,7 +21,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void OnValueChanged(NetworkGuid oldValue, NetworkGuid newValue)
         {
-            Debug.Log($"NetworkBehaviour:NetworkAvatarGuidState:OnValueChanged old: {oldValue.FirstHalf}, new: {newValue.FirstHalf}");
             if (newValue.ToGuid().Equals(Guid.Empty))
             {
                 // not a valid Guid

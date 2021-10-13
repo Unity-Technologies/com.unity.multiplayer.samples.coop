@@ -1,7 +1,7 @@
+using System;
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
@@ -138,9 +138,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 if (playerNetworkObject && playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
                 {
                     // pass avatar GUID to PersistentPlayer
-                    Debug.Log("Assigning guid value NetworkBehaviour:GameStateBehaviour:ServerCharSelectState:SaveLobbyResults");
+                    // it'd be great to simplify this with something like a NetworkScriptableObjects :(
                     persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
-                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToNetworkGuid(); // it'd be great to simplify this with something like a NetworkScriptableObjects :(
+                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToNetworkGuid();
                 }
             }
         }
@@ -214,11 +214,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             int playerNum = GetAvailablePlayerNum();
             if (playerNum == -1)
             {
-                Debug.Assert(false, "we shouldn't be here, connection approval should have refused this connection already", this);
-                // we ran out of seats... there was no room!
-                // CharSelectData.FatalLobbyErrorClientRpc(CharSelectData.FatalLobbyError.LobbyFull,
-                //     new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } });
-                return;
+                // Sanity check. We ran out of seats... there was no room!
+                throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerNum}");
             }
 
             string playerName = m_ServerNetPortal.GetPlayerName(clientId,playerNum);

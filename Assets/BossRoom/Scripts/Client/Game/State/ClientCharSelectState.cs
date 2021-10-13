@@ -70,13 +70,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [Tooltip("The controller for the class-info box")]
         private UICharSelectClassInfoBox m_ClassInfoBox;
 
-        [SerializeField]
-        [Tooltip("When a permanent fatal error occurrs, this is where the error message is shown")]
-        private Text m_FatalLobbyErrorText;
+        // [SerializeField]
+        // [Tooltip("When a permanent fatal error occurrs, this is where the error message is shown")]
+        // private Text m_FatalLobbyErrorText;
 
-        [SerializeField]
-        [Tooltip("Error message text when lobby is full")]
-        private string m_FatalErrorLobbyFullMsg = "Error: lobby is full! You cannot play.";
+        // [SerializeField]
+        // [Tooltip("Error message text when lobby is full")]
+        // private string m_FatalErrorLobbyFullMsg = "Error: lobby is full! You cannot play.";
 
         [SerializeField]
         Transform m_CharacterGraphicsParent;
@@ -103,6 +103,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             LobbyEnding, // "Get ready! Game is starting!" stage
             FatalError, // "Fatal Error" stage
         }
+
         private Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
         private void Awake()
@@ -135,12 +136,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (CharSelectData)
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
-                // CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
                 CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
             }
+
             if (Instance == this)
+            {
                 Instance = null;
+            }
         }
 
         public override void OnNetworkSpawn()
@@ -152,7 +155,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             else
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
-                // CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
                 CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
                 CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
             }
@@ -319,24 +321,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 ConfigureUIForLobbyMode(LobbyMode.LobbyEnding);
             }
         }
-
-        // /// <summary>
-        // /// Called by server when there is a fatal error
-        // /// </summary>
-        // /// <param name="error"></param>
-        // private void OnFatalLobbyError(CharSelectData.FatalLobbyError error)
-        // {
-        //     switch (error)
-        //     {
-        //         case CharSelectData.FatalLobbyError.LobbyFull:
-        //             m_FatalLobbyErrorText.text = m_FatalErrorLobbyFullMsg;
-        //             break;
-        //         default:
-        //             throw new System.Exception($"Unknown fatal lobby error {error}");
-        //     }
-        //
-        //     ConfigureUIForLobbyMode(LobbyMode.FatalError);
-        // }
 
         /// <summary>
         /// Turns on the UI elements for a specified "lobby mode", and turns off UI elements for all other modes.

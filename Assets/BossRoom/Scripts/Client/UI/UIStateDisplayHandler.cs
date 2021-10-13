@@ -211,8 +211,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        void OnDestroy()
+        public override void OnDestroy()
         {
+            base.OnDestroy();
             if (m_UIState != null)
             {
                 Destroy(m_UIState.gameObject);

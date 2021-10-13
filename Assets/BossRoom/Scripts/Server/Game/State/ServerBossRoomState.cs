@@ -185,7 +185,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
             }
 
-            Debug.Log("spawning player, assigning guid NetworkBehaviour:GameStateBehaviour:ServerBossRoomState:SpawnPlayer");
             networkAvatarGuidState.AvatarGuidArray.Value =
                 persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value;
 

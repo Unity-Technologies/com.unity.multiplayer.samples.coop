@@ -24,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             serializer.SerializeValue(ref m_Name);
         }
 
-        public string ToString()
+        public override string ToString()
         {
             return m_Name.ToString();
         }

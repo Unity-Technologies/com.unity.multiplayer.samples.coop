@@ -31,13 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void Awake()
         {
-            Debug.Log("Monobehaviour:ClientAvatarGuidHandler:Awake");
             m_NetworkAvatarGuidState.GuidChanged += RegisterAvatar;
-            if (!m_NetworkAvatarGuidState.AvatarGuidArray.Value.ToGuid().Equals(Guid.Empty))
-            {
-                // the value might have changed before we register this delegate, if the guid is already set, calling the callback now
-                RegisterAvatar(m_NetworkAvatarGuidState.AvatarGuidArray.Value.ToGuid());
-            }
         }
 
         void RegisterAvatar(Guid guid)
@@ -55,7 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 // this makes sure we don't spawn a duplicate graphics GameObject
                 return;
             }
-            Debug.Log("doing setup MonoBehaviour:ClientAvatarGuidHandler:RegisterAvatar");
+
             m_Avatar = avatar;
 
             m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
