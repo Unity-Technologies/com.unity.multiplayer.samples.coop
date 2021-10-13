@@ -251,6 +251,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 else
                 {
                     ulong oldClientId = m_ClientData[connectionPayload.clientGUID].m_ClientID;
+                    // kicking old client to leave only current
                     StartCoroutine(WaitToDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
                 }
             }
@@ -316,21 +317,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // this wait is a workaround to give the client time to receive the above RPC before closing the connection
             yield return new WaitForSeconds(2);
 
-            BootClient(clientId);
-        }
-
-        /// <summary>
-        /// This method will summarily remove a player connection, as well as its controlled object.
-        /// </summary>
-        /// <param name="clientId">the ID of the client to boot.</param>
-        public void BootClient(ulong clientId)
-        {
-            var netObj = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
-            if( netObj )
-            {
-                //TODO-FIXME:Netcode Issue #795. Should not need to explicitly despawn player objects.
-                netObj.Despawn(true);
-            }
             m_Portal.NetManager.DisconnectClient(clientId);
         }
 

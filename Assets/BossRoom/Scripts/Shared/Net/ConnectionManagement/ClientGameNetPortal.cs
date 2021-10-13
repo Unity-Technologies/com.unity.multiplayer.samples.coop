@@ -1,5 +1,4 @@
 using System;
-// using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using MLAPI.Transports.LiteNetLib;
@@ -55,9 +54,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void OnDestroy()
         {
-            if( m_Portal != null )
+            if (m_Portal != null)
             {
-                if( m_Portal.NetManager != null )
+                if (m_Portal.NetManager != null)
                 {
                     m_Portal.NetManager.OnClientDisconnectCallback -= OnDisconnectOrTimeout;
                 }
@@ -129,6 +128,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
+
                     SceneManager.LoadScene("MainMenu");
                 }
                 else
@@ -216,7 +216,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
         {
-            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             switch (chosenTransport)
@@ -242,7 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     }
                     catch (Exception e)
                     {
-                        OnUnityRelayJoinFailed(e.Message);
+                        OnUnityRelayJoinFailed?.Invoke(e.Message);
                         // todo remove the above callback and get the below uncommented when UI is its own assembly
                         // var menuUI = MainMenuUI.Instance;
                         // if (menuUI)
@@ -276,7 +276,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! Netcode will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves (TODO-FIXME:Netcode GOMPS-79, provide feedback for different transport failures).
+            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
 
