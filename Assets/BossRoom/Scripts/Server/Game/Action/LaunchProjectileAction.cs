@@ -59,10 +59,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_Launched = true;
 
                 var projectileInfo = GetProjectileInfo();
-                //GameObject projectile = Object.Instantiate(projectileInfo.ProjectilePrefab);
 
                 NetworkObject no = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab, projectileInfo.ProjectilePrefab.transform.position, projectileInfo.ProjectilePrefab.transform.rotation);
-                //GameObject projectile = no.gameObject;
                 // point the projectile the same way we're facing
                 no.transform.forward = m_Parent.physicsWrapper.Transform.forward;
 
@@ -72,7 +70,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 no.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkObjectId, projectileInfo);
 
-                //projectile.GetComponent<NetworkObject>().Spawn();
                 no.Spawn();
             }
         }
