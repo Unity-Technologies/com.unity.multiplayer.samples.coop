@@ -9,17 +9,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// But on the client, we visualize this as the character dashing across the screen. The dashing begins after
     /// ExecTimeSeconds have elapsed.
     /// </summary>
-    /// <remarks>
-    /// This script moves the character visualization during the "dash", which is normally performed by
-    /// <see cref="ClientCharacterVisualization"/>. Since SmoothMove is called before ActionFX.Update, action fx position changes override interpolated positions
-    /// </remarks>
+    // todo this will need refactoring to show non-interpolated NetworkTransform teleport + VFX to hide teleport
     public class DashAttackActionFX : ActionFX
     {
-        private Vector3 m_StartPos;
-        private Vector3 m_EndPos;
-
         private bool m_StartedDash;
-        private bool m_Teleported;
+        private bool m_Dashed;
 
         public DashAttackActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
@@ -29,9 +23,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 PlayStartAnim();
             }
-
-            // save the ending position. But note that we don't save the START position yet!
-            m_EndPos = ActionUtils.GetTeleportDestination(m_Parent.transform, Data.Position, true, Description.Range, Description.Range);
 
             base.Start();
 
@@ -51,24 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Update()
         {
-            if (m_Teleported) { return ActionConclusion.Stop; } // we're done!
-
-            if (TimeRunning >= Description.ExecTimeSeconds && !m_StartedDash)
-            {
-                // we've waited for ExecTime, so now we will pretend to dash across the screen.
-                m_StartedDash = true;
-
-                // Consider our current position to be the starting point of our "dash"
-                m_StartPos = m_Parent.transform.position;
-            }
-
-            if (m_StartedDash)
-            {
-                float dashDuration = Description.DurationSeconds - Description.ExecTimeSeconds;
-                float dashElapsed = TimeRunning - Description.ExecTimeSeconds;
-                Vector3 currentPos = Vector3.Lerp(m_StartPos, m_EndPos, dashElapsed / dashDuration);
-                // m_Parent.transform.position = currentPos;
-            }
+            if (m_Dashed) { return ActionConclusion.Stop; } // we're done!
 
             return ActionConclusion.Continue;
         }
@@ -90,6 +64,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_Parent.OurAnimator.SetTrigger(Description.OtherAnimatorVariable);
             }
         }
-
     }
 }

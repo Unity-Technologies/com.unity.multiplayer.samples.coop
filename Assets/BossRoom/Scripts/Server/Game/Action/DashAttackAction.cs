@@ -30,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override bool Start()
         {
             // remember the exact spot we'll stop.
-            m_TargetSpot = ActionUtils.GetTeleportDestination(m_Parent.physicsWrapper.Transform, Data.Position, true, Description.Range, Description.Range);
+            m_TargetSpot = ActionUtils.GetDashDestination(m_Parent.physicsWrapper.Transform, Data.Position, true, Description.Range, Description.Range);
 
             // snap to face our destination. This ensures the client visualization faces the right way while "pretending" to dash
             m_Parent.physicsWrapper.Transform.LookAt(m_TargetSpot);
