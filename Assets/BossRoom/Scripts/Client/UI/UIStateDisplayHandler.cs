@@ -92,7 +92,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // if PC, find our graphics transform and update health through callbacks, if displayed
             if (TryGetComponent(out m_ClientAvatarGuidHandler))
             {
-                Debug.Log($"Assumes everything is setup: NetworkBehaviour:UIStateDisplayHandler:OnNetworkSpawn ");
                 m_BaseHP = m_ClientAvatarGuidHandler.RegisteredAvatar.CharacterClass.BaseHP;
 
                 if (m_ClientCharacter.ChildVizObject)
