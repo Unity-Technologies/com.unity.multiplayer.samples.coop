@@ -182,7 +182,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void OnSceneEvent(SceneEvent sceneEvent)
         {
             // We need to filter out the event that are not a client has finished loading the scene
-            if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
+            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
             // When the client finishes loading the Lobby Map, we will need to Seat it
             SeatNewPlayer(sceneEvent.ClientId);
         }

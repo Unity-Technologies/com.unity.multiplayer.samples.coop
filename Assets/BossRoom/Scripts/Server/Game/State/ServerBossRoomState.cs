@@ -83,7 +83,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public void OnClientSceneChanged(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
+            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
 
             var clientId = sceneEvent.ClientId;
             var sceneIndex = SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex;

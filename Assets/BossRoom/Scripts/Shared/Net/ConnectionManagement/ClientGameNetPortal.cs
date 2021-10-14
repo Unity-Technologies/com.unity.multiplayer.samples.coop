@@ -1,8 +1,7 @@
 using System;
+using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using MLAPI.Transports.LiteNetLib;
-using MLAPI.Transports.PhotonRealtime;
 using Photon.Realtime;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
@@ -157,10 +156,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             switch (chosenTransport)
             {
-                case LiteNetLibTransport liteNetLibTransport:
-                    liteNetLibTransport.Address = ipaddress;
-                    liteNetLibTransport.Port = (ushort)port;
-                    break;
                 case UNetTransport unetTransport:
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ConnectPort = port;

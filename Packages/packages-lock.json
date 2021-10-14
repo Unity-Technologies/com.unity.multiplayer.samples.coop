@@ -1,18 +1,11 @@
 {
   "dependencies": {
-    "com.mlapi.contrib.transport.litenetlib": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#develop",
+    "com.community.netcode.transport.photon-realtime": {
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.community.netcode.transport.photon-realtime#update-photon",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "5c7e201f3c52d4d57a688f64947bfff967737c75"
-    },
-    "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#sam/feature/photon-transport-fixes-with-latest-netcode",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "ec26148aabd8c348770913a63a2cbcf30593d0f5"
+      "hash": "0ca795e644bf581e457d49778a12ffbd239c3ed9"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -141,10 +134,10 @@
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.netcode.gameobjects": "0.0.1-preview.1",
+        "com.unity.netcode.gameobjects": "0.2.0-preview.1",
         "com.unity.transport": "1.0.0-pre.5"
       },
-      "hash": "35971179c3871985fcfeebf6fc40dec2345c235f"
+      "hash": "a9688342b1994a6a7ebd4ec5a7abcb0633c8aa37"
     },
     "com.unity.netcode.gameobjects": {
       "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
@@ -156,7 +149,7 @@
         "com.unity.nuget.mono-cecil": "1.10.1-preview.1",
         "com.unity.collections": "1.0.0-pre.5"
       },
-      "hash": "35971179c3871985fcfeebf6fc40dec2345c235f"
+      "hash": "a9688342b1994a6a7ebd4ec5a7abcb0633c8aa37"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1-preview.1",

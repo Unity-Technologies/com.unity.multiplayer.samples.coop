@@ -1,8 +1,5 @@
 using System;
-using System.Collections;
-using MLAPI.Transports.LiteNetLib;
-using MLAPI.Transports.PhotonRealtime;
-using Unity.Collections;
+using Netcode.Transports.PhotonRealtime;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
@@ -102,7 +99,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         private void OnSceneEvent(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
+            // only processing single player finishing loading events
+            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
 
             m_ServerPortal.OnClientSceneChanged(sceneEvent.ClientId, SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex);
         }
@@ -161,10 +159,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             // sample does, since current Transport API doesn't expose these fields.
             switch (chosenTransport)
             {
-                case LiteNetLibTransport liteNetLibTransport:
-                    liteNetLibTransport.Address = ipaddress;
-                    liteNetLibTransport.Port = (ushort)port;
-                    break;
                 case UNetTransport unetTransport:
                     unetTransport.ConnectAddress = ipaddress;
                     unetTransport.ServerListenPort = port;
