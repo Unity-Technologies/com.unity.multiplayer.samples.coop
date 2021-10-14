@@ -222,8 +222,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
-            // todo sam, validate with Cosmin, the below seems like a pretty bad security issue
-            // Another hackfix to unblock me since this is now called on the host's client instance as well
+            // Approval check happens for Host too, but obviously we want it to be approved
             if (clientId == NetworkManager.Singleton.LocalClientId)
             {
                 connectionApprovedCallback(true, null, true, null, null);
@@ -232,20 +231,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
 
-            //Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
+            // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
             // on invalid users trying to connect
             // todo this is currently still spending too much time server side.
             if (m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers)
             {
                 gameReturnStatus = ConnectStatus.ServerFull;
-                if (gameReturnStatus != ConnectStatus.Success)
-                {
-                    //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
-                    SendServerToClientConnectResult(clientId, gameReturnStatus);
-                    SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                    StartCoroutine(WaitToDisconnect(clientId));
-                    return;
-                }
+                //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
+                //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of
+                //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
+                //and then manually close down the connection.
+                SendServerToClientConnectResult(clientId, gameReturnStatus);
+                SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+                StartCoroutine(WaitToDisconnect(clientId));
+                return;
             }
 
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
@@ -268,32 +267,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     ulong oldClientId = m_ClientData[connectionPayload.clientGUID].m_ClientID;
                     // kicking old client to leave only current
                     SendServerToClientSetDisconnectReason(oldClientId, ConnectStatus.LoggedInAgain);
-
                     StartCoroutine(WaitToDisconnect(clientId));
-
-                    // StartCoroutine(WaitToDisconnectClient(oldClientId, ConnectStatus.LoggedInAgain));
+                    return;
                 }
             }
 
-
-
-            //TODO:Netcode: this must be done after the callback for now. In the future we expect Netcode to allow us to return more information as part of
-            //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
-            //and then manually close down the connection.
             SendServerToClientConnectResult(clientId, gameReturnStatus);
 
-
             //Populate our dictionaries with the playerData
-            if( gameReturnStatus == ConnectStatus.Success )
-            {
-                m_ClientSceneMap[clientId] = clientScene;
-                m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
-                m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
-            }
+            m_ClientSceneMap[clientId] = clientScene;
+            m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
+            m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
 
             connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
-            // connection approbal will create a player object for you
+            // connection approval will create a player object for you
             AssignPlayerName(clientId, connectionPayload.playerName);
         }
 

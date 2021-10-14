@@ -41,7 +41,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void Awake()
         {
-            Debug.Assert(Instance == null);
+            if (Instance != null) throw new Exception("Invalid state, instance is not null");
+
             Instance = this;
         }
 
@@ -131,8 +132,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                     SceneManager.LoadScene("MainMenu");
                 }
-                else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect)
+                else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
                 {
+                    // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
             }

@@ -70,14 +70,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [Tooltip("The controller for the class-info box")]
         private UICharSelectClassInfoBox m_ClassInfoBox;
 
-        // [SerializeField]
-        // [Tooltip("When a permanent fatal error occurrs, this is where the error message is shown")]
-        // private Text m_FatalLobbyErrorText;
-
-        // [SerializeField]
-        // [Tooltip("Error message text when lobby is full")]
-        // private string m_FatalErrorLobbyFullMsg = "Error: lobby is full! You cannot play.";
-
         [SerializeField]
         Transform m_CharacterGraphicsParent;
 
