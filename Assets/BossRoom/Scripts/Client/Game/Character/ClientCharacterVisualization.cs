@@ -276,13 +276,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             return false;
         }
-
-        /*void TrySetFloat(int id, float value)
-        {
-            if (IsServer)
-            {
-                OurAnimator.SetFloat(id, value);
-            }
-        }*/
     }
 }
