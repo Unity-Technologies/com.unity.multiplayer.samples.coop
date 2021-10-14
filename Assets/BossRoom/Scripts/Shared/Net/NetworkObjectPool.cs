@@ -98,15 +98,6 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
         }
 
         /// <summary>
-        /// Return an object to the by GameObject
-        /// </summary>
-        public void ReturnGameObject(GameObject go)
-        {
-            go.SetActive(false);
-            pooledObjects[go].Enqueue(go.GetComponent<NetworkObject>());
-        }
-
-        /// <summary>
         /// Adds a prefab to the list of spawnable prefabs.
         /// </summary>
         /// <param name="prefab">The prefab to add.</param>
@@ -207,18 +198,6 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
         {
             m_Prefab = prefab;
             m_Pool = pool;
-        }
-
-        public NetworkObject HandleNetworkPrefabSpawn(ulong ownerClientId, Vector3 position, Quaternion rotation)
-        {
-            var netObject = m_Pool.GetNetworkObject(m_Prefab, position, rotation);
-            netObject.gameObject.SetActive(true);
-            return netObject;
-        }
-
-        public void HandleNetworkPrefabDestroy(NetworkObject networkObject)
-        {
-            m_Pool.ReturnNetworkObject(networkObject, m_Prefab);
         }
 
         NetworkObject INetworkPrefabInstanceHandler.Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation)
