@@ -58,11 +58,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         float m_SmoothedSpeed;
 
-        int m_HitStateTriggerID;
-
         public bool IsOwner => m_NetState.IsOwner;
 
         public ulong NetworkObjectId => m_NetState.NetworkObjectId;
+
+        public event Action<Animator> animatorSet;
 
         public void Start()
         {
@@ -72,8 +72,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
-
             m_ActionViz = new ActionVisualization(this);
 
             m_NetState = GetComponentInParent<NetworkCharacterState>();
@@ -82,18 +80,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
             {
-                // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
-                // following are temporary workarounds to initialize certain components with the Animator component on
-                // the PlayerAvatar prefab. Future refactorings will enable this functionality.
-
                 m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
 
-                m_CharacterSwapper.Initialize(m_ClientVisualsAnimator);
-
-                if (TryGetComponent(out AnimatorFootstepSounds animatorFootstepSounds))
-                {
-                    animatorFootstepSounds.SetAnimator(m_ClientVisualsAnimator);
-                }
+                // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
+                // following is a temporary workaround. Future refactorings will enable this functionality.
+                animatorSet?.Invoke(clientAvatarGuidHandler.graphicsAnimator);
             }
 
             m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();

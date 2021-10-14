@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -110,7 +112,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         private Dictionary<Renderer, Material> m_OriginalMaterials = new Dictionary<Renderer, Material>();
 
-        public void Initialize(Animator animator)
+        [SerializeField]
+        ClientCharacterVisualization m_ClientCharacterVisualization;
+
+        void Awake()
+        {
+            // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
+            // following is a temporary workaround. Future refactorings will enable this functionality.
+            if (!m_Animator && m_ClientCharacterVisualization)
+            {
+                m_ClientCharacterVisualization.animatorSet += Initialize;
+            }
+        }
+
+        void Initialize(Animator animator)
         {
             m_Animator = animator;
 
@@ -190,14 +205,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 }
             }
         }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            // if an Animator is on the same GameObject as us, assume that's the one we'll be using!
-            if (!m_Animator)
-                m_Animator = GetComponent<Animator>();
-        }
-#endif
     }
 }
