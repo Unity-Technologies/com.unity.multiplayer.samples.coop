@@ -25,11 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Start()
         {
-            if (!Anticipated)
-            {
-                PlayStartAnim();
-            }
-
             // save the ending position. But note that we don't save the START position yet!
             m_EndPos = ActionUtils.GetTeleportDestination(m_Parent.transform, Data.Position, true, Description.Range, Description.Range);
 
@@ -72,24 +67,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             return ActionConclusion.Continue;
         }
-
-        public override void End()
-        {
-            // Anim2 contains the name of the end-loop-sequence trigger
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
-            }
-        }
-
-        public override void Cancel()
-        {
-            // OtherAnimatorVariable contains the name of the cancelation trigger
-            if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.OtherAnimatorVariable);
-            }
-        }
-
     }
 }

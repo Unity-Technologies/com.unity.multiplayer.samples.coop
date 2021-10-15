@@ -26,7 +26,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public override bool Start()
         {
             base.Start();
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
 
             m_Graphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
             return true;
@@ -39,11 +38,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override void Cancel()
         {
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
-            }
-
             if (!m_ChargeEnded)
             {
                 foreach (var graphic in m_Graphics)

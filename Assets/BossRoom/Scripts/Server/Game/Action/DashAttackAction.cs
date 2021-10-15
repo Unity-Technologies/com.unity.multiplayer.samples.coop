@@ -35,6 +35,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // snap to face our destination. This ensures the client visualization faces the right way while "pretending" to dash
             m_Parent.physicsWrapper.Transform.LookAt(m_TargetSpot);
 
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+
             // tell clients to visualize this action
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
@@ -48,6 +50,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void End()
         {
+            // Anim2 contains the name of the end-loop-sequence trigger
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+            }
+
             // we're done, time to teleport!
             m_Parent.Movement.Teleport(m_TargetSpot);
 
@@ -57,6 +65,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void Cancel()
         {
+            // OtherAnimatorVariable contains the name of the cancellation trigger
+            if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.OtherAnimatorVariable);
+            }
+
             // because the client-side visualization of the action moves the character visualization around,
             // we need to explicitly end the client-side visuals when we abort
             m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);

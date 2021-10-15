@@ -15,6 +15,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         ClientCharacter m_ClientCharacter;
 
         [SerializeField]
+        Animator m_GraphicsAnimator;
+
+        [SerializeField]
         CharacterClassContainer m_CharacterClassContainer;
 
         [SerializeField]
@@ -24,6 +27,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         AvatarRegistry m_AvatarRegistry;
 
         Avatar m_Avatar;
+
+        public Animator graphicsAnimator => m_GraphicsAnimator;
 
         public Avatar RegisteredAvatar => m_Avatar;
 
@@ -37,7 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         void RegisterAvatar(Guid guid)
         {
             // based on the Guid received, Avatar is fetched from AvatarRegistry
-            if (!m_AvatarRegistry.TryGetAvatar(guid, out Avatar avatar))
+            if (!m_AvatarRegistry.TryGetAvatar(guid, out var avatar))
             {
                 Debug.LogError("Avatar not found!");
                 return;
@@ -55,9 +60,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
 
             // spawn avatar graphics GameObject
-            var graphicsGameObject = Instantiate(avatar.Graphics, transform);
+            var graphicsGameObject = Instantiate(avatar.Graphics, m_GraphicsAnimator.transform);
 
             m_ClientCharacter.SetCharacterVisualization(graphicsGameObject.GetComponent<ClientCharacterVisualization>());
+
+            m_GraphicsAnimator.Rebind();
+            m_GraphicsAnimator.Update(0f);
 
             AvatarGraphicsSpawned?.Invoke(graphicsGameObject);
         }

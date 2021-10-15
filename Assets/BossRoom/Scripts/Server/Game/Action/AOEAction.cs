@@ -33,6 +33,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // We don't know our actual targets for this attack until it triggers, so the client can't use the TargetIds list (and we clear it out for clarity).
             // This means we are responsible for triggering reaction-anims ourselves, which we do in PerformAoe()
             Data.TargetIds = new ulong[0];
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return ActionConclusion.Continue;
         }
@@ -60,17 +61,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 var enemy = colliders[i].GetComponent<IDamageable>();
                 if (enemy != null)
                 {
-                    // make the target "flinch", assuming they're a living enemy
-                    var networkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[enemy.NetworkObjectId];
-                    if (networkObject)
-                    {
-                        var state = networkObject.GetComponent<NetworkCharacterState>();
-                        if (state)
-                        {
-                            state.RecvPerformHitReactionClientRPC();
-                        }
-                    }
-
                     // actually deal the damage
                     enemy.ReceiveHP(m_Parent, -Description.Amount);
                 }

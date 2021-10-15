@@ -26,7 +26,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Start()
         {
-            bool wasAnticipated = Anticipated;
             base.Start();
             m_Target = GetTarget();
 
@@ -37,12 +36,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
-
-            // animate shooting the projectile
-            if (!wasAnticipated)
-            {
-                PlayFireAnim();
-            }
 
             return true;
         }
@@ -88,6 +81,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_ImpactPlayed)
                 return;
             m_ImpactPlayed = true;
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
 
             if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
             {

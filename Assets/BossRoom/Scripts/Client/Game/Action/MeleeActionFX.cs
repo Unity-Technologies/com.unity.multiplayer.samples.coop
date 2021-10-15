@@ -28,11 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Start()
         {
-            if( !Anticipated)
-            {
-                PlayAnim();
-            }
-
             base.Start();
 
             // we can optionally have special particles that should play on the target. If so, add them now.
@@ -57,7 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
                     // target is in range! Play the graphics
-                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(targetNetworkObj.transform, true);
+                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
                 }
             }
             return true;
@@ -108,6 +103,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (m_ImpactPlayed) { return; }
             m_ImpactPlayed = true;
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
 
             //Is my original target still in range? Then definitely get him!
             if (Data.TargetIds != null &&
