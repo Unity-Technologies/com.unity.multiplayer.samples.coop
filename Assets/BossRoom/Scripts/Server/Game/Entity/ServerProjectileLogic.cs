@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using Unity.Netcode;
 using UnityEngine;
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -72,8 +73,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 enabled = false;
                 return;
             }
-
             m_Started = true;
+
+            m_HitTargets = new List<GameObject>();
+            m_IsDead = false;
 
             m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
 
@@ -91,8 +94,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (m_DestroyAtSec < Time.fixedTime)
             {
-                // Time to go away.
-                Destroy(gameObject);
+                // Time to return to the pool from whence it came.
+                NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
+                NetworkObjectPool.Singleton.ReturnNetworkObject(networkObject, m_ProjectileInfo.ProjectilePrefab);
+                networkObject.Despawn();
             }
 
             if (!m_IsDead)
@@ -108,7 +113,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             for (int i = 0; i < numCollisions; i++)
             {
                 int layerTest = 1 << m_CollisionCache[i].gameObject.layer;
-
                 if ((layerTest & m_BlockerMask) != 0)
                 {
                     //hit a wall; leave it for a couple of seconds.

@@ -1,6 +1,6 @@
 using Unity.Netcode;
 using UnityEngine;
-
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -59,17 +59,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_Launched = true;
 
                 var projectileInfo = GetProjectileInfo();
-                GameObject projectile = Object.Instantiate(projectileInfo.ProjectilePrefab);
 
+                NetworkObject no = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab, projectileInfo.ProjectilePrefab.transform.position, projectileInfo.ProjectilePrefab.transform.rotation);
                 // point the projectile the same way we're facing
-                projectile.transform.forward = m_Parent.physicsWrapper.Transform.forward;
+                no.transform.forward = m_Parent.physicsWrapper.Transform.forward;
 
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
                 //where it appears next to the player.
-                projectile.transform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(projectile.transform.position);
-                projectile.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkObjectId, in projectileInfo);
+                no.transform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
 
-                projectile.GetComponent<NetworkObject>().Spawn();
+                no.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkObjectId, projectileInfo);
+
+                no.Spawn();
             }
         }
 
