@@ -203,7 +203,6 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
         NetworkObject INetworkPrefabInstanceHandler.Instantiate(ulong ownerClientId, Vector3 position, Quaternion rotation)
         {
             var netObject = m_Pool.GetNetworkObject(m_Prefab, position, rotation);
-            netObject.gameObject.SetActive(true);
             return netObject;
         }
 
