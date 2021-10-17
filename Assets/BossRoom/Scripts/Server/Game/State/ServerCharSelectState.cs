@@ -139,7 +139,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     // pass avatar GUID to PersistentPlayer
                     // it'd be great to simplify this with something like a NetworkScriptableObjects :(
-                    persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
+                    persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value =
                         CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToNetworkGuid();
                 }
             }

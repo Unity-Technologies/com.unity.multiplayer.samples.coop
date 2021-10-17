@@ -181,12 +181,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // if joining late, assign a random character to the persistent player
             if (lateJoin)
             {
-                persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value =
                     m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
             }
 
-            networkAvatarGuidState.AvatarGuidArray.Value =
-                persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value;
+            networkAvatarGuidState.AvatarGuid.Value =
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value;
 
             // pass name from persistent player to avatar
             if (newPlayer.TryGetComponent(out NetworkNameState networkNameState))

@@ -96,9 +96,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_PartyIds[0] = m_OwnedCharacterState.NetworkObject.NetworkObjectId;
 
             // set hero portrait
-            if (m_OwnedCharacterState.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+            if (m_OwnedCharacterState.TryGetComponent(out NetworkAvatarGuidState avatarGuidState))
             {
-                m_HeroPortrait.sprite = clientAvatarGuidHandler.RegisteredAvatar.Portrait;
+                m_HeroPortrait.sprite = avatarGuidState.RegisteredAvatar.Portrait;
             }
 
             SetUIFromSlotData(0, m_OwnedCharacterState);
@@ -154,11 +154,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void SetUIFromSlotData(int slot, NetworkCharacterState netState)
         {
-            m_PartyHealthSliders[slot].maxValue = netState.CharacterData.BaseHP.Value;
+            m_PartyHealthSliders[slot].maxValue = netState.CharacterClass.BaseHP.Value;
             m_PartyHealthSliders[slot].value = netState.HitPoints;
             m_PartyNames[slot].text = GetPlayerName(netState);
 
-            m_PartyClassSymbols[slot].sprite = netState.CharacterData.ClassBannerLit;
+            m_PartyClassSymbols[slot].sprite = netState.CharacterClass.ClassBannerLit;
         }
 
         void SetAllyHealth(ulong id, int hp)

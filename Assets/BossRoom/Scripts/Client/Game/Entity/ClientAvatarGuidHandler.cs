@@ -1,5 +1,6 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -9,40 +10,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// AvatarRegistry, if possible. Once fetched, the Graphics GameObject is spawned.
     /// </summary>
     [RequireComponent(typeof(NetworkAvatarGuidState))]
-    public class ClientAvatarGuidHandler : MonoBehaviour
+    public class ClientAvatarGuidHandler : NetworkBehaviour
     {
         [SerializeField]
         ClientCharacter m_ClientCharacter;
 
         [SerializeField]
-        CharacterClassContainer m_CharacterClassContainer;
-
-        [SerializeField]
         NetworkAvatarGuidState m_NetworkAvatarGuidState;
-
-        [SerializeField]
-        AvatarRegistry m_AvatarRegistry;
-
-        Avatar m_Avatar;
-
-        public Avatar RegisteredAvatar => m_Avatar;
 
         public event Action<GameObject> AvatarGraphicsSpawned;
 
-        void Awake()
+        public override void OnNetworkSpawn()
         {
-            m_NetworkAvatarGuidState.GuidChanged += RegisterAvatar;
+            base.OnNetworkSpawn();
+            InstantiateAvatar();
         }
 
-        void RegisterAvatar(Guid guid)
+        void InstantiateAvatar()
         {
-            // based on the Guid received, Avatar is fetched from AvatarRegistry
-            if (!m_AvatarRegistry.TryGetAvatar(guid, out Avatar avatar))
-            {
-                Debug.LogError("Avatar not found!");
-                return;
-            }
-
             if (m_ClientCharacter.ChildVizObject)
             {
                 // we may receive a NetworkVariable's OnValueChanged callback more than once as a client
@@ -50,24 +35,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;
             }
 
-            m_Avatar = avatar;
-
-            m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
-
             // spawn avatar graphics GameObject
-            var graphicsGameObject = Instantiate(avatar.Graphics, transform);
+            var graphicsGameObject = Instantiate(m_NetworkAvatarGuidState.RegisteredAvatar.Graphics, transform);
 
             m_ClientCharacter.SetCharacterVisualization(graphicsGameObject.GetComponent<ClientCharacterVisualization>());
 
             AvatarGraphicsSpawned?.Invoke(graphicsGameObject);
-        }
-
-        void OnDestroy()
-        {
-            if (m_NetworkAvatarGuidState)
-            {
-                m_NetworkAvatarGuidState.GuidChanged -= RegisterAvatar;
-            }
         }
     }
 }

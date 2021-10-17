@@ -83,7 +83,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNpc { get { return CharacterData.IsNpc; } }
+        public bool IsNpc { get { return CharacterClass.IsNpc; } }
 
         public bool IsValidTarget => LifeState != LifeState.Dead;
 
@@ -98,7 +98,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
-        public CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
+        public CharacterClass CharacterClass => m_CharacterClassContainer.CharacterClass;
 
         /// <summary>
         /// Character Type. This value is populated during character selection.
@@ -113,7 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
-            HitPoints = CharacterData.BaseHP.Value;
+            HitPoints = CharacterClass.BaseHP.Value;
         }
 
         /// <summary>

@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0ca795e644bf581e457d49778a12ffbd239c3ed9"
+      "hash": "58c946f4bfc3f7c8554f8aa06160149b5c785910"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -134,10 +134,10 @@
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.netcode.gameobjects": "0.2.0-preview.1",
+        "com.unity.netcode.gameobjects": "1.0.0-pre.1",
         "com.unity.transport": "1.0.0-pre.5"
       },
-      "hash": "a9688342b1994a6a7ebd4ec5a7abcb0633c8aa37"
+      "hash": "42e44b4e6d01058c063fadcd89320c7f559f43f1"
     },
     "com.unity.netcode.gameobjects": {
       "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
@@ -146,13 +146,13 @@
       "dependencies": {
         "com.unity.modules.ai": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
-        "com.unity.nuget.mono-cecil": "1.10.1-preview.1",
+        "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.collections": "1.0.0-pre.5"
       },
-      "hash": "a9688342b1994a6a7ebd4ec5a7abcb0633c8aa37"
+      "hash": "42e44b4e6d01058c063fadcd89320c7f559f43f1"
     },
     "com.unity.nuget.mono-cecil": {
-      "version": "1.10.1-preview.1",
+      "version": "1.10.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
