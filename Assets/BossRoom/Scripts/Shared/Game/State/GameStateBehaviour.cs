@@ -95,13 +95,5 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 s_ActiveStateGO = null;
             }
         }
-
-        protected virtual void OnApplicationQuit()
-        {
-            if (!isActiveAndEnabled || !NetworkManager.Singleton)
-                return;
-
-            NetworkManager.Singleton.Shutdown();
-        }
     }
 }
