@@ -12,8 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d99850df10e83c142b4b65527d7cea91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name:
-    m_InternalValue: 
 --- !u!114 &2466014342928185240
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -26,6 +24,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe9bfd21e47445488dfd84b4e0c9884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
 --- !u!114 &2576537793715222015
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,9 +114,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ClientCharacter: {fileID: 2292431908892550450}
   m_GraphicsAnimator: {fileID: 1829276847453002016}
-  m_CharacterClassContainer: {fileID: 5230418375993597025}
   m_NetworkAvatarGuidState: {fileID: 2466014342928185240}
-  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
 --- !u!114 &7232939173259361562
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -194,9 +191,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AnimatorAuthority: 0
-  m_SendRate: 0.1
   m_Animator: {fileID: 1829276847453002016}
+  m_ParameterSendBits: 0
+  m_SendRate: 0.1
 --- !u!1001 &7831782662127126385
 PrefabInstance:
   m_ObjectHideFlags: 0
