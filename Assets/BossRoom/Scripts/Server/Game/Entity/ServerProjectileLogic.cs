@@ -96,7 +96,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 // Time to return to the pool from whence it came.
                 NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
-                NetworkObjectPool.Singleton.ReturnNetworkObject(networkObject, m_ProjectileInfo.ProjectilePrefab);
                 networkObject.Despawn();
             }
 
