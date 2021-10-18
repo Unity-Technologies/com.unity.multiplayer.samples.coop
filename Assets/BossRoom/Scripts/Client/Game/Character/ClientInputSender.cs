@@ -1,12 +1,10 @@
-using MLAPI;
 using System;
-using System.Collections.Generic;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Captures inputs for a character on a client and sends them to the server.
@@ -100,6 +98,9 @@ namespace BossRoom.Client
         /// </summary>
         CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
 
+        [SerializeField]
+        PhysicsWrapper m_PhysicsWrapper;
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient || !IsOwner)
@@ -149,7 +150,7 @@ namespace BossRoom.Client
                     if (actionData.ActionInput != null)
                     {
                         var skillPlayer = Instantiate(actionData.ActionInput);
-                        skillPlayer.Initiate(m_NetworkCharacter, actionData.ActionTypeEnum, SendInput, FinishSkill);
+                        skillPlayer.Initiate(m_NetworkCharacter, m_PhysicsWrapper.Transform.position, actionData.ActionTypeEnum, SendInput, FinishSkill);
                         m_CurrentSkillInput = skillPlayer;
                     }
                     else
@@ -211,7 +212,7 @@ namespace BossRoom.Client
                 int networkedHitIndex = -1;
                 for (int i = 0; i < numHits; i++)
                 {
-                    if (k_CachedHit[i].transform.GetComponent<NetworkObject>())
+                    if (k_CachedHit[i].transform.GetComponentInParent<NetworkObject>())
                     {
                         networkedHitIndex = i;
                         break;
@@ -254,7 +255,7 @@ namespace BossRoom.Client
         {
             resultData = new ActionRequestData();
 
-            var targetNetObj = hit != null ? hit.GetComponent<NetworkObject>() : null;
+            var targetNetObj = hit != null ? hit.GetComponentInParent<NetworkObject>() : null;
 
             //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState.
             if (!targetNetObj && actionType != ActionType.GeneralTarget)
@@ -283,10 +284,20 @@ namespace BossRoom.Client
                 }
             }
 
+            Vector3 targetHitPoint;
+            if (PhysicsWrapper.TryGetPhysicsWrapper(targetNetObj.NetworkObjectId, out var movementContainer))
+            {
+                targetHitPoint = movementContainer.Transform.position;
+            }
+            else
+            {
+                targetHitPoint = targetNetObj.transform.position;
+            }
+
             // record our target in case this action uses that info (non-targeted attacks will ignore this)
             resultData.ActionTypeEnum = actionType;
             resultData.TargetIds = new ulong[] { targetNetObj.NetworkObjectId };
-            PopulateSkillRequest(targetNetObj.transform.position, actionType, ref resultData);
+            PopulateSkillRequest(targetHitPoint, actionType, ref resultData);
             return true;
         }
 
@@ -305,7 +316,7 @@ namespace BossRoom.Client
             resultData.ShouldClose = true;
 
             // figure out the Direction in case we want to send it
-            Vector3 offset = hitPoint - transform.position;
+            Vector3 offset = hitPoint - m_PhysicsWrapper.Transform.position;
             offset.y = 0;
             Vector3 direction = offset.normalized;
 

@@ -1,8 +1,8 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Server-only component which invokes a GameEvent once a LifeState condition is met.

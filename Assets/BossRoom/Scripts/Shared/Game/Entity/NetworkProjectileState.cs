@@ -1,8 +1,6 @@
-using MLAPI;
-using MLAPI.Messaging;
-using UnityEngine;
+using Unity.Netcode;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Shared state for a Projectile.

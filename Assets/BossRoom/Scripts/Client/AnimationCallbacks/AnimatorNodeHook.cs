@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// This is attached to each layer in the animator's state machines that needs to be able
@@ -12,14 +12,11 @@ namespace BossRoom.Visual
     /// <remarks>
     /// While it's possible to attach this script to individual state-machine nodes, it's more efficient to attach
     /// this script to each Layer in the animator controller -- it will get called for all nodes in that layer.
-    /// 
+    ///
     /// Note that we get a list of ALL the AnimatorTriggeredSpecialFX attached to the Animator's game object, and check
-    /// to see which one is enabled. We need this trick for our multi-character graphics prefab: it has multiple 
+    /// to see which one is enabled. We need this trick for our multi-character graphics prefab: it has multiple
     /// AnimatorTriggeredSpecialFX for each of the different character classes, and only the relevant one will be
     /// enabled at any given time.
-    ///
-    /// Also note that we didn't use GetComponentsInChildren(), but rather GetComponents(),
-    /// so all the AnimatorTriggeredSpecialFX components need to be on the same GameObject as the Animator.
     /// </remarks>
     public class AnimatorNodeHook : StateMachineBehaviour
     {
@@ -28,7 +25,7 @@ namespace BossRoom.Visual
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (m_CachedTriggerRefs == null)
-                m_CachedTriggerRefs = animator.GetComponents<AnimatorTriggeredSpecialFX>();
+                m_CachedTriggerRefs = animator.GetComponentsInChildren<AnimatorTriggeredSpecialFX>();
             foreach (var fxController in m_CachedTriggerRefs)
             {
                 if (fxController && fxController.enabled)
@@ -41,14 +38,14 @@ namespace BossRoom.Visual
         // OnStateUpdate is called on each Update frame between OnStateEnter and OnStateExit callbacks
         //override public void OnStateUpdate(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         //{
-        //    
+        //
         //}
 
         // OnStateExit is called when a transition ends and the state machine finishes evaluating this state
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (m_CachedTriggerRefs == null)
-                m_CachedTriggerRefs = animator.GetComponents<AnimatorTriggeredSpecialFX>();
+                m_CachedTriggerRefs = animator.GetComponentsInChildren<AnimatorTriggeredSpecialFX>();
             foreach (var fxController in m_CachedTriggerRefs)
             {
                 if (fxController && fxController.enabled)

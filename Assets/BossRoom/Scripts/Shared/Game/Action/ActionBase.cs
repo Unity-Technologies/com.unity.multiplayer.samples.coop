@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Abstract base class containing some common members shared by Action (server) and ActionFX (client visual)
@@ -31,11 +31,10 @@ namespace BossRoom
         {
             get
             {
-                ActionDescription result;
-                var found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out result);
+                var found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out var result);
                 Debug.AssertFormat(found, "Tried to find ActionType %s but it was missing from GameDataSource!", Data.ActionTypeEnum);
 
-                return GameDataSource.Instance.ActionDataByType[Data.ActionTypeEnum];
+                return result;
             }
         }
 

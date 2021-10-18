@@ -1,8 +1,9 @@
-using BossRoom.Client;
+using System;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Provides backing logic for all of the UI that runs in the MainMenu stage.
@@ -18,6 +19,25 @@ namespace BossRoom.Visual
 
         private Client.ClientGameNetPortal m_ClientNetPortal;
 
+        private static MainMenuUI s_Instance = null;
+
+        /// <summary>
+        /// Small singleton getter, for easy access across other classes, this should be safe,
+        /// as it is not touching any aspect of networking
+        /// </summary>
+        public static MainMenuUI Instance
+        {
+            get
+            {
+                if (s_Instance == null)
+                {
+                    s_Instance = FindObjectOfType<MainMenuUI>();
+                }
+
+                return s_Instance;
+            }
+        }
+
         /// <summary>
         /// This will get more sophisticated as we move to a true relay model.
         /// </summary>
@@ -32,6 +52,7 @@ namespace BossRoom.Visual
             m_ClientNetPortal = GamePortalGO.GetComponent<Client.ClientGameNetPortal>();
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
+            m_ClientNetPortal.OnUnityRelayJoinFailed += OnRelayJoinFailed;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
             //any disconnect reason set? Show it to the user here.
@@ -41,18 +62,23 @@ namespace BossRoom.Visual
 
         public void OnHostClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select Relay mode", "Select CONFIRM to host a Relay room <br> or select IP mode", "iphost", "Confirm",
+            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select another mode", "Select CONFIRM to host a Relay room <br> or select another mode", "Select CONFIRM to host a Unity Relay room <br> or select another mode", "iphost", "Confirm",
                 (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
             {
                 m_GameNetPortal.PlayerName = playerName;
                 switch (onlineMode)
                 {
                     case OnlineMode.Relay:
-                        m_GameNetPortal.StartRelayHost(connectInput);
+                        m_GameNetPortal.StartPhotonRelayHost(connectInput);
                         break;
 
                     case OnlineMode.IpHost:
                         m_GameNetPortal.StartHost(PostProcessIpInput(connectInput), connectPort);
+                        break;
+
+                    case OnlineMode.UnityRelay:
+                        Debug.Log("Unity Relay Host clicked");
+                        m_GameNetPortal.StartUnityRelayHost();
                         break;
                 }
             }, k_DefaultIP, k_ConnectPort);
@@ -60,7 +86,7 @@ namespace BossRoom.Visual
 
         public void OnConnectClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay(false, "Join Game", "Input the host IP below", "Input the room name below", "iphost", "Join",
+            m_ResponsePopup.SetupEnterGameDisplay(false, "Join Game", "Input the host IP below", "Input the room name below", "Input the join code below", "iphost", "Join",
                 (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
             {
                 m_GameNetPortal.PlayerName = playerName;
@@ -77,6 +103,11 @@ namespace BossRoom.Visual
 
                     case OnlineMode.IpHost:
                         ClientGameNetPortal.StartClient(m_GameNetPortal, connectInput, connectPort);
+                        break;
+
+                    case OnlineMode.UnityRelay:
+                        Debug.Log($"Unity Relay Client, join code {connectInput}");
+                        m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, connectInput);
                         break;
                 }
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
@@ -136,6 +167,18 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
+        /// This should allow us to push a message pop up for connection responses from within other classes
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="message"></param>
+        /// <param name="displayImage"></param>
+        /// <param name="displayConfirmation"></param>
+        public void PushConnectionResponsePopup(string title, string message, bool displayImage, bool displayConfirmation)
+        {
+            m_ResponsePopup.SetupNotifierDisplay(title, message, displayImage, displayConfirmation);
+        }
+
+        /// <summary>
         /// Invoked when the client sent a connection request to the server and didn't hear back at all.
         /// This should create a UI letting the player know that something went wrong and to try again
         /// </summary>
@@ -144,10 +187,22 @@ namespace BossRoom.Visual
             m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Unable to Reach Host/Server", false, true, "Please try again");
         }
 
+        private void OnRelayJoinFailed(string message)
+        {
+            PushConnectionResponsePopup("Unity Relay: Join Failed", $"{message}", true, true);
+        }
+
         private void OnDestroy()
         {
-            m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
-            m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
+            if (m_ClientNetPortal != null)
+            {
+                m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
+                m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
+                m_ClientNetPortal.OnUnityRelayJoinFailed -= OnRelayJoinFailed;
+            }
+
+            // Release this instance as soon as we are destroyed
+            s_Instance = null;
         }
     }
 }

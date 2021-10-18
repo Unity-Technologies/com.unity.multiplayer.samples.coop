@@ -1,4 +1,4 @@
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// This corresponds to a CharacterClass ScriptableObject data object, containing the core gameplay data for

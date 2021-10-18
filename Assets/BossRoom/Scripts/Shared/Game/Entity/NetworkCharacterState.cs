@@ -1,10 +1,8 @@
-using MLAPI;
-using MLAPI.Messaging;
-using MLAPI.NetworkVariable;
 using System;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public enum LifeState
     {
@@ -41,7 +39,7 @@ namespace BossRoom
         /// <summary>
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
         /// </summary>
-        public NetworkVariableBool IsStealthy { get; } = new NetworkVariableBool();
+        public NetworkVariable<bool> IsStealthy { get; } = new NetworkVariable<bool>();
 
         [SerializeField]
         NetworkHealthState m_NetworkHealthState;
@@ -57,7 +55,7 @@ namespace BossRoom
         /// <summary>
         /// The active target of this character.
         /// </summary>
-        public NetworkVariableULong TargetId { get; } = new NetworkVariableULong();
+        public NetworkVariable<ulong> TargetId { get; } = new NetworkVariable<ulong>();
 
         /// <summary>
         /// Current HP. This value is populated at startup time from CharacterClass data.
@@ -85,7 +83,7 @@ namespace BossRoom
         /// <summary>
         /// Returns true if this Character is an NPC.
         /// </summary>
-        public bool IsNpc { get { return CharacterData.IsNpc; } }
+        public bool IsNpc { get { return CharacterClass.IsNpc; } }
 
         public bool IsValidTarget => LifeState != LifeState.Dead;
 
@@ -100,7 +98,7 @@ namespace BossRoom
         /// <summary>
         /// The CharacterData object associated with this Character. This is the static game data that defines its attack skills, HP, etc.
         /// </summary>
-        public CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
+        public CharacterClass CharacterClass => m_CharacterClassContainer.CharacterClass;
 
         /// <summary>
         /// Character Type. This value is populated during character selection.
@@ -114,7 +112,8 @@ namespace BossRoom
 
         public override void OnNetworkSpawn()
         {
-            HitPoints = CharacterData.BaseHP.Value;
+            if (!IsServer) return;
+            HitPoints = CharacterClass.BaseHP.Value;
         }
 
         /// <summary>
@@ -182,23 +181,6 @@ namespace BossRoom
         }
 
         // UTILITY AND SPECIAL-PURPOSE RPCs
-
-        /// <summary>
-        /// Called when the character needs to perform a one-off "I've been hit" animation.
-        /// </summary>
-        public event Action OnPerformHitReaction;
-
-        /// <summary>
-        /// Called by Actions when this character needs to perform a one-off "ouch" reaction-animation.
-        /// Note: this is not the normal way to trigger hit-react animations! Normally the client-side
-        /// ActionFX directly controls animation. But some Actions can have unpredictable targets. In cases
-        /// where the ActionFX can't predict who gets hit, the Action calls this to manually trigger animation.
-        /// </summary>
-        [ClientRpc]
-        public void RecvPerformHitReactionClientRPC()
-        {
-            OnPerformHitReaction?.Invoke();
-        }
 
         /// <summary>
         /// Called on server when the character's client decides they have stopped "charging up" an attack.

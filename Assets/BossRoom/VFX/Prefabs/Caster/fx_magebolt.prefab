@@ -52,14 +52,6 @@ MonoBehaviour:
   - {fileID: 1397666064616585489}
   m_TargetMissedGraphics:
   - {fileID: 739000835040427345}
-  m_ShowTheseOnTargetImpact:
-  - {fileID: 1397666064616585489}
-  m_HideTheseOnTargetImpact:
-  - {fileID: 5366033291647406573}
-  m_ShowTheseOnFloorImpact:
-  - {fileID: 739000835040427345}
-  m_HideTheseOnFloorImpact:
-  - {fileID: 5366033291647406573}
   m_PostImpactDurationSeconds: 3
 --- !u!108 &1971963935719761392
 Light:

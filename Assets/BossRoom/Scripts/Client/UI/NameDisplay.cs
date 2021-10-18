@@ -1,8 +1,7 @@
-using UnityEngine.UI;
 using UnityEngine;
 using TMPro;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// This is responsible for displaying and updating the player's chosen name.  Currently, the game does not allow just any

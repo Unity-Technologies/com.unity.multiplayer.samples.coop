@@ -1,9 +1,10 @@
-using MLAPI;
-using MLAPI.Messaging;
+using System;
 using System.Collections;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Server specialization of Character Select game state.
@@ -27,7 +28,7 @@ namespace BossRoom.Server
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
             {
-                //TODO-FIXME:MLAPI See note about MLAPI issue 745 in WaitToSeatNowPlayer.
+                //TODO-FIXME:Netcode See note about Netcode for GameObjects issue 745 in WaitToSeatNowPlayer.
                 //while this workaround is in place, we must simply ignore these update requests from the client.
                 //throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
                 return;
@@ -130,29 +131,32 @@ namespace BossRoom.Server
 
         private void SaveLobbyResults()
         {
-            LobbyResults lobbyResults = new LobbyResults();
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
-                lobbyResults.Choices[playerInfo.ClientId] = new LobbyResults.CharSelectChoice(playerInfo.PlayerNum,
-                    CharSelectData.LobbySeatConfigurations[playerInfo.SeatIdx].Class,
-                    CharSelectData.LobbySeatConfigurations[playerInfo.SeatIdx].CharacterArtIdx);
+                var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(playerInfo.ClientId);
+
+                if (playerNetworkObject && playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+                {
+                    // pass avatar GUID to PersistentPlayer
+                    // it'd be great to simplify this with something like a NetworkScriptableObjects :(
+                    persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value =
+                        CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToNetworkGuid();
+                }
             }
-            GameStateRelay.SetRelayObject(lobbyResults);
         }
 
         private IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
-            NetworkManager.SceneManager.SwitchScene("BossRoom");
+            NetworkManager.SceneManager.LoadScene("BossRoom", LoadSceneMode.Single);
         }
 
         public override void OnNetworkDespawn()
         {
             if (NetworkManager.Singleton)
             {
-                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene -= OnNotifyServerClientLoadedScene;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
             if (CharSelectData)
             {
@@ -171,21 +175,16 @@ namespace BossRoom.Server
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
-                NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-                NetworkManager.Singleton.SceneManager.OnNotifyServerClientLoadedScene += OnNotifyServerClientLoadedScene;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
             }
         }
 
-        private void OnNotifyServerClientLoadedScene(MLAPI.SceneManagement.SceneSwitchProgress progress, ulong clientId)
+        private void OnSceneEvent(SceneEvent sceneEvent)
         {
+            // We need to filter out the event that are not a client has finished loading the scene
+            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
             // When the client finishes loading the Lobby Map, we will need to Seat it
-            SeatNewPlayer(clientId);
-        }
-
-        private void OnClientConnected(ulong clientId)
-        {
-            // When the client first connects to the server we will need to Seat it
-            SeatNewPlayer(clientId);
+            SeatNewPlayer(sceneEvent.ClientId);
         }
 
         private int GetAvailablePlayerNum()
@@ -215,10 +214,8 @@ namespace BossRoom.Server
             int playerNum = GetAvailablePlayerNum();
             if (playerNum == -1)
             {
-                // we ran out of seats... there was no room!
-                CharSelectData.FatalLobbyErrorClientRpc(CharSelectData.FatalLobbyError.LobbyFull,
-                    new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } });
-                return;
+                // Sanity check. We ran out of seats... there was no room!
+                throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerNum}");
             }
 
             string playerName = m_ServerNetPortal.GetPlayerName(clientId,playerNum);

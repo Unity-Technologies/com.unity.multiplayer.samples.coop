@@ -1,10 +1,8 @@
-using System;
-using BossRoom.Client;
-using MLAPI;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
-using SkillTriggerStyle = BossRoom.Client.ClientInputSender.SkillTriggerStyle;
+using SkillTriggerStyle = Unity.Multiplayer.Samples.BossRoom.Client.ClientInputSender.SkillTriggerStyle;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Provides logic for a Hero Emote Bar

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// The visual aspect of a ChargedShieldAction. Shows "charge up particles" while the power is charging up.
@@ -31,11 +31,6 @@ namespace BossRoom.Visual
         public override bool Start()
         {
             Assert.IsTrue(Description.Spawns.Length == 2, $"Found {Description.Spawns.Length} spawns for action {Description.ActionTypeEnum}. Should be exactly 2: a charge-up particle and a fully-charged particle");
-
-            if (!Anticipated)
-            {
-                PlayAnim();
-            }
 
             base.Start();
             m_ChargeGraphics = InstantiateSpecialFXGraphic(Description.Spawns[0], m_Parent.transform, true);
@@ -73,13 +68,11 @@ namespace BossRoom.Visual
                 {
                     m_ChargeGraphics.Shutdown();
                 }
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
             }
 
             if (m_ShieldGraphics)
             {
                 m_ShieldGraphics.Shutdown();
-                m_Parent.OurAnimator.SetInteger(Description.OtherAnimatorVariable, m_Parent.OurAnimator.GetInteger(Description.OtherAnimatorVariable) - 1);
             }
         }
 
@@ -88,23 +81,15 @@ namespace BossRoom.Visual
             if (!IsChargingUp()) { return; }
 
             m_StoppedChargingUpTime = Time.time;
-            m_Parent.OurAnimator.SetTrigger(Description.Anim2);
             if (m_ChargeGraphics)
             {
                 m_ChargeGraphics.Shutdown();
                 m_ChargeGraphics = null;
             }
-            // if fully charged, we show a special graphic and tell the animator controller to enter "invincibility mode"
-            // (where we don't flinch from damage)
+            // if fully charged, we show a special graphic
             if (Mathf.Approximately(finalChargeUpPercentage, 1))
             {
                 m_ShieldGraphics = InstantiateSpecialFXGraphic(Description.Spawns[1], m_Parent.transform, true);
-
-                // increment our "invincibility counter". We use an integer count instead of a boolean because the player
-                // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.
-                // So each active copy of the charge-up increments the invincibility counter, and the animator controller
-                // knows anything greater than zero means we shouldn't show hit-reacts.
-                m_Parent.OurAnimator.SetInteger(Description.OtherAnimatorVariable, m_Parent.OurAnimator.GetInteger(Description.OtherAnimatorVariable) + 1);
             }
         }
 

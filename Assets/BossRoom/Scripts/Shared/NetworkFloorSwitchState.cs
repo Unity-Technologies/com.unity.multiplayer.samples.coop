@@ -1,13 +1,12 @@
-using MLAPI;
-using MLAPI.NetworkVariable;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+using Unity.Netcode;
 
-/// <summary>
-/// Describes the state of a floor-switch (a/k/a "pressure plate")
-/// </summary>
-public class NetworkFloorSwitchState : NetworkBehaviour
+namespace Unity.Multiplayer.Samples.BossRoom
 {
-    public NetworkVariableBool IsSwitchedOn { get; } = new NetworkVariableBool();
+    /// <summary>
+    /// Describes the state of a floor-switch (a/k/a "pressure plate")
+    /// </summary>
+    public class NetworkFloorSwitchState : NetworkBehaviour
+    {
+        public NetworkVariable<bool> IsSwitchedOn { get; } = new NetworkVariable<bool>();
+    }
 }

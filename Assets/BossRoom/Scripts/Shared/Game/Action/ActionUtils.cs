@@ -1,8 +1,7 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
-using MLAPI.Spawning;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public static class ActionUtils
     {
@@ -168,7 +167,7 @@ namespace BossRoom
         /// <param name="distanceToUseIfVeryClose">if we should fix up very short teleport destinations, the new location will be this far away (in meters). -1 = don't check for short teleports</param>
         /// <param name="maxDistance">returned location will be no further away from characterTransform than this. -1 = no max distance</param>
         /// <returns>new coordinates that are near the destination (or near the first obstruction)</returns>
-        public static Vector3 GetTeleportDestination(Transform characterTransform, Vector3 targetSpot, bool stopAtObstructions, float distanceToUseIfVeryClose = -1, float maxDistance = -1)
+        public static Vector3 GetDashDestination(Transform characterTransform, Vector3 targetSpot, bool stopAtObstructions, float distanceToUseIfVeryClose = -1, float maxDistance = -1)
         {
             Vector3 destinationSpot = targetSpot;
 

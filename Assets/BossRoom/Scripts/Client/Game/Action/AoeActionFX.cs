@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// Final step in the AoE action flow. Please see AoEActionInput for the first step and more details on overall flow
     public class AoeActionFX : ActionFX
@@ -12,7 +12,6 @@ namespace BossRoom.Visual
         public override bool Start()
         {
             base.Start();
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
             GameObject.Instantiate(Description.Spawns[0], m_Data.Position, Quaternion.identity);
             return ActionConclusion.Stop;
         }

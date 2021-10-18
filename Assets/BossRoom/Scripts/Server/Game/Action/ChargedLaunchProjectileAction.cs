@@ -1,8 +1,7 @@
-using MLAPI;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// A version of LaunchProjectileAction that can be "powered up" by holding down the attack key.
@@ -45,9 +44,11 @@ namespace BossRoom.Server
                 if (initialTarget)
                 {
                     // face our target
-                    m_Parent.transform.LookAt(initialTarget.transform.position);
+                    m_Parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
                 }
             }
+
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
 
             // start the "charging up" ActionFX
             m_Parent.NetState.RecvDoActionClientRPC(Data);
@@ -104,6 +105,12 @@ namespace BossRoom.Server
             if (m_StoppedChargingUpTime == 0)
             {
                 m_StoppedChargingUpTime = Time.time;
+
+                if (!string.IsNullOrEmpty(Description.Anim2))
+                {
+                    m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+                }
+
                 m_Parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
                 if (!m_HitByAttack)
                 {

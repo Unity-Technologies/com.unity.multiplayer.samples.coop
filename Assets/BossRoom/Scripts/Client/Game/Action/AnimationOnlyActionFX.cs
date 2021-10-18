@@ -1,7 +1,4 @@
-using MLAPI;
-using MLAPI.Spawning;
-
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Used for simple Actions that only need to play a few animations (one at startup and optionally
@@ -10,17 +7,6 @@ namespace BossRoom.Visual
     public class AnimationOnlyActionFX : ActionFX
     {
         public AnimationOnlyActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
-
-        public override bool Start()
-        {
-            if( !Anticipated )
-            {
-                PlayStartAnim();
-            }
-
-            base.Start();
-            return true;
-        }
 
         private void PlayStartAnim()
         {
@@ -37,14 +23,5 @@ namespace BossRoom.Visual
         {
             return ActionConclusion.Continue;
         }
-
-        public override void Cancel()
-        {
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
-            }
-        }
-
     }
 }

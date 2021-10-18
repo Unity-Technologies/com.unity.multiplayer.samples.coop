@@ -1,11 +1,12 @@
+using System;
 using System.Collections.Generic;
-using MLAPI;
-using MLAPI.Spawning;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Client;
+using UnityEngine.Assertions;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Provides logic for the Party HUD with information on the player and allies
@@ -14,6 +15,9 @@ namespace BossRoom.Visual
     /// </summary>
     public class PartyHUD : MonoBehaviour
     {
+        [SerializeField]
+        ClientPlayerAvatarRuntimeCollection m_PlayerAvatars;
+
         [SerializeField]
         private Image m_HeroPortrait;
 
@@ -29,91 +33,135 @@ namespace BossRoom.Visual
         [SerializeField]
         private Slider[] m_PartyHealthSliders;
 
-        [SerializeField]
-        private Sprite[] m_PortraitAppearances;
-
-        // set sprites for classes - order must match class enum
-        [SerializeField]
-        private Sprite[] m_ClassSymbols;
-
         // track a list of hero (slot 0) + allies
         private ulong[] m_PartyIds;
 
         // track Hero's target to show when it is the Hero or an ally
         private ulong m_CurrentTarget;
 
-        private Dictionary<ulong, NetworkCharacterState> m_TrackedHeroes = new Dictionary<ulong, NetworkCharacterState>();
+        NetworkCharacterState m_OwnedCharacterState;
+
+        ClientPlayerAvatar m_OwnedPlayerAvatar;
+
+        private Dictionary<ulong, NetworkCharacterState> m_TrackedAllies = new Dictionary<ulong, NetworkCharacterState>();
 
         private Client.ClientInputSender m_ClientSender;
 
-        public void SetHeroData(NetworkCharacterState netState)
+        void Awake()
         {
             // Make sure arrays are initialized
             InitPartyArrays();
-            // Hero is always our slot 0
-            m_PartyIds[0] = netState.NetworkObject.NetworkObjectId;
-            SetUIFromSlotData(0, netState);
-            // Hero also gets a protrait
-            // TODO: Re-implement names on UI (GOMPS-550)
-            int appearance = 0/*netState.CharacterAppearance*/;
-            if (appearance < m_PortraitAppearances.Length)
+
+            m_PlayerAvatars.ItemAdded += PlayerAvatarAdded;
+            m_PlayerAvatars.ItemRemoved += PlayerAvatarRemoved;
+        }
+
+        void PlayerAvatarAdded(ClientPlayerAvatar clientPlayerAvatar)
+        {
+            if (clientPlayerAvatar.IsOwner)
             {
-                m_HeroPortrait.sprite = m_PortraitAppearances[appearance];
+                SetHeroData(clientPlayerAvatar);
             }
+            else
+            {
+                SetAllyData(clientPlayerAvatar);
+            }
+        }
+
+        void PlayerAvatarRemoved(ClientPlayerAvatar clientPlayerAvatar)
+        {
+            if (m_OwnedPlayerAvatar == clientPlayerAvatar)
+            {
+                RemoveHero();
+            }
+            else if (m_TrackedAllies.ContainsKey(clientPlayerAvatar.NetworkObjectId))
+            {
+                RemoveAlly(clientPlayerAvatar.NetworkObjectId);
+                m_TrackedAllies.Remove(clientPlayerAvatar.NetworkObjectId);
+            }
+        }
+
+        void SetHeroData(ClientPlayerAvatar clientPlayerAvatar)
+        {
+            var networkCharacterStateExists =
+                clientPlayerAvatar.TryGetComponent(out NetworkCharacterState networkCharacterState);
+
+            Assert.IsTrue(networkCharacterStateExists,
+                "NetworkCharacterState component not found on ClientPlayerAvatar");
+
+            m_OwnedPlayerAvatar = clientPlayerAvatar;
+            m_OwnedCharacterState = networkCharacterState;
+
+            // Hero is always our slot 0
+            m_PartyIds[0] = m_OwnedCharacterState.NetworkObject.NetworkObjectId;
+
+            // set hero portrait
+            if (m_OwnedCharacterState.TryGetComponent(out NetworkAvatarGuidState avatarGuidState))
+            {
+                m_HeroPortrait.sprite = avatarGuidState.RegisteredAvatar.Portrait;
+            }
+
+            SetUIFromSlotData(0, m_OwnedCharacterState);
+
+            m_OwnedCharacterState.HealthState.HitPoints.OnValueChanged += SetHeroHealth;
+
             // plus we track their target
-            netState.TargetId.OnValueChanged += OnHeroSelectionChanged;
-            m_TrackedHeroes.Add(netState.NetworkObjectId, netState);
+            m_OwnedCharacterState.TargetId.OnValueChanged += OnHeroSelectionChanged;
 
-            m_ClientSender = netState.GetComponent<Client.ClientInputSender>();
+            m_ClientSender = m_OwnedCharacterState.GetComponent<ClientInputSender>();
         }
 
-        public void SetHeroHealth(int hp)
+        void SetHeroHealth(int previousValue, int newValue)
         {
-            m_PartyHealthSliders[0].value = hp;
-        }
-
-        private int GetMaxHPForClass(CharacterTypeEnum characterType)
-        {
-            return GameDataSource.Instance.CharacterDataByType[characterType].BaseHP.Value;
+            m_PartyHealthSliders[0].value = newValue;
         }
 
         /// <summary>
         /// Gets Player Name from the NetworkObjectId of his controlled Character.
         /// </summary>
-        private string GetPlayerName(ulong netId)
+        string GetPlayerName(Component component)
         {
-            // TODO: Re-implement names on UI (GOMPS-550)
-            return string.Empty;
-            /*var netState = NetworkManager.Singleton.SpawnManager.SpawnedObjects[netId].GetComponent<NetworkCharacterState>();
-            return netState.Name;*/
+            var networkName = component.GetComponent<NetworkNameState>();
+            return networkName.Name.Value;
         }
 
         // set the class type for an ally - allies are tracked  by appearance so you must also provide appearance id
-        public void SetAllyData(NetworkCharacterState netState)
+        void SetAllyData(ClientPlayerAvatar clientPlayerAvatar)
         {
-            ulong id = netState.NetworkObjectId;
+            var networkCharacterStateExists =
+                clientPlayerAvatar.TryGetComponent(out NetworkCharacterState networkCharacterState);
+
+            Assert.IsTrue(networkCharacterStateExists,
+                "NetworkCharacterState component not found on ClientPlayerAvatar");
+
+            ulong id = networkCharacterState.NetworkObjectId;
             int slot = FindOrAddAlly(id);
             // do nothing if not in a slot
-            if (slot == -1) { return; }
-
-            SetUIFromSlotData(slot, netState);
-        }
-
-        private void SetUIFromSlotData(int slot, NetworkCharacterState netState)
-        {
-            m_PartyHealthSliders[slot].maxValue = GetMaxHPForClass(netState.CharacterType);
-            m_PartyHealthSliders[slot].value = netState.HitPoints;
-            m_PartyNames[slot].text = GetPlayerName(m_PartyIds[slot]);
-
-            int symbol = (int)netState.CharacterType;
-            if (symbol > m_ClassSymbols.Length)
+            if (slot == -1)
             {
                 return;
             }
-            m_PartyClassSymbols[slot].sprite = m_ClassSymbols[symbol];
+
+            SetUIFromSlotData(slot, networkCharacterState);
+
+            networkCharacterState.HealthState.HitPoints.OnValueChanged += (int previousValue, int newValue) =>
+            {
+                SetAllyHealth(id, newValue);
+            };
+
+            m_TrackedAllies.Add(networkCharacterState.NetworkObjectId, networkCharacterState);
         }
 
-        public void SetAllyHealth(ulong id, int hp)
+        void SetUIFromSlotData(int slot, NetworkCharacterState netState)
+        {
+            m_PartyHealthSliders[slot].maxValue = netState.CharacterClass.BaseHP.Value;
+            m_PartyHealthSliders[slot].value = netState.HitPoints;
+            m_PartyNames[slot].text = GetPlayerName(netState);
+
+            m_PartyClassSymbols[slot].sprite = netState.CharacterClass.ClassBannerLit;
+        }
+
+        void SetAllyHealth(ulong id, int hp)
         {
             int slot = FindOrAddAlly(id);
             // do nothing if not in a slot
@@ -128,7 +176,7 @@ namespace BossRoom.Visual
             SetHeroSelectFX(newTarget, true);
         }
 
-        // Helper to chaneg name appearance for selected or unselected party members
+        // Helper to change name appearance for selected or unselected party members
         // also updates m_CurrentTarget
         private void SetHeroSelectFX(ulong target, bool selected)
         {
@@ -206,11 +254,21 @@ namespace BossRoom.Visual
             return -1;
         }
 
+        void RemoveHero()
+        {
+            if (m_OwnedCharacterState && m_OwnedCharacterState.HealthState)
+            {
+                m_OwnedCharacterState.HealthState.HitPoints.OnValueChanged -= SetHeroHealth;
+            }
+
+            m_OwnedCharacterState = null;
+        }
+
         /// <summary>
         /// Remove an ally from the PartyHUD UI.
         /// </summary>
         /// <param name="id"> NetworkObjectID of the ally. </param>
-        public void RemoveAlly(ulong id)
+        void RemoveAlly(ulong id)
         {
             for (int i = 0; i < m_PartyIds.Length; i++)
             {
@@ -224,23 +282,24 @@ namespace BossRoom.Visual
                 }
             }
 
-            if( m_TrackedHeroes.TryGetValue(id, out var heroState))
+            if (m_TrackedAllies.TryGetValue(id, out NetworkCharacterState networkCharacterState))
             {
-                if( heroState != null )
+                networkCharacterState.HealthState.HitPoints.OnValueChanged -= (int previousValue, int newValue) =>
                 {
-                    heroState.TargetId.OnValueChanged -= OnHeroSelectionChanged;
-                }
+                    SetAllyHealth(id, newValue);
+                };
             }
         }
 
         void OnDestroy()
         {
-            foreach( var kvp in m_TrackedHeroes )
+            m_PlayerAvatars.ItemAdded -= PlayerAvatarAdded;
+            m_PlayerAvatars.ItemRemoved -= PlayerAvatarRemoved;
+
+            RemoveHero();
+            foreach (var kvp in m_TrackedAllies)
             {
-                if( kvp.Value != null )
-                {
-                    kvp.Value.TargetId.OnValueChanged -= OnHeroSelectionChanged;
-                }
+                RemoveAlly(kvp.Key);
             }
         }
     }

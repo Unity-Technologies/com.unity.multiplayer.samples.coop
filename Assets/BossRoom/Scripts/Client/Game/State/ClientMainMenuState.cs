@@ -1,9 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using BossRoom;
-
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Game Logic that runs when sitting at the MainMenu. This is likely to be "nothing", as no game has been started. But it is

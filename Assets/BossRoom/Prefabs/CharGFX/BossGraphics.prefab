@@ -2001,8 +2001,6 @@ MonoBehaviour:
   m_ClientVisualsAnimator: {fileID: 234724737205816310}
   m_CharacterSwapper: {fileID: 0}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
-  m_RuntimeObjectsParent: {fileID: 11400000, guid: deda38c596e7fbd4386b9d8f9b7bb4b5, type: 2}
-  m_CharacterClass: {fileID: 11400000, guid: 1fdbcd02edb11484a91de118f5ef44b3, type: 2}
 --- !u!114 &4538447335436592133
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2128,6 +2126,8 @@ MonoBehaviour:
   m_AudioSources:
   - {fileID: 6900827550167648780}
   - {fileID: 5287069443216318009}
+  m_Animator: {fileID: 234724737205816310}
+  m_ClientCharacterVisualization: {fileID: 0}
 --- !u!82 &6900827550167648780
 AudioSource:
   m_ObjectHideFlags: 0
@@ -2397,6 +2397,7 @@ MonoBehaviour:
   m_TooSlowThreshold: 0.3
   m_WalkSpeedThreshold: 0.6
   m_RunSpeedThreshold: 1.2
+  m_ClientCharacterVisualization: {fileID: 0}
 --- !u!82 &-2129752889114835779
 AudioSource:
   m_ObjectHideFlags: 0

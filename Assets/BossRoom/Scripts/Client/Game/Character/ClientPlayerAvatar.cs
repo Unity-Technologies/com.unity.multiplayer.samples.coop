@@ -1,11 +1,14 @@
 using System;
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Client
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     public class ClientPlayerAvatar : NetworkBehaviour
     {
+        [SerializeField]
+        ClientPlayerAvatarRuntimeCollection m_PlayerAvatars;
+
         public static event Action<ClientPlayerAvatar> LocalClientSpawned;
 
         public static event Action LocalClientDespawned;
@@ -18,6 +21,11 @@ namespace BossRoom.Client
             {
                 LocalClientSpawned?.Invoke(this);
             }
+
+            if (m_PlayerAvatars)
+            {
+                m_PlayerAvatars.Add(this);
+            }
         }
 
         public override void OnNetworkDespawn()
@@ -25,6 +33,22 @@ namespace BossRoom.Client
             if (IsClient && IsOwner)
             {
                 LocalClientDespawned?.Invoke();
+            }
+
+            RemoveNetworkCharacter();
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            RemoveNetworkCharacter();
+        }
+
+        void RemoveNetworkCharacter()
+        {
+            if (m_PlayerAvatars)
+            {
+                m_PlayerAvatars.Remove(this);
             }
         }
     }

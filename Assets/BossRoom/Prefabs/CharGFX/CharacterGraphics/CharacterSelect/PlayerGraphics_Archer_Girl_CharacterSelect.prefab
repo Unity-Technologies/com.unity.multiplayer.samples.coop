@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &4285338174576980640
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 2408587852517914968, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_Name
+      value: PlayerGraphics_Archer_Girl_CharacterSelect
+      objectReference: {fileID: 0}
+    - target: {fileID: 2950036362190399201, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3037349535683109858, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8839929010072219690, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_AudioSources.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8839929010072219690, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_AudioSources.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8974659347401553557, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+      propertyPath: m_CharacterSwapper
+      value: 
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 1926289423182741662, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+    - {fileID: 7211668411825366569, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+    - {fileID: 7137336644708754433, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+    - {fileID: 6915374236898689727, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+    - {fileID: 4460020700640811699, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+    - {fileID: 8839929010072219690, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+    - {fileID: 8974659347401553557, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: c606ea8a9b63df640a18e10c81bbe28c, type: 3}

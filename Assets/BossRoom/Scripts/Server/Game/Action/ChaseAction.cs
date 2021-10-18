@@ -1,12 +1,14 @@
-using MLAPI;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class ChaseAction : Action
     {
         private NetworkObject m_Target;
+
+        Transform m_TargetTransform;
+
         private ServerCharacterMovement m_Movement;
 
         public ChaseAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
@@ -28,18 +30,28 @@ namespace BossRoom.Server
 
             m_Target = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
 
-            m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
-            Vector3 currentTargetPos = m_Target.transform.position;
+            m_Movement = m_Parent.Movement;
+
+            if (PhysicsWrapper.TryGetPhysicsWrapper(m_Data.TargetIds[0], out var physicsWrapper))
+            {
+                m_TargetTransform = physicsWrapper.Transform;
+            }
+            else
+            {
+                m_TargetTransform = m_Target.transform;
+            }
+
+            Vector3 currentTargetPos = m_TargetTransform.position;
 
             if (StopIfDone())
             {
-                m_Parent.transform.LookAt(currentTargetPos); //even if we didn't move, snap to face the target!
+                m_Parent.physicsWrapper.Transform.LookAt(currentTargetPos); //even if we didn't move, snap to face the target!
                 return ActionConclusion.Stop;
             }
 
             if (!m_Movement.IsPerformingForcedMovement())
             {
-                m_Movement.FollowTransform(m_Target.transform);
+                m_Movement.FollowTransform(m_TargetTransform);
             }
             return ActionConclusion.Continue;
         }
@@ -60,14 +72,14 @@ namespace BossRoom.Server
         /// </summary>
         private bool StopIfDone()
         {
-            if(m_Target == null )
+            if(m_TargetTransform == null )
             {
                 //if the target disappeared on us, then just stop.
                 Cancel();
                 return true;
             }
 
-            float distToTarget2 = (m_Parent.transform.position - m_Target.transform.position).sqrMagnitude;
+            float distToTarget2 = (m_Parent.physicsWrapper.Transform.position - m_TargetTransform.position).sqrMagnitude;
             if ((m_Data.Amount * m_Data.Amount) > distToTarget2)
             {
                 //we made it! we're done.
@@ -90,7 +102,7 @@ namespace BossRoom.Server
             // This way, if we get Knocked Back mid-chase, we pick right back up and continue the chase.
             if (!m_Movement.IsPerformingForcedMovement())
             {
-                m_Movement.FollowTransform(m_Target.transform);
+                m_Movement.FollowTransform(m_TargetTransform);
             }
 
             return ActionConclusion.Continue;

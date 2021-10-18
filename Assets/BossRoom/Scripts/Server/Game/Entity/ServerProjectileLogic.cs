@@ -1,13 +1,13 @@
-using MLAPI;
 using System.Collections.Generic;
 using System.IO;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
+using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
 
-    public class ServerProjectileLogic : MLAPI.NetworkBehaviour
+    public class ServerProjectileLogic : NetworkBehaviour
     {
         private bool m_Started = false;
 
@@ -66,15 +66,17 @@ namespace BossRoom.Server
             m_ProjectileInfo = projectileInfo;
         }
 
-        public override void OnNetworkSpawn(Stream stream)
+        public override void OnNetworkSpawn()
         {
             if (!IsServer)
             {
                 enabled = false;
                 return;
             }
-
             m_Started = true;
+
+            m_HitTargets = new List<GameObject>();
+            m_IsDead = false;
 
             m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
 
@@ -92,8 +94,10 @@ namespace BossRoom.Server
 
             if (m_DestroyAtSec < Time.fixedTime)
             {
-                // Time to go away.
-                Destroy(gameObject);
+                // Time to return to the pool from whence it came.
+                NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
+                NetworkObjectPool.Singleton.ReturnNetworkObject(networkObject, m_ProjectileInfo.ProjectilePrefab);
+                networkObject.Despawn();
             }
 
             if (!m_IsDead)
@@ -109,7 +113,6 @@ namespace BossRoom.Server
             for (int i = 0; i < numCollisions; i++)
             {
                 int layerTest = 1 << m_CollisionCache[i].gameObject.layer;
-
                 if ((layerTest & m_BlockerMask) != 0)
                 {
                     //hit a wall; leave it for a couple of seconds.
@@ -131,7 +134,7 @@ namespace BossRoom.Server
                     }
 
                     //all NPC layer entities should have one of these.
-                    var targetNetObj = m_CollisionCache[i].GetComponent<NetworkObject>();
+                    var targetNetObj = m_CollisionCache[i].GetComponentInParent<NetworkObject>();
                     if (targetNetObj)
                     {
                         m_NetState.RecvHitEnemyClientRPC(targetNetObj.NetworkObjectId);
@@ -141,7 +144,7 @@ namespace BossRoom.Server
                         NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_SpawnerId, out spawnerNet);
                         ServerCharacter spawnerObj = spawnerNet != null ? spawnerNet.GetComponent<ServerCharacter>() : null;
 
-                        targetNetObj.GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
+                        m_CollisionCache[i].GetComponent<IDamageable>().ReceiveHP(spawnerObj, -m_ProjectileInfo.Damage);
                     }
 
                     if (m_IsDead)

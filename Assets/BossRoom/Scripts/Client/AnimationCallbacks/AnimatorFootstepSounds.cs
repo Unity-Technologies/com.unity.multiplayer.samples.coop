@@ -1,12 +1,13 @@
+using System;
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Plays one of a few sound effects, on a loop, based on a variable in an Animator.
     /// We use this to play footstep sounds.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// For this project we're using a few looped footstep sounds, choosing between them
     /// based on the animated speed. This method has good performance versus a more complicated
@@ -61,6 +62,24 @@ namespace BossRoom.Visual
         [SerializeField]
         [Tooltip("If the speed variable is between WalkSpeedThreshold and this, we're running. (Higher than this means no sound)")]
         private float m_RunSpeedThreshold = 1.2f;
+
+        [SerializeField]
+        ClientCharacterVisualization m_ClientCharacterVisualization;
+
+        void Awake()
+        {
+            // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
+            // following is a temporary workaround. Future refactorings will enable this functionality.
+            if (!m_Animator && m_ClientCharacterVisualization)
+            {
+                m_ClientCharacterVisualization.animatorSet += SetAnimator;
+            }
+        }
+
+        void SetAnimator(Animator animator)
+        {
+            m_Animator = animator;
+        }
 
         private void Update()
         {
@@ -119,10 +138,6 @@ namespace BossRoom.Visual
         private void OnValidate()
         {
             m_AnimatorVariableHash = Animator.StringToHash(m_AnimatorVariable);
-
-            // try to automatically plug in components if they happen to be on our same GameObject (since that's a typical use-case)
-            if (m_Animator == null)
-                m_Animator = GetComponent<Animator>();
 
             if (m_AudioSource == null)
                 m_AudioSource = GetComponent<AudioSource>();

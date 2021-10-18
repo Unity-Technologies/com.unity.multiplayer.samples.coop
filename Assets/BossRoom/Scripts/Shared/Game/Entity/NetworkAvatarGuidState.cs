@@ -1,36 +1,68 @@
 using System;
-using MLAPI;
-using MLAPI.NetworkVariable;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// NetworkBehaviour component to send/receive GUIDs from server to clients.
     /// </summary>
     public class NetworkAvatarGuidState : NetworkBehaviour
     {
+        [FormerlySerializedAs("AvatarGuidArray")]
         [HideInInspector]
-        public NetworkVariable<byte[]> AvatarGuidArray = new NetworkVariable<byte[]>(new byte[0]);
+        public NetworkVariable<NetworkGuid> AvatarGuid = new NetworkVariable<NetworkGuid>();
 
-        public event Action<Guid> GuidChanged;
+        CharacterClassContainer m_CharacterClassContainer;
 
-        void Awake()
+        [SerializeField]
+        AvatarRegistry m_AvatarRegistry;
+
+        Avatar m_Avatar;
+
+        public Avatar RegisteredAvatar
         {
-            AvatarGuidArray.OnValueChanged += OnValueChanged;
+            get
+            {
+                if (m_Avatar == null)
+                {
+                    RegisterAvatar(AvatarGuid.Value.ToGuid());
+                }
+
+                return m_Avatar;
+            }
         }
 
-        void OnValueChanged(byte[] previousValue, byte[] newValue)
+        private void Awake()
         {
-            if (newValue == null || newValue.Length == 0)
+            m_CharacterClassContainer = GetComponent<CharacterClassContainer>();
+        }
+
+        public void RegisterAvatar(Guid guid)
+        {
+            if (guid.Equals(Guid.Empty))
             {
                 // not a valid Guid
                 return;
             }
 
-            var guid = new Guid(newValue);
+            // based on the Guid received, Avatar is fetched from AvatarRegistry
+            if (!m_AvatarRegistry.TryGetAvatar(guid, out Avatar avatar))
+            {
+                Debug.LogError("Avatar not found!");
+                return;
+            }
 
-            GuidChanged?.Invoke(guid);
+            if (m_Avatar != null)
+            {
+                // already set, this is an idempotent call, we don't want to Instantiate twice
+                return;
+            }
+
+            m_Avatar = avatar;
+
+            m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
         }
     }
 }

@@ -1,26 +1,26 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
-    /// Repository for visualization-related utility functions. 
+    /// Repository for visualization-related utility functions.
     /// </summary>
     public static class VisualUtils
     {
         /// <summary>
-        /// Minimum Smooth Speed we will set closingSpeed to in SmoothMove. 
+        /// Minimum Smooth Speed we will set closingSpeed to in SmoothMove.
         /// </summary>
         private const float k_MinSmoothSpeed = 4.0f;
 
         /// <summary>
         /// In SmoothMove we set a velocity proportional to our distance, to roughly approximate a spring effect.
-        /// This is the constant we use for that calculation. 
+        /// This is the constant we use for that calculation.
         /// </summary>
         private const float k_TargetCatchupTime = 0.1f;
 
 
         /// <summary>
-        /// Smoothly interpolates towards the parent transform. 
+        /// Smoothly interpolates towards the parent transform.
         /// </summary>
         /// <param name="moveTransform">The transform to interpolate</param>
         /// <param name="targetTransform">The transform to interpolate towards.  </param>

@@ -1,14 +1,15 @@
 using System.Collections;
-using System.Collections.Generic;
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
-    [RequireComponent(typeof(ServerCharacterMovement), typeof(NetworkCharacterState))]
-    public class ServerCharacter : NetworkBehaviour, IDamageable
+    public class ServerCharacter : NetworkBehaviour
     {
-        public NetworkCharacterState NetState { get; private set; }
+        [SerializeField]
+        NetworkCharacterState m_NetworkCharacterState;
+
+        public NetworkCharacterState NetState => m_NetworkCharacterState;
 
         /// <summary>
         /// Returns true if this Character is an NPC.
@@ -39,14 +40,26 @@ namespace BossRoom.Server
         private ActionPlayer m_ActionPlayer;
         private AIBrain m_AIBrain;
 
-        // Cached component reference
-        private ServerCharacterMovement m_Movement;
+        [SerializeField]
+        DamageReceiver m_DamageReceiver;
+
+        [SerializeField]
+        ServerCharacterMovement m_Movement;
+
+        public ServerCharacterMovement Movement => m_Movement;
+
+        [SerializeField]
+        PhysicsWrapper m_PhysicsWrapper;
+
+        public PhysicsWrapper physicsWrapper => m_PhysicsWrapper;
+
+        [SerializeField]
+        ServerAnimationHandler m_ServerAnimationHandler;
+
+        public ServerAnimationHandler serverAnimationHandler => m_ServerAnimationHandler;
 
         private void Awake()
         {
-            m_Movement = GetComponent<ServerCharacterMovement>();
-
-            NetState = GetComponent<NetworkCharacterState>();
             m_ActionPlayer = new ActionPlayer(this);
         }
 
@@ -55,11 +68,12 @@ namespace BossRoom.Server
             if (!IsServer) { enabled = false; }
             else
             {
-                NetState = GetComponent<NetworkCharacterState>();
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+                m_DamageReceiver.damageReceived += ReceiveHP;
+                m_DamageReceiver.collisionEntered += CollisionEntered;
 
                 if (NetState.IsNpc)
                 {
@@ -71,6 +85,8 @@ namespace BossRoom.Server
                     var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
                     PlayAction(ref startingAction);
                 }
+
+                NetState.HitPoints = NetState.CharacterClass.BaseHP.Value;
             }
         }
 
@@ -82,6 +98,12 @@ namespace BossRoom.Server
                 NetState.ReceivedClientInput -= OnClientMoveRequest;
                 NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
+            }
+
+            if (m_DamageReceiver)
+            {
+                m_DamageReceiver.damageReceived -= ReceiveHP;
+                m_DamageReceiver.collisionEntered -= CollisionEntered;
             }
         }
 
@@ -172,9 +194,11 @@ namespace BossRoom.Server
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
+
+                serverAnimationHandler.animator.SetTrigger("HitReact1");
             }
 
-            NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
+            NetState.HitPoints = Mathf.Min(NetState.CharacterClass.BaseHP.Value, NetState.HitPoints+HP);
 
             if( m_AIBrain != null )
             {
@@ -224,7 +248,7 @@ namespace BossRoom.Server
         {
             if (NetState.LifeState == LifeState.Fainted)
             {
-                NetState.HitPoints = Mathf.Clamp(HP, 0, NetState.CharacterData.BaseHP.Value);
+                NetState.HitPoints = Mathf.Clamp(HP, 0, NetState.CharacterClass.BaseHP.Value);
                 NetState.NetworkLifeState.LifeState.Value = LifeState.Alive;
             }
         }
@@ -238,7 +262,7 @@ namespace BossRoom.Server
             }
         }
 
-        private void OnCollisionEnter(Collision collision)
+        private void CollisionEntered(Collision collision)
         {
             if (m_ActionPlayer != null)
             {
@@ -249,16 +273,6 @@ namespace BossRoom.Server
         private void OnStoppedChargingUp()
         {
             m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
-        }
-
-        public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()
-        {
-            return IDamageable.SpecialDamageFlags.None;
-        }
-
-        public bool IsDamageable()
-        {
-            return NetState.NetworkLifeState.LifeState.Value == LifeState.Alive;
         }
 
         /// <summary>

@@ -1,8 +1,4 @@
-using MLAPI;
-using MLAPI.Spawning;
-using UnityEngine;
-
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Causes the character to become hidden to enemies and other players. Notes:
@@ -18,6 +14,8 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
             return true;
@@ -41,6 +39,11 @@ namespace BossRoom.Server
 
         public override void Cancel()
         {
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+            }
+
             EndStealth();
         }
 

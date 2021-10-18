@@ -1,9 +1,8 @@
-using MLAPI;
-using MLAPI.Spawning;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class ReviveAction : Action
     {
@@ -24,7 +23,8 @@ namespace BossRoom.Server
 
             var targetNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
             m_TargetCharacter = targetNetworkObject.GetComponent<ServerCharacter>();
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
 
             return true;
         }
@@ -48,8 +48,15 @@ namespace BossRoom.Server
                 }
             }
 
-
             return true;
+        }
+
+        public override void Cancel()
+        {
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+            }
         }
     }
 }

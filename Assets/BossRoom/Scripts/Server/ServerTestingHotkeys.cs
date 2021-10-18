@@ -1,7 +1,8 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Provides various special commands that the Host can use while developing and
@@ -46,17 +47,16 @@ namespace BossRoom.Server
             if (m_SpawnEnemyKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnEnemyKeyCode))
             {
                 var newEnemy = Instantiate(m_EnemyPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, null, true);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
             }
             if (m_SpawnBossKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnBossKeyCode))
             {
                 var newEnemy = Instantiate(m_BossPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, null, true);
+                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
             }
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
-                GameStateRelay.SetRelayObject(false); // indicate to the post-game screen that the game was lost
-                NetworkManager.SceneManager.SwitchScene("PostGame");
+                NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
             }
         }
     }

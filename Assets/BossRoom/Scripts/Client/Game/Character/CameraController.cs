@@ -2,7 +2,7 @@ using Cinemachine;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     public class CameraController : MonoBehaviour
     {
@@ -20,7 +20,7 @@ namespace BossRoom.Visual
 
             if (m_MainCamera)
             {
-                // camera body / aim 
+                // camera body / aim
                 m_MainCamera.Follow = transform;
                 m_MainCamera.LookAt = transform;
                 // default rotation / zoom

@@ -1,9 +1,9 @@
 using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
-    /// This script randomly varies a light source to create a flickering effect. 
+    /// This script randomly varies a light source to create a flickering effect.
     /// </summary>
     public class RandomizedLight : MonoBehaviour
     {
@@ -22,9 +22,9 @@ namespace BossRoom.Visual
         [Range(1, 50)]
         public int m_Smoothing = 5;
 
-        private int[] m_RingBuffer;   //a buffer full of noise ranging from min to max. 
-        private int m_RingSum;        //the sum of all the values in the current ring buffer. 
-        private int m_RingIndex;      //the current index of the buffer. 
+        private int[] m_RingBuffer;   //a buffer full of noise ranging from min to max.
+        private int m_RingSum;        //the sum of all the values in the current ring buffer.
+        private int m_RingIndex;      //the current index of the buffer.
 
         // Start is called before the first frame update
         void Start()

@@ -1,7 +1,6 @@
 using System;
-using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class EmoteAction : Action
     {
@@ -11,7 +10,7 @@ namespace BossRoom.Server
 
         public override bool Start()
         {
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
             return false;
         }
 
@@ -19,6 +18,14 @@ namespace BossRoom.Server
         {
             // since we return false at Start(), this method should not execute
             throw new InvalidOperationException("No logic defined.");
+        }
+
+        public override void Cancel()
+        {
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+            }
         }
     }
 }

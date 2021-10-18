@@ -49,6 +49,7 @@ MonoBehaviour:
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &3565665953789623675
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -73,36 +74,49 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eca1f4b442326cc4d9be3975746b8cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_InSceneCharacter: {fileID: 0}
-  m_InSceneCharacterAnimator: {fileID: 0}
   m_AnimationTriggerOnCharSelect: BeginRevive
   m_AnimationTriggerOnCharChosen: BeginRevive
-  m_PlayerSeats: []
+  m_PlayerSeats:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   m_IdentifiersForEachPlayerNumber:
-  - Indicator: {fileID: 7073677062034491875, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 4efd4bc875cf78440a2bba2df426df59, type: 3}
     Color: {r: 1, g: 0.9607843, b: 0.03529412, a: 1}
-  - Indicator: {fileID: 2282546892015797016, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: eb78c7426de84ba4fb581a39bd47e1ea, type: 3}
     Color: {r: 1, g: 0.25490198, b: 0.25882354, a: 1}
-  - Indicator: {fileID: -6047367336175053643, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 9f3c077482954fd47ac14f226b754aa4, type: 3}
     Color: {r: 0.40392157, g: 0.6901961, b: 1, a: 1}
-  - Indicator: {fileID: -1584123350094214546, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 354c9edfa39e18f4a8b4bbeab8afa08b, type: 3}
     Color: {r: 0, g: 1, b: 0.3882353, a: 1}
-  - Indicator: {fileID: -2491859787077907965, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 96e799a96c02bea4bb1664c70d61a7fa, type: 3}
     Color: {r: 0.5882353, g: 0.03137255, b: 0.99215686, a: 1}
-  - Indicator: {fileID: -7344767057168477063, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 9e74ea5f2c75a624e9d29ced68c1faa6, type: 3}
     Color: {r: 0, g: 0.72156864, b: 0.7137255, a: 1}
-  - Indicator: {fileID: -720397744737086521, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 4587568254b46b74382b2e5db4111e2e, type: 3}
     Color: {r: 0.99607843, g: 0.6745098, b: 0.03137255, a: 1}
-  - Indicator: {fileID: 8070130267694257472, guid: 6e827080c734678449d9b9a2b63ed6bd, type: 3}
+  - Indicator: {fileID: 21300000, guid: 5e0531f7cad04b346bf05685f3b9a846, type: 3}
     Color: {r: 0.19215687, g: 0.03137255, b: 0.9882353, a: 1}
   m_NumPlayersText: {fileID: 0}
-  m_UIElementsForNoSeatChosen: []
-  m_UIElementsForSeatChosen: []
-  m_UIElementsForLobbyEnding: []
-  m_UIElementsForFatalError: []
+  m_UIElementsForNoSeatChosen:
+  - {fileID: 0}
+  - {fileID: 0}
+  m_UIElementsForSeatChosen:
+  - {fileID: 0}
+  - {fileID: 0}
+  m_UIElementsForLobbyEnding:
+  - {fileID: 0}
+  m_UIElementsForFatalError:
+  - {fileID: 0}
   m_ClassInfoBox: {fileID: 0}
   m_FatalLobbyErrorText: {fileID: 0}
   m_FatalErrorLobbyFullMsg: 'Error: lobby is full! You cannot play.'
+  m_CharacterGraphicsParent: {fileID: 0}
 --- !u!114 &3565665953789623673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,20 +129,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b117c7cd3ae70e458a5b755a4096609, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LobbySeatConfigurations:
-  - Class: 0
-    CharacterArtIdx: 1
-  - Class: 0
-    CharacterArtIdx: 0
-  - Class: 1
-    CharacterArtIdx: 3
-  - Class: 1
-    CharacterArtIdx: 2
-  - Class: 2
-    CharacterArtIdx: 5
-  - Class: 2
-    CharacterArtIdx: 4
-  - Class: 3
-    CharacterArtIdx: 7
-  - Class: 3
-    CharacterArtIdx: 6
+  AvatarConfiguration:
+  - {fileID: 11400000, guid: 20beed451a65c364eb413c7ef6ebb8fa, type: 2}
+  - {fileID: 11400000, guid: 732834deb1e677541bd1c2aef937f608, type: 2}
+  - {fileID: 11400000, guid: f3963f718ed4cea40b8f6e9e4a3dd80e, type: 2}
+  - {fileID: 11400000, guid: da340c65b28e6904a8e89b5a20674ecd, type: 2}
+  - {fileID: 11400000, guid: 237e099f90346e941af744f402a5bdd6, type: 2}
+  - {fileID: 11400000, guid: f49fc0646d4e9554f88a31ac496afd19, type: 2}
+  - {fileID: 11400000, guid: 70d299733c76b0649852336624091fca, type: 2}
+  - {fileID: 11400000, guid: 9cc69a593b6ff1b4b95bf7330ec5ab46, type: 2}

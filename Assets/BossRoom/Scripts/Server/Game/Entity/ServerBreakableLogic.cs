@@ -1,7 +1,7 @@
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// This script handles the logic for a simple "single-shot" breakable object like a pot, or

@@ -1,8 +1,7 @@
-using MLAPI.Serialization;
 using System;
 using UnityEngine;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Data description of a single Action, including the information to visualize it (animations etc), and the information

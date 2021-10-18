@@ -1,13 +1,12 @@
 using System.Collections.Generic;
-using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Graphics for the rogue's StealthModeAction. Note that this is only part of the visual-effects for this action!
     /// The ClientCharacterVisualization is also involved: it hides the actual character model from other players.
     /// That means our job here is just to:
-    /// 
+    ///
     /// - play animations
     /// - show a particle effect, but only for the player that owns this character! (Because the other players can't see
     ///   the character, and showing a particle effect where they're standing would be a dead giveaway.)
@@ -24,13 +23,6 @@ namespace BossRoom.Visual
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
         public StealthModeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
-
-        public override bool Start()
-        {
-            base.Start();
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
-            return true;
-        }
 
         public override bool Update()
         {
@@ -54,11 +46,6 @@ namespace BossRoom.Visual
                         graphic.Shutdown();
                     }
                 }
-            }
-
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
             }
         }
     }

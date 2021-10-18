@@ -1,11 +1,10 @@
 using System.Collections.Generic;
-using UnityEngine;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// This is a companion class to ClientCharacterVisualization that is specifically responsible for visualizing Actions. Action visualizations have lifetimes
-    /// and ongoing state, making this class closely analogous in spirit to the BossRoom.Server.ActionPlayer class.
+    /// and ongoing state, making this class closely analogous in spirit to the Unity.Multiplayer.Samples.BossRoom.Server.ActionPlayer class.
     /// </summary>
     public class ActionVisualization
     {
@@ -13,7 +12,7 @@ namespace BossRoom.Visual
 
         /// <summary>
         /// Don't let anticipated actionFXs persist longer than this. This is a safeguard against scenarios
-        /// where we never get a confirmed action for an action we anticipated. 
+        /// where we never get a confirmed action for an action we anticipated.
         /// </summary>
         private const float k_AnticipationTimeoutSeconds = 1;
 
@@ -36,7 +35,7 @@ namespace BossRoom.Visual
                 bool timedOut = action.Anticipated && action.TimeRunning >= k_AnticipationTimeoutSeconds;
                 if (!keepGoing || timeExpired || timedOut)
                 {
-                    if (timedOut) { action.Cancel(); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead. 
+                    if (timedOut) { action.Cancel(); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
                     else { action.End(); }
 
                     m_PlayingActions.RemoveAt(i);
@@ -44,7 +43,7 @@ namespace BossRoom.Visual
             }
         }
 
-        //helper wrapper for a FindIndex call on m_PlayingActions. 
+        //helper wrapper for a FindIndex call on m_PlayingActions.
         private int FindAction(ActionType action, bool anticipatedOnly )
         {
             return m_PlayingActions.FindIndex(a => a.Description.ActionTypeEnum == action && (!anticipatedOnly || a.Anticipated));
@@ -67,7 +66,7 @@ namespace BossRoom.Visual
         }
 
         /// <summary>
-        /// Called on the client that owns the Character when the player triggers an action. This allows actions to immediately start playing feedback. 
+        /// Called on the client that owns the Character when the player triggers an action. This allows actions to immediately start playing feedback.
         /// </summary>
         /// <remarks>
         ///
@@ -76,7 +75,7 @@ namespace BossRoom.Visual
         /// to only see feedback for your input after a server-client roundtrip. Somewhere over 200ms of round-trip latency, this starts to feel oppressively sluggish.
         /// To combat this, you can play visual effects immediately. For example, MeleeActionFX plays both its weapon swing and applies a hit react to the target,
         /// without waiting to hear from the server. This can lead to discrepancies when the server doesn't think the target was hit, but on the net, will feel
-        /// more responsive. 
+        /// more responsive.
         ///
         /// An important concept of Action Anticipation is that it is opportunistic--it doesn't make any strong guarantees. You don't get an anticipated
         /// action animation if you are already animating in some way, as one example. Another complexity is that you don't know if the server will actually
@@ -90,11 +89,11 @@ namespace BossRoom.Visual
         /// that, if you don't have a good way to implement an Anticipation for your action, you don't have to do anything. In this case, that action will play
         /// "normally" (with visual feedback starting when the server's action broadcast reaches the client). Every action type will have its own particular set of
         /// problems to solve to sell the anticipation effect. For example, in this demo, the mage base attack (FXProjectileTargetedActionFX) just plays the attack animation
-        /// anticipatively, but it could be revised to create and drive the mage bolt effect as well--leaving only damage to arrive in true server time. 
+        /// anticipatively, but it could be revised to create and drive the mage bolt effect as well--leaving only damage to arrive in true server time.
         ///
         /// How to implement your own Anticipation logic:
-        ///   1. Isolate the visual feedback you want play anticipatively in a private helper method on your ActionFX, like "PlayAttackAnim". 
-        ///   2. Override ActionFX.AnticipateAction. Be sure to call base.AnticipateAction, as well as play your visual logic (like PlayAttackAnim). 
+        ///   1. Isolate the visual feedback you want play anticipatively in a private helper method on your ActionFX, like "PlayAttackAnim".
+        ///   2. Override ActionFX.AnticipateAction. Be sure to call base.AnticipateAction, as well as play your visual logic (like PlayAttackAnim).
         ///   3. In your Start method, be sure to call base.Start (note that this will reset the "Anticipated" field to false).
         ///   4. In Start, check if the action was Anticipated. If NOT, then play call your PlayAttackAnim method.
         ///

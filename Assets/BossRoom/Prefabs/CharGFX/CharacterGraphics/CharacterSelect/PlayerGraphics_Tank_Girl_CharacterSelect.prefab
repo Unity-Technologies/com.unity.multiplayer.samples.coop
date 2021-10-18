@@ -1,0 +1,82 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1001 &6609733054084596244
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1398117498558775680, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_AudioSources.Array.data[0]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 1398117498558775680, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_AudioSources.Array.data[1]
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 2477293047135460426, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_CharacterSwapper
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_RootOrder
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8416010035835504957, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8511200453111303230, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 9187479739242730375, guid: b87361d084178644cab2510090411db8, type: 3}
+      propertyPath: m_Name
+      value: PlayerGraphics_Tank_Girl_CharacterSelect
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 4924395648769960513, guid: b87361d084178644cab2510090411db8, type: 3}
+    - {fileID: 4249577192118177014, guid: b87361d084178644cab2510090411db8, type: 3}
+    - {fileID: 4459003548343045854, guid: b87361d084178644cab2510090411db8, type: 3}
+    - {fileID: 78005936613222496, guid: b87361d084178644cab2510090411db8, type: 3}
+    - {fileID: 7136047019496992876, guid: b87361d084178644cab2510090411db8, type: 3}
+    - {fileID: 1398117498558775680, guid: b87361d084178644cab2510090411db8, type: 3}
+    - {fileID: 2477293047135460426, guid: b87361d084178644cab2510090411db8, type: 3}
+  m_SourcePrefab: {fileID: 100100000, guid: b87361d084178644cab2510090411db8, type: 3}

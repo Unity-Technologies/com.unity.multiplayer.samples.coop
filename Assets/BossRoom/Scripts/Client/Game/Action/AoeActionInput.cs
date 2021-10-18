@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// This class is the first step in AoE ability. It will update the initial input visuals' position and will be in charge
@@ -19,8 +19,6 @@ namespace BossRoom.Visual
         GameObject m_OutOfRangeVisualization;
 
         Camera m_Camera;
-
-        Vector3 m_Origin;
 
         //The general action system works on MouseDown events (to support Charged Actions), but that means that if we only wait for
         //a mouse up event internally, we will fire as part of the same UI click that started the action input (meaning the user would
@@ -40,7 +38,6 @@ namespace BossRoom.Visual
             var radius = GameDataSource.Instance.ActionDataByType[m_ActionType].Radius;
             transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
             m_Camera = Camera.main;
-            m_Origin = m_PlayerOwner.transform.position;
         }
 
         void Update()

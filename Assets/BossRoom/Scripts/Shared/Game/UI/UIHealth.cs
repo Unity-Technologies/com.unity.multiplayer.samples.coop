@@ -1,8 +1,8 @@
-using MLAPI.NetworkVariable;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// UI object that visually represents an object's health. Visuals are updated when NetworkVariable is modified.
@@ -12,9 +12,9 @@ namespace BossRoom
         [SerializeField]
         Slider m_HitPointsSlider;
 
-        NetworkVariableInt m_NetworkedHealth;
+        NetworkVariable<int> m_NetworkedHealth;
 
-        public void Initialize(NetworkVariableInt networkedHealth, int maxValue)
+        public void Initialize(NetworkVariable<int> networkedHealth, int maxValue)
         {
             m_NetworkedHealth = networkedHealth;
 

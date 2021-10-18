@@ -8,7 +8,7 @@ using UnityEditor;
 using UnityEditor.Animations;
 #endif
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// Instantiates and maintains graphics prefabs and sound effects. They're triggered by entering
@@ -68,9 +68,9 @@ namespace BossRoom.Visual
         internal AudioSource[] m_AudioSources;
 
         /// <summary>
-        /// cached reference to our required Animator. (Animator MUST be on the same
-        /// GameObject as us so the AnimatorNodeHook can dispatch events to us correctly.)
+        /// cached reference to our Animator.
         /// </summary>
+        [SerializeField]
         private Animator m_Animator;
 
         /// <summary>
@@ -78,11 +78,24 @@ namespace BossRoom.Visual
         /// </summary>
         private HashSet<int> m_ActiveNodes = new HashSet<int>();
 
+        [SerializeField]
+        ClientCharacterVisualization m_ClientCharacterVisualization;
+
         private void Awake()
         {
-            m_Animator = GetComponent<Animator>();
-            Debug.Assert(m_Animator, "AnimatorTriggeredSpecialFX needs to be on the same GameObject as the Animator it works with!", gameObject);
             Debug.Assert(m_AudioSources != null && m_AudioSources.Length > 0, "No AudioSource plugged into AnimatorTriggeredSpecialFX!", gameObject);
+
+            // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
+            // following is a temporary workaround. Future refactorings will enable this functionality.
+            if (!m_Animator && m_ClientCharacterVisualization)
+            {
+                m_ClientCharacterVisualization.animatorSet += SetAnimator;
+            }
+        }
+
+        void SetAnimator(Animator animator)
+        {
+            m_Animator = animator;
         }
 
         public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -117,7 +130,7 @@ namespace BossRoom.Visual
             if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
                 yield break;
 
-            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_Animator.transform;
+            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_ClientCharacterVisualization.transform;
             var instantiatedFX = Instantiate(eventInfo.m_Prefab, parent);
             instantiatedFX.transform.localPosition += eventInfo.m_PrefabParentOffset;
 
@@ -231,7 +244,7 @@ namespace BossRoom.Visual
     /// </summary>
     [CustomEditor(typeof(AnimatorTriggeredSpecialFX))]
     [CanEditMultipleObjects]
-    public class AnimatorTriggeredSpecialFXEditor : Editor
+    public class AnimatorTriggeredSpecialFXEditor : UnityEditor.Editor
     {
         private GUIStyle m_ErrorStyle = null;
         public override void OnInspectorGUI()
@@ -283,7 +296,7 @@ namespace BossRoom.Visual
             Animator animator = fx.GetComponent<Animator>();
             if (!animator)
             {
-                // should be impossible because we explicitly RequireComponent the Animator 
+                // should be impossible because we explicitly RequireComponent the Animator
                 EditorUtility.DisplayDialog("Error", "No Animator found on this GameObject!?", "OK");
                 return;
             }
@@ -359,7 +372,7 @@ namespace BossRoom.Visual
             Debug.Assert(animator.runtimeAnimatorController); // already pre-checked
 
             // we need the AnimatorController, but there's no direct way to retrieve it from the Animator, because
-            // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why 
+            // at runtime the actual AnimatorController doesn't exist! Only a runtime representation does. (That's why
             // AnimatorController is in the UnityEditor namespace.) But this *isn't* runtime, so when we retrieve the
             // runtime controller, it will actually be a reference to our real AnimatorController.
             AnimatorController controller = animator.runtimeAnimatorController as AnimatorController;

@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
-using MLAPI;
-using MLAPI.Spawning;
 
-namespace BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// The TargetActionFX runs persistently on the local player, and will attach target reticules to the player's active target.
@@ -99,7 +96,7 @@ namespace BossRoom.Visual
             }
 
             bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;
-            bool myself_isnpc = m_ParentState.CharacterData.IsNpc;
+            bool myself_isnpc = m_ParentState.CharacterClass.IsNpc;
             bool hostile = target_isnpc != myself_isnpc;
 
             m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? m_Parent.ReticuleHostileMat : m_Parent.ReticuleFriendlyMat;

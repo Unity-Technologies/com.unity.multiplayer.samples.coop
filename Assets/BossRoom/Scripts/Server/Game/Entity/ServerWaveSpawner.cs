@@ -1,10 +1,9 @@
-using MLAPI;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using MLAPI.Connection;
+using Unity.Netcode;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Component responsible for spawning prefab clones in waves on the server.
@@ -225,9 +224,8 @@ namespace BossRoom.Server
             var clone = Instantiate(m_NetworkedPrefab, m_SpawnPositions[posIdx].position, m_SpawnPositions[posIdx].rotation);
             if (!clone.IsSpawned)
             {
-                clone.Spawn(null, true);
+                clone.Spawn(true);
             }
-
             if (m_SpawnedEntityDetectDistance > -1)
             {
                 // need to override the spawned creature's detection range (if they even have a detection range!)
@@ -291,7 +289,7 @@ namespace BossRoom.Server
                     continue;
                 }
 
-                var playerPosition = serverCharacter.transform.position;
+                var playerPosition = serverCharacter.physicsWrapper.Transform.position;
                 var direction = playerPosition - spawnerPosition;
 
                 if (direction.sqrMagnitude > squaredProximityDistance)
