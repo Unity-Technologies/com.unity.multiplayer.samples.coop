@@ -11,7 +11,7 @@ Our intention is that you can use everything in this project as a starting point
 
 > __IMPORTANT__:
 > - Boss Room supports those platforms supported by Netcode (Windows and Mac).
-> - Boss Room is compatible with Unity 2020.3 and later.
+> - Boss Room is compatible with the latest Unity LTS version.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
 
 

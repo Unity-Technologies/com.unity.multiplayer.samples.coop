@@ -19,10 +19,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Start()
         {
-            if (!Anticipated)
-            {
-                PlayStartAnim();
-            }
 
             base.Start();
 
@@ -45,24 +41,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_Dashed) { return ActionConclusion.Stop; } // we're done!
 
             return ActionConclusion.Continue;
-        }
-
-        public override void End()
-        {
-            // Anim2 contains the name of the end-loop-sequence trigger
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
-            }
-        }
-
-        public override void Cancel()
-        {
-            // OtherAnimatorVariable contains the name of the cancelation trigger
-            if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.OtherAnimatorVariable);
-            }
         }
     }
 }

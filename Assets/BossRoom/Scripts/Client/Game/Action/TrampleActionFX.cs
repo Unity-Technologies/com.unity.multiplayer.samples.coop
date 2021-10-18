@@ -34,22 +34,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </remarks>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public override bool Start()
-        {
-            base.Start();
-            // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.ResetTrigger(Description.Anim2);
-            }
-            // start the animation sequence!
-            if (!string.IsNullOrEmpty(Description.Anim))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim);
-            }
-            return true;
-        }
-
         public override bool Update()
         {
             float age = Time.time - TimeStarted;
@@ -74,11 +58,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
             }
             m_SpawnedGraphics = null;
-
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
-            }
         }
     }
 }

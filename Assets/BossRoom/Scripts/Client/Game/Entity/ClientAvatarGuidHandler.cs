@@ -15,9 +15,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         ClientCharacter m_ClientCharacter;
 
+		[SerializeField]
+        Animator m_GraphicsAnimator;
+
         [SerializeField]
         NetworkAvatarGuidState m_NetworkAvatarGuidState;
 
+
+        public Animator graphicsAnimator => m_GraphicsAnimator;
         public event Action<GameObject> AvatarGraphicsSpawned;
 
         public override void OnNetworkSpawn()
@@ -36,9 +41,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             // spawn avatar graphics GameObject
-            var graphicsGameObject = Instantiate(m_NetworkAvatarGuidState.RegisteredAvatar.Graphics, transform);
+            var graphicsGameObject = Instantiate(m_NetworkAvatarGuidState.RegisteredAvatar.Graphics, m_GraphicsAnimator.transform);
 
             m_ClientCharacter.SetCharacterVisualization(graphicsGameObject.GetComponent<ClientCharacterVisualization>());
+
+            m_GraphicsAnimator.Rebind();
+            m_GraphicsAnimator.Update(0f);
 
             AvatarGraphicsSpawned?.Invoke(graphicsGameObject);
         }
