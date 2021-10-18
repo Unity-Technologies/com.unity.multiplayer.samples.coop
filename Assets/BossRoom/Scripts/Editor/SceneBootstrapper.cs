@@ -6,7 +6,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 {
     /// <summary>
     /// Class that permits auto-loading a bootstrap scene when the editor switches play state. This class is
-    /// initialized when Unity loads and when scripts are recompiled. This is to be able to subscribe to
+    /// initialized when Unity is opened and when scripts are recompiled. This is to be able to subscribe to
     /// EditorApplication's playModeStateChanged event, which is when we wish to open a new scene.
     /// </summary>
     [InitializeOnLoad]
@@ -18,6 +18,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         const string k_LoadBootstrapSceneOnPlay = "Boss Room/Load Bootstrap Scene On Play";
         const string k_DoNotLoadBootstrapSceneOnPlay = "Boss Room/Don't Load Bootstrap Scene On Play";
+
+        static bool s_StoppingAndStarting;
 
         static string BootstrapScene
         {
@@ -87,6 +89,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                 return;
             }
 
+            if (s_StoppingAndStarting)
+            {
+                return;
+            }
+
             if (obj == PlayModeStateChange.ExitingEditMode)
             {
                 // cache previous scene so we return to this scene after play session, if possible
@@ -99,8 +106,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                     if (!string.IsNullOrEmpty(BootstrapScene) &&
                         System.Array.Exists(EditorBuildSettings.scenes, scene => scene.path == BootstrapScene))
                     {
-                        // scene is included in build settings; open it
-                        EditorSceneManager.OpenScene(BootstrapScene);
+                        var activeScene = EditorSceneManager.GetActiveScene();
+                        s_StoppingAndStarting = activeScene.path == string.Empty || !BootstrapScene.Contains(activeScene.path);
+
+                        // only if we are in a blank empty scene or if the active scene is not already BootstrapScene
+                        if (s_StoppingAndStarting)
+                        {
+                            s_StoppingAndStarting = true;
+                            EditorApplication.ExitPlaymode();
+
+                            // scene is included in build settings; open it
+                            EditorSceneManager.OpenScene(BootstrapScene);
+
+                            EditorApplication.EnterPlaymode();
+                            s_StoppingAndStarting = false;
+
+                        }
                     }
                 }
                 else
