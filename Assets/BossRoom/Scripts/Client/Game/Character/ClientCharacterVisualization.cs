@@ -241,7 +241,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            // NetworkTransform is interpolated, updating visual using authoritative value here
+            // NetworkTransform is interpolated - we can just apply it's position value to our visual object
             transform.position = m_PhysicsWrapper.Transform.position;
             transform.rotation = m_PhysicsWrapper.Transform.rotation;
 
