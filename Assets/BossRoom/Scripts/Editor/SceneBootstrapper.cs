@@ -9,6 +9,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
     /// initialized when Unity is opened and when scripts are recompiled. This is to be able to subscribe to
     /// EditorApplication's playModeStateChanged event, which is when we wish to open a new scene.
     /// </summary>
+    /// <remarks>
+    /// A critical edge case scenario regarding NetworkManager is accounted for here.
+    /// A NetworkObject's GlobalObjectIdHash value is currently generated in OnValidate() which is invoked during a
+    /// build and when the asset is loaded/viewed in the editor.
+    /// If we were to manually open Bootstrap scene via EditorSceneManager.OpenScene(...) as the editor is exiting play
+    /// mode, Bootstrap scene would be entering play mode within the editor prior to having loaded any assets, meaning
+    /// NetworkManager itself has no entry within the AssetDatabase cache. As a result of this, any referenced Network
+    /// Prefabs wouldn't have any entry either.
+    /// To account for this necessary AssetDatabase step, whenever we're redirecting from a new scene, or a scene
+    /// existing in our EditorBuildSettings, we forcefully stop the editor, open Bootstrap scene, and re-enter play
+    /// mode. This provides the editor the chance to create AssetDatabase cache entries for the Network Prefabs assigned
+    /// to the NetworkManager.
+    /// If we are entering play mode directly from Bootstrap scene, no additional steps need to be taken and the scene
+    /// is loaded normally.
+    /// </remarks>
     [InitializeOnLoad]
     public class SceneBootstrapper
     {
@@ -107,9 +122,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                         System.Array.Exists(EditorBuildSettings.scenes, scene => scene.path == BootstrapScene))
                     {
                         var activeScene = EditorSceneManager.GetActiveScene();
-                        s_StoppingAndStarting = activeScene.path == string.Empty || !BootstrapScene.Contains(activeScene.path);
 
-                        // only if we are in a blank empty scene or if the active scene is not already BootstrapScene
+                        s_StoppingAndStarting = activeScene.path == string.Empty ||
+                            !BootstrapScene.Contains(activeScene.path);
+
+                        // we only manually inject Bootstrap scene if we are in a blank empty scene,
+                        // or if the active scene is not already BootstrapScene
                         if (s_StoppingAndStarting)
                         {
                             s_StoppingAndStarting = true;
