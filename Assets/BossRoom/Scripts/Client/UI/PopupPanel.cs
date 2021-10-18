@@ -1,10 +1,15 @@
 using System;
+using System.Collections.Generic;
 using System.Text;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
 using TMPro;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using Unity.Services.Relay;
+using UnityRegion = Unity.Services.Relay.Models.Region;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -225,7 +230,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Called when the user selects a different online mode from the dropdown.
         /// </summary>
-        private void OnOnlineModeDropdownChanged(OnlineMode value)
+        private async void OnOnlineModeDropdownChanged(OnlineMode value)
         {
             // activate this so that it is always activated unless entering as relay host
             m_InputField.gameObject.SetActive(true);
@@ -277,6 +282,47 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else if (value == OnlineMode.UnityRelay)
             {
+                await UnityServices.InitializeAsync();
+                if (!AuthenticationService.Instance.IsSignedIn)
+                {
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                    var playerId = AuthenticationService.Instance.PlayerId;
+                    Debug.Log(playerId);
+                }
+                var task = Relay.Instance.ListRegionsAsync();
+                RelayServiceException caughtException = null;
+                try
+                {
+                    await task;
+                }
+                catch (RelayServiceException e)
+                {
+                    caughtException = e;
+                }
+
+                if (task.IsFaulted || caughtException != null)
+                {
+                    Debug.LogException(task.Exception);
+                    Debug.LogException(caughtException);
+
+                    if (Application.isEditor)
+                    {
+                        // Error trying to get the list of available regions, something is not setup correctly
+                        SetupNotifierDisplay(
+                            "Unity Relay error!", "Something went wrong trying to reach Unity Relay. Please follow the instructions in the readme (<ProjectRoot>/Documents/UnityRelay/Readme.md) " +
+                                                          "to setup Unity Relay and use relay mode.", false, true);
+                    }
+                    else
+                    {
+                        // If there is no photon app id set tell the user they need to install
+                        SetupNotifierDisplay(
+                            "Unity Relay error!", "Something went wrong trying to reach Unity Relay. It needs to be setup in the Unity Editor for this project " +
+                                                       "by following the Unity Relay guide, then rebuild the project and distribute it.", false, true);
+                    }
+
+                    return;
+                }
+
                 m_MainText.text = m_UnityRelayMainText;
                 if (m_EnterAsHost)
                 {
