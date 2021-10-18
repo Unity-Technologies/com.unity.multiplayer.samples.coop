@@ -1,18 +1,11 @@
 {
   "dependencies": {
-    "com.mlapi.contrib.transport.litenetlib": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.litenetlib#develop",
+    "com.community.netcode.transport.photon-realtime": {
+      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.community.netcode.transport.photon-realtime#develop",
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "5c7e201f3c52d4d57a688f64947bfff967737c75"
-    },
-    "com.mlapi.contrib.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.mlapi.contrib.transport.photon-realtime#develop",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "5c7e201f3c52d4d57a688f64947bfff967737c75"
+      "hash": "0ab8d25f5bd0e4861a43641ba6fb328e55c35e15"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -141,10 +134,10 @@
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.netcode.gameobjects": "0.0.1-preview.1",
-        "com.unity.transport": "1.0.0-pre.4"
+        "com.unity.netcode.gameobjects": "1.0.0-pre.1",
+        "com.unity.transport": "1.0.0-pre.6"
       },
-      "hash": "46dfe4a2fbbc0656d7e4bfef2474dddf7beb2168"
+      "hash": "18cd3f20ab97bfa6ecdff864bc9977bcd5d62570"
     },
     "com.unity.netcode.gameobjects": {
       "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
@@ -153,13 +146,13 @@
       "dependencies": {
         "com.unity.modules.ai": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
-        "com.unity.nuget.mono-cecil": "1.10.1-preview.1",
+        "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.collections": "1.0.0-pre.5"
       },
-      "hash": "46dfe4a2fbbc0656d7e4bfef2474dddf7beb2168"
+      "hash": "18cd3f20ab97bfa6ecdff864bc9977bcd5d62570"
     },
     "com.unity.nuget.mono-cecil": {
-      "version": "1.10.1-preview.1",
+      "version": "1.10.1",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -257,7 +250,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "1.0.0-pre.4",
+      "version": "1.0.0-pre.6",
       "depth": 1,
       "source": "registry",
       "dependencies": {

@@ -41,8 +41,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         }
 
-        private void OnDestroy()
+        public override void OnDestroy()
         {
+            base.OnDestroy();
             if (m_ClientSender)
             {
                 m_ClientSender.ClientMoveEvent -= OnClientMove;

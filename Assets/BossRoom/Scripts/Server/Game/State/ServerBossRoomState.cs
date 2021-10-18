@@ -61,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_NetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
                 m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
 
-                m_NetPortal.ClientSceneChanged += OnClientSceneChanged;
+                NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
 
                 DoInitialSpawnIfPossible();
             }
@@ -81,8 +81,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return false;
         }
 
-        private void OnClientSceneChanged(ulong clientId, int sceneIndex)
+        public void OnClientSceneChanged(SceneEvent sceneEvent)
         {
+            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
+
+            var clientId = sceneEvent.ClientId;
+            var sceneIndex = SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex;
             int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
             if (sceneIndex == serverScene)
             {
@@ -117,7 +121,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (m_NetPortal != null)
             {
-                m_NetPortal.ClientSceneChanged -= OnClientSceneChanged;
+                NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
             }
         }
 
@@ -176,12 +180,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // if joining late, assign a random character to the persistent player
             if (lateJoin)
             {
-                persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value =
                     m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
             }
 
-            networkAvatarGuidState.AvatarGuidArray.Value =
-                persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value;
+            networkAvatarGuidState.AvatarGuid.Value =
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value;
 
             // pass name from persistent player to avatar
             if (newPlayer.TryGetComponent(out NetworkNameState networkNameState))

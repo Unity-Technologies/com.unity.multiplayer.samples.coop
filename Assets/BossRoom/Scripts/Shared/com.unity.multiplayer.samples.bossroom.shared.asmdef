@@ -3,13 +3,13 @@
     "rootNamespace": "",
     "references": [
         "Unity.Netcode.Runtime",
-        "Photon Realtime MLAPI Transport",
-        "LiteNetLib MLAPI Transport",
         "Unity.TextMeshPro",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
         "Unity.Services.Relay",
-        "Unity.Netcode.Adapter.UTP"
+        "Unity.Netcode.Adapter.UTP",
+        "Unity.Collections",
+        "Photon Realtime Transport for Netcode for GameObjects"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

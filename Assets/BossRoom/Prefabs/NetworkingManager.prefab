@@ -29,7 +29,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &5486862276979889515
 MonoBehaviour:
@@ -44,11 +44,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ProtocolType: 0
-  m_MessageBufferSize: 9999
-  m_ServerAddress: 127.0.0.1
-  m_ServerPort: 7777
-  m_RelayMaxPlayers: 10
-  m_RelayServer: https://relay-allocations.cloud.unity3d.com
+  m_MaximumPacketSize: 1400
+  m_MaxPacketQueueSize: 256
+  m_SendQueueBatchSize: 12000
+  ConnectionData:
+    Address: 127.0.0.1
+    Port: 7777
 --- !u!1 &409269880
 GameObject:
   m_ObjectHideFlags: 0
@@ -78,7 +79,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &409269882
 MonoBehaviour:
@@ -95,7 +96,7 @@ MonoBehaviour:
   m_NickName: 
   m_RoomName: 
   m_MaxPlayers: 16
-  m_ChannelIdCodesStartRange: 130
+  m_NetworkDeliveryEventCodesStartRange: 130
   m_AttachSupportLogger: 0
   m_BatchMode: 1
   m_SendQueueBatchSize: 8192
@@ -130,7 +131,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &503411709
 MonoBehaviour:
@@ -145,65 +146,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ProtocolType: 1
-  m_MessageBufferSize: 9999
-  m_ServerAddress: 127.0.0.1
-  m_ServerPort: 7777
-  m_RelayMaxPlayers: 10
-  m_RelayServer: https://relay-allocations.cloud.unity3d.com
---- !u!1 &3591499506183471245
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 5355783542964773244}
-  - component: {fileID: 6885944472713585796}
-  m_Layer: 0
-  m_Name: LiteNetLibTransport
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &5355783542964773244
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3591499506183471245}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6885944472713585796
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3591499506183471245}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db28424c2ae12f64da25c9ecccded6b1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Port: 7777
-  Address: 127.0.0.1
-  PingInterval: 1
-  DisconnectTimeout: 5
-  ReconnectDelay: 0.5
-  MaxConnectAttempts: 10
-  channels: []
-  MessageBufferSize: 5120
-  SimulatePacketLossChance: 0
-  SimulateMinLatency: 80
-  SimulateMaxLatency: 120
+  m_MaximumPacketSize: 1400
+  m_MaxPacketQueueSize: 256
+  m_SendQueueBatchSize: 32000
+  ConnectionData:
+    Address: 127.0.0.1
+    Port: 7777
 --- !u!1 &5436007408952557947
 GameObject:
   m_ObjectHideFlags: 0
@@ -233,7 +181,6 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 5355783542964773244}
   - {fileID: 409269881}
   - {fileID: 1861090270400447367}
   - {fileID: 347284043}
@@ -274,14 +221,6 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 5486862276979889515}
-    RegisteredScenes:
-    - MainMenu
-    - CharSelect
-    - BossRoom
-    - PostGame
-    - Startup
-    - 
-    AllowRuntimeSceneChanges: 1
     PlayerPrefab: {fileID: 4927145850774787080, guid: 1d3f5528d25661949890bcd7f47fe81a, type: 3}
     NetworkPrefabs:
     - Override: 0
@@ -324,16 +263,12 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
-    ReceiveTickrate: 0
-    NetworkTickIntervalSec: 0.05
-    MaxReceiveEventsPerTickRate: 1000
-    EventTickrate: 30
+    TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
     ConnectionData: 
     EnableTimeResync: 0
     TimeResyncInterval: 30
-    EnableNetworkVariable: 1
     EnsureNetworkVariableLengthSafety: 0
     EnableSceneManagement: 1
     ForceSamePrefabs: 0
@@ -341,7 +276,6 @@ MonoBehaviour:
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
-    EnableMessageBuffering: 1
     MessageBufferTimeout: 20
     EnableNetworkLogs: 1
 --- !u!1 &7311172147761373013
@@ -373,7 +307,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5436007408952557925}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &7738483995325753316
 MonoBehaviour:
@@ -393,10 +327,4 @@ MonoBehaviour:
   ConnectAddress: 127.0.0.1
   ConnectPort: 7777
   ServerListenPort: 7777
-  ServerWebsocketListenPort: 8887
-  SupportWebsocket: 0
-  Channels: []
-  UseMLAPIRelay: 0
-  MLAPIRelayAddress: 184.72.104.138
-  MLAPIRelayPort: 8888
   MessageSendMode: 0

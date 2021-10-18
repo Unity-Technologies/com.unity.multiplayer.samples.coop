@@ -5,12 +5,11 @@
         "Unity.Netcode.Runtime",
         "Unity.Multiplayer.Samples.BossRoom.Shared",
         "Cinemachine",
-        "Photon Realtime MLAPI Transport",
-        "LiteNetLib MLAPI Transport",
         "Unity.TextMeshPro",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
-        "Unity.Netcode.Adapter.UTP"
+        "Unity.Netcode.Adapter.UTP",
+        "Photon Realtime Transport for Netcode for GameObjects"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

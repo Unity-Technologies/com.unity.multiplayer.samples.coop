@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -76,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 // to help the clients visually keep track of who's in what seat, we'll "kick out" any other players
                 // who were also in that seat. (Those players didn't click "Ready!" fast enough, somebody else took their seat!)
-                for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
+                for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
                 {
                     if (CharSelectData.LobbyPlayers[i].SeatIdx == newSeatIdx && i != idx)
                     {
@@ -98,7 +99,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private int FindLobbyPlayerIdx(ulong clientId)
         {
-            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == clientId)
                     return i;
@@ -134,11 +135,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(playerInfo.ClientId);
 
-                if (playerNetworkObject &&
-                    playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+                if (playerNetworkObject && playerNetworkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
                 {
                     // pass avatar GUID to PersistentPlayer
-                    persistentPlayer.NetworkAvatarGuidState.AvatarGuidArray.Value =
+                    // it'd be great to simplify this with something like a NetworkScriptableObjects :(
+                    persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value =
                         CharSelectData.AvatarConfiguration[playerInfo.SeatIdx].Guid.ToNetworkGuid();
                 }
             }
@@ -181,7 +182,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void OnSceneEvent(SceneEvent sceneEvent)
         {
             // We need to filter out the event that are not a client has finished loading the scene
-            if (sceneEvent.SceneEventType != SceneEventData.SceneEventTypes.C2S_LoadComplete) return;
+            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
             // When the client finishes loading the Lobby Map, we will need to Seat it
             SeatNewPlayer(sceneEvent.ClientId);
         }
@@ -213,10 +214,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             int playerNum = GetAvailablePlayerNum();
             if (playerNum == -1)
             {
-                // we ran out of seats... there was no room!
-                CharSelectData.FatalLobbyErrorClientRpc(CharSelectData.FatalLobbyError.LobbyFull,
-                    new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new ulong[] { clientId } } });
-                return;
+                // Sanity check. We ran out of seats... there was no room!
+                throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerNum}");
             }
 
             string playerName = m_ServerNetPortal.GetPlayerName(clientId,playerNum);
@@ -226,7 +225,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void OnClientDisconnectCallback(ulong clientId)
         {
             // clear this client's PlayerNumber and any associated visuals (so other players know they're gone).
-            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == clientId)
                 {
