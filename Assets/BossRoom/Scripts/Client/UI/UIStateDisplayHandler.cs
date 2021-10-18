@@ -37,6 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         ClientCharacter m_ClientCharacter;
 
         ClientAvatarGuidHandler m_ClientAvatarGuidHandler;
+        private NetworkAvatarGuidState m_NetworkAvatarGuidState;
 
         [SerializeField]
         IntVariable m_BaseHP;
@@ -90,9 +91,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
             // if PC, find our graphics transform and update health through callbacks, if displayed
-            if (TryGetComponent(out m_ClientAvatarGuidHandler))
+            if (TryGetComponent(out m_ClientAvatarGuidHandler) && TryGetComponent(out m_NetworkAvatarGuidState))
             {
-                m_BaseHP = m_ClientAvatarGuidHandler.RegisteredAvatar.CharacterClass.BaseHP;
+                m_BaseHP = m_NetworkAvatarGuidState.RegisteredAvatar.CharacterClass.BaseHP;
 
                 if (m_ClientCharacter.ChildVizObject)
                 {
@@ -197,7 +198,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_TransformToTrack = graphicsGameObject.transform;
         }
 
-        void LateUpdate()
+        void Update()
         {
             if (m_UIStateActive && m_TransformToTrack)
             {
@@ -210,8 +211,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        void OnDestroy()
+        public override void OnDestroy()
         {
+            base.OnDestroy();
             if (m_UIState != null)
             {
                 Destroy(m_UIState.gameObject);

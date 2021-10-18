@@ -41,8 +41,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             RemovePhysicsWrapper();
         }
 
-        void OnDestroy()
+        public override void OnDestroy()
         {
+            base.OnDestroy();
             RemovePhysicsWrapper();
         }
 

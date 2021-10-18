@@ -1,8 +1,7 @@
 using System;
+using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.UI;
-using MLAPI.Transports.LiteNetLib;
-using MLAPI.Transports.PhotonRealtime;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine.Assertions;
@@ -27,13 +26,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                 switch (chosenTransport)
                 {
                     // adding this preprocessor directive check since LiteNetLib only injects latency in #DEBUG
-                    #if DEBUG
-                    case LiteNetLibTransport liteNetLibTransport:
-                        m_ArtificialLatencyEnabled = liteNetLibTransport.SimulatePacketLossChance > 0 ||
-                            liteNetLibTransport.SimulateMinLatency > 0 ||
-                            liteNetLibTransport.SimulateMaxLatency > 0;
-                        break;
-                    #endif
+                    // todo MTT-1426 do this for UTP
+                    // #if DEBUG
+                    // case LiteNetLibTransport liteNetLibTransport:
+                    //     m_ArtificialLatencyEnabled = liteNetLibTransport.SimulatePacketLossChance > 0 ||
+                    //         liteNetLibTransport.SimulateMinLatency > 0 ||
+                    //         liteNetLibTransport.SimulateMaxLatency > 0;
+                    //     break;
+                    // #endif
                     case UNetTransport unetTransport:
                     case PhotonRealtimeTransport photonTransport:
                     case UnityTransport UnityTransport:

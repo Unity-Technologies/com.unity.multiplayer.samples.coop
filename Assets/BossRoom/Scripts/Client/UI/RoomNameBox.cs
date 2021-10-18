@@ -1,5 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom;
-using MLAPI.Transports.PhotonRealtime;
+using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.Assertions;
 using TMPro;

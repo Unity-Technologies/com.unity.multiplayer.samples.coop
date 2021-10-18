@@ -1,3 +1,4 @@
+using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -14,7 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [SerializeField]
         UIHealth m_UIHealth;
 
-        public void DisplayName(NetworkVariableString networkedName)
+        public void DisplayName(NetworkVariable<FixedPlayerName> networkedName)
         {
             m_UIName.gameObject.SetActive(true);
             m_UIName.Initialize(networkedName);
