@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 using Photon.Realtime;
 using UnityEngine;
 using UnityEngine.UI;
@@ -282,28 +283,34 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else if (value == OnlineMode.UnityRelay)
             {
-                await UnityServices.InitializeAsync();
-                if (!AuthenticationService.Instance.IsSignedIn)
-                {
-                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                    var playerId = AuthenticationService.Instance.PlayerId;
-                    Debug.Log(playerId);
-                }
-                var task = Relay.Instance.ListRegionsAsync();
-                RelayServiceException caughtException = null;
+                Exception caughtException = null;
+                Task<List<UnityRegion>> task = null;
                 try
                 {
+                    await UnityServices.InitializeAsync();
+                    if (!AuthenticationService.Instance.IsSignedIn)
+                    {
+                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                        var playerId = AuthenticationService.Instance.PlayerId;
+                        Debug.Log(playerId);
+                    }
+
+                    // calling ListRegion to get a single light health check call. This isn't the best method for this, but is fine to use for now until we
+                    // get full QoS endpoints available. MTT-1483
+                    task = Relay.Instance.ListRegionsAsync();
+
                     await task;
                 }
-                catch (RelayServiceException e)
+                catch (RequestFailedException e)
                 {
                     caughtException = e;
                 }
 
-                if (task.IsFaulted || caughtException != null)
+                if (task == null || task.IsFaulted || caughtException != null)
                 {
-                    Debug.LogException(task.Exception);
-                    Debug.LogException(caughtException);
+
+                    if (caughtException != null) Debug.LogException(caughtException);
+                    if (task != null) Debug.LogException(task.Exception);
 
                     if (Application.isEditor)
                     {
