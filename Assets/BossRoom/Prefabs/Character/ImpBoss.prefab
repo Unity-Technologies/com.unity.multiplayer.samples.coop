@@ -19,7 +19,7 @@ MonoBehaviour:
   m_NetworkHealthState: {fileID: 848206395698055335}
   m_ClientCharacter: {fileID: 9189411777962710699}
   m_BaseHP: {fileID: 11400000, guid: f393c51c2bce455478a0b995b8d4e3dd, type: 2}
-  m_TransformToTrack: {fileID: 0}
+  m_TransformToTrack: {fileID: 2561745155600296936}
   m_VerticalWorldOffset: 0
   m_VerticalScreenOffset: -50
 --- !u!114 &7678927093694714386
@@ -63,9 +63,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AnimatorAuthority: 0
-  m_SendRate: 0.1
   m_Animator: {fileID: 8461429659892969874}
+  m_ParameterSendBits: 0
+  m_SendRate: 0.1
 --- !u!1001 &2203142923062114684
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -306,6 +306,11 @@ PrefabInstance:
 --- !u!1 &2938305229903524178 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 6839301660383890230, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
+  m_PrefabInstance: {fileID: 8515429031237761636}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2561745155600296936 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6170428688339538316, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
   m_PrefabInstance: {fileID: 8515429031237761636}
   m_PrefabAsset: {fileID: 0}
 --- !u!95 &8461429659892969874 stripped
