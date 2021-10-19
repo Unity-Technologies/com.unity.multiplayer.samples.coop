@@ -24,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var targetNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
             m_TargetCharacter = targetNetworkObject.GetComponent<ServerCharacter>();
 
-            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
 
             return true;
         }
@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
         }
     }

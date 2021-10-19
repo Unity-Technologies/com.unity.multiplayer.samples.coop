@@ -93,12 +93,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
             }
         }
-
-        private void PlayAnim()
-        {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
-        }
-
+        
         private void PlayHitReact()
         {
             if (m_ImpactPlayed) { return; }
@@ -144,15 +139,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             //in the future we may do another physics check to handle the case where a target "ran under our weapon".
             //But for now, if the original target is no longer present, then we just don't play our hit react on anything.
-        }
-
-        public override void AnticipateAction()
-        {
-            base.AnticipateAction();
-
-            //note: because the hit-react is driven from the animation, this means we can anticipatively trigger a hit-react too. That
-            //will make combat feel responsive, but of course the actual damage won't be applied until the server tells us about it.
-            PlayAnim();
         }
     }
 }

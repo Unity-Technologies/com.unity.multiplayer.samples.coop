@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AnimatorAuthority: 0
-  m_SendRate: 0.1
   m_Animator: {fileID: 929086692793228630}
+  m_ParameterSendBits: 0
+  m_SendRate: 0.1
 --- !u!114 &-4570750241117365215
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -139,6 +139,10 @@ PrefabInstance:
       propertyPath: m_Animator
       value: 
       objectReference: {fileID: 929086692793228630}
+    - target: {fileID: 1632591904850424414, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_NetworkAnimator
+      value: 
+      objectReference: {fileID: 6027014890250673899}
     - target: {fileID: 3288448142974003537, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_Name
       value: Imp

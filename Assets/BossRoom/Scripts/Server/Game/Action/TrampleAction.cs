@@ -78,12 +78,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.animator.ResetTrigger(Description.Anim2);
+                    //todo reenable the following line after NetworkAnimator.ResetTrigger lands
+                //m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
             }
             // start the animation sequence!
             if (!string.IsNullOrEmpty(Description.Anim))
             {
-                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             }
 
             m_Parent.NetState.RecvDoActionClientRPC(Data);
@@ -249,7 +250,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
         }
     }

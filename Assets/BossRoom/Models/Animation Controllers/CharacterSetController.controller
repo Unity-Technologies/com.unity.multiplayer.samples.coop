@@ -1535,16 +1535,16 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -3516404760485336223}
-    m_Position: {x: 180, y: 150, z: 0}
+    m_Position: {x: 440, y: 180, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8314685060882719794}
-    m_Position: {x: -10, y: 660, z: 0}
+    m_Position: {x: 210, y: 700, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 5803934921609956400}
     m_Position: {x: -290, y: 390, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6995031694560656813}
-    m_Position: {x: -220, y: 560, z: 0}
+    m_Position: {x: -80, y: 640, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -7547485152901491539}
     m_Position: {x: -400, y: 270, z: 0}
@@ -1580,13 +1580,13 @@ AnimatorStateMachine:
     m_Position: {x: 650, y: -360, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -8836472361825652495}
-    m_Position: {x: -300, y: 500, z: 0}
+    m_Position: {x: -180, y: 490, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 7103618770137260043}
     m_Position: {x: -350, y: 330, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -5093654682345616202}
-    m_Position: {x: 310, y: 330, z: 0}
+    m_Position: {x: 720, y: 310, z: 0}
   m_ChildStateMachines: []
   m_AnyStateTransitions:
   - {fileID: 6300214233644051234}
@@ -1854,33 +1854,33 @@ AnimatorController:
   - m_Name: Invincible
     m_Type: 3
     m_DefaultFloat: 0
-    m_DefaultInt: 0
+    m_DefaultInt: 15
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: TrampleStop
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: DashAttackStart
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: DashAttackEnd
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: DashAttackCanceled
     m_Type: 9
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -3254,25 +3254,25 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: -1068572555509609370}
-    m_Position: {x: 240, y: 90, z: 0}
+    m_Position: {x: 310, y: 70, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 6299315480180736668}
-    m_Position: {x: 0, y: 200, z: 0}
+    m_Position: {x: -70, y: 200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4401103057488639788}
-    m_Position: {x: 0, y: 260, z: 0}
+    m_Position: {x: 10, y: 300, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1947924984486084563}
     m_Position: {x: 10, y: 40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -4482486829903005221}
-    m_Position: {x: 620, y: 140, z: 0}
+    m_Position: {x: 560, y: 200, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -1840114918578548792}
-    m_Position: {x: 600, y: 90, z: 0}
+    m_Position: {x: 630, y: 80, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 2966677855542082757}
-    m_Position: {x: 580, y: 40, z: 0}
+    m_Position: {x: 560, y: -40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 4131880658289977400}
     m_Position: {x: 850, y: 140, z: 0}
@@ -3284,7 +3284,7 @@ AnimatorStateMachine:
     m_Position: {x: 800, y: 40, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -5881165063788833599}
-    m_Position: {x: 260, y: 240, z: 0}
+    m_Position: {x: 300, y: 270, z: 0}
   - serializedVersion: 1
     m_State: {fileID: -5241877383201234331}
     m_Position: {x: 1040, y: 40, z: 0}

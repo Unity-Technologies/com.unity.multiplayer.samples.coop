@@ -195,7 +195,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
 
-                serverAnimationHandler.animator.SetTrigger("HitReact1");
+                serverAnimationHandler.NetworkAnimator.SetTrigger("HitReact1");
             }
 
             NetState.HitPoints = Mathf.Min(NetState.CharacterClass.BaseHP.Value, NetState.HitPoints+HP);

@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override bool Start()
         {
-            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             return false;
         }
 
@@ -24,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
         }
     }
