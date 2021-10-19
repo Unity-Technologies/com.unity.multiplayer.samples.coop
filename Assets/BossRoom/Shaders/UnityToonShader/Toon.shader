@@ -28,20 +28,23 @@ Shader "Roystan/Toon"
 			{
 				//"LightMode" = "ForwardBase"
 				"PassFlags" = "OnlyDirectional"
+				"Queue"="Geometry"
 				"RenderPipeline" = "UniversalPipeline"
+				
 			}
 
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			// Compile multiple versions of this shader depending on lighting settings.
-			//#pragma multi_compile_fwdbase
+			// #pragma multi_compile_fwdbase
 
 			#include "UnityCG.cginc"
 			// Files below include macros and functions to assist
 			// with lighting and shadows.
 			#include "Lighting.cginc"
 			#include "AutoLight.cginc"
+			
 
 			struct appdata
 			{
@@ -140,3 +143,26 @@ Shader "Roystan/Toon"
         UsePass "Legacy Shaders/VertexLit/SHADOWCASTER"
 	}
 }
+	
+	/*SubShader
+	{
+		Tags
+		{
+			"RenderPipeline" = "UniversalPipeline"
+			"Queue" = "Geometry"
+		}
+		
+		HLSLINCLUDE
+		
+		#include "Packages/com.unity.render-pipelines.universal/ShaderLibrary/Core.hlsl"
+		
+		ENDHLSL
+		
+		Pass
+		{
+			
+			
+			
+		}
+		
+	}*/
