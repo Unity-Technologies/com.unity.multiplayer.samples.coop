@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using MLAPI;
+using Unity.Netcode;
 using UnityEngine;
-using MLAPI.SceneManagement;
+using UnityEngine.SceneManagement;
 
-namespace BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public struct SessionPlayerData
     {
@@ -71,7 +71,7 @@ namespace BossRoom.Server
 
             m_Portal.NetworkReadied += OnNetworkReady;
 
-            // we add ApprovalCheck callback BEFORE OnNetworkSpawn to avoid spurious MLAPI warning:
+            // we add ApprovalCheck callback BEFORE OnNetworkSpawn to avoid spurious NGO warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
             m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
@@ -172,7 +172,7 @@ namespace BossRoom.Server
         /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
         /// <param name="clientId">This is the clientId that MLAPI assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="callback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        private void ApprovalCheck(byte[] connectionData, ulong clientId, MLAPI.NetworkManager.ConnectionApprovedDelegate callback)
+        private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback)
         {
             if (connectionData.Length > k_MaxConnectPayload)
             {
@@ -185,7 +185,7 @@ namespace BossRoom.Server
             {
                 return;
             }
-            
+
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
