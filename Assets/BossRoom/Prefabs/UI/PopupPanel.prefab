@@ -2715,19 +2715,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1982309448160183326, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
       propertyPath: m_text
-      value: PHOTON
-      objectReference: {fileID: 0}
-    - target: {fileID: 1982309448160183326, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
-      propertyPath: m_fontSize
-      value: 16
+      value: PHOTON RELAY
       objectReference: {fileID: 0}
     - target: {fileID: 1982309448160183326, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
       propertyPath: m_fontSizeBase
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 1982309448160183326, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
-      propertyPath: m_enableAutoSizing
-      value: 0
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 4518466638098578806, guid: 1229ed617a5124549b46c08c004b7d6b, type: 3}
       propertyPath: m_AnchoredPosition.y
@@ -2973,12 +2965,8 @@ PrefabInstance:
       value: UNITY RELAY
       objectReference: {fileID: 0}
     - target: {fileID: 3659563950709367200, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_fontSize
-      value: 16
-      objectReference: {fileID: 0}
-    - target: {fileID: 3659563950709367200, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
       propertyPath: m_fontSizeBase
-      value: 16
+      value: 14
       objectReference: {fileID: 0}
     - target: {fileID: 4092997452673795389, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
       propertyPath: m_Group
