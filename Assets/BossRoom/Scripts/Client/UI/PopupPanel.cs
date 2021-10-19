@@ -316,7 +316,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     {
                         // Error trying to get the list of available regions, something is not setup correctly
                         SetupNotifierDisplay(
-                            "Unity Relay error!", "Something went wrong trying to reach Unity Relay. Please follow the instructions in the readme (<ProjectRoot>/Documents/UnityRelay/Readme.md) " +
+                            "Unity Relay error!", "Something went wrong trying to reach Unity Relay. Please follow the instructions here https://docs-multiplayer.unity3d.com/transport/1.0.0/relay/relay#how-do-I-enable-Relay-for-my-project" +
                                                           "to setup Unity Relay and use relay mode.", false, true);
                     }
                     else
