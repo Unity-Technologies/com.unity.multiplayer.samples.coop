@@ -3,6 +3,10 @@ using Unity.Collections.LowLevel.Unsafe;
 
 using UnityEngine;
 
+/// !!!!!
+/// THIS CLASS IS HERE TEMPORARILY AND WILL BE REPLACED WITH A REFERENCE TO NETCODE FOR GAMEOBJECTS COMPONENTS SOON.
+/// !!!!!
+
 namespace Unity.Netcode.Components
 {
     /// <summary>
