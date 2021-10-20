@@ -25,17 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return true;
         }
 
-        private void PlayStartAnim()
-        {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
-        }
-
-        public override void AnticipateAction()
-        {
-            base.AnticipateAction();
-            PlayStartAnim();
-        }
-
         public override bool Update()
         {
             if (m_Dashed) { return ActionConclusion.Stop; } // we're done!

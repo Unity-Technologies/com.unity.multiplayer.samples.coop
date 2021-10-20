@@ -37,6 +37,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [Tooltip("After this Action is successfully started, the server will discard any attempts to perform it again until this amount of time has elapsed.")]
         public float ReuseTimeSeconds;
 
+        [Tooltip("The Anticipation Animation trigger that gets raised when user starts using this Action, but while the server confirmation hasn't returned")]
+        public string AnimAnticipation;
+        
         [Tooltip("The primary Animation trigger that gets raised when visualizing this Action")]
         public string Anim;
 

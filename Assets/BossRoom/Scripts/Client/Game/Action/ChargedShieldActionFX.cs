@@ -37,18 +37,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return true;
         }
 
-        private void PlayAnim()
-        {
-            // because this action can be visually started and stopped as often and as quickly as the player wants, it's possible
-            // for several copies of this action to be playing at once. This can lead to situations where several
-            // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
-            // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            m_Parent.OurAnimator.ResetTrigger(Description.Anim2);
-
-            // raise the start trigger to start the animation loop!
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
-        }
-
         private bool IsChargingUp()
         {
             return m_StoppedChargingUpTime == 0;
@@ -95,10 +83,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override void AnticipateAction()
         {
+            // because this action can be visually started and stopped as often and as quickly as the player wants, it's possible
+            // for several copies of this action to be playing at once. This can lead to situations where several
+            // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
+            // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
+            m_Parent.OurAnimator.ResetTrigger(Description.Anim2);
             base.AnticipateAction();
-            PlayAnim();
         }
-
     }
 }
 

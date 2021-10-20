@@ -8,17 +8,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     {
         public AnimationOnlyActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
-        private void PlayStartAnim()
-        {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
-        }
-
-        public override void AnticipateAction()
-        {
-            base.AnticipateAction();
-            PlayStartAnim();
-        }
-
         public override bool Update()
         {
             return ActionConclusion.Continue;
