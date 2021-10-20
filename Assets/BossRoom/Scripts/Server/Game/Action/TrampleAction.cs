@@ -79,7 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
                     //todo reenable the following line after NetworkAnimator.ResetTrigger lands
-                m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+                //m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
             }
             // start the animation sequence!
             if (!string.IsNullOrEmpty(Description.Anim))

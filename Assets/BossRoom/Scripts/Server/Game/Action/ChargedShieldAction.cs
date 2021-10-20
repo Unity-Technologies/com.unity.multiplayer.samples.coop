@@ -47,7 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
             //todo: reenable the following line after NetowrkAnimator.ResetTrigger lands
-            m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+            //m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
 
             // raise the start trigger to start the animation loop!
             m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
