@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -69,7 +66,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (m_Portal == null) return;
 
-            m_Portal.NetworkReadied += OnNetworkReady;
+            //m_Portal.NetworkReadied += OnNetworkReady;
 
             // we add ApprovalCheck callback BEFORE OnNetworkSpawn to avoid spurious NGO warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
@@ -85,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (m_Portal != null)
             {
-                m_Portal.NetworkReadied -= OnNetworkReady;
+                //m_Portal.NetworkReadied -= OnNetworkReady;
 
                 if (m_Portal.NetManager != null)
                 {
@@ -104,7 +101,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             else
             {
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
-                m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
+                //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
             }
         }
@@ -135,7 +132,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
-                m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
+                //m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
             }
         }
