@@ -130,17 +130,17 @@
       }
     },
     "com.unity.netcode.adapter.utp": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#develop",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#bcef5b992c5414707ff48c95a48a113fd0e09ad3",
       "depth": 0,
       "source": "git",
       "dependencies": {
-        "com.unity.netcode.gameobjects": "1.0.0-pre.1",
+        "com.unity.netcode.gameobjects": "1.0.0-pre.2",
         "com.unity.transport": "1.0.0-pre.6"
       },
-      "hash": "18cd3f20ab97bfa6ecdff864bc9977bcd5d62570"
+      "hash": "bcef5b992c5414707ff48c95a48a113fd0e09ad3"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#bcef5b992c5414707ff48c95a48a113fd0e09ad3",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -149,7 +149,7 @@
         "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.collections": "1.0.0-pre.5"
       },
-      "hash": "18cd3f20ab97bfa6ecdff864bc9977bcd5d62570"
+      "hash": "bcef5b992c5414707ff48c95a48a113fd0e09ad3"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1",
