@@ -205,10 +205,6 @@ PrefabInstance:
       propertyPath: m_Animator
       value: 
       objectReference: {fileID: 1829276847453002016}
-    - target: {fileID: 350177175035117514, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
-      propertyPath: m_NetworkAnimator
-      value: 
-      objectReference: {fileID: 3352015142852197742}
     - target: {fileID: 4600110157238723776, guid: 0d2d836e2e83b754fa1a1c4022d6d65d, type: 3}
       propertyPath: m_AoePrefab
       value: 

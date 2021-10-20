@@ -20,9 +20,6 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
         public static NetworkObjectPool Singleton { get { return _instance; } }
 
         [SerializeField]
-        NetworkManager m_NetworkManager;
-
-        [SerializeField]
         List<PoolConfigObject> PooledPrefabsList;
 
         HashSet<GameObject> prefabs = new HashSet<GameObject>();
@@ -128,7 +125,7 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
             }
 
             // Register Netcode Spawn handlers
-            m_NetworkManager.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
+            NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
