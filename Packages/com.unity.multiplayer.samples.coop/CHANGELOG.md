@@ -1,5 +1,52 @@
 # Multiplayer Samples Co-op Changelog
 
+## [1.0.0-pre] - 2021-10-21
+
+v1.0.0-pre is a pre-release release for Multiplayer Samples Co-op.
+
+It requires and supports Unity v2020.3 LTS and Netcode for GameObjects (Netcode) v1.0.0-pre. For additional information on Netcode, see the changelog and release notes for the Unity Netcode package.
+
+### New features
+
+* Player persistence hierarchical modifications to Netcode's Player Prefab https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/342, https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/349, &
+  & https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/356
+* Radio button introduced for main menu UX improvements (default is still IP) https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/345
+* Archer's base attack & charged shot 1-3 replicated via `NetworkTransform` https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/353
+* `NetworkTransform` handles players' movement syncing https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/354
+* Adding ParrelSync and updating third party notice.md https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/357
+* `NetworkAnimator` added to boss door & floor switch with server-authority https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/360
+* Integrating Unity Transport and Relay into Boss Room https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/366
+* Updated image in the UnityLogo prefab with the new Unity logo https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/374
+* NetworkObject pool (arrows are pooled) https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/362
+* Server-authoritative character `NetworkAnimator` https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/367
+
+### Changes
+
+* Collider and Layer cleanup & optimizations https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/341
+* Photon Transport send queue batch size incremented to 8192 https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/350
+* OnNetworkSpawn() refactoring, player prefab removed from NetworkManager prefab list https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/352
+* Netcode rebranding https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/368
+* Added link to bitesize samples https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/370
+* Update compatible Unity version in Readme https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/376
+* Renaming connection methods in main menu https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/382
+* Updated Animations to use an additional anticipation animation, to properly work with NetworkAnimator. https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/383
+* Updated actions to latest NetworkAnimator APIs https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/383
+
+### Fixes
+
+This release includes the following fixes:
+
+* A Netcode soft sync error on cleanup between scene transitions previously broke the game. For example imps did not spawn and pots were intangible.
+* Sometimes after completing a match and the host starts a new match from the Victory or Loss screen, connected players had no visible interactions to join or select characters.
+* Sometimes the client may have been disconnected from Photon which caused a timeout and `PhotonRealtimeTransport` to be in a bad state after the shutdown. An exception developed that fired every frame.
+
+### Known issues
+
+* The game can be initiated while a second player is connecting to the host in `CharSelect`. Players may join without selected characters spawning and in an unresponsive state.
+* The game may not transition completely into the game scene past the character select screen on lower-end Android devices.
+* This version currently includes a patched NetworkAnimator. This will be reverted back once this patch goes live in Netcode for GameObjects
+
+
 ## [0.2.1] - 2021-05-27
 
 v0.2.1 is a hotfix for an Early Access release for Boss Room: Small Scale Co-op Sample.
