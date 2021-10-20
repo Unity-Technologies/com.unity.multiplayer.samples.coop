@@ -15,7 +15,7 @@ Our intention is that you can use everything in this project as a starting point
 
 
 ```
-Platforms : Windows, Mac, iOS, Android (TODO check)
+Platforms : Windows, Mac, iOS, Android
 ```
 
 ![](Documentation/Images/3Players.png)
