@@ -1,22 +1,17 @@
 ![Banner](Documentation/Images/Banner.png)
-# Boss Room - co-op multiplayer RPG built with Unity Netcode for GameObjects
+# Boss Room - Co-op multiplayer RPG built with Unity Netcode for GameObjects
 
-| Boss Room: Small Scale Co-op Sample is built on top of the Netcode for GameObjects (Netcode) package. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
+| Solutions architects are available on [Discord](https://discord.gg/mNgM2XRDpb) and [forums](https://forum.unity.com/forums/multiplayer.26/) to help you work through issues you may encounter when using Boss Room. |
 | -- |
 
 Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is built to serve as an educational sample that showcases certain typical gameplay [patterns](https://docs-multiplayer.unity3d.com/docs/develop/learn/bossroom-examples/bossroom-actions) that are frequently featured in similar networked games.
 
-Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
+You can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 > __IMPORTANT__:
-> - Boss Room supports those platforms supported by Netcode (Windows and Mac).
+> - Boss Room supports those platforms supported by Netcode (Windows, Mac, iOS, and Android).
 > - Boss Room is compatible with the latest Unity LTS version.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
-
-
-```
-Platforms : Windows, Mac, iOS, Android
-```
 
 ![](Documentation/Images/3Players.png)
 ![](Documentation/Images/Boss.png)
@@ -51,7 +46,7 @@ In order to see the multiplayer functionality in action we can either run multip
 
 First we need to build an executable.
 
-To build an executable  press _File/Build Settings_ in the menu bar, and then press **Build**.
+To build an executable, press _File/Build Settings_ in the menu bar, and then press **Build**.
 ![](Documentation/Images/BuildProject.png)
 
 Once the build has completed you can launch several instances of the built executable in order to both host and join a game.
