@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &6027014890250673899
+--- !u!114 &3721496480756063830
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 5858966600248860054}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Script: {fileID: 11500000, guid: 0d67a547d7745d14695b9a6532c7e0f3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 929086692793228630}
@@ -142,7 +142,15 @@ PrefabInstance:
     - target: {fileID: 1632591904850424414, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_NetworkAnimator
       value: 
-      objectReference: {fileID: 6027014890250673899}
+      objectReference: {fileID: 3721496480756063830}
+    - target: {fileID: 1632591904850424414, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_NetworkLifeState
+      value: 
+      objectReference: {fileID: 3837839015300097846}
+    - target: {fileID: 1632591904850424414, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_VisualizationConfiguration
+      value: 
+      objectReference: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
     - target: {fileID: 3288448142974003537, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_Name
       value: Imp
@@ -295,5 +303,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6733907396f36c44891916e5c62f25a0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &3837839015300097846 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 3128178037050369367, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+  m_PrefabInstance: {fileID: 2173896227866280545}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3713729372785093424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 818290ebb0ac23541921b4dfc6842778, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
