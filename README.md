@@ -1,34 +1,28 @@
 ![Banner](Documentation/Images/Banner.png)
-# Boss Room - co-op multiplayer RPG built with Unity Netcode for GameObjects
+# Boss Room - Co-op multiplayer RPG built with Unity Netcode for GameObjects
 
-| 🛑  IMPORTANT - Early Access 🛑  | 
+| Solutions architects are available on [Discord](https://discord.gg/mNgM2XRDpb) and [forums](https://forum.unity.com/forums/multiplayer.26/) to help you work through issues you may encounter when using Boss Room. |
 | -- |
-| Boss Room: Small Scale Co-op Sample is built on top of the Netcode for GameObjects (Netcode) package. The Netcode package is on the road to being a fully featured solution. We have solutions architects available on Discord and forums to help you work through issues you encounter. |
 
-Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is built to serve as an educational sample that showcases certain typical gameplay patterns that are frequently featured in similar games.
+Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is built to serve as an educational sample that showcases certain typical gameplay [patterns](https://docs-multiplayer.unity3d.com/docs/develop/learn/bossroom-examples/bossroom-actions) that are frequently featured in similar networked games.
 
-Our intention is that you can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
+You can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
 > __IMPORTANT__:
-> - Boss Room supports those platforms supported by Netcode (Windows and Mac).
+> - Boss Room supports those platforms supported by Netcode (Windows, Mac, iOS, and Android).
 > - Boss Room is compatible with the latest Unity LTS version.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
-
-
-```
-Platforms : Windows, Mac
-```
 
 ![](Documentation/Images/3Players.png)
 ![](Documentation/Images/Boss.png)
 
 ## Getting the project
- - The early access version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
+ - The pre-release version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
  - Alternatively: click the green `Code` button and then choose to download the zip archive. Remember, that you would download the branch that you are currently viewing in Github.
  - For Windows users: Using Windows' built-in extracting tool may generate a "Error 0x80010135: Path too long" error window which can invalidate the extraction process. A workaround for this is to shorten the zip file to a single character (eg. "c.zip") and move it to the shortest path on your computer (most often right at C:\\) and retry. If that solution fails, another workaround is to extract the downloaded zip file using 7zip.
 
 
-## Installing Git LFS
+## Installing Git LFS to clone locally
 
 This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. 
 
@@ -45,14 +39,14 @@ Once you have downloaded the project, the steps below should get you up and runn
 
 ## Testing multiplayer
 
-In order to see the multiplayer functionality in action we can either run multiple instances of the game locally on our computer or choose to connect to a friend over the internet.
+In order to see the multiplayer functionality in action we can either run multiple instances of the game locally on your computer, using either ParrelSync or builds or choose to connect to a friend over the internet. See [how to test](https://docs-multiplayer.unity3d.com/docs/develop/tutorials/testing/testing_locally) for more info.
 
 ---------------
-**Local multiplayer setup**
+** Local multiplayer setup**
 
 First we need to build an executable.
 
-To build an executable  press _File/Build Settings_ in the menu bar, and then press **Build**.
+To build an executable, press _File/Build Settings_ in the menu bar, and then press **Build**.
 ![](Documentation/Images/BuildProject.png)
 
 Once the build has completed you can launch several instances of the built executable in order to both host and join a game.
@@ -67,12 +61,12 @@ To play over internet, we need to build an executable that is shared between all
 
 It is possible to connect between multiple instances of the same executable OR between executables and the editor that produced said executable.
 
-Running the game over internet currently requires setting up a [Photon Transport for Netcode](https://github.com/Unity-Technologies/multiplayer-community-contributions), which uses Photon relay server to facilitate communication between clients and server living on different networks.
+Running the game over internet currently requires setting up a relay. Boss Room provides integrations with [Unity Relay](https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html) and [Photon Transport for Netcode](https://github.com/Unity-Technologies/multiplayer-community-contributions).
 
-> Checkout our Photon-Realtime setup guide, here:
-> [Boss Room Photon Setup Guide](Documentation/Photon-Realtime/Readme.md)
+> Checkout our Unity Relay setup guide [here](https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html)
+> Checkout our Photon-Realtime setup guide [here](Documentation/Photon-Realtime/Readme.md)
 
-Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. 
+Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. Make sure your host's address listens on 0.0.0.0 (127.0.0.1 is for local development only).
 
 ------------------------------------------
 
@@ -91,7 +85,7 @@ For an overview of the project's architecture please check out our [ARCHITECTURE
 
 For a deep dive in Unity Netcode and Boss Room, visit our [doc](https://docs-multiplayer.unity3d.com/) and [Learn](https://docs-multiplayer.unity3d.com/docs/learn/introduction) sections.
 
-##Bite-size Samples
+## Bite-size Samples
 This repository contains a collection of bitesize sample projects and games that showcase different sub-features of NGO. You can review these samples with documentation to understand APIs and features better.
 - [Our various bitesize samples](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize)
 
