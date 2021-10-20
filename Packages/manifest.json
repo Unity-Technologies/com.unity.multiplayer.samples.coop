@@ -9,6 +9,7 @@
     "com.unity.ide.visualstudio": "2.0.11",
     "com.unity.ide.vscode": "1.2.3",
     "com.unity.learn.iet-framework": "1.2.1",
+    "com.unity.multiplayer.tools": "1.0.0-pre.2",
     "com.unity.netcode.adapter.utp": "1.0.0-pre.2",
     "com.unity.netcode.gameobjects": "1.0.0-pre.2",
     "com.unity.postprocessing": "3.1.1",
@@ -50,15 +51,5 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  },
-  "scopedRegistries": [
-    {
-      "name": "Candidates Registry",
-      "url": "https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-candidates",
-      "scopes": [
-        "com.unity.netcode.gameobjects",
-        "com.unity.netcode.adapter.utp"
-      ]
-    }
-  ]
+  }
 }
