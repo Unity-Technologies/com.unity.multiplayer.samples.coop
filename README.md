@@ -10,6 +10,7 @@ You can use everything in this project as a starting point or as bits and pieces
 
 > __IMPORTANT__:
 > - Boss Room has been developed and tested on these Platforms (Windows, Mac, iOS, and Android).
+>     - Tested on iPhone 6 and Pixel 3.
 > - Boss Room is compatible with the latest Unity LTS version.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
 
