@@ -50,11 +50,6 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
             ClearPool();
         }
 
-        public void OnDestroy()
-        {
-            ClearPool();
-        }
-
         public void OnValidate()
         {
             for (var i = 0; i < PooledPrefabsList.Count; i++)
