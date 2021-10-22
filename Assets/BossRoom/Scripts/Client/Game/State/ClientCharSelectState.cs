@@ -395,6 +395,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             // Player is leaving the group
             // first disconnect then return to menu
+            if (IsServer)
+            {
+                NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
+                networkObject.Despawn();
+            }
             var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
             gameNetPortal.RequestDisconnect();
             SceneManager.LoadScene("MainMenu");
