@@ -58,11 +58,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         float m_SmoothedSpeed;
 
-        int m_HitStateTriggerID;
-
         public bool IsOwner => m_NetState.IsOwner;
 
         public ulong NetworkObjectId => m_NetState.NetworkObjectId;
+
+        public event Action<Animator> animatorSet;
 
         public void Start()
         {
@@ -72,21 +72,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_HitStateTriggerID = Animator.StringToHash(ActionFX.k_DefaultHitReact);
-
             m_ActionViz = new ActionVisualization(this);
 
-            Parent = transform.parent;
+            m_NetState = GetComponentInParent<NetworkCharacterState>();
 
-            m_NetState = Parent.gameObject.GetComponent<NetworkCharacterState>();
+            Parent = m_NetState.transform;
 
-            PhysicsWrapper.TryGetPhysicsWrapper(m_NetState.NetworkObjectId, out m_PhysicsWrapper);
+            if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+            {
+                m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
+
+                // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
+                // following is a temporary workaround. Future refactorings will enable this functionality.
+                animatorSet?.Invoke(clientAvatarGuidHandler.graphicsAnimator);
+            }
+
+            m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
 
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
-            m_NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
-            m_NetState.OnPerformHitReaction += OnPerformHitReaction;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
 
@@ -95,9 +100,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
-
-            // sync our animator to the most up to date version received from server
-            SyncEntryAnimation(m_NetState.LifeState);
 
             if (!m_NetState.IsNpc)
             {
@@ -111,7 +113,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                     if (Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
-                        inputSender.ActionInputEvent += OnActionInput;
+                        // TODO: revisit; anticipated actions would play twice on the host
+                        if (!NetworkManager.Singleton.IsServer)
+                        {
+                            inputSender.ActionInputEvent += OnActionInput;
+                        }
                         inputSender.ClientMoveEvent += OnMoveInput;
                     }
                 }
@@ -131,23 +137,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        /// <summary>
-        /// The switch to certain LifeStates fires an animation on an NPC/PC. This bypasses that initial animation
-        /// and sends an NPC/PC to their eventual looping animation. This is necessary for mid-game player connections.
-        /// </summary>
-        /// <param name="lifeState"> The last LifeState received by server. </param>
-        void SyncEntryAnimation(LifeState lifeState)
-        {
-            switch (lifeState)
-            {
-                case LifeState.Dead: // ie. NPCs already dead
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.EntryDeathTriggerID);
-                    break;
-                case LifeState.Fainted: // ie. PCs already fainted
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.EntryFaintedTriggerID);
-                    break;
-            }
-        }
         private void OnDestroy()
         {
             if (m_NetState)
@@ -155,8 +144,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_NetState.DoActionEventClient -= PerformActionFX;
                 m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
                 m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
-                m_NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
-                m_NetState.OnPerformHitReaction -= OnPerformHitReaction;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
 
@@ -166,11 +153,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     sender.ClientMoveEvent -= OnMoveInput;
                 }
             }
-        }
-
-        private void OnPerformHitReaction()
-        {
-            m_ClientVisualsAnimator.SetTrigger(m_HitStateTriggerID);
         }
 
         private void PerformActionFX(ActionRequestData data)
@@ -191,24 +173,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         private void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
             m_ActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
-        }
-
-        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
-        {
-            switch (newValue)
-            {
-                case LifeState.Alive:
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
-                    break;
-                case LifeState.Fainted:
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
-                    break;
-                case LifeState.Dead:
-                    m_ClientVisualsAnimator.SetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
-            }
         }
 
         private void OnStealthyChanged(bool oldValue, bool newValue)
@@ -277,12 +241,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, m_PhysicsWrapper.Transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxRotSpeed);
+            // NetworkTransform is interpolated - we can just apply it's position value to our visual object
+            transform.position = m_PhysicsWrapper.Transform.position;
+            transform.rotation = m_PhysicsWrapper.Transform.rotation;
 
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                m_ClientVisualsAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
+                OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
             }
 
             m_ActionViz.Update();
@@ -312,6 +278,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             return false;
         }
-
     }
 }

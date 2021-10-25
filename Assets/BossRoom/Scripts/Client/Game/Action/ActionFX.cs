@@ -169,6 +169,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             Anticipated = true;
             TimeStarted = UnityEngine.Time.time;
+            
+            if(!string.IsNullOrEmpty(Description.AnimAnticipation))
+            {
+                m_Parent.OurAnimator.SetTrigger(Description.AnimAnticipation);
+            }
         }
     }
 }

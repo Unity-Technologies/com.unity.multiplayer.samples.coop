@@ -24,13 +24,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public StealthModeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
-        public override bool Start()
-        {
-            base.Start();
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
-            return true;
-        }
-
         public override bool Update()
         {
             if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.IsOwner)
@@ -53,11 +46,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                         graphic.Shutdown();
                     }
                 }
-            }
-
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.OurAnimator.SetTrigger(Description.Anim2);
             }
         }
     }

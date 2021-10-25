@@ -34,6 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if( m_NetState != null )
             {
+                transform.parent = m_Parent;
                 m_NetState.HitEnemyEvent -= OnEnemyHit;
             }
         }
@@ -61,12 +62,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 {
                     // show an impact graphic
                     Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
-                }
-
-                var clientChar = targetNetObject.GetComponent<Client.ClientCharacter>();
-                if (clientChar && clientChar.ChildVizObject)
-                {
-                    clientChar.ChildVizObject.OurAnimator.SetTrigger(ActionFX.k_DefaultHitReact);
                 }
             }
         }

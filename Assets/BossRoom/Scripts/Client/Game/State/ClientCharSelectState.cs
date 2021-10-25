@@ -71,14 +71,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private UICharSelectClassInfoBox m_ClassInfoBox;
 
         [SerializeField]
-        [Tooltip("When a permanent fatal error occurrs, this is where the error message is shown")]
-        private Text m_FatalLobbyErrorText;
-
-        [SerializeField]
-        [Tooltip("Error message text when lobby is full")]
-        private string m_FatalErrorLobbyFullMsg = "Error: lobby is full! You cannot play.";
-
-        [SerializeField]
         Transform m_CharacterGraphicsParent;
 
         private int m_LastSeatSelected = -1;
@@ -103,6 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             LobbyEnding, // "Get ready! Game is starting!" stage
             FatalError, // "Fatal Error" stage
         }
+
         private Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
         private void Awake()
@@ -135,12 +128,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (CharSelectData)
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
-                CharSelectData.OnFatalLobbyError -= OnFatalLobbyError;
-                CharSelectData.OnAssignedPlayerNumber -= OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnLobbyChanged -= OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
             }
+
             if (Instance == this)
+            {
                 Instance = null;
+            }
         }
 
         public override void OnNetworkSpawn()
@@ -152,9 +146,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             else
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged += OnLobbyClosedChanged;
-                CharSelectData.OnFatalLobbyError += OnFatalLobbyError;
-                CharSelectData.OnAssignedPlayerNumber += OnAssignedPlayerNumber;
-                CharSelectData.LobbyPlayers.OnLobbyChanged += OnLobbyPlayerStateChanged;
+                CharSelectData.LobbyPlayers.OnListChanged += OnLobbyPlayerStateChanged;
             }
         }
 
@@ -169,7 +161,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void UpdatePlayerCount()
         {
-            int count = CharSelectData.LobbyPlayers.PlayerCount;
+            int count = CharSelectData.LobbyPlayers.Count;
             var pstr = (count > 1) ? "players" : "player";
             m_NumPlayersText.text = "<b>" + count + "</b> " + pstr +" connected";
         }
@@ -177,14 +169,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
-        private void OnLobbyPlayerStateChanged(ArraySegment<CharSelectData.LobbyPlayerState> lobbyArray )
+        private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> changeEvent)
         {
             UpdateSeats();
             UpdatePlayerCount();
 
             // now let's find our local player in the list and update the character/info box appropriately
             int localPlayerIdx = -1;
-            for (int i = 0; i < CharSelectData.LobbyPlayers.PlayerCount; ++i)
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
                 if (CharSelectData.LobbyPlayers[i].ClientId == NetworkManager.Singleton.LocalClientId)
                 {
@@ -318,24 +310,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 ConfigureUIForLobbyMode(LobbyMode.LobbyEnding);
             }
-        }
-
-        /// <summary>
-        /// Called by server when there is a fatal error
-        /// </summary>
-        /// <param name="error"></param>
-        private void OnFatalLobbyError(CharSelectData.FatalLobbyError error)
-        {
-            switch (error)
-            {
-                case CharSelectData.FatalLobbyError.LobbyFull:
-                    m_FatalLobbyErrorText.text = m_FatalErrorLobbyFullMsg;
-                    break;
-                default:
-                    throw new System.Exception($"Unknown fatal lobby error {error}");
-            }
-
-            ConfigureUIForLobbyMode(LobbyMode.FatalError);
         }
 
         /// <summary>

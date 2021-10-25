@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8801324764397981686}
   - component: {fileID: 8184890942973508939}
   - component: {fileID: 4897062626467851486}
-  m_Layer: 8
+  m_Layer: 6
   m_Name: env_door_crystral_base
   m_TagString: Untagged
   m_Icon: {fileID: 0}

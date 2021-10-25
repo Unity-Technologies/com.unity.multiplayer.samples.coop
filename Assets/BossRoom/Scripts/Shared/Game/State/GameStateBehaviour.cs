@@ -87,20 +87,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        protected virtual void OnDestroy()
+        public override void OnDestroy()
         {
+            base.OnDestroy();
             if (!Persists)
             {
                 s_ActiveStateGO = null;
             }
-        }
-
-        protected virtual void OnApplicationQuit()
-        {
-            if (!isActiveAndEnabled || !NetworkManager.Singleton)
-                return;
-
-            NetworkManager.Singleton.Shutdown();
         }
     }
 }
