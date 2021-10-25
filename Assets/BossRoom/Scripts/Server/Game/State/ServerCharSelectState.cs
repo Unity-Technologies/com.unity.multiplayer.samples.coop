@@ -167,7 +167,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (NetworkManager.Singleton)
             {
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnSceneEvent;
+                if (NetworkManager.Singleton.SceneManager != null)
+                    NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
             if (CharSelectData)
             {
