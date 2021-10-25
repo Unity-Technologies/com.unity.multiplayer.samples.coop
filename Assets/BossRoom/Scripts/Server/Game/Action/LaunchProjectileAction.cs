@@ -18,7 +18,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
             m_Parent.physicsWrapper.Transform.forward = Data.Direction;
 
-            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -85,7 +86,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim2);
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
         }
     }

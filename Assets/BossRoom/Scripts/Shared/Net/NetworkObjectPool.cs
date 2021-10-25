@@ -13,14 +13,11 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
     /// Boss Room uses this for projectiles. In theory it should use this for imps too, but we wanted to show vanilla spawning vs pooled spawning.
     /// Hooks to NetworkManager's prefab handler to intercept object spawning and do custom actions
     /// </summary>
-    public class NetworkObjectPool : MonoBehaviour
+    public class NetworkObjectPool : NetworkBehaviour
     {
         private static NetworkObjectPool _instance;
 
         public static NetworkObjectPool Singleton { get { return _instance; } }
-
-        [SerializeField]
-        NetworkManager m_NetworkManager;
 
         [SerializeField]
         List<PoolConfigObject> PooledPrefabsList;
@@ -43,14 +40,14 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
             }
         }
 
-        public void Start()
+        public override void OnNetworkSpawn()
         {
             InitializePool();
         }
 
-        public void OnDestroy()
+        public override void OnNetworkDespawn()
         {
-            pooledObjects.Clear();
+            ClearPool();
         }
 
         public void OnValidate()
@@ -128,7 +125,7 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
             }
 
             // Register Netcode Spawn handlers
-            m_NetworkManager.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
+            NetworkManager.Singleton.PrefabHandler.AddHandler(prefab, new PooledPrefabInstanceHandler(prefab, this));
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -179,6 +176,19 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
                 RegisterPrefabInternal(configObject.Prefab, configObject.PrewarmCount);
             }
             m_HasInitialized = true;
+        }
+
+        /// <summary>
+        /// Unregisters all objects in <see cref="PooledPrefabsList"/> from the cache.
+        /// </summary>
+        public void ClearPool()
+        {
+            foreach (var prefab in prefabs)
+            {
+                // Unregister Netcode Spawn handlers
+                NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
+            }
+            pooledObjects.Clear();
         }
     }
 

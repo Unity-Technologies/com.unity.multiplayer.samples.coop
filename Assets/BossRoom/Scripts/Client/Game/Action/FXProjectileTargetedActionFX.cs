@@ -40,11 +40,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return true;
         }
 
-        private void PlayFireAnim()
-        {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
-        }
-
         public override bool Update()
         {
             if (TimeRunning >= Description.ExecTimeSeconds && m_Projectile == null)
@@ -148,7 +143,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public override void AnticipateAction()
         {
             base.AnticipateAction();
-            PlayFireAnim();
 
             // see if this is going to be a "miss" because the player tried to click through a wall. If so,
             // we change our data in the same way that the server will (changing our target point to the spot on the wall)

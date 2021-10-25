@@ -1,5 +1,6 @@
 using System;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
@@ -7,7 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     public class ServerAnimationHandler : NetworkBehaviour
     {
         [SerializeField]
-        Animator m_Animator;
+        NetworkAnimator m_NetworkAnimator;
 
         [SerializeField]
         private VisualizationConfiguration m_VisualizationConfiguration;
@@ -15,10 +16,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
-        public Animator animator
+        public NetworkAnimator NetworkAnimator
         {
-            get => m_Animator;
-            set => m_Animator = value;
+            get => m_NetworkAnimator;
+            set => m_NetworkAnimator = value;
         }
 
         public override void OnNetworkSpawn()
@@ -26,23 +27,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
         }
 
-        public void SetAnimator(Animator otherAnimator)
-        {
-            animator = otherAnimator;
-        }
-
         private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             switch (newValue)
             {
                 case LifeState.Alive:
-                    animator.SetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
+                    NetworkAnimator.SetTrigger(m_VisualizationConfiguration.AliveStateTriggerID);
                     break;
                 case LifeState.Fainted:
-                    animator.SetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
+                    NetworkAnimator.SetTrigger(m_VisualizationConfiguration.FaintedStateTriggerID);
                     break;
                 case LifeState.Dead:
-                    animator.SetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
+                    NetworkAnimator.SetTrigger(m_VisualizationConfiguration.DeadStateTriggerID);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);

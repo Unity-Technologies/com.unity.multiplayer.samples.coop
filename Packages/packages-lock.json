@@ -129,27 +129,36 @@
         "com.unity.modules.ui": "1.0.0"
       }
     },
-    "com.unity.netcode.adapter.utp": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#develop",
+    "com.unity.multiplayer.tools": {
+      "version": "1.0.0-pre.2",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {
-        "com.unity.netcode.gameobjects": "1.0.0-pre.1",
+        "com.unity.profiling.core": "1.0.0-pre.1"
+      },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.netcode.adapter.utp": {
+      "version": "1.0.0-pre.2",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.netcode.gameobjects": "1.0.0-pre.2",
         "com.unity.transport": "1.0.0-pre.6"
       },
-      "hash": "18cd3f20ab97bfa6ecdff864bc9977bcd5d62570"
+      "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
+      "version": "1.0.0-pre.2",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {
         "com.unity.modules.ai": "1.0.0",
         "com.unity.modules.animation": "1.0.0",
         "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.collections": "1.0.0-pre.5"
       },
-      "hash": "18cd3f20ab97bfa6ecdff864bc9977bcd5d62570"
+      "url": "https://packages.unity.com"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1",
@@ -172,6 +181,13 @@
       "dependencies": {
         "com.unity.modules.physics": "1.0.0"
       },
+      "url": "https://packages.unity.com"
+    },
+    "com.unity.profiling.core": {
+      "version": "1.0.0-pre.1",
+      "depth": 1,
+      "source": "registry",
+      "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.services.authentication": {

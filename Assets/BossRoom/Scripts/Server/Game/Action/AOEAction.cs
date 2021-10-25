@@ -33,7 +33,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // We don't know our actual targets for this attack until it triggers, so the client can't use the TargetIds list (and we clear it out for clarity).
             // This means we are responsible for triggering reaction-anims ourselves, which we do in PerformAoe()
             Data.TargetIds = new ulong[0];
-            m_Parent.serverAnimationHandler.animator.SetTrigger(Description.Anim);
+            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return ActionConclusion.Continue;
         }
