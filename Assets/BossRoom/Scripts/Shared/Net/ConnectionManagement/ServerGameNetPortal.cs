@@ -32,16 +32,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private GameNetPortal m_Portal;
 
-        /// <summary>
-        /// Maps a given client guid to the data for a given client player.
-        /// </summary>
-        private Dictionary<string, PlayerData> m_ClientData;
-
-        /// <summary>
-        /// Map to allow us to cheaply map from guid to player data.
-        /// </summary>
-        private Dictionary<ulong, string> m_ClientIDToGuid;
-
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
         private const int k_MaxConnectPayload = 1024;
 
@@ -63,8 +53,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // warning: "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
             m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
-            m_ClientData = new Dictionary<string, PlayerData>();
-            m_ClientIDToGuid = new Dictionary<ulong, string>();
         }
 
         void OnDestroy()
@@ -108,19 +96,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void OnClientDisconnect(ulong clientId)
         {
             m_ClientSceneMap.Remove(clientId);
-            if( m_ClientIDToGuid.TryGetValue(clientId, out var guid ) )
-            {
-                m_ClientIDToGuid.Remove(clientId);
-
-                if( m_ClientData[guid].m_ClientID == clientId )
-                {
-                    //be careful to only remove the ClientData if it is associated with THIS clientId; in a case where a new connection
-                    //for the same GUID kicks the old connection, this could get complicated. In a game that fully supported the reconnect flow,
-                    //we would NOT remove ClientData here, but instead time it out after a certain period, since the whole point of it is
-                    //to remember client information on a per-guid basis after the connection has been lost.
-                    m_ClientData.Remove(guid);
-                }
-            }
 
             if( clientId == m_Portal.NetManager.LocalClientId )
             {
@@ -147,8 +122,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void Clear()
         {
             //resets all our runtime state.
-            m_ClientData.Clear();
-            m_ClientIDToGuid.Clear();
             m_ClientSceneMap.Clear();
         }
 
@@ -161,44 +134,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             return true;
         }
-
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="clientId"> guid of the client whose data is requested</param>
-        /// <returns>Player data struct matching the given ID</returns>
-        public PlayerData? GetPlayerData(ulong clientId)
-        {
-            //First see if we have a guid matching the clientID given.
-
-            if (m_ClientIDToGuid.TryGetValue(clientId, out string clientguid))
-            {
-                if (m_ClientData.TryGetValue(clientguid, out PlayerData data))
-                {
-                    return data;
-                }
-                else
-                {
-                    Debug.Log("No PlayerData of matching guid found");
-                }
-            }
-            else
-            {
-                Debug.Log("No client guid found mapped to the given client ID");
-            }
-            return null;
-        }
-
-        /// <summary>
-        /// Convenience method to get player name from player data
-        /// Returns name in data or default name using playerNum
-        /// </summary>
-        public string GetPlayerName(ulong clientId, int playerNum)
-        {
-            var playerData = GetPlayerData(clientId);
-            return (playerData != null) ? playerData.Value.m_PlayerName : ("Player" + playerNum);
-        }
-
 
         /// <summary>
         /// This logic plugs into the "ConnectionApprovalCallback" exposed by Netcode.NetworkManager, and is run every time a client connects to us.
@@ -234,7 +169,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
             // on invalid users trying to connect
             // todo this is currently still spending too much time server side.
-            if (m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers)
+            if (ServerSessionManager.Instance.IsServerFull())
             {
                 gameReturnStatus = ConnectStatus.ServerFull;
                 //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
@@ -254,30 +189,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
+            gameReturnStatus = ServerSessionManager.Instance.OnClientConnected(clientId, connectionPayload.clientGUID,
+                connectionPayload.playerName);
+
             //Test for Duplicate Login.
-            if (m_ClientData.ContainsKey(connectionPayload.clientGUID))
+            if (gameReturnStatus == ConnectStatus.LoggedInAgain)
             {
-                if (Debug.isDebugBuild)
-                {
-                    Debug.Log($"Client GUID {connectionPayload.clientGUID} already exists. Because this is a debug build, we will still accept the connection");
-                    while (m_ClientData.ContainsKey(connectionPayload.clientGUID)) { connectionPayload.clientGUID += "_Secondary"; }
-                }
-                else
-                {
-                    ulong oldClientId = m_ClientData[connectionPayload.clientGUID].m_ClientID;
-                    // kicking old client to leave only current
-                    SendServerToClientSetDisconnectReason(oldClientId, ConnectStatus.LoggedInAgain);
-                    StartCoroutine(WaitToDisconnect(clientId));
-                    return;
-                }
+                SessionPlayerData? sessionPlayerData =
+                    ServerSessionManager.Instance.GetPlayerData(connectionPayload.clientGUID);
+
+                ulong oldClientId = sessionPlayerData?.ClientID ?? 0;
+                // kicking old client to leave only current
+                SendServerToClientSetDisconnectReason(oldClientId, ConnectStatus.LoggedInAgain);
+
+                StartCoroutine(WaitToDisconnect(clientId));
+                return;
             }
 
             SendServerToClientConnectResult(clientId, gameReturnStatus);
 
             //Populate our dictionaries with the playerData
             m_ClientSceneMap[clientId] = clientScene;
-            m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
-            m_ClientData[connectionPayload.clientGUID] = new PlayerData(connectionPayload.playerName, clientId);
 
             connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
@@ -320,9 +252,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private void ServerStartedHandler()
         {
-            m_ClientData.Add("host_guid", new PlayerData(m_Portal.PlayerName, NetworkManager.Singleton.LocalClientId));
-            m_ClientIDToGuid.Add(NetworkManager.Singleton.LocalClientId, "host_guid");
-
             AssignPlayerName(NetworkManager.Singleton.LocalClientId, m_Portal.PlayerName);
 
             // server spawns game state

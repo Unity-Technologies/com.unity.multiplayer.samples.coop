@@ -218,7 +218,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerNum}");
             }
 
-            string playerName = m_ServerNetPortal.GetPlayerName(clientId,playerNum);
+            string playerName = ServerSessionManager.Instance.GetPlayerName(clientId,playerNum);
             CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
         }
 

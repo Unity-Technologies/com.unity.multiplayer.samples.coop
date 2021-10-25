@@ -70,7 +70,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             // we add ApprovalCheck callback BEFORE OnNetworkSpawn to avoid spurious NGO warning:
             // "No ConnectionApproval callback defined. Connection approval will timeout"
-            m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
             m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
             m_ClientData = new Dictionary<string, SessionPlayerData>();
             m_ClientIDToGuid = new Dictionary<ulong, string>();
@@ -86,7 +85,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 if (m_Portal.NetManager != null)
                 {
-                    m_Portal.NetManager.ConnectionApprovalCallback -= ApprovalCheck;
                     m_Portal.NetManager.OnServerStarted -= ServerStartedHandler;
                 }
             }
@@ -122,9 +120,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     //for the same GUID kicks the old connection, this could get complicated. In a game that fully supported the reconnect flow,
                     //we would NOT remove ClientData here, but instead time it out after a certain period, since the whole point of it is
                     //to remember client information on a per-guid basis after the connection has been lost.
+                    /*
                     var character = PlayerServerCharacter.GetPlayerServerCharacters().Find(
                         player => player.OwnerClientId == clientId);
                     m_ClientData[m_ClientIDToGuid[clientId]] = new SessionPlayerData(clientId, m_ClientIDToGuid[clientId], m_Portal.PlayerName, character.transform.position, character.transform.rotation.eulerAngles, false);
+                    */
+                    m_ClientData.Remove(guid);
                 }
             }
 
@@ -154,46 +155,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_ClientIDToGuid.Clear();
         }
 
-
-        /// <summary>
-        /// This logic plugs into the "ConnectionApprovalCallback" exposed by MLAPI.NetworkManager, and is run every time a client connects to us.
-        /// See GNH_Client.StartClient for the complementary logic that runs when the client starts its connection.
-        /// </summary>
-        /// <remarks>
-        /// Since our game doesn't have to interact with some third party authentication service to validate the identity of the new connection, our ApprovalCheck
-        /// method is simple, and runs synchronously, invoking "callback" to signal approval at the end of the method. MLAPI currently doesn't support the ability
-        /// to send back more than a "true/false", which means we have to work a little harder to provide a useful error return to the client. To do that, we invoke a
-        /// client RPC in the same channel that MLAPI uses for its connection callback. Since that channel ("MLAPI_INTERNAL") is both reliable and sequenced, we can be
-        /// confident that our login result message will execute before any disconnect message.
-        /// </remarks>
-        /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
-        /// <param name="clientId">This is the clientId that MLAPI assigned us on login. It does not persist across multiple logins from the same client. </param>
-        /// <param name="callback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate callback)
+        public bool IsServerFull()
         {
-            if (connectionData.Length > k_MaxConnectPayload)
-            {
-                return;
-            }
+            return m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers;
+        }
 
-            string payload = System.Text.Encoding.UTF8.GetString(connectionData);
-            var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
-            if (connectionPayload == null)
-            {
-                return;
-            }
-
-            Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
-
+        public ConnectStatus OnClientConnected(ulong clientId, string clientGUID, string playerName)
+        {
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
-
             //Test for Duplicate Login.
-            if (m_ClientData.ContainsKey(connectionPayload.clientGUID))
+            if (m_ClientData.ContainsKey(clientGUID))
             {
                 if (Debug.isDebugBuild)
                 {
-                    Debug.Log($"Client GUID {connectionPayload.clientGUID} already exists. Because this is a debug build, we will still accept the connection");
-                    while (m_ClientData.ContainsKey(connectionPayload.clientGUID)) { connectionPayload.clientGUID += "_Secondary"; }
+                    Debug.Log($"Client GUID {clientGUID} already exists. Because this is a debug build, we will still accept the connection");
+                    while (m_ClientData.ContainsKey(clientGUID)) { clientGUID += "_Secondary"; }
                 }
                 else
                 {
@@ -201,19 +177,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 }
             }
 
-            //Test for over-capacity Login.
-            if (m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers)
-            {
-                gameReturnStatus = ConnectStatus.ServerFull;
-            }
-
             //Populate our dictionaries with the SessionPlayerData
             if (gameReturnStatus == ConnectStatus.Success)
             {
-                m_ClientIDToGuid[clientId] = connectionPayload.clientGUID;
-                m_ClientData[connectionPayload.clientGUID] = new SessionPlayerData(clientId, connectionPayload.clientGUID, connectionPayload.playerName, m_InitialPositionRotation, m_InitialPositionRotation, true);
+                m_ClientIDToGuid[clientId] = clientGUID;
+                m_ClientData[clientGUID] = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPositionRotation, m_InitialPositionRotation, true);
             }
+
+            return gameReturnStatus;
         }
+
 
         public string GetPlayerGUID(ulong clientID)
         {
@@ -224,7 +197,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <summary>
         ///
         /// </summary>
-        /// <param name="clientId"> guid of the client whose data is requested</param>
+        /// <param name="clientId"> id of the client whose data is requested</param>
         /// <returns>Player data struct matching the given ID</returns>
         public SessionPlayerData? GetPlayerData(ulong clientId)
         {
@@ -244,6 +217,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             else
             {
                 Debug.Log("No client guid found mapped to the given client ID");
+            }
+            return null;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="clientGUID"> guid of the client whose data is requested</param>
+        /// <returns>Player data struct matching the given ID</returns>
+        public SessionPlayerData? GetPlayerData(string clientGUID)
+        {
+            //First see if we have a guid matching the clientID given.
+
+
+            if (m_ClientData.TryGetValue(clientGUID, out SessionPlayerData data))
+            {
+                return data;
+            }
+            else
+            {
+                Debug.Log("No PlayerData of matching guid found");
             }
             return null;
         }
