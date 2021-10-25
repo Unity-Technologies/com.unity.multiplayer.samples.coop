@@ -151,7 +151,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             NetworkManager.SceneManager.LoadScene("BossRoom", LoadSceneMode.Single);
         }
 
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            UnregisterCallbacks();
+        }
+
         public override void OnNetworkDespawn()
+        {
+            UnregisterCallbacks();
+        }
+
+        private void UnregisterCallbacks()
         {
             if (NetworkManager.Singleton)
             {
@@ -163,6 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 CharSelectData.OnClientChangedSeat -= OnClientChangedSeat;
             }
         }
+
 
         public override void OnNetworkSpawn()
         {
