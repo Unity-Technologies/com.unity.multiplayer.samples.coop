@@ -27,12 +27,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (!IsServer)
             {
                 enabled = false;
+                return;
             }
 
             s_ActivePlayers.Add(m_CachedServerCharacter);
         }
 
-        void OnDisable()
+        public override void OnNetworkDespawn()
+        {
+            RemovePlayerCharacter();
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            RemovePlayerCharacter();
+        }
+
+        void RemovePlayerCharacter()
         {
             s_ActivePlayers.Remove(m_CachedServerCharacter);
         }

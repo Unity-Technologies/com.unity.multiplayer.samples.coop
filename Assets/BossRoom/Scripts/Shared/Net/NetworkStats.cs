@@ -150,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             LastRTT = rttSum / m_MaxWindowSize;
         }
 
-        public override void OnNetworkDespawn()
+        void RemoveText()
         {
             if (m_TextStat != null)
             {
@@ -160,6 +160,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 Destroy(m_TextHostType.gameObject);
             }
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            RemoveText();
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            RemoveText();
         }
     }
 }
