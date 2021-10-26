@@ -111,8 +111,8 @@ Material:
     - _Speed: 1
     - __dirty: 0
     m_Colors:
-    - Color_9195cb73a727450cbc963d9e3025d795: {r: 31.999996, g: 14.240836, b: 3.0157065, a: 1}
-    - Color_fc6bbeba4e8c458bbeb642f2f0b0c048: {r: 20.02094, g: 1.7591621, b: 0.75392663, a: 1}
+    - Color_9195cb73a727450cbc963d9e3025d795: {r: 31.999996, g: 15.17508, b: 3.0157065, a: 1}
+    - Color_fc6bbeba4e8c458bbeb642f2f0b0c048: {r: 20.020945, g: 2.8440793, b: 0.9433947, a: 1}
     - Vector4_e771ca002e644c0c89285d39e4dd8e2a: {r: 1, g: 0.5, b: 0, a: -0.5}
     - Vector4_e771ca002e644c0c89285d39e4dd8e2a_1: {r: 0.5, g: 1, b: 0, a: -1}
     - Vector4_e771ca002e644c0c89285d39e4dd8e2a_2: {r: 1, g: 1, b: 0, a: 0}
