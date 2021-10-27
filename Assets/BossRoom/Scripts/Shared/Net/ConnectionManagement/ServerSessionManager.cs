@@ -148,7 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
         /// handled in server code).
         /// </summary>
-        private void OnUserDisconnectRequest()
+        public void OnUserDisconnectRequest()
         {
             Clear();
         }
@@ -302,10 +302,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public void UpdatePlayer(ulong clientId, string name, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid, bool isConnected)
+        public void UpdatePlayerBeforeDisconnect(ulong clientId, string name, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid, bool isConnected)
         {
             var guid = m_ClientIDToGuid[clientId];
             m_ClientData[guid] = new SessionPlayerData(clientId, guid, name, position, rotation, avatarNetworkGuid, isConnected);
+            m_ClientIDToGuid.Remove(clientId);
         }
 
 
