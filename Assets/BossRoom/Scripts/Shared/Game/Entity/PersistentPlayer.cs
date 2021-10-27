@@ -56,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_PersistentPlayerRuntimeCollection.Remove(this);
             if (IsServer)
             {
-                ServerSessionManager.Instance.UpdatePlayerBeforeDisconnect(OwnerClientId, m_NetworkNameState.Name.Value, transform.position, transform.rotation.eulerAngles, m_NetworkAvatarGuidState.AvatarGuid.Value, false);
+                ServerSessionManager.Instance.UpdatePlayerBeforeDisconnect(OwnerClientId, m_NetworkNameState.Name.Value, transform.position, transform.rotation.eulerAngles, m_NetworkAvatarGuidState.AvatarGuid.Value);
             }
         }
     }

@@ -189,7 +189,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
-            gameReturnStatus = ServerSessionManager.Instance.OnClientConnected(clientId, connectionPayload.clientGUID,
+            gameReturnStatus = ServerSessionManager.Instance.OnClientApprovalCheck(clientId, connectionPayload.clientGUID,
                 connectionPayload.playerName);
 
             //Test for Duplicate Login.
@@ -206,16 +206,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
-            SendServerToClientConnectResult(clientId, gameReturnStatus);
+            if (gameReturnStatus == ConnectStatus.Success)
+            {
+                SendServerToClientConnectResult(clientId, gameReturnStatus);
 
-            //Populate our dictionaries with the playerData
-            m_ClientSceneMap[clientId] = clientScene;
+                //Populate our dictionaries with the playerData
+                m_ClientSceneMap[clientId] = clientScene;
 
-            connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
+                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
-            // connection approval will create a player object for you
-            ServerSessionManager.Instance.OnConnectionApproved(clientId, connectionPayload.clientGUID,
-                connectionPayload.playerName);
+                // connection approval will create a player object for you
+                ServerSessionManager.Instance.OnConnectionApproved(clientId, connectionPayload.clientGUID);
+            }
         }
 
         private IEnumerator WaitToDisconnect(ulong clientId)

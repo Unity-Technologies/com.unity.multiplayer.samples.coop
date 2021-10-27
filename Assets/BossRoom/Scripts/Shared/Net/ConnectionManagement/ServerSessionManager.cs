@@ -165,7 +165,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers;
         }
 
-        public ConnectStatus OnClientConnected(ulong clientId, string clientGUID, string playerName)
+        /// <summary>
+        /// Handles the flow when a user is connecting by testing for duplicate logins and populating the session's data.
+        /// Invoked during the approval check and returns the connection status.
+        /// </summary>
+        /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
+        /// <param name="clientGUID">This is the clientGUID that is unique to this client and persists accross multiple logins from the same client</param>
+        /// <param name="playerName">The player's name</param>
+        /// <returns></returns>
+        public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, string playerName)
         {
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
             SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPositionRotation, m_InitialPositionRotation, true);
@@ -207,7 +215,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return gameReturnStatus;
         }
 
-        public void OnConnectionApproved(ulong clientId, string clientGUID, string playerName)
+        /// <summary>
+        /// Handles the flow when a user's connection is approved. Assigns name and class to persistent player.
+        /// Invoked after the approval check.
+        /// </summary>
+        /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
+        /// <param name="clientGUID">This is the clientGUID that is unique to this client and persists accross multiple logins from the same client</param>
+        public void OnConnectionApproved(ulong clientId, string clientGUID)
         {
             SessionPlayerData? sessionPlayerData = GetPlayerData(clientGUID);
             Assert.IsTrue(sessionPlayerData.HasValue, $"SessionPlayerData not found for client GUID!");
@@ -302,11 +316,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public void UpdatePlayerBeforeDisconnect(ulong clientId, string name, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid, bool isConnected)
+        /// <summary>
+        /// Updates the player's session data and removes the mapping between the clientId and the GUID since the client will be disconnected.
+        /// </summary>
+        /// <param name="clientId">Id of the client to update</param>
+        /// <param name="playerName">The player's name to save</param>
+        /// <param name="position">The player's last position before disconnecting</param>
+        /// <param name="rotation">The player's last rotation before disconnecting</param>
+        /// <param name="avatarNetworkGuid">The NetworkGuid describing the player's class</param>
+        public void UpdatePlayerBeforeDisconnect(ulong clientId, string playerName, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid)
         {
-            var guid = m_ClientIDToGuid[clientId];
-            m_ClientData[guid] = new SessionPlayerData(clientId, guid, name, position, rotation, avatarNetworkGuid, isConnected);
-            m_ClientIDToGuid.Remove(clientId);
+            if (m_ClientIDToGuid.ContainsKey(clientId))
+            {
+                var guid = m_ClientIDToGuid[clientId];
+                m_ClientData[guid] = new SessionPlayerData(clientId, guid, playerName, position, rotation, avatarNetworkGuid, false, false);
+                m_ClientIDToGuid.Remove(clientId);
+            }
         }
 
 
