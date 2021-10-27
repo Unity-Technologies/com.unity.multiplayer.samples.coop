@@ -115,19 +115,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
-                //m_ClientIDToGuid.Remove(clientId);
-
                 if (m_ClientData[guid].ClientID == clientId)
                 {
-                    //be careful to only remove the ClientData if it is associated with THIS clientId; in a case where a new connection
-                    //for the same GUID kicks the old connection, this could get complicated. In a game that fully supported the reconnect flow,
-                    //we would NOT remove ClientData here, but instead time it out after a certain period, since the whole point of it is
-                    //to remember client information on a per-guid basis after the connection has been lost.
-                    /*
-                    var character = PlayerServerCharacter.GetPlayerServerCharacters().Find(
-                        player => player.OwnerClientId == clientId);
-                    m_ClientData[m_ClientIDToGuid[clientId]] = new SessionPlayerData(clientId, m_ClientIDToGuid[clientId], m_Portal.PlayerName, character.transform.position, character.transform.rotation.eulerAngles, false);
-                    */
                     var sessionPlayerData = m_ClientData[guid];
                     sessionPlayerData.IsConnected = false;
                     m_ClientData[guid] = sessionPlayerData;
@@ -136,9 +125,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (clientId == m_Portal.NetManager.LocalClientId)
             {
-                //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
+                //the ServerSessionManager may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
-                //m_Portal.UserDisconnectRequested -= OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
             }
         }
@@ -333,7 +321,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_ClientIDToGuid.Remove(clientId);
             }
         }
-
 
         static void AssignPlayerName(ulong clientId, string playerName)
         {
