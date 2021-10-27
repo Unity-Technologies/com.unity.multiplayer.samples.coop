@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -53,6 +54,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void RemovePersistentPlayer()
         {
             m_PersistentPlayerRuntimeCollection.Remove(this);
+            if (IsServer)
+            {
+                ServerSessionManager.Instance.UpdatePlayer(OwnerClientId, m_NetworkNameState.Name.Value, transform.position, transform.rotation.eulerAngles, m_NetworkAvatarGuidState.AvatarGuid.Value, false);
+            }
         }
     }
 }

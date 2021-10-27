@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -11,16 +12,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public string PlayerName;
         public Vector3 PlayerPosition;
         public Vector3 PlayerRotation;
+        public NetworkGuid AvatarNetworkGuid;
         public bool IsConnected;
+        public bool IsReconnecting;
 
-        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, bool isConnected = false)
+        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid, bool isConnected = false, bool isReconnecting = false)
         {
             ClientID = clientID;
             ClientGUID = clientGUID;
             PlayerName = name;
             PlayerPosition = position;
             PlayerRotation = rotation;
+            AvatarNetworkGuid = avatarNetworkGuid;
             IsConnected = isConnected;
+            IsReconnecting = isReconnecting;
+        }
+
+        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, bool isConnected = false, bool isReconnecting = false)
+        {
+            ClientID = clientID;
+            ClientGUID = clientGUID;
+            PlayerName = name;
+            PlayerPosition = position;
+            PlayerRotation = rotation;
+            AvatarNetworkGuid = new NetworkGuid();
+            IsConnected = isConnected;
+            IsReconnecting = isReconnecting;
         }
     }
 
@@ -90,20 +107,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private void OnNetworkReady()
-        {
-            if (!m_Portal.NetManager.IsServer)
-            {
-                enabled = false;
-            }
-            else
-            {
-                //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
-                //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
-                m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
-            }
-        }
-
         /// <summary>
         /// Handles the case where NetworkManager has told us a client has disconnected. This includes ourselves, if we're the host,
         /// and the server is stopped."
@@ -112,7 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
-                m_ClientIDToGuid.Remove(clientId);
+                //m_ClientIDToGuid.Remove(clientId);
 
                 if (m_ClientData[guid].ClientID == clientId)
                 {
@@ -125,7 +128,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                         player => player.OwnerClientId == clientId);
                     m_ClientData[m_ClientIDToGuid[clientId]] = new SessionPlayerData(clientId, m_ClientIDToGuid[clientId], m_Portal.PlayerName, character.transform.position, character.transform.rotation.eulerAngles, false);
                     */
-                    m_ClientData.Remove(guid);
+                    var sessionPlayerData = m_ClientData[guid];
+                    sessionPlayerData.IsConnected = false;
+                    m_ClientData[guid] = sessionPlayerData;
                 }
             }
 
@@ -163,28 +168,51 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public ConnectStatus OnClientConnected(ulong clientId, string clientGUID, string playerName)
         {
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
+            SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPositionRotation, m_InitialPositionRotation, true);
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
             {
-                if (Debug.isDebugBuild)
+                if (m_ClientData[clientGUID].IsConnected)
                 {
-                    Debug.Log($"Client GUID {clientGUID} already exists. Because this is a debug build, we will still accept the connection");
-                    while (m_ClientData.ContainsKey(clientGUID)) { clientGUID += "_Secondary"; }
+                    if (Debug.isDebugBuild)
+                    {
+                        Debug.Log($"Client GUID {clientGUID} already exists. Because this is a debug build, we will still accept the connection");
+                        while (m_ClientData.ContainsKey(clientGUID)) { clientGUID += "_Secondary"; }
+                    }
+                    else
+                    {
+                        gameReturnStatus = ConnectStatus.LoggedInAgain;
+                    }
                 }
                 else
                 {
-                    gameReturnStatus = ConnectStatus.LoggedInAgain;
+                    // Reconnecting. Give data from old player to new player
+
+                    // Update player session data
+                    sessionPlayerData = m_ClientData[clientGUID];
+                    sessionPlayerData.ClientID = clientId;
+                    sessionPlayerData.IsConnected = true;
+                    sessionPlayerData.IsReconnecting = true;
                 }
+
             }
 
             //Populate our dictionaries with the SessionPlayerData
             if (gameReturnStatus == ConnectStatus.Success)
             {
                 m_ClientIDToGuid[clientId] = clientGUID;
-                m_ClientData[clientGUID] = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPositionRotation, m_InitialPositionRotation, true);
+                m_ClientData[clientGUID] = sessionPlayerData;
             }
 
             return gameReturnStatus;
+        }
+
+        public void OnConnectionApproved(ulong clientId, string clientGUID, string playerName)
+        {
+            SessionPlayerData? sessionPlayerData = GetPlayerData(clientGUID);
+            Assert.IsTrue(sessionPlayerData.HasValue, $"SessionPlayerData not found for client GUID!");
+            AssignPlayerName(clientId, sessionPlayerData.Value.PlayerName);
+            AssignPlayerAvatar(clientId, sessionPlayerData.Value.AvatarNetworkGuid);
         }
 
 
@@ -257,14 +285,52 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private void ServerStartedHandler()
         {
-            m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPositionRotation, m_InitialPositionRotation, true));
-            m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
+            if (!m_Portal.NetManager.IsServer)
+            {
+                enabled = false;
+            }
+            else
+            {
+                //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
+                //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
+                m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
+
+                m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPositionRotation, m_InitialPositionRotation, true));
+                m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
+
+                AssignPlayerName(NetworkManager.Singleton.LocalClientId, m_Portal.PlayerName);
+            }
         }
 
-        public void UpdatePlayer(ulong clientId, string name, Vector3 position, Vector3 rotation)
+        public void UpdatePlayer(ulong clientId, string name, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid, bool isConnected)
         {
             var guid = m_ClientIDToGuid[clientId];
-            m_ClientData[guid] = new SessionPlayerData(clientId, guid, name, position, rotation, true);
+            m_ClientData[guid] = new SessionPlayerData(clientId, guid, name, position, rotation, avatarNetworkGuid, isConnected);
+        }
+
+
+        static void AssignPlayerName(ulong clientId, string playerName)
+        {
+            // get this client's player NetworkObject
+            var networkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
+
+            // update client's name
+            if (networkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+            {
+                persistentPlayer.NetworkNameState.Name.Value = playerName;
+            }
+        }
+
+        static void AssignPlayerAvatar(ulong clientId, NetworkGuid avatarNetworkGuid)
+        {
+            // get this client's player NetworkObject
+            var networkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
+
+            // update client's player avatar
+            if (networkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
+            {
+                persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value = avatarNetworkGuid;
+            }
         }
     }
 }

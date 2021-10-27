@@ -214,7 +214,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
             // connection approval will create a player object for you
-            AssignPlayerName(clientId, connectionPayload.playerName);
+            ServerSessionManager.Instance.OnConnectionApproved(clientId, connectionPayload.clientGUID,
+                connectionPayload.playerName);
         }
 
         private IEnumerator WaitToDisconnect(ulong clientId)
@@ -252,24 +253,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private void ServerStartedHandler()
         {
-            AssignPlayerName(NetworkManager.Singleton.LocalClientId, m_Portal.PlayerName);
-
             // server spawns game state
             var gameState = Instantiate(m_GameState);
 
             gameState.Spawn();
         }
 
-        static void AssignPlayerName(ulong clientId, string playerName)
-        {
-            // get this client's player NetworkObject
-            var networkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
-
-            // update client's name
-            if (networkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
-            {
-                persistentPlayer.NetworkNameState.Name.Value = playerName;
-            }
-        }
     }
 }
