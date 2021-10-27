@@ -159,7 +159,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             var newPlayer = Instantiate(m_PlayerPrefab, Vector3.zero, Quaternion.identity);
 
-            var physicsTransform = newPlayer.GetComponent<ServerCharacter>().physicsWrapper.Transform;
+            var newPlayerCharacter = newPlayer.GetComponent<ServerCharacter>();
+
+            var physicsTransform = newPlayerCharacter.physicsWrapper.Transform;
 
             if (spawnPoint != null)
             {
@@ -184,6 +186,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 if (sessionPlayerData != null && sessionPlayerData.Value.IsReconnecting)
                 {
                     physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, Quaternion.Euler(sessionPlayerData.Value.PlayerRotation));
+                    newPlayerCharacter.NetState.HitPoints = sessionPlayerData.Value.CurrentHP;
                 }
                 else
                 {

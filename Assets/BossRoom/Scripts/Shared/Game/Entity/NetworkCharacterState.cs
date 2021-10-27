@@ -113,7 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
-            HitPoints = CharacterClass.BaseHP.Value;
+            if (HitPoints == 0) HitPoints = CharacterClass.BaseHP.Value;
         }
 
         /// <summary>

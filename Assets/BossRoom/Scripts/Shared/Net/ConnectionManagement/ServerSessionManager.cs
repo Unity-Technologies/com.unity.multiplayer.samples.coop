@@ -14,10 +14,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public Vector3 PlayerPosition;
         public Vector3 PlayerRotation;
         public NetworkGuid AvatarNetworkGuid;
+        public int CurrentHP;
         public bool IsConnected;
         public bool IsReconnecting;
 
-        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid, bool isConnected = false, bool isReconnecting = false)
+        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid, int currentHP = 0, bool isConnected = false, bool isReconnecting = false)
         {
             ClientID = clientID;
             ClientGUID = clientGUID;
@@ -25,11 +26,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             PlayerPosition = position;
             PlayerRotation = rotation;
             AvatarNetworkGuid = avatarNetworkGuid;
+            CurrentHP = currentHP;
             IsConnected = isConnected;
             IsReconnecting = isReconnecting;
         }
 
-        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, bool isConnected = false, bool isReconnecting = false)
+        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, int currentHP = 0, bool isConnected = false, bool isReconnecting = false)
         {
             ClientID = clientID;
             ClientGUID = clientGUID;
@@ -37,6 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             PlayerPosition = position;
             PlayerRotation = rotation;
             AvatarNetworkGuid = new NetworkGuid();
+            CurrentHP = currentHP;
             IsConnected = isConnected;
             IsReconnecting = isReconnecting;
         }
@@ -174,7 +177,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, string playerName)
         {
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
-            SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPositionRotation, m_InitialPositionRotation, true);
+            SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPositionRotation, m_InitialPositionRotation, 0, true, false);
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
             {
@@ -307,7 +310,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
 
-                m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPositionRotation, m_InitialPositionRotation, true));
+                m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPositionRotation, m_InitialPositionRotation, 0, true, false));
                 m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
 
                 AssignPlayerName(NetworkManager.Singleton.LocalClientId, m_Portal.PlayerName);
@@ -333,7 +336,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public void UpdatePlayerTransform(ulong clientId, Vector3 position, Vector3 rotation)
+        public void UpdatePlayerTransform(ulong clientId, Vector3 position, Vector3 rotation, int currentHp)
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
@@ -341,6 +344,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     sessionPlayerData.PlayerPosition = position;
                     sessionPlayerData.PlayerRotation = rotation;
+                    sessionPlayerData.CurrentHP = currentHp;
                     m_ClientData[guid] = sessionPlayerData;
                 }
             }
