@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -119,7 +120,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     var sessionPlayerData = m_ClientData[guid];
                     sessionPlayerData.IsConnected = false;
+                    sessionPlayerData.IsReconnecting = false;
                     m_ClientData[guid] = sessionPlayerData;
+                    // Wait a few seconds before removing the clientId-GUID mapping to allow for final updates to SessionPlayerData.
+                    StartCoroutine(WaitToRemoveClientId(clientId));
                 }
             }
 
@@ -129,6 +133,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
             }
+        }
+
+        private IEnumerator WaitToRemoveClientId(ulong clientId)
+        {
+            yield return new WaitForSeconds(5.0f);
+            m_ClientIDToGuid.Remove(clientId);
         }
 
 
@@ -305,20 +315,34 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         }
 
         /// <summary>
-        /// Updates the player's session data and removes the mapping between the clientId and the GUID since the client will be disconnected.
+        /// Updates the player's session data.
         /// </summary>
         /// <param name="clientId">Id of the client to update</param>
         /// <param name="playerName">The player's name to save</param>
-        /// <param name="position">The player's last position before disconnecting</param>
-        /// <param name="rotation">The player's last rotation before disconnecting</param>
         /// <param name="avatarNetworkGuid">The NetworkGuid describing the player's class</param>
-        public void UpdatePlayerBeforeDisconnect(ulong clientId, string playerName, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid)
+        public void UpdatePlayerData(ulong clientId, string playerName, NetworkGuid avatarNetworkGuid)
         {
-            if (m_ClientIDToGuid.ContainsKey(clientId))
+            if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
-                var guid = m_ClientIDToGuid[clientId];
-                m_ClientData[guid] = new SessionPlayerData(clientId, guid, playerName, position, rotation, avatarNetworkGuid, false, false);
-                m_ClientIDToGuid.Remove(clientId);
+                if (m_ClientData.TryGetValue(guid, out var sessionPlayerData))
+                {
+                    sessionPlayerData.PlayerName = playerName;
+                    sessionPlayerData.AvatarNetworkGuid = avatarNetworkGuid;
+                    m_ClientData[guid] = sessionPlayerData;
+                }
+            }
+        }
+
+        public void UpdatePlayerTransform(ulong clientId, Vector3 position, Vector3 rotation)
+        {
+            if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
+            {
+                if (m_ClientData.TryGetValue(guid, out var sessionPlayerData))
+                {
+                    sessionPlayerData.PlayerPosition = position;
+                    sessionPlayerData.PlayerRotation = rotation;
+                    m_ClientData[guid] = sessionPlayerData;
+                }
             }
         }
 

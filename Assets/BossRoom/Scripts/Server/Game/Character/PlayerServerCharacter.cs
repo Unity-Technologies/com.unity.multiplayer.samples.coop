@@ -37,6 +37,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             s_ActivePlayers.Remove(m_CachedServerCharacter);
         }
 
+        public override void OnNetworkDespawn()
+        {
+            var movementTransform = m_CachedServerCharacter.Movement.transform;
+            ServerSessionManager.Instance.UpdatePlayerTransform(OwnerClientId, movementTransform.position, movementTransform.rotation.eulerAngles);
+        }
+
         /// <summary>
         /// Returns a list of all active players' ServerCharacters. Treat the list as read-only!
         /// The list will be empty on the client.
