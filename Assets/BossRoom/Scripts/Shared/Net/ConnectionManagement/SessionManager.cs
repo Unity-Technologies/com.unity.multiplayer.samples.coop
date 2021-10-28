@@ -47,14 +47,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
     public class SessionManager : MonoBehaviour
     {
-        private static SessionManager _instance;
+        public static SessionManager Instance { get; private set; }
 
-        public static SessionManager Instance
-        {
-            get { return _instance; }
-        }
-
-        public GameNetPortal m_Portal;
+        [SerializeField]
+        private GameNetPortal m_Portal;
 
         /// <summary>
         /// Maps a given client guid to the data for a given client player.
@@ -73,13 +69,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         private void Awake()
         {
-            if (_instance != null && _instance != this)
+            if (Instance != null && Instance != this)
             {
                 Destroy(this.gameObject);
             }
             else
             {
-                _instance = this;
+                Instance = this;
             }
         }
 
@@ -246,9 +242,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             //First see if we have a guid matching the clientID given.
 
-            if (m_ClientIDToGuid.TryGetValue(clientId, out string clientguid))
+            if (m_ClientIDToGuid.TryGetValue(clientId, out string clientGUID))
             {
-                if (m_ClientData.TryGetValue(clientguid, out SessionPlayerData data))
+                if (m_ClientData.TryGetValue(clientGUID, out SessionPlayerData data))
                 {
                     return data;
                 }
