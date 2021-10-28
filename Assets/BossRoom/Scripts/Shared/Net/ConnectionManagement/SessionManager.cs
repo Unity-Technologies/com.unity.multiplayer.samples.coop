@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public struct SessionPlayerData
     {
@@ -45,11 +45,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         }
     }
 
-    public class ServerSessionManager : MonoBehaviour
+    public class SessionManager : MonoBehaviour
     {
-        private static ServerSessionManager _instance;
+        private static SessionManager _instance;
 
-        public static ServerSessionManager Instance
+        public static SessionManager Instance
         {
             get { return _instance; }
         }
@@ -132,7 +132,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (clientId == m_Portal.NetManager.LocalClientId)
             {
-                //the ServerSessionManager may be initialized again, which will cause its OnNetworkSpawn to be called again.
+                //the SessionManager may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
             }
@@ -318,12 +318,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         }
 
         /// <summary>
-        /// Updates the player's session data.
+        /// Updates the player's session persistant data
         /// </summary>
         /// <param name="clientId">Id of the client to update</param>
         /// <param name="playerName">The player's name to save</param>
         /// <param name="avatarNetworkGuid">The NetworkGuid describing the player's class</param>
-        public void UpdatePlayerData(ulong clientId, string playerName, NetworkGuid avatarNetworkGuid)
+        public void UpdatePlayerPersistantData(ulong clientId, string playerName, NetworkGuid avatarNetworkGuid)
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
@@ -336,7 +336,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public void UpdatePlayerTransform(ulong clientId, Vector3 position, Vector3 rotation, int currentHp)
+        /// <summary>
+        /// Updates the player's session data linked to their character
+        /// </summary>
+        /// <param name="clientId">Id of the client to update</param>
+        /// <param name="position">Current position of the player character</param>
+        /// <param name="rotation">Current rotation of the player character</param>
+        /// <param name="currentHp">Current hp of the player character</param>
+        public void UpdatePlayerCharacterData(ulong clientId, Vector3 position, Vector3 rotation, int currentHp)
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {

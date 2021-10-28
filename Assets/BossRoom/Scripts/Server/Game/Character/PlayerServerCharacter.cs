@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override void OnNetworkDespawn()
         {
             var movementTransform = m_CachedServerCharacter.Movement.transform;
-            ServerSessionManager.Instance.UpdatePlayerTransform(OwnerClientId, movementTransform.position, movementTransform.rotation.eulerAngles, m_CachedServerCharacter.NetState.HitPoints);
+            SessionManager.Instance.UpdatePlayerCharacterData(OwnerClientId, movementTransform.position, movementTransform.rotation.eulerAngles, m_CachedServerCharacter.NetState.HitPoints);
         }
 
         /// <summary>

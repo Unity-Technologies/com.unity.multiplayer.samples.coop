@@ -182,7 +182,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // if joining late, assign a random character to the persistent player
             if (lateJoin)
             {
-                SessionPlayerData? sessionPlayerData = ServerSessionManager.Instance.GetPlayerData(clientId);
+                SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(clientId);
                 if (sessionPlayerData != null && sessionPlayerData.Value.IsReconnecting)
                 {
                     physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, Quaternion.Euler(sessionPlayerData.Value.PlayerRotation));

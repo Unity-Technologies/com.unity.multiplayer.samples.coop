@@ -243,7 +243,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            ServerSessionManager.Instance.OnUserDisconnectRequest();
+            SessionManager.Instance.OnUserDisconnectRequest();
             NetManager.Shutdown();
         }
     }

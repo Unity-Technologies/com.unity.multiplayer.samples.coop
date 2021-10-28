@@ -1,4 +1,3 @@
-using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -56,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_PersistentPlayerRuntimeCollection.Remove(this);
             if (IsServer)
             {
-                ServerSessionManager.Instance.UpdatePlayerData(OwnerClientId, m_NetworkNameState.Name.Value, m_NetworkAvatarGuidState.AvatarGuid.Value);
+                SessionManager.Instance.UpdatePlayerPersistantData(OwnerClientId, m_NetworkNameState.Name.Value, m_NetworkAvatarGuidState.AvatarGuid.Value);
             }
         }
     }
