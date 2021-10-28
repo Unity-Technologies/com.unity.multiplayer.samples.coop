@@ -12,6 +12,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 enabled = false;
             }
+            else
+            {
+                SessionManager.Instance.OnGameEnded();
+            }
         }
     }
 }

@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -350,6 +351,27 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     sessionPlayerData.CurrentHP = currentHp;
                     m_ClientData[guid] = sessionPlayerData;
                 }
+            }
+        }
+
+        /// <summary>
+        /// Clears data from disconnected players, so that if they reconnect in the next game, they will be treated as new players
+        /// </summary>
+        public void OnGameEnded()
+        {
+            List<ulong> idsToClear = new List<ulong>();
+            foreach (var id in m_ClientIDToGuid.Keys)
+            {
+                if (!m_Portal.NetManager.ConnectedClientsIds.Contains(id))
+                {
+                    idsToClear.Add(id);
+                }
+            }
+
+            foreach (var id in idsToClear)
+            {
+                m_ClientData.Remove(m_ClientIDToGuid[id]);
+                m_ClientIDToGuid.Remove(id);
             }
         }
 
