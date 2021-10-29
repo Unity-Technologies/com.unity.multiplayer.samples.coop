@@ -1,4 +1,5 @@
 {
+  "registry": "https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-candidates",
   "dependencies": {
     "com.community.netcode.transport.photon-realtime": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.community.netcode.transport.photon-realtime#develop",
     "com.unity.2d.sprite": "1.0.0",
@@ -10,8 +11,8 @@
     "com.unity.ide.vscode": "1.2.4",
     "com.unity.learn.iet-framework": "1.2.1",
     "com.unity.multiplayer.tools": "1.0.0-pre.2",
-    "com.unity.netcode.adapter.utp": "1.0.0-pre.2",
-    "com.unity.netcode.gameobjects": "1.0.0-pre.2",
+    "com.unity.netcode.adapter.utp": "1.0.0-pre.3",
+    "com.unity.netcode.gameobjects": "1.0.0-pre.3",
     "com.unity.postprocessing": "3.1.1",
     "com.unity.services.authentication": "1.0.0-pre.4",
     "com.unity.services.relay": "1.0.1-pre.1",
