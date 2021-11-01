@@ -14,9 +14,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     public class ServerBossRoomState : GameStateBehaviour
     {
         [SerializeField]
-        AvatarRegistry m_AvatarRegistry;
-
-        [SerializeField]
         TransformVariable m_NetworkGameStateTransform;
 
         [SerializeField]
@@ -179,21 +176,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             Assert.IsTrue(networkAvatarGuidStateExists,
                 $"NetworkCharacterGuidState not found on player avatar!");
 
-            // if joining late, assign a random character to the persistent player
+            // if reconnecting, set the player's position and rotation to its previous state
             if (lateJoin)
             {
                 SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(clientId);
-                if (sessionPlayerData != null && sessionPlayerData.Value.IsReconnecting)
+                if (sessionPlayerData is {IsReconnecting: true})
                 {
-                    physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, Quaternion.Euler(sessionPlayerData.Value.PlayerRotation));
-                    newPlayerCharacter.NetState.HitPoints = sessionPlayerData.Value.CurrentHP;
+                    physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, sessionPlayerData.Value.PlayerRotation);
                 }
-                else
-                {
-                    persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value =
-                        m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
-                }
-
             }
 
             networkAvatarGuidState.AvatarGuid.Value =

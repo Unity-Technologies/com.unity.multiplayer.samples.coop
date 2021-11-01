@@ -13,13 +13,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public string ClientGUID;
         public string PlayerName;
         public Vector3 PlayerPosition;
-        public Vector3 PlayerRotation;
+        public Quaternion PlayerRotation;
         public NetworkGuid AvatarNetworkGuid;
         public int CurrentHP;
         public bool IsConnected;
         public bool IsReconnecting;
 
-        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, NetworkGuid avatarNetworkGuid, int currentHP = 0, bool isConnected = false, bool isReconnecting = false)
+        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Quaternion rotation, NetworkGuid avatarNetworkGuid, int currentHP = 0, bool isConnected = false, bool isReconnecting = false)
         {
             ClientID = clientID;
             ClientGUID = clientGUID;
@@ -27,19 +27,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             PlayerPosition = position;
             PlayerRotation = rotation;
             AvatarNetworkGuid = avatarNetworkGuid;
-            CurrentHP = currentHP;
-            IsConnected = isConnected;
-            IsReconnecting = isReconnecting;
-        }
-
-        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Vector3 rotation, int currentHP = 0, bool isConnected = false, bool isReconnecting = false)
-        {
-            ClientID = clientID;
-            ClientGUID = clientGUID;
-            PlayerName = name;
-            PlayerPosition = position;
-            PlayerRotation = rotation;
-            AvatarNetworkGuid = new NetworkGuid();
             CurrentHP = currentHP;
             IsConnected = isConnected;
             IsReconnecting = isReconnecting;
@@ -52,6 +39,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         [SerializeField]
         private GameNetPortal m_Portal;
+
+        [SerializeField]
+        AvatarRegistry m_AvatarRegistry;
 
         /// <summary>
         /// Maps a given client guid to the data for a given client player.
@@ -66,7 +56,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
         private const int k_MaxConnectPayload = 1024;
 
-        private Vector3 m_InitialPositionRotation = Vector3.zero;
+        private Vector3 m_InitialPosition = Vector3.zero;
+
+        private Quaternion m_InitialRotation = Quaternion.identity;
 
         private void Awake()
         {
@@ -174,7 +166,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, string playerName)
         {
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
-            SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPositionRotation, m_InitialPositionRotation, 0, true, false);
+            SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPosition, m_InitialRotation, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false);
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
             {
@@ -307,7 +299,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
 
-                m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPositionRotation, m_InitialPositionRotation, 0, true, false));
+                m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPosition, m_InitialRotation, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false));
                 m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
 
                 AssignPlayerName(NetworkManager.Singleton.LocalClientId, m_Portal.PlayerName);
@@ -340,7 +332,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="position">Current position of the player character</param>
         /// <param name="rotation">Current rotation of the player character</param>
         /// <param name="currentHp">Current hp of the player character</param>
-        public void UpdatePlayerCharacterData(ulong clientId, Vector3 position, Vector3 rotation, int currentHp)
+        public void UpdatePlayerCharacterData(ulong clientId, Vector3 position, Quaternion rotation, int currentHp)
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {

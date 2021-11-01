@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -113,7 +114,21 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
-            if (HitPoints == 0) HitPoints = CharacterClass.BaseHP.Value;
+            HitPoints = GetInitialHitPoints();
+        }
+
+        int GetInitialHitPoints()
+        {
+            if (!IsNpc)
+            {
+                SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(ClientPrefs.GetGuid());
+                if (sessionPlayerData.HasValue && sessionPlayerData.Value.IsReconnecting)
+                {
+                    return sessionPlayerData.Value.CurrentHP;
+                }
+            }
+
+            return CharacterClass.BaseHP.Value;
         }
 
         /// <summary>
