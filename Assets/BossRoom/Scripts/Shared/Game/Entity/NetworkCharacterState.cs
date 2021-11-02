@@ -1,5 +1,4 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -121,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (!IsNpc)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(ClientPrefs.GetGuid());
+                SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData is {IsReconnecting: true})
                 {
                     return sessionPlayerData.Value.CurrentHP;
