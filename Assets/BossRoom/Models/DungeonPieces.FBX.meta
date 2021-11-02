@@ -21,7 +21,27 @@ ModelImporter:
   - first:
       74: -998496362607748373
     second: pot_break
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 21 - Default
+    second: {fileID: 2100000, guid: 5baabffd1c6c1964fad95f0c1a25aac3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 22 - Default
+    second: {fileID: 2100000, guid: 45ba6b42e6b4e3d4ba220ee0a2f777ca, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: 23 - Default
+    second: {fileID: 2100000, guid: b2c1276a94ceb4a4980a3986b2e1aa7f, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: env_floor
+    second: {fileID: 2100000, guid: 96b8562f6664cfd45bed6ab5272d330d, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
@@ -231,13 +251,13 @@ ModelImporter:
     addColliders: 0
     useSRGBMaterialColor: 1
     sortHierarchyByName: 1
-    importVisibility: 1
-    importBlendShapes: 1
-    importCameras: 1
-    importLights: 1
+    importVisibility: 0
+    importBlendShapes: 0
+    importCameras: 0
+    importLights: 0
     fileIdsGeneration: 2
     swapUVChannels: 0
-    generateSecondaryUV: 0
+    generateSecondaryUV: 1
     useFileUnits: 1
     keepQuads: 0
     weldVertices: 1
@@ -280,11 +300,11 @@ ModelImporter:
     globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
-    hasExtraRoot: 0
+    hasExtraRoot: 1
     skeletonHasParents: 1
   lastHumanDescriptionAvatarSource: {instanceID: 0}
   autoGenerateAvatarMappingIfUnspecified: 1
-  animationType: 2
+  animationType: 0
   humanoidOversampling: 1
   avatarSetup: 0
   addHumanoidExtraRootOnlyWhenUsingAvatar: 0

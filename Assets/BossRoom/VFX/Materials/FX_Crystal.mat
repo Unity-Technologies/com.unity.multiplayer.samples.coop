@@ -8,9 +8,9 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_Crystal
-  m_Shader: {fileID: 4800000, guid: 76af2de2914fe504581efd439de00102, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 1b76023fc80e4ae43bfa38d1092c2f3c, type: 3}
   m_ShaderKeywords: 
-  m_LightmapFlags: 0
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -55,6 +55,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_e44098f8ce8c4aafaf724e92f07e43fd_Texture_1:
+        m_Texture: {fileID: 2800000, guid: 9ed3e7e3831313745a7354fa9e38753c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture0:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -63,7 +67,28 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - Emissive_Strength: 0.2
+    - Metallic: 0.685
+    - Smoothness: 0.782
+    - Vector1_35a25956798941978ad5a95ee3c0447b: 0
+    - Vector1_bfc83604dc6348c89e2c8b82c0606d2d: 1
+    - Vector1_bfc83604dc6348c89e2c8b82c0606d2d_1: 1
+    - Vector1_c18de5949905429aa83db73b3c89918c: 35.06
+    - Vector1_c18de5949905429aa83db73b3c89918c_1: 3.4
+    - Vector1_c18de5949905429aa83db73b3c89918c_2: 2.23
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -89,6 +114,11 @@ Material:
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
+    - Base_Color: {r: 7.999999, g: 0.4607329, b: 2.5221288, a: 0}
+    - Base_Color_1: {r: 108.928055, g: 1.7109088, b: 52.996563, a: 0}
+    - Color_1: {r: 0.9811321, g: 0.49519405, b: 0.49519405, a: 0}
+    - Color_3142ba33c52c4314aa587b0a442797a1: {r: 256, g: 0, b: 256, a: 0}
+    - Specular_Color: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 1, g: 0.5518868, b: 0.7967859, a: 0}

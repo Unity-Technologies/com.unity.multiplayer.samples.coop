@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 742602510776183192}
   - component: {fileID: 742602510776183198}
   - component: {fileID: 742602510776183193}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Archer_cast_Glow_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4894,7 +4894,7 @@ GameObject:
   - component: {fileID: 742602510966002356}
   - component: {fileID: 742602510966002362}
   - component: {fileID: 742602510966002357}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Archer_cast_Cast_Particles_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9786,7 +9786,7 @@ GameObject:
   - component: {fileID: 742602511471314697}
   - component: {fileID: 742602511471314703}
   - component: {fileID: 742602511471314702}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Archer_cast_Main_Flare_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -14669,7 +14669,7 @@ GameObject:
   - component: {fileID: 742602511970213198}
   - component: {fileID: 742602511970213196}
   - component: {fileID: 742602511970213199}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Archer_cast_Main_Glow_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -19579,7 +19579,7 @@ GameObject:
   - component: {fileID: 742602512138205060}
   - component: {fileID: 742602512138205066}
   - component: {fileID: 742602512138205061}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Archer_cast_Star_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -24395,7 +24395,7 @@ GameObject:
   - component: {fileID: 742602512168463914}
   - component: {fileID: 742602512168463912}
   - component: {fileID: 742602512168463915}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: Archer_cast_Glow_circle_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29278,8 +29278,8 @@ GameObject:
   - component: {fileID: 742602512405653753}
   - component: {fileID: 742602512405653752}
   - component: {fileID: 742602512405653755}
-  m_Layer: 0
-  m_Name: FX_Archer_cast_2
+  m_Layer: 12
+  m_Name: FX_Archer_skill1_cast_2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

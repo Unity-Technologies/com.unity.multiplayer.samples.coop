@@ -64,6 +64,7 @@ MonoBehaviour:
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &-2604036011194100329
 MonoBehaviour:
   m_ObjectHideFlags: 0
