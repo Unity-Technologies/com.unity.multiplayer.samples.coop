@@ -9,20 +9,6 @@ using UnityEngine.SceneManagement;
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
-    /// Represents a single player on the game server
-    /// </summary>
-    public struct PlayerData
-    {
-        public string m_PlayerName;  //name of the player
-        public ulong m_ClientID; //the identifying id of the client
-
-        public PlayerData(string playerName, ulong clientId)
-        {
-            m_PlayerName = playerName;
-            m_ClientID = clientId;
-        }
-    }
-    /// <summary>
     /// Server logic plugin for the GameNetHub. Contains implementations for all GameNetHub's C2S RPCs.
     /// </summary>
     public class ServerGameNetPortal : MonoBehaviour

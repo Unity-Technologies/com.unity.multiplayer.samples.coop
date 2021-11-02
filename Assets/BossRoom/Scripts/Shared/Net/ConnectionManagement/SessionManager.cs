@@ -53,9 +53,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private Dictionary<ulong, string> m_ClientIDToGuid;
 
-        // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
-        private const int k_MaxConnectPayload = 1024;
-
         private Vector3 m_InitialPosition = Vector3.zero;
 
         private Quaternion m_InitialRotation = Quaternion.identity;
