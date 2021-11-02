@@ -110,6 +110,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         public event Action<Vector3> ReceivedClientInput;
 
+        void Start()
+        {
+            // This removes characters who are in the scene but have not been spawned, i.e. imps that have despawned
+            // before this client connected to the server
+            if (IsClient && !IsSpawned)
+            {
+                Destroy(gameObject);
+            }
+        }
+
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
