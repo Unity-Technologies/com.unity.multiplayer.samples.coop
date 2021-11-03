@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.Netcode;
@@ -171,6 +170,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> changeEvent)
         {
+            // ignore state changes for the local player, unless the change event is a locked in event (which is
+            // server-authoritative)
+            if (changeEvent.Value.ClientId == NetworkManager.Singleton.LocalClientId)
+            {
+                if (changeEvent.Value.SeatState == CharSelectData.SeatState.LockedIn && !m_HasLocalPlayerLockedIn)
+                {
+
+                }
+                else if (changeEvent.Value.SeatState == CharSelectData.SeatState.Active && m_HasLocalPlayerLockedIn)
+                {
+
+                }
+                else
+                {
+                    return;
+                }
+            }
+
             UpdateSeats();
             UpdatePlayerCount();
 
@@ -376,6 +393,40 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
         {
+            // visually show the change immediately
+
+            // get current seat (m_LastSeatSelected)
+            if (m_LastSeatSelected != -1)
+            {
+                var otherPlayerSharesSeat = false;
+
+                // if any other user shares seat, set them as owner; else deactivate seat
+                foreach (var lobbyPlayer in CharSelectData.LobbyPlayers)
+                {
+                    if (lobbyPlayer.ClientId == NetworkManager.Singleton.LocalClientId)
+                    {
+                        // ignore self;
+                        continue;
+                    }
+
+                    if (lobbyPlayer.SeatIdx == m_LastSeatSelected)
+                    {
+                        otherPlayerSharesSeat = true;
+                        m_PlayerSeats[m_LastSeatSelected].SetState(CharSelectData.SeatState.Active, lobbyPlayer.PlayerNum, lobbyPlayer.PlayerName);
+                    }
+                }
+
+                if (!otherPlayerSharesSeat)
+                {
+                    m_PlayerSeats[m_LastSeatSelected].SetState(CharSelectData.SeatState.Inactive, -1, string.Empty);
+                }
+            }
+
+            TryGetLobbyPlayer(NetworkManager.Singleton.LocalClientId, out var localLobbyPlayerState);
+
+            m_PlayerSeats[seatIdx].SetState(CharSelectData.SeatState.Active, localLobbyPlayerState.PlayerNum, localLobbyPlayerState.PlayerName);
+            UpdateCharacterSelection(CharSelectData.SeatState.Active, seatIdx);
+
             CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
         }
 
@@ -398,6 +449,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
             gameNetPortal.RequestDisconnect();
             SceneManager.LoadScene("MainMenu");
+        }
+
+        bool TryGetLobbyPlayer(ulong clientId, out CharSelectData.LobbyPlayerState lobbyPlayerState)
+        {
+            foreach (var lobbyPlayer in CharSelectData.LobbyPlayers)
+            {
+                if (lobbyPlayer.ClientId == clientId)
+                {
+                    lobbyPlayerState = lobbyPlayer;
+                    return true;
+                }
+            }
+
+            lobbyPlayerState = default;
+            return false;
         }
 
         GameObject GetCharacterGraphics(Avatar avatar)
