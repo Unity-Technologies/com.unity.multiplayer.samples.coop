@@ -202,7 +202,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
                 // connection approval will create a player object for you
-                SessionManager.Instance.OnConnectionApproved(clientId, connectionPayload.clientGUID);
+                SessionManager.Instance.OnConnectionApproved(clientId);
             }
         }
 

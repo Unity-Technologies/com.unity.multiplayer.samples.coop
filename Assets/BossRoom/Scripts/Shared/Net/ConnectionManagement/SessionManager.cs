@@ -17,9 +17,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public NetworkGuid AvatarNetworkGuid;
         public int CurrentHP;
         public bool IsConnected;
-        public bool IsReconnecting;
+        public bool HasCharacterSpawned;
 
-        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Quaternion rotation, NetworkGuid avatarNetworkGuid, int currentHP = 0, bool isConnected = false, bool isReconnecting = false)
+        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Quaternion rotation, NetworkGuid avatarNetworkGuid, int currentHP = 0, bool isConnected = false, bool hasCharacterSpawned = false)
         {
             ClientID = clientID;
             ClientGUID = clientGUID;
@@ -29,7 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             AvatarNetworkGuid = avatarNetworkGuid;
             CurrentHP = currentHP;
             IsConnected = isConnected;
-            IsReconnecting = isReconnecting;
+            HasCharacterSpawned = hasCharacterSpawned;
         }
     }
 
@@ -109,7 +109,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 {
                     var sessionPlayerData = m_ClientData[guid];
                     sessionPlayerData.IsConnected = false;
-                    sessionPlayerData.IsReconnecting = false;
                     m_ClientData[guid] = sessionPlayerData;
                     // Wait a few seconds before removing the clientId-GUID mapping to allow for final updates to SessionPlayerData.
                     StartCoroutine(WaitToRemoveClientId(clientId));
@@ -167,12 +166,22 @@ namespace Unity.Multiplayer.Samples.BossRoom
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
             {
+                bool isReconnecting = false;
+                // If another client is connected with the same clientGUID
                 if (m_ClientData[clientGUID].IsConnected)
                 {
                     if (Debug.isDebugBuild)
                     {
                         Debug.Log($"Client GUID {clientGUID} already exists. Because this is a debug build, we will still accept the connection");
-                        while (m_ClientData.ContainsKey(clientGUID)) { clientGUID += "_Secondary"; }
+                        // If debug build, accept connection and manually update clientGUID until we get one that either is not connected or that does not already exist
+                        while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) {clientGUID += "_Secondary"; }
+
+                        if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected)
+                        {
+                            // In this specific case, if the clients with the same GUID reconnect in a different order than when they originally connected,
+                            // they will swap characters, since their GUIDs are manually modified here at runtime.
+                            isReconnecting = true;
+                        }
                     }
                     else
                     {
@@ -181,13 +190,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 }
                 else
                 {
-                    // Reconnecting. Give data from old player to new player
+                    isReconnecting = true;
+                }
 
+                // Reconnecting. Give data from old player to new player
+                if (isReconnecting)
+                {
                     // Update player session data
                     sessionPlayerData = m_ClientData[clientGUID];
                     sessionPlayerData.ClientID = clientId;
                     sessionPlayerData.IsConnected = true;
-                    sessionPlayerData.IsReconnecting = true;
                 }
 
             }
@@ -207,10 +219,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Invoked after the approval check.
         /// </summary>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
-        /// <param name="clientGUID">This is the clientGUID that is unique to this client and persists accross multiple logins from the same client</param>
-        public void OnConnectionApproved(ulong clientId, string clientGUID)
+        public void OnConnectionApproved(ulong clientId)
         {
-            SessionPlayerData? sessionPlayerData = GetPlayerData(clientGUID);
+            SessionPlayerData? sessionPlayerData = GetPlayerData(clientId);
             Assert.IsTrue(sessionPlayerData.HasValue, $"SessionPlayerData not found for client GUID!");
             AssignPlayerName(clientId, sessionPlayerData.Value.PlayerName);
             AssignPlayerAvatar(clientId, sessionPlayerData.Value.AvatarNetworkGuid);
@@ -338,6 +349,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     sessionPlayerData.PlayerPosition = position;
                     sessionPlayerData.PlayerRotation = rotation;
                     sessionPlayerData.CurrentHP = currentHp;
+                    sessionPlayerData.HasCharacterSpawned = true;
                     m_ClientData[guid] = sessionPlayerData;
                 }
             }

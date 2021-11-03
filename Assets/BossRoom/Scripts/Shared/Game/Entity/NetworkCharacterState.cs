@@ -121,7 +121,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (!IsNpc)
             {
                 SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(OwnerClientId);
-                if (sessionPlayerData is {IsReconnecting: true})
+                if (sessionPlayerData is {HasCharacterSpawned: true})
                 {
                     return sessionPlayerData.Value.CurrentHP;
                 }
