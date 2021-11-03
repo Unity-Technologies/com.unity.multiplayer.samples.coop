@@ -30,9 +30,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         private string m_AnimatorTriggerWhenUnlocked = "Unlocked";
 
-        [SerializeField]
-        private CharacterTypeEnum m_CharacterClass;
-
         // just a way to designate which seat we are -- the leftmost seat on the lobby UI is index 0, the next one is index 1, etc.
         private int m_SeatIndex;
 
