@@ -123,7 +123,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData is {HasCharacterSpawned: true})
                 {
-                    return sessionPlayerData.Value.CurrentHP;
+                    return sessionPlayerData.Value.CurrentHitPoints;
                 }
             }
 

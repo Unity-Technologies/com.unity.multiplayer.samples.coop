@@ -1,31 +1,28 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
     public struct SessionPlayerData
     {
         public ulong ClientID;
-        public string ClientGUID;
         public string PlayerName;
         public Vector3 PlayerPosition;
         public Quaternion PlayerRotation;
         public NetworkGuid AvatarNetworkGuid;
-        public int CurrentHP;
+        public int CurrentHitPoints;
         public bool IsConnected;
         public bool HasCharacterSpawned;
 
-        public SessionPlayerData(ulong clientID, string clientGUID, string name, Vector3 position, Quaternion rotation, NetworkGuid avatarNetworkGuid, int currentHP = 0, bool isConnected = false, bool hasCharacterSpawned = false)
+        public SessionPlayerData(ulong clientID, string name, NetworkGuid avatarNetworkGuid, int currentHitPoints = 0, bool isConnected = false, bool hasCharacterSpawned = false)
         {
             ClientID = clientID;
-            ClientGUID = clientGUID;
             PlayerName = name;
-            PlayerPosition = position;
-            PlayerRotation = rotation;
+            PlayerPosition = Vector3.zero;
+            PlayerRotation = Quaternion.identity;
             AvatarNetworkGuid = avatarNetworkGuid;
-            CurrentHP = currentHP;
+            CurrentHitPoints = currentHitPoints;
             IsConnected = isConnected;
             HasCharacterSpawned = hasCharacterSpawned;
         }
@@ -51,15 +48,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private Dictionary<ulong, string> m_ClientIDToGuid;
 
-        private Vector3 m_InitialPosition = Vector3.zero;
-
-        private Quaternion m_InitialRotation = Quaternion.identity;
-
         private void Awake()
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
             else
             {
@@ -95,7 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void AddHostData()
         {
-            m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPosition, m_InitialRotation, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
+            m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, m_Portal.PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
             m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
         }
 
@@ -159,7 +152,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, string playerName)
         {
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
-            SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, clientGUID, playerName, m_InitialPosition, m_InitialRotation, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false);
+            SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, playerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false);
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
             {

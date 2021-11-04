@@ -46,7 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 var playerData = sessionPlayerData.Value;
                 playerData.PlayerPosition = movementTransform.position;
                 playerData.PlayerRotation = movementTransform.rotation;
-                playerData.CurrentHP = m_CachedServerCharacter.NetState.HitPoints;
+                playerData.CurrentHitPoints = m_CachedServerCharacter.NetState.HitPoints;
                 playerData.HasCharacterSpawned = true;
                 SessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
             }
