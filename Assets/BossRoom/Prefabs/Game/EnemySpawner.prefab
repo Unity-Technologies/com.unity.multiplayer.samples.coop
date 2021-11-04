@@ -236,7 +236,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5320772107039249662}
   m_LocalRotation: {x: -0.000000005268356, y: -0.7071068, z: 0.000000005268356, w: 0.7071068}
-  m_LocalPosition: {x: 1.8022459, y: 1.9499848, z: 3.0679176}
+  m_LocalPosition: {x: 2.46, y: 4.2, z: 2.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 8727022540156222958}
@@ -253,9 +253,9 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 0.9137255, g: 0.1870887, b: 0, a: 1}
-  m_Intensity: 2.13
-  m_Range: 17.75
+  m_Color: {r: 1, g: 0.39, b: 0.47133324, a: 1}
+  m_Intensity: 25.5
+  m_Range: 20.2
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -296,7 +296,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -382,11 +382,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 10832509785548470301
-  PrefabHashGenerator: EnemySpawner
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &4844841199312666291
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -533,7 +532,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: f6c369516d8e9794baf0c35e5916b823, type: 2}
+  - {fileID: 2100000, guid: 9e4481bbbe2fed14490dc1c464ff6e1d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

@@ -26,15 +26,16 @@
 			// data on the main directional light and ambient light.
 			Tags
 			{
-				"LightMode" = "ForwardBase"
+				//"LightMode" = "ForwardBase"
 				"PassFlags" = "OnlyDirectional"
+				"RenderPipeline" = "UniversalPipeline"
 			}
 
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			// Compile multiple versions of this shader depending on lighting settings.
-			#pragma multi_compile_fwdbase
+			// #pragma multi_compile_fwdbase
 			
 			#include "UnityCG.cginc"
 			// Files below include macros and functions to assist

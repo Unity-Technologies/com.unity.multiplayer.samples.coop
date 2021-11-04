@@ -43,20 +43,20 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 1, g: 0.5975877, b: 0.28627455, a: 1}
-  m_Intensity: 7
-  m_Range: 2.34
+  m_Color: {r: 1, g: 0.72625, b: 0.61, a: 1}
+  m_Intensity: 2.5
+  m_Range: 5.95
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: -1
     m_CustomResolution: -1
     m_Strength: 1
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 0.0234
+    m_NearPlane: 0.0619
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -86,7 +86,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -107,8 +107,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TargetLight: {fileID: 7512149632649692484}
-  m_MinIntensity: 6
-  m_MaxIntensity: 12
+  m_MinIntensity: 1
+  m_MaxIntensity: 20
   m_Smoothing: 36
 --- !u!1 &4371491365999748502
 GameObject:
@@ -234,7 +234,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7628197252956779504}
   m_LocalRotation: {x: -0.000000021855694, y: -0.00000011920929, z: 0.000000007450582, w: 1}
-  m_LocalPosition: {x: -0.06, y: 3.9, z: -0.02}
+  m_LocalPosition: {x: -0.06, y: 4.72, z: -0.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3325143161705299546}
@@ -251,20 +251,20 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 1, g: 0.5975877, b: 0.28627455, a: 1}
-  m_Intensity: 2.42
-  m_Range: 10
+  m_Color: {r: 1, g: 0.48942566, b: 0.21300006, a: 1}
+  m_Intensity: 20
+  m_Range: 14.904541
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
   m_Shadows:
-    m_Type: 2
+    m_Type: 0
     m_Resolution: 2
     m_CustomResolution: -1
     m_Strength: 0.884
-    m_Bias: 1.12
+    m_Bias: 0
     m_NormalBias: 0.61
-    m_NearPlane: 0.1
+    m_NearPlane: 2.16
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -294,7 +294,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
@@ -316,7 +316,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TargetLight: {fileID: 1483535084249736413}
   m_MinIntensity: 1
-  m_MaxIntensity: 2
+  m_MaxIntensity: 30
   m_Smoothing: 36
 --- !u!1001 &5931713884133125109
 PrefabInstance:

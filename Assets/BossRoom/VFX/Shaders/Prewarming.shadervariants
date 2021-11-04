@@ -341,36 +341,28 @@ ShaderVariantCollection:
         passType: 4
       - keywords: BILLBOARD_FACE_CAMERA_POS POINT SOFTPARTICLES_ON UNITY_HDR_ON
         passType: 5
-  - first: {fileID: 4800000, guid: 41c49b64d906a384cab2d953a43231e3, type: 3}
+  - first: {fileID: 4800000, guid: 11053485e6f23bf4c84a5962f5f67116, type: 3}
     second:
       variants:
-      - keywords: BILLBOARD_FACE_CAMERA_POS DIRECTIONAL LIGHTPROBE_SH SOFTPARTICLES_ON
-          UNITY_HDR_ON _NORMALMAP
+      - keywords: 
+        passType: 1
+      - keywords: 
+        passType: 2
+      - keywords: 
         passType: 4
-      - keywords: BILLBOARD_FACE_CAMERA_POS DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
-          SHADOWS_SOFT SHADOWS_SPLIT_SPHERES SOFTPARTICLES_ON UNITY_HDR_ON _NORMALMAP
-        passType: 4
-      - keywords: BILLBOARD_FACE_CAMERA_POS DIRECTIONAL LIGHTPROBE_SH SOFTPARTICLES_ON
-          UNITY_HDR_ON _EMISSION _NORMALMAP
-        passType: 4
-      - keywords: BILLBOARD_FACE_CAMERA_POS DIRECTIONAL LIGHTPROBE_SH SHADOWS_SCREEN
-          SHADOWS_SOFT SHADOWS_SPLIT_SPHERES SOFTPARTICLES_ON UNITY_HDR_ON _EMISSION
-          _NORMALMAP
-        passType: 4
-      - keywords: INSTANCING_ON SHADOWS_DEPTH
-        passType: 8
-      - keywords: INSTANCING_ON SHADOWS_CUBE
-        passType: 8
-      - keywords: INSTANCING_ON _NORMALMAP
-        passType: 8
-      - keywords: INSTANCING_ON _EMISSION _NORMALMAP
-        passType: 8
-      - keywords: BILLBOARD_FACE_CAMERA_POS INSTANCING_ON SHADOWS_DEPTH SHADOWS_SPLIT_SPHERES
-          SOFTPARTICLES_ON UNITY_HDR_ON _NORMALMAP
-        passType: 8
-      - keywords: BILLBOARD_FACE_CAMERA_POS INSTANCING_ON LIGHTPROBE_SH POINT SHADOWS_CUBE
-          SHADOWS_SOFT SOFTPARTICLES_ON UNITY_HDR_ON _EMISSION _NORMALMAP
-        passType: 8
+      - keywords: 
+        passType: 5
+      - keywords: 
+        passType: 6
+      - keywords: 
+        passType: 7
+      - keywords: 
+        passType: 10
+      - keywords: 
+        passType: 11
+  - first: {fileID: 4800000, guid: 41c49b64d906a384cab2d953a43231e3, type: 3}
+    second:
+      variants: []
   - first: {fileID: 4800000, guid: 81af42a93ade3dd46a9b583d4eec76d6, type: 3}
     second:
       variants:
@@ -441,6 +433,17 @@ ShaderVariantCollection:
       - keywords: BILLBOARD_FACE_CAMERA_POS ETC1_EXTERNAL_ALPHA POINT SOFTPARTICLES_ON
           UNITY_HDR_ON VERTEXLIGHT_ON
         passType: 5
+  - first: {fileID: 4800000, guid: 143bf507d0b743947992b1ed3d1a0d1f, type: 3}
+    second:
+      variants:
+      - keywords: BILLBOARD_FACE_CAMERA_POS LIGHTPROBE_SH SOFTPARTICLES_ON UNITY_HDR_ON
+          _DISSOLVETYPE_CUSTOM _DISSOLVETYPE_UV _DISSOLVE_UV _DISTYPE_DISSOLVETEXRED
+          _INVERTDISSOLVE_ON _KEYWORD0_ON
+        passType: 4
+      - keywords: BILLBOARD_FACE_CAMERA_POS POINT SOFTPARTICLES_ON UNITY_HDR_ON _DISSOLVETYPE_CUSTOM
+          _DISSOLVETYPE_UV _DISSOLVE_UV _DISTYPE_DISSOLVETEXRED _INVERTDISSOLVE_ON
+          _KEYWORD0_ON
+        passType: 5
   - first: {fileID: 4800000, guid: 76af2de2914fe504581efd439de00102, type: 3}
     second:
       variants:
@@ -499,6 +502,15 @@ ShaderVariantCollection:
       - keywords: BILLBOARD_FACE_CAMERA_POS BLOOM_LOW COLOR_GRADING_LDR_2D SOFTPARTICLES_ON
           UNITY_HDR_ON
         passType: 0
+  - first: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
+    second:
+      variants:
+      - keywords: 
+        passType: 0
+      - keywords: BILLBOARD_FACE_CAMERA_POS SOFTPARTICLES_ON
+        passType: 0
+      - keywords: BILLBOARD_FACE_CAMERA_POS SOFTPARTICLES_ON UNITY_HDR_ON
+        passType: 0
   - first: {fileID: 4800000, guid: 7886845fdd0f0a148b23f1e533e46533, type: 3}
     second:
       variants:
@@ -556,9 +568,7 @@ ShaderVariantCollection:
         passType: 5
   - first: {fileID: 4800000, guid: 4968826cd1690d448bd993e9859e8d20, type: 3}
     second:
-      variants:
-      - keywords: 
-        passType: 8
+      variants: []
   - first: {fileID: 4800000, guid: e98b6ae7301185b48b6dee05ea1ff2d6, type: 3}
     second:
       variants:
@@ -652,42 +662,3 @@ ShaderVariantCollection:
         passType: 4
       - keywords: BILLBOARD_FACE_CAMERA_POS POINT SOFTPARTICLES_ON UNITY_HDR_ON
         passType: 5
-  - first: {fileID: 4800000, guid: 11053485e6f23bf4c84a5962f5f67116, type: 3}
-    second:
-      variants:
-      - keywords: 
-        passType: 1
-      - keywords: 
-        passType: 2
-      - keywords: 
-        passType: 4
-      - keywords: 
-        passType: 5
-      - keywords: 
-        passType: 6
-      - keywords: 
-        passType: 7
-      - keywords: 
-        passType: 10
-      - keywords: 
-        passType: 11
-  - first: {fileID: 4800000, guid: 143bf507d0b743947992b1ed3d1a0d1f, type: 3}
-    second:
-      variants:
-      - keywords: BILLBOARD_FACE_CAMERA_POS LIGHTPROBE_SH SOFTPARTICLES_ON UNITY_HDR_ON
-          _DISSOLVETYPE_CUSTOM _DISSOLVETYPE_UV _DISSOLVE_UV _DISTYPE_DISSOLVETEXRED
-          _INVERTDISSOLVE_ON _KEYWORD0_ON
-        passType: 4
-      - keywords: BILLBOARD_FACE_CAMERA_POS POINT SOFTPARTICLES_ON UNITY_HDR_ON _DISSOLVETYPE_CUSTOM
-          _DISSOLVETYPE_UV _DISSOLVE_UV _DISTYPE_DISSOLVETEXRED _INVERTDISSOLVE_ON
-          _KEYWORD0_ON
-        passType: 5
-  - first: {fileID: 4800000, guid: 68e6db2ebdc24f95958faec2be5558d6, type: 3}
-    second:
-      variants:
-      - keywords: 
-        passType: 0
-      - keywords: BILLBOARD_FACE_CAMERA_POS SOFTPARTICLES_ON
-        passType: 0
-      - keywords: BILLBOARD_FACE_CAMERA_POS SOFTPARTICLES_ON UNITY_HDR_ON
-        passType: 0
