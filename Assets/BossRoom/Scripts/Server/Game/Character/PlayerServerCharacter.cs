@@ -40,7 +40,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override void OnNetworkDespawn()
         {
             var movementTransform = m_CachedServerCharacter.Movement.transform;
-            SessionManager.Instance.UpdatePlayerCharacterData(OwnerClientId, movementTransform.position, movementTransform.rotation, m_CachedServerCharacter.NetState.HitPoints);
+            SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(OwnerClientId);
+            if (sessionPlayerData.HasValue)
+            {
+                var playerData = sessionPlayerData.Value;
+                playerData.PlayerPosition = movementTransform.position;
+                playerData.PlayerRotation = movementTransform.rotation;
+                playerData.CurrentHP = m_CachedServerCharacter.NetState.HitPoints;
+                playerData.HasCharacterSpawned = true;
+                SessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
+            }
         }
 
         /// <summary>

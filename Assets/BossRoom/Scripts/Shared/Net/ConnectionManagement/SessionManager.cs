@@ -265,6 +265,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
+        /// Updates player data
+        /// </summary>
+        /// <param name="clientId"> id of the client whose data will be updated </param>
+        /// <param name="sessionPlayerData"> new data to overwrite the old </param>
+        public void SetPlayerData(ulong clientId, SessionPlayerData sessionPlayerData)
+        {
+            if (m_ClientIDToGuid.TryGetValue(clientId, out string clientGUID))
+            {
+                m_ClientData[clientGUID] = sessionPlayerData;
+            }
+        }
+
+        /// <summary>
         /// Convenience method to get player name from player data
         /// Returns name in data or default name using playerNum
         /// </summary>
@@ -288,47 +301,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
                 //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
-            }
-        }
-
-        /// <summary>
-        /// Updates the player's session persistent data
-        /// </summary>
-        /// <param name="clientId">Id of the client to update</param>
-        /// <param name="playerName">The player's name to save</param>
-        /// <param name="avatarNetworkGuid">The NetworkGuid describing the player's class</param>
-        public void UpdatePlayerPersistentData(ulong clientId, string playerName, NetworkGuid avatarNetworkGuid)
-        {
-            if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
-            {
-                if (m_ClientData.TryGetValue(guid, out var sessionPlayerData))
-                {
-                    sessionPlayerData.PlayerName = playerName;
-                    sessionPlayerData.AvatarNetworkGuid = avatarNetworkGuid;
-                    m_ClientData[guid] = sessionPlayerData;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Updates the player's session data linked to their character
-        /// </summary>
-        /// <param name="clientId">Id of the client to update</param>
-        /// <param name="position">Current position of the player character</param>
-        /// <param name="rotation">Current rotation of the player character</param>
-        /// <param name="currentHp">Current hp of the player character</param>
-        public void UpdatePlayerCharacterData(ulong clientId, Vector3 position, Quaternion rotation, int currentHp)
-        {
-            if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
-            {
-                if (m_ClientData.TryGetValue(guid, out var sessionPlayerData))
-                {
-                    sessionPlayerData.PlayerPosition = position;
-                    sessionPlayerData.PlayerRotation = rotation;
-                    sessionPlayerData.CurrentHP = currentHp;
-                    sessionPlayerData.HasCharacterSpawned = true;
-                    m_ClientData[guid] = sessionPlayerData;
-                }
             }
         }
 
