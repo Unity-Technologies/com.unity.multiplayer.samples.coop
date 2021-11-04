@@ -38,7 +38,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             // that OwnerClientID could be its default value (0).
             m_PersistentPlayerRuntimeCollection.Add(this);
 
-            SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(OwnerClientId);
+            SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(OwnerClientId);
             if (sessionPlayerData.HasValue)
             {
                 m_NetworkNameState.Name.Value = sessionPlayerData.Value.PlayerName;
@@ -62,13 +62,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_PersistentPlayerRuntimeCollection.Remove(this);
             if (IsServer)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(OwnerClientId);
+                SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData.HasValue)
                 {
                     var playerData = sessionPlayerData.Value;
                     playerData.PlayerName = m_NetworkNameState.Name.Value;
                     playerData.AvatarNetworkGuid = m_NetworkAvatarGuidState.AvatarGuid.Value;
-                    SessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
+                    BossRoomSessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
                 }
             }
         }

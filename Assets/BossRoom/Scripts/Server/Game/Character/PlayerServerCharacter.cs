@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override void OnNetworkDespawn()
         {
             var movementTransform = m_CachedServerCharacter.Movement.transform;
-            SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(OwnerClientId);
+            SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(OwnerClientId);
             if (sessionPlayerData.HasValue)
             {
                 var playerData = sessionPlayerData.Value;
@@ -48,7 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 playerData.PlayerRotation = movementTransform.rotation;
                 playerData.CurrentHitPoints = m_CachedServerCharacter.NetState.HitPoints;
                 playerData.HasCharacterSpawned = true;
-                SessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
+                BossRoomSessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
             }
         }
 

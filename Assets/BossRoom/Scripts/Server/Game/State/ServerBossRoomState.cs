@@ -179,7 +179,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // if reconnecting, set the player's position and rotation to its previous state
             if (lateJoin)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager.Instance.GetPlayerData(clientId);
+                SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(clientId);
                 if (sessionPlayerData is {HasCharacterSpawned: true})
                 {
                     physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, sessionPlayerData.Value.PlayerRotation);

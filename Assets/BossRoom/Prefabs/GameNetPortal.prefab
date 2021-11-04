@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NetworkManager: {fileID: 0}
+  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
   PlayerName: 
 --- !u!114 &5062837533140207353
 MonoBehaviour:
@@ -71,5 +72,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54b0859a1da930541adf0b2d1bb8d977, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PersistentPlayer: {fileID: 5202563697772659352, guid: 1d3f5528d25661949890bcd7f47fe81a, type: 3}
   m_GameState: {fileID: 7151198093957655792, guid: 3af96a32a84bcf74d9538fa7af973c97, type: 3}

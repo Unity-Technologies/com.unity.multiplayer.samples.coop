@@ -1,47 +1,31 @@
-using System.Collections;
+using System;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
-    public struct SessionPlayerData
+    public interface ISessionPlayerData
     {
-        public ulong ClientID;
-        public string PlayerName;
-        public Vector3 PlayerPosition;
-        public Quaternion PlayerRotation;
-        public NetworkGuid AvatarNetworkGuid;
-        public int CurrentHitPoints;
-        public bool IsConnected;
-        public bool HasCharacterSpawned;
-
-        public SessionPlayerData(ulong clientID, string name, NetworkGuid avatarNetworkGuid, int currentHitPoints = 0, bool isConnected = false, bool hasCharacterSpawned = false)
-        {
-            ClientID = clientID;
-            PlayerName = name;
-            PlayerPosition = Vector3.zero;
-            PlayerRotation = Quaternion.identity;
-            AvatarNetworkGuid = avatarNetworkGuid;
-            CurrentHitPoints = currentHitPoints;
-            IsConnected = isConnected;
-            HasCharacterSpawned = hasCharacterSpawned;
-        }
+        bool IsConnected();
+        void SetIsConnected(bool isConnected);
+        ulong GetClientID();
+        void SetClientID(ulong clientID);
     }
 
-    public class SessionManager : MonoBehaviour
+    public class SessionManager<T> : MonoBehaviour where T: struct, ISessionPlayerData
     {
-        public static SessionManager Instance { get; private set; }
-
         [SerializeField]
-        private GameNetPortal m_Portal;
+        NetworkManager m_NetworkManager;
 
-        [SerializeField]
-        AvatarRegistry m_AvatarRegistry;
+        public NetworkManager NetManager => m_NetworkManager;
+
+        public static SessionManager<T> Instance { get; private set; }
 
         /// <summary>
         /// Maps a given client guid to the data for a given client player.
         /// </summary>
-        private Dictionary<string, SessionPlayerData> m_ClientData;
+        private Dictionary<string, T> m_ClientData;
 
         /// <summary>
         /// Map to allow us to cheaply map from guid to player data.
@@ -62,10 +46,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void Start()
         {
-            if (m_Portal == null) return;
-
-            m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
-            m_ClientData = new Dictionary<string, SessionPlayerData>();
+            if (m_NetworkManager)
+            {
+                m_NetworkManager.OnServerStarted += ServerStartedHandler;
+            }
+            m_ClientData = new Dictionary<string, T>();
             m_ClientIDToGuid = new Dictionary<ulong, string>();
 
             DontDestroyOnLoad(this);
@@ -73,19 +58,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void OnDestroy()
         {
-            if (m_Portal != null)
+            if (m_NetworkManager)
             {
-                if (m_Portal.NetManager != null)
-                {
-                    m_Portal.NetManager.OnServerStarted -= ServerStartedHandler;
-                }
+                m_NetworkManager.OnServerStarted -= ServerStartedHandler;
             }
         }
 
-        public void AddHostData()
+        public void AddHostData(T sessionPlayerData)
         {
-            m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, m_Portal.PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
-            m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
+            m_ClientData.Add("host_guid", sessionPlayerData);
+            m_ClientIDToGuid.Add(m_NetworkManager.LocalClientId, "host_guid");
         }
 
         /// <summary>
@@ -96,30 +78,21 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
-                if (m_ClientData[guid].ClientID == clientId)
+                if (m_ClientData[guid].GetClientID() == clientId)
                 {
-                    var sessionPlayerData = m_ClientData[guid];
-                    sessionPlayerData.IsConnected = false;
-                    m_ClientData[guid] = sessionPlayerData;
-                    // Wait a few seconds before removing the clientId-GUID mapping to allow for final updates to SessionPlayerData.
-                    StartCoroutine(WaitToRemoveClientId(clientId));
+                    var T = m_ClientData[guid];
+                    T.SetIsConnected(false);
+                    m_ClientData[guid] = T;
                 }
             }
 
-            if (clientId == m_Portal.NetManager.LocalClientId)
+            if (clientId == m_NetworkManager.LocalClientId)
             {
                 //the SessionManager may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
-                m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
+                m_NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
             }
         }
-
-        private IEnumerator WaitToRemoveClientId(ulong clientId)
-        {
-            yield return new WaitForSeconds(5.0f);
-            m_ClientIDToGuid.Remove(clientId);
-        }
-
 
         /// <summary>
         /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
@@ -145,24 +118,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="clientGUID">This is the clientGUID that is unique to this client and persists accross multiple logins from the same client</param>
         /// <param name="playerName">The player's name</param>
         /// <returns></returns>
-        public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, string playerName)
+        public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, T sessionPlayerData)
         {
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
-            SessionPlayerData sessionPlayerData = new SessionPlayerData(clientId, playerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false);
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
             {
                 bool isReconnecting = false;
                 // If another client is connected with the same clientGUID
-                if (m_ClientData[clientGUID].IsConnected)
+                if (m_ClientData[clientGUID].IsConnected())
                 {
                     if (Debug.isDebugBuild)
                     {
                         Debug.Log($"Client GUID {clientGUID} already exists. Because this is a debug build, we will still accept the connection");
                         // If debug build, accept connection and manually update clientGUID until we get one that either is not connected or that does not already exist
-                        while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) {clientGUID += "_Secondary"; }
+                        while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected()) {clientGUID += "_Secondary"; }
 
-                        if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected)
+                        if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected())
                         {
                             // In this specific case, if the clients with the same GUID reconnect in a different order than when they originally connected,
                             // they will swap characters, since their GUIDs are manually modified here at runtime.
@@ -184,8 +156,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 {
                     // Update player session data
                     sessionPlayerData = m_ClientData[clientGUID];
-                    sessionPlayerData.ClientID = clientId;
-                    sessionPlayerData.IsConnected = true;
+                    sessionPlayerData.SetClientID(clientId);
+                    sessionPlayerData.SetIsConnected(true);
                 }
 
             }
@@ -212,7 +184,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         /// <param name="clientId"> id of the client whose data is requested</param>
         /// <returns>Player data struct matching the given ID</returns>
-        public SessionPlayerData? GetPlayerData(ulong clientId)
+        public T? GetPlayerData(ulong clientId)
         {
             //First see if we have a guid matching the clientID given.
 
@@ -230,12 +202,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         /// <param name="clientGUID"> guid of the client whose data is requested</param>
         /// <returns>Player data struct matching the given ID</returns>
-        public SessionPlayerData? GetPlayerData(string clientGUID)
+        public T? GetPlayerData(string clientGUID)
         {
             //First see if we have a guid matching the clientID given.
 
 
-            if (m_ClientData.TryGetValue(clientGUID, out SessionPlayerData data))
+            if (m_ClientData.TryGetValue(clientGUID, out T data))
             {
                 return data;
             }
@@ -249,7 +221,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         /// <param name="clientId"> id of the client whose data will be updated </param>
         /// <param name="sessionPlayerData"> new data to overwrite the old </param>
-        public void SetPlayerData(ulong clientId, SessionPlayerData sessionPlayerData)
+        public void SetPlayerData(ulong clientId, T sessionPlayerData)
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out string clientGUID))
             {
@@ -258,21 +230,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
-        /// Convenience method to get player name from player data
-        /// Returns name in data or default name using playerNum
-        /// </summary>
-        public string GetPlayerName(ulong clientId, int playerNum)
-        {
-            var playerData = GetPlayerData(clientId);
-            return (playerData != null) ? playerData.Value.PlayerName : ("Player" + playerNum);
-        }
-
-        /// <summary>
         /// Called after the server is created-  This is primarily meant for the host server to clean up or handle/set state as its starting up
         /// </summary>
         private void ServerStartedHandler()
         {
-            if (!m_Portal.NetManager.IsServer)
+            if (!m_NetworkManager.IsServer)
             {
                 enabled = false;
             }
@@ -280,7 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
                 //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
-                m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
+                m_NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
             }
         }
 
@@ -290,7 +252,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public void OnGameEnded()
         {
             List<ulong> idsToClear = new List<ulong>();
-            List<ulong> connectedClientIds = new List<ulong>(m_Portal.NetManager.ConnectedClientsIds);
+            List<ulong> connectedClientIds = new List<ulong>(m_NetworkManager.ConnectedClientsIds);
             foreach (var id in m_ClientIDToGuid.Keys)
             {
                 if (!connectedClientIds.Contains(id))

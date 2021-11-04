@@ -175,14 +175,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
-            gameReturnStatus = SessionManager.Instance.OnClientApprovalCheck(clientId, connectionPayload.clientGUID,
-                connectionPayload.playerName);
+            gameReturnStatus = BossRoomSessionManager.Instance.OnClientApprovalCheck(clientId, connectionPayload.clientGUID,
+                new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false));
 
             //Test for Duplicate Login.
             if (gameReturnStatus == ConnectStatus.LoggedInAgain)
             {
                 SessionPlayerData? sessionPlayerData =
-                    SessionManager.Instance.GetPlayerData(connectionPayload.clientGUID);
+                    BossRoomSessionManager.Instance.GetPlayerData(connectionPayload.clientGUID);
 
                 ulong oldClientId = sessionPlayerData?.ClientID ?? 0;
                 // kicking old client to leave only current

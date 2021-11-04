@@ -217,9 +217,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 // Sanity check. We ran out of seats... there was no room!
                 throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerNum}");
             }
-
-            string playerName = SessionManager.Instance.GetPlayerName(clientId, playerNum);
-            CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
+            SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(OwnerClientId);
+            if (sessionPlayerData.HasValue)
+            {
+                string playerName = BossRoomSessionManager.Instance.GetPlayerData(clientId)?.PlayerName;
+                CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
+            }
         }
 
         private void OnClientDisconnectCallback(ulong clientId)
