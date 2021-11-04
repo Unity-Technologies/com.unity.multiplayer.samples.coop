@@ -64,10 +64,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (m_Portal == null) return;
 
-            //m_Portal.NetworkReadied += OnNetworkReady;
-
-            // we add ApprovalCheck callback BEFORE OnNetworkSpawn to avoid spurious NGO warning:
-            // "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
             m_ClientData = new Dictionary<string, SessionPlayerData>();
             m_ClientIDToGuid = new Dictionary<ulong, string>();
@@ -222,19 +218,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             if (m_ClientIDToGuid.TryGetValue(clientId, out string clientGUID))
             {
-                if (m_ClientData.TryGetValue(clientGUID, out SessionPlayerData data))
-                {
-                    return data;
-                }
-                else
-                {
-                    Debug.Log("No PlayerData of matching guid found");
-                }
+                return GetPlayerData(clientGUID);
             }
-            else
-            {
-                Debug.Log("No client guid found mapped to the given client ID");
-            }
+
+            Debug.Log("No client guid found mapped to the given client ID");
             return null;
         }
 
