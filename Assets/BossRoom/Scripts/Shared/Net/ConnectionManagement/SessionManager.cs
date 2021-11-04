@@ -1,7 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -88,13 +86,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (m_Portal != null)
             {
-                //m_Portal.NetworkReadied -= OnNetworkReady;
-
                 if (m_Portal.NetManager != null)
                 {
                     m_Portal.NetManager.OnServerStarted -= ServerStartedHandler;
                 }
             }
+        }
+
+        public void AddHostData()
+        {
+            m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPosition, m_InitialRotation, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
+            m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
         }
 
         /// <summary>
@@ -144,11 +146,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             //resets all our runtime state.
             m_ClientData.Clear();
             m_ClientIDToGuid.Clear();
-        }
-
-        public bool IsServerFull()
-        {
-            return m_ClientData.Count >= CharSelectData.k_MaxLobbyPlayers;
         }
 
         /// <summary>
@@ -214,19 +211,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             return gameReturnStatus;
         }
 
-        /// <summary>
-        /// Handles the flow when a user's connection is approved. Assigns name and class to persistent player.
-        /// Invoked after the approval check.
-        /// </summary>
-        /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
-        public void OnConnectionApproved(ulong clientId)
-        {
-            SessionPlayerData? sessionPlayerData = GetPlayerData(clientId);
-            Assert.IsTrue(sessionPlayerData.HasValue, $"SessionPlayerData not found for client GUID!");
-            AssignPlayerName(clientId, sessionPlayerData.Value.PlayerName);
-            AssignPlayerAvatar(clientId, sessionPlayerData.Value.AvatarNetworkGuid);
-        }
-
 
         public string GetPlayerGUID(ulong clientID)
         {
@@ -275,10 +259,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 return data;
             }
-            else
-            {
-                Debug.Log("No PlayerData of matching guid found");
-            }
+
+            Debug.Log("No PlayerData of matching guid found");
             return null;
         }
 
@@ -306,21 +288,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
                 //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
-
-                m_ClientData.Add("host_guid", new SessionPlayerData(m_Portal.NetManager.LocalClientId, "host_guid", m_Portal.PlayerName, m_InitialPosition, m_InitialRotation, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false));
-                m_ClientIDToGuid.Add(m_Portal.NetManager.LocalClientId, "host_guid");
-
-                AssignPlayerName(NetworkManager.Singleton.LocalClientId, m_Portal.PlayerName);
             }
         }
 
         /// <summary>
-        /// Updates the player's session persistant data
+        /// Updates the player's session persistent data
         /// </summary>
         /// <param name="clientId">Id of the client to update</param>
         /// <param name="playerName">The player's name to save</param>
         /// <param name="avatarNetworkGuid">The NetworkGuid describing the player's class</param>
-        public void UpdatePlayerPersistantData(ulong clientId, string playerName, NetworkGuid avatarNetworkGuid)
+        public void UpdatePlayerPersistentData(ulong clientId, string playerName, NetworkGuid avatarNetworkGuid)
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
@@ -361,9 +338,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public void OnGameEnded()
         {
             List<ulong> idsToClear = new List<ulong>();
+            List<ulong> connectedClientIds = new List<ulong>(m_Portal.NetManager.ConnectedClientsIds);
             foreach (var id in m_ClientIDToGuid.Keys)
             {
-                if (!m_Portal.NetManager.ConnectedClientsIds.Contains(id))
+                if (!connectedClientIds.Contains(id))
                 {
                     idsToClear.Add(id);
                 }
@@ -373,30 +351,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 m_ClientData.Remove(m_ClientIDToGuid[id]);
                 m_ClientIDToGuid.Remove(id);
-            }
-        }
-
-        static void AssignPlayerName(ulong clientId, string playerName)
-        {
-            // get this client's player NetworkObject
-            var networkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
-
-            // update client's name
-            if (networkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
-            {
-                persistentPlayer.NetworkNameState.Name.Value = playerName;
-            }
-        }
-
-        static void AssignPlayerAvatar(ulong clientId, NetworkGuid avatarNetworkGuid)
-        {
-            // get this client's player NetworkObject
-            var networkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(clientId);
-
-            // update client's player avatar
-            if (networkObject.TryGetComponent(out PersistentPlayer persistentPlayer))
-            {
-                persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value = avatarNetworkGuid;
             }
         }
     }

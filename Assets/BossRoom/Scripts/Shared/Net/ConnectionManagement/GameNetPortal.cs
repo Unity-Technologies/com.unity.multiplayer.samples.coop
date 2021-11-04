@@ -169,7 +169,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
             }
-
+            SessionManager.Instance.AddHostData();
             NetManager.StartHost();
         }
 

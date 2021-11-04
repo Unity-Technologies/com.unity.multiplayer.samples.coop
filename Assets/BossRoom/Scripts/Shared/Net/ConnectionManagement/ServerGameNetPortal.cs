@@ -155,7 +155,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
             // on invalid users trying to connect
             // todo this is currently still spending too much time server side.
-            if (SessionManager.Instance.IsServerFull())
+            if (m_Portal.NetManager.ConnectedClientsIds.Count >= CharSelectData.k_MaxLobbyPlayers)
             {
                 gameReturnStatus = ConnectStatus.ServerFull;
                 //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
@@ -202,7 +202,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
                 // connection approval will create a player object for you
-                SessionManager.Instance.OnConnectionApproved(clientId);
             }
         }
 
