@@ -24,7 +24,7 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
 
         HashSet<GameObject> prefabs = new HashSet<GameObject>();
 
-        Dictionary<GameObject, List<NetworkObject>> pooledObjects = new Dictionary<GameObject, List<NetworkObject>>();
+        Dictionary<GameObject, Queue<NetworkObject>> pooledObjects = new Dictionary<GameObject, Queue<NetworkObject>>();
 
         private bool m_HasInitialized = false;
 
@@ -87,10 +87,11 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
         /// <summary>
         /// Return an object to the pool (reset objects before returning).
         /// </summary>
-        public void ReturnNetworkObject(NetworkObject networkObject)
+        public void ReturnNetworkObject(NetworkObject networkObject, GameObject prefab)
         {
             var go = networkObject.gameObject;
             go.SetActive(false);
+            pooledObjects[prefab].Enqueue(networkObject);
         }
 
         /// <summary>
@@ -115,14 +116,12 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
         {
             prefabs.Add(prefab);
 
-            var prefabList = new List<NetworkObject>();
-            pooledObjects[prefab] = prefabList;
+            var prefabQueue = new Queue<NetworkObject>();
+            pooledObjects[prefab] = prefabQueue;
             for (int i = 0; i < prewarmCount; i++)
             {
                 var go = CreateInstance(prefab);
-                var no = go.GetComponent<NetworkObject>();
-                ReturnNetworkObject(no);
-                prefabList.Add(no);
+                ReturnNetworkObject(go.GetComponent<NetworkObject>(), prefab);
             }
 
             // Register Netcode Spawn handlers
@@ -135,23 +134,6 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
             return Instantiate(prefab);
         }
 
-        private NetworkObject GetNextSpawnObject(GameObject prefab)
-        {
-            var list = pooledObjects[prefab];
-
-            foreach (var no in list)
-            {
-                if (!no.gameObject.activeInHierarchy)
-                {
-                    return no;
-                }
-            }
-            //We are out of objects, expand our pool by 1 more NetworkObject
-            NetworkObject networkObject = CreateInstance(prefab).GetComponent<NetworkObject>();
-            list.Add(networkObject);
-            return networkObject;
-        }
-
         /// <summary>
         /// This matches the signature of <see cref="NetworkSpawnManager.SpawnHandlerDelegate"/>
         /// </summary>
@@ -161,7 +143,17 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
         /// <returns></returns>
         private NetworkObject GetNetworkObjectInternal(GameObject prefab, Vector3 position, Quaternion rotation)
         {
-            NetworkObject networkObject = GetNextSpawnObject(prefab);
+            var queue = pooledObjects[prefab];
+
+            NetworkObject networkObject;
+            if (queue.Count > 0)
+            {
+                networkObject = queue.Dequeue();
+            }
+            else
+            {
+                networkObject = CreateInstance(prefab).GetComponent<NetworkObject>();
+            }
 
             // Here we must reverse the logic in ReturnNetworkObject.
             var go = networkObject.gameObject;
@@ -195,10 +187,6 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
             {
                 // Unregister Netcode Spawn handlers
                 NetworkManager.Singleton.PrefabHandler.RemoveHandler(prefab);
-                foreach (var no in pooledObjects[prefab])
-                {
-                    Destroy(no);
-                }
             }
             pooledObjects.Clear();
         }
@@ -230,7 +218,7 @@ namespace BossRoom.Scripts.Shared.Net.NetworkObjectPool
 
         void INetworkPrefabInstanceHandler.Destroy(NetworkObject networkObject)
         {
-            m_Pool.ReturnNetworkObject(networkObject);
+            m_Pool.ReturnNetworkObject(networkObject, m_Prefab);
         }
     }
 
