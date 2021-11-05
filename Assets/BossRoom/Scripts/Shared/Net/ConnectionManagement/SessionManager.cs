@@ -8,6 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         public ulong ClientID;
         public string PlayerName;
+        public int PlayerNum;
         public Vector3 PlayerPosition;
         public Quaternion PlayerRotation;
         public NetworkGuid AvatarNetworkGuid;
@@ -19,6 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             ClientID = clientID;
             PlayerName = name;
+            PlayerNum = -1;
             PlayerPosition = Vector3.zero;
             PlayerRotation = Quaternion.identity;
             AvatarNetworkGuid = avatarNetworkGuid;
@@ -246,16 +248,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 m_ClientData[clientGUID] = sessionPlayerData;
             }
-        }
-
-        /// <summary>
-        /// Convenience method to get player name from player data
-        /// Returns name in data or default name using playerNum
-        /// </summary>
-        public string GetPlayerName(ulong clientId, int playerNum)
-        {
-            var playerData = GetPlayerData(clientId);
-            return (playerData != null) ? playerData.Value.PlayerName : ("Player" + playerNum);
         }
 
         /// <summary>
