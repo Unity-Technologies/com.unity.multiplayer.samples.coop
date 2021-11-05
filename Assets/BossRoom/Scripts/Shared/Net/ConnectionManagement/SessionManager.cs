@@ -101,8 +101,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     var sessionPlayerData = m_ClientData[guid];
                     sessionPlayerData.IsConnected = false;
                     m_ClientData[guid] = sessionPlayerData;
-                    // Wait a few seconds before removing the clientId-GUID mapping to allow for final updates to SessionPlayerData.
-                    StartCoroutine(WaitToRemoveClientId(clientId));
                 }
             }
 
@@ -113,13 +111,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
             }
         }
-
-        private IEnumerator WaitToRemoveClientId(ulong clientId)
-        {
-            yield return new WaitForSeconds(5.0f);
-            m_ClientIDToGuid.Remove(clientId);
-        }
-
 
         /// <summary>
         /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
@@ -297,11 +288,22 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 {
                     idsToClear.Add(id);
                 }
+                else
+                {
+                    string guid = m_ClientIDToGuid[id];
+                    SessionPlayerData sessionPlayerData = m_ClientData[guid];
+                    sessionPlayerData.HasCharacterSpawned = false;
+                    m_ClientData[guid] = sessionPlayerData;
+                }
             }
 
             foreach (var id in idsToClear)
             {
-                m_ClientData.Remove(m_ClientIDToGuid[id]);
+                string guid = m_ClientIDToGuid[id];
+                if (m_ClientData[guid].ClientID == id)
+                {
+                    m_ClientData.Remove(guid);
+                }
                 m_ClientIDToGuid.Remove(id);
             }
         }
