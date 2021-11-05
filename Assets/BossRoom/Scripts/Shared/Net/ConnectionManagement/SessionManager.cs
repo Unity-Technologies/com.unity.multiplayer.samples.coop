@@ -263,7 +263,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             foreach (var id in idsToClear)
             {
-                m_ClientData.Remove(m_ClientIDToGuid[id]);
+                string guid = m_ClientIDToGuid[id];
+                if (m_ClientData[guid].GetClientID() == id)
+                {
+                    m_ClientData.Remove(guid);
+                }
                 m_ClientIDToGuid.Remove(id);
             }
         }
