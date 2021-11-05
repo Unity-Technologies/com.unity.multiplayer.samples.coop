@@ -211,17 +211,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void SeatNewPlayer(ulong clientId)
         {
-            int playerNum = GetAvailablePlayerNum();
-            if (playerNum == -1)
-            {
-                // Sanity check. We ran out of seats... there was no room!
-                throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerNum}");
-            }
-            SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(OwnerClientId);
+            SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(clientId);
             if (sessionPlayerData.HasValue)
             {
-                string playerName = BossRoomSessionManager.Instance.GetPlayerData(clientId)?.PlayerName;
-                CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
+                var playerData = sessionPlayerData.Value;
+                if (playerData.PlayerNum == -1)
+                {
+                    // If no player num already assigned, get an available one.
+                    playerData.PlayerNum = GetAvailablePlayerNum();
+                }
+                if (playerData.PlayerNum == -1)
+                {
+                    // Sanity check. We ran out of seats... there was no room!
+                    throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerData.PlayerNum}");
+                }
+
+                CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerData.PlayerName, playerData.PlayerNum, CharSelectData.SeatState.Inactive));
+                BossRoomSessionManager.Instance.SetPlayerData(clientId, playerData);
             }
         }
 

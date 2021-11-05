@@ -6,6 +6,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         public ulong ClientID;
         public string PlayerName;
+        public int PlayerNum;
         public Vector3 PlayerPosition;
         public Quaternion PlayerRotation;
         public NetworkGuid AvatarNetworkGuid;
@@ -17,6 +18,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             ClientID = clientID;
             PlayerName = name;
+            PlayerNum = -1;
             PlayerPosition = Vector3.zero;
             PlayerRotation = Quaternion.identity;
             AvatarNetworkGuid = avatarNetworkGuid;
@@ -43,6 +45,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public void SetClientID(ulong clientID)
         {
             ClientID = clientID;
+        }
+
+        public void Reinitialize()
+        {
+            HasCharacterSpawned = false;
         }
     }
 

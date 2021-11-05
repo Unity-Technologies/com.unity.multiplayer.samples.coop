@@ -11,6 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void SetIsConnected(bool isConnected);
         ulong GetClientID();
         void SetClientID(ulong clientID);
+        void Reinitialize();
     }
 
     public class SessionManager<T> : MonoBehaviour where T: struct, ISessionPlayerData
@@ -258,6 +259,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (!connectedClientIds.Contains(id))
                 {
                     idsToClear.Add(id);
+                }
+                else
+                {
+                    string guid = m_ClientIDToGuid[id];
+                    T sessionPlayerData = m_ClientData[guid];
+                    sessionPlayerData.Reinitialize();
+                    m_ClientData[guid] = sessionPlayerData;
                 }
             }
 

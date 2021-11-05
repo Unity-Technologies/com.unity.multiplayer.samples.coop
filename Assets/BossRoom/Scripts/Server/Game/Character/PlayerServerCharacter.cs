@@ -39,16 +39,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkDespawn()
         {
-            var movementTransform = m_CachedServerCharacter.Movement.transform;
-            SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(OwnerClientId);
-            if (sessionPlayerData.HasValue)
+            if (IsServer)
             {
-                var playerData = sessionPlayerData.Value;
-                playerData.PlayerPosition = movementTransform.position;
-                playerData.PlayerRotation = movementTransform.rotation;
-                playerData.CurrentHitPoints = m_CachedServerCharacter.NetState.HitPoints;
-                playerData.HasCharacterSpawned = true;
-                BossRoomSessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
+                var movementTransform = m_CachedServerCharacter.Movement.transform;
+                SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData.HasValue)
+                {
+                    var playerData = sessionPlayerData.Value;
+                    playerData.PlayerPosition = movementTransform.position;
+                    playerData.PlayerRotation = movementTransform.rotation;
+                    playerData.CurrentHitPoints = m_CachedServerCharacter.NetState.HitPoints;
+                    playerData.HasCharacterSpawned = true;
+                    BossRoomSessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
+                }
             }
         }
 
