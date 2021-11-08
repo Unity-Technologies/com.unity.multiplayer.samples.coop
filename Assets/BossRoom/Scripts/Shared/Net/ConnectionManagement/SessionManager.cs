@@ -17,8 +17,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [SerializeField]
         NetworkManager m_NetworkManager;
 
-        public NetworkManager NetManager => m_NetworkManager;
-
         public static SessionManager<T> Instance { get; private set; }
 
         /// <summary>
@@ -238,7 +236,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             else
             {
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
-                //m_Portal.UserDisconnectRequested += OnUserDisconnectRequest;
                 m_NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
             }
         }
