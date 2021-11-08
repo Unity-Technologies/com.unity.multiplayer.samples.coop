@@ -4,17 +4,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     public struct SessionPlayerData : ISessionPlayerData
     {
-        public ulong ClientID;
         public string PlayerName;
         public int PlayerNum;
         public Vector3 PlayerPosition;
         public Quaternion PlayerRotation;
         public NetworkGuid AvatarNetworkGuid;
         public int CurrentHitPoints;
-        public bool IsPlayerConnected;
         public bool HasCharacterSpawned;
 
-        public SessionPlayerData(ulong clientID, string name, NetworkGuid avatarNetworkGuid, int currentHitPoints = 0, bool isPlayerConnected = false, bool hasCharacterSpawned = false)
+        public SessionPlayerData(ulong clientID, string name, NetworkGuid avatarNetworkGuid, int currentHitPoints = 0, bool isConnected = false, bool hasCharacterSpawned = false)
         {
             ClientID = clientID;
             PlayerName = name;
@@ -23,29 +21,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             PlayerRotation = Quaternion.identity;
             AvatarNetworkGuid = avatarNetworkGuid;
             CurrentHitPoints = currentHitPoints;
-            IsPlayerConnected = isPlayerConnected;
+            IsConnected = isConnected;
             HasCharacterSpawned = hasCharacterSpawned;
         }
 
-        public bool IsConnected()
-        {
-            return IsPlayerConnected;
-        }
-
-        public void SetIsConnected(bool isConnected)
-        {
-            IsPlayerConnected = isConnected;
-        }
-
-        public ulong GetClientID()
-        {
-            return ClientID;
-        }
-
-        public void SetClientID(ulong clientID)
-        {
-            ClientID = clientID;
-        }
+        public bool IsConnected { get; set; }
+        public ulong ClientID { get; set; }
 
         public void Reinitialize()
         {

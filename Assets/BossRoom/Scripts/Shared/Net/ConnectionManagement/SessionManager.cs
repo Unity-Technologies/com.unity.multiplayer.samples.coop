@@ -7,10 +7,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     public interface ISessionPlayerData
     {
-        bool IsConnected();
-        void SetIsConnected(bool isConnected);
-        ulong GetClientID();
-        void SetClientID(ulong clientID);
+        bool IsConnected { get; set; }
+        ulong ClientID { get; set; }
         void Reinitialize();
     }
 
@@ -79,10 +77,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
-                if (m_ClientData[guid].GetClientID() == clientId)
+                if (m_ClientData[guid].ClientID == clientId)
                 {
                     var T = m_ClientData[guid];
-                    T.SetIsConnected(false);
+                    T.IsConnected = false;
                     m_ClientData[guid] = T;
                 }
             }
@@ -127,15 +125,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 bool isReconnecting = false;
                 // If another client is connected with the same clientGUID
-                if (m_ClientData[clientGUID].IsConnected())
+                if (m_ClientData[clientGUID].IsConnected)
                 {
                     if (Debug.isDebugBuild)
                     {
                         Debug.Log($"Client GUID {clientGUID} already exists. Because this is a debug build, we will still accept the connection");
                         // If debug build, accept connection and manually update clientGUID until we get one that either is not connected or that does not already exist
-                        while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected()) {clientGUID += "_Secondary"; }
+                        while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) {clientGUID += "_Secondary"; }
 
-                        if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected())
+                        if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected)
                         {
                             // In this specific case, if the clients with the same GUID reconnect in a different order than when they originally connected,
                             // they will swap characters, since their GUIDs are manually modified here at runtime.
@@ -157,8 +155,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 {
                     // Update player session data
                     sessionPlayerData = m_ClientData[clientGUID];
-                    sessionPlayerData.SetClientID(clientId);
-                    sessionPlayerData.SetIsConnected(true);
+                    sessionPlayerData.ClientID = clientId;
+                    sessionPlayerData.IsConnected = true;
                 }
 
             }
@@ -272,7 +270,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             foreach (var id in idsToClear)
             {
                 string guid = m_ClientIDToGuid[id];
-                if (m_ClientData[guid].GetClientID() == id)
+                if (m_ClientData[guid].ClientID == id)
                 {
                     m_ClientData.Remove(guid);
                 }
