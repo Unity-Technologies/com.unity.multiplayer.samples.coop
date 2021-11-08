@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void Reinitialize();
     }
 
-    public class SessionManager<T> : MonoBehaviour where T: struct, ISessionPlayerData
+    public class SessionManager<T> : MonoBehaviour where T : struct, ISessionPlayerData
     {
         [SerializeField]
         NetworkManager m_NetworkManager;
@@ -49,6 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 m_NetworkManager.OnServerStarted += ServerStartedHandler;
             }
+
             m_ClientData = new Dictionary<string, T>();
             m_ClientIDToGuid = new Dictionary<ulong, string>();
 
@@ -77,7 +78,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (m_ClientIDToGuid.TryGetValue(clientId, out var guid))
             {
-                if (m_ClientData[guid].ClientID == clientId)
+                if (GetPlayerData(guid)?.ClientID == clientId)
                 {
                     var T = m_ClientData[guid];
                     T.IsConnected = false;
@@ -115,23 +116,26 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="clientGUID">This is the clientGUID that is unique to this client and persists accross multiple logins from the same client</param>
-        /// <param name="playerName">The player's name</param>
+        /// <param name="sessionPlayerData">The player's initial data</param>
         /// <returns></returns>
         public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, T sessionPlayerData)
         {
             ConnectStatus gameReturnStatus = ConnectStatus.Success;
+
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
             {
                 bool isReconnecting = false;
+
                 // If another client is connected with the same clientGUID
                 if (m_ClientData[clientGUID].IsConnected)
                 {
                     if (Debug.isDebugBuild)
                     {
                         Debug.Log($"Client GUID {clientGUID} already exists. Because this is a debug build, we will still accept the connection");
+
                         // If debug build, accept connection and manually update clientGUID until we get one that either is not connected or that does not already exist
-                        while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) {clientGUID += "_Secondary"; }
+                        while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) clientGUID += "_Secondary";
 
                         if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected)
                         {
@@ -158,7 +162,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     sessionPlayerData.ClientID = clientId;
                     sessionPlayerData.IsConnected = true;
                 }
-
             }
 
             //Populate our dictionaries with the SessionPlayerData
@@ -171,12 +174,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             return gameReturnStatus;
         }
 
-
         public string GetPlayerGUID(ulong clientID)
         {
             return m_ClientIDToGuid[clientID];
         }
-
 
         /// <summary>
         ///
@@ -203,9 +204,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <returns>Player data struct matching the given ID</returns>
         public T? GetPlayerData(string clientGUID)
         {
-            //First see if we have a guid matching the clientID given.
-
-
             if (m_ClientData.TryGetValue(clientGUID, out T data))
             {
                 return data;
@@ -246,7 +244,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
-        /// Clears data from disconnected players, so that if they reconnect in the next game, they will be treated as new players
+        /// Reinitializes session data from connected players, and clears data from disconnected players, so that if they reconnect in the next game, they will be treated as new players
         /// </summary>
         public void OnGameEnded()
         {
@@ -270,10 +268,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             foreach (var id in idsToClear)
             {
                 string guid = m_ClientIDToGuid[id];
-                if (m_ClientData[guid].ClientID == id)
+                if (GetPlayerData(guid)?.ClientID == id)
                 {
                     m_ClientData.Remove(guid);
                 }
+
                 m_ClientIDToGuid.Remove(id);
             }
         }
