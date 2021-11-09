@@ -70,8 +70,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3784045606710551546}
   - component: {fileID: 2576950312805496058}
-  - component: {fileID: 6285673325005903992}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DoorframePhysicsR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -105,22 +104,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 1, z: 4}
   m_Center: {x: -0.4, y: 0, z: 0}
---- !u!208 &6285673325005903992
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5592032498234627691}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.15, y: 0.5, z: 2}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 0
-  m_Center: {x: -0.4, y: 0, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &7209195486721713045
 GameObject:
   m_ObjectHideFlags: 0
@@ -131,8 +114,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1067615519027872932}
   - component: {fileID: 3990117462104163279}
-  - component: {fileID: 8807641936519818861}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: DoorframePhysicsL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166,22 +148,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 1, z: 4}
   m_Center: {x: 0.4, y: 0, z: 0}
---- !u!208 &8807641936519818861
-NavMeshObstacle:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7209195486721713045}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Shape: 1
-  m_Extents: {x: 0.15, y: 0.5, z: 2}
-  m_MoveThreshold: 0.1
-  m_Carve: 1
-  m_CarveOnlyStationary: 0
-  m_Center: {x: 0.4, y: 0, z: 0}
-  m_TimeToStationary: 0.5
 --- !u!1 &7526482618397390991
 GameObject:
   m_ObjectHideFlags: 0
