@@ -38,7 +38,7 @@ If you would like to implement a new feature then consider what kind of change i
 
 ### <a name="docs"></a> Documentation
 
-We accept changes and improvements to our documentation through the [MLAPI Documentation repo](https://github.com/Unity-Technologies/com.unity.multiplayer.docs).
+We accept changes and improvements to our documentation through the [Netcode for GameObjects Documentation repo](https://github.com/Unity-Technologies/com.unity.multiplayer.docs).
 
 ## <a name="cla"></a> Contributor License Agreements
 

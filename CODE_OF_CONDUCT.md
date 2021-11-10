@@ -1,1 +1,1 @@
-The Boss Room repository follows the same code of conduct as the MLAPI repository. Please read the [MLAPI code of conduct](https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/blob/master/CODE_OF_CONDUCT.md), thank you!
+The Boss Room repository follows the same code of conduct as the Netcode for GameObjects (NGO) repository. Please read the [NGO code of conduct](https://github.com/Unity-Technologies/com.unity.multiplayer.mlapi/blob/master/CODE_OF_CONDUCT.md), thank you!
