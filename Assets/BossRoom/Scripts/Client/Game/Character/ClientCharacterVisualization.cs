@@ -78,15 +78,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             Parent = m_NetState.transform;
 
-            if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
-            {
-                m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
-
-                // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
-                // following is a temporary workaround. Future refactorings will enable this functionality.
-                animatorSet?.Invoke(clientAvatarGuidHandler.graphicsAnimator);
-            }
-
             m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
 
             m_NetState.DoActionEventClient += PerformActionFX;
@@ -104,6 +95,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (!m_NetState.IsNpc)
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
+
+                if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                {
+                    m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
+
+                    // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime.
+                    // The following is a temporary workaround. Future refactorings will enable this functionality.
+                    animatorSet?.Invoke(clientAvatarGuidHandler.graphicsAnimator);
+                }
+
+                // due to the above limitation, animator hierarchy is slightly different between PCs and NPCs
+                // due to this, a component is attached to the animator GameObject to listen for anim-based events
+                if (Parent.TryGetComponent(out ClientAnimListener clientAnimListener))
+                {
+                    clientAnimListener.animEventRaised += OnAnimEvent;
+                }
 
                 if (m_NetState.IsOwner)
                 {
@@ -146,6 +153,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+
+                if (Parent.TryGetComponent(out ClientAnimListener clientAnimListener))
+                {
+                    clientAnimListener.animEventRaised -= OnAnimEvent;
+                }
 
                 if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
                 {
@@ -254,7 +266,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ActionViz.Update();
         }
 
-        public void OnAnimEvent(string id)
+        void OnAnimEvent(string id)
         {
             //if you are trying to figure out who calls this method, it's "magic". The Unity Animation Event system takes method names as strings,
             //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one
