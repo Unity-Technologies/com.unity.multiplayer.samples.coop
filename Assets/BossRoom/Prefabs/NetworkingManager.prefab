@@ -47,6 +47,10 @@ MonoBehaviour:
   m_MaximumPacketSize: 2000
   m_MaxPacketQueueSize: 512
   m_SendQueueBatchSize: 16000
+  m_HeartbeatTimeoutMS: 500
+  m_ConnectTimeoutMS: 1000
+  m_MaxConnectAttempts: 60
+  m_DisconnectTimeoutMS: 30000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
@@ -99,7 +103,7 @@ MonoBehaviour:
   m_NetworkDeliveryEventCodesStartRange: 130
   m_AttachSupportLogger: 0
   m_BatchMode: 1
-  m_SendQueueBatchSize: 8192
+  m_SendQueueBatchSize: 100000
   m_BatchedTransportEventCode: 129
   m_KickEventCode: 130
 --- !u!1 &503411707
@@ -149,6 +153,10 @@ MonoBehaviour:
   m_MaximumPacketSize: 1400
   m_MaxPacketQueueSize: 256
   m_SendQueueBatchSize: 32000
+  m_HeartbeatTimeoutMS: 500
+  m_ConnectTimeoutMS: 1000
+  m_MaxConnectAttempts: 60
+  m_DisconnectTimeoutMS: 30000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777

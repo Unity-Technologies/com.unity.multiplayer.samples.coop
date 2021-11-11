@@ -1,16 +1,13 @@
 {
-    "name": "Unity.Multiplayer.Samples.BossRoom.Shared",
+    "name": "Unity.Multiplayer.Samples.Utilities",
     "rootNamespace": "",
     "references": [
+        "Unity.Netcode.Adapter.UTP",
+        "Unity.Netcode.Components",
         "Unity.Netcode.Runtime",
-        "Unity.TextMeshPro",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
-        "Unity.Services.Relay",
-        "Unity.Netcode.Adapter.UTP",
-        "Unity.Collections",
-        "Photon Realtime Transport for Netcode for GameObjects",
-        "Unity.Multiplayer.Samples.Utilities"
+        "Unity.Services.Relay"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

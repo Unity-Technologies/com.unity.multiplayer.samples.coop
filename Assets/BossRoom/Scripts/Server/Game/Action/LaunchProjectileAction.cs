@@ -72,7 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 no.GetComponent<ServerProjectileLogic>().Initialize(m_Parent.NetworkObjectId, projectileInfo);
 
-                no.Spawn();
+                no.Spawn(true);
             }
         }
 
