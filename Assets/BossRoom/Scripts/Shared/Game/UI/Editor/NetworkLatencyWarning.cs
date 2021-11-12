@@ -4,7 +4,9 @@ using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Networking.Transport.Utilities;
 using UnityEngine.Assertions;
+
 
 namespace Unity.Multiplayer.Samples.BossRoom.Editor
 {
@@ -35,9 +37,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                     //     break;
                     // #endif
                     case UNetTransport unetTransport:
+                        break;
                     case PhotonRealtimeTransport photonTransport:
-                    case UnityTransport UnityTransport:
+                        break;
+                    case UnityTransport unityTransport:
+#if UNITY_EDITOR || DEVELOPEMENT_BUILD
+                        SimulatorUtility.Parameters simulatorParameters = unityTransport.ClientSimulatorParameters;
+                        m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMs > 0 ||
+                            simulatorParameters.PacketJitterMs > 0 ||
+                            simulatorParameters.PacketDropPercentage > 0;
+#else
                         m_ArtificialLatencyEnabled = false;
+#endif
                         break;
                     default:
                         throw new Exception($"unhandled transport {chosenTransport.GetType()}");
