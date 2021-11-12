@@ -27,21 +27,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
                 switch (chosenTransport)
                 {
-                    // adding this preprocessor directive check since LiteNetLib only injects latency in #DEBUG
-                    // todo MTT-1426 do this for UTP
-                    // #if DEBUG
-                    // case LiteNetLibTransport liteNetLibTransport:
-                    //     m_ArtificialLatencyEnabled = liteNetLibTransport.SimulatePacketLossChance > 0 ||
-                    //         liteNetLibTransport.SimulateMinLatency > 0 ||
-                    //         liteNetLibTransport.SimulateMaxLatency > 0;
-                    //     break;
-                    // #endif
                     case UNetTransport unetTransport:
                         break;
                     case PhotonRealtimeTransport photonTransport:
                         break;
                     case UnityTransport unityTransport:
-#if UNITY_EDITOR || DEVELOPEMENT_BUILD
+// adding this preprocessor directive check since LiteNetLib only injects latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
                         SimulatorUtility.Parameters simulatorParameters = unityTransport.ClientSimulatorParameters;
                         m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMs > 0 ||
                             simulatorParameters.PacketJitterMs > 0 ||
