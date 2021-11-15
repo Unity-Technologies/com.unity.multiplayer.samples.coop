@@ -28,8 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                 switch (chosenTransport)
                 {
                     case UNetTransport unetTransport:
-                        m_ArtificialLatencyEnabled = false;
-                        break;
                     case PhotonRealtimeTransport photonTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
