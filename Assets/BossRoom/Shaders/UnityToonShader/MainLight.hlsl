@@ -1,14 +1,6 @@
 #ifndef MAIN_LIGHT_INCLUDED
 #define MAIN_LIGHT_INCLUDED
 
-#if defined(SHADERGRAPH_PREVIEW)
-#else
-#pragma multi_compile _ _MAIN_LIGHT_SHADOWS
-#pragma multi_compile _ _MAIN_LIGHT_SHADOWS_CASCADE
-#pragma multi_compile_fragment _ _SHADOWS_SOFT
-#endif
-
-
 void MainLight_float(float3 WorldPosition, out float3 Direction, out float3 Color, out float ShadowAttenuation)
 {
     #if defined(SHADERGRAPH_PREVIEW)
@@ -23,7 +15,7 @@ void MainLight_float(float3 WorldPosition, out float3 Direction, out float3 Colo
         Color = mainLight.color;
 
         #if !defined(_MAIN_LIGHT_SHADOWS) || defined(_RECIEVE_SHADOWS_OFF)
-        ShadowAttenuation = 1.0h;
+            ShadowAttenuation = 1.0h;
         #else
             ShadowSamplingData shadowSamplingData = GetMainLightShadowSamplingData();
             float shadowStrength = GetMainLightShadowStrength();
