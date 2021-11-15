@@ -28,8 +28,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                 switch (chosenTransport)
                 {
                     case UNetTransport unetTransport:
+                        m_ArtificialLatencyEnabled = false;
                         break;
                     case PhotonRealtimeTransport photonTransport:
+                        m_ArtificialLatencyEnabled = false;
                         break;
                     case UnityTransport unityTransport:
 // adding this preprocessor directive check since LiteNetLib only injects latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
@@ -56,6 +58,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
                     m_TextColor.a = Mathf.PingPong(Time.time, 1f);
                     m_LatencyText.color = m_TextColor;
+                }
+            }
+            else
+            {
+                m_ArtificialLatencyEnabled = false;
+            }
+
+            if (!m_ArtificialLatencyEnabled)
+            {
+                if (m_LatencyTextCreated)
+                {
+                    m_LatencyTextCreated = false;
+                    Destroy(m_LatencyText);
                 }
             }
         }
