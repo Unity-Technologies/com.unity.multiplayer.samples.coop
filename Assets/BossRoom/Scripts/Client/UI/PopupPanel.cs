@@ -145,8 +145,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.IpHost;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            if (m_OnlineMode != OnlineMode.IpHost)
+            {
+                m_OnlineMode = OnlineMode.IpHost;
+                OnOnlineModeDropdownChanged(m_OnlineMode);
+            }
         }
 
         void RelayRadioRadioButtonPressed(bool value)
@@ -156,8 +159,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.Relay;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            if (m_OnlineMode != OnlineMode.Relay)
+            {
+                m_OnlineMode = OnlineMode.Relay;
+                OnOnlineModeDropdownChanged(m_OnlineMode);
+            }
         }
 
         void UnityRelayRadioRadioButtonPressed(bool value)
@@ -167,8 +173,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.UnityRelay;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            if (m_OnlineMode != OnlineMode.UnityRelay)
+            {
+                m_OnlineMode = OnlineMode.UnityRelay;
+                OnOnlineModeDropdownChanged(m_OnlineMode);
+            }
         }
 
         private void OnConfirmClick()
@@ -283,6 +292,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else if (value == OnlineMode.UnityRelay)
             {
+                m_ReconnectingImage.SetActive(true);
+                m_InputField.gameObject.SetActive(false);
+                m_PortInputField.gameObject.SetActive(false);
+                m_ConfirmationButton.gameObject.SetActive(false);
+                m_MainText.text = "Waiting for Unity Relay Health Check...";
+
                 Exception caughtException = null;
                 Task<List<UnityRegion>> task = null;
                 try
@@ -335,13 +350,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 if (m_EnterAsHost)
                 {
                     m_InputField.text = GenerateRandomRoomKey();
-                    m_InputField.gameObject.SetActive(false);
                 }
                 else
                 {
                     m_InputField.text = "";
                     m_InputFieldPlaceholderText.text = "Join Code";
+                    m_InputField.gameObject.SetActive(true);
                 }
+                m_ReconnectingImage.SetActive(false);
+                m_ConfirmationButton.gameObject.SetActive(true);
 
                 m_PortInputField.gameObject.SetActive(false);
                 m_PortInputField.text = "";
@@ -389,6 +406,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CancelButton.onClick.RemoveListener(OnCancelClick);
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
             m_ConfirmFunction = null;
+            m_OnlineMode = OnlineMode.Unset;
         }
 
         /// <summary>
