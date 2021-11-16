@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Netcode.Transports.PhotonRealtime;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
@@ -173,7 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetManager.StartHost();
         }
 
-        public void StartPhotonRelayHost(string roomName)
+        public void StartPhotonRelayHost(string roomName, CancellationToken cancellationToken)
         {
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -187,10 +188,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            NetManager.StartHost();
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                NetManager.StartHost();
+            }
         }
 
-        public async void StartUnityRelayHost()
+        public async void StartUnityRelayHost(CancellationToken cancellationToken)
         {
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -232,7 +236,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            NetManager.StartHost();
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                NetManager.StartHost();
+            }
         }
 
         /// <summary>

@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -179,7 +180,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </remarks>
         /// <param name="portal"> </param>
         /// <param name="roomKey">The room name of the host to connect to.</param>
-        public static bool StartClientRelayMode(GameNetPortal portal, string roomKey, out string failMessage)
+        public static bool StartClientRelayMode(GameNetPortal portal, string roomKey, out string failMessage, CancellationToken cancellationToken)
         {
             var splits = roomKey.Split('_');
 
@@ -211,7 +212,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             return true;
         }
 
-        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode)
+        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode, CancellationToken cancellationToken)
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
