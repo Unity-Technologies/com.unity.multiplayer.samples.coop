@@ -122,6 +122,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override void Cancel()
         {
             StopChargingUp();
+
+            // if stepped into invincibility, decrement invincibility counter
+            if (Mathf.Approximately(GetPercentChargedUp(), 1f))
+            {
+                m_Parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
+                    m_Parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) - 1);
+            }
         }
 
         private void StopChargingUp()
