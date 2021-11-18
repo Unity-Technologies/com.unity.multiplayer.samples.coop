@@ -54,7 +54,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private ActionVisualization m_ActionViz;
 
-        private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
+        private const float k_MaxRotSpeed = 450f;  //max angular speed at which we will rotate, in degrees/second.
 
         float m_SmoothedSpeed;
 
@@ -242,8 +242,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // NetworkTransform is interpolated - we can just apply it's position value to our visual object
-            transform.position = m_PhysicsWrapper.Transform.position;
-            transform.rotation = m_PhysicsWrapper.Transform.rotation;
+            VisualUtils.SmoothMove(transform,
+                m_PhysicsWrapper.Transform,
+                Time.deltaTime,
+                ref m_SmoothedSpeed,
+                k_MaxRotSpeed);
 
             if (m_ClientVisualsAnimator)
             {
