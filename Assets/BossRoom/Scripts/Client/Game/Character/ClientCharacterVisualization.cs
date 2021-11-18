@@ -89,9 +89,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
 
-            // ...and visualize the current char-select value that we know about
-            SetAppearanceSwap();
-
             if (!m_NetState.IsNpc)
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
@@ -111,6 +108,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 {
                     clientAnimListener.animEventRaised += OnAnimEvent;
                 }
+
+                // ...and visualize the current char-select value that we know about
+                SetAppearanceSwap();
 
                 if (m_NetState.IsOwner)
                 {
