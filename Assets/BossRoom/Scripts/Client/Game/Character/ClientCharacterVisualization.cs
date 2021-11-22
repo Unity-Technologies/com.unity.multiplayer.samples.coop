@@ -241,7 +241,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            // NetworkTransform is interpolated - we can just apply it's position value to our visual object
+            // smoothly move and rotate towards the NetworkTransform GameObject
             VisualUtils.SmoothMove(transform,
                 m_PhysicsWrapper.Transform,
                 Time.deltaTime,
