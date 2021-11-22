@@ -304,13 +304,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_ConfirmationButton.gameObject.SetActive(false);
                 m_MainText.text = "Waiting for Unity Relay Health Check...";
 
-                if (m_UnityRelayHealthCheck == null || m_UnityRelayHealthCheck.IsCompleted && !m_UnityRelayHealthCheck.Result)
+                if (m_UnityRelayHealthCheck == null || m_UnityRelayHealthCheck.IsCompleted)
                 {
-                    m_UnityRelayHealthCheck = UnityRelayHealthCheckCall();
-                }
-                else if (m_UnityRelayHealthCheck != null && m_UnityRelayHealthCheck.IsCompleted && m_UnityRelayHealthCheck.Result)
-                {
-                    SetupEnterGameDisplayForUnityRelay();
+                    if (m_UnityRelayHealthCheck is {Result: true})
+                    {
+                        SetupEnterGameDisplayForUnityRelay();
+                    }
+                    else
+                    {
+                        m_UnityRelayHealthCheck = UnityRelayHealthCheckCall();
+                    }
                 }
             }
         }
