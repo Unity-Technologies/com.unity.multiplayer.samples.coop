@@ -14,7 +14,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
-        [SerializeField]
         private CharacterSwap m_CharacterSwapper;
 
         [SerializeField]
@@ -62,8 +61,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public ulong NetworkObjectId => m_NetState.NetworkObjectId;
 
-        public event Action<Animator> animatorSet;
-
         public void Start()
         {
             if (!NetworkManager.Singleton.IsClient || transform.parent == null)
@@ -96,18 +93,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
                 {
                     m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
-
-                    // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime.
-                    // The following is a temporary workaround. Future refactorings will enable this functionality.
-                    animatorSet?.Invoke(clientAvatarGuidHandler.graphicsAnimator);
                 }
 
-                // due to the above limitation, animator hierarchy is slightly different between PCs and NPCs
-                // due to this, a component is attached to the animator GameObject to listen for anim-based events
-                if (Parent.TryGetComponent(out ClientAnimListener clientAnimListener))
-                {
-                    clientAnimListener.animEventRaised += OnAnimEvent;
-                }
+                m_CharacterSwapper = GetComponentInChildren<CharacterSwap>();
 
                 // ...and visualize the current char-select value that we know about
                 SetAppearanceSwap();
@@ -153,11 +141,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
-
-                if (Parent.TryGetComponent(out ClientAnimListener clientAnimListener))
-                {
-                    clientAnimListener.animEventRaised -= OnAnimEvent;
-                }
 
                 if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
                 {
