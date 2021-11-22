@@ -67,6 +67,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         string m_DefaultIpInput;
         int m_DefaultPort;
 
+        Task<bool> m_UnityRelayHealthCheck;
+
         /// <summary>
         /// Confirm function invoked when confirm is hit on popup. The meaning of the arguments may vary by popup panel, but
         /// in the initial case of the login popup, they represent the IP Address, port, the Player Name, and the connection mode
@@ -80,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private const string k_DefaultConfirmText = "OK";
 
-        static readonly char[] k_InputFieldIncludeChars = new[] { '.', '_' };
+        static readonly char[] k_InputFieldIncludeChars = new[] {'.', '_'};
 
         /// <summary>
         /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
@@ -150,8 +152,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.IpHost;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            if (m_OnlineMode != OnlineMode.IpHost)
+            {
+                m_OnlineMode = OnlineMode.IpHost;
+                OnOnlineModeDropdownChanged(m_OnlineMode);
+            }
         }
 
         void RelayRadioRadioButtonPressed(bool value)
@@ -161,8 +166,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.Relay;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            if (m_OnlineMode != OnlineMode.Relay)
+            {
+                m_OnlineMode = OnlineMode.Relay;
+                OnOnlineModeDropdownChanged(m_OnlineMode);
+            }
         }
 
         void UnityRelayRadioRadioButtonPressed(bool value)
@@ -172,8 +180,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.UnityRelay;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            if (m_OnlineMode != OnlineMode.UnityRelay)
+            {
+                m_OnlineMode = OnlineMode.UnityRelay;
+                OnOnlineModeDropdownChanged(m_OnlineMode);
+            }
         }
 
         private void OnConfirmClick()
@@ -237,10 +248,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Called when the user selects a different online mode from the dropdown.
         /// </summary>
-        private async void OnOnlineModeDropdownChanged(OnlineMode value)
+        private void OnOnlineModeDropdownChanged(OnlineMode value)
         {
             // activate this so that it is always activated unless entering as relay host
             m_InputField.gameObject.SetActive(true);
+
+            // set those activation states so that they are always activated and deactivated respectively, unless during Unity Relay health check call
+            m_ConfirmationButton.gameObject.SetActive(true);
+            m_ReconnectingImage.SetActive(false);
 
             if (value == OnlineMode.IpHost)
             {
@@ -289,32 +304,79 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else if (value == OnlineMode.UnityRelay)
             {
-                Exception caughtException = null;
-                Task<List<UnityRegion>> task = null;
-                try
+                m_ReconnectingImage.SetActive(true);
+                m_InputField.gameObject.SetActive(false);
+                m_PortInputField.gameObject.SetActive(false);
+                m_ConfirmationButton.gameObject.SetActive(false);
+                m_MainText.text = "Waiting for Unity Relay Health Check...";
+
+                if (m_UnityRelayHealthCheck == null || m_UnityRelayHealthCheck.IsCompleted)
                 {
-                    await UnityServices.InitializeAsync();
-                    if (!AuthenticationService.Instance.IsSignedIn)
+                    if (m_UnityRelayHealthCheck is {Result: true})
                     {
-                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                        var playerId = AuthenticationService.Instance.PlayerId;
-                        Debug.Log(playerId);
+                        SetupEnterGameDisplayForUnityRelay();
                     }
-
-                    // calling ListRegion to get a single light health check call. This isn't the best method for this, but is fine to use for now until we
-                    // get full QoS endpoints available. MTT-1483
-                    task = Relay.Instance.ListRegionsAsync();
-
-                    await task;
+                    else
+                    {
+                        m_UnityRelayHealthCheck = UnityRelayHealthCheckCall();
+                    }
                 }
-                catch (RequestFailedException e)
+            }
+        }
+
+        void SetupEnterGameDisplayForUnityRelay()
+        {
+            m_MainText.text = m_UnityRelayMainText;
+            if (m_EnterAsHost)
+            {
+                m_InputField.text = GenerateRandomRoomKey();
+            }
+            else
+            {
+                m_InputField.text = "";
+                m_InputFieldPlaceholderText.text = "Join Code";
+                m_InputField.gameObject.SetActive(true);
+            }
+
+            m_ReconnectingImage.SetActive(false);
+            m_ConfirmationButton.gameObject.SetActive(true);
+
+            m_PortInputField.gameObject.SetActive(false);
+            m_PortInputField.text = "";
+        }
+
+        async Task<bool> UnityRelayHealthCheckCall()
+        {
+            Exception caughtException = null;
+            Task<List<UnityRegion>> task = null;
+            try
+            {
+                await UnityServices.InitializeAsync();
+                if (!AuthenticationService.Instance.IsSignedIn)
                 {
-                    caughtException = e;
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                    var playerId = AuthenticationService.Instance.PlayerId;
+                    Debug.Log(playerId);
                 }
 
-                if (task == null || task.IsFaulted || caughtException != null)
-                {
+                // calling ListRegion to get a single light health check call. This isn't the best method for this, but is fine to use for now until we
+                // get full QoS endpoints available. MTT-1483
+                task = Relay.Instance.ListRegionsAsync();
 
+                await task;
+            }
+            catch (RequestFailedException e)
+            {
+                caughtException = e;
+            }
+
+            bool failed = task == null || task.IsFaulted || caughtException != null;
+
+            // Don't need to show the results if the panel was exited or if the online mode was changed before the task completed
+            if (m_OnlineMode == OnlineMode.UnityRelay)
+            {
+                if (failed)
+                {
                     if (caughtException != null) Debug.LogException(caughtException);
                     if (task != null) Debug.LogException(task.Exception);
 
@@ -323,36 +385,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                         // Error trying to get the list of available regions, something is not setup correctly
                         SetupNotifierDisplay(
                             "Unity Relay error!", "Something went wrong trying to reach Unity Relay. Please follow the instructions here https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html#how-do-I-enable-Relay-for-my-project" +
-
-                                                          "to setup Unity Relay and use relay mode.", false, true);
+                            "to setup Unity Relay and use relay mode.", false, true);
                     }
                     else
                     {
                         // If there is no photon app id set tell the user they need to install
                         SetupNotifierDisplay(
                             "Unity Relay error!", "Something went wrong trying to reach Unity Relay. It needs to be setup in the Unity Editor for this project " +
-                                                       "by following the Unity Relay guide, then rebuild the project and distribute it.", false, true);
+                            "by following the Unity Relay guide, then rebuild the project and distribute it.", false, true);
                     }
-
-                    return;
-                }
-
-                m_MainText.text = m_UnityRelayMainText;
-                if (m_EnterAsHost)
-                {
-                    m_InputField.text = GenerateRandomRoomKey();
-                    m_InputField.gameObject.SetActive(false);
                 }
                 else
                 {
-                    m_InputField.text = "";
-                    m_InputFieldPlaceholderText.text = "Join Code";
+                    SetupEnterGameDisplayForUnityRelay();
                 }
-
-                m_PortInputField.gameObject.SetActive(false);
-                m_PortInputField.text = "";
             }
+            return !failed;
         }
+
         /// <summary>
         /// Generates a random room key to use as a default value.
         /// </summary>
@@ -396,6 +446,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
             m_ConfirmFunction = null;
             m_CancelFunction = null;
+            m_OnlineMode = OnlineMode.Unset;
         }
 
         /// <summary>
