@@ -14,6 +14,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
     public class SessionManager<T> : MonoBehaviour where T : struct, ISessionPlayerData
     {
+        const string k_HostGUID = "host_guid";
+        
         [SerializeField]
         NetworkManager m_NetworkManager;
 
@@ -64,8 +66,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void AddHostData(T sessionPlayerData)
         {
-            m_ClientData.Add("host_guid", sessionPlayerData);
-            m_ClientIDToGuid.Add(m_NetworkManager.LocalClientId, "host_guid");
+            m_ClientData.Add(k_HostGUID, sessionPlayerData);
+            m_ClientIDToGuid.Add(m_NetworkManager.LocalClientId, k_HostGUID);
         }
 
         /// <summary>
@@ -78,9 +80,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 if (GetPlayerData(guid)?.ClientID == clientId)
                 {
-                    var T = m_ClientData[guid];
-                    T.IsConnected = false;
-                    m_ClientData[guid] = T;
+                    var clientData = m_ClientData[guid];
+                    clientData.IsConnected = false;
+                    m_ClientData[guid] = clientData;
                 }
             }
 
