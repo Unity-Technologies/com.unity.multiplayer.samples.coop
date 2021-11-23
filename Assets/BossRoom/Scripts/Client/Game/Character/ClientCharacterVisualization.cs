@@ -64,6 +64,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public event Action<Animator> animatorSet;
 
+        float m_CurrentPositionLerpTime;
+
+        float m_CurrentRotationLerpTime;
+
+        // this value suffices for both positional and rotational interpolations; one may have a constant value for each
+        const float k_LerpTime = 0.1f;
+
+        Vector3 m_LerpStartPosition;
+
+        Quaternion m_LerpStartRotation;
+
         public void Start()
         {
             if (!NetworkManager.Singleton.IsClient || transform.parent == null)
@@ -97,6 +108,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
+
+            // similarly, initialize start position and rotation for smooth lerping purposes
+            m_LerpStartPosition = m_PhysicsWrapper.Transform.position;
+            m_LerpStartRotation = m_PhysicsWrapper.Transform.rotation;
 
             // ...and visualize the current char-select value that we know about
             SetAppearanceSwap();
@@ -231,7 +246,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-
         void Update()
         {
             if (Parent == null)
@@ -241,12 +255,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            // smoothly move and rotate towards the NetworkTransform GameObject
-            VisualUtils.SmoothMove(transform,
-                m_PhysicsWrapper.Transform,
-                Time.deltaTime,
-                ref m_SmoothedSpeed,
-                k_MaxRotSpeed);
+            transform.SetPositionAndRotation(VisualUtils.LerpPosition(transform.position,
+                    m_PhysicsWrapper.Transform.position,
+                    ref m_LerpStartPosition,
+                    ref m_CurrentPositionLerpTime,
+                    k_LerpTime),
+                VisualUtils.LerpRotation(transform.rotation,
+                    m_PhysicsWrapper.Transform.rotation,
+                    ref m_LerpStartRotation,
+                    ref m_CurrentRotationLerpTime,
+                    k_LerpTime));
 
             if (m_ClientVisualsAnimator)
             {

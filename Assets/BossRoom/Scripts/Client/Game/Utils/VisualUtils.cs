@@ -62,6 +62,66 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 moveTransform.rotation = Quaternion.Slerp(moveTransform.rotation, targetTransform.rotation, t);
             }
         }
+
+        /// <summary>
+        /// Linearly interpolate between two Vector3 values. Allows for flexible linear interpolations where
+        /// current and target change over time.
+        /// </summary>
+        /// <param name="current"> Start of the interpolation. </param>
+        /// <param name="target"> End of the interpolation. </param>
+        /// <param name="lerpStart"> Calculated start for the most recent interpolation. </param>
+        /// <param name="currentLerpTime"> Calculated time elapsed for the most recent interpolation.</param>
+        /// <param name="lerpTime"> The duration of the interpolation, in seconds. </param>
+        /// <returns> A Vector3 value between current and target. </returns>
+        public static Vector3 LerpPosition(Vector3 current, Vector3 target,
+            ref Vector3 lerpStart, ref float currentLerpTime, float lerpTime)
+        {
+            if (current != target)
+            {
+                lerpStart = current;
+                currentLerpTime = 0f;
+            }
+
+            currentLerpTime += Time.deltaTime;
+            if (currentLerpTime > lerpTime)
+            {
+                currentLerpTime = lerpTime;
+            }
+
+            var lerpPercentage = currentLerpTime / lerpTime;
+
+            return Vector3.Lerp(lerpStart, target, lerpPercentage);
+        }
+
+        /// <summary>
+        /// Linearly interpolate between two Quaternion values. Allows for flexible linear interpolations where
+        /// current and target change over time.
+        /// </summary>
+        /// <param name="current"> Start of the interpolation. </param>
+        /// <param name="target"> End of the interpolation. </param>
+        /// <param name="lerpStart"> Calculated start for the most recent interpolation. </param>
+        /// <param name="currentLerpTime"> Calculated time elapsed for the most recent interpolation.</param>
+        /// <param name="lerpTime"> The duration of the interpolation, in seconds. </param>
+        /// <returns> A Quaternion value between current and target. </returns>
+        public static Quaternion LerpRotation(Quaternion current, Quaternion target,
+            ref Quaternion lerpStart, ref float currentLerpTime, float lerpTime)
+        {
+            if (current != target)
+            {
+                lerpStart = current;
+                currentLerpTime = 0f;
+            }
+
+            currentLerpTime += Time.deltaTime;
+            if (currentLerpTime > lerpTime)
+            {
+                currentLerpTime = lerpTime;
+            }
+
+            var lerpPercentage = currentLerpTime / lerpTime;
+
+            return Quaternion.Lerp(lerpStart, target, lerpPercentage);
+        }
     }
 
 }
