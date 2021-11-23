@@ -206,7 +206,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            ConnectClient(portal);
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                ConnectClient(portal);
+            }
 
             failMessage = String.Empty;
             return true;
@@ -255,7 +258,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            ConnectClient(portal);
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                ConnectClient(portal);
+            }
         }
 
         private static void ConnectClient(GameNetPortal portal)
