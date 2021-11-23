@@ -15,7 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public class SessionManager<T> : MonoBehaviour where T : struct, ISessionPlayerData
     {
         const string k_HostGUID = "host_guid";
-        
+
         [SerializeField]
         NetworkManager m_NetworkManager;
 
@@ -172,11 +172,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
 
             return gameReturnStatus;
-        }
-
-        public string GetPlayerGUID(ulong clientID)
-        {
-            return m_ClientIDToGuid[clientID];
         }
 
         /// <summary>
