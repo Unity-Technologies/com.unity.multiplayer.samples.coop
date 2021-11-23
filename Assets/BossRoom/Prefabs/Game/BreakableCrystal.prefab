@@ -147,7 +147,6 @@ MonoBehaviour:
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
   m_NetworkNameState: {fileID: 0}
   m_NetworkHealthState: {fileID: 1536483666502863715}
-  m_CharacterClassContainer: {fileID: 0}
   m_ClientCharacter: {fileID: 0}
   m_BaseHP: {fileID: 11400000, guid: 35bb8d80ab89bf64aa87c6e1a7863370, type: 2}
   m_TransformToTrack: {fileID: 2925848032892422867}
@@ -179,7 +178,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4457111245660246774}
   m_LocalRotation: {x: -0.0000000052683555, y: -0.7071068, z: 0.0000000052683555, w: 0.7071068}
-  m_LocalPosition: {x: 0.09, y: -0.06792259, z: 0.06}
+  m_LocalPosition: {x: 0.09, y: 0.34, z: 0.06}
   m_LocalScale: {x: 0.8011758, y: 0.8011749, z: 0.8011758}
   m_Children: []
   m_Father: {fileID: 2925848032892422867}

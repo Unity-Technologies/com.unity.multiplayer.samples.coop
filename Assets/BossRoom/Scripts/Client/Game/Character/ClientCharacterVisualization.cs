@@ -14,7 +14,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
-        [SerializeField]
         private CharacterSwap m_CharacterSwapper;
 
         [SerializeField]
@@ -62,8 +61,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public ulong NetworkObjectId => m_NetState.NetworkObjectId;
 
-        public event Action<Animator> animatorSet;
-
         public void Start()
         {
             if (!NetworkManager.Singleton.IsClient || transform.parent == null)
@@ -78,15 +75,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             Parent = m_NetState.transform;
 
-            if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
-            {
-                m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
-
-                // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
-                // following is a temporary workaround. Future refactorings will enable this functionality.
-                animatorSet?.Invoke(clientAvatarGuidHandler.graphicsAnimator);
-            }
-
             m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
 
             m_NetState.DoActionEventClient += PerformActionFX;
@@ -98,12 +86,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
 
-            // ...and visualize the current char-select value that we know about
-            SetAppearanceSwap();
-
             if (!m_NetState.IsNpc)
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
+
+                if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                {
+                    m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
+                }
+
+                m_CharacterSwapper = GetComponentInChildren<CharacterSwap>();
+
+                // ...and visualize the current char-select value that we know about
+                SetAppearanceSwap();
 
                 if (m_NetState.IsOwner)
                 {
@@ -254,7 +249,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ActionViz.Update();
         }
 
-        public void OnAnimEvent(string id)
+        void OnAnimEvent(string id)
         {
             //if you are trying to figure out who calls this method, it's "magic". The Unity Animation Event system takes method names as strings,
             //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one
