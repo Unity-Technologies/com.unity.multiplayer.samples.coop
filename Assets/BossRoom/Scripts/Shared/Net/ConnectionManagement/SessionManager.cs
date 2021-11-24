@@ -15,14 +15,35 @@ namespace Unity.Multiplayer.Samples.BossRoom
     // GUID binds a player to a session
     // Once that player connects to a host, the host associates the current ClientID to the player's session GUID.
     // If the player disconnects and reconnects to the same host, the session is preserved.
-    public class SessionManager<T> : MonoBehaviour where T : struct, ISessionPlayerData
+    public class SessionManager<T> where T : struct, ISessionPlayerData
     {
         const string k_HostGUID = "host_guid";
 
-        [SerializeField]
         NetworkManager m_NetworkManager;
 
-        public static SessionManager<T> Instance { get; private set; }
+        protected SessionManager()
+        {
+            m_NetworkManager = NetworkManager.Singleton;
+            if (m_NetworkManager)
+            {
+                m_NetworkManager.OnServerStarted += ServerStartedHandler;
+            }
+
+            m_ClientData = new Dictionary<string, T>();
+            m_ClientIDToGuid = new Dictionary<ulong, string>();
+        }
+
+        ~SessionManager()
+        {
+            if (m_NetworkManager)
+            {
+                m_NetworkManager.OnServerStarted -= ServerStartedHandler;
+            }
+        }
+
+        public static SessionManager<T> Instance => s_Instance ??= new SessionManager<T>();
+
+        private static SessionManager<T> s_Instance;
 
         /// <summary>
         /// Maps a given client guid to the data for a given client player.
@@ -33,39 +54,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Map to allow us to cheaply map from guid to player data.
         /// </summary>
         private Dictionary<ulong, string> m_ClientIDToGuid;
-
-        private void Awake()
-        {
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-            }
-            else
-            {
-                Instance = this;
-            }
-        }
-
-        void Start()
-        {
-            if (m_NetworkManager)
-            {
-                m_NetworkManager.OnServerStarted += ServerStartedHandler;
-            }
-
-            m_ClientData = new Dictionary<string, T>();
-            m_ClientIDToGuid = new Dictionary<ulong, string>();
-
-            DontDestroyOnLoad(this);
-        }
-
-        void OnDestroy()
-        {
-            if (m_NetworkManager)
-            {
-                m_NetworkManager.OnServerStarted -= ServerStartedHandler;
-            }
-        }
 
         public void AddHostData(T sessionPlayerData)
         {
@@ -229,21 +217,38 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private void ServerStartedHandler()
         {
-            if (!m_NetworkManager.IsServer)
-            {
-                enabled = false;
-            }
-            else
+            if (m_NetworkManager.IsServer)
             {
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
                 m_NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
             }
         }
 
+        public void OnSessionStarted()
+        {
+            ClearDisconnectedPlayersData();
+        }
+
         /// <summary>
         /// Reinitializes session data from connected players, and clears data from disconnected players, so that if they reconnect in the next game, they will be treated as new players
         /// </summary>
-        public void OnGameEnded()
+        public void OnSessionEnded()
+        {
+            ClearDisconnectedPlayersData();
+            List<ulong> connectedClientIds = new List<ulong>(m_NetworkManager.ConnectedClientsIds);
+            foreach (var id in m_ClientIDToGuid.Keys)
+            {
+                if (connectedClientIds.Contains(id))
+                {
+                    string guid = m_ClientIDToGuid[id];
+                    T sessionPlayerData = m_ClientData[guid];
+                    sessionPlayerData.Reinitialize();
+                    m_ClientData[guid] = sessionPlayerData;
+                }
+            }
+        }
+
+        void ClearDisconnectedPlayersData()
         {
             List<ulong> idsToClear = new List<ulong>();
             List<ulong> connectedClientIds = new List<ulong>(m_NetworkManager.ConnectedClientsIds);

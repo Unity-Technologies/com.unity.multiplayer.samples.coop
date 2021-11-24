@@ -14,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             else
             {
-                BossRoomSessionManager.Instance.OnGameEnded();
+                BossRoomSessionManager.Instance.OnSessionEnded();
             }
         }
     }
