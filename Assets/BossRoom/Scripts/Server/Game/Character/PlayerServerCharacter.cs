@@ -42,7 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (IsServer)
             {
                 var movementTransform = m_CachedServerCharacter.Movement.transform;
-                SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(OwnerClientId);
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData.HasValue)
                 {
                     var playerData = sessionPlayerData.Value;
@@ -50,7 +50,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     playerData.PlayerRotation = movementTransform.rotation;
                     playerData.CurrentHitPoints = m_CachedServerCharacter.NetState.HitPoints;
                     playerData.HasCharacterSpawned = true;
-                    BossRoomSessionManager.Instance.SetPlayerData(OwnerClientId, playerData);
+                    SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
                 }
             }
         }

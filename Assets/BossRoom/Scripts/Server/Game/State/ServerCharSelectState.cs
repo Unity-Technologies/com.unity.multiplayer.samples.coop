@@ -177,7 +177,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
 
-                BossRoomSessionManager.Instance.OnSessionStarted();
+                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             }
         }
 
@@ -213,7 +213,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void SeatNewPlayer(ulong clientId)
         {
-            SessionPlayerData? sessionPlayerData = BossRoomSessionManager.Instance.GetPlayerData(clientId);
+            SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
             if (sessionPlayerData.HasValue)
             {
                 var playerData = sessionPlayerData.Value;
@@ -229,7 +229,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 }
 
                 CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerData.PlayerName, playerData.PlayerNum, CharSelectData.SeatState.Inactive));
-                BossRoomSessionManager.Instance.SetPlayerData(clientId, playerData);
+                SessionManager<SessionPlayerData>.Instance.SetPlayerData(clientId, playerData);
             }
         }
 

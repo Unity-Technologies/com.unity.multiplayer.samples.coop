@@ -33,6 +33,4 @@ namespace Unity.Multiplayer.Samples.BossRoom
             HasCharacterSpawned = false;
         }
     }
-
-    public class BossRoomSessionManager : SessionManager<SessionPlayerData> { }
 }
