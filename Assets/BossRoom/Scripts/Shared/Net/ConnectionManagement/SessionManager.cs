@@ -15,9 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     // GUID binds a player to a session
     // Once that player connects to a host, the host associates the current ClientID to the player's session GUID.
     // If the player disconnects and reconnects to the same host, the session is preserved.
-    // GUID binds a player to a session
-    // Once that player connects to a host, the host associates the current ClientID to the player's session GUID.
-    // If the player disconnects and reconnects to the same host, the session is preserved.
     public class SessionManager<T> : MonoBehaviour where T : struct, ISessionPlayerData
     {
         const string k_HostGUID = "host_guid";
