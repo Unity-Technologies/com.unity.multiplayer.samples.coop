@@ -48,6 +48,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 }
             }
 
+            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+
             // start the "charging up" ActionFX
             m_Parent.NetState.RecvDoActionClientRPC(Data);
 
@@ -103,6 +105,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_StoppedChargingUpTime == 0)
             {
                 m_StoppedChargingUpTime = Time.time;
+
+                if (!string.IsNullOrEmpty(Description.Anim2))
+                {
+                    m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                }
+
                 m_Parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
                 if (!m_HitByAttack)
                 {

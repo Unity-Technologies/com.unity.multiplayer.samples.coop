@@ -65,6 +65,7 @@ MonoBehaviour:
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &-8903857516321632127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,6 +172,10 @@ PrefabInstance:
     - target: {fileID: 4371491365999748502, guid: e5e46d03def7870439c2e42d5601394c, type: 3}
       propertyPath: m_Name
       value: pot
+      objectReference: {fileID: 0}
+    - target: {fileID: 4371491365999748502, guid: e5e46d03def7870439c2e42d5601394c, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 122
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: -2116509465241817417, guid: e5e46d03def7870439c2e42d5601394c, type: 3}

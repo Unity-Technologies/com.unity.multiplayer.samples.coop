@@ -1,5 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom;
-using MLAPI.Transports.PhotonRealtime;
+using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.Assertions;
 using TMPro;
@@ -16,19 +16,31 @@ public class RoomNameBox : MonoBehaviour
         Assert.IsNotNull(m_RoomNameText, $"{nameof(m_RoomNameText)} not assigned!");
 
         var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-
+        bool isUsingRelay = true;
         switch (transport)
         {
             case PhotonRealtimeTransport realtimeTransport:
                 m_RoomNameText.text = $"Loading room key...";
                 break;
             case UnityTransport utp:
-                m_RoomNameText.text = $"Loading join code...";
+                if (utp.Protocol == UnityTransport.ProtocolType.RelayUnityTransport)
+                {
+                    m_RoomNameText.text = $"Loading join code...";
+                }
+                else
+                {
+                    isUsingRelay = false;
+                }
                 break;
             default:
-                // RoomName should only be displayed when using relay.
-                Destroy(gameObject);
+                isUsingRelay = false;
                 break;
+        }
+
+        if (!isUsingRelay)
+        {
+            // RoomName should only be displayed when using relay.
+            Destroy(gameObject);
         }
     }
 

@@ -20,11 +20,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     public class ChargedShieldAction : Action
     {
         /// <summary>
-        /// Cached reference to a component in Parent
-        /// </summary>
-        private ServerCharacterMovement m_Movement;
-
-        /// <summary>
         /// Set once we've stopped charging up, for any reason:
         /// - the player has let go of the button,
         /// - we were attacked,
@@ -32,12 +27,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private float m_StoppedChargingUpTime = 0;
 
-        public ChargedShieldAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
+        public ChargedShieldAction(ServerCharacter parent, ref ActionRequestData data)
+            : base(parent, ref data) { }
 
         public override bool Start()
         {
-            m_Movement = m_Parent.GetComponent<ServerCharacterMovement>();
-
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
                 NetworkObject initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
@@ -48,8 +42,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 }
             }
 
+            // because this action can be visually started and stopped as often and as quickly as the player wants, it's possible
+            // for several copies of this action to be playing at once. This can lead to situations where several
+            // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
+            // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
+            m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+
+            // raise the start trigger to start the animation loop!
+            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+
             m_Parent.NetState.RecvDoActionClientRPC(Data);
             return true;
+        }
+
+        private bool IsChargingUp()
+        {
+            return m_StoppedChargingUpTime == 0;
         }
 
         public override bool Update()
@@ -90,7 +98,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 // it's looking for how much damage to DO, not how much to REDUCE BY). Also note how we don't just SET
                 // buffedValue... we multiply our buff in with the current value. This lets our Action "stack"
                 // with any other Actions that also alter this variable.)
-                buffedValue *= 1-percentDamageReduction;
+                buffedValue *= 1 - percentDamageReduction;
             }
             else if (buffType == BuffableValue.ChanceToStunTramplers)
             {
@@ -114,16 +122,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override void Cancel()
         {
             StopChargingUp();
+
+            // if stepped into invincibility, decrement invincibility counter
+            if (Mathf.Approximately(GetPercentChargedUp(), 1f))
+            {
+                m_Parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
+                    m_Parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) - 1);
+            }
         }
 
         private void StopChargingUp()
         {
-            if (m_StoppedChargingUpTime == 0)
+            if (IsChargingUp())
             {
                 m_StoppedChargingUpTime = Time.time;
                 m_Parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
+
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+
+                //tell the animator controller to enter "invincibility mode" (where we don't flinch from damage)
+                if (Mathf.Approximately(GetPercentChargedUp(), 1f))
+                {
+                    // increment our "invincibility counter". We use an integer count instead of a boolean because the player
+                    // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.
+                    // So each active copy of the charge-up increments the invincibility counter, and the animator controller
+                    // knows anything greater than zero means we shouldn't show hit-reacts.
+                    m_Parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
+                        m_Parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) + 1);
+                }
             }
         }
-
     }
 }

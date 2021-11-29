@@ -49,6 +49,7 @@ MonoBehaviour:
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &-5536186819612961332
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,8 +77,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d99850df10e83c142b4b65527d7cea91, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Name:
-    m_InternalValue: 
 --- !u!114 &596945379875709001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,5 +89,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe9bfd21e47445488dfd84b4e0c9884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AvatarGuidArray:
-    m_InternalValue: 
+  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}

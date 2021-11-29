@@ -1,6 +1,7 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -9,25 +10,59 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public class NetworkAvatarGuidState : NetworkBehaviour
     {
+        [FormerlySerializedAs("AvatarGuidArray")]
         [HideInInspector]
-        public NetworkVariable<NetworkGuid> AvatarGuidArray = new NetworkVariable<NetworkGuid>();
+        public NetworkVariable<NetworkGuid> AvatarGuid = new NetworkVariable<NetworkGuid>();
 
-        public event Action<Guid> GuidChanged;
+        CharacterClassContainer m_CharacterClassContainer;
 
-        void Awake()
+        [SerializeField]
+        AvatarRegistry m_AvatarRegistry;
+
+        Avatar m_Avatar;
+
+        public Avatar RegisteredAvatar
         {
-            AvatarGuidArray.OnValueChanged += OnValueChanged;
+            get
+            {
+                if (m_Avatar == null)
+                {
+                    RegisterAvatar(AvatarGuid.Value.ToGuid());
+                }
+
+                return m_Avatar;
+            }
         }
 
-        void OnValueChanged(NetworkGuid oldValue, NetworkGuid newValue)
+        private void Awake()
         {
-            if (newValue.ToGuid().Equals(Guid.Empty))
+            m_CharacterClassContainer = GetComponent<CharacterClassContainer>();
+        }
+
+        public void RegisterAvatar(Guid guid)
+        {
+            if (guid.Equals(Guid.Empty))
             {
                 // not a valid Guid
                 return;
             }
 
-            GuidChanged?.Invoke(newValue.ToGuid());
+            // based on the Guid received, Avatar is fetched from AvatarRegistry
+            if (!m_AvatarRegistry.TryGetAvatar(guid, out Avatar avatar))
+            {
+                Debug.LogError("Avatar not found!");
+                return;
+            }
+
+            if (m_Avatar != null)
+            {
+                // already set, this is an idempotent call, we don't want to Instantiate twice
+                return;
+            }
+
+            m_Avatar = avatar;
+
+            m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
         }
     }
 }

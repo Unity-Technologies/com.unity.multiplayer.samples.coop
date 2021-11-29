@@ -5093,7 +5093,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.5665226, g: 1, b: 0.514151, a: 0.105882354}
+      maxColor: {r: 0.39516452, g: 1, b: 0.319, a: 0.5254902}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}
@@ -14606,7 +14606,7 @@ GameObject:
   - component: {fileID: 6614281681929508734}
   - component: {fileID: 6614281681929508736}
   - component: {fileID: 6614281681929508737}
-  m_Layer: 0
+  m_Layer: 14
   m_Name: FX_Caster_skill1_impact_glow
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -29412,7 +29412,7 @@ ParticleSystem:
       serializedVersion: 2
       minMaxState: 0
       minColor: {r: 1, g: 1, b: 1, a: 1}
-      maxColor: {r: 0.38774344, g: 1, b: 0.3160377, a: 0.3254902}
+      maxColor: {r: 0.4737235, g: 1, b: 0.41799998, a: 0.49411765}
       maxGradient:
         serializedVersion: 2
         key0: {r: 1, g: 1, b: 1, a: 1}

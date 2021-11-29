@@ -28,11 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Start()
         {
-            if( !Anticipated)
-            {
-                PlayAnim();
-            }
-
             base.Start();
 
             // we can optionally have special particles that should play on the target. If so, add them now.
@@ -57,7 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
                     // target is in range! Play the graphics
-                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(targetNetworkObj.transform, true);
+                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
                 }
             }
             return true;
@@ -98,16 +93,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
             }
         }
-
-        private void PlayAnim()
-        {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
-        }
-
+        
         private void PlayHitReact()
         {
             if (m_ImpactPlayed) { return; }
             m_ImpactPlayed = true;
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
 
             //Is my original target still in range? Then definitely get him!
             if (Data.TargetIds != null &&
@@ -144,15 +139,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             //in the future we may do another physics check to handle the case where a target "ran under our weapon".
             //But for now, if the original target is no longer present, then we just don't play our hit react on anything.
-        }
-
-        public override void AnticipateAction()
-        {
-            base.AnticipateAction();
-
-            //note: because the hit-react is driven from the animation, this means we can anticipatively trigger a hit-react too. That
-            //will make combat feel responsive, but of course the actual damage won't be applied until the server tells us about it.
-            PlayAnim();
         }
     }
 }

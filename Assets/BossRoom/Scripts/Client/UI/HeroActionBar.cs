@@ -255,9 +255,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         void UpdateAllActionButtons()
         {
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], m_NetState.CharacterData.Skill1);
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_NetState.CharacterData.Skill2);
-            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_NetState.CharacterData.Skill3);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], m_NetState.CharacterClass.Skill1);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_NetState.CharacterClass.Skill2);
+            UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_NetState.CharacterClass.Skill3);
 
             // special case: when we have a player selected, we change the meaning of the basic action
             if (m_NetState.TargetId.Value != 0

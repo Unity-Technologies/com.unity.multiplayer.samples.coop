@@ -17,9 +17,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// to see which one is enabled. We need this trick for our multi-character graphics prefab: it has multiple
     /// AnimatorTriggeredSpecialFX for each of the different character classes, and only the relevant one will be
     /// enabled at any given time.
-    ///
-    /// Also note that we didn't use GetComponentsInChildren(), but rather GetComponents(),
-    /// so all the AnimatorTriggeredSpecialFX components need to be on the same GameObject as the Animator.
     /// </remarks>
     public class AnimatorNodeHook : StateMachineBehaviour
     {
@@ -28,7 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (m_CachedTriggerRefs == null)
-                m_CachedTriggerRefs = animator.GetComponents<AnimatorTriggeredSpecialFX>();
+                m_CachedTriggerRefs = animator.GetComponentsInChildren<AnimatorTriggeredSpecialFX>();
             foreach (var fxController in m_CachedTriggerRefs)
             {
                 if (fxController && fxController.enabled)
@@ -48,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         override public void OnStateExit(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
         {
             if (m_CachedTriggerRefs == null)
-                m_CachedTriggerRefs = animator.GetComponents<AnimatorTriggeredSpecialFX>();
+                m_CachedTriggerRefs = animator.GetComponentsInChildren<AnimatorTriggeredSpecialFX>();
             foreach (var fxController in m_CachedTriggerRefs)
             {
                 if (fxController && fxController.enabled)

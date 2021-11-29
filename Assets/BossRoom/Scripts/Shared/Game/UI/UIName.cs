@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.Collections;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom
@@ -12,19 +13,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [SerializeField]
         TextMeshProUGUI m_UINameText;
 
-        NetworkVariableString m_NetworkedNameTag;
+        NetworkVariable<FixedPlayerName> m_NetworkedNameTag;
 
-        public void Initialize(NetworkVariableString networkedName)
+        public void Initialize(NetworkVariable<FixedPlayerName> networkedName)
         {
             m_NetworkedNameTag = networkedName;
 
-            m_UINameText.text = networkedName.Value;
+            m_UINameText.text = networkedName.Value.ToString();
             networkedName.OnValueChanged += NameUpdated;
         }
 
-        void NameUpdated(string previousValue, string newValue)
+        void NameUpdated(FixedPlayerName previousValue, FixedPlayerName newValue)
         {
-            m_UINameText.text = newValue;
+            m_UINameText.text = newValue.ToString();
         }
 
         void OnDestroy()

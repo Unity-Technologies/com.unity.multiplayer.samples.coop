@@ -53,6 +53,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public PhysicsWrapper physicsWrapper => m_PhysicsWrapper;
 
+        [SerializeField]
+        ServerAnimationHandler m_ServerAnimationHandler;
+
+        public ServerAnimationHandler serverAnimationHandler => m_ServerAnimationHandler;
+
         private void Awake()
         {
             m_ActionPlayer = new ActionPlayer(this);
@@ -81,7 +86,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     PlayAction(ref startingAction);
                 }
 
-                NetState.HitPoints = NetState.CharacterData.BaseHP.Value;
+                NetState.HitPoints = NetState.CharacterClass.BaseHP.Value;
             }
         }
 
@@ -189,9 +194,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
+
+                serverAnimationHandler.NetworkAnimator.SetTrigger("HitReact1");
             }
 
-            NetState.HitPoints = Mathf.Min(NetState.CharacterData.BaseHP.Value, NetState.HitPoints+HP);
+            NetState.HitPoints = Mathf.Min(NetState.CharacterClass.BaseHP.Value, NetState.HitPoints+HP);
 
             if( m_AIBrain != null )
             {
@@ -241,7 +248,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (NetState.LifeState == LifeState.Fainted)
             {
-                NetState.HitPoints = Mathf.Clamp(HP, 0, NetState.CharacterData.BaseHP.Value);
+                NetState.HitPoints = Mathf.Clamp(HP, 0, NetState.CharacterClass.BaseHP.Value);
                 NetState.NetworkLifeState.LifeState.Value = LifeState.Alive;
             }
         }

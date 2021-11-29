@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -110,12 +112,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         private Dictionary<Renderer, Material> m_OriginalMaterials = new Dictionary<Renderer, Material>();
 
-        private void Awake()
+        ClientCharacterVisualization m_ClientCharacterVisualization;
+
+        void Awake()
         {
-            if (m_Animator)
-            {
-                m_OriginalController = m_Animator.runtimeAnimatorController;
-            }
+            m_ClientCharacterVisualization = GetComponentInParent<ClientCharacterVisualization>();
+            m_Animator = m_ClientCharacterVisualization.OurAnimator;
+            m_OriginalController = m_Animator.runtimeAnimatorController;
         }
 
         private void OnDisable()
@@ -188,14 +191,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 }
             }
         }
-
-#if UNITY_EDITOR
-        private void OnValidate()
-        {
-            // if an Animator is on the same GameObject as us, assume that's the one we'll be using!
-            if (!m_Animator)
-                m_Animator = GetComponent<Animator>();
-        }
-#endif
     }
 }

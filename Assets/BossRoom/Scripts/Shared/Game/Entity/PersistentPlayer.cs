@@ -39,8 +39,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_PersistentPlayerRuntimeCollection.Add(this);
         }
 
-        void OnDestroy()
+        public override void OnDestroy()
         {
+            base.OnDestroy();
             RemovePersistentPlayer();
         }
 

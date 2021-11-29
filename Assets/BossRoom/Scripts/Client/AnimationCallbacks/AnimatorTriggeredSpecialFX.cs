@@ -15,7 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// (or exiting) specific nodes in an Animator. (Each relevant Animator node must have an
     /// AnimationNodeHook component attached.)
     /// </summary>
-    [RequireComponent(typeof(Animator))]
     public class AnimatorTriggeredSpecialFX : MonoBehaviour
     {
         [SerializeField]
@@ -68,9 +67,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         internal AudioSource[] m_AudioSources;
 
         /// <summary>
-        /// cached reference to our required Animator. (Animator MUST be on the same
-        /// GameObject as us so the AnimatorNodeHook can dispatch events to us correctly.)
+        /// cached reference to our Animator.
         /// </summary>
+        [SerializeField]
         private Animator m_Animator;
 
         /// <summary>
@@ -78,11 +77,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private HashSet<int> m_ActiveNodes = new HashSet<int>();
 
+        [SerializeField]
+        ClientCharacterVisualization m_ClientCharacterVisualization;
+
         private void Awake()
         {
-            m_Animator = GetComponent<Animator>();
-            Debug.Assert(m_Animator, "AnimatorTriggeredSpecialFX needs to be on the same GameObject as the Animator it works with!", gameObject);
             Debug.Assert(m_AudioSources != null && m_AudioSources.Length > 0, "No AudioSource plugged into AnimatorTriggeredSpecialFX!", gameObject);
+
+            if (!m_ClientCharacterVisualization)
+            {
+                m_ClientCharacterVisualization = GetComponentInParent<ClientCharacterVisualization>();
+
+                m_Animator = m_ClientCharacterVisualization.OurAnimator;
+            }
         }
 
         public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
@@ -117,7 +124,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
                 yield break;
 
-            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_Animator.transform;
+            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_ClientCharacterVisualization.transform;
             var instantiatedFX = Instantiate(eventInfo.m_Prefab, parent);
             instantiatedFX.transform.localPosition += eventInfo.m_PrefabParentOffset;
 

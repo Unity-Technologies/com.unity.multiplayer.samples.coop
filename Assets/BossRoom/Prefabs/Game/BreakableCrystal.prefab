@@ -50,11 +50,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 18298031947863545144
-  PrefabHashGenerator: BreakableCrystal
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &7561466626167410996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -148,6 +147,7 @@ MonoBehaviour:
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
   m_NetworkNameState: {fileID: 0}
   m_NetworkHealthState: {fileID: 1536483666502863715}
+  m_ClientCharacter: {fileID: 0}
   m_BaseHP: {fileID: 11400000, guid: 35bb8d80ab89bf64aa87c6e1a7863370, type: 2}
   m_TransformToTrack: {fileID: 2925848032892422867}
   m_VerticalWorldOffset: 0
@@ -178,7 +178,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4457111245660246774}
   m_LocalRotation: {x: -0.0000000052683555, y: -0.7071068, z: 0.0000000052683555, w: 0.7071068}
-  m_LocalPosition: {x: 0.6890124, y: -0.06792259, z: -0.8412349}
+  m_LocalPosition: {x: 0.09, y: 0.34, z: 0.06}
   m_LocalScale: {x: 0.8011758, y: 0.8011749, z: 0.8011758}
   m_Children: []
   m_Father: {fileID: 2925848032892422867}
@@ -195,9 +195,9 @@ Light:
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
-  m_Color: {r: 0.99215686, g: 0.18804128, b: 0.16862741, a: 1}
-  m_Intensity: 11.22
-  m_Range: 1.68
+  m_Color: {r: 0.99215686, g: 0.16862741, b: 0.5189111, a: 1}
+  m_Intensity: 7.35
+  m_Range: 3.62
   m_SpotAngle: 30
   m_InnerSpotAngle: 21.80208
   m_CookieSize: 10
@@ -238,7 +238,7 @@ Light:
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
-  m_BounceIntensity: 1
+  m_BounceIntensity: 0
   m_ColorTemperature: 6570
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}

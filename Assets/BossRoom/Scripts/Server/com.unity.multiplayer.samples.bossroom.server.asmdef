@@ -7,7 +7,9 @@
         "Unity.Services.Core",
         "Unity.Services.Authentication",
         "Unity.Services.Relay",
-        "Unity.Netcode.Adapter.UTP"
+        "Unity.Netcode.Adapter.UTP",
+        "Unity.Netcode.Components",
+        "Unity.Multiplayer.Samples.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

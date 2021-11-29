@@ -26,7 +26,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Start()
         {
-            bool wasAnticipated = Anticipated;
             base.Start();
             m_Target = GetTarget();
 
@@ -38,18 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
                 throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
 
-            // animate shooting the projectile
-            if (!wasAnticipated)
-            {
-                PlayFireAnim();
-            }
-
             return true;
-        }
-
-        private void PlayFireAnim()
-        {
-            m_Parent.OurAnimator.SetTrigger(Description.Anim);
         }
 
         public override bool Update()
@@ -88,6 +76,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_ImpactPlayed)
                 return;
             m_ImpactPlayed = true;
+
+            if (NetworkManager.Singleton.IsServer)
+            {
+                return;
+            }
 
             if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
             {
@@ -150,7 +143,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public override void AnticipateAction()
         {
             base.AnticipateAction();
-            PlayFireAnim();
 
             // see if this is going to be a "miss" because the player tried to click through a wall. If so,
             // we change our data in the same way that the server will (changing our target point to the spot on the wall)
