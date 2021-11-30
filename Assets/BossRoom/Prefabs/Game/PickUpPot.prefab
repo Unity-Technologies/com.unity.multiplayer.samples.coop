@@ -51,7 +51,7 @@ MonoBehaviour:
   GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
-  AutoObjectParentSync: 0
+  AutoObjectParentSync: 1
 --- !u!114 &1583543423304314433
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -103,7 +103,7 @@ MonoBehaviour:
   ScaleThreshold: 0
   InLocalSpace: 0
   Interpolate: 1
-  FixedSendsPerSecond: 30
+  CanCommitToTransform: 0
 --- !u!114 &7749064398440206079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,6 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d305a23aab66843ab49f61511c8662, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_NetworkTransform: {fileID: -6910049848596396308}
 --- !u!1001 &1583543425366239673
 PrefabInstance:
   m_ObjectHideFlags: 0

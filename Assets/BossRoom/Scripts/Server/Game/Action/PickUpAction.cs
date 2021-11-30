@@ -14,35 +14,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         const string k_HeavyTag = "Heavy";
 
         const string k_NpcLayer = "NPCs";
-
-        CustomParentingHandler m_CustomParentingHandler;
-
         public PickUpAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
-            m_CustomParentingHandler = parent.physicsWrapper.Transform.GetComponent<CustomParentingHandler>();
         }
 
         public override bool Start()
         {
-            // first, check if a pot has already been parented; if so, drop it
-            if (m_CustomParentingHandler.hasChildren)
-            {
-                // find parented children NetworkObjects
-                var serverDisplacers =
-                    m_Parent.physicsWrapper.Transform.GetComponentsInChildren<ServerDisplacerOnParentChange>();
+            var pickUpObject = m_Parent.GetComponentInChildren<NetworkPickUpState>();
 
-                // we shouldn't ever have multiple children NetworkObjects; however, still deparent all children
-                foreach (var serverDisplacer in serverDisplacers)
-                {
-                    if (m_CustomParentingHandler.TryRemoveParent(serverDisplacer.NetworkObject))
-                    {
-                        serverDisplacer.NetworkObjectParentChanged(null);
-                    }
-                }
+            // first, check if a pot has already been parented; if so, drop it
+            if (pickUpObject)
+            {
+                pickUpObject.transform.SetParent(null);
 
                 Data.TargetIds = null;
 
-                m_Parent.NetState.RecvDoActionClientRPC(Data);
+                if (!string.IsNullOrEmpty(Description.Anim))
+                {
+                    m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim);
+                }
+
+                // drop
+                if (!string.IsNullOrEmpty(Description.Anim2))
+                {
+                    m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                }
+
                 return false;
             }
 
@@ -62,14 +59,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
 
             // found a suitable collider; try to child this NetworkObject
-            if (!m_CustomParentingHandler.TrySetParent(heavyNetworkObject))
+            if (!heavyNetworkObject.TrySetParent(m_Parent.transform))
             {
                 return false;
-            }
-
-            if (heavyNetworkObject.TryGetComponent(out ServerDisplacerOnParentChange serverDisplacerOnParentChange))
-            {
-                serverDisplacerOnParentChange.NetworkObjectParentChanged(m_Parent.NetworkObject);
             }
 
             Data.TargetIds = new ulong[] { heavyNetworkObject.NetworkObjectId };
@@ -83,7 +75,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_Parent.transform.forward = Data.Direction;
             }
 
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            if (!string.IsNullOrEmpty(Description.Anim2))
+            {
+                m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+            }
+
+            // pickup
+            if (!string.IsNullOrEmpty(Description.Anim))
+            {
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            }
+
             return true;
         }
 

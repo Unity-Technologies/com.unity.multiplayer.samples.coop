@@ -1,5 +1,6 @@
 using System.Collections;
 using Unity.Netcode;
+using Unity.Netcode.Components;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
@@ -17,12 +18,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         const float k_DropAnimationLength = 0.7f;
 
-        /// <summary>
-        /// Since NetworkObject parenting is handled via custom script, <see cref="CustomParentingHandler"/>, this
-        /// method is invoked externally when a parenting attempt is successful.
-        /// </summary>
-        /// <param name="parentNetworkObject"></param>
-        public void NetworkObjectParentChanged(NetworkObject parentNetworkObject)
+        [SerializeField]
+        NetworkTransform m_NetworkTransform;
+
+        public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
         {
             if (!IsServer)
             {
@@ -37,6 +36,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             else
             {
                 StopAllCoroutines();
+
+                m_NetworkTransform.enabled = true;
+
                 StartCoroutine(SmoothPositionLerpY(k_DropAnimationLength, 0));
             }
         }

@@ -78,8 +78,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ActionLogic.StealthMode: return new StealthModeActionFX(ref data, parent);
                 case ActionLogic.DashAttack: return new DashAttackActionFX(ref data, parent);
 
-                case ActionLogic.PickUp: return new PickUpActionFX(ref data, parent);
-
+                case ActionLogic.PickUp:
                 case ActionLogic.Stunned:
                 case ActionLogic.LaunchProjectile:
                 case ActionLogic.Revive:
@@ -171,7 +170,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             Anticipated = true;
             TimeStarted = UnityEngine.Time.time;
-            
+
             if(!string.IsNullOrEmpty(Description.AnimAnticipation))
             {
                 m_Parent.OurAnimator.SetTrigger(Description.AnimAnticipation);
