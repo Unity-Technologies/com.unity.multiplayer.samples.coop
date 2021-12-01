@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3765979716845461207}
   - component: {fileID: 3765979716845461206}
   - component: {fileID: 3029178677072641126}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: AdditiveSceneLoader
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,7 +59,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneName: 
-  loadOnNetworkSpawn: 0
 --- !u!114 &3029178677072641126
 MonoBehaviour:
   m_ObjectHideFlags: 0

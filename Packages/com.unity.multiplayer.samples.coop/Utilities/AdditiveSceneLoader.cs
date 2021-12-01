@@ -1,10 +1,15 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+/// <summary>
+/// This NetworkBehavior, when added to a gameobject containing a collider (or multiple colliders) with the IsTrigger
+/// property On, loads a scene additively when there is at least one gameobject with the "Player" tag that enters its
+/// collider, and unloads it when all players leave the collider, after a specified cooldown to prevent it from
+/// repeatedly loading and unloading the same scene.
+/// </summary>
 public class AdditiveSceneLoader : NetworkBehaviour
 {
     const float k_CooldownDuration = 5.0f;
@@ -27,6 +32,11 @@ public class AdditiveSceneLoader : NetworkBehaviour
 
     void Update()
     {
+        if (!IsSpawned)
+        {
+            return;
+        }
+
         if (!m_IsCooldown)
         {
             if (m_IsLoaded && m_PlayersInTrigger == 0)
