@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -17,17 +18,30 @@ public class AdditiveSceneLoader : NetworkBehaviour
     [SerializeField]
     string sceneName;
 
-    int m_PlayersInTrigger;
+    List<ulong> m_PlayersInTrigger;
     bool m_IsLoaded;
     bool m_IsCooldown;
 
     public override void OnNetworkSpawn()
     {
-        if (!IsServer)
+        if (IsServer)
+        {
+            NetworkManager.OnClientDisconnectCallback += RemovePlayer;
+            m_PlayersInTrigger = new List<ulong>();
+        }
+        else
         {
             enabled = false;
         }
 
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (IsServer)
+        {
+            NetworkManager.OnClientDisconnectCallback -= RemovePlayer;
+        }
     }
 
     void Update()
@@ -39,12 +53,12 @@ public class AdditiveSceneLoader : NetworkBehaviour
 
         if (!m_IsCooldown)
         {
-            if (m_IsLoaded && m_PlayersInTrigger == 0)
+            if (m_IsLoaded && m_PlayersInTrigger.Count == 0)
             {
                 NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(sceneName));
                 m_IsLoaded = false;
             }
-            else if (!m_IsLoaded && m_PlayersInTrigger > 0)
+            else if (!m_IsLoaded && m_PlayersInTrigger.Count > 0)
             {
                 NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
                 m_IsLoaded = true;
@@ -57,18 +71,23 @@ public class AdditiveSceneLoader : NetworkBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player") && other.TryGetComponent(out NetworkObject no))
         {
-            m_PlayersInTrigger++;
+            m_PlayersInTrigger.Add(no.OwnerClientId);
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        if (other.CompareTag("Player")  && other.TryGetComponent(out NetworkObject no))
         {
-            m_PlayersInTrigger--;
+            RemovePlayer(no.OwnerClientId);
         }
+    }
+
+    void RemovePlayer(ulong clientId)
+    {
+        m_PlayersInTrigger.Remove(clientId);
     }
 
     IEnumerator Cooldown()
