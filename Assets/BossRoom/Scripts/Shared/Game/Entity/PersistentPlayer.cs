@@ -37,6 +37,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
             // when this element is added to the runtime collection. If this was done in OnEnable() there is a chance
             // that OwnerClientID could be its default value (0).
             m_PersistentPlayerRuntimeCollection.Add(this);
+            if (IsServer)
+            {
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData.HasValue)
+                {
+                    m_NetworkNameState.Name.Value = sessionPlayerData.Value.PlayerName;
+                    m_NetworkAvatarGuidState.AvatarGuid.Value = sessionPlayerData.Value.AvatarNetworkGuid;
+                }
+            }
         }
 
         public override void OnDestroy()
@@ -53,6 +62,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void RemovePersistentPlayer()
         {
             m_PersistentPlayerRuntimeCollection.Remove(this);
+            if (IsServer)
+            {
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData.HasValue)
+                {
+                    var playerData = sessionPlayerData.Value;
+                    playerData.PlayerName = m_NetworkNameState.Name.Value;
+                    playerData.AvatarNetworkGuid = m_NetworkAvatarGuidState.AvatarGuid.Value;
+                    SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
+                }
+            }
         }
     }
 }
