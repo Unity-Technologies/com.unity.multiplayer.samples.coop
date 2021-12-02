@@ -174,8 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
             }
-            SessionManager<SessionPlayerData>.Instance.AddHostData(new SessionPlayerData(NetManager.LocalClientId, PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
-            NetManager.StartHost();
+            StartHost();
         }
 
         public void StartPhotonRelayHost(string roomName)
@@ -192,7 +191,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            NetManager.StartHost();
+            StartHost();
         }
 
         public async void StartUnityRelayHost()
@@ -237,6 +236,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
+            StartHost();
+        }
+
+        void StartHost()
+        {
+            SessionManager<SessionPlayerData>.Instance.AddHostData(new SessionPlayerData(NetManager.LocalClientId, PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
             NetManager.StartHost();
         }
 
