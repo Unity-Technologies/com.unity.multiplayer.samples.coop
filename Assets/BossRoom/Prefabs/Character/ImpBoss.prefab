@@ -258,62 +258,6 @@ PrefabInstance:
       propertyPath: m_ClientCharacterVisualization
       value: 
       objectReference: {fileID: 5970403413429264330}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.size
-      value: 8
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[6].m_Prefab
-      value: 
-      objectReference: {fileID: 6607808867635938880, guid: 260ac2f5765fdfb4bb4fe3d466851e01, type: 3}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[7].m_Prefab
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[6].m_LoopSound
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[7].m_LoopSound
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[6].m_SoundEffect
-      value: 
-      objectReference: {fileID: 8300000, guid: 4ec1f2194317a224c85c142cd9d44b17, type: 3}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[7].m_SoundEffect
-      value: 
-      objectReference: {fileID: 8300000, guid: 6519c554f1671494ca8ced6e3849ada4, type: 3}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[6].m_PrefabParent
-      value: 
-      objectReference: {fileID: 7260051756037255462}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[6].m_AnimatorNodeName
-      value: Dead Loop
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[7].m_AnimatorNodeName
-      value: Dead
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[6].m_AnimatorNodeNameHash
-      value: -1573871441
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[6].m_PrefabParentOffset.y
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[7].m_AnimatorNodeNameHash
-      value: 1293411866
-      objectReference: {fileID: 0}
-    - target: {fileID: 4538447335436592133, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.data[6].m_PrefabCanBeAbortedUntilSecs
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6170428688339538316, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -390,11 +334,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9520a47fc61d5ab4ca99cdac2d574909, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &7260051756037255462 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 1363468141647399746, guid: 1e8ae28d24c5683478548d7e96e5ba55, type: 3}
-  m_PrefabInstance: {fileID: 8515429031237761636}
-  m_PrefabAsset: {fileID: 0}
 --- !u!114 &2816369992019265630
 MonoBehaviour:
   m_ObjectHideFlags: 0

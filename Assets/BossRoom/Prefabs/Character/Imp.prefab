@@ -63,10 +63,6 @@ PrefabInstance:
       propertyPath: m_ClientCharacterVisualization
       value: 
       objectReference: {fileID: 3121817358174221070}
-    - target: {fileID: 8005647249789065143, guid: 1ffde884792e9a44a9fbe049ebb79c9f, type: 3}
-      propertyPath: m_EventsOnNodeEntry.Array.size
-      value: 3
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1ffde884792e9a44a9fbe049ebb79c9f, type: 3}
 --- !u!1 &5858966600248860054 stripped
