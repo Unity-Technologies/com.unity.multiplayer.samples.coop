@@ -10,7 +10,8 @@
         "Unity.Services.Authentication",
         "Unity.Netcode.Adapter.UTP",
         "Photon Realtime Transport for Netcode for GameObjects",
-        "Unity.Services.Relay"
+        "Unity.Services.Relay",
+        "Unity.Multiplayer.Samples.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

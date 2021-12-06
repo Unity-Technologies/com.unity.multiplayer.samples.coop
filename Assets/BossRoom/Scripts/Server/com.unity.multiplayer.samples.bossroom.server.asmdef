@@ -8,7 +8,8 @@
         "Unity.Services.Authentication",
         "Unity.Services.Relay",
         "Unity.Netcode.Adapter.UTP",
-        "BossRoomNetworkAnimator"
+        "Unity.Netcode.Components",
+        "Unity.Multiplayer.Samples.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

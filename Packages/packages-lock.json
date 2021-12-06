@@ -5,7 +5,7 @@
       "depth": 0,
       "source": "git",
       "dependencies": {},
-      "hash": "0ab8d25f5bd0e4861a43641ba6fb328e55c35e15"
+      "hash": "ae9ed5f768a9abca0907919889f055b499f80b3d"
     },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
@@ -98,12 +98,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.learn.iet-framework": {
-      "version": "1.2.1",
+      "version": "2.1.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.editorcoroutines": "1.0.0",
-        "com.unity.settings-manager": "1.0.2"
+        "com.unity.settings-manager": "1.0.3"
       },
       "url": "https://packages.unity.com"
     },
@@ -140,17 +140,17 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.adapter.utp": {
-      "version": "1.0.0-pre.2",
+      "version": "1.0.0-pre.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.netcode.gameobjects": "1.0.0-pre.2",
-        "com.unity.transport": "1.0.0-pre.6"
+        "com.unity.netcode.gameobjects": "1.0.0-pre.3",
+        "com.unity.transport": "1.0.0-pre.7"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.0.0-pre.2",
+      "version": "1.0.0-pre.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -255,7 +255,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.settings-manager": {
-      "version": "1.0.2",
+      "version": "1.0.3",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -304,7 +304,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "1.0.0-pre.6",
+      "version": "1.0.0-pre.7",
       "depth": 1,
       "source": "registry",
       "dependencies": {

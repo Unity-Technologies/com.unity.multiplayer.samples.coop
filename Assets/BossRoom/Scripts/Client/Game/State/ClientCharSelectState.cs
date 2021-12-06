@@ -47,6 +47,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [Tooltip("Text element containing player count which updates as players connect")]
         private TextMeshProUGUI m_NumPlayersText;
 
+        [SerializeField]
+        [Tooltip("Text element for the Ready button")]
+        private TextMeshProUGUI m_ReadyButtonText;
+
         [Header("UI Elements for different lobby modes")]
         [SerializeField]
         [Tooltip("UI elements to turn on when the player hasn't chosen their seat yet. Turned off otherwise!")]
@@ -358,10 +362,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         }
                         m_ClassInfoBox.ConfigureForNoSelection();
                     }
+                    m_ReadyButtonText.text = "READY!";
                     break;
                 case LobbyMode.SeatChosen:
                     isSeatsDisabledInThisMode = true;
                     m_ClassInfoBox.SetLockedIn(true);
+                    m_ReadyButtonText.text = "UNREADY";
                     break;
                 case LobbyMode.FatalError:
                     isSeatsDisabledInThisMode = true;

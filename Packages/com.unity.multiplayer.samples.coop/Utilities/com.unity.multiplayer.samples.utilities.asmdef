@@ -1,12 +1,17 @@
 {
-    "name": "BossRoomNetworkAnimator",
+    "name": "Unity.Multiplayer.Samples.Utilities",
     "rootNamespace": "",
     "references": [
-        "GUID:1491147abca9d7d4bb7105af628b223e"
+        "Unity.Netcode.Adapter.UTP",
+        "Unity.Netcode.Components",
+        "Unity.Netcode.Runtime",
+        "Unity.Services.Core",
+        "Unity.Services.Authentication",
+        "Unity.Services.Relay"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
-    "allowUnsafeCode": true,
+    "allowUnsafeCode": false,
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
