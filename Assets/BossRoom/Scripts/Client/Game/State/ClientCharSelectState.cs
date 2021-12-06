@@ -32,7 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [Header("Lobby Seats")]
         [SerializeField]
         [Tooltip("Collection of 8 portrait-boxes, one for each potential lobby member")]
-        private List<UICharSelectPlayerSeat> m_PlayerSeats;
+        private List<UICharSelectPlayerSeat> m_UIPlayerSeats;
 
         [System.Serializable]
         public class ColorAndIndicator
@@ -117,9 +117,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         protected override void Start()
         {
             base.Start();
-            for (int i = 0; i < m_PlayerSeats.Count; ++i)
+            for (int i = 0; i < m_UIPlayerSeats.Count; ++i)
             {
-                m_PlayerSeats[i].Initialize(i);
+                m_UIPlayerSeats[i].Initialize(i);
             }
 
             ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
@@ -172,16 +172,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
+        /// <remarks>
+        /// This method serves as the conflict resolution of all player seats. A seat change request is initially sent
+        /// by a client via a ServerRPC (see OnPlayerClickedSeat method), the server modifies a NetworkList, and that
+        /// list change event is replicated to all clients.
+        /// Since the local player's seat is modified inside this class' OnPlayerChangedSeat method directly when a UI
+        /// element is selected, a NetworkListEvent that contains any local seat change will be simply ignored.
+        /// </remarks>
         private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> changeEvent)
         {
             // ignore state changes for the local player unless the change event is a locked in event, or when seat
-            // has been reset to -1 (both server-authoritative)
+            // has been invalidated (both server-authoritative)
             if (changeEvent.Value.ClientId == NetworkManager.Singleton.LocalClientId)
             {
                 var isLockedInEvent = (changeEvent.Value.SeatState == CharSelectData.SeatState.LockedIn && !m_HasLocalPlayerLockedIn) ||
                     (changeEvent.Value.SeatState == CharSelectData.SeatState.Active && m_HasLocalPlayerLockedIn);
 
-                if (!isLockedInEvent && changeEvent.Value.SeatIdx != -1)
+                if (!isLockedInEvent && changeEvent.Value.IsValid())
                 {
                     return;
                 }
@@ -297,10 +304,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // Once they have chosen their class (by "locking in" their seat), other players in that seat are kicked out.
             // But until a seat is locked in, we need to display each seat as being used by the latest player to choose it.
             // So we go through all players and figure out who should visually be shown as sitting in that seat.
-            CharSelectData.LobbyPlayerState[] curSeats = new CharSelectData.LobbyPlayerState[m_PlayerSeats.Count];
+            CharSelectData.LobbyPlayerState[] curSeats = new CharSelectData.LobbyPlayerState[m_UIPlayerSeats.Count];
             foreach (CharSelectData.LobbyPlayerState playerState in CharSelectData.LobbyPlayers)
             {
-                if (playerState.SeatIdx == -1 || playerState.SeatState == CharSelectData.SeatState.Inactive)
+                if (!playerState.IsValid() || playerState.SeatState == CharSelectData.SeatState.Inactive)
                     continue; // this player isn't seated at all!
                 if (    curSeats[playerState.SeatIdx].SeatState == CharSelectData.SeatState.Inactive
                     || (curSeats[playerState.SeatIdx].SeatState == CharSelectData.SeatState.Active && curSeats[playerState.SeatIdx].LastChangeTime < playerState.LastChangeTime))
@@ -311,9 +318,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             // now actually update the seats in the UI
-            for (int i = 0; i < m_PlayerSeats.Count; ++i)
+            for (int i = 0; i < m_UIPlayerSeats.Count; ++i)
             {
-                m_PlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNum, curSeats[i].PlayerName);
+                m_UIPlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNum, curSeats[i].PlayerName);
             }
         }
 
@@ -380,7 +387,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             // go through all our seats and enable or disable buttons
-            foreach (var seat in m_PlayerSeats)
+            foreach (var seat in m_UIPlayerSeats)
             {
                 // disable interaction if seat is already locked or all seats disabled
                 seat.SetDisableInteraction(seat.IsLocked() || isSeatsDisabledInThisMode);
@@ -417,21 +424,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     {
                         // populate this seat with a shared player's lobby player state
                         otherPlayerSharesSeat = true;
-                        m_PlayerSeats[m_LastSeatSelected].SetState(lobbyPlayer.SeatState, lobbyPlayer.PlayerNum, lobbyPlayer.PlayerName);
+                        m_UIPlayerSeats[m_LastSeatSelected].SetState(lobbyPlayer.SeatState, lobbyPlayer.PlayerNum, lobbyPlayer.PlayerName);
                     }
                 }
 
                 if (!otherPlayerSharesSeat)
                 {
                     // no other player shared this seat; it is safe to just disable
-                    m_PlayerSeats[m_LastSeatSelected].SetState(CharSelectData.SeatState.Inactive, -1, string.Empty);
+                    m_UIPlayerSeats[m_LastSeatSelected].SetState(CharSelectData.SeatState.Inactive, -1, string.Empty);
                 }
             }
 
             // get local player, and populate the seat that is anticipated to be taken
             TryGetLobbyPlayer(NetworkManager.Singleton.LocalClientId, out var localLobbyPlayerState);
 
-            m_PlayerSeats[seatIdx].SetState(CharSelectData.SeatState.Active, localLobbyPlayerState.PlayerNum, localLobbyPlayerState.PlayerName);
+            // apply seat change directly to local player without waiting for server-driven NetworkList event
+            m_UIPlayerSeats[seatIdx].SetState(CharSelectData.SeatState.Active, localLobbyPlayerState.PlayerNum, localLobbyPlayerState.PlayerName);
             UpdateCharacterSelection(CharSelectData.SeatState.Active, seatIdx);
 
             // send server rpc containing selection
@@ -490,9 +498,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
-                while (m_PlayerSeats.Count < CharSelectData.k_MaxLobbyPlayers)
+                while (m_UIPlayerSeats.Count < CharSelectData.k_MaxLobbyPlayers)
                 {
-                    m_PlayerSeats.Add(null);
+                    m_UIPlayerSeats.Add(null);
                 }
             }
         }

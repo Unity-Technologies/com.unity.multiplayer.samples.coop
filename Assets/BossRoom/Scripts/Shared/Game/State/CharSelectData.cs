@@ -70,6 +70,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
                        LastChangeTime.Equals(other.LastChangeTime) &&
                        SeatState == other.SeatState;
             }
+
+            public bool IsValid()
+            {
+                return SeatIdx != -1;
+            }
         }
 
         private NetworkList<LobbyPlayerState> m_LobbyPlayers;
