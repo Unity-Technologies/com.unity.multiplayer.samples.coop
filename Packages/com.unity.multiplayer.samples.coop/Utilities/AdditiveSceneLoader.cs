@@ -19,7 +19,9 @@ public class AdditiveSceneLoader : NetworkBehaviour
     string sceneName;
 
     List<ulong> m_PlayersInTrigger;
+    
     bool m_IsLoaded;
+    
     bool m_IsCooldown;
 
     public override void OnNetworkSpawn()
@@ -33,7 +35,6 @@ public class AdditiveSceneLoader : NetworkBehaviour
         {
             enabled = false;
         }
-
     }
 
     public override void OnNetworkDespawn()
@@ -66,7 +67,6 @@ public class AdditiveSceneLoader : NetworkBehaviour
                 StartCoroutine(Cooldown());
             }
         }
-
     }
 
     void OnTriggerEnter(Collider other)
