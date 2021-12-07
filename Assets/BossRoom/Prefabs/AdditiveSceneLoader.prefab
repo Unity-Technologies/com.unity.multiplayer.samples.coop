@@ -59,6 +59,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sceneName: 
+  triggeringTag: Player
 --- !u!114 &3029178677072641126
 MonoBehaviour:
   m_ObjectHideFlags: 0
