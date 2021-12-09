@@ -31,7 +31,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 throw new Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats! Shouldn't be here!");
             }
 
-
             if (CharSelectData.IsLobbyClosed.Value)
             {
                 // The user tried to change their class after everything was locked in... too late! Discard this choice
