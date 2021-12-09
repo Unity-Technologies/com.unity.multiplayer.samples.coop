@@ -9,9 +9,10 @@ namespace Unity.Multiplayer.Samples.Utilities
 {
     /// <summary>
     /// This NetworkBehavior, when added to a GameObject containing a collider (or multiple colliders) with the
-    /// IsTrigger property On, allows the server to load a scene additively when there is at least one GameObject with
-    /// the specified tag that enters its collider. It also unloads it when all players leave the collider, after a
-    /// specified cooldown to prevent it from repeatedly loading and unloading the same scene.
+    /// IsTrigger property On, allows the server to load or unload a scene additively according to the position of
+    /// player-owned objects. The scene is loaded when there is at least one NetworkObject with the specified tag that
+    /// enters its collider. It also unloads it when all such NetworkObjects leave the collider, after a specified
+    /// cooldown to prevent it from repeatedly loading and unloading the same scene.
     /// </summary>
     public class ServerAdditiveSceneLoader : NetworkBehaviour
     {
@@ -22,7 +23,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         string sceneName;
 
         [SerializeField]
-        string triggeringTag;
+        string playerTag;
 
         List<ulong> m_PlayersInTrigger;
 
@@ -34,12 +35,14 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsServer)
             {
+                // Adding this to remove all pending references to a specific client when they disconnect, since objects
+                // that are destroyed do not generate OnTriggerExit events.
                 NetworkManager.OnClientDisconnectCallback += RemovePlayer;
                 m_PlayersInTrigger = new List<ulong>();
             }
             else
             {
-                enabled = false;
+                gameObject.SetActive(false);
             }
         }
 
@@ -78,7 +81,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(triggeringTag) && other.TryGetComponent(out NetworkObject networkObject))
+            if (other.CompareTag(playerTag) && other.TryGetComponent(out NetworkObject networkObject))
             {
                 m_PlayersInTrigger.Add(networkObject.OwnerClientId);
             }
@@ -86,15 +89,16 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag(triggeringTag) && other.TryGetComponent(out NetworkObject networkObject))
+            if (other.CompareTag(playerTag) && other.TryGetComponent(out NetworkObject networkObject))
             {
-                RemovePlayer(networkObject.OwnerClientId);
+                m_PlayersInTrigger.Remove(networkObject.OwnerClientId);
             }
         }
 
         void RemovePlayer(ulong clientId)
         {
-            m_PlayersInTrigger.Remove(clientId);
+            // remove all references to this clientId
+            while (m_PlayersInTrigger.Remove(clientId)) { }
         }
 
         IEnumerator Cooldown()
