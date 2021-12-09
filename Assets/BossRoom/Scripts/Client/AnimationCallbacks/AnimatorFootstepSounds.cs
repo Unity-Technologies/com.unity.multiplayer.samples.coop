@@ -63,22 +63,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [Tooltip("If the speed variable is between WalkSpeedThreshold and this, we're running. (Higher than this means no sound)")]
         private float m_RunSpeedThreshold = 1.2f;
 
-        [SerializeField]
-        ClientCharacterVisualization m_ClientCharacterVisualization;
-
         void Awake()
         {
-            // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
-            // following is a temporary workaround. Future refactorings will enable this functionality.
-            if (!m_Animator && m_ClientCharacterVisualization)
+            if (!m_Animator)
             {
-                m_ClientCharacterVisualization.animatorSet += SetAnimator;
+                m_Animator = GetComponentInParent<Animator>();
             }
-        }
-
-        void SetAnimator(Animator animator)
-        {
-            m_Animator = animator;
         }
 
         private void Update()

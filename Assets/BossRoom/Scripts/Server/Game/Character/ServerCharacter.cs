@@ -85,8 +85,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
                     PlayAction(ref startingAction);
                 }
-
-                NetState.HitPoints = NetState.CharacterClass.BaseHP.Value;
             }
         }
 

@@ -249,6 +249,18 @@ PrefabInstance:
       propertyPath: m_KilledDestroyDelaySeconds
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 8711964190551163567, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_Height
+      value: 1.6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8711964190551163567, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_Radius
+      value: 0.75
+      objectReference: {fileID: 0}
+    - target: {fileID: 8711964190551163567, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_Center.y
+      value: 0.8
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64cfd098f62285f42918875fef849e88, type: 3}
 --- !u!1 &3713729372785093424 stripped
