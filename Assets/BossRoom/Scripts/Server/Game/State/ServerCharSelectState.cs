@@ -28,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
             {
-                throw new Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
+                throw new Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats! Shouldn't be here!");
             }
 
 
