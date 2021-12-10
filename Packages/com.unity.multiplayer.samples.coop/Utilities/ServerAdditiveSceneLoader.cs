@@ -12,12 +12,12 @@ namespace Unity.Multiplayer.Samples.Utilities
     /// IsTrigger property On, allows the server to load or unload a scene additively according to the position of
     /// player-owned objects. The scene is loaded when there is at least one NetworkObject with the specified tag that
     /// enters its collider. It also unloads it when all such NetworkObjects leave the collider, after a specified
-    /// cooldown to prevent it from repeatedly loading and unloading the same scene.
+    /// delay to prevent it from repeatedly loading and unloading the same scene.
     /// </summary>
     public class ServerAdditiveSceneLoader : NetworkBehaviour
     {
         [SerializeField]
-        float cooldownBeforeUnload = 5.0f;
+        float delayBeforeUnload = 5.0f;
 
         [SerializeField]
         string sceneName;
@@ -35,7 +35,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         bool m_IsLoaded;
 
-        bool m_IsCooldown;
+        Coroutine m_UnloadCoroutine;
 
         public override void OnNetworkSpawn()
         {
@@ -60,36 +60,23 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        void Update()
-        {
-            if (!IsSpawned)
-            {
-                return;
-            }
-
-            if (!m_IsCooldown)
-            {
-                if (m_IsLoaded && m_PlayersInTrigger.Count == 0)
-                {
-                    NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(sceneName));
-                    m_IsLoaded = false;
-                }
-                else if (!m_IsLoaded && m_PlayersInTrigger.Count > 0)
-                {
-                    NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-                    m_IsLoaded = true;
-
-                    // Add this delay to prevent players entering and leaving the collider repeatedly from continually load/unloading the scene
-                    StartCoroutine(Cooldown());
-                }
-            }
-        }
-
         void OnTriggerEnter(Collider other)
         {
             if (other.CompareTag(playerTag) && other.TryGetComponent(out NetworkObject networkObject))
             {
                 m_PlayersInTrigger.Add(networkObject.OwnerClientId);
+
+                if (m_UnloadCoroutine != null)
+                {
+                    // stopping the unloading coroutine since there is now a player-owned NetworkObject inside
+                    StopCoroutine(m_UnloadCoroutine);
+                }
+
+                if (!m_IsLoaded && m_PlayersInTrigger.Count > 0)
+                {
+                    NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+                    m_IsLoaded = true;
+                }
             }
         }
 
@@ -98,6 +85,11 @@ namespace Unity.Multiplayer.Samples.Utilities
             if (other.CompareTag(playerTag) && other.TryGetComponent(out NetworkObject networkObject))
             {
                 m_PlayersInTrigger.Remove(networkObject.OwnerClientId);
+                if (m_IsLoaded && m_PlayersInTrigger.Count == 0)
+                {
+                    // using a coroutine here to add a delay before unloading the scene
+                    m_UnloadCoroutine = StartCoroutine(UnloadCoroutine());
+                }
             }
         }
 
@@ -108,11 +100,14 @@ namespace Unity.Multiplayer.Samples.Utilities
             while (m_PlayersInTrigger.Remove(clientId)) { }
         }
 
-        IEnumerator Cooldown()
+        IEnumerator UnloadCoroutine()
         {
-            m_IsCooldown = true;
-            yield return new WaitForSeconds(cooldownBeforeUnload);
-            m_IsCooldown = false;
+            yield return new WaitForSeconds(delayBeforeUnload);
+            if (m_IsLoaded)
+            {
+                NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(sceneName));
+                m_IsLoaded = false;
+            }
         }
     }
 }
