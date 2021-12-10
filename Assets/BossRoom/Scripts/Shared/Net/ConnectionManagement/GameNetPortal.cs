@@ -64,6 +64,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public NetworkManager NetManager => m_NetworkManager;
 
+        [SerializeField]
+        AvatarRegistry m_AvatarRegistry;
+
+        public AvatarRegistry AvatarRegistry => m_AvatarRegistry;
+
         /// <summary>
         /// the name of the player chosen at game start
         /// </summary>
@@ -169,8 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
             }
-
-            NetManager.StartHost();
+            StartHost();
         }
 
         public void StartPhotonRelayHost(string roomName)
@@ -187,7 +191,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            NetManager.StartHost();
+            StartHost();
         }
 
         public async void StartUnityRelayHost()
@@ -232,6 +236,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
+            StartHost();
+        }
+
+        void StartHost()
+        {
+            SessionManager<SessionPlayerData>.Instance.AddHostData(new SessionPlayerData(NetManager.LocalClientId, PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
             NetManager.StartHost();
         }
 
@@ -243,6 +253,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
+            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
             NetManager.Shutdown();
         }
     }

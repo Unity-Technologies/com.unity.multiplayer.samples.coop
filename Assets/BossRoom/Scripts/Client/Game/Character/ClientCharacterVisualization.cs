@@ -14,7 +14,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Animator m_ClientVisualsAnimator;
 
-        [SerializeField]
         private CharacterSwap m_CharacterSwapper;
 
         [SerializeField]
@@ -54,20 +53,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private ActionVisualization m_ActionViz;
 
-        float m_SmoothedSpeed;
-
-        public bool IsOwner => m_NetState.IsOwner;
-
-        public ulong NetworkObjectId => m_NetState.NetworkObjectId;
-
-        public event Action<Animator> animatorSet;
-
         PositionLerper m_PositionLerper;
 
         QuaternionLerper m_QuaternionLerper;
 
         // this value suffices for both positional and rotational interpolations; one may have a constant value for each
         const float k_LerpTime = 0.1f;
+
+        public bool IsOwner => m_NetState.IsOwner;
+
+        public ulong NetworkObjectId => m_NetState.NetworkObjectId;
 
         public void Start()
         {
@@ -82,15 +77,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_NetState = GetComponentInParent<NetworkCharacterState>();
 
             Parent = m_NetState.transform;
-
-            if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
-            {
-                m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
-
-                // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
-                // following is a temporary workaround. Future refactorings will enable this functionality.
-                animatorSet?.Invoke(clientAvatarGuidHandler.graphicsAnimator);
-            }
 
             m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
 
@@ -107,12 +93,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_PositionLerper = new PositionLerper(m_PhysicsWrapper.Transform.position, k_LerpTime);
             m_QuaternionLerper = new QuaternionLerper(m_PhysicsWrapper.Transform.rotation, k_LerpTime);
 
-            // ...and visualize the current char-select value that we know about
-            SetAppearanceSwap();
-
             if (!m_NetState.IsNpc)
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
+
+                if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                {
+                    m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
+                }
+
+                m_CharacterSwapper = GetComponentInChildren<CharacterSwap>();
+
+                // ...and visualize the current char-select value that we know about
+                SetAppearanceSwap();
 
                 if (m_NetState.IsOwner)
                 {
@@ -263,7 +256,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ActionViz.Update();
         }
 
-        public void OnAnimEvent(string id)
+        void OnAnimEvent(string id)
         {
             //if you are trying to figure out who calls this method, it's "magic". The Unity Animation Event system takes method names as strings,
             //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one

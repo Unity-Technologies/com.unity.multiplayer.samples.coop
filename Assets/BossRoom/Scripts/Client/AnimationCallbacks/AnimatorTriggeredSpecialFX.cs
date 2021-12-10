@@ -15,7 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// (or exiting) specific nodes in an Animator. (Each relevant Animator node must have an
     /// AnimationNodeHook component attached.)
     /// </summary>
-    [RequireComponent(typeof(Animator))]
     public class AnimatorTriggeredSpecialFX : MonoBehaviour
     {
         [SerializeField]
@@ -85,17 +84,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             Debug.Assert(m_AudioSources != null && m_AudioSources.Length > 0, "No AudioSource plugged into AnimatorTriggeredSpecialFX!", gameObject);
 
-            // Netcode for GameObjects (Netcode) does not currently support NetworkAnimator binding at runtime. The
-            // following is a temporary workaround. Future refactorings will enable this functionality.
-            if (!m_Animator && m_ClientCharacterVisualization)
+            if (!m_ClientCharacterVisualization)
             {
-                m_ClientCharacterVisualization.animatorSet += SetAnimator;
-            }
-        }
+                m_ClientCharacterVisualization = GetComponentInParent<ClientCharacterVisualization>();
 
-        void SetAnimator(Animator animator)
-        {
-            m_Animator = animator;
+                m_Animator = m_ClientCharacterVisualization.OurAnimator;
+            }
         }
 
         public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
