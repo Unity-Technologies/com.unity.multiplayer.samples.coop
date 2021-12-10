@@ -147,11 +147,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            if (m_OnlineMode != OnlineMode.IpHost)
-            {
-                m_OnlineMode = OnlineMode.IpHost;
-                OnOnlineModeDropdownChanged(m_OnlineMode);
-            }
+            SetOnlineMode(OnlineMode.IpHost);
         }
 
         void RelayRadioRadioButtonPressed(bool value)
@@ -161,11 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            if (m_OnlineMode != OnlineMode.Relay)
-            {
-                m_OnlineMode = OnlineMode.Relay;
-                OnOnlineModeDropdownChanged(m_OnlineMode);
-            }
+            SetOnlineMode(OnlineMode.Relay);
         }
 
         void UnityRelayRadioRadioButtonPressed(bool value)
@@ -175,10 +167,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            if (m_OnlineMode != OnlineMode.UnityRelay)
+            SetOnlineMode(OnlineMode.UnityRelay);
+        }
+
+        void SetOnlineMode(OnlineMode onlineMode)
+        {
+            if (m_OnlineMode != onlineMode)
             {
-                m_OnlineMode = OnlineMode.UnityRelay;
-                OnOnlineModeDropdownChanged(m_OnlineMode);
+                m_OnlineMode = onlineMode;
+                OnOnlineModeChanged(m_OnlineMode);
             }
         }
 
@@ -242,7 +239,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Called when the user selects a different online mode from the dropdown.
         /// </summary>
-        private void OnOnlineModeDropdownChanged(OnlineMode value)
+        private void OnOnlineModeChanged(OnlineMode value)
         {
             // activate this so that it is always activated unless entering as relay host
             m_InputField.gameObject.SetActive(true);
@@ -298,20 +295,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else if (value == OnlineMode.UnityRelay)
             {
+                // set popup state to waiting for health check
                 m_ReconnectingImage.SetActive(true);
                 m_InputField.gameObject.SetActive(false);
                 m_PortInputField.gameObject.SetActive(false);
                 m_ConfirmationButton.gameObject.SetActive(false);
                 m_MainText.text = "Waiting for Unity Relay Health Check...";
 
+                // If no health check is currently running
                 if (m_UnityRelayHealthCheck == null || m_UnityRelayHealthCheck.IsCompleted)
                 {
                     if (m_UnityRelayHealthCheck is {Result: true})
                     {
+                        // If it has already been completed successfully, setup display for entering game
                         SetupEnterGameDisplayForUnityRelay();
                     }
                     else
                     {
+                        // If not, start a new task
                         m_UnityRelayHealthCheck = UnityRelayHealthCheckCall();
                     }
                 }
@@ -342,7 +343,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         async Task<bool> UnityRelayHealthCheckCall()
         {
             Exception caughtException = null;
-            Task<List<UnityRegion>> task = null;
+            Task<List<UnityRegion>> healthCheckTask = null;
             try
             {
                 await UnityServices.InitializeAsync();
@@ -355,16 +356,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                 // calling ListRegion to get a single light health check call. This isn't the best method for this, but is fine to use for now until we
                 // get full QoS endpoints available. MTT-1483
-                task = Relay.Instance.ListRegionsAsync();
+                healthCheckTask = Relay.Instance.ListRegionsAsync();
 
-                await task;
+                await healthCheckTask;
             }
             catch (RequestFailedException e)
             {
                 caughtException = e;
             }
 
-            bool failed = task == null || task.IsFaulted || caughtException != null;
+            bool failed = healthCheckTask == null || healthCheckTask.IsFaulted || caughtException != null;
 
             // Don't need to show the results if the panel was exited or if the online mode was changed before the task completed
             if (m_OnlineMode == OnlineMode.UnityRelay)
@@ -372,7 +373,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 if (failed)
                 {
                     if (caughtException != null) Debug.LogException(caughtException);
-                    if (task != null) Debug.LogException(task.Exception);
+                    if (healthCheckTask != null) Debug.LogException(healthCheckTask.Exception);
 
                     if (Application.isEditor)
                     {
@@ -391,6 +392,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
                 else
                 {
+                    // If the task completed successfully, setup display for entering game
                     SetupEnterGameDisplayForUnityRelay();
                 }
             }
@@ -440,6 +442,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
             m_ConfirmFunction = null;
             m_OnlineMode = OnlineMode.Unset;
+            m_UnityRelayHealthCheck = null;
         }
 
         /// <summary>
