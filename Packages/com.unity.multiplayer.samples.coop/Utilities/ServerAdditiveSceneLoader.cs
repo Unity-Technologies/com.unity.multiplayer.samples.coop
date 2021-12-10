@@ -22,9 +22,15 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         string sceneName;
 
+        /// <summary>
+        /// We assume that all NetworkObjects with this tag are player-owned
+        /// </summary>
         [SerializeField]
         string playerTag;
 
+        /// <summary>
+        /// We keep the clientIds of every player-owned object inside the collider's volumed
+        /// </summary>
         List<ulong> m_PlayersInTrigger;
 
         bool m_IsLoaded;
@@ -97,7 +103,8 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void RemovePlayer(ulong clientId)
         {
-            // remove all references to this clientId
+            // remove all references to this clientId. There could be multiple references if a single client owns
+            // multiple NetworkObjects with the playerTag, or if this script's GameObject has overlapping colliders
             while (m_PlayersInTrigger.Remove(clientId)) { }
         }
 
