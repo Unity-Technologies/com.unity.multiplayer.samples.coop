@@ -10,11 +10,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         private SpecialFXGraphic m_OnHitParticlePrefab;
 
         NetworkProjectileState m_NetState;
+
         Transform m_Parent;
 
-        private const float k_MaxTurnRateDegreesSecond = 280;
+        const float k_LerpTime = 0.1f;
 
-        private float m_SmoothedSpeed;
+        PositionLerper m_PositionLerper;
 
         public override void OnNetworkSpawn()
         {
@@ -28,6 +29,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             transform.parent = null;
             m_NetState = m_Parent.GetComponent<NetworkProjectileState>();
             m_NetState.HitEnemyEvent += OnEnemyHit;
+
+            m_PositionLerper = new PositionLerper(m_Parent.position, k_LerpTime);
+            transform.rotation = m_Parent.transform.rotation;
         }
 
         public override void OnNetworkDespawn()
@@ -47,7 +51,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, m_Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxTurnRateDegreesSecond);
+            transform.position =
+                m_PositionLerper.LerpPosition(transform.position, m_Parent.transform.position);
         }
 
         private void OnEnemyHit(ulong enemyId)
@@ -66,7 +71,4 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
     }
-
-
 }
-
