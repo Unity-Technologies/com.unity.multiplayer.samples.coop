@@ -47,6 +47,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private NameDisplay m_NameDisplay;
 
+        OnlineMode OnlineMode
+        {
+            get => m_OnlineMode;
+            set
+            {
+                if (value != m_OnlineMode)
+                {
+                    m_OnlineMode = value;
+                    OnOnlineModeChanged(m_OnlineMode);
+                }
+            }
+        }
+
         OnlineMode m_OnlineMode;
 
         [SerializeField]
@@ -147,7 +160,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            SetOnlineMode(OnlineMode.IpHost);
+            OnlineMode = OnlineMode.IpHost;
         }
 
         void RelayRadioRadioButtonPressed(bool value)
@@ -157,7 +170,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            SetOnlineMode(OnlineMode.Relay);
+            OnlineMode = OnlineMode.Relay;
         }
 
         void UnityRelayRadioRadioButtonPressed(bool value)
@@ -167,16 +180,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            SetOnlineMode(OnlineMode.UnityRelay);
-        }
-
-        void SetOnlineMode(OnlineMode onlineMode)
-        {
-            if (m_OnlineMode != onlineMode)
-            {
-                m_OnlineMode = onlineMode;
-                OnOnlineModeChanged(m_OnlineMode);
-            }
+            OnlineMode = OnlineMode.UnityRelay;
         }
 
         private void OnConfirmClick()
@@ -185,7 +189,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             int.TryParse(m_PortInputField.text, out portNum);
             if (portNum <= 0)
                 portNum = m_DefaultPort;
-            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), m_OnlineMode);
+            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), OnlineMode);
         }
 
         /// <summary>
@@ -368,7 +372,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             bool failed = healthCheckTask == null || healthCheckTask.IsFaulted || caughtException != null;
 
             // Don't need to show the results if the panel was exited or if the online mode was changed before the task completed
-            if (m_OnlineMode == OnlineMode.UnityRelay)
+            if (OnlineMode == OnlineMode.UnityRelay)
             {
                 if (failed)
                 {
@@ -441,7 +445,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CancelButton.onClick.RemoveListener(OnCancelClick);
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
             m_ConfirmFunction = null;
-            m_OnlineMode = OnlineMode.Unset;
+            OnlineMode = OnlineMode.Unset;
             m_UnityRelayHealthCheck = null;
         }
 
