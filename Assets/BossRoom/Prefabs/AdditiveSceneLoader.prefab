@@ -58,9 +58,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4506649f88aac74ea839a52818e3174, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cooldownBeforeUnload: 5
-  sceneName: 
-  playerTag: Player
+  m_DelayBeforeUnload: 5
+  m_SceneName: 
+  m_PlayerTag: Player
 --- !u!114 &3029178677072641126
 MonoBehaviour:
   m_ObjectHideFlags: 0

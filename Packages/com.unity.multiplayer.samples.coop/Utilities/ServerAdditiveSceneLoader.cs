@@ -17,16 +17,16 @@ namespace Unity.Multiplayer.Samples.Utilities
     public class ServerAdditiveSceneLoader : NetworkBehaviour
     {
         [SerializeField]
-        float delayBeforeUnload = 5.0f;
+        float m_DelayBeforeUnload = 5.0f;
 
         [SerializeField]
-        string sceneName;
+        string m_SceneName;
 
         /// <summary>
         /// We assume that all NetworkObjects with this tag are player-owned
         /// </summary>
         [SerializeField]
-        string playerTag;
+        string m_PlayerTag;
 
         /// <summary>
         /// We keep the clientIds of every player-owned object inside the collider's volumed
@@ -73,11 +73,11 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneEvent(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted && sceneEvent.SceneName == sceneName)
+            if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted && sceneEvent.SceneName == m_SceneName)
             {
                 m_SceneState = SceneState.Loaded;
             }
-            else if (sceneEvent.SceneEventType == SceneEventType.UnloadEventCompleted && sceneEvent.SceneName == sceneName)
+            else if (sceneEvent.SceneEventType == SceneEventType.UnloadEventCompleted && sceneEvent.SceneName == m_SceneName)
             {
                 m_SceneState = SceneState.Unloaded;
             }
@@ -85,7 +85,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(playerTag) && other.TryGetComponent(out NetworkObject networkObject))
+            if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
             {
                 m_PlayersInTrigger.Add(networkObject.OwnerClientId);
 
@@ -103,7 +103,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag(playerTag) && other.TryGetComponent(out NetworkObject networkObject))
+            if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
             {
                 m_PlayersInTrigger.Remove(networkObject.OwnerClientId);
             }
@@ -115,7 +115,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 if (m_SceneState == SceneState.Unloaded && m_PlayersInTrigger.Count > 0)
                 {
-                    var status = NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+                    var status = NetworkManager.SceneManager.LoadScene(m_SceneName, LoadSceneMode.Additive);
                     // if successfully started a LoadScene event, set state to Loading
                     if (status == SceneEventProgressStatus.Started)
                     {
@@ -134,17 +134,17 @@ namespace Unity.Multiplayer.Samples.Utilities
         void RemovePlayer(ulong clientId)
         {
             // remove all references to this clientId. There could be multiple references if a single client owns
-            // multiple NetworkObjects with the playerTag, or if this script's GameObject has overlapping colliders
+            // multiple NetworkObjects with the m_PlayerTag, or if this script's GameObject has overlapping colliders
             while (m_PlayersInTrigger.Remove(clientId)) { }
         }
 
         IEnumerator WaitToUnloadCoroutine()
         {
-            yield return new WaitForSeconds(delayBeforeUnload);
-            Scene scene = SceneManager.GetSceneByName(sceneName);
+            yield return new WaitForSeconds(m_DelayBeforeUnload);
+            Scene scene = SceneManager.GetSceneByName(m_SceneName);
             if (scene.isLoaded)
             {
-                var status = NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(sceneName));
+                var status = NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(m_SceneName));
                 // if successfully started an UnloadScene event, set state to Unloading, if not, reset state to Loaded so a new Coroutine will start
                 m_SceneState = status == SceneEventProgressStatus.Started ? SceneState.Unloading : SceneState.Loaded;
             }
