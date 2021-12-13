@@ -9,14 +9,14 @@ namespace Unity.Multiplayer.Samples.Utilities
     public class ClientLoadingScreen : NetworkBehaviour
     {
         [SerializeField]
-        CanvasGroup canvasGroup;
+        CanvasGroup m_CanvasGroup;
 
         [SerializeField]
-        float fadeDuration = 2;
+        float m_FadeDuration = 1;
 
         void Start()
         {
-            canvasGroup.alpha = 0;
+            m_CanvasGroup.alpha = 0;
         }
 
         void Awake()
@@ -27,7 +27,11 @@ namespace Unity.Multiplayer.Samples.Utilities
         public override void OnNetworkSpawn()
         {
             NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
-            base.OnNetworkSpawn();
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
         }
 
         void OnSceneEvent(SceneEvent sceneEvent)
@@ -44,13 +48,18 @@ namespace Unity.Multiplayer.Samples.Utilities
                     StartCoroutine(FadeCoroutine());
                     break;
                 case SceneEventType.Load:
-                    if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
+                    if (sceneEvent.ClientId == NetworkManager.LocalClientId && sceneEvent.LoadSceneMode == LoadSceneMode.Single)
                     {
-                        canvasGroup.alpha = 1;
+                        Time.timeScale = 0;
+                        m_CanvasGroup.alpha = 1;
                     }
                     break;
                 case SceneEventType.Synchronize:
-                    canvasGroup.alpha = 1;
+                    if (sceneEvent.ClientId == NetworkManager.LocalClientId)
+                    {
+                        Time.timeScale = 0;
+                        m_CanvasGroup.alpha = 1;
+                    }
                     break;
             }
         }
@@ -59,14 +68,15 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             float startTime = Time.time;
             float currentTime = startTime;
-            while (currentTime < startTime + fadeDuration)
+            while (currentTime < startTime + m_FadeDuration)
             {
-                canvasGroup.alpha = Mathf.Lerp(0, 1, (currentTime - startTime) / fadeDuration);
+                m_CanvasGroup.alpha = Mathf.Lerp(1, 0, (currentTime - startTime) / m_FadeDuration);
                 yield return null;
                 currentTime += Time.deltaTime;
             }
 
-            canvasGroup.alpha = 1;
+            m_CanvasGroup.alpha = 0;
+            Time.timeScale = 1;
         }
     }
 }

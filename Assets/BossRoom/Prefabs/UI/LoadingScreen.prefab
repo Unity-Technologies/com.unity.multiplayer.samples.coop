@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 5535057700358825828}
   - component: {fileID: 5841466599347033389}
   - component: {fileID: 1345148053419680721}
+  - component: {fileID: 8062549866693974723}
   m_Layer: 5
   m_Name: LoadingScreen
   m_TagString: Untagged
@@ -207,10 +208,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -226,7 +227,7 @@ CanvasGroup:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 948382310089859896}
   m_Enabled: 1
-  m_Alpha: 1
+  m_Alpha: 0
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
@@ -242,8 +243,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fcbf5eb0902445d8108a8a5ec695a7a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  canvasGroup: {fileID: 5841466599347033389}
-  fadeDuration: 1
+  m_CanvasGroup: {fileID: 5841466599347033389}
+  m_FadeDuration: 1
+--- !u!114 &8062549866693974723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 948382310089859896}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 1
+  AutoObjectParentSync: 1
 --- !u!1 &2603814365607019202
 GameObject:
   m_ObjectHideFlags: 0
@@ -824,7 +841,7 @@ GameObject:
   - component: {fileID: 177006234969976614}
   - component: {fileID: 9211731567775427510}
   m_Layer: 5
-  m_Name: HowToPlayPopupPanel
+  m_Name: HowToPlayPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
