@@ -38,7 +38,8 @@ namespace Unity.Multiplayer.Samples.Utilities
             Loaded,
             Unloaded,
             Loading,
-            Unloading
+            Unloading,
+            WaitingToUnload,
         }
 
         SceneState m_SceneState = SceneState.Unloaded;
@@ -72,11 +73,11 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneEvent(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType == SceneEventType.LoadComplete && sceneEvent.SceneName == sceneName)
+            if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted && sceneEvent.SceneName == sceneName)
             {
                 m_SceneState = SceneState.Loaded;
             }
-            else if (sceneEvent.SceneEventType == SceneEventType.UnloadComplete && sceneEvent.SceneName == sceneName)
+            else if (sceneEvent.SceneEventType == SceneEventType.UnloadEventCompleted && sceneEvent.SceneName == sceneName)
             {
                 m_SceneState = SceneState.Unloaded;
             }
@@ -92,7 +93,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 {
                     // stopping the unloading coroutine since there is now a player-owned NetworkObject inside
                     StopCoroutine(m_UnloadCoroutine);
-                    if (m_SceneState == SceneState.Unloading)
+                    if (m_SceneState == SceneState.WaitingToUnload)
                     {
                         m_SceneState = SceneState.Loaded;
                     }
@@ -114,14 +115,18 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 if (m_SceneState == SceneState.Unloaded && m_PlayersInTrigger.Count > 0)
                 {
-                    NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
-                    m_SceneState = SceneState.Loading;
+                    var status = NetworkManager.SceneManager.LoadScene(sceneName, LoadSceneMode.Additive);
+                    // if successfully started a LoadScene event, set state to Loading
+                    if (status == SceneEventProgressStatus.Started)
+                    {
+                        m_SceneState = SceneState.Loading;
+                    }
                 }
                 else if (m_SceneState == SceneState.Loaded && m_PlayersInTrigger.Count == 0)
                 {
                     // using a coroutine here to add a delay before unloading the scene
                     m_UnloadCoroutine = StartCoroutine(WaitToUnloadCoroutine());
-                    m_SceneState = SceneState.Unloading;
+                    m_SceneState = SceneState.WaitingToUnload;
                 }
             }
         }
@@ -139,7 +144,9 @@ namespace Unity.Multiplayer.Samples.Utilities
             Scene scene = SceneManager.GetSceneByName(sceneName);
             if (scene.isLoaded)
             {
-                NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(sceneName));
+                var status = NetworkManager.SceneManager.UnloadScene(SceneManager.GetSceneByName(sceneName));
+                // if successfully started an UnloadScene event, set state to Unloading, if not, reset state to Loaded so a new Coroutine will start
+                m_SceneState = status == SceneEventProgressStatus.Started ? SceneState.Unloading : SceneState.Loaded;
             }
         }
     }
