@@ -29,7 +29,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         string m_PlayerTag;
 
         /// <summary>
-        /// We keep the clientIds of every player-owned object inside the collider's volumed
+        /// We keep the clientIds of every player-owned object inside the collider's volume
         /// </summary>
         List<ulong> m_PlayersInTrigger;
 
@@ -53,6 +53,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 // Adding this to remove all pending references to a specific client when they disconnect, since objects
                 // that are destroyed do not generate OnTriggerExit events.
                 NetworkManager.OnClientDisconnectCallback += RemovePlayer;
+
                 NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
                 m_PlayersInTrigger = new List<ulong>();
             }
@@ -85,17 +86,20 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
+            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
             {
-                m_PlayersInTrigger.Add(networkObject.OwnerClientId);
-
-                if (m_UnloadCoroutine != null)
+                if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
                 {
-                    // stopping the unloading coroutine since there is now a player-owned NetworkObject inside
-                    StopCoroutine(m_UnloadCoroutine);
-                    if (m_SceneState == SceneState.WaitingToUnload)
+                    m_PlayersInTrigger.Add(networkObject.OwnerClientId);
+
+                    if (m_UnloadCoroutine != null)
                     {
-                        m_SceneState = SceneState.Loaded;
+                        // stopping the unloading coroutine since there is now a player-owned NetworkObject inside
+                        StopCoroutine(m_UnloadCoroutine);
+                        if (m_SceneState == SceneState.WaitingToUnload)
+                        {
+                            m_SceneState = SceneState.Loaded;
+                        }
                     }
                 }
             }
@@ -103,15 +107,18 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerExit(Collider other)
         {
-            if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
+            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
             {
-                m_PlayersInTrigger.Remove(networkObject.OwnerClientId);
+                if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
+                {
+                    m_PlayersInTrigger.Remove(networkObject.OwnerClientId);
+                }
             }
         }
 
         void FixedUpdate()
         {
-            if (IsSpawned)
+            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
             {
                 if (m_SceneState == SceneState.Unloaded && m_PlayersInTrigger.Count > 0)
                 {
