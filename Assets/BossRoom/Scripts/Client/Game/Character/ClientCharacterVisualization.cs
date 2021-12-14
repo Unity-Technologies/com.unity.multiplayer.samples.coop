@@ -255,8 +255,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (NetworkManager.Singleton.IsHost)
             {
                 // Note: a cached position (m_LerpedPosition) and rotation (m_LerpedRotation) are created and used as
-                // the starting point for each interpolation since the root's position and rotation are modified every
-                // in FixedUpdate, thus altering this transform (being a child) in the process.
+                // the starting point for each interpolation since the root's position and rotation are modified in
+                // FixedUpdate, thus altering this transform (being a child) in the process.
                 m_LerpedPosition = m_PositionLerper.LerpPosition(m_LerpedPosition,
                     m_PhysicsWrapper.Transform.position);
                 m_LerpedRotation = m_RotationLerper.LerpRotation(m_LerpedRotation,
