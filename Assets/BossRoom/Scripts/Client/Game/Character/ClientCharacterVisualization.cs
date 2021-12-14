@@ -53,13 +53,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private ActionVisualization m_ActionViz;
 
-        private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
+        PositionLerper m_PositionLerper;
 
-        float m_SmoothedSpeed;
+        RotationLerper m_RotationLerper;
+
+        // this value suffices for both positional and rotational interpolations; one may have a constant value for each
+        const float k_LerpTime = 0.08f;
 
         public bool IsOwner => m_NetState.IsOwner;
 
         public ulong NetworkObjectId => m_NetState.NetworkObjectId;
+
+        Vector3 m_LerpedPosition;
+
+        Quaternion m_LerpedRotation;
 
         public void Start()
         {
@@ -85,6 +92,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
+            m_LerpedPosition = transform.position;
+            m_LerpedRotation = transform.rotation;
+
+            // similarly, initialize start position and rotation for smooth lerping purposes
+            m_PositionLerper = new PositionLerper(m_PhysicsWrapper.Transform.position, k_LerpTime);
+            m_RotationLerper = new RotationLerper(m_PhysicsWrapper.Transform.rotation, k_LerpTime);
 
             if (!m_NetState.IsNpc)
             {
@@ -226,7 +239,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-
         void Update()
         {
             if (Parent == null)
@@ -236,9 +248,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            // NetworkTransform is interpolated - we can just apply it's position value to our visual object
-            transform.position = m_PhysicsWrapper.Transform.position;
-            transform.rotation = m_PhysicsWrapper.Transform.rotation;
+            // On the host, Characters are translated via ServerCharacterMovement's FixedUpdate method. To ensure that
+            // the game camera tracks a GameObject moving in the Update loop and therefore eliminate any camera jitter,
+            // this graphics GameObject's position is smoothed over time on the host. Clients do not need to perform any
+            // positional smoothing since NetworkTransform will interpolate position updates on the root GameObject.
+            if (NetworkManager.Singleton.IsHost)
+            {
+                // Note: a cached position (m_LerpedPosition) and rotation (m_LerpedRotation) are created and used as
+                // the starting point for each interpolation since the root's position and rotation are modified in
+                // FixedUpdate, thus altering this transform (being a child) in the process.
+                m_LerpedPosition = m_PositionLerper.LerpPosition(m_LerpedPosition,
+                    m_PhysicsWrapper.Transform.position);
+                m_LerpedRotation = m_RotationLerper.LerpRotation(m_LerpedRotation,
+                    m_PhysicsWrapper.Transform.rotation);
+                transform.SetPositionAndRotation(m_LerpedPosition, m_LerpedRotation);
+            }
 
             if (m_ClientVisualsAnimator)
             {
