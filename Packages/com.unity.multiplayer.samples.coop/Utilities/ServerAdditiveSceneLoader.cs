@@ -29,7 +29,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         string m_PlayerTag;
 
         /// <summary>
-        /// We keep the clientIds of every player-owned object inside the collider's volumed
+        /// We keep the clientIds of every player-owned object inside the collider's volume
         /// </summary>
         List<ulong> m_PlayersInTrigger;
 
@@ -53,6 +53,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 // Adding this to remove all pending references to a specific client when they disconnect, since objects
                 // that are destroyed do not generate OnTriggerExit events.
                 NetworkManager.OnClientDisconnectCallback += RemovePlayer;
+
                 NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
                 m_PlayersInTrigger = new List<ulong>();
             }
@@ -85,7 +86,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerEnter(Collider other)
         {
-            if (IsSpawned)
+            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
             {
                 if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
                 {
@@ -106,7 +107,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerExit(Collider other)
         {
-            if (IsSpawned)
+            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
             {
                 if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
                 {
@@ -117,7 +118,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void FixedUpdate()
         {
-            if (IsSpawned)
+            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
             {
                 if (m_SceneState == SceneState.Unloaded && m_PlayersInTrigger.Count > 0)
                 {
