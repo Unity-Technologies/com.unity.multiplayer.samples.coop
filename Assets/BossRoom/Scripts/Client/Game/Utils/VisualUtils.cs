@@ -54,7 +54,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// Utility struct to linearly interpolate between two Quaternion values. Allows for flexible linear interpolations
     /// where current and target change over time.
     /// </summary>
-    public struct QuaternionLerper
+    public struct RotationLerper
     {
         // Calculated start for the most recent interpolation
         Quaternion m_LerpStart;
@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         // The duration of the interpolation, in seconds
         float m_LerpTime;
 
-        public QuaternionLerper(Quaternion start, float lerpTime)
+        public RotationLerper(Quaternion start, float lerpTime)
         {
             m_LerpStart = start;
             m_CurrentLerpTime = 0f;
@@ -94,7 +94,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             var lerpPercentage = m_CurrentLerpTime / m_LerpTime;
 
-            return Quaternion.Lerp(m_LerpStart, target, lerpPercentage);
+            return Quaternion.Slerp(m_LerpStart, target, lerpPercentage);
         }
     }
 }
