@@ -156,17 +156,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
         }
 
-        private void OnValidate()
-        {
-            if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
-            {
-                Assert.IsNotNull(
-                    GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag)?.GetComponent<NavigationSystem>(),
-                    $"NavigationSystem not found. Is there a NavigationSystem Behaviour in the Scene and does its GameObject have the {NavigationSystem.NavigationSystemTag} tag? {gameObject.scene.name}"
-                );
-            }
-        }
-
         public override void OnNetworkDespawn()
         {
             if (m_NavPath != null)
