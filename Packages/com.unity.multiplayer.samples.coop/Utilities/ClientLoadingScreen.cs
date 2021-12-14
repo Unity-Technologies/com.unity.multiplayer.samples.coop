@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
-    public class ClientLoadingScreen : NetworkBehaviour
+    public class ClientLoadingScreen : MonoBehaviour
     {
         [SerializeField]
         CanvasGroup m_CanvasGroup;
@@ -14,31 +14,75 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         float m_FadeDuration = 1;
 
-        void Start()
-        {
-            m_CanvasGroup.alpha = 0;
-        }
+        [SerializeField]
+        NetworkManager m_NetworkManager;
 
         void Awake()
         {
-            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(this);
         }
 
-        public override void OnNetworkSpawn()
+        void Start()
         {
-            NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
+            m_CanvasGroup.alpha = 0;
+            if (m_NetworkManager)
+            {
+                m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
+                m_NetworkManager.OnClientDisconnectCallback += OnClientDisconnected;
+            }
+
+            SceneManager.sceneLoaded += OnSceneLoaded;
+            SceneManager.sceneUnloaded += OnSceneUnLoaded;
         }
 
-        public override void OnNetworkDespawn()
+        void OnDestroy()
         {
-            NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+            if (m_NetworkManager)
+            {
+                m_NetworkManager.OnClientConnectedCallback -= OnClientConnected;
+                m_NetworkManager.OnClientDisconnectCallback -= OnClientDisconnected;
+                if (m_NetworkManager.SceneManager != null)
+                {
+                    m_NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+                }
+            }
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            SceneManager.sceneUnloaded -= OnSceneUnLoaded;
+        }
+
+        void OnSceneUnLoaded(Scene scene)
+        {
+            StartLoadingScreen();
+        }
+
+        void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        {
+            StartCoroutine(FadeCoroutine());
+        }
+
+        void OnClientConnected(ulong clientId)
+        {
+            if (m_NetworkManager.SceneManager != null)
+            {
+                m_NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
+                SceneManager.sceneLoaded -= OnSceneLoaded;
+                SceneManager.sceneUnloaded -= OnSceneUnLoaded;
+            }
+        }
+
+        void OnClientDisconnected(ulong clientId)
+        {
+            if (m_NetworkManager.SceneManager != null)
+            {
+                m_NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+            }
         }
 
         void OnSceneEvent(SceneEvent sceneEvent)
         {
             switch (sceneEvent.SceneEventType)
             {
-                case SceneEventType.LoadComplete:
+                case SceneEventType.LoadEventCompleted:
                     if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
                     {
                         StartCoroutine(FadeCoroutine());
@@ -48,20 +92,23 @@ namespace Unity.Multiplayer.Samples.Utilities
                     StartCoroutine(FadeCoroutine());
                     break;
                 case SceneEventType.Load:
-                    if (sceneEvent.ClientId == NetworkManager.LocalClientId && sceneEvent.LoadSceneMode == LoadSceneMode.Single)
+                    if (sceneEvent.ClientId == m_NetworkManager.LocalClientId && sceneEvent.LoadSceneMode == LoadSceneMode.Single)
                     {
-                        Time.timeScale = 0;
-                        m_CanvasGroup.alpha = 1;
+                        StartLoadingScreen();
                     }
                     break;
                 case SceneEventType.Synchronize:
-                    if (sceneEvent.ClientId == NetworkManager.LocalClientId)
+                    if (sceneEvent.ClientId == m_NetworkManager.LocalClientId)
                     {
-                        Time.timeScale = 0;
-                        m_CanvasGroup.alpha = 1;
+                        StartLoadingScreen();
                     }
                     break;
             }
+        }
+
+        public void StartLoadingScreen()
+        {
+            m_CanvasGroup.alpha = 1;
         }
 
         IEnumerator FadeCoroutine()
@@ -76,7 +123,6 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
 
             m_CanvasGroup.alpha = 0;
-            Time.timeScale = 1;
         }
     }
 }
