@@ -10,11 +10,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         private SpecialFXGraphic m_OnHitParticlePrefab;
 
         NetworkProjectileState m_NetState;
+
         Transform m_Parent;
 
-        private const float k_MaxTurnRateDegreesSecond = 280;
+        const float k_LerpTime = 0.1f;
 
-        private float m_SmoothedSpeed;
+        PositionLerper m_PositionLerper;
 
         public override void OnNetworkSpawn()
         {
@@ -28,6 +29,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             transform.parent = null;
             m_NetState = m_Parent.GetComponent<NetworkProjectileState>();
             m_NetState.HitEnemyEvent += OnEnemyHit;
+
+            m_PositionLerper = new PositionLerper(m_Parent.position, k_LerpTime);
+            transform.rotation = m_Parent.transform.rotation;
         }
 
         public override void OnNetworkDespawn()
@@ -47,7 +51,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            VisualUtils.SmoothMove(transform, m_Parent.transform, Time.deltaTime, ref m_SmoothedSpeed, k_MaxTurnRateDegreesSecond);
+            // One thing to note: this graphics GameObject is detached from its parent on OnNetworkSpawn. On the host,
+            // the m_Parent Transform is translated via ServerProjectileLogic's FixedUpdate method. On all other
+            // clients, m_Parent's NetworkTransform handles syncing and interpolating the m_Parent Transform. Thus, to
+            // eliminate any visual jitter on the host, this GameObject is positionally smoothed over time. On all other
+            // clients, no positional smoothing is required, since m_Parent's NetworkTransform will perform
+            // positional interpolation on its Update method, and so this position is simply matched 1:1 with m_Parent.
+
+            if (IsHost)
+            {
+                transform.position = m_PositionLerper.LerpPosition(transform.position,
+                    m_Parent.transform.position);
+            }
+            else
+            {
+                transform.position = m_Parent.position;
+            }
         }
 
         private void OnEnemyHit(ulong enemyId)
@@ -66,7 +85,4 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
     }
-
-
 }
-

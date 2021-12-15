@@ -28,12 +28,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
             {
-                //TODO-FIXME:Netcode See note about Netcode for GameObjects issue 745 in WaitToSeatNowPlayer.
-                //while this workaround is in place, we must simply ignore these update requests from the client.
-                //throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
-                return;
+                throw new Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats! Shouldn't be here!");
             }
-
 
             if (CharSelectData.IsLobbyClosed.Value)
             {
@@ -176,6 +172,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
+
+                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             }
         }
 
@@ -211,15 +209,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void SeatNewPlayer(ulong clientId)
         {
-            int playerNum = GetAvailablePlayerNum();
-            if (playerNum == -1)
+            SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+            if (sessionPlayerData.HasValue)
             {
-                // Sanity check. We ran out of seats... there was no room!
-                throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerNum}");
-            }
+                var playerData = sessionPlayerData.Value;
+                if (playerData.PlayerNum == -1)
+                {
+                    // If no player num already assigned, get an available one.
+                    playerData.PlayerNum = GetAvailablePlayerNum();
+                }
+                if (playerData.PlayerNum == -1)
+                {
+                    // Sanity check. We ran out of seats... there was no room!
+                    throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerData.PlayerNum}");
+                }
 
-            string playerName = m_ServerNetPortal.GetPlayerName(clientId,playerNum);
-            CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerName, playerNum, CharSelectData.SeatState.Inactive));
+                CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerData.PlayerName, playerData.PlayerNum, CharSelectData.SeatState.Inactive));
+                SessionManager<SessionPlayerData>.Instance.SetPlayerData(clientId, playerData);
+            }
         }
 
         private void OnClientDisconnectCallback(ulong clientId)
