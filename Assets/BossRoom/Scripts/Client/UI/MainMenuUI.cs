@@ -203,7 +203,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private void OnRelayJoinFailed(string message)
         {
-            PushConnectionResponsePopup("Unity Relay: Join Failed", $"{message}", true, true);
+            PushConnectionResponsePopup("Unity Relay: Join Failed", $"{message}", false, true);
         }
 
         private void OnDestroy()

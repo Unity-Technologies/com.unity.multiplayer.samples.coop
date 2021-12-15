@@ -243,14 +243,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     }
                     catch (Exception e)
                     {
-                        OnUnityRelayJoinFailed?.Invoke(e.Message);
-                        // todo remove the above callback and get the below uncommented when UI is its own assembly
-                        // var menuUI = MainMenuUI.Instance;
-                        // if (menuUI)
-                        // {
-                        //     menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
-                        // }
-                        throw;
+                        if (cancellationToken.IsCancellationRequested)
+                        {
+                            Debug.Log("Unity Relay join failed, but was cancelled: " + e.Message);
+                        }
+                        else
+                        {
+                            OnUnityRelayJoinFailed?.Invoke(e.Message);
+
+                            // todo remove the above callback and get the below uncommented when UI is its own assembly
+                            // var menuUI = MainMenuUI.Instance;
+                            // if (menuUI)
+                            // {
+                            //     menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
+                            // }
+                            throw;
+                        }
                     }
 
                     break;
