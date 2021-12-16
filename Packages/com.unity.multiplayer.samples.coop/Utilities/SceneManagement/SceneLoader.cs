@@ -84,9 +84,12 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (m_ScenesEndingLoadingScreen.Contains(scene.name))
+            if (m_NetworkManager == null || !m_NetworkManager.IsListening)
             {
-                m_ClientLoadingScreen.StopLoadingScreen();
+                if (m_ScenesEndingLoadingScreen.Contains(scene.name))
+                {
+                    m_ClientLoadingScreen.StopLoadingScreen();
+                }
             }
         }
 
@@ -99,17 +102,25 @@ namespace Unity.Multiplayer.Samples.Utilities
                 {
                     case SceneEventType.Unload:
                     case SceneEventType.Load:
-                        if (sceneEvent.ClientId == m_NetworkManager.LocalClientId)
+                    case SceneEventType.Synchronize:
+                        if (m_ScenesTriggeringLoadingScreen.Contains(sceneEvent.SceneName))
                         {
-                            if (m_ScenesTriggeringLoadingScreen.Contains(sceneEvent.SceneName))
-                            {
-                                m_ClientLoadingScreen.StartLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
-                            }
-                            else
-                            {
-                                m_ClientLoadingScreen.UpdateLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
-                            }
+                            m_ClientLoadingScreen.StartLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
                         }
+                        else
+                        {
+                            m_ClientLoadingScreen.UpdateLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
+                        }
+                        break;
+                    case SceneEventType.LoadEventCompleted:
+                        if (m_ScenesEndingLoadingScreen.Contains(sceneEvent.SceneName))
+                        {
+                            m_ClientLoadingScreen.StopLoadingScreen();
+                        }
+                        break;
+                    case SceneEventType.SynchronizeComplete:
+                        // Always stop loading screen after synchronizeComplete event
+                        m_ClientLoadingScreen.StopLoadingScreen();
                         break;
                 }
             }
