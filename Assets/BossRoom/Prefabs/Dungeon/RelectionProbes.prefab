@@ -55,7 +55,7 @@ ReflectionProbe:
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 257
   m_IntensityMultiplier: 1
   m_BlendDistance: 100
   m_HDR: 0
@@ -110,8 +110,8 @@ ReflectionProbe:
   m_TimeSlicingMode: 0
   m_Resolution: 32
   m_UpdateFrequency: 0
-  m_BoxSize: {x: 78.2, y: 15, z: 151.3}
-  m_BoxOffset: {x: 0, y: 0, z: 0}
+  m_BoxSize: {x: 88.63669, y: 15, z: 151.3}
+  m_BoxOffset: {x: 5.2183456, y: 0, z: 0}
   m_NearClip: 0.3
   m_FarClip: 1000
   m_ShadowDistance: 100
@@ -119,7 +119,7 @@ ReflectionProbe:
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 257
   m_IntensityMultiplier: 1
   m_BlendDistance: 100
   m_HDR: 0
@@ -216,7 +216,7 @@ ReflectionProbe:
   m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 257
   m_IntensityMultiplier: 1
   m_BlendDistance: 100
   m_HDR: 0
