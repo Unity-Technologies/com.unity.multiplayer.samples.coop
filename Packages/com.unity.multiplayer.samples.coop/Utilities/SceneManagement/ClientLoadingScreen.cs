@@ -11,7 +11,10 @@ namespace Unity.Multiplayer.Samples.Utilities
         CanvasGroup m_CanvasGroup;
 
         [SerializeField]
-        float m_FadeDuration = 1;
+        float m_DelayBeforeFadeOut = 0.5f;
+
+        [SerializeField]
+        float m_FadeOutDuration = 1;
 
         [SerializeField]
         Slider m_ProgressBar;
@@ -22,6 +25,8 @@ namespace Unity.Multiplayer.Samples.Utilities
         bool m_LoadingScreenRunning;
 
         AsyncOperation m_LoadOperation;
+
+        Coroutine m_FadeOutCoroutine;
 
         void Awake()
         {
@@ -37,14 +42,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (m_LoadingScreenRunning && m_LoadOperation != null)
             {
-                if (m_LoadOperation.isDone)
-                {
-                    m_ProgressBar.value = 1;
-                }
-                else
-                {
-                    m_ProgressBar.value = m_LoadOperation.progress;
-                }
+                m_ProgressBar.value = m_LoadOperation.progress;
             }
         }
 
@@ -52,8 +50,11 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (m_LoadingScreenRunning)
             {
-                StartCoroutine(FadeCoroutine());
-                m_LoadingScreenRunning = false;
+                if (m_FadeOutCoroutine != null)
+                {
+                    StopCoroutine(m_FadeOutCoroutine);
+                }
+                m_FadeOutCoroutine = StartCoroutine(FadeOutCoroutine());
             }
         }
 
@@ -74,13 +75,21 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        IEnumerator FadeCoroutine()
+        IEnumerator FadeOutCoroutine()
         {
-            float startTime = Time.time;
-            float currentTime = startTime;
-            while (currentTime < startTime + m_FadeDuration)
+            m_ProgressBar.value = 1;
+            float currentTime = 0;
+            while (currentTime < m_DelayBeforeFadeOut)
             {
-                m_CanvasGroup.alpha = Mathf.Lerp(1, 0, (currentTime - startTime) / m_FadeDuration);
+                yield return null;
+                currentTime += Time.deltaTime;
+            }
+
+            m_LoadingScreenRunning = false;
+            currentTime = 0;
+            while (currentTime < m_FadeOutDuration)
+            {
+                m_CanvasGroup.alpha = Mathf.Lerp(1, 0, currentTime/ m_FadeOutDuration);
                 yield return null;
                 currentTime += Time.deltaTime;
             }

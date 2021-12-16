@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CanvasGroup: {fileID: 5841466599347033389}
-  m_FadeDuration: 0.1
+  m_FadeDuration: 1
   m_ProgressBar: {fileID: 9084798262095498542}
   m_SceneName: {fileID: 552738085472852216}
 --- !u!1 &1467556332204833860
