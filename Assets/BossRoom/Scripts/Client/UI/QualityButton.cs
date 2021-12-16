@@ -5,7 +5,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     public class QualityButton : MonoBehaviour
     {
-//test sam
         public TMP_Text qualityBtnText;
 
         private void Start()
