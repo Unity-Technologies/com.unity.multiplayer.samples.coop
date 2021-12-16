@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -56,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
-                NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+                SceneLoader.Instance.LoadScene("PostGame", LoadSceneMode.Single);
             }
         }
     }

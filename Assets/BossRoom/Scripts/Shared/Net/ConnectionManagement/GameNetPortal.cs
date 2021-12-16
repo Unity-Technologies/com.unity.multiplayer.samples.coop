@@ -2,6 +2,7 @@ using System;
 using Netcode.Transports.PhotonRealtime;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine;
@@ -243,6 +244,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             SessionManager<SessionPlayerData>.Instance.AddHostData(new SessionPlayerData(NetManager.LocalClientId, PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
             NetManager.StartHost();
+            SceneLoader.Instance.AddOnSceneEventCallback();
+
+            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
+            //may do this differently.
+            SceneLoader.Instance.LoadScene("CharSelect", LoadSceneMode.Single);
         }
 
         /// <summary>

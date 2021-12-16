@@ -3,6 +3,7 @@ using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Photon.Realtime;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using Unity.Services.Core;
@@ -129,7 +130,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
 
-                    SceneManager.LoadScene("MainMenu");
+                    SceneLoader.Instance.LoadScene("MainMenu", LoadSceneMode.Single);
                 }
                 else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
                 {
@@ -276,6 +277,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
             portal.NetManager.StartClient();
+            SceneLoader.Instance.AddOnSceneEventCallback();
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
             NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult_CustomMessage), ReceiveServerToClientConnectResult_CustomMessage);

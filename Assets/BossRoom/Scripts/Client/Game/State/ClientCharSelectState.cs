@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -403,7 +403,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // first disconnect then return to menu
             var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
             gameNetPortal.RequestDisconnect();
-            SceneManager.LoadScene("MainMenu");
+            SceneLoader.Instance.LoadScene("MainMenu", LoadSceneMode.Single);
         }
 
         GameObject GetCharacterGraphics(Avatar avatar)
