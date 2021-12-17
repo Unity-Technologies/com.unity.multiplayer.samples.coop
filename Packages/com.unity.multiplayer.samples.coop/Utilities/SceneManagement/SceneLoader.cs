@@ -121,6 +121,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                     if (IsServer)
                     {
                         // Always stop loading screen after synchronizeComplete event
+                        // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing
                         StopLoadingScreenClientRpc(new ClientRpcParams {Send = new ClientRpcSendParams {TargetClientIds = new[] {sceneEvent.ClientId}}});
                     }
                     break;

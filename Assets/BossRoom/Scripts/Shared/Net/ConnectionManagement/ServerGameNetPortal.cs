@@ -2,10 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using Unity.Netcode;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
