@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.ComponentModel.Design;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
-    public class SceneLoader : MonoBehaviour
+    public class SceneLoader : NetworkBehaviour
     {
         [SerializeField]
         List<string> m_ScenesTriggeringLoadingScreen;
@@ -16,9 +15,6 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         [SerializeField]
         ClientLoadingScreen m_ClientLoadingScreen;
-
-        [SerializeField]
-        NetworkManager m_NetworkManager;
 
         public static SceneLoader Instance { get; private set; }
 
@@ -42,12 +38,9 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnDestroy()
         {
-            if (m_NetworkManager)
+            if (NetworkManager.SceneManager != null)
             {
-                if (m_NetworkManager.SceneManager != null)
-                {
-                    m_NetworkManager.SceneManager.OnSceneEvent -= NotifyLoadingScreen;
-                }
+                NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
             SceneManager.sceneLoaded -= OnSceneLoaded;
         }
@@ -55,20 +48,20 @@ namespace Unity.Multiplayer.Samples.Utilities
         // This needs to be called right after initializing NetworkManager (after StartHost, StartClient or StartServer)
         public void AddOnSceneEventCallback()
         {
-            if (m_NetworkManager.SceneManager != null)
+            if (NetworkManager.SceneManager != null)
             {
-                m_NetworkManager.SceneManager.OnSceneEvent += NotifyLoadingScreen;
+                NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
             }
         }
 
         public void LoadScene(string sceneName, LoadSceneMode loadSceneMode)
         {
-            if (m_NetworkManager != null && m_NetworkManager.IsListening)
+            if (NetworkManager.IsListening)
             {
-                if (m_NetworkManager.IsServer)
+                if (NetworkManager.IsServer)
                 {
                     // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
-                    m_NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+                    NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
                 }
             }
             else
@@ -84,7 +77,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (m_NetworkManager == null || !m_NetworkManager.IsListening)
+            if (!NetworkManager.IsListening)
             {
                 if (m_ScenesEndingLoadingScreen.Contains(scene.name))
                 {
@@ -93,16 +86,16 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        void NotifyLoadingScreen(SceneEvent sceneEvent)
+        void OnSceneEvent(SceneEvent sceneEvent)
         {
-            // Only executes on client
-            if (m_NetworkManager != null && m_NetworkManager.IsClient)
+            switch (sceneEvent.SceneEventType)
             {
-                switch (sceneEvent.SceneEventType)
-                {
-                    case SceneEventType.Unload:
-                    case SceneEventType.Load:
-                    case SceneEventType.Synchronize:
+                case SceneEventType.Unload:
+                case SceneEventType.Load:
+                case SceneEventType.Synchronize:
+                    // Only executes on client
+                    if (IsClient)
+                    {
                         if (m_ScenesTriggeringLoadingScreen.Contains(sceneEvent.SceneName))
                         {
                             m_ClientLoadingScreen.StartLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
@@ -111,19 +104,33 @@ namespace Unity.Multiplayer.Samples.Utilities
                         {
                             m_ClientLoadingScreen.UpdateLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
                         }
-                        break;
-                    case SceneEventType.LoadEventCompleted:
+                    }
+                    break;
+                case SceneEventType.LoadEventCompleted:
+                    // Only executes on client
+                    if (IsClient)
+                    {
                         if (m_ScenesEndingLoadingScreen.Contains(sceneEvent.SceneName))
                         {
                             m_ClientLoadingScreen.StopLoadingScreen();
                         }
-                        break;
-                    case SceneEventType.SynchronizeComplete:
+                    }
+                    break;
+                case SceneEventType.SynchronizeComplete:
+                    // Only executes on server
+                    if (IsServer)
+                    {
                         // Always stop loading screen after synchronizeComplete event
-                        m_ClientLoadingScreen.StopLoadingScreen();
-                        break;
-                }
+                        StopLoadingScreenClientRpc(new ClientRpcParams {Send = new ClientRpcSendParams {TargetClientIds = new[] {sceneEvent.ClientId}}});
+                    }
+                    break;
             }
+        }
+
+        [ClientRpc]
+        void StopLoadingScreenClientRpc(ClientRpcParams clientRpcParams = default)
+        {
+            m_ClientLoadingScreen.StopLoadingScreen();
         }
     }
 }

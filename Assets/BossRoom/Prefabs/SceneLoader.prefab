@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7533068275093218427}
   - component: {fileID: 2071498811241465156}
+  - component: {fileID: 8734696198808489477}
   m_Layer: 0
   m_Name: SceneLoader
   m_TagString: Untagged
@@ -56,4 +57,19 @@ MonoBehaviour:
   - DungeonTransition
   - DungeonBossRoom
   m_ClientLoadingScreen: {fileID: 0}
-  m_NetworkManager: {fileID: 0}
+--- !u!114 &8734696198808489477
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5970766024194302363}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
