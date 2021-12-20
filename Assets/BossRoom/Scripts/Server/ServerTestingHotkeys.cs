@@ -12,6 +12,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     public class ServerTestingHotkeys : NetworkBehaviour
     {
         [SerializeField]
+        ServerBossRoomState m_BossRoomState;
+
+        [SerializeField]
         [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_EnemyPrefab;
 
@@ -34,8 +37,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         [Tooltip("Key that the Host can press to toggle god mode")]
         KeyCode m_GodModeKeyCode = KeyCode.G;
-
-        bool m_GodMode;
 
         public override void OnNetworkSpawn()
         {
@@ -66,12 +67,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             if (m_GodModeKeyCode != KeyCode.None && Input.GetKeyDown(m_GodModeKeyCode))
             {
-                m_GodMode = !m_GodMode;
-                foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+                if (m_BossRoomState)
                 {
-                    playerServerCharacter.SetGodMode(m_GodMode);
+                    m_BossRoomState.ToggleGodMode();
                 }
-                Debug.Log($"Turning God mode {(m_GodMode?"On":"Off")}");
             }
         }
     }

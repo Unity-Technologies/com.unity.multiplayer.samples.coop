@@ -44,6 +44,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         //the lifetime of the ServerBossRoomState).
         private List<ulong> m_HeroIds = new List<ulong>();
 
+        bool m_GodMode;
+
         public override void OnNetworkSpawn()
         {
             if (!IsServer)
@@ -157,6 +159,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var newPlayer = Instantiate(m_PlayerPrefab, Vector3.zero, Quaternion.identity);
 
             var newPlayerCharacter = newPlayer.GetComponent<ServerCharacter>();
+            newPlayerCharacter.SetGodMode(m_GodMode);
 
             var physicsTransform = newPlayerCharacter.physicsWrapper.Transform;
 
@@ -257,6 +260,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SetWinState(gameWon ? WinState.Win : WinState.Loss);
 
             NetworkManager.Singleton.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+        }
+
+        public void ToggleGodMode()
+        {
+            m_GodMode = !m_GodMode;
+            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            {
+                playerServerCharacter.SetGodMode(m_GodMode);
+            }
+            Debug.Log($"Turning God Mode {(m_GodMode?"On":"Off")}");
         }
     }
 }

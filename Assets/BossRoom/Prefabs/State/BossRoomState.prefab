@@ -83,9 +83,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 927521835ae055247b17e4abe805b4ab, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
   m_NetworkGameStateTransform: {fileID: 11400000, guid: 07bddcdf06738e74cb79d30065ff96af, type: 2}
-  m_RuntimeNetworkObjectsParent: {fileID: 11400000, guid: 777947e430fc5cb4ba60df7eed45a515, type: 2}
   m_PlayerPrefab: {fileID: 6009713983291384767, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
   m_PlayerSpawnPoints:
   - {fileID: 6319832178442273571}
@@ -136,11 +134,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1e76745edfc434ab8154ad27efc5fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_BossRoomState: {fileID: 5762482089640033414}
   m_EnemyPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
   m_BossPrefab: {fileID: 3688950541947916326, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
   m_SpawnEnemyKeyCode: 101
   m_SpawnBossKeyCode: 98
   m_InstantQuitKeyCode: 113
+  m_GodModeKeyCode: 103
 --- !u!1 &1088799320945899822
 GameObject:
   m_ObjectHideFlags: 0
