@@ -251,6 +251,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
+        public void SetGodMode(bool value)
+        {
+            m_DamageReceiver.GodMode = value;
+        }
+
         void Update()
         {
             m_ActionPlayer.Update();

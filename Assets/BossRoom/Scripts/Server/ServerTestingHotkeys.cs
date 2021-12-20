@@ -31,6 +31,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [Tooltip("Key that the Host can press to quit the game")]
         KeyCode m_InstantQuitKeyCode = KeyCode.Q;
 
+        [SerializeField]
+        [Tooltip("Key that the Host can press to toggle god mode")]
+        KeyCode m_GodModeKeyCode = KeyCode.G;
+
+        bool m_GodMode;
+
         public override void OnNetworkSpawn()
         {
             if (!IsServer)
@@ -57,6 +63,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
                 NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+            }
+            if (m_GodModeKeyCode != KeyCode.None && Input.GetKeyDown(m_GodModeKeyCode))
+            {
+                m_GodMode = !m_GodMode;
+                foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+                {
+                    playerServerCharacter.SetGodMode(m_GodMode);
+                }
+                Debug.Log($"Turning God mode {(m_GodMode?"On":"Off")}");
             }
         }
     }
