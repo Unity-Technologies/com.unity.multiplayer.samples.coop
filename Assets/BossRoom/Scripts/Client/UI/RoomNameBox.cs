@@ -3,7 +3,6 @@ using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.Assertions;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine.UI;
 
