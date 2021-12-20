@@ -3,11 +3,18 @@ using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.Assertions;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
+using UnityEngine.UI;
 
 public class RoomNameBox : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI m_RoomNameText;
+    [SerializeField]
+    TextMeshProUGUI m_RoomNameText;
+    [SerializeField]
+    Button m_CopyToClipboardButton;
+
+    string m_RoomName;
 
     bool m_ConnectionFinished = false;
 
@@ -59,15 +66,33 @@ public class RoomNameBox : MonoBehaviour
                 string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
             {
                 string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
-                m_RoomNameText.text = $"Room Name: {roomName}";
-                m_ConnectionFinished = true;
+                ConnectionFinished(roomName);
             }
             else if (transport != null && transport is UnityTransport utp &&
                      !string.IsNullOrEmpty(RelayJoinCode.Code))
             {
-                m_RoomNameText.text = RelayJoinCode.Code;
-                m_ConnectionFinished = true;
+                ConnectionFinished(RelayJoinCode.Code);
             }
+        }
+    }
+
+    void ConnectionFinished(string roomName)
+    {
+        m_RoomName = roomName;
+        m_RoomNameText.text = $"Room Name: {m_RoomName}";
+        m_ConnectionFinished = true;
+        m_CopyToClipboardButton.gameObject.SetActive(true);
+    }
+
+    public void CopyToClipboard()
+    {
+        if (m_ConnectionFinished)
+        {
+            GUIUtility.systemCopyBuffer = m_RoomName;
+        }
+        else
+        {
+            Debug.Log("Connection not finished, can't copy to clipboard yet.");
         }
     }
 }
