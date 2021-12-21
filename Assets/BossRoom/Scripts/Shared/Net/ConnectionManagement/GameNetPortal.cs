@@ -218,9 +218,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                         var serverRelayUtilityTask = RelayUtility.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
                         await serverRelayUtilityTask;
                         // we now have the info from the relay service
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
-
-                        RelayJoinCode.Code = joinCode;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, _) = serverRelayUtilityTask.Result;
 
                         // we now need to set the RelayCode somewhere :P
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);

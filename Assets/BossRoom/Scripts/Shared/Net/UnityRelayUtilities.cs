@@ -36,6 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             try
             {
                 joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
+                RelayJoinCode.Code = joinCode;
             }
             catch (Exception exception)
             {
@@ -54,6 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             try
             {
                 allocation = await Relay.Instance.JoinAllocationAsync(joinCode);
+                RelayJoinCode.Code = joinCode;
             }
             catch (Exception exception)
             {
