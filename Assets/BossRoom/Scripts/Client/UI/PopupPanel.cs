@@ -175,8 +175,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             if (m_OnlineMode != OnlineMode.Lobby)
             {
-                m_OnlineMode = OnlineMode.Lobby;
-                OnOnlineModeDropdownChanged(m_OnlineMode);
+                OnlineMode = OnlineMode.Lobby;
             }
         }
 
