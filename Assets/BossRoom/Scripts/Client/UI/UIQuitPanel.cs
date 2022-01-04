@@ -1,18 +1,18 @@
 using System;
-using TMPro;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
-public class QuitButton : MonoBehaviour
+public class UIQuitPanel : MonoBehaviour
 {
     [SerializeField]
-    TMP_Text m_QuitButtonText;
+    Text m_QuitButtonText;
 
     void OnEnable()
     {
-        m_QuitButtonText.text = NetworkManager.Singleton.IsListening ? "Disconnect" : "Exit Game";
+        m_QuitButtonText.text = NetworkManager.Singleton.IsListening ? "Disconnect from current session?" : "Exit Game?";
     }
 
     public void Quit()
@@ -28,5 +28,6 @@ public class QuitButton : MonoBehaviour
         {
             Application.Quit();
         }
+        gameObject.SetActive(false);
     }
 }
