@@ -3,66 +3,98 @@ using UnityEngine;
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
-    /// Repository for visualization-related utility functions.
+    /// Utility struct to linearly interpolate between two Vector3 values. Allows for flexible linear interpolations
+    /// where current and target change over time.
     /// </summary>
-    public static class VisualUtils
+    public struct PositionLerper
     {
-        /// <summary>
-        /// Minimum Smooth Speed we will set closingSpeed to in SmoothMove.
-        /// </summary>
-        private const float k_MinSmoothSpeed = 4.0f;
+        // Calculated start for the most recent interpolation
+        Vector3 m_LerpStart;
 
-        /// <summary>
-        /// In SmoothMove we set a velocity proportional to our distance, to roughly approximate a spring effect.
-        /// This is the constant we use for that calculation.
-        /// </summary>
-        private const float k_TargetCatchupTime = 0.1f;
+        // Calculated time elapsed for the most recent interpolation
+        float m_CurrentLerpTime;
 
+        // The duration of the interpolation, in seconds
+        float m_LerpTime;
 
-        /// <summary>
-        /// Smoothly interpolates towards the parent transform.
-        /// </summary>
-        /// <param name="moveTransform">The transform to interpolate</param>
-        /// <param name="targetTransform">The transform to interpolate towards.  </param>
-        /// <param name="timeDelta">Time in seconds that has elapsed, for purposes of interpolation.</param>
-        /// <param name="closingSpeed">The closing speed in m/s. This is updated by SmoothMove every time it is called, and will drop to 0 whenever the moveTransform has "caught up". </param>
-        /// <param name="maxAngularSpeed">The max angular speed to to rotate at, in degrees/s.</param>
-        public static void SmoothMove(Transform moveTransform, Transform targetTransform, float timeDelta, ref float closingSpeed, float maxAngularSpeed)
+        public PositionLerper(Vector3 start, float lerpTime)
         {
-            var posDiff = targetTransform.position - moveTransform.position;
-            var angleDiff = Quaternion.Angle(targetTransform.transform.rotation, moveTransform.rotation);
-            float posDiffMag = posDiff.magnitude;
+            m_LerpStart = start;
+            m_CurrentLerpTime = 0f;
+            m_LerpTime = lerpTime;
+        }
 
-            if (posDiffMag > 0)
+        /// <summary>
+        /// Linearly interpolate between two Vector3 values.
+        /// </summary>
+        /// <param name="current"> Start of the interpolation. </param>
+        /// <param name="target"> End of the interpolation. </param>
+        /// <returns> A Vector3 value between current and target. </returns>
+        public Vector3 LerpPosition(Vector3 current, Vector3 target)
+        {
+            if (current != target)
             {
-                closingSpeed = Mathf.Max(closingSpeed, Mathf.Max(k_MinSmoothSpeed, posDiffMag / k_TargetCatchupTime));
-
-                float maxMove = timeDelta * closingSpeed;
-                float moveDist = Mathf.Min(maxMove, posDiffMag);
-                posDiff *= (moveDist / posDiffMag);
-
-                moveTransform.position += posDiff;
-
-                if( moveDist == posDiffMag )
-                {
-                    //we capped the move, meaning we exactly reached our target transform. Time to reset our velocity.
-                    closingSpeed = 0;
-                }
-            }
-            else
-            {
-                closingSpeed = 0;
+                m_LerpStart = current;
+                m_CurrentLerpTime = 0f;
             }
 
-            if (angleDiff > 0)
+            m_CurrentLerpTime += Time.deltaTime;
+            if (m_CurrentLerpTime > m_LerpTime)
             {
-                float maxAngleMove = timeDelta * maxAngularSpeed;
-                float angleMove = Mathf.Min(maxAngleMove, angleDiff);
-                float t = angleMove / angleDiff;
-                moveTransform.rotation = Quaternion.Slerp(moveTransform.rotation, targetTransform.rotation, t);
+                m_CurrentLerpTime = m_LerpTime;
             }
+
+            var lerpPercentage = m_CurrentLerpTime / m_LerpTime;
+
+            return Vector3.Lerp(m_LerpStart, target, lerpPercentage);
         }
     }
 
-}
+    /// <summary>
+    /// Utility struct to linearly interpolate between two Quaternion values. Allows for flexible linear interpolations
+    /// where current and target change over time.
+    /// </summary>
+    public struct RotationLerper
+    {
+        // Calculated start for the most recent interpolation
+        Quaternion m_LerpStart;
 
+        // Calculated time elapsed for the most recent interpolation
+        float m_CurrentLerpTime;
+
+        // The duration of the interpolation, in seconds
+        float m_LerpTime;
+
+        public RotationLerper(Quaternion start, float lerpTime)
+        {
+            m_LerpStart = start;
+            m_CurrentLerpTime = 0f;
+            m_LerpTime = lerpTime;
+        }
+
+        /// <summary>
+        /// Linearly interpolate between two Quaternion values.
+        /// </summary>
+        /// <param name="current"> Start of the interpolation. </param>
+        /// <param name="target"> End of the interpolation. </param>
+        /// <returns> A Quaternion value between current and target. </returns>
+        public Quaternion LerpRotation(Quaternion current, Quaternion target)
+        {
+            if (current != target)
+            {
+                m_LerpStart = current;
+                m_CurrentLerpTime = 0f;
+            }
+
+            m_CurrentLerpTime += Time.deltaTime;
+            if (m_CurrentLerpTime > m_LerpTime)
+            {
+                m_CurrentLerpTime = m_LerpTime;
+            }
+
+            var lerpPercentage = m_CurrentLerpTime / m_LerpTime;
+
+            return Quaternion.Slerp(m_LerpStart, target, lerpPercentage);
+        }
+    }
+}
