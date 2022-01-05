@@ -5,6 +5,11 @@ using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
+    /// <summary>
+    /// This script handles the use of a loading screen with a progress bar and the name of the loaded scene shown. It
+    /// must be started and stopped from outside this script. It also allows updating the loading screen when a new
+    /// loading operation starts before the loading screen is stopped.
+    /// </summary>
     public class ClientLoadingScreen : MonoBehaviour
     {
         [SerializeField]

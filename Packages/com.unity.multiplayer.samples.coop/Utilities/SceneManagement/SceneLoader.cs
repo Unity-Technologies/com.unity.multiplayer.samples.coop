@@ -7,6 +7,11 @@ namespace Unity.Multiplayer.Samples.Utilities
 {
     public class SceneLoader : NetworkBehaviour
     {
+        /// <summary>
+        /// This singleton is a utility handling the loading of scenes. It loads scene using the SceneManager, or, on
+        /// listening servers for which scene management is enabled, using the NetworkSceneManager. It also starts and
+        /// stops the loading screen.
+        /// </summary>
         [SerializeField]
         List<string> m_ScenesTriggeringLoadingScreen;
 
@@ -36,9 +41,9 @@ namespace Unity.Multiplayer.Samples.Utilities
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        void OnDestroy()
+        public override void OnDestroy()
         {
-            if (NetworkManager.SceneManager != null)
+            if (NetworkManager != null && NetworkManager.SceneManager != null)
             {
                 NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
@@ -48,7 +53,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         // This needs to be called right after initializing NetworkManager (after StartHost, StartClient or StartServer)
         public void AddOnSceneEventCallback()
         {
-            if (NetworkManager.SceneManager != null)
+            if (NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement)
             {
                 NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
             }
@@ -56,28 +61,40 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         public void LoadScene(string sceneName, LoadSceneMode loadSceneMode)
         {
-            if (NetworkManager.IsListening)
+            if (NetworkManager != null && NetworkManager.IsListening)
             {
                 if (NetworkManager.IsServer)
                 {
-                    // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
-                    NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+                    if (NetworkManager.NetworkConfig.EnableSceneManagement)
+                    {
+                        // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
+                        NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+                    }
+                    else
+                    {
+                        LoadUsingSceneManager(sceneName, loadSceneMode);
+                    }
                 }
             }
             else
             {
                 // If offline, load using SceneManager
-                var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
-                if (m_ScenesTriggeringLoadingScreen.Contains(sceneName))
-                {
-                    m_ClientLoadingScreen.StartLoadingScreen(sceneName, loadOperation);
-                }
+                LoadUsingSceneManager(sceneName, loadSceneMode);
+            }
+        }
+
+        void LoadUsingSceneManager(string sceneName, LoadSceneMode loadSceneMode)
+        {
+            var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
+            if (m_ScenesTriggeringLoadingScreen.Contains(sceneName))
+            {
+                m_ClientLoadingScreen.StartLoadingScreen(sceneName, loadOperation);
             }
         }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (!NetworkManager.IsListening)
+            if (NetworkManager == null || !NetworkManager.IsListening)
             {
                 if (m_ScenesEndingLoadingScreen.Contains(scene.name))
                 {
