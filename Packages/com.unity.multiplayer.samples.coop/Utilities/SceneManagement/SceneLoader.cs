@@ -12,11 +12,6 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// listening servers for which scene management is enabled, using the NetworkSceneManager. It also starts and
         /// stops the loading screen.
         /// </summary>
-        [SerializeField]
-        List<string> m_ScenesTriggeringLoadingScreen;
-
-        [SerializeField]
-        List<string> m_ScenesEndingLoadingScreen;
 
         [SerializeField]
         ClientLoadingScreen m_ClientLoadingScreen;
@@ -86,7 +81,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         void LoadUsingSceneManager(string sceneName, LoadSceneMode loadSceneMode)
         {
             var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
-            if (m_ScenesTriggeringLoadingScreen.Contains(sceneName))
+            if (loadSceneMode == LoadSceneMode.Single)
             {
                 m_ClientLoadingScreen.StartLoadingScreen(sceneName, loadOperation);
             }
@@ -96,10 +91,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (NetworkManager == null || !NetworkManager.IsListening)
             {
-                if (m_ScenesEndingLoadingScreen.Contains(scene.name))
-                {
-                    m_ClientLoadingScreen.StopLoadingScreen();
-                }
+                m_ClientLoadingScreen.StopLoadingScreen();
             }
         }
 
@@ -107,13 +99,12 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             switch (sceneEvent.SceneEventType)
             {
-                case SceneEventType.Unload:
-                case SceneEventType.Load:
-                case SceneEventType.Synchronize:
+                case SceneEventType.Load: // Server told client to load a scene
                     // Only executes on client
                     if (IsClient)
                     {
-                        if (m_ScenesTriggeringLoadingScreen.Contains(sceneEvent.SceneName))
+                        // Only start a new loading screen if scene loaded in Single mode, else simply update
+                        if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
                         {
                             m_ClientLoadingScreen.StartLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
                         }
@@ -123,21 +114,17 @@ namespace Unity.Multiplayer.Samples.Utilities
                         }
                     }
                     break;
-                case SceneEventType.LoadEventCompleted:
+                case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
                     // Only executes on client
                     if (IsClient)
                     {
-                        if (m_ScenesEndingLoadingScreen.Contains(sceneEvent.SceneName))
-                        {
-                            m_ClientLoadingScreen.StopLoadingScreen();
-                        }
+                        m_ClientLoadingScreen.StopLoadingScreen();
                     }
                     break;
-                case SceneEventType.SynchronizeComplete:
+                case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
                     // Only executes on server
                     if (IsServer)
                     {
-                        // Always stop loading screen after synchronizeComplete event
                         // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing
                         StopLoadingScreenClientRpc(new ClientRpcParams {Send = new ClientRpcSendParams {TargetClientIds = new[] {sceneEvent.ClientId}}});
                     }
