@@ -257,7 +257,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             SetWinState(gameWon ? WinState.Win : WinState.Loss);
 
-            SceneLoader.Instance.LoadScene("PostGame", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("PostGame", LoadSceneMode.Single);
         }
     }
 }

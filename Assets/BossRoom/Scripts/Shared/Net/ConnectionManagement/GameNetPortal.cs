@@ -244,11 +244,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             SessionManager<SessionPlayerData>.Instance.AddHostData(new SessionPlayerData(NetManager.LocalClientId, PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
             NetManager.StartHost();
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-
-            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
-            //may do this differently.
-            SceneLoaderWrapper.Instance.LoadScene("CharSelect", LoadSceneMode.Single);
         }
 
         /// <summary>

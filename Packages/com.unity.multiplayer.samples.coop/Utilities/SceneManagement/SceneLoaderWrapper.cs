@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
-    public class SceneLoader : NetworkBehaviour
+    public class SceneLoaderWrapper : NetworkBehaviour
     {
         /// <summary>
         /// Manages a loading screen by wrapping around scene management APIs. It loads scene using the SceneManager,
@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         ClientLoadingScreen m_ClientLoadingScreen;
 
-        public static SceneLoader Instance { get; private set; }
+        public static SceneLoaderWrapper Instance { get; private set; }
 
         public void Awake()
         {

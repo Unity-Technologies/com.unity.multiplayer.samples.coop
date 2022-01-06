@@ -403,7 +403,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // first disconnect then return to menu
             var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
             gameNetPortal.RequestDisconnect();
-            SceneLoader.Instance.LoadScene("MainMenu", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu", LoadSceneMode.Single);
         }
 
         GameObject GetCharacterGraphics(Avatar avatar)
