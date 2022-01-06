@@ -8,6 +8,8 @@ Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. I
 
 You can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
+See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art of Boss Room.
+
 > __IMPORTANT__:
 > - Boss Room has been developed and tested on these Platforms (Windows, Mac, iOS, and Android).
 >     - Tested on iPhone 6 and Pixel 3.
