@@ -69,7 +69,7 @@ Lighting settings can be found at Window > Rendering > Lighting
 
 We've set up some prefabs and scenes to make baking easier.
 
-* Thre is a lighting settings asset called FastBaking (Assets > BossRoom > Scenes > Bossroom) that has pre set up settings for a quick, but decent bake for Boss Room.
+* There is a lighting settings asset called FastBaking (Assets > BossRoom > Scenes > Bossroom) that has pre set up settings for a quick, but decent bake for Boss Room.
 
 * There is a light probe group prefab called BossroomLightprobes (Assets > Bossroom > Prefabs > Dungeon) to be used with baked lighting. Light probes store baked lighting from your scene to be used on objects moving through the scene. Check out the sources below for more info on light probes <br /><br />
 
