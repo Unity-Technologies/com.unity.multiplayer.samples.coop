@@ -5,29 +5,33 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class UIQuitPanel : MonoBehaviour
+namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
-    [SerializeField]
-    Text m_QuitButtonText;
-
-    void OnEnable()
+    public class UIQuitPanel : MonoBehaviour
     {
-        m_QuitButtonText.text = NetworkManager.Singleton.IsListening ? "Disconnect from current session?" : "Exit Game?";
-    }
+        [SerializeField]
+        Text m_QuitButtonText;
 
-    public void Quit()
-    {
-        if (NetworkManager.Singleton.IsListening)
+        void OnEnable()
         {
-            // first disconnect then return to menu
-            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
-            gameNetPortal.RequestDisconnect();
-            SceneManager.LoadScene("MainMenu");
+            m_QuitButtonText.text = NetworkManager.Singleton.IsListening ? "Disconnect from current session?" : "Exit Game?";
         }
-        else
+
+        public void Quit()
         {
-            Application.Quit();
+            if (NetworkManager.Singleton.IsListening)
+            {
+                // first disconnect then return to menu
+                var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
+                gameNetPortal.RequestDisconnect();
+                SceneManager.LoadScene("MainMenu");
+            }
+            else
+            {
+                Application.Quit();
+            }
+
+            gameObject.SetActive(false);
         }
-        gameObject.SetActive(false);
     }
 }
