@@ -232,7 +232,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                             Debug.Log(playerId);
                         }
 
-                        var clientRelayUtilityTask =  RelayUtility.JoinRelayServerFromJoinCode(joinCode);
+                        var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
                         await clientRelayUtilityTask;
                         var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);

@@ -6,13 +6,10 @@ using Unity.Services.Relay.Models;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
-    public static class RelayJoinCode
+    public static class UnityRelayUtilities
     {
-        public static string Code = string.Empty;
-    }
+        public static string JoinCode { get; private set; } = string.Empty;
 
-    public static class RelayUtility
-    {
         public static async
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
                 joinCode)> AllocateRelayServerAndGetJoinCode(int maxConnections, string region = null)
@@ -35,7 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             try
             {
                 joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
-                RelayJoinCode.Code = joinCode;
+                JoinCode = joinCode;
             }
             catch (Exception exception)
             {
@@ -54,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             try
             {
                 allocation = await Relay.Instance.JoinAllocationAsync(joinCode);
-                RelayJoinCode.Code = joinCode;
+                JoinCode = joinCode;
             }
             catch (Exception exception)
             {
