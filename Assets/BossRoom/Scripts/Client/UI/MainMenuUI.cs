@@ -87,7 +87,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
                 m_ResponsePopup.SetupNotifierDisplay("Starting host", "Attempting to Start host...", true, false, () =>
                 {
+                    // Shutdown NetworkManager in case it started the hosting process
                     m_GameNetPortal.RequestDisconnect();
+                    // This token is used with Photon Relay and Unity Relay to prevent starting the host if it hasn't yet
                     cancellationTokenSource.Cancel();
                 });
             }, k_DefaultIP, k_ConnectPort);
@@ -122,7 +124,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
                 m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false, () =>
                 {
+                    // Shutdown NetworkManager in case it started the connection process
                     m_GameNetPortal.RequestDisconnect();
+                    // This token is used with Photon Relay and Unity Relay to prevent starting the connection if it hasn't yet
                     cancellationTokenSource.Cancel();
                 });
             }, k_DefaultIP, k_ConnectPort);
