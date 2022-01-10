@@ -81,6 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                         m_GameNetPortal.StartUnityRelayHost();
                         break;
                 }
+                m_ResponsePopup.SetupNotifierDisplay("Starting host", "Attempting to Start host...", true, false);
             }, k_DefaultIP, k_ConnectPort);
         }
 
