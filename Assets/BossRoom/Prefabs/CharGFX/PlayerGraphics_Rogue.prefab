@@ -167,7 +167,7 @@ MonoBehaviour:
   - m_AnimatorNodeName: Attack1
     m_AnimatorNodeNameHash: -47317214
     m_Prefab: {fileID: 2787649059963953560, guid: 5121957b2fabba043a36ec5641e54be7, type: 3}
-    m_PrefabSpawnDelaySeconds: 0.8
+    m_PrefabSpawnDelaySeconds: 0.5
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
