@@ -9,15 +9,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    public class ClientCharacterVisualization : MonoBehaviour
+    public class ClientCharacterVisualization : NetworkBehaviour
     {
         [SerializeField]
-        private Animator m_ClientVisualsAnimator;
+        Animator m_ClientVisualsAnimator;
 
-        private CharacterSwap m_CharacterSwapper;
+        CharacterSwap m_CharacterSwapper;
 
         [SerializeField]
-        private VisualizationConfiguration m_VisualizationConfiguration;
+        VisualizationConfiguration m_VisualizationConfiguration;
 
         /// <summary>
         /// Returns a reference to the active Animator for this visualization
@@ -49,9 +49,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
 
-        private NetworkCharacterState m_NetState;
+        NetworkCharacterState m_NetState;
 
-        private ActionVisualization m_ActionViz;
+        ActionVisualization m_ActionViz;
 
         PositionLerper m_PositionLerper;
 
@@ -60,15 +60,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         // this value suffices for both positional and rotational interpolations; one may have a constant value for each
         const float k_LerpTime = 0.08f;
 
-        public bool IsOwner => m_NetState.IsOwner;
-
-        public ulong NetworkObjectId => m_NetState.NetworkObjectId;
-
         Vector3 m_LerpedPosition;
 
         Quaternion m_LerpedRotation;
 
-        public void Start()
+        public override void OnNetworkSpawn()
         {
             if (!NetworkManager.Singleton.IsClient || transform.parent == null)
             {
@@ -130,6 +126,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     }
                 }
             }
+
+            // lastly, host deparents child
+            if (NetworkManager.Singleton.IsHost)
+            {
+                transform.SetParent(null);
+            }
         }
 
         private void OnActionInput(ActionRequestData data)
@@ -145,8 +147,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
+            if (IsHost)
+            {
+                Destroy(gameObject);
+            }
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
             if (m_NetState)
             {
                 m_NetState.DoActionEventClient -= PerformActionFX;

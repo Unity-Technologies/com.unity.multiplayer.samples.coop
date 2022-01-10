@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -37,7 +36,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         ClientCharacter m_ClientCharacter;
 
         ClientAvatarGuidHandler m_ClientAvatarGuidHandler;
-        private NetworkAvatarGuidState m_NetworkAvatarGuidState;
+
+        NetworkAvatarGuidState m_NetworkAvatarGuidState;
 
         [SerializeField]
         IntVariable m_BaseHP;
@@ -64,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         Vector3 m_VerticalOffset;
 
         // used to compute world position based on target and offsets
-        private Vector3 m_WorldPos;
+        Vector3 m_WorldPos;
 
         public override void OnNetworkSpawn()
         {
@@ -198,16 +198,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_TransformToTrack = graphicsGameObject.transform;
         }
 
-        void LateUpdate()
+        void Update()
         {
             if (m_UIStateActive && m_TransformToTrack)
             {
                 // set world position with world offset added
                 m_WorldPos.Set(m_TransformToTrack.position.x,
-                    m_TransformToTrack.position.y + m_VerticalWorldOffset, m_TransformToTrack.position.z );
+                    m_TransformToTrack.position.y + m_VerticalWorldOffset,
+                    m_TransformToTrack.position.z);
 
-                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_WorldPos) +
-                    m_VerticalOffset;
+                m_UIStateRectTransform.position = m_Camera.WorldToScreenPoint(m_WorldPos) + m_VerticalOffset;
             }
         }
 
