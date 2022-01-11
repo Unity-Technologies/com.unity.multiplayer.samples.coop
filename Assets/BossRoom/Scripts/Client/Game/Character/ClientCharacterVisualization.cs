@@ -66,7 +66,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override void OnNetworkSpawn()
         {
-            if (!NetworkManager.Singleton.IsClient || transform.parent == null)
+            if (!IsClient || transform.parent == null)
             {
                 enabled = false;
                 return;
@@ -118,7 +118,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     if (Parent.TryGetComponent(out ClientInputSender inputSender))
                     {
                         // TODO: revisit; anticipated actions would play twice on the host
-                        if (!NetworkManager.Singleton.IsServer)
+                        if (!IsServer)
                         {
                             inputSender.ActionInputEvent += OnActionInput;
                         }
@@ -138,14 +138,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (!IsAnimating())
             {
                 OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
-            }
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            if (IsHost)
-            {
-                Destroy(gameObject);
             }
         }
 
@@ -257,7 +249,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             // the game camera tracks a GameObject moving in the Update loop and therefore eliminate any camera jitter,
             // this graphics GameObject's position is smoothed over time on the host. Clients do not need to perform any
             // positional smoothing since NetworkTransform will interpolate position updates on the root GameObject.
-            if (NetworkManager.Singleton.IsHost)
+            if (IsHost)
             {
                 // Note: a cached position (m_LerpedPosition) and rotation (m_LerpedRotation) are created and used as
                 // the starting point for each interpolation since the root's position and rotation are modified in
