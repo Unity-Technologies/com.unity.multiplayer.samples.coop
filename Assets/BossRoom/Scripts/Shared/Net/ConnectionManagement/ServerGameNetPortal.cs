@@ -176,7 +176,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
             gameReturnStatus = SessionManager<SessionPlayerData>.Instance.OnClientApprovalCheck(clientId, connectionPayload.clientGUID,
-                new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false)) ? ConnectStatus.Success : ConnectStatus.LoggedInAgain;
+                new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false))
+                ? ConnectStatus.Success
+                : ConnectStatus.LoggedInAgain;
 
             //Test for Duplicate Login.
             if (gameReturnStatus == ConnectStatus.LoggedInAgain)
