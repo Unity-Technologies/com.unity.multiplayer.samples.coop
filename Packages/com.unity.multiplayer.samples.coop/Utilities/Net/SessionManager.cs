@@ -109,9 +109,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="clientGUID">This is the clientGUID that is unique to this client and persists accross multiple logins from the same client</param>
         /// <param name="sessionPlayerData">The player's initial data</param>
         /// <returns></returns>
-        public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, T sessionPlayerData)
+        public bool OnClientApprovalCheck(ulong clientId, string clientGUID, T sessionPlayerData)
         {
-            ConnectStatus gameReturnStatus = ConnectStatus.Success;
+            bool success = true;
 
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
@@ -137,7 +137,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     }
                     else
                     {
-                        gameReturnStatus = ConnectStatus.LoggedInAgain;
+                        success = false;
                     }
                 }
                 else
@@ -156,13 +156,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
 
             //Populate our dictionaries with the SessionPlayerData
-            if (gameReturnStatus == ConnectStatus.Success)
+            if (success)
             {
                 m_ClientIDToGuid[clientId] = clientGUID;
                 m_ClientData[clientGUID] = sessionPlayerData;
             }
 
-            return gameReturnStatus;
+            return success;
         }
 
         /// <summary>
