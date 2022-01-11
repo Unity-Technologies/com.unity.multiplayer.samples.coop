@@ -22,22 +22,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Returns a reference to the active Animator for this visualization
         /// </summary>
-        public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
+        public Animator OurAnimator => m_ClientVisualsAnimator;
 
         /// <summary>
         /// Returns the targeting-reticule prefab for this character visualization
         /// </summary>
-        public GameObject TargetReticulePrefab { get { return m_VisualizationConfiguration.TargetReticule; } }
+        public GameObject TargetReticulePrefab => m_VisualizationConfiguration.TargetReticule;
 
         /// <summary>
         /// Returns the Material to plug into the reticule when the selected entity is hostile
         /// </summary>
-        public Material ReticuleHostileMat { get { return m_VisualizationConfiguration.ReticuleHostileMat; } }
+        public Material ReticuleHostileMat => m_VisualizationConfiguration.ReticuleHostileMat;
 
         /// <summary>
         /// Returns the Material to plug into the reticule when the selected entity is friendly
         /// </summary>
-        public Material ReticuleFriendlyMat { get { return m_VisualizationConfiguration.ReticuleFriendlyMat; } }
+        public Material ReticuleFriendlyMat => m_VisualizationConfiguration.ReticuleFriendlyMat;
 
         /// <summary>
         /// Returns our pseudo-Parent, the object that owns the visualization.
@@ -47,7 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         PhysicsWrapper m_PhysicsWrapper;
 
-        public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
+        public bool CanPerformActions => m_NetState.CanPerformActions;
 
         NetworkCharacterState m_NetState;
 
@@ -126,20 +126,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     }
                 }
             }
-
-            // lastly, host deparents child
-            if (NetworkManager.Singleton.IsHost)
-            {
-                transform.SetParent(null);
-            }
         }
 
-        private void OnActionInput(ActionRequestData data)
+        void OnActionInput(ActionRequestData data)
         {
             m_ActionViz.AnticipateAction(ref data);
         }
 
-        private void OnMoveInput(Vector3 position)
+        void OnMoveInput(Vector3 position)
         {
             if (!IsAnimating())
             {
@@ -174,32 +168,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        private void PerformActionFX(ActionRequestData data)
+        void PerformActionFX(ActionRequestData data)
         {
             m_ActionViz.PlayAction(ref data);
         }
 
-        private void CancelAllActionFXs()
+        void CancelAllActionFXs()
         {
             m_ActionViz.CancelAllActions();
         }
 
-        private void CancelActionFXByType(ActionType actionType)
+        void CancelActionFXByType(ActionType actionType)
         {
             m_ActionViz.CancelAllActionsOfType(actionType);
         }
 
-        private void OnStoppedChargingUp(float finalChargeUpPercentage)
+        void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
             m_ActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
         }
 
-        private void OnStealthyChanged(bool oldValue, bool newValue)
+        void OnStealthyChanged(bool oldValue, bool newValue)
         {
             SetAppearanceSwap();
         }
 
-        private void SetAppearanceSwap()
+        void SetAppearanceSwap()
         {
             if (m_CharacterSwapper)
             {
@@ -223,7 +217,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Returns the value we should set the Animator's "Speed" variable, given current gameplay conditions.
         /// </summary>
-        private float GetVisualMovementSpeed()
+        float GetVisualMovementSpeed()
         {
             Assert.IsNotNull(m_VisualizationConfiguration);
             if (m_NetState.NetworkLifeState.LifeState.Value != LifeState.Alive)

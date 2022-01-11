@@ -8,6 +8,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// <summary>
     /// Class designed to only run on a client. Add this to a world-space prefab to display health or name on UI.
     /// </summary>
+    /// <remarks>
+    /// Execution order is explicitly set such that it this class executes its LateUpdate after any Cinemachine
+    /// LateUpdate calls, which may alter the final position of the game camera.
+    /// </remarks>
+    [DefaultExecutionOrder(300)]
     public class UIStateDisplayHandler : NetworkBehaviour
     {
         [SerializeField]
@@ -198,7 +203,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_TransformToTrack = graphicsGameObject.transform;
         }
 
-        void Update()
+        /// <remarks>
+        /// Moving UI objects on LateUpdate ensures that the game camera is at its final position pre-render.
+        /// </remarks>
+        void LateUpdate()
         {
             if (m_UIStateActive && m_TransformToTrack)
             {
