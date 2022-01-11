@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// </summary>
         /// <param name="sceneName">Name or path of the Scene to load.</param>
         /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
-        public void LoadScene(string sceneName, LoadSceneMode loadSceneMode)
+        public void LoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
             if (NetworkManager != null && NetworkManager.IsListening && NetworkManager.NetworkConfig.EnableSceneManagement)
             {

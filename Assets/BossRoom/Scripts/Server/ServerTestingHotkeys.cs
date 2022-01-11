@@ -57,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
             {
-                SceneLoaderWrapper.Instance.LoadScene("PostGame", LoadSceneMode.Single);
+                SceneLoaderWrapper.Instance.LoadScene("PostGame");
             }
         }
     }

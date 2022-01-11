@@ -130,7 +130,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
 
-                    SceneLoaderWrapper.Instance.LoadScene("MainMenu", LoadSceneMode.Single);
+                    SceneLoaderWrapper.Instance.LoadScene("MainMenu");
                 }
                 else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
                 {
