@@ -5,7 +5,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     public class QualityButton : MonoBehaviour
     {
-        public TMP_Text qualityBtnText;
+        [SerializeField]
+        private TMP_Text qualityBtnText;
 
         private void Start()
         {

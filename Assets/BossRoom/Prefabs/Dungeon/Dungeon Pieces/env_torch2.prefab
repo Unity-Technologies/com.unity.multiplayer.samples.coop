@@ -31,8 +31,8 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3790976994824457333}
-  - {fileID: 1332257092475825127}
   - {fileID: 2669503988279524391}
+  - {fileID: 1332257092475825127}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -108,7 +108,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2669503988279524391}
   - component: {fileID: 7604957176162376385}
-  - component: {fileID: 3718748985965881007}
   m_Layer: 0
   m_Name: Point Light_ForBaking
   m_TagString: Untagged
@@ -124,11 +123,11 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5772851459325150932}
   m_LocalRotation: {x: -0.000000021855694, y: -0.00000011920929, z: 0.000000007450582, w: 1}
-  m_LocalPosition: {x: -0.06, y: 3.86, z: -0.02}
+  m_LocalPosition: {x: -0.06, y: 2.31, z: -0.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 3325143161705299546}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!108 &7604957176162376385
 Light:
@@ -192,22 +191,6 @@ Light:
   m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
---- !u!114 &3718748985965881007
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5772851459325150932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5f1c83ea9dfad3d46aaf1d61e74e7faa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TargetLight: {fileID: 7604957176162376385}
-  m_MinIntensity: 1
-  m_MaxIntensity: 30
-  m_Smoothing: 36
 --- !u!1 &6439644344178914268
 GameObject:
   m_ObjectHideFlags: 0
@@ -339,7 +322,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4624227725711097874, guid: 4e2ccdc22ce4a0f4f84280f1d3025a46, type: 3}
       propertyPath: m_RootOrder
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4624227725711097874, guid: 4e2ccdc22ce4a0f4f84280f1d3025a46, type: 3}
       propertyPath: m_LocalPosition.x

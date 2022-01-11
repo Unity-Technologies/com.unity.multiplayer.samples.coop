@@ -23,7 +23,7 @@ LightingSettings:
   m_TextureCompression: 1
   m_AO: 1
   m_AOMaxDistance: 3
-  m_CompAOExponent: 9.11
+  m_CompAOExponent: 0
   m_CompAOExponentDirect: 0
   m_ExtractAO: 0
   m_MixedBakeMode: 2
@@ -40,7 +40,7 @@ LightingSettings:
   m_FinalGatherFiltering: 1
   m_PVRCulling: 1
   m_PVRSampling: 1
-  m_PVRDirectSampleCount: 4
+  m_PVRDirectSampleCount: 8
   m_PVRSampleCount: 8
   m_PVREnvironmentSampleCount: 8
   m_PVREnvironmentReferencePointCount: 2048
