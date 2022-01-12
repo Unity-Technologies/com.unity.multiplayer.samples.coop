@@ -54,7 +54,7 @@ Lighting settings can be found at Window > Rendering > Lighting
 
  <br />       
     
-* You can hover over each setting and a tooltip will descirbe what it does <br /><br />
+* You can hover over each setting and a tooltip will describe what it does <br /><br />
 
 * Directional Mode toggles to whether or not normal maps will influence your baked lighting. Changing your settings to Directional will generate a better quality bake, but is more costly. When baking, additional textures, called directional maps, will be generated for every baked lightmap texture. For example, if you have three lightmaps, you will have three directional maps.  <br /><br />
 
