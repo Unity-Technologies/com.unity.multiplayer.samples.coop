@@ -16,6 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         KeyCode m_OpenWindowKeyCode = KeyCode.Return;
 
+        const int k_NbTouchesToOpenWindow = 4;
 
         public void SpawnEnemy()
         {
@@ -39,7 +40,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void Update()
         {
-            if (m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
+            if (Input.touchCount == k_NbTouchesToOpenWindow ||
+                m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
             {
                 m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
             }
