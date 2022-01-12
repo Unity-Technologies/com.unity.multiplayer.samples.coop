@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: -5536186819612961332}
   - component: {fileID: 8450381715082006755}
   - component: {fileID: 596945379875709001}
+  - component: {fileID: 7654311390279920710}
   m_Layer: 0
   m_Name: PersistentPlayer
   m_TagString: Untagged
@@ -90,3 +91,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
+--- !u!114 &7654311390279920710
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4927145850774787080}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ca9dee5032d8410686d2810f01a27bf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isBlueTeam: 1
