@@ -57,8 +57,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void AddHostData(T sessionPlayerData)
         {
-            m_ClientData.Add(k_HostGUID, sessionPlayerData);
-            m_ClientIDToGuid.Add(sessionPlayerData.ClientID, k_HostGUID);
+            if (sessionPlayerData.ClientID == m_NetworkManager.ServerClientId)
+            {
+                m_ClientData.Add(k_HostGUID, sessionPlayerData);
+                m_ClientIDToGuid.Add(sessionPlayerData.ClientID, k_HostGUID);
+            }
+            else
+            {
+                Debug.LogError($"Invalid ClientId for host. Got {sessionPlayerData.ClientID}, but should have gotten {m_NetworkManager.ServerClientId}.");
+            }
         }
 
         /// <summary>
