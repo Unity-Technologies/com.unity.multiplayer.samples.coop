@@ -14,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         GameObject m_DebugCheatsPanel;
 
         [SerializeField]
-        KeyCode m_OpenWindowKeyCode = KeyCode.Tilde;
+        KeyCode m_OpenWindowKeyCode = KeyCode.Return;
 
 
         public void SpawnEnemy()
@@ -41,7 +41,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             if (m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
             {
-                m_DebugCheatsPanel.SetActive(true);
+                m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
             }
         }
     }

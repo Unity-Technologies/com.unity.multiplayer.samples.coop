@@ -1399,6 +1399,7 @@ GameObject:
   - component: {fileID: 5277713031684110774}
   - component: {fileID: 5277713031684110769}
   - component: {fileID: 5277713031684110768}
+  - component: {fileID: 9076100988238400401}
   m_Layer: 5
   m_Name: BossRoomHudCanvas
   m_TagString: GameCanvas
@@ -1492,6 +1493,21 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!114 &9076100988238400401
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5277713031684110771}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2dccd56273595344890c4570bcbeb78a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_DebugCheatsState: {fileID: 0}
+  m_DebugCheatsPanel: {fileID: 7649295862146065024}
+  m_OpenWindowKeyCode: 13
 --- !u!1 &5277713032042430138
 GameObject:
   m_ObjectHideFlags: 0
@@ -2133,14 +2149,13 @@ GameObject:
   - component: {fileID: 3433386668875250805}
   - component: {fileID: 5926017047087515966}
   - component: {fileID: 6997645926228612327}
-  - component: {fileID: 6602205850694734192}
   m_Layer: 5
   m_Name: CheatsPopupPanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3433386668875250805
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2204,21 +2219,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &6602205850694734192
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7649295862146065024}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2dccd56273595344890c4570bcbeb78a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_DebugCheatsState: {fileID: 0}
-  m_DebugCheatsPanel: {fileID: 7649295862146065024}
-  m_OpenWindowKeyCode: 0
 --- !u!1 &7669773307619547384
 GameObject:
   m_ObjectHideFlags: 0
@@ -2416,7 +2416,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7649295862146065024}
         m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: 
+        m_MethodName: SetActive
         m_Mode: 6
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2582,7 +2582,7 @@ PrefabInstance:
     - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6602205850694734192}
+      objectReference: {fileID: 9076100988238400401}
     - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: GoToPostGame
@@ -3141,7 +3141,7 @@ PrefabInstance:
     - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6602205850694734192}
+      objectReference: {fileID: 9076100988238400401}
     - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SpawnBoss
@@ -3389,7 +3389,7 @@ PrefabInstance:
     - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6602205850694734192}
+      objectReference: {fileID: 9076100988238400401}
     - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: ToggleGodMode
@@ -3511,7 +3511,7 @@ PrefabInstance:
     - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
-      objectReference: {fileID: 6602205850694734192}
+      objectReference: {fileID: 9076100988238400401}
     - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: SpawnEnemy
