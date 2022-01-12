@@ -80,7 +80,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ClientVisualsAnimator: {fileID: 1829276847453002016}
-  m_CharacterSwapper: {fileID: 0}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
 --- !u!1001 &7831782662127126385
 PrefabInstance:
@@ -293,7 +292,7 @@ MonoBehaviour:
   m_NetworkHealthState: {fileID: 7751377510591478590}
   m_ClientCharacter: {fileID: 2292431908892550450}
   m_BaseHP: {fileID: 0}
-  m_TransformToTrack: {fileID: 0}
+  m_TransformToTrack: {fileID: 7902288483105483375}
   m_VerticalWorldOffset: 2.2
   m_VerticalScreenOffset: 20
 --- !u!114 &3481187672596608374
@@ -361,7 +360,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bb02fcdd8d85034794f2a32382009e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ClientCharacter: {fileID: 2292431908892550450}
   m_GraphicsAnimator: {fileID: 1829276847453002016}
   m_NetworkAvatarGuidState: {fileID: 2466014342928185240}
 --- !u!114 &7232939173259361562
