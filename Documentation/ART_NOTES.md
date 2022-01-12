@@ -82,7 +82,7 @@ We've set up some prefabs and scenes to make baking easier.
 
 ### **Lighting set up for the MainMenu, CharSelect, and PostGame Scenes:**
 
-* To bake these scenes, open them and navigate to the CharSel_Background Prefab in the scene. In the prefab, there is are two other prefabs called "EnvLighting_Realtime" and "EnvLighting_ForBaking_" with lights set up for realtime, and lights set up for baking. Leave the Realtime prefab enabled if you're using realtime lighting, otherwise, disable it and enable the Baking prefab when baking lighting.
+* To bake these scenes, open them and navigate to the CharSel_Background Prefab in the scene. In the prefab, there are two other prefabs called "EnvLighting_Realtime" and "EnvLighting_ForBaking_" with lights set up for realtime, and lights set up for baking. Leave the Realtime prefab enabled if you're using realtime lighting, otherwise, disable it and enable the Baking prefab when baking lighting.
 
     ![CharSelectLights](Images/CharSelectLights.png) <br /><br />
 
