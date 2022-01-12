@@ -10,11 +10,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// debugging the game. To disable them, just disable or remove this component from the
     /// BossRoomState prefab.
     /// </summary>
-    public class ServerTestingHotkeys : NetworkBehaviour
+    public class ServerDebugCheatsManager : NetworkBehaviour
     {
-        [SerializeField]
-        ServerBossRoomState m_BossRoomState;
-
         [SerializeField]
         [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         NetworkObject m_EnemyPrefab;
