@@ -58,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public void AddHostData(T sessionPlayerData)
         {
             m_ClientData.Add(k_HostGUID, sessionPlayerData);
-            m_ClientIDToGuid.Add(m_NetworkManager.LocalClientId, k_HostGUID);
+            m_ClientIDToGuid.Add(sessionPlayerData.ClientID, k_HostGUID);
         }
 
         /// <summary>
