@@ -33,7 +33,7 @@ Lighting settings can be found at Window > Rendering > Lighting
 
 ![LightingSettings](Images/LightingPanel.png)
 
-* There are three tabs at the top for navgating your lighting options:
+* There are three tabs at the top for navigating your lighting options:
   * Scene: light baking options for the current scene(s)
   * Environment: settings for overall environment changes (ambient color, skybox, etc.) in your current scene(s)
   * Baked Lightmaps: where you can look at your baked light maps if you have baked lighting for your current scene(s) <br /><br />
