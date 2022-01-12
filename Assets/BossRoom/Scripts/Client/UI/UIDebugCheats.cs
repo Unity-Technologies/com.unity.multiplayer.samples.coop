@@ -20,22 +20,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void SpawnEnemy()
         {
-            m_DebugCheatsState.SpawnEnemy?.Invoke(NetworkManager.Singleton.LocalClientId);
+            m_DebugCheatsState.SpawnEnemyServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
         public void SpawnBoss()
         {
-            m_DebugCheatsState.SpawnBoss?.Invoke(NetworkManager.Singleton.LocalClientId);
+            m_DebugCheatsState.SpawnBossServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
         public void GoToPostGame()
         {
-            m_DebugCheatsState.GoToPostGame?.Invoke(NetworkManager.Singleton.LocalClientId);
+            m_DebugCheatsState.GoToPostGameServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
         public void ToggleGodMode()
         {
-            m_DebugCheatsState.ToggleGodMode?.Invoke(NetworkManager.Singleton.LocalClientId);
+            m_DebugCheatsState.ToggleGodModeServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
         void Update()
