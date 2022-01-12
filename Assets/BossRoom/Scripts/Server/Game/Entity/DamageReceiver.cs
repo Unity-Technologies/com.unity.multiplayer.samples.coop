@@ -13,14 +13,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
-        public bool GodMode { get; set; }
-
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
-            if (!GodMode)
-            {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (!m_NetworkLifeState.IsGodMode.Value)
+#endif
                 damageReceived?.Invoke(inflicter, HP);
-            }
         }
 
         public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()

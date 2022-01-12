@@ -33,6 +33,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Slider[] m_PartyHealthSliders;
 
+        [SerializeField]
+        private Image[] m_PartyHealthGodModeImages;
+
         // track a list of hero (slot 0) + allies
         private ulong[] m_PartyIds;
 
@@ -157,6 +160,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_PartyHealthSliders[slot].maxValue = netState.CharacterClass.BaseHP.Value;
             m_PartyHealthSliders[slot].value = netState.HitPoints;
             m_PartyNames[slot].text = GetPlayerName(netState);
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            m_PartyHealthGodModeImages[slot].gameObject.SetActive(netState.NetworkLifeState.IsGodMode.Value);
+            netState.NetworkLifeState.IsGodMode.OnValueChanged += (value, newValue) =>
+            {
+                m_PartyHealthGodModeImages[slot].gameObject.SetActive(newValue);
+            };
+#endif
 
             m_PartyClassSymbols[slot].sprite = netState.CharacterClass.ClassBannerLit;
         }

@@ -67,9 +67,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void ToggleGodMode(ulong clientId)
         {
-            if (m_BossRoomState)
+            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                m_BossRoomState.ToggleGodMode();
+                if (playerServerCharacter.OwnerClientId == clientId)
+                {
+                    playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
+                }
             }
         }
     }
