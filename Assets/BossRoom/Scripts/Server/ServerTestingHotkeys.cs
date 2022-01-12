@@ -2,6 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
@@ -16,62 +17,61 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         [SerializeField]
         [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_EnemyPrefab;
+        NetworkObject m_EnemyPrefab;
 
         [SerializeField]
         [Tooltip("Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
-        private NetworkObject m_BossPrefab;
+        NetworkObject m_BossPrefab;
 
         [SerializeField]
-        [Tooltip("Key that the Host can press to spawn an extra enemy")]
-        KeyCode m_SpawnEnemyKeyCode = KeyCode.E;
-
-        [SerializeField]
-        [Tooltip("Key that the Host can press to spawn an extra boss")]
-        KeyCode m_SpawnBossKeyCode = KeyCode.B;
-
-        [SerializeField]
-        [Tooltip("Key that the Host can press to quit the game")]
-        KeyCode m_InstantQuitKeyCode = KeyCode.Q;
-
-        [SerializeField]
-        [Tooltip("Key that the Host can press to toggle god mode")]
-        KeyCode m_GodModeKeyCode = KeyCode.G;
+        DebugCheatsState m_DebugCheatsState;
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
             {
-                // these commands don't work on the client
-                enabled = false;
+                m_DebugCheatsState.SpawnEnemy += SpawnEnemy;
+                m_DebugCheatsState.SpawnBoss += SpawnBoss;
+                m_DebugCheatsState.GoToPostGame += GoToPostGame;
+                m_DebugCheatsState.ToggleGodMode += ToggleGodMode;
             }
         }
 
-        private void Update()
+        public override void OnNetworkDespawn()
         {
-            if (!IsServer) { return; } // not initialized yet
+            if (IsServer)
+            {
+                m_DebugCheatsState.SpawnEnemy -= SpawnEnemy;
+                m_DebugCheatsState.SpawnBoss -= SpawnBoss;
+                m_DebugCheatsState.GoToPostGame -= GoToPostGame;
+                m_DebugCheatsState.ToggleGodMode -= ToggleGodMode;
+            }
+        }
 
-            if (m_SpawnEnemyKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnEnemyKeyCode))
+        void SpawnEnemy(ulong clientId)
+        {
+            var newEnemy = Instantiate(m_EnemyPrefab);
+            newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
+        }
+
+        void SpawnBoss(ulong clientId)
+        {
+            var newEnemy = Instantiate(m_BossPrefab);
+            newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
+        }
+
+        void GoToPostGame(ulong clientId)
+        {
+            NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+        }
+
+        void ToggleGodMode(ulong clientId)
+        {
+            if (m_BossRoomState)
             {
-                var newEnemy = Instantiate(m_EnemyPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
-            }
-            if (m_SpawnBossKeyCode != KeyCode.None && Input.GetKeyDown(m_SpawnBossKeyCode))
-            {
-                var newEnemy = Instantiate(m_BossPrefab);
-                newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
-            }
-            if (m_InstantQuitKeyCode != KeyCode.None && Input.GetKeyDown(m_InstantQuitKeyCode))
-            {
-                NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
-            }
-            if (m_GodModeKeyCode != KeyCode.None && Input.GetKeyDown(m_GodModeKeyCode))
-            {
-                if (m_BossRoomState)
-                {
-                    m_BossRoomState.ToggleGodMode();
-                }
+                m_BossRoomState.ToggleGodMode();
             }
         }
     }
 }
+#endif
