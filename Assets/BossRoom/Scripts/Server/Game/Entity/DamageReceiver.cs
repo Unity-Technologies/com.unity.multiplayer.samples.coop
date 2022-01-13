@@ -15,10 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
-            if (!m_NetworkLifeState.IsGodMode.Value)
-#endif
-                damageReceived?.Invoke(inflicter, HP);
+            damageReceived?.Invoke(inflicter, HP);
         }
 
         public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()
