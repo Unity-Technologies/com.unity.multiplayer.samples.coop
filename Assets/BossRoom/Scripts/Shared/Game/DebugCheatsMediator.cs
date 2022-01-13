@@ -37,16 +37,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
             LogCheatUsedClientRPC(clientId, "GoToPostGame");
         }
 
-        [ClientRpc]
-        public void LogCheatUsedClientRPC(ulong clientId, string cheatUsed)
-        {
-            Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
-        }
-
         [ServerRpc(RequireOwnership = false)]
         public void ToggleGodModeServerRpc(ulong clientId)
         {
             ToggleGodMode?.Invoke(clientId);
+            LogCheatUsedClientRPC(clientId, "ToggleGodMode");
+        }
+
+        [ClientRpc]
+        public void LogCheatUsedClientRPC(ulong clientId, string cheatUsed)
+        {
+            Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
         }
     }
 }
