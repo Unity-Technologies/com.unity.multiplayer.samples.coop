@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -18,6 +17,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
     // If the player disconnects and reconnects to the same host, the session is preserved.
     public class SessionManager<T> where T : struct, ISessionPlayerData
     {
+        const string k_HostGUID = "host_guid";
+
         NetworkManager m_NetworkManager;
 
         protected SessionManager()
@@ -58,9 +59,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (sessionPlayerData.ClientID == m_NetworkManager.ServerClientId)
             {
-                string hostGUID = ClientPrefs.GetGuid();
-                m_ClientData.Add(hostGUID, sessionPlayerData);
-                m_ClientIDToGuid.Add(sessionPlayerData.ClientID, hostGUID);
+                m_ClientData.Add(k_HostGUID, sessionPlayerData);
+                m_ClientIDToGuid.Add(sessionPlayerData.ClientID, k_HostGUID);
             }
             else
             {
