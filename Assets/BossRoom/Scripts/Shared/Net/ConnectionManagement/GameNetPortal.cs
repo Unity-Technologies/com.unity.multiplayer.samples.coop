@@ -242,7 +242,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void StartHost()
         {
-            // First initialize the host data so that objects that need it during their initial spawn can use it, using ServerClientId as the host's ClientId
             NetManager.StartHost();
         }
 
