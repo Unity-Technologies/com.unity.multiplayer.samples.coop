@@ -33,6 +33,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_DebugCheatsState.GoToPostGameServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
+        public void ToggleGodMode()
+        {
+            m_DebugCheatsState.ToggleGodModeServerRpc(NetworkManager.Singleton.LocalClientId);
+        }
+
         void Update()
         {
             if (Input.touchCount == k_NbTouchesToOpenWindow ||

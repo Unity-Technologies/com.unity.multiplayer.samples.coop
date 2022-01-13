@@ -30,6 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_DebugCheatsState.SpawnEnemy += SpawnEnemy;
                 m_DebugCheatsState.SpawnBoss += SpawnBoss;
                 m_DebugCheatsState.GoToPostGame += GoToPostGame;
+                m_DebugCheatsState.ToggleGodMode += ToggleGodMode;
             }
         }
 
@@ -40,6 +41,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_DebugCheatsState.SpawnEnemy -= SpawnEnemy;
                 m_DebugCheatsState.SpawnBoss -= SpawnBoss;
                 m_DebugCheatsState.GoToPostGame -= GoToPostGame;
+                m_DebugCheatsState.ToggleGodMode -= ToggleGodMode;
             }
         }
 
@@ -58,6 +60,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         void GoToPostGame(ulong clientId)
         {
             NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+        }
+
+        void ToggleGodMode(ulong clientId)
+        {
+            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            {
+                if (playerServerCharacter.OwnerClientId == clientId)
+                {
+                    playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
+                }
+            }
         }
     }
 }
