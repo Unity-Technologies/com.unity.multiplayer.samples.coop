@@ -135,10 +135,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab1e76745edfc434ab8154ad27efc5fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_BossRoomState: {fileID: 5762482089640033414}
   m_EnemyPrefab: {fileID: 3713729372785093435, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
   m_BossPrefab: {fileID: 3688950541947916326, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
-  m_DebugCheatsState: {fileID: 4671806015186365672}
+  m_DebugCheatsMediator: {fileID: 4671806015186365672}
 --- !u!114 &4671806015186365672
 MonoBehaviour:
   m_ObjectHideFlags: 0

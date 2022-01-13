@@ -21,15 +21,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         NetworkObject m_BossPrefab;
 
         [SerializeField]
-        DebugCheatsState m_DebugCheatsState;
+        DebugCheatsMediator m_DebugCheatsMediator;
 
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
-                m_DebugCheatsState.SpawnEnemy += SpawnEnemy;
-                m_DebugCheatsState.SpawnBoss += SpawnBoss;
-                m_DebugCheatsState.GoToPostGame += GoToPostGame;
+                m_DebugCheatsMediator.SpawnEnemy += SpawnEnemy;
+                m_DebugCheatsMediator.SpawnBoss += SpawnBoss;
+                m_DebugCheatsMediator.GoToPostGame += GoToPostGame;
             }
         }
 
@@ -37,9 +37,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (IsServer)
             {
-                m_DebugCheatsState.SpawnEnemy -= SpawnEnemy;
-                m_DebugCheatsState.SpawnBoss -= SpawnBoss;
-                m_DebugCheatsState.GoToPostGame -= GoToPostGame;
+                m_DebugCheatsMediator.SpawnEnemy -= SpawnEnemy;
+                m_DebugCheatsMediator.SpawnBoss -= SpawnBoss;
+                m_DebugCheatsMediator.GoToPostGame -= GoToPostGame;
             }
         }
 

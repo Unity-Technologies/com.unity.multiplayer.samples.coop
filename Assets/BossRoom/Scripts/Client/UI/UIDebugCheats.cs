@@ -8,7 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     public class UIDebugCheats : MonoBehaviour
     {
         [SerializeField]
-        DebugCheatsState m_DebugCheatsState;
+        DebugCheatsMediator m_DebugCheatsMediator;
 
         [SerializeField]
         GameObject m_DebugCheatsPanel;
@@ -20,17 +20,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void SpawnEnemy()
         {
-            m_DebugCheatsState.SpawnEnemyServerRpc(NetworkManager.Singleton.LocalClientId);
+            m_DebugCheatsMediator.SpawnEnemyServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
         public void SpawnBoss()
         {
-            m_DebugCheatsState.SpawnBossServerRpc(NetworkManager.Singleton.LocalClientId);
+            m_DebugCheatsMediator.SpawnBossServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
         public void GoToPostGame()
         {
-            m_DebugCheatsState.GoToPostGameServerRpc(NetworkManager.Singleton.LocalClientId);
+            m_DebugCheatsMediator.GoToPostGameServerRpc(NetworkManager.Singleton.LocalClientId);
         }
 
         void Update()

@@ -6,7 +6,7 @@ using UnityEngine;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 namespace Unity.Multiplayer.Samples.BossRoom
 {
-    public class DebugCheatsState : NetworkBehaviour
+    public class DebugCheatsMediator : NetworkBehaviour
     {
 
         public Action<ulong> SpawnEnemy;
