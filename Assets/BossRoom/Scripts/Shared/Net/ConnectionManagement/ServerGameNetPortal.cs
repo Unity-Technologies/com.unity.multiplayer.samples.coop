@@ -153,7 +153,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
-            ConnectStatus gameReturnStatus = ConnectStatus.Success;
+            ConnectStatus gameReturnStatus;
 
             // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
             // on invalid users trying to connect

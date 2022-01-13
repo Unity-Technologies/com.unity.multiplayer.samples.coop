@@ -186,7 +186,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return GetPlayerData(clientGUID);
             }
 
-            Debug.Log("No client guid found mapped to the given client ID");
+            Debug.LogError("No client guid found mapped to the given client ID");
             return null;
         }
 
@@ -202,7 +202,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return data;
             }
 
-            Debug.Log("No PlayerData of matching guid found");
+            Debug.LogError("No PlayerData of matching guid found");
             return null;
         }
 
@@ -216,6 +216,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (m_ClientIDToGuid.TryGetValue(clientId, out string clientGUID))
             {
                 m_ClientData[clientGUID] = sessionPlayerData;
+            }
+            else
+            {
+                Debug.LogError("No client guid found mapped to the given client ID");
             }
         }
 
