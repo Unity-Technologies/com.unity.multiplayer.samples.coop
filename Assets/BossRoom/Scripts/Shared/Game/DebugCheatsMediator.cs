@@ -17,18 +17,27 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public void SpawnEnemyServerRpc(ulong clientId)
         {
             SpawnEnemy?.Invoke(clientId);
+            LogCheatUsedClientRPC(clientId, "SpawnEnemy");
         }
 
         [ServerRpc(RequireOwnership = false)]
         public void SpawnBossServerRpc(ulong clientId)
         {
             SpawnBoss?.Invoke(clientId);
+            LogCheatUsedClientRPC(clientId, "SpawnBoss");
         }
 
         [ServerRpc(RequireOwnership = false)]
         public void GoToPostGameServerRpc(ulong clientId)
         {
             GoToPostGame?.Invoke(clientId);
+            LogCheatUsedClientRPC(clientId, "GoToPostGame");
+        }
+
+        [ClientRpc]
+        public void LogCheatUsedClientRPC(ulong clientId, string cheatUsed)
+        {
+            Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
         }
     }
 }
