@@ -14,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         GameObject m_DebugCheatsPanel;
 
         [SerializeField]
-        KeyCode m_OpenWindowKeyCode = KeyCode.Return;
+        KeyCode m_OpenWindowKeyCode;
 
         const int k_NbTouchesToOpenWindow = 4;
 

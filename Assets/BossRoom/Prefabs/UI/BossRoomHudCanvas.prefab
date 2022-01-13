@@ -1507,7 +1507,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_DebugCheatsState: {fileID: 0}
   m_DebugCheatsPanel: {fileID: 7649295862146065024}
-  m_OpenWindowKeyCode: 13
+  m_OpenWindowKeyCode: 47
 --- !u!1 &5277713032042430138
 GameObject:
   m_ObjectHideFlags: 0
@@ -2155,7 +2155,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &3433386668875250805
 RectTransform:
   m_ObjectHideFlags: 0
