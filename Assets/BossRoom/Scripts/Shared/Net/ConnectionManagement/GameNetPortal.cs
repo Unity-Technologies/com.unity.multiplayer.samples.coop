@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Netcode.Transports.PhotonRealtime;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
@@ -26,6 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
         Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
         UnityRelay = 2, // The server is hosted over a Unity Relay server and clients join by entering a join code.
+        Unset = -1, // The hosting mode is not set yet.
     }
 
     [Serializable]
@@ -177,7 +179,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             StartHost();
         }
 
-        public void StartPhotonRelayHost(string roomName)
+        public void StartPhotonRelayHost(string roomName, CancellationToken cancellationToken)
         {
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -191,10 +193,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            StartHost();
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                StartHost();
+            }
         }
 
-        public async void StartUnityRelayHost()
+        public async void StartUnityRelayHost(CancellationToken cancellationToken)
         {
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -234,12 +239,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            StartHost();
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                StartHost();
+            }
         }
 
         void StartHost()
         {
-            SessionManager<SessionPlayerData>.Instance.AddHostData(new SessionPlayerData(NetManager.LocalClientId, PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
             NetManager.StartHost();
         }
 

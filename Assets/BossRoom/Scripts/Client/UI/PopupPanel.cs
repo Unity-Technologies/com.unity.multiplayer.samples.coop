@@ -47,6 +47,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private NameDisplay m_NameDisplay;
 
+        OnlineMode OnlineMode
+        {
+            get => m_OnlineMode;
+            set
+            {
+                if (value != m_OnlineMode)
+                {
+                    m_OnlineMode = value;
+                    OnOnlineModeChanged(m_OnlineMode);
+                }
+            }
+        }
+
         OnlineMode m_OnlineMode;
 
         [SerializeField]
@@ -67,15 +80,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         string m_DefaultIpInput;
         int m_DefaultPort;
 
+        Task<bool> m_UnityRelayHealthCheck;
+
         /// <summary>
         /// Confirm function invoked when confirm is hit on popup. The meaning of the arguments may vary by popup panel, but
         /// in the initial case of the login popup, they represent the IP Address, port, the Player Name, and the connection mode
         /// </summary>
         private System.Action<string, int, string, OnlineMode> m_ConfirmFunction;
 
+        /// <summary>
+        /// Cancel function invoked when cancel is hit on popup.
+        /// </summary>
+        private System.Action m_CancelFunction;
+
         private const string k_DefaultConfirmText = "OK";
 
-        static readonly char[] k_InputFieldIncludeChars = new[] { '.', '_' };
+        static readonly char[] k_InputFieldIncludeChars = new[] {'.', '_'};
 
         /// <summary>
         /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
@@ -145,8 +165,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.IpHost;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            OnlineMode = OnlineMode.IpHost;
         }
 
         void RelayRadioRadioButtonPressed(bool value)
@@ -156,8 +175,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.Relay;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            OnlineMode = OnlineMode.Relay;
         }
 
         void UnityRelayRadioRadioButtonPressed(bool value)
@@ -167,8 +185,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            m_OnlineMode = OnlineMode.UnityRelay;
-            OnOnlineModeDropdownChanged(m_OnlineMode);
+            OnlineMode = OnlineMode.UnityRelay;
         }
 
         private void OnConfirmClick()
@@ -177,7 +194,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             int.TryParse(m_PortInputField.text, out portNum);
             if (portNum <= 0)
                 portNum = m_DefaultPort;
-            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), m_OnlineMode);
+            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), OnlineMode);
         }
 
         /// <summary>
@@ -225,16 +242,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private void OnCancelClick()
         {
+            m_CancelFunction?.Invoke();
             ResetState();
         }
 
         /// <summary>
         /// Called when the user selects a different online mode from the dropdown.
         /// </summary>
-        private async void OnOnlineModeDropdownChanged(OnlineMode value)
+        private void OnOnlineModeChanged(OnlineMode value)
         {
+            if (value == OnlineMode.Unset)
+            {
+                return;
+            }
+
             // activate this so that it is always activated unless entering as relay host
             m_InputField.gameObject.SetActive(true);
+
+            // set those activation states so that they are always activated and deactivated respectively, unless during Unity Relay health check call
+            m_ConfirmationButton.gameObject.SetActive(true);
+            m_ReconnectingImage.SetActive(false);
 
             if (value == OnlineMode.IpHost)
             {
@@ -283,70 +310,110 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else if (value == OnlineMode.UnityRelay)
             {
-                Exception caughtException = null;
-                Task<List<UnityRegion>> task = null;
-                try
+                // set popup state to waiting for health check
+                m_ReconnectingImage.SetActive(true);
+                m_InputField.gameObject.SetActive(false);
+                m_PortInputField.gameObject.SetActive(false);
+                m_ConfirmationButton.gameObject.SetActive(false);
+                m_MainText.text = "Waiting for Unity Relay Health Check...";
+
+                // If no health check is currently running
+                if (m_UnityRelayHealthCheck == null || m_UnityRelayHealthCheck.IsCompleted)
                 {
-                    await UnityServices.InitializeAsync();
-                    if (!AuthenticationService.Instance.IsSignedIn)
+                    if (m_UnityRelayHealthCheck is {Result: true})
                     {
-                        await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                        var playerId = AuthenticationService.Instance.PlayerId;
-                        Debug.Log(playerId);
+                        // If it has already been completed successfully, setup display for entering game
+                        SetupEnterGameDisplayForUnityRelay();
                     }
-
-                    // calling ListRegion to get a single light health check call. This isn't the best method for this, but is fine to use for now until we
-                    // get full QoS endpoints available. MTT-1483
-                    task = Relay.Instance.ListRegionsAsync();
-
-                    await task;
+                    else
+                    {
+                        // If not, start a new task
+                        m_UnityRelayHealthCheck = UnityRelayHealthCheckCall();
+                    }
                 }
-                catch (RequestFailedException e)
+            }
+        }
+
+        void SetupEnterGameDisplayForUnityRelay()
+        {
+            m_MainText.text = m_UnityRelayMainText;
+            if (m_EnterAsHost)
+            {
+                m_InputField.text = GenerateRandomRoomKey();
+            }
+            else
+            {
+                m_InputField.text = "";
+                m_InputFieldPlaceholderText.text = "Join Code";
+                m_InputField.gameObject.SetActive(true);
+            }
+
+            m_ReconnectingImage.SetActive(false);
+            m_ConfirmationButton.gameObject.SetActive(true);
+
+            m_PortInputField.gameObject.SetActive(false);
+            m_PortInputField.text = "";
+        }
+
+        async Task<bool> UnityRelayHealthCheckCall()
+        {
+            Exception caughtException = null;
+            Task<List<UnityRegion>> healthCheckTask = null;
+            try
+            {
+                await UnityServices.InitializeAsync();
+                if (!AuthenticationService.Instance.IsSignedIn)
                 {
-                    caughtException = e;
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                    var playerId = AuthenticationService.Instance.PlayerId;
+                    Debug.Log(playerId);
                 }
 
-                if (task == null || task.IsFaulted || caughtException != null)
-                {
+                // calling ListRegion to get a single light health check call. This isn't the best method for this, but is fine to use for now until we
+                // get full QoS endpoints available. MTT-1483
+                healthCheckTask = Relay.Instance.ListRegionsAsync();
 
+                await healthCheckTask;
+            }
+            catch (RequestFailedException e)
+            {
+                caughtException = e;
+            }
+
+            bool failed = healthCheckTask == null || healthCheckTask.IsFaulted || caughtException != null;
+
+            // Don't need to show the results if the panel was exited or if the online mode was changed before the task completed
+            if (OnlineMode == OnlineMode.UnityRelay)
+            {
+                if (failed)
+                {
                     if (caughtException != null) Debug.LogException(caughtException);
-                    if (task != null) Debug.LogException(task.Exception);
+                    if (healthCheckTask != null) Debug.LogException(healthCheckTask.Exception);
 
                     if (Application.isEditor)
                     {
                         // Error trying to get the list of available regions, something is not setup correctly
                         SetupNotifierDisplay(
                             "Unity Relay error!", "Something went wrong trying to reach Unity Relay. Please follow the instructions here https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html#how-do-I-enable-Relay-for-my-project" +
-
-                                                          "to setup Unity Relay and use relay mode.", false, true);
+                            "to setup Unity Relay and use relay mode.", false, true);
                     }
                     else
                     {
                         // If there is no photon app id set tell the user they need to install
                         SetupNotifierDisplay(
                             "Unity Relay error!", "Something went wrong trying to reach Unity Relay. It needs to be setup in the Unity Editor for this project " +
-                                                       "by following the Unity Relay guide, then rebuild the project and distribute it.", false, true);
+                            "by following the Unity Relay guide, then rebuild the project and distribute it.", false, true);
                     }
-
-                    return;
-                }
-
-                m_MainText.text = m_UnityRelayMainText;
-                if (m_EnterAsHost)
-                {
-                    m_InputField.text = GenerateRandomRoomKey();
-                    m_InputField.gameObject.SetActive(false);
                 }
                 else
                 {
-                    m_InputField.text = "";
-                    m_InputFieldPlaceholderText.text = "Join Code";
+                    // If the task completed successfully, setup display for entering game
+                    SetupEnterGameDisplayForUnityRelay();
                 }
-
-                m_PortInputField.gameObject.SetActive(false);
-                m_PortInputField.text = "";
             }
+            return !failed;
         }
+
         /// <summary>
         /// Generates a random room key to use as a default value.
         /// </summary>
@@ -389,6 +456,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CancelButton.onClick.RemoveListener(OnCancelClick);
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
             m_ConfirmFunction = null;
+            m_CancelFunction = null;
+            OnlineMode = OnlineMode.Unset;
+            m_UnityRelayHealthCheck = null;
         }
 
         /// <summary>
@@ -413,6 +483,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_InputField.gameObject.SetActive(false);
             m_PortInputField.gameObject.SetActive(false);
             gameObject.SetActive(true);
+        }
+
+        /// <summary>
+        /// Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
+        /// </summary>
+        /// <param name="titleText">The title text at the top of the panel</param>
+        /// <param name="mainText"> The text just under the title- the main body of text</param>
+        /// <param name="displayImage">set to true if the notifier should display the animating icon for being busy</param>
+        /// <param name="displayConfirmation"> set to true if the panel expects the user to click the button to close the panel.</param>
+        /// <param name="cancelCallback"> The delegate to invoke when the player cancels. </param>
+        /// <param name="subText">optional text in the middle of the panel.  Is not meant to coincide with the displayImage</param>
+        public void SetupNotifierDisplay(string titleText, string mainText, bool displayImage, bool displayConfirmation, System.Action cancelCallback, string subText = "")
+        {
+            SetupNotifierDisplay(titleText, mainText, displayImage, displayConfirmation, subText);
+
+            m_CancelFunction = cancelCallback;
+            m_CancelButton.gameObject.SetActive(true);
+            m_CancelButton.onClick.AddListener(OnCancelClick);
         }
     }
 }
