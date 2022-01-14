@@ -1,0 +1,18 @@
+{
+    "name": "Unity.Multiplayer.Samples.BossRoom.Debug.Cheats",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Netcode.Runtime",
+        "Unity.Multiplayer.Samples.BossRoom.Server",
+        "Unity.Multiplayer.Samples.BossRoom.Shared"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

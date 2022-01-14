@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Debug
 {
     /// <summary>
     /// Handles debug cheat events, applies them on the server and logs them on all clients. This class is only
@@ -60,7 +60,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [ClientRpc]
         void LogCheatUsedClientRPC(ulong clientId, string cheatUsed)
         {
-            Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
+            UnityEngine.Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
         }
     }
 }
