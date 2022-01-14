@@ -6,7 +6,8 @@ using UnityEngine;
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
-    ///
+    /// Provides a way to open/close a popup window and GameEvents to raise debug cheat commands to be caught by
+    /// listeners. This class is only available in the editor or for development builds
     /// </summary>
     public class UIDebugCheats : MonoBehaviour
     {

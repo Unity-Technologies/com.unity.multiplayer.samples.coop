@@ -6,9 +6,8 @@ using UnityEngine.SceneManagement;
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
-    /// Provides various special commands that the Host can use while developing and
-    /// debugging the game. To disable them, just disable or remove this component from the
-    /// BossRoomState prefab.
+    /// Handles debug cheat events, applies them on the server and logs them on all clients. This class is only
+    /// available in the editor or for development builds
     /// </summary>
     public class DebugCheatsManager : NetworkBehaviour
     {
