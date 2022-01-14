@@ -1505,7 +1505,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2dccd56273595344890c4570bcbeb78a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_DebugCheatsState: {fileID: 0}
+  m_DebugCheatsMediator: {fileID: 0}
   m_DebugCheatsPanel: {fileID: 7649295862146065024}
   m_OpenWindowKeyCode: 47
 --- !u!1 &5277713032042430138
@@ -1988,7 +1988,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3133,6 +3133,10 @@ PrefabInstance:
       propertyPath: m_text
       value: Spawn Boss
       objectReference: {fileID: 0}
+    - target: {fileID: 7721113380232533813, guid: addf3685293c35d48a673397c748f116, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7721113380319664578, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_Name
       value: SpawnBossBtn
@@ -3380,6 +3384,10 @@ PrefabInstance:
     - target: {fileID: 7721113380232533813, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_fontSize
       value: 44
+      objectReference: {fileID: 0}
+    - target: {fileID: 7721113380232533813, guid: addf3685293c35d48a673397c748f116, type: 3}
+      propertyPath: m_RaycastTarget
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7721113380319664578, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_Name
