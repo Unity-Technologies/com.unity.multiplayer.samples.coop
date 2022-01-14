@@ -23,10 +23,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 enabled = false;
             }
         }
-
-        public void SetCharacterVisualization(ClientCharacterVisualization clientCharacterVisualization)
-        {
-            m_ClientCharacterVisualization = clientCharacterVisualization;
-        }
     }
 }
