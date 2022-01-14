@@ -1,7 +1,7 @@
 using System;
 using BossRoom.Scripts.Shared.Infrastructure;
 
-namespace LobbyRelaySample
+namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// Current state of the local game.

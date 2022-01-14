@@ -1,8 +1,7 @@
-
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 
-namespace LobbyRelaySample
+namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// Used when displaying the lobby list, to indicate when we are awaiting an updated lobby query.

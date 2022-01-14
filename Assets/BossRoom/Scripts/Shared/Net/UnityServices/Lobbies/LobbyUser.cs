@@ -1,10 +1,8 @@
 using System;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
-using LobbyRelaySample;
-using UnityEditor.Experimental.RestService;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
+namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// Current state of the user in the lobby.
@@ -34,9 +32,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
             m_UserApprovedMessagePublisher = userApprovedMessagePublisher;
         }
 
-        public LobbyUser(bool isHost = false, string displayName = null, string id = null, UserStatus userStatus = UserStatus.Menu, bool isApproved = false)
+        public LobbyUser()
         {
-            m_data = new UserData(isHost, displayName, id, userStatus, isApproved);
+            m_data = new UserData(isHost: false, displayName: null, id: null, userStatus: UserStatus.Menu, isApproved: false);
         }
 
         #region Local UserData

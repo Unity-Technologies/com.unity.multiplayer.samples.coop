@@ -1,4 +1,4 @@
-namespace LobbyRelaySample
+namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// Just for displaying the anonymous Relay IP.

@@ -4,7 +4,6 @@ using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Game;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Relays;
-using LobbyRelaySample;
 using LobbyRemote = Unity.Services.Lobbies.Models.Lobby;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies

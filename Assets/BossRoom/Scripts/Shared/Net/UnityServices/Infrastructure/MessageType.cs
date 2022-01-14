@@ -1,6 +1,6 @@
 using System;
+using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using BossRoom.Scripts.Shared.Net.UnityServices.Relays;
-using LobbyRelaySample;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
 {

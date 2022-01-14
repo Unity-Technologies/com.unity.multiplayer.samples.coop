@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Net.UnityServices.Game;
-using LobbyRelaySample;
 using Unity.Services.Lobbies.Models;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
