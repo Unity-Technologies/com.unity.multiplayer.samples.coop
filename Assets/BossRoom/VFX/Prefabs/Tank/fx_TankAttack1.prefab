@@ -56,7 +56,7 @@ ParticleSystem:
   startDelay:
     serializedVersion: 2
     minMaxState: 0
-    scalar: 0.13
+    scalar: 0.065
     minScalar: 0
     maxCurve:
       serializedVersion: 2
@@ -4878,4 +4878,3 @@ MonoBehaviour:
   m_ParticleSystemsToTurnOffOnShutdown: []
   m_AutoShutdownTime: 1
   m_PostShutdownSelfDestructTime: -1
-  m_SoundsToTurnOffOnShutdown: []
