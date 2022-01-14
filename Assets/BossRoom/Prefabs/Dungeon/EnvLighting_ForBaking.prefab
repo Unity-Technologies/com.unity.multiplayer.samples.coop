@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3629768828911571612}
   m_Layer: 0
   m_Name: Door Light_2
-  m_TagString: Untagged
+  m_TagString: LightingBaked
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -38,7 +38,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 686297351285862834}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
@@ -106,7 +106,7 @@ GameObject:
   - component: {fileID: 575491698529174053}
   m_Layer: 0
   m_Name: Boss Stage Light
-  m_TagString: Untagged
+  m_TagString: LightingBaked
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -132,7 +132,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2039840874262302536}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
@@ -213,7 +213,7 @@ GameObject:
   - component: {fileID: 2786683237775341406}
   m_Layer: 0
   m_Name: Door Light
-  m_TagString: Untagged
+  m_TagString: LightingBaked
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -239,7 +239,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5657543571161387178}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
@@ -355,7 +355,7 @@ GameObject:
   - component: {fileID: 71845034481266946}
   m_Layer: 0
   m_Name: Treasure Spot Light
-  m_TagString: Untagged
+  m_TagString: LightingBaked
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -381,7 +381,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6631150895037038206}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
@@ -448,7 +448,7 @@ GameObject:
   - component: {fileID: 2305371697806295603}
   m_Layer: 0
   m_Name: Boss Door Light
-  m_TagString: Untagged
+  m_TagString: LightingBaked
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -474,7 +474,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8030665820898736734}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0
@@ -542,7 +542,7 @@ GameObject:
   - component: {fileID: 4799484358976048585}
   m_Layer: 0
   m_Name: Boss Stage Light
-  m_TagString: Untagged
+  m_TagString: LightingBaked
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 4294967295
@@ -568,7 +568,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8373754277990851514}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 0
   m_Shape: 0

@@ -110,11 +110,11 @@ GameObject:
   - component: {fileID: 7604957176162376385}
   m_Layer: 0
   m_Name: Point Light_ForBaking
-  m_TagString: Untagged
+  m_TagString: LightingBaked
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2669503988279524391
 Transform:
   m_ObjectHideFlags: 0
@@ -136,7 +136,7 @@ Light:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5772851459325150932}
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 10
   m_Type: 2
   m_Shape: 0
@@ -204,7 +204,7 @@ GameObject:
   - component: {fileID: 2386560678635874104}
   m_Layer: 0
   m_Name: Point Light_Realtime
-  m_TagString: Untagged
+  m_TagString: LightingRealtime
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 1
