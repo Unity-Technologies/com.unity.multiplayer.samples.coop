@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// debugging the game. To disable them, just disable or remove this component from the
     /// BossRoomState prefab.
     /// </summary>
-    public class ServerDebugCheatsManager : NetworkBehaviour
+    public class DebugCheatsManager : NetworkBehaviour
     {
         [SerializeField]
         [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
@@ -20,44 +20,48 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [Tooltip("Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         NetworkObject m_BossPrefab;
 
-        [SerializeField]
-        DebugCheatsMediator m_DebugCheatsMediator;
-
-        public override void OnNetworkSpawn()
+        public void SpawnEnemy()
         {
-            if (IsServer)
-            {
-                m_DebugCheatsMediator.SpawnEnemy += SpawnEnemy;
-                m_DebugCheatsMediator.SpawnBoss += SpawnBoss;
-                m_DebugCheatsMediator.GoToPostGame += GoToPostGame;
-            }
+            SpawnEnemyServerRpc();
         }
 
-        public override void OnNetworkDespawn()
+        public void SpawnBoss()
         {
-            if (IsServer)
-            {
-                m_DebugCheatsMediator.SpawnEnemy -= SpawnEnemy;
-                m_DebugCheatsMediator.SpawnBoss -= SpawnBoss;
-                m_DebugCheatsMediator.GoToPostGame -= GoToPostGame;
-            }
+            SpawnBossServerRpc();
         }
 
-        void SpawnEnemy(ulong clientId)
+        public void GoToPostGame()
+        {
+            GoToPostGameServerRpc();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void SpawnEnemyServerRpc(ServerRpcParams serverRpcParams = default)
         {
             var newEnemy = Instantiate(m_EnemyPrefab);
             newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "SpawnEnemy");
         }
 
-        void SpawnBoss(ulong clientId)
+        [ServerRpc(RequireOwnership = false)]
+        void SpawnBossServerRpc(ServerRpcParams serverRpcParams = default)
         {
             var newEnemy = Instantiate(m_BossPrefab);
             newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "SpawnBoss");
         }
 
-        void GoToPostGame(ulong clientId)
+        [ServerRpc(RequireOwnership = false)]
+        void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
         {
             NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
+        }
+
+        [ClientRpc]
+        void LogCheatUsedClientRPC(ulong clientId, string cheatUsed)
+        {
+            Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
         }
     }
 }

@@ -5,32 +5,41 @@ using UnityEngine;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
+    /// <summary>
+    ///
+    /// </summary>
     public class UIDebugCheats : MonoBehaviour
     {
-        [SerializeField]
-        DebugCheatsMediator m_DebugCheatsMediator;
-
         [SerializeField]
         GameObject m_DebugCheatsPanel;
 
         [SerializeField]
         KeyCode m_OpenWindowKeyCode;
 
+        [SerializeField]
+        GameEvent m_SpawnEnemyGameEvent;
+
+        [SerializeField]
+        GameEvent m_SpawnBossGameEvent;
+
+        [SerializeField]
+        GameEvent m_GoToPostGameGameEvent;
+
         const int k_NbTouchesToOpenWindow = 4;
 
         public void SpawnEnemy()
         {
-            m_DebugCheatsMediator.SpawnEnemyServerRpc(NetworkManager.Singleton.LocalClientId);
+            m_SpawnEnemyGameEvent.Raise();
         }
 
         public void SpawnBoss()
         {
-            m_DebugCheatsMediator.SpawnBossServerRpc(NetworkManager.Singleton.LocalClientId);
+            m_SpawnBossGameEvent.Raise();
         }
 
         public void GoToPostGame()
         {
-            m_DebugCheatsMediator.GoToPostGameServerRpc(NetworkManager.Singleton.LocalClientId);
+            m_GoToPostGameGameEvent.Raise();
         }
 
         void Update()

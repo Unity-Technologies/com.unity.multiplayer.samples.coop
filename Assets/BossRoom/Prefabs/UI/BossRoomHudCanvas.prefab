@@ -1508,6 +1508,9 @@ MonoBehaviour:
   m_DebugCheatsMediator: {fileID: 0}
   m_DebugCheatsPanel: {fileID: 7649295862146065024}
   m_OpenWindowKeyCode: 47
+  m_SpawnEnemyGameEvent: {fileID: 11400000, guid: 157db487e1515e947b4c6e14d99a1fce, type: 2}
+  m_SpawnBossGameEvent: {fileID: 11400000, guid: 4fd8e6b1eeccecd40b18de52f9a6bfb7, type: 2}
+  m_GoToPostGameGameEvent: {fileID: 11400000, guid: e7897c39830fa7644bede6450514147b, type: 2}
 --- !u!1 &5277713032042430138
 GameObject:
   m_ObjectHideFlags: 0
