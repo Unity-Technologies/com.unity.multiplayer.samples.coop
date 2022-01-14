@@ -1,5 +1,4 @@
 using System;
-using Unity.Netcode;
 using UnityEngine;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
