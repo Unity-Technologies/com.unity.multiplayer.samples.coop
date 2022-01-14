@@ -19,6 +19,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         [Tooltip("Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         NetworkObject m_BossPrefab;
 
+        [SerializeField]
+        GameObject m_DebugCheatsPanel;
+
+        [SerializeField]
+        KeyCode m_OpenWindowKeyCode = KeyCode.Slash;
+
+        const int k_NbTouchesToOpenWindow = 4;
+
+        void Update()
+        {
+            if (Input.touchCount == k_NbTouchesToOpenWindow ||
+                m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
+            {
+                m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
+            }
+        }
+
         public void SpawnEnemy()
         {
             SpawnEnemyServerRpc();
