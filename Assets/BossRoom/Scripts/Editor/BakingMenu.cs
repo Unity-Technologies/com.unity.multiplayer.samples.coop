@@ -1,148 +1,123 @@
+using System;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
+using UnityEngine.XR;
 
-public class BakingMenu : MonoBehaviour
+namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
 {
-
-    [MenuItem("Boss Room/Lighting Setup/Environment Lights/Baked")]
-    static void EnvironmentLightsBaked()
+    /// <summary>
+    /// This is a script that creates a menu for baking lights (and changing other lighting features) for Boss Room.
+    /// </summary>
+    public class BakingMenu : MonoBehaviour
     {
-        GameObject[] bakedLights = GameObject.FindGameObjectsWithTag("LightingBaked");
-        GameObject[] realtimelights = GameObject.FindGameObjectsWithTag("LightingRealtime");
-        
-        foreach (var index in bakedLights)
+        static void HandleEnvLights(bool realtimeLightsEnabled, bool bakedLightsEnabled, string lightingStatus)
         {
-            index.GetComponent<Light>().enabled = true;
-        }
+            GameObject[] bakedLights = GameObject.FindGameObjectsWithTag("LightingBaked");
+            GameObject[] realtimeLights = GameObject.FindGameObjectsWithTag("LightingRealtime");
 
-        foreach (var index in realtimelights)
-        {
-            index.GetComponent<Light>().enabled = false;
-        }
-        
-        Debug.Log(realtimelights.Length + " Environment lights set to Baked");
-    }
-    
-    [MenuItem("Boss Room/Lighting Setup/Environment Lights/Realtime")]
-    static void EnvironmentLightsRealtime()
-    {
-        GameObject[] bakedLights = GameObject.FindGameObjectsWithTag("LightingBaked");
-        GameObject[] realtimelights = GameObject.FindGameObjectsWithTag("LightingRealtime");
-        
-        foreach (var index in bakedLights)
-        {
-            index.GetComponent<Light>().enabled = false;
-        }
 
-        foreach (var index in realtimelights)
-        {
-            index.GetComponent<Light>().enabled = true;
-        }
-        
-        Debug.Log(bakedLights.Length + " Environment lights set to Realtime");
-    }
-
-    [MenuItem("Boss Room/Lighting Setup/Light Probes/Enabled")]
-    static void LightProbesEnabled()
-    {
-        GameObject[] lightProbes = GameObject.FindGameObjectsWithTag("LightingProbes");
-
-        if (lightProbes == null || lightProbes.Length == 0)
-        {
-            Debug.Log("No light probes found in scene");
-        }
-
-        else
-        {
-            foreach (var index in lightProbes)
+            foreach (var index in bakedLights)
             {
-                index.GetComponent<LightProbeGroup>().enabled = true;
-                Debug.Log("Light probes enabled");
+                index.GetComponent<Light>().enabled = bakedLightsEnabled;
+            }
+
+            foreach (var index in realtimeLights)
+            {
+                index.GetComponent<Light>().enabled = realtimeLightsEnabled;
+            }
+
+            Debug.Log(realtimeLights.Length + " Environment lights set to " + lightingStatus);
+        }
+
+        static void HandleLightProbes(bool lightProbesEnabled, string lightProbesStatus)
+        {
+            GameObject[] lightProbes = GameObject.FindGameObjectsWithTag("LightingProbes");
+
+            if (lightProbes == null || lightProbes.Length == 0)
+            {
+                Debug.Log("No light probes found in scene");
+            }
+
+            else
+            {
+                foreach (var index in lightProbes)
+                {
+                    index.GetComponent<LightProbeGroup>().enabled = lightProbesEnabled;
+                    Debug.Log("Light probes " + lightProbesStatus);
+                }
             }
         }
-    }
-    
-    [MenuItem("Boss Room/Lighting Setup/Light Probes/Disabled")]
-    static void LightProbesDisabled()
-    {
-        GameObject[] lightProbes = GameObject.FindGameObjectsWithTag("LightingProbes");
 
-        if (lightProbes == null || lightProbes.Length == 0)
+        static void HandleReflectionProbes(ReflectionProbeMode reflectionProbeMode, string refProbesStatus)
         {
-            Debug.Log("No light probes found in scene");
-        }
+            GameObject[] reflectionProbes = GameObject.FindGameObjectsWithTag("LightingReflectionProbe");
 
-        else
-        {
-            foreach (var index in lightProbes)
+            if (reflectionProbes == null || reflectionProbes.Length == 0)
             {
-                index.GetComponent<LightProbeGroup>().enabled = false;
-                Debug.Log("Light probes disabled");
+                Debug.Log("No reflection probes found in scene");
+            }
+
+            else
+            {
+                foreach (var index in reflectionProbes)
+                {
+                    index.GetComponent<ReflectionProbe>().mode = reflectionProbeMode;
+                    Debug.Log("Reflection probes set to " + refProbesStatus);
+                }
             }
         }
-    }
-    
-    [MenuItem("Boss Room/Lighting Setup/Reflection Probes/Baked")]
-    static void ReflectionProbesBaked()
-    {
-        GameObject[] reflectionProbes = GameObject.FindGameObjectsWithTag("LightingReflectionProbe");
 
-        if (reflectionProbes == null || reflectionProbes.Length == 0)
+        [MenuItem("Boss Room/Lighting Setup/Environment Lights/Baked")]
+        static void SetEnvLightsBaked()
         {
-            Debug.Log("No reflection probes found in scene");
+            HandleEnvLights(false, true, "Baked");
         }
 
-        else
+        [MenuItem("Boss Room/Lighting Setup/Environment Lights/Realtime (except area lights)")]
+        static void SetEnvLightsRealtime()
         {
-            foreach (var index in reflectionProbes)
-            {
-                index.GetComponent<ReflectionProbe>().mode = ReflectionProbeMode.Baked;
-                Debug.Log("Reflection probes set to Baked");
-            }  
-        }
-    }
-    
-    [MenuItem("Boss Room/Lighting Setup/Reflection Probes/Realtime")]
-    static void ReflectionProbesRealtime()
-    {
-        GameObject[] reflectionProbes = GameObject.FindGameObjectsWithTag("LightingReflectionProbe");
-        
-        if (reflectionProbes == null || reflectionProbes.Length == 0)
-        {
-            Debug.Log("No reflection probes found in scene");
+            HandleEnvLights(true, false, "Realtime");
         }
 
-        else
+        [MenuItem("Boss Room/Lighting Setup/Light Probes/Enabled")]
+        static void SetLightProbesEnabled()
         {
-            foreach (var index in reflectionProbes)
-            {
-                index.GetComponent<ReflectionProbe>().mode = ReflectionProbeMode.Realtime;
-                Debug.Log("Reflection probes set to Realtime");
-            }  
+            HandleLightProbes(true, "enabled");
         }
-    }
-    
-    [MenuItem("Boss Room/Lighting Setup/All Baked")]
-    static void AllBaked()
-    {
-        EnvironmentLightsBaked();
-        ReflectionProbesBaked();
-        Debug.Log("All lights and reflection probes in scene set to Baked");
-    }
-    
-    [MenuItem("Boss Room/Lighting Setup/All Realtime (except area lights)")]
-    static void AllRealtime()
-    {
-        EnvironmentLightsRealtime();
-        ReflectionProbesRealtime();
-        Debug.Log("All lights and reflection probes in scene set to Realtime");
-    }
-    
-    [MenuItem("Boss Room/Lighting Setup/Clear ALL Baked Data")]
-    static void ClearBakedData()
-    {
-        Lightmapping.Clear();
-        Debug.Log("All baked data cleared");
+
+        [MenuItem("Boss Room/Lighting Setup/Light Probes/Disabled")]
+        static void SetLightProbesDisabled()
+        {
+            HandleLightProbes(false, "disabled");
+        }
+
+        [MenuItem("Boss Room/Lighting Setup/Reflection Probes/Baked")]
+        static void SetRefProbesBaked()
+        {
+            HandleReflectionProbes(ReflectionProbeMode.Baked, "baked");
+        }
+
+        [MenuItem("Boss Room/Lighting Setup/Reflection Probes/Realtime")]
+        static void SetRefProbesRealtime()
+        {
+            HandleReflectionProbes(ReflectionProbeMode.Realtime, "realtime");
+        }
+
+        [MenuItem("Boss Room/Lighting Setup/All Baked")]
+        static void AllBaked()
+        {
+            SetEnvLightsBaked();
+            SetRefProbesBaked();
+            Debug.Log("All lights and reflection probes in scene set to Baked");
+        }
+
+        [MenuItem("Boss Room/Lighting Setup/All Realtime (except area lights)")]
+        static void AllRealtime()
+        {
+            SetEnvLightsRealtime();
+            SetRefProbesRealtime();
+            Debug.Log("All lights and reflection probes in scene set to Realtime");
+        }
     }
 }

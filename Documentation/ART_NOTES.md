@@ -19,10 +19,12 @@ Boss Room is set up to support baked lighting. Please feel free to use the exist
   * Go to menu Boss Room > Lighting Setup > All Realtime (except area lights)
   * Go to lighting settings (Window > Rendering > Lighting). Use the FastBaking baking profile & hit Generate Lighting button to lava bake area lights lights<br /><br />
 
-* **To clear all baked data (including baked area lights)**
-  * Go to Boss Room > Lighting Setup > Clear ALL baked data <br /><br />
+* In your lighting settings, use the **FastBaking baking profile for a fast, but lower quality bake**. Use the **GoodBaking baking profile for a slow but higher quality bake** <br /><br />
 
-* In your lighting settings, use the **FastBaking baking profile for a fast, but lower quality bake**. Use the **GoodBaking baking profile for a slow but higher quality bake**
+* **To clear all baked data (including baked area lights)**
+  * Go go lighting settings (Window > Rendering > Lighting). Click on dropdown arrow on Generate Lighting button, then select Clear Baked Data from the menu
+
+    ![AutoGenerate](Images/ClearBakingData.png) <br /><br />
 
 ### **TL:DR+**
 * Other lighting options (such as relfection probes and light probes) can be set to baked / realtime or enabled / disabled in this menu
@@ -78,10 +80,6 @@ Lighting settings can be found at Window > Rendering > Lighting
 * In the lighting panel, there is a checkbox that allows Unity to auto-generate lighting whenever your lighting changes, a model is moved, a lighting setting is changed, etc.. This can be useful for quick lighting iteration
  
   ![AutoGenerate](Images/AutoGenerateLighting.png) <br /><br />
-
-* To clear baking data for your scene: click the arrow on the Generate Lighting button. From the drop down menu, click Clear Baked Data
-
-  ![AutoGenerate](Images/ClearBakingData.png) <br /><br />
 
 * Multiple scenes can be baked at once by loading them together (click and drag scenes into the heirarchy), and generating lighting. Overlapping geometry in your scenes scenes can cause baking artifacts though, so only bake them together if they're not overlapping <br /><br />
 
