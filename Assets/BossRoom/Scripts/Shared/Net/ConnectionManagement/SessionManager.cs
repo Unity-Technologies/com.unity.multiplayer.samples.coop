@@ -57,8 +57,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void AddHostData(T sessionPlayerData)
         {
-            m_ClientData.Add(k_HostGUID, sessionPlayerData);
-            m_ClientIDToGuid.Add(m_NetworkManager.LocalClientId, k_HostGUID);
+            if (sessionPlayerData.ClientID == m_NetworkManager.ServerClientId)
+            {
+                m_ClientData.Add(k_HostGUID, sessionPlayerData);
+                m_ClientIDToGuid.Add(sessionPlayerData.ClientID, k_HostGUID);
+            }
+            else
+            {
+                Debug.LogError($"Invalid ClientId for host. Got {sessionPlayerData.ClientID}, but should have gotten {m_NetworkManager.ServerClientId}.");
+            }
         }
 
         /// <summary>
@@ -179,7 +186,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return GetPlayerData(clientGUID);
             }
 
-            Debug.Log("No client guid found mapped to the given client ID");
+            Debug.LogError($"No client guid found mapped to the given client ID: {clientId}");
             return null;
         }
 
@@ -195,7 +202,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return data;
             }
 
-            Debug.Log("No PlayerData of matching guid found");
+            Debug.LogError($"No PlayerData of matching guid found: {clientGUID}");
             return null;
         }
 
@@ -209,6 +216,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (m_ClientIDToGuid.TryGetValue(clientId, out string clientGUID))
             {
                 m_ClientData[clientGUID] = sessionPlayerData;
+            }
+            else
+            {
+                Debug.LogError($"No client guid found mapped to the given client ID: {clientId}");
             }
         }
 

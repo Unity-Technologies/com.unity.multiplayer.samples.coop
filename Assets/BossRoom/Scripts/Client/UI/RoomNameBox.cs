@@ -68,9 +68,9 @@ public class RoomNameBox : MonoBehaviour
                 ConnectionFinished(roomName);
             }
             else if (transport != null && transport is UnityTransport utp &&
-                     !string.IsNullOrEmpty(RelayJoinCode.Code))
+                     !string.IsNullOrEmpty(UnityRelayUtilities.JoinCode))
             {
-                ConnectionFinished(RelayJoinCode.Code);
+                ConnectionFinished(UnityRelayUtilities.JoinCode);
             }
         }
     }

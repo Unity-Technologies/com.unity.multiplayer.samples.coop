@@ -88,6 +88,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private System.Action<string, int, string, OnlineMode> m_ConfirmFunction;
 
+        /// <summary>
+        /// Cancel function invoked when cancel is hit on popup.
+        /// </summary>
+        private System.Action m_CancelFunction;
+
         private const string k_DefaultConfirmText = "OK";
 
         static readonly char[] k_InputFieldIncludeChars = new[] {'.', '_'};
@@ -237,6 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private void OnCancelClick()
         {
+            m_CancelFunction?.Invoke();
             ResetState();
         }
 
@@ -245,6 +251,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private void OnOnlineModeChanged(OnlineMode value)
         {
+            if (value == OnlineMode.Unset)
+            {
+                return;
+            }
+
             // activate this so that it is always activated unless entering as relay host
             m_InputField.gameObject.SetActive(true);
 
@@ -445,6 +456,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CancelButton.onClick.RemoveListener(OnCancelClick);
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
             m_ConfirmFunction = null;
+            m_CancelFunction = null;
             OnlineMode = OnlineMode.Unset;
             m_UnityRelayHealthCheck = null;
         }
@@ -471,6 +483,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_InputField.gameObject.SetActive(false);
             m_PortInputField.gameObject.SetActive(false);
             gameObject.SetActive(true);
+        }
+
+        /// <summary>
+        /// Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
+        /// </summary>
+        /// <param name="titleText">The title text at the top of the panel</param>
+        /// <param name="mainText"> The text just under the title- the main body of text</param>
+        /// <param name="displayImage">set to true if the notifier should display the animating icon for being busy</param>
+        /// <param name="displayConfirmation"> set to true if the panel expects the user to click the button to close the panel.</param>
+        /// <param name="cancelCallback"> The delegate to invoke when the player cancels. </param>
+        /// <param name="subText">optional text in the middle of the panel.  Is not meant to coincide with the displayImage</param>
+        public void SetupNotifierDisplay(string titleText, string mainText, bool displayImage, bool displayConfirmation, System.Action cancelCallback, string subText = "")
+        {
+            SetupNotifierDisplay(titleText, mainText, displayImage, displayConfirmation, subText);
+
+            m_CancelFunction = cancelCallback;
+            m_CancelButton.gameObject.SetActive(true);
+            m_CancelButton.onClick.AddListener(OnCancelClick);
         }
     }
 }
