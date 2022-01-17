@@ -1399,7 +1399,6 @@ GameObject:
   - component: {fileID: 5277713031684110774}
   - component: {fileID: 5277713031684110769}
   - component: {fileID: 5277713031684110768}
-  - component: {fileID: 9076100988238400401}
   m_Layer: 5
   m_Name: BossRoomHudCanvas
   m_TagString: GameCanvas
@@ -1493,21 +1492,6 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
---- !u!114 &9076100988238400401
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5277713031684110771}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2dccd56273595344890c4570bcbeb78a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_DebugCheatsState: {fileID: 0}
-  m_DebugCheatsPanel: {fileID: 7649295862146065024}
-  m_OpenWindowKeyCode: 47
 --- !u!1 &5277713032042430138
 GameObject:
   m_ObjectHideFlags: 0
@@ -2579,18 +2563,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: GoToPostGameBtn
       objectReference: {fileID: 0}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 9076100988238400401}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: GoToPostGame
-      objectReference: {fileID: 0}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Unity.Multiplayer.Samples.BossRoom.Client.UIDebugCheats, Unity.Multiplayer.Samples.BossRoom.Client
-      objectReference: {fileID: 0}
     - target: {fileID: 7721113380319664589, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3138,18 +3110,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpawnBossBtn
       objectReference: {fileID: 0}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 9076100988238400401}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SpawnBoss
-      objectReference: {fileID: 0}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Unity.Multiplayer.Samples.BossRoom.Client.UIDebugCheats, Unity.Multiplayer.Samples.BossRoom.Client
-      objectReference: {fileID: 0}
     - target: {fileID: 7721113380319664589, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3390,18 +3350,6 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 9076100988238400401}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: ToggleGodMode
-      objectReference: {fileID: 0}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Unity.Multiplayer.Samples.BossRoom.Client.UIDebugCheats, Unity.Multiplayer.Samples.BossRoom.Client
-      objectReference: {fileID: 0}
     - target: {fileID: 7721113380319664589, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -3511,18 +3459,6 @@ PrefabInstance:
     - target: {fileID: 7721113380319664578, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_Name
       value: SpawnImpBtn
-      objectReference: {fileID: 0}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
-      value: 
-      objectReference: {fileID: 9076100988238400401}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: SpawnEnemy
-      objectReference: {fileID: 0}
-    - target: {fileID: 7721113380319664588, guid: addf3685293c35d48a673397c748f116, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: Unity.Multiplayer.Samples.BossRoom.Client.UIDebugCheats, Unity.Multiplayer.Samples.BossRoom.Client
       objectReference: {fileID: 0}
     - target: {fileID: 7721113380319664589, guid: addf3685293c35d48a673397c748f116, type: 3}
       propertyPath: m_Pivot.x
