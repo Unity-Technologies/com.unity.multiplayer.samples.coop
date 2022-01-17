@@ -1,9 +1,9 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-#if UNITY_EDITOR || DEVELOPMENT_BUILD
 namespace Unity.Multiplayer.Samples.BossRoom.Debug
 {
     /// <summary>
@@ -13,15 +13,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
     public class DebugCheatsManager : NetworkBehaviour
     {
         [SerializeField]
+        GameObject m_DebugCheatsPanel;
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        [SerializeField]
         [Tooltip("Enemy to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         NetworkObject m_EnemyPrefab;
 
         [SerializeField]
         [Tooltip("Boss to spawn. Make sure this is included in the NetworkManager's list of prefabs!")]
         NetworkObject m_BossPrefab;
-
-        [SerializeField]
-        GameObject m_DebugCheatsPanel;
 
         [SerializeField]
         KeyCode m_OpenWindowKeyCode = KeyCode.Slash;
@@ -99,6 +100,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         {
             UnityEngine.Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
         }
+
+#else
+        void Awake()
+        {
+            m_DebugCheatsPanel.SetActive(false);
+        }
+#endif
     }
 }
-#endif
