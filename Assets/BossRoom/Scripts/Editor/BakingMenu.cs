@@ -117,7 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
         {
             SetEnvLightsRealtime();
             SetRefProbesRealtime();
-            Debug.Log("All lights and reflection probes in scene set to Realtime");
+            Debug.Log("All lights (except for area lights) and reflection probes in scene set to Realtime");
         }
     }
 }
