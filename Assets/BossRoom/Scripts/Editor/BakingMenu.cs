@@ -132,7 +132,7 @@ public class BakingMenu : MonoBehaviour
     }
     
     [MenuItem("Boss Room/Lighting Setup/All Realtime (except area lights)")]
-    static void AllRealtime()
+    static void SetAllRealtime()
     {
         EnvironmentLightsRealtime();
         ReflectionProbesRealtime();
