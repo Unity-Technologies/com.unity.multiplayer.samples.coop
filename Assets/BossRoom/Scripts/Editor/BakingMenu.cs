@@ -38,7 +38,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
             {
                 Debug.Log("No light probes found in scene");
             }
-
             else
             {
                 foreach (var index in lightProbes)
