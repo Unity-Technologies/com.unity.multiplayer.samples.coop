@@ -108,6 +108,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             m_OwnedCharacterState.HealthState.HitPoints.OnValueChanged += SetHeroHealth;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            m_OwnedCharacterState.NetworkLifeState.IsGodMode.OnValueChanged += SetHeroGodModeStatus;
+#endif
+
             // plus we track their target
             m_OwnedCharacterState.TargetId.OnValueChanged += OnHeroSelectionChanged;
 
@@ -118,6 +122,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_PartyHealthSliders[0].value = newValue;
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        void SetHeroGodModeStatus(bool previousValue, bool newValue)
+        {
+            m_PartyHealthGodModeImages[0].gameObject.SetActive(newValue);
+        }
+#endif
 
         /// <summary>
         /// Gets Player Name from the NetworkObjectId of his controlled Character.
@@ -152,6 +163,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 SetAllyHealth(id, newValue);
             };
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            networkCharacterState.NetworkLifeState.IsGodMode.OnValueChanged += (value, newValue) =>
+            {
+                SetAllyGodModeStatus(id, newValue);
+            };
+#endif
+
             m_TrackedAllies.Add(networkCharacterState.NetworkObjectId, networkCharacterState);
         }
 
@@ -163,20 +181,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             m_PartyHealthGodModeImages[slot].gameObject.SetActive(netState.NetworkLifeState.IsGodMode.Value);
-            netState.NetworkLifeState.IsGodMode.OnValueChanged += (value, newValue) =>
-            {
-                m_PartyHealthGodModeImages[slot].gameObject.SetActive(newValue);
-            };
 #endif
 
             m_PartyClassSymbols[slot].sprite = netState.CharacterClass.ClassBannerLit;
         }
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        void SetAllyGodModeStatus(ulong id, bool newValue)
+        {
+            int slot = FindOrAddAlly(id);
+            // do nothing if not in a slot
+            if (slot == -1)
+            {
+                return;
+            }
+            m_PartyHealthGodModeImages[slot].gameObject.SetActive(newValue);
+        }
+#endif
+
         void SetAllyHealth(ulong id, int hp)
         {
             int slot = FindOrAddAlly(id);
             // do nothing if not in a slot
-            if (slot == -1) { return; }
+            if (slot == -1)
+            {
+                return;
+            }
 
             m_PartyHealthSliders[slot].value = hp;
         }
@@ -270,6 +300,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_OwnedCharacterState && m_OwnedCharacterState.HealthState)
             {
                 m_OwnedCharacterState.HealthState.HitPoints.OnValueChanged -= SetHeroHealth;
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                m_OwnedCharacterState.NetworkLifeState.IsGodMode.OnValueChanged -= SetHeroGodModeStatus
+#endif
             }
 
             m_OwnedCharacterState = null;
@@ -299,6 +332,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 {
                     SetAllyHealth(id, newValue);
                 };
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                networkCharacterState.NetworkLifeState.IsGodMode.OnValueChanged -= (value, newValue) =>
+                {
+                    SetAllyGodModeStatus(id, value);
+                };
+#endif
             }
         }
 
