@@ -301,7 +301,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 m_OwnedCharacterState.HealthState.HitPoints.OnValueChanged -= SetHeroHealth;
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                m_OwnedCharacterState.NetworkLifeState.IsGodMode.OnValueChanged -= SetHeroGodModeStatus
+                m_OwnedCharacterState.NetworkLifeState.IsGodMode.OnValueChanged -= SetHeroGodModeStatus;
 #endif
             }
 
