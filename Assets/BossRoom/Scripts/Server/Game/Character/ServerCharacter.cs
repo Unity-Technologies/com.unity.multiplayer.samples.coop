@@ -191,7 +191,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                 // Don't apply damage if god mode is on
-                if (NetState.NetworkLifeState.IsGodMode.Value) return;
+                if (NetState.NetworkLifeState.IsGodMode.Value)
+                {
+                    return;
+                }
 #endif
 
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);

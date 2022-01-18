@@ -92,7 +92,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                     playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
                 }
             }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
         }
 
         [ClientRpc]
