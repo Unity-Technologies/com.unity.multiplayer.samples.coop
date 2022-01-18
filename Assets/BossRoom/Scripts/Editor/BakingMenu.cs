@@ -56,7 +56,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
             {
                 Debug.Log("No reflection probes found in scene");
             }
-
             else
             {
                 foreach (var index in reflectionProbes)
