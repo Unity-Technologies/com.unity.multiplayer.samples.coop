@@ -13,7 +13,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
     {
         static void HandleEnvLights(bool realtimeLightsEnabled, bool bakedLightsEnabled, string lightingStatus)
         {
-            GameObject[] bakedLights = GameObject.FindGameObjectsWithTag("LightingBaked");
+            var bakedLights = GameObject.FindGameObjectsWithTag("LightingBaked");
             GameObject[] realtimeLights = GameObject.FindGameObjectsWithTag("LightingRealtime");
 
 
