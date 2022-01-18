@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,6 +27,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         [SerializeField]
         KeyCode m_OpenWindowKeyCode = KeyCode.Slash;
 
+        ServerSwitchedDoor m_ServerSwitchedDoor;
+
+        ServerSwitchedDoor ServerSwitchedDoor
+        {
+            get
+            {
+                if (m_ServerSwitchedDoor == null)
+                {
+                    m_ServerSwitchedDoor = FindObjectOfType<ServerSwitchedDoor>();
+                }
+                return m_ServerSwitchedDoor;
+            }
+        }
+
         const int k_NbTouchesToOpenWindow = 4;
 
         void Update()
@@ -52,6 +67,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             GoToPostGameServerRpc();
         }
 
+        public void ToggleDoor()
+        {
+            ToggleDoorServerRpc();
+        }
+
         [ServerRpc(RequireOwnership = false)]
         void SpawnEnemyServerRpc(ServerRpcParams serverRpcParams = default)
         {
@@ -73,6 +93,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         {
             NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void ToggleDoorServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            if (ServerSwitchedDoor != null)
+            {
+                ServerSwitchedDoor.ForceOpen = !ServerSwitchedDoor.ForceOpen;
+                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleDoor");
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Could not activate ToggleDoor cheat. Door not found.");
+            }
         }
 
         [ClientRpc]
