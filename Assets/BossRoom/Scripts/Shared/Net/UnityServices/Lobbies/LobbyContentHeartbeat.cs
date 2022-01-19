@@ -88,7 +88,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             bool shouldDisapprove = m_localLobby.State != LobbyState.Lobby; // By not refreshing, it's possible to have a lobby in the lobby list UI after its countdown starts and then try joining.
             if (shouldDisapprove)
             {
-                message.ApprovalAction?.Invoke(Approval.GameAlreadyStarted);
+                message.DisapprovalAction?.Invoke(Approval.GameAlreadyStarted);
             }
         }
 

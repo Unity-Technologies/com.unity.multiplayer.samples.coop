@@ -98,11 +98,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
 
     public struct ClientUserSeekingDisapproval
     {
-        public Action<Approval> ApprovalAction;
+        public Action<Approval> DisapprovalAction;
 
-        public ClientUserSeekingDisapproval(Action<Approval> approvalAction)
+        public ClientUserSeekingDisapproval(Action<Approval> disapprovalAction)
         {
-            ApprovalAction = approvalAction;
+            DisapprovalAction = disapprovalAction;
         }
     }
 

@@ -14,9 +14,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
 {
     public class LobbyUIManager : MonoBehaviour
     {
+        [SerializeField] private GameObject[] _autoInjected;
         private DIScope _container;
-
-        private IDisposable m_DisposableSubscriptions;
 
         //injected dependencies
         private LobbyAsyncRequests m_LobbyAsyncRequests;
@@ -30,6 +29,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
         private LocalGameState m_localGameState;
         //this one is currently manually collected from a player NetworkObject
         private PersistentPlayer m_persistentPlayer;
+
+        private IDisposable m_DisposableSubscriptions;
 
         private void Awake()
         {
@@ -62,10 +63,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
 
             _container.FinalizeScopeConstruction();
 
+            foreach (var go in _autoInjected)
+            {
+                _container.Inject(go);
+            }
+
             //todo:
             // - break apart the initialization logic for the DI container into an entrypoint monobeh
             // - then the Lobby UI Manager would have a bunch of injected fields
-            // - need to create a way to inject MonoBehaviours that I can set up from Inspector
 
             //todo: inject all monobehaviours of this UI so that they have the dependencies and can operate
 
