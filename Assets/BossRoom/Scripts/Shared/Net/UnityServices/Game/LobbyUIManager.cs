@@ -5,7 +5,6 @@ using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
-using BossRoom.Scripts.Shared.Net.UnityServices.Relays;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
@@ -78,6 +77,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
             SetLocalUserNameFromPersistentPlayerName();
 
             //fetching dependency references from the DI Scope
+            //todo: move to [Inject]-decorated method
             m_LobbyAsyncRequests = _container.Resolve<LobbyAsyncRequests>();
             m_DisplayErrorPopupPublisher = _container.Resolve<IPublisher<DisplayErrorPopup>>();
             m_LobbyUserStatusPublisher = _container.Resolve<IPublisher<UserStatus>>();
