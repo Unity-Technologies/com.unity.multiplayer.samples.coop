@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -73,6 +74,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         {
             NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void KillAllEnemiesServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
+            {
+                if (serverCharacter.IsNpc)
+                {
+                    serverCharacter.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
+                }
+            }
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillAllEnemies");
+        }
+
+
+
+        [ServerRpc(RequireOwnership = false)]
+        void KillRandomEnemyServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
+            {
+                if (serverCharacter.IsNpc)
+                {
+                    serverCharacter.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
+                    break;
+                }
+            }
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillRandomEnemy");
         }
 
         [ClientRpc]
