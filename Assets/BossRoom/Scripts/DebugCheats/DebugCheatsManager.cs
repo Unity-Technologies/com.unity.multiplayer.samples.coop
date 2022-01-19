@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -47,6 +48,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             SpawnBossServerRpc();
         }
 
+        public void ToggleTeleportMode()
+        {
+            ToggleTeleportModeServerRpc();
+        }
+
         public void GoToPostGame()
         {
             GoToPostGameServerRpc();
@@ -66,6 +72,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             var newEnemy = Instantiate(m_BossPrefab);
             newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "SpawnBoss");
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void ToggleTeleportModeServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            var clientId = serverRpcParams.Receive.SenderClientId;
+            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            {
+                if (playerServerCharacter.OwnerClientId == clientId)
+                {
+                    playerServerCharacter.Movement.TeleportModeActivated = !playerServerCharacter.Movement.TeleportModeActivated;
+                }
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]

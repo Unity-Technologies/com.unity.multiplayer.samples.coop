@@ -44,6 +44,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         // this one is specific to knockback mode
         private Vector3 m_KnockbackVector;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public bool TeleportModeActivated { get; set; }
+#endif
+
         private void Awake()
         {
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
@@ -69,6 +73,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <param name="position">Position in world space to path to. </param>
         public void SetMovementTarget(Vector3 position)
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (TeleportModeActivated)
+            {
+                Teleport(position);
+                return;
+            }
+#endif
             m_MovementState = MovementState.PathFollowing;
             m_NavPath.SetTargetPosition(position);
         }
