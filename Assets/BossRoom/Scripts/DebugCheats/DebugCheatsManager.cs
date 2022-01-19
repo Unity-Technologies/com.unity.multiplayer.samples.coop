@@ -48,6 +48,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             SpawnBossServerRpc();
         }
 
+        public void KillRandomEnemy()
+        {
+            KillRandomEnemyServerRpc();
+        }
+
+        public void KillAllEnemies()
+        {
+            KillAllEnemiesServerRpc();
+        }
+
         public void GoToPostGame()
         {
             GoToPostGameServerRpc();
@@ -70,10 +80,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         }
 
         [ServerRpc(RequireOwnership = false)]
-        void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
+        void KillRandomEnemyServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
+            foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
+            {
+                if (serverCharacter.IsNpc)
+                {
+                    serverCharacter.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
+                    break;
+                }
+            }
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillRandomEnemy");
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -89,20 +106,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillAllEnemies");
         }
 
-
-
         [ServerRpc(RequireOwnership = false)]
-        void KillRandomEnemyServerRpc(ServerRpcParams serverRpcParams = default)
+        void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
-            {
-                if (serverCharacter.IsNpc)
-                {
-                    serverCharacter.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
-                    break;
-                }
-            }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillRandomEnemy");
+            NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
         }
 
         [ClientRpc]

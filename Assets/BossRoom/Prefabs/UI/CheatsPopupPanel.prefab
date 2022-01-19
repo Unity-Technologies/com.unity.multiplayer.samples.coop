@@ -442,8 +442,8 @@ RectTransform:
   - {fileID: 797167611908236019}
   - {fileID: 8773562443471055693}
   - {fileID: 649489175604869097}
-  - {fileID: 6271467218016491254}
   - {fileID: 3944910748685586870}
+  - {fileID: 6271467218016491254}
   - {fileID: 6254780512517690342}
   - {fileID: 6903512172871602512}
   - {fileID: 5557599409654156049}
@@ -987,6 +987,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7893676886333526174}
     m_Modifications:
+    - target: {fileID: 5700619323420510958, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
+      propertyPath: m_text
+      value: Kill All Enemies
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700619323420510958, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
+      propertyPath: m_fontSize
+      value: 25.25
+      objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -997,7 +1005,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_RootOrder
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1057,7 +1065,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -160
+      value: -280
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1073,11 +1081,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: CheatBtn3
+      value: KillAllEnemiesBtn
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1851,6 +1859,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 7893676886333526174}
     m_Modifications:
+    - target: {fileID: 5700619323420510958, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
+      propertyPath: m_text
+      value: Kill Random Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5700619323420510958, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
+      propertyPath: m_fontSize
+      value: 22.5
+      objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -1861,7 +1877,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_AnchorMax.x
@@ -1921,7 +1937,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -280
+      value: -160
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338838, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1937,11 +1953,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: CheatBtn4
+      value: KillRandomEnemyBtn
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
