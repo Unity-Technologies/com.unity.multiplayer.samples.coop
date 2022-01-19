@@ -21,12 +21,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
         private IDisposable m_Disposable;
 
         [Inject]
-        private void InjectDependencies( ISubscriber<DisplayErrorPopupMessage> errorPopupSubscriber)
+        private void InjectDependencies( ISubscriber<DisplayErrorPopup> errorPopupSubscriber)
         {
             m_Disposable = errorPopupSubscriber.Subscribe(OnReceiveDisplayableErrorMessage);
         }
 
-        private void OnReceiveDisplayableErrorMessage(DisplayErrorPopupMessage obj)
+        private void OnReceiveDisplayableErrorMessage(DisplayErrorPopup obj)
         {
             SpawnErrorPopup(obj);
         }
@@ -48,7 +48,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             LogHandler.Get().mode = m_editorLogVerbosity;
         }
 
-        private void SpawnErrorPopup(DisplayErrorPopupMessage errorMessage)
+        private void SpawnErrorPopup(DisplayErrorPopup error)
         {
             throw new NotImplementedException();
             // m_popUp.ShowPopup(errorMessage.Message);

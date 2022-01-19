@@ -27,7 +27,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     {
 
         [Inject]
-        private void InjectDependencies(IPublisher<ClientUserApprovedMessage> userApprovedMessagePublisher)
+        private void InjectDependencies(IPublisher<ClientUserApproved> userApprovedMessagePublisher)
         {
             m_UserApprovedMessagePublisher = userApprovedMessagePublisher;
         }
@@ -127,7 +127,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         }
 
         UserStatus m_userStatus = UserStatus.Menu;
-        private IPublisher<ClientUserApprovedMessage> m_UserApprovedMessagePublisher;
+        private IPublisher<ClientUserApproved> m_UserApprovedMessagePublisher;
 
         public UserStatus UserStatus
         {
@@ -153,7 +153,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                     m_data.IsApproved = value;
                     m_lastChanged = UserMembers.IsApproved;
                     OnChanged(this);
-                    m_UserApprovedMessagePublisher.Publish(new ClientUserApprovedMessage());
+                    m_UserApprovedMessagePublisher.Publish(new ClientUserApproved());
                 }
             }
         }

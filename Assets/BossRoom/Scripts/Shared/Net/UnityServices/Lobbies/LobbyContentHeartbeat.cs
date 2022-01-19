@@ -23,20 +23,20 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private readonly UpdateSlow m_SlowUpdate;
         private IDisposable m_DisposableSubscription;
-        private readonly ISubscriber<ClientUserSeekingDisapprovalMessage> m_UserSeekingApprovalSubscriber;
+        private readonly ISubscriber<ClientUserSeekingDisapproval> m_UserSeekingApprovalSubscriber;
         private readonly LobbyAsyncRequests m_LobbyAsyncRequests;
-        private readonly IPublisher<DisplayErrorPopupMessage> m_DisplayErrorPopupPublisher;
-        private readonly IPublisher<ChangeGameStateMessage> m_ChangeGameStatePublisher;
-        private readonly IPublisher<EndGameMessage> m_EndGamePublisher;
+        private readonly IPublisher<DisplayErrorPopup> m_DisplayErrorPopupPublisher;
+        private readonly IPublisher<ChangeGameState> m_ChangeGameStatePublisher;
+        private readonly IPublisher<EndGame> m_EndGamePublisher;
 
         [Inject]
         public LobbyContentHeartbeat(
             UpdateSlow slowUpdate,
-            ISubscriber<ClientUserSeekingDisapprovalMessage> userSeekingApprovalSubscriber,
+            ISubscriber<ClientUserSeekingDisapproval> userSeekingApprovalSubscriber,
             LobbyAsyncRequests lobbyAsyncRequests,
-            IPublisher<ChangeGameStateMessage> changeGameStatePublisher,
-            IPublisher<DisplayErrorPopupMessage> displayErrorPopupPublisher,
-            IPublisher<EndGameMessage> endGamePublisher)
+            IPublisher<ChangeGameState> changeGameStatePublisher,
+            IPublisher<DisplayErrorPopup> displayErrorPopupPublisher,
+            IPublisher<EndGame> endGamePublisher)
         {
             m_SlowUpdate = slowUpdate;
             m_UserSeekingApprovalSubscriber = userSeekingApprovalSubscriber;
@@ -83,7 +83,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_shouldPushData = true;
         }
 
-        public void OnReceiveMessage(ClientUserSeekingDisapprovalMessage message)
+        public void OnReceiveMessage(ClientUserSeekingDisapproval message)
         {
             bool shouldDisapprove = m_localLobby.State != LobbyState.Lobby; // By not refreshing, it's possible to have a lobby in the lobby list UI after its countdown starts and then try joining.
             if (shouldDisapprove)
@@ -108,8 +108,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             if (!m_localUser.IsApproved && m_lifetime > k_approvalMaxTime)
             {
-                m_DisplayErrorPopupPublisher.Publish(new DisplayErrorPopupMessage("Connection attempt timed out!"));
-                m_ChangeGameStatePublisher.Publish(new ChangeGameStateMessage(GameState.JoinMenu));
+                m_DisplayErrorPopupPublisher.Publish(new DisplayErrorPopup("Connection attempt timed out!"));
+                m_ChangeGameStatePublisher.Publish(new ChangeGameState(GameState.JoinMenu));
             }
 
             if (m_shouldPushData)
@@ -158,9 +158,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                         if (lobbyUser.Value.IsHost)
                             return;
                     }
-                    m_DisplayErrorPopupPublisher.Publish(new DisplayErrorPopupMessage("Host left the lobby, disconnecting."));
-                    m_EndGamePublisher.Publish(new EndGameMessage());
-                    m_ChangeGameStatePublisher.Publish(new ChangeGameStateMessage(GameState.JoinMenu));
+                    m_DisplayErrorPopupPublisher.Publish(new DisplayErrorPopup("Host left the lobby, disconnecting."));
+                    m_EndGamePublisher.Publish(new EndGame());
+                    m_ChangeGameStatePublisher.Publish(new ChangeGameState(GameState.JoinMenu));
                 }
             }
         }
