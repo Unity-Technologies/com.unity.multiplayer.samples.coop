@@ -83,8 +83,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                 if (playerServerCharacter.OwnerClientId == clientId)
                 {
                     playerServerCharacter.Movement.TeleportModeActivated = !playerServerCharacter.Movement.TeleportModeActivated;
+                    break;
                 }
             }
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleTeleportMode");
         }
 
         [ServerRpc(RequireOwnership = false)]
