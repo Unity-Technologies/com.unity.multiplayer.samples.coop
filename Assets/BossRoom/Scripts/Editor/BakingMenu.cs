@@ -15,7 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
             var bakedLights = GameObject.FindGameObjectsWithTag("LightingBaked");
             GameObject[] realtimeLights = GameObject.FindGameObjectsWithTag("LightingRealtime");
 
-
             foreach (var index in bakedLights)
             {
                 index.GetComponent<Light>().enabled = bakedLightsEnabled;
