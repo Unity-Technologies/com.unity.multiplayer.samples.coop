@@ -58,6 +58,48 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             KillAllEnemiesServerRpc();
         }
 
+        public void ToggleGodMode()
+        {
+
+            LogCheatNotImplemented("ToggleGodMode");
+        }
+
+        public void HealPlayer()
+        {
+
+            LogCheatNotImplemented("HealPlayer");
+        }
+
+        public void KillPlayer()
+        {
+
+            LogCheatNotImplemented("KillPlayer");
+        }
+
+        public void ToggleSuperSpeed()
+        {
+
+            LogCheatNotImplemented("ToggleSuperSpeed");
+        }
+
+        public void ToggleTeleportMode()
+        {
+
+            LogCheatNotImplemented("ToggleTeleportMode");
+        }
+
+        public void ToggleDoor()
+        {
+
+            LogCheatNotImplemented("ToggleDoor");
+        }
+
+        public void TogglePortals()
+        {
+
+            LogCheatNotImplemented("TogglePortals");
+        }
+
         public void GoToPostGame()
         {
             GoToPostGameServerRpc();
@@ -117,6 +159,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         void LogCheatUsedClientRPC(ulong clientId, string cheatUsed)
         {
             UnityEngine.Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
+        }
+
+        void LogCheatNotImplemented(string cheat)
+        {
+            UnityEngine.Debug.Log($"Cheat {cheat} not implemented");
         }
 
 #else
