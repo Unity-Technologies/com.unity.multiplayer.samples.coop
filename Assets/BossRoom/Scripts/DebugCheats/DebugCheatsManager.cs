@@ -84,7 +84,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         {
             foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
             {
-                if (serverCharacter.IsNpc)
+                if (serverCharacter.IsNpc && serverCharacter.NetState.LifeState == LifeState.Alive)
                 {
                     serverCharacter.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
                     break;
