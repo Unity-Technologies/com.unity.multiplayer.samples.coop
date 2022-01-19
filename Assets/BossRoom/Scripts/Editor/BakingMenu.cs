@@ -2,14 +2,13 @@ using System;
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.Rendering;
-using UnityEngine.XR;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
 {
     /// <summary>
     /// This is a script that creates a menu for baking lights (and changing other lighting features) for Boss Room.
     /// </summary>
-    public class BakingMenu : MonoBehaviour
+    abstract class BakingMenu
     {
         static void HandleEnvLights(bool realtimeLightsEnabled, bool bakedLightsEnabled, string lightingStatus)
         {
@@ -27,7 +26,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
                 index.GetComponent<Light>().enabled = realtimeLightsEnabled;
             }
 
-            Debug.Log(realtimeLights.Length + " Environment lights set to " + lightingStatus);
+            Debug.Log( "Environment lights set to " + lightingStatus + ": " + realtimeLights.Length);
         }
 
         static void HandleLightProbes(bool lightProbesEnabled, string lightProbesStatus)
