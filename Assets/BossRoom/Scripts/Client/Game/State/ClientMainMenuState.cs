@@ -1,4 +1,8 @@
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using BossRoom.Scripts.Shared.Infrastructure;
+using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using BossRoom.Scripts.Shared.Net.UnityServices.Game;
+using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
+using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -15,9 +19,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         public override GameState ActiveState { get { return GameState.MainMenu;  } }
 
-        [SerializeField]
-        private PopupPanel m_ResponsePopup;
-
         private const string k_DefaultIP = "127.0.0.1";
 
         private GameNetPortal m_GameNetPortal;
@@ -28,6 +29,77 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// This will get more sophisticated as we move to a true relay model.
         /// </summary>
         private const int k_ConnectPort = 9998;
+
+        [SerializeField] private GameObject[] _autoInjected;
+        private DIScope _container;
+
+
+        [SerializeField] private LobbyUIManager m_lobbyUIManager;
+
+        [SerializeField] private CanvasGroup m_mainMenuButtons;
+        [SerializeField] private GameObject m_signInSpinner;
+
+        private void Awake()
+        {
+            m_mainMenuButtons.interactable = false;
+
+            CreateDIScope();
+        }
+
+        private void CreateDIScope()
+        {
+            void OnAuthSignIn()
+            {
+                Debug.Log("Signed in.");
+
+                m_mainMenuButtons.interactable = true;
+                m_signInSpinner.SetActive(false);
+
+                var localUser = _container.Resolve<LobbyUser>();
+                var identity = _container.Resolve<Identity>();
+                var localLobby = _container.Resolve<LocalLobby>();
+
+                localUser.ID = identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
+                // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
+                localLobby.AddPlayer(localUser);
+            }
+
+            _container = new DIScope();
+
+            _container.BindMessageChannel<ClientUserSeekingDisapproval>();
+            _container.BindMessageChannel<DisplayErrorPopup>();
+            _container.BindMessageChannel<CreateLobbyRequest>();
+            _container.BindMessageChannel<JoinLobbyRequest>();
+            _container.BindMessageChannel<QueryLobbies>();
+            _container.BindMessageChannel<QuickJoin>();
+            _container.BindMessageChannel<RenameRequest>();
+            _container.BindMessageChannel<ClientUserApproved>();
+            _container.BindMessageChannel<UserStatus>();
+            _container.BindMessageChannel<StartCountdown>();
+            _container.BindMessageChannel<CancelCountdown>();
+            _container.BindMessageChannel<CompleteCountdown>();
+            _container.BindMessageChannel<ChangeGameState>();
+            _container.BindMessageChannel<ConfirmInGameState>();
+            _container.BindMessageChannel<EndGame>();
+
+            _container.BindAsSingle<LobbyAsyncRequests>();
+            _container.BindAsSingle<LocalGameState>();
+            _container.BindAsSingle<LobbyUser>();
+            _container.BindAsSingle<LobbyServiceData>();
+            _container.BindAsSingle<LobbyContentHeartbeat>();
+            _container.BindAsSingle<LocalLobby>();
+            _container.BindInstanceAsSingle(new Identity(OnAuthSignIn));
+
+            _container.BindInstanceAsSingle(m_lobbyUIManager);
+
+            _container.FinalizeScopeConstruction();
+
+            foreach (var go in _autoInjected)
+            {
+                _container.Inject(go);
+            }
+        }
+        //
 
         protected override void Start()
         {
@@ -46,63 +118,68 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_ClientNetPortal.DisconnectReason.Clear();
         }
 
-        public void OnHostClicked()
+        public void OnStartClicked()
         {
-            m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select another mode", "Select CONFIRM to host a Relay room <br> or select another mode", "Select CONFIRM to host a Unity Relay room <br> or select another mode", "iphost", "Confirm",
-                (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
-            {
-                m_GameNetPortal.PlayerName = playerName;
-                switch (onlineMode)
-                {
-                    case OnlineMode.Relay:
-                        m_GameNetPortal.StartPhotonRelayHost(connectInput);
-                        break;
-
-                    case OnlineMode.IpHost:
-                        m_GameNetPortal.StartHost(PostProcessIpInput(connectInput), connectPort);
-                        break;
-
-                    case OnlineMode.UnityRelay:
-                        Debug.Log("Unity Relay Host clicked");
-                        m_GameNetPortal.StartUnityRelayHost();
-                        break;
-                }
-                m_ResponsePopup.SetupNotifierDisplay("Starting host", "Attempting to Start host...", true, false);
-            }, k_DefaultIP, k_ConnectPort);
+            m_lobbyUIManager.gameObject.SetActive(true);
         }
 
-        public void OnConnectClicked()
-        {
-            m_ResponsePopup.SetupEnterGameDisplay(false, "Join Game", "Input the host IP below", "Input the room name below", "Input the join code below", "iphost", "Join",
-                (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
-            {
-                m_GameNetPortal.PlayerName = playerName;
-
-                switch (onlineMode)
-                {
-                    case OnlineMode.Relay:
-                        if (ClientGameNetPortal.StartClientRelayMode(m_GameNetPortal, connectInput, out string failMessage) == false)
-                        {
-                            m_ResponsePopup.SetupNotifierDisplay("Connection Failed", failMessage, false, true);
-                            return;
-                        }
-                        break;
-
-                    case OnlineMode.IpHost:
-                        ClientGameNetPortal.StartClient(m_GameNetPortal, connectInput, connectPort);
-                        break;
-
-                    case OnlineMode.UnityRelay:
-                        Debug.Log($"Unity Relay Client, join code {connectInput}");
-                        m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, connectInput);
-                        break;
-                    case OnlineMode.Lobby:
-                        //todo - implement logic for OnConnect
-                        break;
-                }
-                m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
-            }, k_DefaultIP, k_ConnectPort);
-        }
+        // public void OnHostClicked()
+        // {
+        //     m_ResponsePopup.SetupEnterGameDisplay(true, "Host Game", "Input the Host IP <br> or select another mode", "Select CONFIRM to host a Relay room <br> or select another mode", "Select CONFIRM to host a Unity Relay room <br> or select another mode", "iphost", "Confirm",
+        //         (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
+        //     {
+        //         m_GameNetPortal.PlayerName = playerName;
+        //         switch (onlineMode)
+        //         {
+        //             case OnlineMode.Relay:
+        //                 m_GameNetPortal.StartPhotonRelayHost(connectInput);
+        //                 break;
+        //
+        //             case OnlineMode.IpHost:
+        //                 m_GameNetPortal.StartHost(PostProcessIpInput(connectInput), connectPort);
+        //                 break;
+        //
+        //             case OnlineMode.UnityRelay:
+        //                 Debug.Log("Unity Relay Host clicked");
+        //                 m_GameNetPortal.StartUnityRelayHost();
+        //                 break;
+        //         }
+        //         m_ResponsePopup.SetupNotifierDisplay("Starting host", "Attempting to Start host...", true, false);
+        //     }, k_DefaultIP, k_ConnectPort);
+        // }
+        //
+        // public void OnConnectClicked()
+        // {
+        //     m_ResponsePopup.SetupEnterGameDisplay(false, "Join Game", "Input the host IP below", "Input the room name below", "Input the join code below", "iphost", "Join",
+        //         (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
+        //     {
+        //         m_GameNetPortal.PlayerName = playerName;
+        //
+        //         switch (onlineMode)
+        //         {
+        //             case OnlineMode.Relay:
+        //                 if (ClientGameNetPortal.StartClientRelayMode(m_GameNetPortal, connectInput, out string failMessage) == false)
+        //                 {
+        //                     m_ResponsePopup.SetupNotifierDisplay("Connection Failed", failMessage, false, true);
+        //                     return;
+        //                 }
+        //                 break;
+        //
+        //             case OnlineMode.IpHost:
+        //                 ClientGameNetPortal.StartClient(m_GameNetPortal, connectInput, connectPort);
+        //                 break;
+        //
+        //             case OnlineMode.UnityRelay:
+        //                 Debug.Log($"Unity Relay Client, join code {connectInput}");
+        //                 m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, connectInput);
+        //                 break;
+        //             case OnlineMode.Lobby:
+        //                 //todo - implement logic for OnConnect
+        //                 break;
+        //         }
+        //         m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
+        //     }, k_DefaultIP, k_ConnectPort);
+        // }
 
         private string PostProcessIpInput(string ipInput)
         {
@@ -131,29 +208,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
         private void ConnectStatusToMessage(ConnectStatus status, bool connecting)
         {
-            switch(status)
-            {
-                case ConnectStatus.Undefined:
-                case ConnectStatus.UserRequestedDisconnect:
-                    break;
-                case ConnectStatus.ServerFull:
-                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections", false, true);
-                    break;
-                case ConnectStatus.Success:
-                    if(connecting) { m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now", false, true); }
-                    break;
-                case ConnectStatus.LoggedInAgain:
-                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account", false, true);
-                    break;
-                case ConnectStatus.GenericDisconnect:
-                    var title = connecting ? "Connection Failed" : "Disconnected From Host";
-                    var text = connecting ? "Something went wrong" : "The connection to the host was lost";
-                    m_ResponsePopup.SetupNotifierDisplay(title, text, false, true);
-                    break;
-                default:
-                    Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
-                    break;
-            }
+            // switch(status)
+            // {
+            //     case ConnectStatus.Undefined:
+            //     case ConnectStatus.UserRequestedDisconnect:
+            //         break;
+            //     case ConnectStatus.ServerFull:
+            //         m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections", false, true);
+            //         break;
+            //     case ConnectStatus.Success:
+            //         if(connecting) { m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now", false, true); }
+            //         break;
+            //     case ConnectStatus.LoggedInAgain:
+            //         m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account", false, true);
+            //         break;
+            //     case ConnectStatus.GenericDisconnect:
+            //         var title = connecting ? "Connection Failed" : "Disconnected From Host";
+            //         var text = connecting ? "Something went wrong" : "The connection to the host was lost";
+            //         m_ResponsePopup.SetupNotifierDisplay(title, text, false, true);
+            //         break;
+            //     default:
+            //         Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
+            //         break;
+            // }
         }
 
         /// <summary>
@@ -165,7 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="displayConfirmation"></param>
         public void PushConnectionResponsePopup(string title, string message, bool displayImage, bool displayConfirmation)
         {
-            m_ResponsePopup.SetupNotifierDisplay(title, message, displayImage, displayConfirmation);
+            // m_ResponsePopup.SetupNotifierDisplay(title, message, displayImage, displayConfirmation);
         }
 
         /// <summary>
@@ -174,7 +251,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         private void OnNetworkTimeout()
         {
-            m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Unable to Reach Host/Server", false, true, "Please try again");
+            // m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Unable to Reach Host/Server", false, true, "Please try again");
         }
 
         private void OnRelayJoinFailed(string message)
@@ -184,6 +261,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public override void OnDestroy()
         {
+            _container?.Dispose();
+
             if (m_ClientNetPortal != null)
             {
                 m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;

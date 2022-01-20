@@ -14,10 +14,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
 {
     public class LobbyUIManager : MonoBehaviour
     {
-        [SerializeField] private GameObject[] _autoInjected;
-        private DIScope _container;
-
         //injected dependencies
+        private DIScope _container;
         private LobbyAsyncRequests m_LobbyAsyncRequests;
         private LobbyUser m_localUser;
         private LocalLobby m_localLobby;
@@ -27,52 +25,28 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
         private IPublisher<UserStatus> m_LobbyUserStatusPublisher;
         private Identity m_Identity;
         private LocalGameState m_localGameState;
+
         //this one is currently manually collected from a player NetworkObject
         private PersistentPlayer m_persistentPlayer;
 
         private IDisposable m_DisposableSubscriptions;
 
-        private void Awake()
+       
+
+        [Inject]
+        private void InjectDependencies(
+            LobbyAsyncRequests lobbyAsyncRequests,
+            IPublisher<DisplayErrorPopup> displayErrorPopupPublisher,
+            IPublisher<UserStatus> lobbyUserStatusPublisher,
+            Identity identity,
+            LocalGameState localGameState,
+            LobbyUser lobbyUser,
+            LobbyContentHeartbeat lobbyContentHeartbeat,
+            LobbyServiceData lobbyServiceData,
+            LocalLobby localLobby,
+            DIScope container
+        )
         {
-            _container = new DIScope();
-
-            _container.BindMessageChannel<ClientUserSeekingDisapproval>();
-            _container.BindMessageChannel<DisplayErrorPopup>();
-            _container.BindMessageChannel<CreateLobbyRequest>();
-            _container.BindMessageChannel<JoinLobbyRequest>();
-            _container.BindMessageChannel<QueryLobbies>();
-            _container.BindMessageChannel<QuickJoin>();
-            _container.BindMessageChannel<RenameRequest>();
-            _container.BindMessageChannel<ClientUserApproved>();
-            _container.BindMessageChannel<UserStatus>();
-            _container.BindMessageChannel<StartCountdown>();
-            _container.BindMessageChannel<CancelCountdown>();
-            _container.BindMessageChannel<CompleteCountdown>();
-            _container.BindMessageChannel<ChangeGameState>();
-            _container.BindMessageChannel<ConfirmInGameState>();
-            _container.BindMessageChannel<EndGame>();
-
-            _container.BindAsSingle<LobbyAsyncRequests>();
-            _container.BindAsSingle<LocalGameState>();
-            _container.BindAsSingle<LobbyUser>();
-            _container.BindAsSingle<LobbyServiceData>();
-            _container.BindAsSingle<LobbyContentHeartbeat>();
-            _container.BindAsSingle<LocalLobby>();
-
-            _container.BindInstanceAsSingle(new Identity(OnAuthSignIn));
-
-            _container.FinalizeScopeConstruction();
-
-            foreach (var go in _autoInjected)
-            {
-                _container.Inject(go);
-            }
-
-            //todo:
-            // - break apart the initialization logic for the DI container into an entrypoint monobeh
-            // - then the Lobby UI Manager would have a bunch of injected fields
-
-            //todo: inject all monobehaviours of this UI so that they have the dependencies and can operate
 
             Application.wantsToQuit += OnWantToQuit;
 
@@ -81,17 +55,16 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
 
             SetLocalUserNameFromPersistentPlayerName();
 
-            //fetching dependency references from the DI Scope
-            //todo: move to [Inject]-decorated method
-            m_LobbyAsyncRequests = _container.Resolve<LobbyAsyncRequests>();
-            m_DisplayErrorPopupPublisher = _container.Resolve<IPublisher<DisplayErrorPopup>>();
-            m_LobbyUserStatusPublisher = _container.Resolve<IPublisher<UserStatus>>();
-            m_Identity = _container.Resolve<Identity>();
-            m_localGameState = _container.Resolve<LocalGameState>();
-            m_localUser = _container.Resolve<LobbyUser>();
-            m_lobbyContentHeartbeat = _container.Resolve<LobbyContentHeartbeat>();
-            m_lobbyServiceData = _container.Resolve<LobbyServiceData>();
-            m_localLobby = _container.Resolve<LocalLobby>();
+            _container = container;
+            m_LobbyAsyncRequests = lobbyAsyncRequests;
+            m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
+            m_LobbyUserStatusPublisher = lobbyUserStatusPublisher;
+            m_Identity = identity;
+            m_localGameState = localGameState;
+            m_localUser = lobbyUser;
+            m_lobbyContentHeartbeat = lobbyContentHeartbeat;
+            m_lobbyServiceData = lobbyServiceData;
+            m_localLobby = localLobby;
             m_localLobby.State = LobbyState.Lobby;
 
             SubscribeToMessageChannels();
@@ -99,7 +72,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
 
         private void OnDestroy()
         {
-            _container?.Dispose();
             ForceLeaveAttempt();
         }
 
