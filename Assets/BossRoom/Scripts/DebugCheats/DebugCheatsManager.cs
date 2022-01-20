@@ -131,40 +131,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         void HealPlayerServerRpc(ServerRpcParams serverRpcParams = default)
         {
             ulong clientId = serverRpcParams.Receive.SenderClientId;
-            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
+            if (playerServerCharacter != null)
             {
-                if (playerServerCharacter.OwnerClientId == clientId)
+                var baseHp = playerServerCharacter.NetState.CharacterClass.BaseHP.Value;
+                if (playerServerCharacter.NetState.LifeState == LifeState.Fainted)
                 {
-                    var baseHp = playerServerCharacter.NetState.CharacterClass.BaseHP.Value;
-                    if (playerServerCharacter.NetState.LifeState == LifeState.Fainted)
-                    {
-                        playerServerCharacter.Revive(null, baseHp);
-                    }
-                    else
-                    {
-                        playerServerCharacter.ReceiveHP(null, baseHp);
-                    }
-
-                    break;
+                    playerServerCharacter.Revive(null, baseHp);
                 }
+                else
+                {
+                    playerServerCharacter.ReceiveHP(null, baseHp);
+                }
+                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "HealPlayer");
             }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "HealPlayer");
         }
 
         [ServerRpc(RequireOwnership = false)]
         void KillPlayerServerRpc(ServerRpcParams serverRpcParams = default)
         {
             ulong clientId = serverRpcParams.Receive.SenderClientId;
-            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
+            if (playerServerCharacter != null)
             {
-                if (playerServerCharacter.OwnerClientId == clientId)
-                {
-                    playerServerCharacter.ReceiveHP(null, -playerServerCharacter.NetState.HitPoints);
-
-                    break;
-                }
+                playerServerCharacter.ReceiveHP(null, -playerServerCharacter.NetState.HitPoints);
+                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillPlayer");
             }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillPlayer");
         }
 
         [ClientRpc]

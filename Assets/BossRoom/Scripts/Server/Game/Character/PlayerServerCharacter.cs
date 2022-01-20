@@ -63,5 +63,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             return s_ActivePlayers;
         }
+
+        /// <summary>
+        /// Returns the ServerCharacter owned by a specific client. Always returns null on the client.
+        /// </summary>
+        /// <param name="ownerClientId"></param>
+        /// <returns>The ServerCharacter owned by the client, or null if no ServerCharacter is found</returns>
+        public static ServerCharacter GetPlayerServerCharacter(ulong ownerClientId)
+        {
+            foreach (var playerServerCharacter in s_ActivePlayers)
+            {
+                if (playerServerCharacter.OwnerClientId == ownerClientId)
+                {
+                    return playerServerCharacter;
+                }
+            }
+            Debug.LogError($"PlayerServerCharacter owned by client {ownerClientId} not found");
+            return null;
+        }
+
     }
 }
