@@ -55,14 +55,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         public void KillAllEnemies()
         {
-
             LogCheatNotImplemented("KillAllEnemies");
         }
 
         public void ToggleGodMode()
         {
-
-            LogCheatNotImplemented("ToggleGodMode");
+            ToggleGodModeServerRpc();
         }
 
         public void HealPlayer()
@@ -77,25 +75,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         public void ToggleSuperSpeed()
         {
-
             LogCheatNotImplemented("ToggleSuperSpeed");
         }
 
         public void ToggleTeleportMode()
         {
-
             LogCheatNotImplemented("ToggleTeleportMode");
         }
 
         public void ToggleDoor()
         {
-
             LogCheatNotImplemented("ToggleDoor");
         }
 
         public void TogglePortals()
         {
-
             LogCheatNotImplemented("TogglePortals");
         }
 
@@ -121,10 +115,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         }
 
         [ServerRpc(RequireOwnership = false)]
-        void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
+        void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
+            ulong clientId = serverRpcParams.Receive.SenderClientId;
+            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
+            if (playerServerCharacter != null)
+            {
+                playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
+                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -157,6 +156,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                 playerServerCharacter.ReceiveHP(null, -playerServerCharacter.NetState.HitPoints);
                 LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillPlayer");
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
         }
 
         [ClientRpc]
