@@ -113,6 +113,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_ClientNetPortal.OnUnityRelayJoinFailed += OnRelayJoinFailed;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
+            m_lobbyUIManager.Hide();
+
             //any disconnect reason set? Show it to the user here.
             ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
             m_ClientNetPortal.DisconnectReason.Clear();
@@ -120,7 +122,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void OnStartClicked()
         {
-            m_lobbyUIManager.gameObject.SetActive(true);
+            m_lobbyUIManager.Show();
         }
 
         // public void OnHostClicked()

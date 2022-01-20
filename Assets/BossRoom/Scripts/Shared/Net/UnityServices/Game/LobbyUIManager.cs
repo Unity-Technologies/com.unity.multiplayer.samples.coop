@@ -31,7 +31,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
 
         private IDisposable m_DisposableSubscriptions;
 
-       
+        [SerializeField] private CanvasGroup _cg;
 
         [Inject]
         private void InjectDependencies(
@@ -390,6 +390,19 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
             m_localLobby.RelayServer = null;
         }
 
+        public void Show()
+        {
+            _cg.alpha = 1;
+            _cg.interactable = true;
+            _cg.blocksRaycasts = true;
+        }
+
+        public void Hide()
+        {
+            _cg.alpha = 0;
+            _cg.interactable = false;
+            _cg.blocksRaycasts = false;
+        }
 
     }
 }

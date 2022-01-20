@@ -890,7 +890,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 30.918804}
+  m_AnchoredPosition: {x: 0, y: 30.918823}
   m_SizeDelta: {x: 0, y: -203.7624}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &1731153198487894681
@@ -2164,7 +2164,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -0.000030517578, y: 0}
+  m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 50}
   m_Pivot: {x: 0.5, y: 1}
 --- !u!114 &7839092826857427528
@@ -3388,10 +3388,11 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6702871171647363808}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 1722388064424237406}
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Shared.Net.UnityServices.Game.LobbyUIManager,
+          Unity.Multiplayer.Samples.BossRoom.Shared
+        m_MethodName: Hide
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -3516,7 +3517,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -11.819916, y: 0}
+  m_AnchoredPosition: {x: -11.819946, y: 0}
   m_SizeDelta: {x: -23.640142, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2091644658784427042
@@ -4414,8 +4415,8 @@ GameObject:
   - component: {fileID: 6702871171647363811}
   - component: {fileID: 6702871171647363813}
   - component: {fileID: 6702871171647363810}
-  - component: {fileID: 555642270058284568}
   - component: {fileID: 1722388064424237406}
+  - component: {fileID: 6889764071769254414}
   m_Layer: 5
   m_Name: LoginPopup
   m_TagString: Untagged
@@ -4483,27 +4484,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!223 &555642270058284568
-Canvas:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6702871171647363808}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_RenderMode: 2
-  m_Camera: {fileID: 0}
-  m_PlaneDistance: 100
-  m_PixelPerfect: 0
-  m_ReceivesEvents: 1
-  m_OverrideSorting: 0
-  m_OverridePixelPerfect: 0
-  m_SortingBucketNormalizedSize: 0
-  m_AdditionalShaderChannelsFlag: 25
-  m_SortingLayerID: 0
-  m_SortingOrder: 0
-  m_TargetDisplay: 0
 --- !u!114 &1722388064424237406
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4516,8 +4496,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baa903a3eece41eab81a9432f523ae3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _autoInjected:
-  - {fileID: 6702871171647363808}
+  _cg: {fileID: 6889764071769254414}
+--- !u!225 &6889764071769254414
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6702871171647363808}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6899287395706514363
 GameObject:
   m_ObjectHideFlags: 0

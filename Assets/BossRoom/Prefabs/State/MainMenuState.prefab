@@ -634,6 +634,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 30.918823
       objectReference: {fileID: 0}
+    - target: {fileID: 562483524736970639, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 562483524736970639, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 6981629790417190249}
+    - target: {fileID: 562483524736970639, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: Hide
+      objectReference: {fileID: 0}
+    - target: {fileID: 562483524736970639, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: BossRoom.Scripts.Shared.Net.UnityServices.Game.LobbyUIManager, Unity.Multiplayer.Samples.BossRoom.Shared
+      objectReference: {fileID: 0}
     - target: {fileID: 2234904744820987572, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -648,23 +664,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 3632019498769524828, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_AnchorMax.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3632019498769524828, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_AnchorMin.y
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3632019498769524828, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 1113.4602
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3632019498769524828, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 556.7301
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3632019498769524828, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -55
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3902557823681792741, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_SizeDelta.y
