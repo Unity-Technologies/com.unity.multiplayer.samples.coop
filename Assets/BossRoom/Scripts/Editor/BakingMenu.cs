@@ -8,12 +8,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
     /// <summary>
     /// This is a script that creates a menu for baking lights (and changing other lighting features) for Boss Room.
     /// </summary>
-    abstract class BakingMenu
+    public abstract class BakingMenu
     {
         static void HandleEnvLights(bool realtimeLightsEnabled, bool bakedLightsEnabled, string lightingStatus)
         {
             var bakedLights = GameObject.FindGameObjectsWithTag("LightingBaked");
-            GameObject[] realtimeLights = GameObject.FindGameObjectsWithTag("LightingRealtime");
+            var realtimeLights = GameObject.FindGameObjectsWithTag("LightingRealtime");
 
             foreach (var index in bakedLights)
             {
@@ -30,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
 
         static void HandleLightProbes(bool lightProbesEnabled, string lightProbesStatus)
         {
-            GameObject[] lightProbes = GameObject.FindGameObjectsWithTag("LightingProbes");
+            var lightProbes = GameObject.FindGameObjectsWithTag("LightingProbes");
 
             if (lightProbes == null || lightProbes.Length == 0)
             {
@@ -48,7 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
 
         static void HandleReflectionProbes(ReflectionProbeMode reflectionProbeMode, string refProbesStatus)
         {
-            GameObject[] reflectionProbes = GameObject.FindGameObjectsWithTag("LightingReflectionProbe");
+            var reflectionProbes = GameObject.FindGameObjectsWithTag("LightingReflectionProbe");
 
             if (reflectionProbes == null || reflectionProbes.Length == 0)
             {

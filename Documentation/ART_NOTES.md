@@ -11,6 +11,13 @@ Boss Room is set up to support baked lighting. Please feel free to use the exist
 
 ![LightExplorer](Images/BossRoomMenu.png)
 
+The main Boss Room level is separated into three scenes (Assets > BossRoom > Scenes > BossRoom):
+  * Dungeon BossRoom
+  * Dungeon Entrance
+  * Dungeon Transition
+
+To bake, open the BossRoom scene. Load the pieces of the dungeon listed above into that scene, make sure you're using the baking version of all of the lights, then generate your lighting using the settings you'd like from the Boss Room Lighting Setup menu. <br /><br />
+
 * **To bake all lights:**
   * Go to menu Boss Room > Lighting Setup > All Baked
   * Go to lighting settings (Window > Rendering > Lighting). Use the FastBaking baking profile & hit Generate Lighting button to bake all lights<br /><br />
@@ -89,14 +96,7 @@ Lighting settings can be found at Window > Rendering > Lighting
 
 * Reflection probes can also be baked to save performance <br /><br />
 
-## **Baking for Boss Room**
 
-* The main Boss Room level is separated into three scenes (Assets > BossRoom > Scenes > BossRoom):
-  * Dungeon BossRoom
-  * Dungeon Entrance
-  * Dungeon Transition <br /><br />
-
-To bake, open the BossRoom scene. Load the pieces of the dungeon listed above into that scene, make sure you're using the baking version of all of the lights, then generate your lighting using the settings you'd like from the Boss Room Lighting Setup menu. <br /><br />
 
 
 ## **Resources from Unity for more details:**
