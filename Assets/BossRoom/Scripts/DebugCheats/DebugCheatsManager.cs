@@ -115,24 +115,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         }
 
         [ServerRpc(RequireOwnership = false)]
+        void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ulong clientId = serverRpcParams.Receive.SenderClientId;
+            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
+            if (playerServerCharacter != null)
+            {
+                playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
+                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
         void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
         {
             NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            ulong clientId = serverRpcParams.Receive.SenderClientId;
-            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
-            {
-                if (playerServerCharacter.OwnerClientId == clientId)
-                {
-                    playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
-                }
-            }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
         }
 
         [ClientRpc]
