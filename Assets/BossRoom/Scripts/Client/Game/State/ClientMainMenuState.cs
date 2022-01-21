@@ -1,6 +1,6 @@
+using BossRoom.Scripts.Client.UI;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
-using BossRoom.Scripts.Shared.Net.UnityServices.Game;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
@@ -68,10 +68,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             _container.BindMessageChannel<ClientUserSeekingDisapproval>();
             _container.BindMessageChannel<DisplayErrorPopup>();
-            _container.BindMessageChannel<CreateLobbyRequest>();
-            _container.BindMessageChannel<JoinLobbyRequest>();
-            _container.BindMessageChannel<QueryLobbies>();
-            _container.BindMessageChannel<QuickJoin>();
+
+            //todo: remember to cleanup unused message channels
+
             _container.BindMessageChannel<RenameRequest>();
             _container.BindMessageChannel<ClientUserApproved>();
             _container.BindMessageChannel<UserStatus>();
@@ -80,7 +79,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             _container.BindMessageChannel<CompleteCountdown>();
             _container.BindMessageChannel<ChangeGameState>();
             _container.BindMessageChannel<ConfirmInGameState>();
-            _container.BindMessageChannel<EndGame>();
 
             _container.BindAsSingle<LobbyAsyncRequests>();
             _container.BindAsSingle<LocalGameState>();
@@ -88,9 +86,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             _container.BindAsSingle<LobbyServiceData>();
             _container.BindAsSingle<LobbyContentHeartbeat>();
             _container.BindAsSingle<LocalLobby>();
-            _container.BindInstanceAsSingle(new Identity(OnAuthSignIn));
-
+            _container.BindAsSingle<UIFactory>();
+            var playerNetworkObject = Netcode.NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(Netcode.NetworkManager.Singleton.LocalClientId);
+            var persistentPlayer = playerNetworkObject.GetComponent<PersistentPlayer>();
+            _container.BindInstanceAsSingle(persistentPlayer);
             _container.BindInstanceAsSingle(m_lobbyUIManager);
+            _container.BindInstanceAsSingle(new Identity(OnAuthSignIn));
 
             _container.FinalizeScopeConstruction();
 

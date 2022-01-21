@@ -32,7 +32,6 @@ RectTransform:
   - {fileID: 7425930387181850068}
   - {fileID: 4518466638098578806}
   - {fileID: 653101121782963216}
-  - {fileID: 1051339196988081499}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -80,124 +79,6 @@ MonoBehaviour:
   m_ChildScaleWidth: 0
   m_ChildScaleHeight: 0
   m_ReverseArrangement: 0
---- !u!1001 &1830779137034067347
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 6512949122037871174}
-    m_Modifications:
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_Pivot.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_Pivot.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_AnchorMax.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_AnchorMax.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_AnchorMin.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_AnchorMin.y
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_SizeDelta.x
-      value: 233.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_SizeDelta.y
-      value: 49.32695
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: -0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_AnchoredPosition.x
-      value: 116.75
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -187.64432
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1929306791437634001, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_Name
-      value: Unity Lobby
-      objectReference: {fileID: 0}
-    - target: {fileID: 3659563950709367200, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_text
-      value: UNITY LOBBY
-      objectReference: {fileID: 0}
-    - target: {fileID: 3659563950709367200, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_fontSize
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 3659563950709367200, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_fontSizeBase
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 4092997452673795389, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-      propertyPath: m_Group
-      value: 
-      objectReference: {fileID: 540982105790756123}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
---- !u!224 &1051339196988081499 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 1729136521228310728, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
-  m_PrefabInstance: {fileID: 1830779137034067347}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2229115255605134552
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -291,7 +172,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1929306791437634001, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
       propertyPath: m_Name
-      value: UnityRelay RadioButton
+      value: Unity Relay RadioButton
       objectReference: {fileID: 0}
     - target: {fileID: 3659563950709367200, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
       propertyPath: m_text
@@ -409,7 +290,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1929306791437634001, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
       propertyPath: m_Name
-      value: Relay RadioButton
+      value: Photon Relay RadioButton
       objectReference: {fileID: 0}
     - target: {fileID: 3659563950709367200, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
       propertyPath: m_text
@@ -540,6 +421,10 @@ PrefabInstance:
     - target: {fileID: 3659563950709367200, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
       propertyPath: m_fontSizeBase
       value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 4092997452673795389, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
+      propertyPath: m_IsOn
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4092997452673795389, guid: 661bcdeefbb3aef4cbaaefbf213c6310, type: 3}
       propertyPath: m_Group

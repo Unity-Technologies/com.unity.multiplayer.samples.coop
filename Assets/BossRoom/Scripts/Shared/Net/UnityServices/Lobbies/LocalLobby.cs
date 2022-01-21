@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom;
 using UnityEngine;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
@@ -40,6 +41,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             public long State_LastEdit { get; set; }
             public long Color_LastEdit { get; set; }
             public long RelayNGOCode_LastEdit { get; set; }
+            public OnlineMode OnlineMode { get; set; }
 
             public LobbyData(LobbyData existing)
             {
@@ -55,6 +57,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 State_LastEdit = existing.State_LastEdit;
                 Color_LastEdit = existing.Color_LastEdit;
                 RelayNGOCode_LastEdit = existing.RelayNGOCode_LastEdit;
+                OnlineMode = existing.OnlineMode;
             }
 
             public LobbyData(string lobbyCode)
@@ -71,6 +74,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 State_LastEdit = 0;
                 Color_LastEdit = 0;
                 RelayNGOCode_LastEdit = 0;
+                OnlineMode = OnlineMode.Unset;
             }
         }
 
@@ -228,6 +232,18 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 if (m_data.Color != value)
                 {   m_data.Color = value;
                     m_data.Color_LastEdit = DateTime.Now.Ticks;
+                    OnChanged(this);
+                }
+            }
+        }
+
+        public OnlineMode OnlineMode
+        {
+            get => m_data.OnlineMode;
+            set
+            {
+                if (m_data.OnlineMode != value)
+                {   m_data.OnlineMode = value;
                     OnChanged(this);
                 }
             }

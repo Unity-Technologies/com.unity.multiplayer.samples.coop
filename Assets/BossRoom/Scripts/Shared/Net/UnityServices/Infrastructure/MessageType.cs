@@ -47,36 +47,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
         }
     }
 
-    public struct JoinLobbyRequest
-    {
-        public LocalLobby.LobbyData JoinLobbyData;
-
-        public JoinLobbyRequest(LocalLobby.LobbyData joinLobbyData)
-        {
-            JoinLobbyData = joinLobbyData;
-        }
-    }
-
-    public struct CreateLobbyRequest
-    {
-        public LocalLobby.LobbyData CreateLobbyData;
-
-        public CreateLobbyRequest(LocalLobby.LobbyData createLobbyData)
-        {
-            CreateLobbyData = createLobbyData;
-        }
-    }
-
-    public struct QueryLobbies
-    {
-
-    }
-
-    public struct QuickJoin
-    {
-
-    }
-
     public struct EndGame
     {
 

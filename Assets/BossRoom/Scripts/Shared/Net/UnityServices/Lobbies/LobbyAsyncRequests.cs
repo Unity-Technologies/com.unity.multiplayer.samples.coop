@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
-using BossRoom.Scripts.Shared.Net.UnityServices.Game;
-using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Game;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Relays;
 using LobbyRemote = Unity.Services.Lobbies.Models.Lobby;
@@ -168,6 +167,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private static Dictionary<string, string> RetrieveLobbyData(LocalLobby lobby)
         {
             Dictionary<string, string> data = new Dictionary<string, string>();
+
             data.Add("RelayCode", lobby.RelayCode);
             data.Add("RelayNGOCode", lobby.RelayNGOCode);
             data.Add("State", ((int)lobby.State).ToString()); // Using an int is smaller than using the enum state's name.
@@ -175,6 +175,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             data.Add("State_LastEdit", lobby.Data.State_LastEdit.ToString());
             data.Add("Color_LastEdit", lobby.Data.Color_LastEdit.ToString());
             data.Add("RelayNGOCode_LastEdit", lobby.Data.RelayNGOCode_LastEdit.ToString());
+            data.Add("OnlineMode", lobby.Data.OnlineMode.ToString());
+
             return data;
         }
 

@@ -5,12 +5,15 @@ using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
+using GameLobby.UI;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.UI;
 using GameState = BossRoom.Scripts.Shared.Net.UnityServices.Lobbies.GameState;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
+namespace BossRoom.Scripts.Client.UI
 {
     public class LobbyUIManager : MonoBehaviour
     {
@@ -25,13 +28,15 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
         private IPublisher<UserStatus> m_LobbyUserStatusPublisher;
         private Identity m_Identity;
         private LocalGameState m_localGameState;
-
-        //this one is currently manually collected from a player NetworkObject
         private PersistentPlayer m_persistentPlayer;
 
         private IDisposable m_DisposableSubscriptions;
 
         [SerializeField] private CanvasGroup _cg;
+        [SerializeField] private CanvasGroup m_JoinLobbyCanvasGroup;
+        [SerializeField] private CanvasGroup m_CreateLobbyCanvasGroup;
+        [SerializeField] private UITinter m_JoinToggle;
+        [SerializeField] private UITinter m_CreateToggle;
 
         [Inject]
         private void InjectDependencies(
@@ -44,16 +49,16 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
             LobbyContentHeartbeat lobbyContentHeartbeat,
             LobbyServiceData lobbyServiceData,
             LocalLobby localLobby,
+            PersistentPlayer persistentPlayer,
             DIScope container
         )
         {
-
             Application.wantsToQuit += OnWantToQuit;
 
-            var playerNetworkObject = NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(NetworkManager.Singleton.LocalClientId);
-            m_persistentPlayer = playerNetworkObject.GetComponent<PersistentPlayer>();
+            m_persistentPlayer = persistentPlayer;
 
-            SetLocalUserNameFromPersistentPlayerName();
+            m_localUser = lobbyUser;
+            m_localUser.DisplayName = m_persistentPlayer.NetworkNameState.Name.Value;
 
             _container = container;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
@@ -61,13 +66,17 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
             m_LobbyUserStatusPublisher = lobbyUserStatusPublisher;
             m_Identity = identity;
             m_localGameState = localGameState;
-            m_localUser = lobbyUser;
             m_lobbyContentHeartbeat = lobbyContentHeartbeat;
             m_lobbyServiceData = lobbyServiceData;
             m_localLobby = localLobby;
             m_localLobby.State = LobbyState.Lobby;
 
             SubscribeToMessageChannels();
+        }
+
+        private void Awake()
+        {
+            ShowJoinLobbyUI();
         }
 
         private void OnDestroy()
@@ -107,10 +116,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
         {
             var subscriptions = new DisposableGroup();
 
-            subscriptions.Add(_container.Resolve<ISubscriber<CreateLobbyRequest>>().Subscribe(OnCreateLobbyRequest));
-            subscriptions.Add(_container.Resolve<ISubscriber<JoinLobbyRequest>>().Subscribe(OnJoinLobbyRequest));
-            subscriptions.Add(_container.Resolve<ISubscriber<QueryLobbies>>().Subscribe(OnQueryLobbies));
-            subscriptions.Add(_container.Resolve<ISubscriber<QuickJoin>>().Subscribe(OnQuickJoin));
             subscriptions.Add(_container.Resolve<ISubscriber<RenameRequest>>().Subscribe(OnRenameRequest));
             subscriptions.Add(_container.Resolve<ISubscriber<ClientUserApproved>>().Subscribe(OnClientUserApproved));
             subscriptions.Add(_container.Resolve<ISubscriber<UserStatus>>().Subscribe(OnLobbyUserStatus));
@@ -119,53 +124,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
             subscriptions.Add(_container.Resolve<ISubscriber<CompleteCountdown>>().Subscribe(OnCompleteCountdown));
             subscriptions.Add(_container.Resolve<ISubscriber<ChangeGameState>>().Subscribe(OnChangeGameState));
             subscriptions.Add(_container.Resolve<ISubscriber<ConfirmInGameState>>().Subscribe(OnConfirmInGameState));
-            subscriptions.Add(_container.Resolve<ISubscriber<EndGame>>().Subscribe(OnEndGame));
 
             m_DisposableSubscriptions = subscriptions;
 
-
-            void OnCreateLobbyRequest(CreateLobbyRequest msg)
-            {
-                var createLobbyData = msg.CreateLobbyData;
-                m_LobbyAsyncRequests.CreateLobbyAsync(createLobbyData.LobbyName, createLobbyData.MaxPlayerCount, createLobbyData.Private, m_localUser, (r) =>
-                    {   ToLocalLobby.Convert(r, m_localLobby);
-                        OnCreatedLobby();
-                    },
-                    OnFailedJoin);
-            }
-
-            void OnJoinLobbyRequest(JoinLobbyRequest msg)
-            {
-                var joinLobbyData = msg.JoinLobbyData;
-                m_LobbyAsyncRequests.JoinLobbyAsync(joinLobbyData.LobbyID, joinLobbyData.LobbyCode, m_localUser, (r) =>
-                    {   ToLocalLobby.Convert(r, m_localLobby);
-                        OnJoinedLobby();
-                    },
-                    OnFailedJoin);
-            }
-
-            void OnQueryLobbies(QueryLobbies _)
-            {
-                m_lobbyServiceData.State = LobbyQueryState.Fetching;
-                m_LobbyAsyncRequests.RetrieveLobbyListAsync(
-                    qr => {
-                        if (qr != null)
-                            OnLobbiesQueried(ToLocalLobby.Convert(qr));
-                    },
-                    er => {
-                        OnLobbyQueryFailed();
-                    },
-                    LobbyColor.None);
-            }
-
-            void OnQuickJoin(QuickJoin _)
-            {
-                m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, LobbyColor.None, (r) =>
-                    {   ToLocalLobby.Convert(r, m_localLobby);
-                        OnJoinedLobby();
-                    },
-                    OnFailedJoin);
-            }
 
             void OnRenameRequest(RenameRequest msg)
             {
@@ -213,10 +174,40 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
                 m_localLobby.State = LobbyState.InGame;
             }
 
-            void OnEndGame(EndGame _)
-            {   m_localLobby.State = LobbyState.Lobby;
-                SetUserLobbyState();
-            }
+
+        }
+
+        public void CreateLobbyRequest(LocalLobby.LobbyData lobbyData)
+        {
+            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, (r) =>
+                {   ToLocalLobby.Convert(r, m_localLobby);
+                    OnCreatedLobby();
+                },
+                OnFailedJoin);
+        }
+
+        public void QueryLobbiesRequest()
+        {
+            m_lobbyServiceData.State = LobbyQueryState.Fetching;
+            m_LobbyAsyncRequests.RetrieveLobbyListAsync(
+                qr => {
+                    if (qr != null)
+                        OnLobbiesQueried(ToLocalLobby.Convert(qr));
+                },
+                er => {
+                    OnLobbyQueryFailed();
+                },
+                LobbyColor.None);
+        }
+
+
+        public void JoinLobbyRequest(LocalLobby.LobbyData lobbyData)
+        {
+            m_LobbyAsyncRequests.JoinLobbyAsync(lobbyData.LobbyID, lobbyData.LobbyCode, m_localUser, (r) =>
+                {   ToLocalLobby.Convert(r, m_localLobby);
+                    OnJoinedLobby();
+                },
+                OnFailedJoin);
         }
 
         private void UnusubscribeFromMessageChannels()
@@ -227,16 +218,24 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
         private void OnAuthSignIn()
         {
             Debug.Log("Signed in.");
-            m_localUser.ID = m_Identity.GetSubIdentity(Auth.IIdentityType.Auth).GetContent("id");
-            SetLocalUserNameFromPersistentPlayerName();
+            m_localUser.ID = m_Identity.GetSubIdentity(Shared.Net.UnityServices.Auth.IIdentityType.Auth).GetContent("id");
+            m_localUser.DisplayName = m_persistentPlayer.NetworkNameState.Name.Value;
             m_localLobby.AddPlayer(m_localUser); // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
         }
 
-        private void SetLocalUserNameFromPersistentPlayerName()
+        public void QuickJoinRequest()
         {
-            m_localUser.DisplayName = m_persistentPlayer.NetworkNameState.Name.Value;
+            m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, LobbyColor.None, (r) =>
+                {   ToLocalLobby.Convert(r, m_localLobby);
+                    OnJoinedLobby();
+                },
+                OnFailedJoin);
         }
 
+       public void EndGame()
+        {   m_localLobby.State = LobbyState.Lobby;
+            SetUserLobbyState();
+        }
 
         //todo:
         // - *Create a centralized way to subscribe to Update, SlowUpdate, WantsToQuit and other events - use MessageChannel for that? Or reuse SlowUpdate
@@ -392,17 +391,42 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Game
 
         public void Show()
         {
-            _cg.alpha = 1;
-            _cg.interactable = true;
-            _cg.blocksRaycasts = true;
+            ShowCanvasGroup(_cg);
         }
 
         public void Hide()
         {
-            _cg.alpha = 0;
-            _cg.interactable = false;
-            _cg.blocksRaycasts = false;
+            HideCanvasGroup(_cg);
         }
 
+        public void ShowJoinLobbyUI()
+        {
+            HideCanvasGroup(m_CreateLobbyCanvasGroup);
+            ShowCanvasGroup(m_JoinLobbyCanvasGroup);
+            m_JoinToggle.SetToColor(true);
+            m_CreateToggle.SetToColor(false);
+        }
+
+        public void ShowCreateLobbyUI()
+        {
+            HideCanvasGroup(m_JoinLobbyCanvasGroup);
+            ShowCanvasGroup(m_CreateLobbyCanvasGroup);
+            m_JoinToggle.SetToColor(false);
+            m_CreateToggle.SetToColor(true);
+        }
+
+        private void HideCanvasGroup(CanvasGroup cg)
+        {
+            cg.alpha = 0;
+            cg.interactable = false;
+            cg.blocksRaycasts = false;
+        }
+
+        private void ShowCanvasGroup(CanvasGroup cg)
+        {
+            cg.alpha = 1;
+            cg.interactable = true;
+            cg.blocksRaycasts = true;
+        }
     }
 }
