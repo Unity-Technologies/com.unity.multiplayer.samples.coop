@@ -29,6 +29,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         const int k_NbTouchesToOpenWindow = 4;
 
+        bool m_DestroyPortalsOnNextToggle = true;
+
         void Update()
         {
             if (Input.touchCount == k_NbTouchesToOpenWindow ||
@@ -90,7 +92,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         public void TogglePortals()
         {
-            LogCheatNotImplemented("TogglePortals");
+            TogglePortalsServerRpc();
         }
 
         public void GoToPostGame()
@@ -124,6 +126,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                 playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
                 LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
             }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void TogglePortalsServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            foreach (var portal in FindObjectsOfType<ServerEnemyPortal>())
+            {
+                if (m_DestroyPortalsOnNextToggle)
+                {
+                    portal.ForceDestroy();
+                }
+                else
+                {
+                    portal.ForceRestart();
+                }
+            }
+
+            m_DestroyPortalsOnNextToggle = !m_DestroyPortalsOnNextToggle;
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "TogglePortals");
         }
 
         [ServerRpc(RequireOwnership = false)]
