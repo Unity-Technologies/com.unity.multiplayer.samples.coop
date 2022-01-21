@@ -9,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// </summary>
     public class ClientPrefs
     {
-        private const float k_DefaultMasterVolume = 1;
+        private const float k_DefaultMasterVolume = 0.5f;
         private const float k_DefaultMusicVolume = 0.8f;
 
         public static float GetMasterVolume()

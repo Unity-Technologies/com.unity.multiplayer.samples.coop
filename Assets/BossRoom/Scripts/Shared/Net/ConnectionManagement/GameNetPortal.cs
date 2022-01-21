@@ -1,4 +1,5 @@
 using System;
+using System.Threading;
 using Netcode.Transports.PhotonRealtime;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
@@ -179,7 +180,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             StartHost();
         }
 
-        public void StartPhotonRelayHost(string roomName)
+        public void StartPhotonRelayHost(string roomName, CancellationToken cancellationToken)
         {
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -193,10 +194,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            StartHost();
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                StartHost();
+            }
         }
 
-        public async void StartUnityRelayHost()
+        public async void StartUnityRelayHost(CancellationToken cancellationToken)
         {
             var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -217,12 +221,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
                         }
 
                         // we now need to get the joinCode?
-                        var serverRelayUtilityTask = RelayUtility.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
+                        var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
                         await serverRelayUtilityTask;
                         // we now have the info from the relay service
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
-
-                        RelayJoinCode.Code = joinCode;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, _) = serverRelayUtilityTask.Result;
 
                         // we now need to set the RelayCode somewhere :P
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);
@@ -238,13 +240,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            StartHost();
+            if (!cancellationToken.IsCancellationRequested)
+            {
+                StartHost();
+            }
         }
 
         void StartHost()
         {
             NetManager.StartHost();
-            SessionManager<SessionPlayerData>.Instance.AddHostData(new SessionPlayerData(NetManager.LocalClientId, PlayerName, m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
         }
 
         /// <summary>
