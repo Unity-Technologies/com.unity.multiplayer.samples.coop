@@ -124,7 +124,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             if (playerServerCharacter != null)
             {
                 playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
-                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
+                LogCheatUsedClientRPC(clientId, "ToggleGodMode");
             }
         }
 
@@ -160,7 +160,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             UnityEngine.Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
         }
 
-        void LogCheatNotImplemented(string cheat)
+        static void LogCheatNotImplemented(string cheat)
         {
             UnityEngine.Debug.Log($"Cheat {cheat} not implemented");
         }
