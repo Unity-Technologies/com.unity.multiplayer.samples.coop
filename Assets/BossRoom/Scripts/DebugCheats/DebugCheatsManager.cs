@@ -55,49 +55,41 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         public void KillAllEnemies()
         {
-
             LogCheatNotImplemented("KillAllEnemies");
         }
 
         public void ToggleGodMode()
         {
-
-            LogCheatNotImplemented("ToggleGodMode");
+            ToggleGodModeServerRpc();
         }
 
         public void HealPlayer()
         {
-
             LogCheatNotImplemented("HealPlayer");
         }
 
         public void KillPlayer()
         {
-
             LogCheatNotImplemented("KillPlayer");
         }
 
         public void ToggleSuperSpeed()
         {
-
             LogCheatNotImplemented("ToggleSuperSpeed");
         }
 
         public void ToggleTeleportMode()
         {
-
             ToggleTeleportModeServerRpc();
         }
 
         public void ToggleDoor()
         {
-
             LogCheatNotImplemented("ToggleDoor");
         }
 
         public void TogglePortals()
         {
-
             LogCheatNotImplemented("TogglePortals");
         }
 
@@ -120,6 +112,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             var newEnemy = Instantiate(m_BossPrefab);
             newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "SpawnBoss");
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            ulong clientId = serverRpcParams.Receive.SenderClientId;
+            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
+            if (playerServerCharacter != null)
+            {
+                playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
+                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
+            }
         }
 
         [ServerRpc(RequireOwnership = false)]
