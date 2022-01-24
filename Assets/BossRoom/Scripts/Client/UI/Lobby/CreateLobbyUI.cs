@@ -22,14 +22,9 @@ namespace BossRoom.Scripts.Client.UI
 
         [SerializeField]
         private InputField m_IPInputField;
-        [SerializeField]
-        private InputField m_DefaultIPInputField;
 
         [SerializeField]
         private InputField m_PortInputField;
-
-        [SerializeField]
-        private InputField m_DefaultPortField;
 
         private OnlineMode m_OnlineMode;
 
@@ -44,10 +39,6 @@ namespace BossRoom.Scripts.Client.UI
 
         [SerializeField]
         private NameDisplay m_NameDisplay;
-
-        [SerializeField] private Toggle m_IPRadioButton;
-
-        [SerializeField] private Toggle m_UnityRelayRadioButton;
 
 
         [SerializeField] private Toggle m_IsPrivate;
@@ -164,7 +155,7 @@ namespace BossRoom.Scripts.Client.UI
             m_LoadingImage.SetActive(false);
         }
 
-        private void OnCreateClick()
+        public void OnCreateClick()
         {
             int portNum = 0;
             int.TryParse(m_PortInputField.text, out portNum);

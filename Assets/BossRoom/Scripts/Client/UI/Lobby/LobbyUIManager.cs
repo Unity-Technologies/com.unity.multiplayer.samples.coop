@@ -218,14 +218,14 @@ namespace BossRoom.Scripts.Client.UI
         private void OnAuthSignIn()
         {
             Debug.Log("Signed in.");
-            m_localUser.ID = m_Identity.GetSubIdentity(Shared.Net.UnityServices.Auth.IIdentityType.Auth).GetContent("id");
+            m_localUser.ID = m_Identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
             m_localUser.DisplayName = m_persistentPlayer.NetworkNameState.Name.Value;
             m_localLobby.AddPlayer(m_localUser); // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
         }
 
         public void QuickJoinRequest()
         {
-            m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, OnSuccess, OnFailedJoin, OnlineMode.Unset);
+            m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, OnSuccess, OnFailedJoin);
 
             void OnSuccess(Lobby r)
             {

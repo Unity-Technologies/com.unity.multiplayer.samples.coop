@@ -87,9 +87,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             _container.BindAsSingle<LobbyContentHeartbeat>();
             _container.BindAsSingle<LocalLobby>();
             _container.BindAsSingle<UIFactory>();
-            var playerNetworkObject = Netcode.NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(Netcode.NetworkManager.Singleton.LocalClientId);
-            var persistentPlayer = playerNetworkObject.GetComponent<PersistentPlayer>();
-            _container.BindInstanceAsSingle(persistentPlayer);
+
+            //var playerNetworkObject = Netcode.NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(Netcode.NetworkManager.Singleton.LocalClientId);
+           // var persistentPlayer = playerNetworkObject.GetComponent<PersistentPlayer>();
+           // _container.BindInstanceAsSingle(persistentPlayer);
+
             _container.BindInstanceAsSingle(m_lobbyUIManager);
             _container.BindInstanceAsSingle(new Identity(OnAuthSignIn));
 

@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
-using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace BossRoom.Scripts.Client.UI
 {
@@ -19,7 +19,7 @@ namespace BossRoom.Scripts.Client.UI
 
         //
         [SerializeField]
-        TMP_InputField m_JoinCodeField;
+        InputField m_JoinCodeField;
 
         /// <summary>
         /// Key: Lobby ID, Value Lobby UI
@@ -37,6 +37,11 @@ namespace BossRoom.Scripts.Client.UI
             m_UIFactory = uiFactory;
             m_LobbyUIManager = lobbyUIManager;
             m_LobbyServiceData = lobbyServiceData;
+        }
+
+        private void Awake()
+        {
+            m_LobbyPanelPrototype.gameObject.SetActive(false);
         }
 
         public void LobbyPanelSelected(LocalLobby lobby)
