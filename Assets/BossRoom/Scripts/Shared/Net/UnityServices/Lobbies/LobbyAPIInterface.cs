@@ -9,7 +9,7 @@ using Unity.Services.Lobbies.Models;
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     using Lobbies = Unity.Services.Lobbies.Lobbies;
-    using Lobby = Unity.Services.Lobbies.Models.Lobby;
+    using Lobby = Lobby;
 
     /// <summary>
     /// Wrapper for all the interactions with the Lobby API.
@@ -62,21 +62,21 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             DoRequest(task, onComplete);
         }
 
-        public void JoinLobbyAsync_ByCode(string requesterUASId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData, Action<Unity.Services.Lobbies.Models.Lobby> onComplete)
+        public void JoinLobbyAsync_ByCode(string requesterUASId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete)
         {
             JoinLobbyByCodeOptions joinOptions = new JoinLobbyByCodeOptions { Player = new Player(id: requesterUASId, data: localUserData) };
             var task = Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions);
             DoRequest(task, onComplete);
         }
 
-        public void JoinLobbyAsync_ById(string requesterUASId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData, Action<Unity.Services.Lobbies.Models.Lobby> onComplete)
+        public void JoinLobbyAsync_ById(string requesterUASId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete)
         {
             JoinLobbyByIdOptions joinOptions = new JoinLobbyByIdOptions { Player = new Player(id: requesterUASId, data: localUserData) };
-            var task = Unity.Services.Lobbies.Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, joinOptions);
+            var task = Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, joinOptions);
             DoRequest(task, onComplete);
         }
 
-        public void QuickJoinLobbyAsync(string requesterUASId, List<QueryFilter> filters, Dictionary<string, PlayerDataObject> localUserData, Action<Unity.Services.Lobbies.Models.Lobby> onComplete)
+        public void QuickJoinLobbyAsync(string requesterUASId, List<QueryFilter> filters, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete)
         {
             var joinRequest = new QuickJoinLobbyOptions
             {

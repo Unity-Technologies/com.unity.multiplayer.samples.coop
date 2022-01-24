@@ -14,13 +14,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         InGame = 4
     }
 
-    public enum LobbyColor { None = 0, Orange = 1, Green = 2, Blue = 3 }
-
     /// <summary>
     /// A local wrapper around a lobby's remote data, with additional functionality for providing that data to UI elements and tracking local player objects.
     /// (The way that the Lobby service handles its data doesn't necessarily match our needs, so we need to map from that to this LocalLobby for use in the sample code.)
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public class LocalLobby : Observed<LocalLobby>
     {
         Dictionary<string, LobbyUser> m_LobbyUsers = new Dictionary<string, LobbyUser>();
@@ -37,11 +35,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             public bool Private { get; set; }
             public int MaxPlayerCount { get; set; }
             public LobbyState State { get; set; }
-            public LobbyColor Color { get; set; }
             public long State_LastEdit { get; set; }
-            public long Color_LastEdit { get; set; }
             public long RelayNGOCode_LastEdit { get; set; }
+
             public OnlineMode OnlineMode { get; set; }
+            public string IP { get; set; }
+            public int Port { get; set; }
+
 
             public LobbyData(LobbyData existing)
             {
@@ -53,11 +53,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 Private = existing.Private;
                 MaxPlayerCount = existing.MaxPlayerCount;
                 State = existing.State;
-                Color = existing.Color;
                 State_LastEdit = existing.State_LastEdit;
-                Color_LastEdit = existing.Color_LastEdit;
                 RelayNGOCode_LastEdit = existing.RelayNGOCode_LastEdit;
                 OnlineMode = existing.OnlineMode;
+                IP = existing.IP;
+                Port = existing.Port;
             }
 
             public LobbyData(string lobbyCode)
@@ -70,11 +70,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 Private = false;
                 MaxPlayerCount = -1;
                 State = LobbyState.Lobby;
-                Color = LobbyColor.None;
                 State_LastEdit = 0;
-                Color_LastEdit = 0;
                 RelayNGOCode_LastEdit = 0;
                 OnlineMode = OnlineMode.Unset;
+                IP = string.Empty;
+                Port = 0;
             }
         }
 
@@ -224,19 +224,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public LobbyColor Color
-        {
-            get => m_data.Color;
-            set
-            {
-                if (m_data.Color != value)
-                {   m_data.Color = value;
-                    m_data.Color_LastEdit = DateTime.Now.Ticks;
-                    OnChanged(this);
-                }
-            }
-        }
-
         public OnlineMode OnlineMode
         {
             get => m_data.OnlineMode;
@@ -254,17 +241,16 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             // It's possible for the host to edit the lobby in between the time they last pushed lobby data and the time their pull for new lobby data completes.
             // If that happens, the edit will be lost, so instead we maintain the time of last edit to detect that case.
             var pendingState = data.State;
-            var pendingColor = data.Color;
+
             var pendingNgoCode = data.RelayNGOCode;
             if (m_data.State_LastEdit > data.State_LastEdit)
                 pendingState = m_data.State;
-            if (m_data.Color_LastEdit > data.Color_LastEdit)
-                pendingColor = m_data.Color;
+
             if (m_data.RelayNGOCode_LastEdit > data.RelayNGOCode_LastEdit)
                 pendingNgoCode = m_data.RelayNGOCode;
             m_data = data;
             m_data.State = pendingState;
-            m_data.Color = pendingColor;
+
             m_data.RelayNGOCode = pendingNgoCode;
 
             if (currUsers == null)

@@ -1,41 +1,100 @@
+using System;
+using System.Text;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace BossRoom.Scripts.Client.UI
 {
+
     public class CreateLobbyUI : MonoBehaviour
     {
+        public const string k_DefaultIP = "192.168.1.1";
+        public const int k_DefaultPort = 0;
 
         private LobbyUIManager m_LobbyUIManager;
-
-        private LocalLobby.LobbyData m_lobbyData = new LocalLobby.LobbyData { LobbyName = "New Lobby", MaxPlayerCount = 8, Private = false};
 
         [SerializeField]
         private InputField m_LobbyNameInputField;
 
         [SerializeField]
         private InputField m_IPInputField;
+        [SerializeField]
+        private InputField m_DefaultIPInputField;
 
         [SerializeField]
         private InputField m_PortInputField;
 
-        OnlineMode m_OnlineMode;
+        [SerializeField]
+        private InputField m_DefaultPortField;
+
+        private OnlineMode m_OnlineMode;
+
+        #region temp
 
         [SerializeField]
-        Toggle m_IPRadioButton;
+        [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
+        private GameObject m_LoadingImage;
 
         [SerializeField]
-        Toggle m_RelayRadioButton;
+        private Button m_ConfirmationButton;
 
         [SerializeField]
-        Toggle m_UnityRelayRadioButton;
+        private NameDisplay m_NameDisplay;
 
-        [SerializeField]
-        Toggle m_UnityLobbyRadioButton;
+        [SerializeField] private Toggle m_IPRadioButton;
 
+        [SerializeField] private Toggle m_UnityRelayRadioButton;
+
+
+        [SerializeField] private Toggle m_IsPrivate;
+
+        private static readonly char[] k_InputFieldIncludeChars = new[] {'.', '_'};
+
+
+        /// <summary>
+        /// Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
+        /// </summary>
+        /// <param name="dirtyString"> string to sanitize. </param>
+        /// <param name="includeChars"> Array of chars to include. </param>
+        /// <returns> Sanitized text string. </returns>
+        private static string Sanitize(string dirtyString, char[] includeChars = null)
+        {
+            var result = new StringBuilder(dirtyString.Length);
+            foreach (char c in dirtyString)
+            {
+                if (char.IsLetterOrDigit(c) ||
+                    (includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c)))
+                {
+                    result.Append(c);
+                }
+            }
+
+            return result.ToString();
+        }
+
+        /// <summary>
+        /// Added to the InputField component's OnValueChanged callback for the Room/IP UI text.
+        /// </summary>
+        public void SanitizeInputText()
+        {
+            var inputFieldText = Sanitize(m_IPInputField.text, k_InputFieldIncludeChars);
+            m_IPInputField.text = inputFieldText;
+        }
+
+        /// <summary>
+        /// Added to the InputField component's OnValueChanged callback for the Port UI text.
+        /// </summary>
+        public void SanitizePortText()
+        {
+            var inputFieldText = Sanitize(m_PortInputField.text);
+            m_PortInputField.text = inputFieldText;
+        }
+
+        #endregion
 
         [Inject]
         private void InjectDependencies(LobbyUIManager lobbyUIManager)
@@ -45,111 +104,93 @@ namespace BossRoom.Scripts.Client.UI
 
         private void Awake()
         {
+            SetOnlineMode(OnlineMode.UnityRelay);
         }
 
-        public void SetupEnterGameDisplay(bool enterAsHost, string titleText, string ipHostMainText, string relayMainText, string unityRelayMainText, string inputFieldText,
-            string confirmationText, System.Action<string, int, string, OnlineMode> confirmCallback, string defaultIpInput = "", int defaultPortInput = 0)
+        public void IPRadioRadioButtonPressed(bool value)
         {
+            if (!value)
+            {
+                return;
+            }
 
-            m_EnterAsHost = enterAsHost;
+            SetOnlineMode(OnlineMode.IpHost);
+        }
 
-            m_DefaultIpInput = defaultIpInput;
-            m_DefaultPort = defaultPortInput;
+        public void UnityRelayRadioRadioButtonPressed(bool value)
+        {
+            if (!value)
+            {
+                return;
+            }
 
-            m_IpHostMainText = ipHostMainText;
-            m_RelayMainText = relayMainText;
-            m_UnityRelayMainText = unityRelayMainText;
+            SetOnlineMode(OnlineMode.UnityRelay);
+        }
 
-            m_TitleText.text = titleText;
-            m_SubText.text = string.Empty;
-            m_InputFieldPlaceholderText.text = inputFieldText;
-            m_PortInputField.text = defaultPortInput.ToString();
-            m_ConfirmFunction = confirmCallback;
 
-            m_ConfirmationText.text = confirmationText;
-            m_ConfirmationButton.onClick.AddListener(OnConfirmClick);
+        private void SetOnlineMode(OnlineMode mode)
+        {
+            m_OnlineMode = mode;
+
+            switch (mode)
+            {
+                case OnlineMode.IpHost:
+                {
+                    m_LobbyNameInputField.gameObject.SetActive(false);
+
+                    m_PortInputField.text = k_DefaultPort.ToString();
+                    m_IPInputField.gameObject.SetActive(true);
+
+                    m_PortInputField.text = k_DefaultPort.ToString();
+                    m_PortInputField.gameObject.SetActive(true);
+                }
+                    break;
+                case OnlineMode.PhotonRelay:
+                    throw new NotImplementedException();
+                case OnlineMode.UnityRelay:
+                {
+                    m_LobbyNameInputField.gameObject.SetActive(true);
+
+                    m_IPInputField.gameObject.SetActive(false);
+                    m_PortInputField.gameObject.SetActive(false);
+                }
+                    break;
+                case OnlineMode.Unset:
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
+            }
+
             m_ConfirmationButton.gameObject.SetActive(true);
-
-            m_IPRadioButton.gameObject.SetActive(true);
-            m_RelayRadioButton.gameObject.SetActive(true);
-            m_IPRadioButton.onValueChanged.AddListener(IPRadioRadioButtonPressed);
-            m_RelayRadioButton.onValueChanged.AddListener(RelayRadioRadioButtonPressed);
-            m_RelayRadioButton.isOn = false;
-            m_UnityRelayRadioButton.gameObject.SetActive(true);
-            m_UnityRelayRadioButton.onValueChanged.AddListener(UnityRelayRadioRadioButtonPressed);
-            m_UnityRelayRadioButton.isOn = false;
-
-            m_UnityLobbyRadioButton.gameObject.SetActive(true);
-            m_UnityLobbyRadioButton.onValueChanged.AddListener(UnityLobbyRadioButtonPressed);
-            m_UnityLobbyRadioButton.isOn = false;
-
-            m_IPRadioButton.isOn = true;
+            m_LoadingImage.SetActive(false);
         }
 
-        private void UnityLobbyRadioButtonPressed(bool value)
-        {
-            if (!value)
-            {
-                return;
-            }
-
-            if (m_OnlineMode != OnlineMode.Lobby)
-            {
-                OnlineMode = OnlineMode.Lobby;
-            }
-        }
-
-        void IPRadioRadioButtonPressed(bool value)
-        {
-            if (!value)
-            {
-                return;
-            }
-
-            m_OnlineMode = OnlineMode.IpHost;
-        }
-
-        void RelayRadioRadioButtonPressed(bool value)
-        {
-            if (!value)
-            {
-                return;
-            }
-
-            m_OnlineMode = OnlineMode.Relay;
-        }
-
-        void UnityRelayRadioRadioButtonPressed(bool value)
-        {
-            if (!value)
-            {
-                return;
-            }
-
-            m_OnlineMode = OnlineMode.UnityRelay;
-        }
-
-        private void OnConfirmClick()
+        private void OnCreateClick()
         {
             int portNum = 0;
             int.TryParse(m_PortInputField.text, out portNum);
             if (portNum <= 0)
-                portNum = m_DefaultPort;
-            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), OnlineMode);
-        }
-
-        public void OnCreateButtonClicked()
-        {
-
-
+                portNum = k_DefaultPort;
 
             var lobbyData = new LocalLobby.LobbyData()
             {
                 LobbyName = m_LobbyNameInputField.text,
+                //LobbyID = ,
+                //LobbyCode = ,
+                //RelayCode = ,
+                //RelayNGOCode = ,
+                Private = m_IsPrivate.isOn,
+                MaxPlayerCount = 8,
+                //State = ,
+                //Color = ,
+                //State_LastEdit = ,
+                //Color_LastEdit = ,
+                //RelayNGOCode_LastEdit = ,
+                OnlineMode = m_OnlineMode,
+                IP = m_IPInputField.text,
+                Port = portNum
+            };
 
-            }
-
-            m_LobbyUIManager.CreateLobbyRequest(m_lobbyData);
+            m_LobbyUIManager.CreateLobbyRequest(lobbyData);
         }
     }
 

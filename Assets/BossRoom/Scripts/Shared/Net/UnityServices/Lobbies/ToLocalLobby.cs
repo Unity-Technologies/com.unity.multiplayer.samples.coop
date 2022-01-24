@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Services.Lobbies.Models;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
@@ -22,10 +24,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 RelayCode           = lobby.Data?.ContainsKey("RelayCode") == true ? lobby.Data["RelayCode"].Value : null, // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
                 RelayNGOCode        = lobby.Data?.ContainsKey("RelayNGOCode") == true ? lobby.Data["RelayNGOCode"].Value : null,
                 State               = lobby.Data?.ContainsKey("State") == true ? (LobbyState) int.Parse(lobby.Data["State"].Value) : LobbyState.Lobby,
-                Color               = lobby.Data?.ContainsKey("Color") == true ? (LobbyColor) int.Parse(lobby.Data["Color"].Value) : LobbyColor.None,
                 State_LastEdit        = lobby.Data?.ContainsKey("State_LastEdit") == true ? long.Parse(lobby.Data["State_LastEdit"].Value) : 0,
-                Color_LastEdit        = lobby.Data?.ContainsKey("Color_LastEdit") == true ? long.Parse(lobby.Data["Color_LastEdit"].Value) : 0,
                 RelayNGOCode_LastEdit = lobby.Data?.ContainsKey("RelayNGOCode_LastEdit") == true ? long.Parse(lobby.Data["RelayNGOCode_LastEdit"].Value) : 0,
+                OnlineMode = lobby.Data?.ContainsKey("OnlineMode") == true ? (OnlineMode)int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset,
+                IP = lobby.Data?.ContainsKey("IP") == true ? lobby.Data["IP"].Value : string.Empty,
+                Port =  lobby.Data?.ContainsKey("Port") == true ? int.Parse(lobby.Data["Port"].Value) : 0
             };
 
             Dictionary<string, LobbyUser> lobbyUsers = new Dictionary<string, LobbyUser>();

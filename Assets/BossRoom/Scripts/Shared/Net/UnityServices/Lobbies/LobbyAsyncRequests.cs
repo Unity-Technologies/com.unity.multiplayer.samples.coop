@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 
@@ -53,7 +54,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             if (!string.IsNullOrEmpty(m_currentLobbyId))
                 RetrieveLobbyAsync(m_currentLobbyId, OnComplete);
 
-            void OnComplete(Unity.Services.Lobbies.Models.Lobby lobby)
+            void OnComplete(Lobby lobby)
             {
                 if (lobby != null)
                 {
@@ -105,7 +106,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to create a new lobby and then join it.
         /// </summary>
-        public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, LobbyUser localUser, Action<Unity.Services.Lobbies.Models.Lobby> onSuccess, Action onFailure)
+        public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_rateLimitHost.CanCall())
             {
@@ -118,7 +119,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             m_LobbyApiInterface.CreateLobbyAsync(uasId, lobbyName, maxPlayers, isPrivate, CreateInitialPlayerData(localUser), OnLobbyCreated);
 
-            void OnLobbyCreated(Unity.Services.Lobbies.Models.Lobby response)
+            void OnLobbyCreated(Lobby response)
             {
                 if (response == null)
                     onFailure?.Invoke();
@@ -130,7 +131,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to join an existing lobby. Either ID xor code can be null.
         /// </summary>
-        public void JoinLobbyAsync(string lobbyId, string lobbyCode, LobbyUser localUser, Action<Unity.Services.Lobbies.Models.Lobby> onSuccess, Action onFailure)
+        public void JoinLobbyAsync(string lobbyId, string lobbyCode, LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_rateLimitJoin.CanCall() ||
                 (lobbyId == null && lobbyCode == null))
@@ -146,7 +147,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             else
                 m_LobbyApiInterface.JoinLobbyAsync_ByCode(uasId, lobbyCode, CreateInitialPlayerData(localUser), OnLobbyJoined);
 
-            void OnLobbyJoined(Unity.Services.Lobbies.Models.Lobby response)
+            void OnLobbyJoined(Lobby response)
             {
                 if (response == null)
                     onFailure?.Invoke();
@@ -156,9 +157,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         }
 
         /// <summary>
-        /// Attempt to join the first lobby among the available lobbies that match the filtered limitToColor.
+        /// Attempt to join the first lobby among the available lobbies that match the filtered onlineMode.
         /// </summary>
-        public void QuickJoinLobbyAsync(LobbyUser localUser, LobbyColor limitToColor = LobbyColor.None, Action<Unity.Services.Lobbies.Models.Lobby> onSuccess = null, Action onFailure = null)
+        public void QuickJoinLobbyAsync(LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure, List<QueryFilter> filters = null)
         {
             if (!m_rateLimitQuickJoin.CanCall())
             {
@@ -167,11 +168,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 return;
             }
 
-            var filters = LobbyColorToFilters(limitToColor);
             string uasId = AuthenticationService.Instance.PlayerId;
             m_LobbyApiInterface.QuickJoinLobbyAsync(uasId, filters, CreateInitialPlayerData(localUser), OnLobbyJoined);
 
-            void OnLobbyJoined(Unity.Services.Lobbies.Models.Lobby response)
+            void OnLobbyJoined(Lobby response)
             {
                 if (response == null)
                     onFailure?.Invoke();
@@ -184,17 +184,15 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// Used for getting the list of all active lobbies, without needing full info for each.
         /// </summary>
         /// <param name="onListRetrieved">If called with null, retrieval was unsuccessful. Else, this will be given a list of contents to display, as pairs of a lobby code and a display string for that lobby.</param>
-        public void RetrieveLobbyListAsync(Action<QueryResponse> onListRetrieved, Action<QueryResponse> onError = null, LobbyColor limitToColor = LobbyColor.None)
+        public void RetrieveLobbyListAsync(Action<QueryResponse> onListRetrieved, Action<QueryResponse> onError, List<QueryFilter> filters = null)
         {
             if (!m_rateLimitQuery.CanCall())
             {
                 onListRetrieved?.Invoke(null);
-                m_rateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onListRetrieved, onError, limitToColor); });
+                m_rateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onListRetrieved, onError, filters); });
                 UnityEngine.Debug.LogWarning("Retrieve Lobby list hit the rate limit. Will try again soon...");
                 return;
             }
-
-            var filters = LobbyColorToFilters(limitToColor);
 
             m_LobbyApiInterface.QueryAllLobbiesAsync(filters, OnLobbyListRetrieved);
 
@@ -207,20 +205,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        private List<QueryFilter> LobbyColorToFilters(LobbyColor limitToColor)
-        {
-            List<QueryFilter> filters = new List<QueryFilter>();
-            if (limitToColor == LobbyColor.Orange)
-                filters.Add(new QueryFilter(QueryFilter.FieldOptions.N1, ((int)LobbyColor.Orange).ToString(), QueryFilter.OpOptions.EQ));
-            else if (limitToColor == LobbyColor.Green)
-                filters.Add(new QueryFilter(QueryFilter.FieldOptions.N1, ((int)LobbyColor.Green).ToString(), QueryFilter.OpOptions.EQ));
-            else if (limitToColor == LobbyColor.Blue)
-                filters.Add(new QueryFilter(QueryFilter.FieldOptions.N1, ((int)LobbyColor.Blue).ToString(), QueryFilter.OpOptions.EQ));
-            return filters;
-        }
-
         /// <param name="onComplete">If no lobby is retrieved, or if this call hits the rate limit, this is given null.</param>
-        private void RetrieveLobbyAsync(string lobbyId, Action<Unity.Services.Lobbies.Models.Lobby> onComplete)
+        private void RetrieveLobbyAsync(string lobbyId, Action<Lobby> onComplete)
         {
             if (!m_rateLimitQuery.CanCall())
             {
@@ -230,7 +216,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
             m_LobbyApiInterface.GetLobbyAsync(lobbyId, OnGet);
 
-            void OnGet(Unity.Services.Lobbies.Models.Lobby response)
+            void OnGet(Lobby response)
             {
                 onComplete?.Invoke(response); // FUTURE: Consider passing in the exception code here (and elsewhere) to, e.g., specifically handle a 404 indicating a Relay auto-disconnect.
             }
@@ -294,7 +280,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             if (!ShouldUpdateData(() => { UpdateLobbyDataAsync(data, onComplete); }, onComplete, false))
                 return;
 
-            Unity.Services.Lobbies.Models.Lobby lobby = m_lastKnownLobby;
+            Lobby lobby = m_lastKnownLobby;
             Dictionary<string, DataObject> dataCurr = lobby.Data ?? new Dictionary<string, DataObject>();
 
 			var shouldLock = false;
@@ -336,7 +322,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 return false;
             }
 
-            Unity.Services.Lobbies.Models.Lobby lobby = m_lastKnownLobby;
+            Lobby lobby = m_lastKnownLobby;
             if (lobby == null)
             {
                 if (shouldRetryIfLobbyNull)

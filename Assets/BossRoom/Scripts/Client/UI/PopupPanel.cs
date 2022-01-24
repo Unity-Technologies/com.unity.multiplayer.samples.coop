@@ -70,7 +70,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [SerializeField]
         Toggle m_UnityRelayRadioButton;
-        
+
         [SerializeField]
         Toggle m_UnityLobbyRadioButton;
 
@@ -148,11 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_UnityRelayRadioButton.gameObject.SetActive(true);
             m_UnityRelayRadioButton.onValueChanged.AddListener(UnityRelayRadioRadioButtonPressed);
             m_UnityRelayRadioButton.isOn = false;
-            
-            m_UnityLobbyRadioButton.gameObject.SetActive(true);
-            m_UnityLobbyRadioButton.onValueChanged.AddListener(UnityLobbyRadioButtonPressed);
-            m_UnityLobbyRadioButton.isOn = false;
-            
+
             m_IPRadioButton.isOn = true;
 
             m_CancelButton.onClick.AddListener(OnCancelClick);
@@ -164,19 +160,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_NameDisplay.gameObject.SetActive(true);
 
             gameObject.SetActive(true);
-        }
-
-        private void UnityLobbyRadioButtonPressed(bool value)
-        {
-            if (!value)
-            {
-                return;
-            }
-
-            if (m_OnlineMode != OnlineMode.Lobby)
-            {
-                OnlineMode = OnlineMode.Lobby;
-            }
         }
 
         void IPRadioRadioButtonPressed(bool value)
@@ -196,7 +179,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            OnlineMode = OnlineMode.Relay;
+            OnlineMode = OnlineMode.PhotonRelay;
         }
 
         void UnityRelayRadioRadioButtonPressed(bool value)
@@ -292,7 +275,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_PortInputField.gameObject.SetActive(true);
                 m_PortInputField.text = m_DefaultPort.ToString();
             }
-            else if (value == OnlineMode.Relay)
+            else if (value == OnlineMode.PhotonRelay)
             {
                 if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
                 {
@@ -352,10 +335,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                         m_UnityRelayHealthCheck = UnityRelayHealthCheckCall();
                     }
                 }
-            }
-            else if (value == OnlineMode.Lobby)
-            {
-                
             }
         }
 

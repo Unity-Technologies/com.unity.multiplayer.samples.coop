@@ -8,6 +8,7 @@ using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using GameLobby.UI;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
@@ -196,8 +197,7 @@ namespace BossRoom.Scripts.Client.UI
                 },
                 er => {
                     OnLobbyQueryFailed();
-                },
-                LobbyColor.None);
+                });
         }
 
 
@@ -225,27 +225,22 @@ namespace BossRoom.Scripts.Client.UI
 
         public void QuickJoinRequest()
         {
-            m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, LobbyColor.None, (r) =>
-                {   ToLocalLobby.Convert(r, m_localLobby);
-                    OnJoinedLobby();
-                },
-                OnFailedJoin);
+            m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, OnSuccess, OnFailedJoin, OnlineMode.Unset);
+
+            void OnSuccess(Lobby r)
+            {
+                ToLocalLobby.Convert(r, m_localLobby);
+                OnJoinedLobby();
+            }
         }
 
        public void EndGame()
-        {   m_localLobby.State = LobbyState.Lobby;
+        {
+            m_localLobby.State = LobbyState.Lobby;
             SetUserLobbyState();
         }
 
-        //todo:
-        // - *Create a centralized way to subscribe to Update, SlowUpdate, WantsToQuit and other events - use MessageChannel for that? Or reuse SlowUpdate
-        // - Before we go into any kind of state that would require us to have wired dependencies - we should already had created a DIScope with dependencies
-        //    - for the purposes of wiring the Lobby code we can just create a DI Scope within the PopupPanel (or some other class that would serve as entrypoint into this whole login logic)
-        // - we want to start by injecting dependencies into our UI objects
-        // - we want to suscribe to various events
-
-
-        private void SetGameState(GameState state)
+       private void SetGameState(GameState state)
         {
             bool isLeavingLobby = (state == GameState.Menu || state == GameState.JoinMenu) && m_localGameState.State == GameState.Lobby;
             m_localGameState.State = state;

@@ -25,11 +25,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public enum OnlineMode
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
-        Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
+        PhotonRelay = 1, // The server is hosted over a relay server and clients join by entering a room name.
         UnityRelay = 2, // The server is hosted over a Unity Relay server and clients join by entering a join code.
-        Lobby = 3, // The server is hosted over a Unity Lobby server. Depending on the settings of the lobby clients will be able to join by entering the code, by finding the lobby or via QuickJoin mechanism.
         Unset = -1, // The hosting mode is not set yet.
-        
+
     }
 
     [Serializable]

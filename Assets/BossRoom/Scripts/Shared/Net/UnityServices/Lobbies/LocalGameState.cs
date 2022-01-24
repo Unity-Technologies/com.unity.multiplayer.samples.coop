@@ -18,7 +18,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     /// <summary>
     /// Awaits player input to change the local game data.
     /// </summary>
-    [System.Serializable]
+    [Serializable]
     public class LocalGameState : Observed<LocalGameState>
     {
         GameState m_State = GameState.Menu;
