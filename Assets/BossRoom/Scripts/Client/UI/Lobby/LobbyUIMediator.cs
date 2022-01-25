@@ -16,7 +16,7 @@ using GameState = BossRoom.Scripts.Shared.Net.UnityServices.Lobbies.GameState;
 
 namespace BossRoom.Scripts.Client.UI
 {
-    public class LobbyUIManager : MonoBehaviour
+    public class LobbyUIMediator : MonoBehaviour
     {
         //injected dependencies
         private DIScope _container;
@@ -29,7 +29,6 @@ namespace BossRoom.Scripts.Client.UI
         private IPublisher<UserStatus> m_LobbyUserStatusPublisher;
         private Identity m_Identity;
         private LocalGameState m_localGameState;
-        private PersistentPlayer m_persistentPlayer;
 
         private IDisposable m_DisposableSubscriptions;
 
@@ -50,16 +49,15 @@ namespace BossRoom.Scripts.Client.UI
             LobbyContentHeartbeat lobbyContentHeartbeat,
             LobbyServiceData lobbyServiceData,
             LocalLobby localLobby,
-            PersistentPlayer persistentPlayer,
             DIScope container
         )
         {
             Application.wantsToQuit += OnWantToQuit;
 
-            m_persistentPlayer = persistentPlayer;
+            //m_persistentPlayer = persistentPlayer;
 
             m_localUser = lobbyUser;
-            m_localUser.DisplayName = m_persistentPlayer.NetworkNameState.Name.Value;
+            m_localUser.DisplayName = "test";//m_persistentPlayer.NetworkNameState.Name.Value;
 
             _container = container;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
@@ -219,7 +217,7 @@ namespace BossRoom.Scripts.Client.UI
         {
             Debug.Log("Signed in.");
             m_localUser.ID = m_Identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
-            m_localUser.DisplayName = m_persistentPlayer.NetworkNameState.Name.Value;
+            m_localUser.DisplayName = "test";// m_persistentPlayer.NetworkNameState.Name.Value;
             m_localLobby.AddPlayer(m_localUser); // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
         }
 

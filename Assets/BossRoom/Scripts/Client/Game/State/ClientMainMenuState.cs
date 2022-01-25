@@ -5,6 +5,7 @@ using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.Serialization;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -30,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private DIScope _container;
 
 
-        [SerializeField] private LobbyUIManager m_lobbyUIManager;
+        [FormerlySerializedAs("m_lobbyUIManager")] [SerializeField] private LobbyUIMediator lobbyUIMediator;
 
         [SerializeField] private CanvasGroup m_mainMenuButtons;
         [SerializeField] private GameObject m_signInSpinner;
@@ -38,7 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private void Awake()
         {
             m_mainMenuButtons.interactable = false;
-
+            lobbyUIMediator.Hide();
             CreateDIScope();
         }
 
@@ -91,7 +92,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
            // var persistentPlayer = playerNetworkObject.GetComponent<PersistentPlayer>();
            // _container.BindInstanceAsSingle(persistentPlayer);
 
-            _container.BindInstanceAsSingle(m_lobbyUIManager);
+            _container.BindInstanceAsSingle(lobbyUIMediator);
             _container.BindInstanceAsSingle(new Identity(OnAuthSignIn));
 
             _container.FinalizeScopeConstruction();
@@ -115,7 +116,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_ClientNetPortal.OnUnityRelayJoinFailed += OnRelayJoinFailed;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
-            m_lobbyUIManager.Hide();
+            lobbyUIMediator.Hide();
 
             //any disconnect reason set? Show it to the user here.
             ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
@@ -124,7 +125,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void OnStartClicked()
         {
-            m_lobbyUIManager.Show();
+            lobbyUIMediator.Show();
         }
 
         // public void OnHostClicked()

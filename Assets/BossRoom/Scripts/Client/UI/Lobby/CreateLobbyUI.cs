@@ -15,7 +15,7 @@ namespace BossRoom.Scripts.Client.UI
         public const string k_DefaultIP = "192.168.1.1";
         public const int k_DefaultPort = 0;
 
-        private LobbyUIManager m_LobbyUIManager;
+        private LobbyUIMediator m_LobbyUIMediator;
 
         [SerializeField]
         private InputField m_LobbyNameInputField;
@@ -90,9 +90,9 @@ namespace BossRoom.Scripts.Client.UI
         #endregion
 
         [Inject]
-        private void InjectDependencies(LobbyUIManager lobbyUIManager)
+        private void InjectDependencies(LobbyUIMediator lobbyUIMediator)
         {
-            m_LobbyUIManager = lobbyUIManager;
+            m_LobbyUIMediator = lobbyUIMediator;
         }
 
         private void Awake()
@@ -181,7 +181,7 @@ namespace BossRoom.Scripts.Client.UI
                 Port = portNum
             };
 
-            m_LobbyUIManager.CreateLobbyRequest(lobbyData);
+            m_LobbyUIMediator.CreateLobbyRequest(lobbyData);
         }
     }
 

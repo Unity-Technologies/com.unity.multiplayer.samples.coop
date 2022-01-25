@@ -12,7 +12,7 @@ namespace BossRoom.Scripts.Client.UI
     public class JoinLobbyUI : ObserverBehaviour<LobbyServiceData>
     {
         private UIFactory m_UIFactory;
-        private LobbyUIManager m_LobbyUIManager;
+        private LobbyUIMediator m_LobbyUIMediator;
         private LobbyServiceData m_LobbyServiceData;
 
         [SerializeField] private LobbyPanelUI m_LobbyPanelPrototype;
@@ -32,10 +32,10 @@ namespace BossRoom.Scripts.Client.UI
 
 
         [Inject]
-        private void InjectDependencies(UIFactory uiFactory, LobbyUIManager lobbyUIManager, LobbyServiceData lobbyServiceData)
+        private void InjectDependencies(UIFactory uiFactory, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData)
         {
             m_UIFactory = uiFactory;
-            m_LobbyUIManager = lobbyUIManager;
+            m_LobbyUIMediator = lobbyUIMediator;
             m_LobbyServiceData = lobbyServiceData;
         }
 
@@ -57,13 +57,13 @@ namespace BossRoom.Scripts.Client.UI
 
         public void OnJoinButtonPressed()
         {
-            m_LobbyUIManager.JoinLobbyRequest(m_LocalLobbySelected);
+            m_LobbyUIMediator.JoinLobbyRequest(m_LocalLobbySelected);
             m_LocalLobbySelected = default;
         }
 
         public void OnRefresh()
         {
-            m_LobbyUIManager.QueryLobbiesRequest();
+            m_LobbyUIMediator.QueryLobbiesRequest();
         }
 
         protected override void UpdateObserver(LobbyServiceData observed)
@@ -116,7 +116,7 @@ namespace BossRoom.Scripts.Client.UI
 
         public void OnQuickJoinClicked()
         {
-            m_LobbyUIManager.QuickJoinRequest();
+            m_LobbyUIMediator.QuickJoinRequest();
         }
 
         private bool CanDisplay(LocalLobby lobby)
