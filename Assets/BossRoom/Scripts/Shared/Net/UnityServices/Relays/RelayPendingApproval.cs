@@ -17,7 +17,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
         private Action<NetworkConnection, Approval> m_onResult;
         public string ID { get; private set; }
 
-        private UpdateSlow m_updateSlow;
+        private UpdateRunner m_UpdateRunner;
 
 
         public RelayPendingApproval(NetworkConnection conn, Action<NetworkConnection, Approval> onResult, string id)
@@ -28,10 +28,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
         }
 
         [Inject]
-        private void InjectDependencies(UpdateSlow updateSlow, IPublisher<ClientUserSeekingDisapproval> disapprovalPublisher)
+        private void InjectDependencies(UpdateRunner updateRunner, IPublisher<ClientUserSeekingDisapproval> disapprovalPublisher)
         {
-            updateSlow.Subscribe(Approve, k_waitTime);
-            m_updateSlow = updateSlow;
+            updateRunner.Subscribe(Approve, k_waitTime);
+            m_UpdateRunner = updateRunner;
             disapprovalPublisher.Publish( new ClientUserSeekingDisapproval(Disapprove));
         }
 
@@ -61,7 +61,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
         {
             if (!m_hasDisposed)
             {
-                m_updateSlow.Unsubscribe(Approve);
+                m_UpdateRunner.Unsubscribe(Approve);
                 m_hasDisposed = true;
             }
         }
