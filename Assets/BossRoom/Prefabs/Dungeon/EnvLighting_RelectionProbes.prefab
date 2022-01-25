@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 531599622989977181}
   m_Layer: 0
   m_Name: Reflection Probe (8)
-  m_TagString: Untagged
+  m_TagString: LightingReflectionProbe
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 1805384388071980699}
   m_Layer: 0
   m_Name: Reflection Probe (16)
-  m_TagString: Untagged
+  m_TagString: LightingReflectionProbe
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -173,7 +173,7 @@ GameObject:
   - component: {fileID: 7592168011145345609}
   m_Layer: 0
   m_Name: Reflection Probe (7)
-  m_TagString: Untagged
+  m_TagString: LightingReflectionProbe
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

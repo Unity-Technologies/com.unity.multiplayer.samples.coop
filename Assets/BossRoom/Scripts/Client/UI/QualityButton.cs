@@ -6,30 +6,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     public class QualityButton : MonoBehaviour
     {
         [SerializeField]
-        private TMP_Text qualityBtnText;
+        TMP_Text m_QualityBtnText;
 
         private void Start()
         {
-            int index = QualitySettings.GetQualityLevel();
-            qualityBtnText.text = QualitySettings.names[index];
+            var index = QualitySettings.GetQualityLevel();
+            m_QualityBtnText.text = QualitySettings.names[index];
         }
 
         public void SetQualitySettings()
         {
-            int qualityLevels = QualitySettings.names.Length - 1;
-            int currentLevel = QualitySettings.GetQualityLevel();
+            var qualityLevels = QualitySettings.names.Length - 1;
+            var currentLevel = QualitySettings.GetQualityLevel();
 
             if (currentLevel < qualityLevels)
             {
                 QualitySettings.IncreaseLevel();
-                qualityBtnText.text = QualitySettings.names[QualitySettings.GetQualityLevel()];
+                m_QualityBtnText.text = QualitySettings.names[QualitySettings.GetQualityLevel()];
             }
             else
             {
                 QualitySettings.SetQualityLevel(0);
-                qualityBtnText.text = QualitySettings.names[QualitySettings.GetQualityLevel()];
+                m_QualityBtnText.text = QualitySettings.names[QualitySettings.GetQualityLevel()];
             }
-        
         }
     }  
 }
