@@ -14,13 +14,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private void Awake()
         {
             DontDestroyOnLoad(m_UpdateRunner.gameObject);
-
             var scope = DIScope.RootScope;
-
             scope.BindInstanceAsSingle(m_UpdateRunner);
-
             scope.FinalizeScopeConstruction();
+        }
 
+        private void Start()
+        {
             SceneManager.LoadScene("MainMenu");
         }
     }

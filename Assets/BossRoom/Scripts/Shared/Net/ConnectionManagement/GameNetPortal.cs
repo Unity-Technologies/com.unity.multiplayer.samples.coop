@@ -93,10 +93,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             Instance = this;
             m_ClientPortal = GetComponent<ClientGameNetPortal>();
             m_ServerPortal = GetComponent<ServerGameNetPortal>();
-        }
-
-        void Start()
-        {
             DontDestroyOnLoad(gameObject);
 
             //we synthesize a "OnNetworkSpawn" event for the NetworkManager out of existing events. At some point

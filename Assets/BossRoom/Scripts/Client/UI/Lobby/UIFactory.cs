@@ -5,10 +5,10 @@ namespace BossRoom.Scripts.Client.UI
 {
     public class UIFactory
     {
-        private readonly DIScope m_Scope;
+        private readonly IInstanceResolver m_Scope;
 
         [Inject]
-        public UIFactory(DIScope scope)
+        public UIFactory(IInstanceResolver scope)
         {
             m_Scope = scope;
         }

@@ -9,7 +9,6 @@ using Unity.Services.Lobbies.Models;
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     using Lobbies = Unity.Services.Lobbies.Lobbies;
-    using Lobby = Lobby;
 
     /// <summary>
     /// Wrapper for all the interactions with the Lobby API.

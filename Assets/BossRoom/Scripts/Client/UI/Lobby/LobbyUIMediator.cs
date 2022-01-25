@@ -19,7 +19,7 @@ namespace BossRoom.Scripts.Client.UI
     public class LobbyUIMediator : MonoBehaviour
     {
         //injected dependencies
-        private DIScope _container;
+        private IInstanceResolver _container;
         private LobbyAsyncRequests m_LobbyAsyncRequests;
         private LobbyUser m_localUser;
         private LocalLobby m_localLobby;
@@ -49,7 +49,7 @@ namespace BossRoom.Scripts.Client.UI
             LobbyContentHeartbeat lobbyContentHeartbeat,
             LobbyServiceData lobbyServiceData,
             LocalLobby localLobby,
-            DIScope container
+            IInstanceResolver container
         )
         {
             Application.wantsToQuit += OnWantToQuit;
