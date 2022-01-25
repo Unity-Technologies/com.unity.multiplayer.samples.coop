@@ -40,6 +40,8 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField]
         private NameDisplay m_NameDisplay;
 
+        [SerializeField] private Toggle m_IPToggle;
+        [SerializeField] private Toggle m_UnityRelayToggle;
 
         [SerializeField] private Toggle m_IsPrivate;
 
@@ -96,9 +98,11 @@ namespace BossRoom.Scripts.Client.UI
         private void Awake()
         {
             SetOnlineMode(OnlineMode.UnityRelay);
+            m_IPToggle.onValueChanged.AddListener(IPRadioRadioButtonPressed);
+            m_UnityRelayToggle.onValueChanged.AddListener(UnityRelayRadioRadioButtonPressed);
         }
 
-        public void IPRadioRadioButtonPressed(bool value)
+        private void IPRadioRadioButtonPressed(bool value)
         {
             if (!value)
             {
@@ -108,7 +112,7 @@ namespace BossRoom.Scripts.Client.UI
             SetOnlineMode(OnlineMode.IpHost);
         }
 
-        public void UnityRelayRadioRadioButtonPressed(bool value)
+        private void UnityRelayRadioRadioButtonPressed(bool value)
         {
             if (!value)
             {
@@ -127,8 +131,6 @@ namespace BossRoom.Scripts.Client.UI
             {
                 case OnlineMode.IpHost:
                 {
-                    m_LobbyNameInputField.gameObject.SetActive(false);
-
                     m_PortInputField.text = k_DefaultPort.ToString();
                     m_IPInputField.gameObject.SetActive(true);
 
@@ -140,8 +142,6 @@ namespace BossRoom.Scripts.Client.UI
                     throw new NotImplementedException();
                 case OnlineMode.UnityRelay:
                 {
-                    m_LobbyNameInputField.gameObject.SetActive(true);
-
                     m_IPInputField.gameObject.SetActive(false);
                     m_PortInputField.gameObject.SetActive(false);
                 }

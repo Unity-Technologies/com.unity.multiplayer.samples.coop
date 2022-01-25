@@ -23,12 +23,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private GameNetPortal m_GameNetPortal;
 
-        private Client.ClientGameNetPortal m_ClientNetPortal;
+        private ClientGameNetPortal m_ClientNetPortal;
 
-        /// <summary>
-        /// This will get more sophisticated as we move to a true relay model.
-        /// </summary>
-        private const int k_ConnectPort = 9998;
 
         [SerializeField] private GameObject[] _autoInjected;
         private DIScope _container;
@@ -64,7 +60,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 localLobby.AddPlayer(localUser);
             }
 
-            _container = new DIScope();
+            _container = new DIScope(DIScope.RootScope);
 
             _container.BindMessageChannel<ClientUserSeekingDisapproval>();
             _container.BindMessageChannel<DisplayErrorPopup>();
@@ -80,6 +76,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             _container.BindMessageChannel<ChangeGameState>();
             _container.BindMessageChannel<ConfirmInGameState>();
 
+            _container.BindMessageChannel<EndGame>();
+
+            _container.BindAsSingle<LobbyAPIInterface>();
             _container.BindAsSingle<LobbyAsyncRequests>();
             _container.BindAsSingle<LocalGameState>();
             _container.BindAsSingle<LobbyUser>();

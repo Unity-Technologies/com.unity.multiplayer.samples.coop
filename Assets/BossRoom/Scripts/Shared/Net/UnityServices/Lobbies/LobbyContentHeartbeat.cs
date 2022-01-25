@@ -20,7 +20,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private const float k_approvalMaxTime = 10; // Used for determining if a user should timeout if they are unable to connect.
         private float m_lifetime = 0;
 
-        private readonly UpdateSlow m_SlowUpdate;
+        private readonly UpdateRunner m_SlowUpdate;
         private IDisposable m_DisposableSubscription;
         private readonly ISubscriber<ClientUserSeekingDisapproval> m_UserSeekingApprovalSubscriber;
         private readonly LobbyAsyncRequests m_LobbyAsyncRequests;
@@ -30,7 +30,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         [Inject]
         public LobbyContentHeartbeat(
-            UpdateSlow slowUpdate,
+            UpdateRunner slowUpdate,
             ISubscriber<ClientUserSeekingDisapproval> userSeekingApprovalSubscriber,
             LobbyAsyncRequests lobbyAsyncRequests,
             IPublisher<ChangeGameState> changeGameStatePublisher,

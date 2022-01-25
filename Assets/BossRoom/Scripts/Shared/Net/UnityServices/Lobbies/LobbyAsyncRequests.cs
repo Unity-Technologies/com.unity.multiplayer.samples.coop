@@ -15,16 +15,16 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     public class LobbyAsyncRequests
     {
         [Inject]
-        public LobbyAsyncRequests(UpdateSlow slowUpdate, LobbyAPIInterface lobbyAPIInterface, Identity localIdentity)
+        public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, Identity localIdentity)
         {
             m_LocalPlayerIdentity = localIdentity;
             m_LobbyApiInterface = lobbyAPIInterface;
             m_SlowUpdate = slowUpdate;
 
             m_rateLimitQuery = new RateLimitCooldown(1.5f, slowUpdate); // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
-         m_rateLimitJoin = new RateLimitCooldown(3f, slowUpdate);
-         m_rateLimitQuickJoin = new RateLimitCooldown(10f,  slowUpdate);
-        m_rateLimitHost = new RateLimitCooldown(3f, slowUpdate);
+            m_rateLimitJoin = new RateLimitCooldown(3f, slowUpdate);
+            m_rateLimitQuickJoin = new RateLimitCooldown(10f,  slowUpdate);
+            m_rateLimitHost = new RateLimitCooldown(3f, slowUpdate);
 
             // Shouldn't need to unsubscribe since this instance won't be replaced. 0.5s is arbitrary; the rate limits are tracked later.
             slowUpdate.Subscribe(UpdateLobby, 0.5f);
@@ -283,7 +283,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             Lobby lobby = m_lastKnownLobby;
             Dictionary<string, DataObject> dataCurr = lobby.Data ?? new Dictionary<string, DataObject>();
 
-			var shouldLock = false;
+            var shouldLock = false;
             foreach (var dataNew in data)
             {
                 // Special case: We want to be able to filter on our color data, so we need to supply an arbitrary index to retrieve later. Uses N# for numerics, instead of S# for strings.
@@ -336,7 +336,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private float m_heartbeatTime = 0;
         private readonly LobbyAPIInterface m_LobbyApiInterface;
-        private readonly UpdateSlow m_SlowUpdate;
+        private readonly UpdateRunner m_SlowUpdate;
         private readonly IIdentity m_LocalPlayerIdentity;
         private const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
 
@@ -358,7 +358,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             private float m_TimeSinceLastCall = float.MaxValue;
             private readonly float m_CooldownTime;
             private Queue<Action> m_PendingOperations = new Queue<Action>();
-            private readonly UpdateSlow m_SlowUpdate;
+            private readonly UpdateRunner m_SlowUpdate;
 
             public void EnqueuePendingOperation(Action action)
             {
@@ -380,7 +380,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 }
             }
 
-            public RateLimitCooldown(float cooldownTime, UpdateSlow slowUpdate)
+            public RateLimitCooldown(float cooldownTime, UpdateRunner slowUpdate)
             {
                 m_CooldownTime = cooldownTime;
             }
