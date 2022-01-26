@@ -142,18 +142,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         }
 
         [ServerRpc(RequireOwnership = false)]
-        void KillPlayerServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            var clientId = serverRpcParams.Receive.SenderClientId;
-            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
-            if (playerServerCharacter != null)
-            {
-                playerServerCharacter.ReceiveHP(null, -playerServerCharacter.NetState.HitPoints);
-                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillPlayer");
-            }
-        }
-
-        [ServerRpc(RequireOwnership = false)]
         void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
         {
             NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
