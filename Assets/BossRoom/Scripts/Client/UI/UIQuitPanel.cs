@@ -14,7 +14,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void OnEnable()
         {
-            m_QuitButtonText.text = NetworkManager.Singleton.IsListening ? "Disconnect from current session?" : "Exit Game?";
+            m_QuitButtonText.text = NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening ?
+                "Leave session?" :
+                "Exit Game?";
         }
 
         public void Quit()
