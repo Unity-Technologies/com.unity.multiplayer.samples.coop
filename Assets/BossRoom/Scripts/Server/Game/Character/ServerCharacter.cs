@@ -204,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 serverAnimationHandler.NetworkAnimator.SetTrigger("HitReact1");
             }
 
-            NetState.HitPoints = Mathf.Min(NetState.CharacterClass.BaseHP.Value, NetState.HitPoints+HP);
+            NetState.HitPoints = Mathf.Clamp(NetState.HitPoints + HP, 0, NetState.CharacterClass.BaseHP.Value);
 
             if( m_AIBrain != null )
             {
