@@ -48,9 +48,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             SpawnBossServerRpc();
         }
 
-        public void KillRandomEnemy()
+        public void KillTarget()
         {
-            KillRandomEnemyServerRpc();
+            KillTargetServerRpc();
         }
 
         public void KillAllEnemies()
@@ -115,17 +115,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         }
 
         [ServerRpc(RequireOwnership = false)]
-        void KillRandomEnemyServerRpc(ServerRpcParams serverRpcParams = default)
+        void KillTargetServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
+            ulong clientId = serverRpcParams.Receive.SenderClientId;
+            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
+            if (playerServerCharacter != null)
             {
-                if (serverCharacter.IsNpc && serverCharacter.NetState.LifeState == LifeState.Alive)
+                var targetId = playerServerCharacter.NetState.TargetId.Value;
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject obj))
                 {
-                    serverCharacter.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
-                    break;
+                    var damageable = obj.GetComponent<IDamageable>();
+                    if (damageable != null)
+                    {
+                        damageable.ReceiveHP(playerServerCharacter, int.MinValue);
+                        LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillTarget");
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.LogError($"Target {targetId} has no IDamageable component.");
+                    }
                 }
+
             }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillRandomEnemy");
         }
 
         [ServerRpc(RequireOwnership = false)]
