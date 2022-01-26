@@ -64,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 if (m_NetworkHealthState)
                 {
                     m_NetworkHealthState.HitPoints.Value =
-                        Mathf.Clamp(m_NetworkHealthState.HitPoints.Value + HP,0, m_MaxHealth.Value);
+                        Mathf.Clamp(m_NetworkHealthState.HitPoints.Value + HP, 0, m_MaxHealth.Value);
                     if (m_NetworkHealthState.HitPoints.Value <= 0)
                     {
                         Break();
