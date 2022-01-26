@@ -9,13 +9,18 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     /// </summary>
     public class LocalLobbyFactory
     {
-        private readonly IInstanceResolver m_diScope;
+        private IInstanceResolver m_diScope;
 
-        public LocalLobbyFactory(IInstanceResolver _scope)
+        [Inject]
+        private void InjectDependencies(IInstanceResolver scope)
         {
-            m_diScope = _scope;
+            m_diScope = scope;
         }
 
+        public LocalLobbyFactory()
+        {
+
+        }
 
         /// <summary>
         /// Create a list of new LocalLobbies from the result of a lobby list query.
