@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 445632146649864073}
   - component: {fileID: 7463718357983197496}
   m_Layer: 0
-  m_Name: torch
+  m_Name: env_torch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: de7d8b0cdceac8140b98a459d9533db4, type: 2}
+  - {fileID: 2100000, guid: 08a6ed3e19879c844a1bb6d8f07e2653, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
