@@ -48,9 +48,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             SpawnBossServerRpc();
         }
 
-        public void KillRandomEnemy()
+        public void KillTarget()
         {
-            LogCheatNotImplemented("KillRandomEnemy");
+            LogCheatNotImplemented("KillTarget");
         }
 
         public void KillAllEnemies()
@@ -66,11 +66,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         public void HealPlayer()
         {
             LogCheatNotImplemented("HealPlayer");
-        }
-
-        public void KillPlayer()
-        {
-            LogCheatNotImplemented("KillPlayer");
         }
 
         public void ToggleSuperSpeed()
