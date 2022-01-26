@@ -146,7 +146,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 if (lobbyRemote == null) return;
                 bool prevShouldPush = m_shouldPushData;
                 var prevState = m_localLobby.State;
-                ToLocalLobby.Convert(lobbyRemote, m_localLobby);
+                m_localLobby.ApplyRemoteData(lobbyRemote);
                 m_shouldPushData = prevShouldPush;
 
                 // If the host suddenly leaves, the Lobby service will automatically handle disconnects after about 30s, but we can try to do a disconnect sooner if we detect it.

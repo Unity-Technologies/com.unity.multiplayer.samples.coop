@@ -383,6 +383,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             public RateLimitCooldown(float cooldownTime, UpdateRunner slowUpdate)
             {
                 m_CooldownTime = cooldownTime;
+                m_SlowUpdate = slowUpdate;
             }
 
             public bool CanCall()

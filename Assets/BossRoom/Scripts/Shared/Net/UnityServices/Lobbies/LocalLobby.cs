@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom;
+using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
@@ -21,8 +22,21 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     [Serializable]
     public class LocalLobby : Observed<LocalLobby>
     {
+        private LobbyUserFactory m_userFactory;
+
         Dictionary<string, LobbyUser> m_LobbyUsers = new Dictionary<string, LobbyUser>();
         public Dictionary<string, LobbyUser> LobbyUsers => m_LobbyUsers;
+
+        [Inject]
+        public void InjectDependencies(LobbyUserFactory userFactory)
+        {
+            m_userFactory = userFactory;
+        }
+
+        public LocalLobby()
+        {
+
+        }
 
         #region LocalLobbyData
         public struct LobbyData
@@ -285,6 +299,51 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public override void CopyObserved(LocalLobby oldObserved)
         {
             CopyObserved(oldObserved.Data, oldObserved.m_LobbyUsers);
+        }
+
+        public void ApplyRemoteData(Lobby lobby)
+        {
+            var info = new LobbyData // Technically, this is largely redundant after the first assignment, but it won't do any harm to assign it again.
+            {   LobbyID             = lobby.Id,
+                LobbyCode           = lobby.LobbyCode,
+                Private             = lobby.IsPrivate,
+                LobbyName           = lobby.Name,
+                MaxPlayerCount      = lobby.MaxPlayers,
+                RelayCode           = lobby.Data?.ContainsKey("RelayCode") == true ? lobby.Data["RelayCode"].Value : null, // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
+                RelayNGOCode        = lobby.Data?.ContainsKey("RelayNGOCode") == true ? lobby.Data["RelayNGOCode"].Value : null,
+                State               = lobby.Data?.ContainsKey("State") == true ? (LobbyState) int.Parse(lobby.Data["State"].Value) : LobbyState.Lobby,
+                State_LastEdit        = lobby.Data?.ContainsKey("State_LastEdit") == true ? long.Parse(lobby.Data["State_LastEdit"].Value) : 0,
+                RelayNGOCode_LastEdit = lobby.Data?.ContainsKey("RelayNGOCode_LastEdit") == true ? long.Parse(lobby.Data["RelayNGOCode_LastEdit"].Value) : 0,
+                OnlineMode = lobby.Data?.ContainsKey("OnlineMode") == true ? (OnlineMode)int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset,
+                IP = lobby.Data?.ContainsKey("IP") == true ? lobby.Data["IP"].Value : string.Empty,
+                Port =  lobby.Data?.ContainsKey("Port") == true ? int.Parse(lobby.Data["Port"].Value) : 0
+            };
+
+            var lobbyUsers = new Dictionary<string, LobbyUser>();
+            foreach (var player in lobby.Players)
+            {
+                // If we already know about this player and this player is already connected to Relay, don't overwrite things that Relay might be changing.
+                if (player.Data?.ContainsKey("UserStatus") == true && int.TryParse(player.Data["UserStatus"].Value, out int status))
+                {
+                    if (status > (int)UserStatus.Connecting && LobbyUsers.ContainsKey(player.Id))
+                    {
+                        lobbyUsers.Add(player.Id, LobbyUsers[player.Id]);
+                        continue;
+                    }
+                }
+
+                // If the player isn't connected to Relay, get the most recent data that the lobby knows.
+                // (If we haven't seen this player yet, a new local representation of the player will have already been added by the LocalLobby.)
+                var incomingData = m_userFactory.Create();
+
+                incomingData.IsHost = lobby.HostId.Equals(player.Id);
+                incomingData.DisplayName = player.Data?.ContainsKey("DisplayName") == true ? player.Data["DisplayName"].Value : default;
+                incomingData.UserStatus = player.Data?.ContainsKey("UserStatus") == true ? (UserStatus) int.Parse(player.Data["UserStatus"].Value) : UserStatus.Connecting;
+                incomingData.ID = player.Id;
+
+                lobbyUsers.Add(incomingData.ID, incomingData);
+            }
+            CopyObserved(info, lobbyUsers);
         }
     }
 }

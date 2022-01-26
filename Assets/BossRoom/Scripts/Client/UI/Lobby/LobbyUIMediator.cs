@@ -6,12 +6,8 @@ using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using GameLobby.UI;
-using Unity.Multiplayer.Samples.BossRoom;
-using Unity.Netcode;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
-using UnityEngine.Events;
-using UnityEngine.UI;
 using GameState = BossRoom.Scripts.Shared.Net.UnityServices.Lobbies.GameState;
 
 namespace BossRoom.Scripts.Client.UI
@@ -30,6 +26,8 @@ namespace BossRoom.Scripts.Client.UI
         private Identity m_Identity;
         private LocalGameState m_localGameState;
 
+        private LocalLobbyFactory m_LocalLobbyFactory;
+
         private IDisposable m_DisposableSubscriptions;
 
         [SerializeField] private CanvasGroup _cg;
@@ -45,18 +43,19 @@ namespace BossRoom.Scripts.Client.UI
             IPublisher<UserStatus> lobbyUserStatusPublisher,
             Identity identity,
             LocalGameState localGameState,
-            LobbyUser lobbyUser,
+            LobbyUser localUser,
             LobbyContentHeartbeat lobbyContentHeartbeat,
             LobbyServiceData lobbyServiceData,
             LocalLobby localLobby,
-            IInstanceResolver container
+            IInstanceResolver container,
+            LocalLobbyFactory localLobbyFactory
         )
         {
             Application.wantsToQuit += OnWantToQuit;
 
             //m_persistentPlayer = persistentPlayer;
 
-            m_localUser = lobbyUser;
+            m_localUser = localUser;
             m_localUser.DisplayName = "test";//m_persistentPlayer.NetworkNameState.Name.Value;
 
             _container = container;
@@ -67,6 +66,7 @@ namespace BossRoom.Scripts.Client.UI
             m_localGameState = localGameState;
             m_lobbyContentHeartbeat = lobbyContentHeartbeat;
             m_lobbyServiceData = lobbyServiceData;
+            m_LocalLobbyFactory = localLobbyFactory;
             m_localLobby = localLobby;
             m_localLobby.State = LobbyState.Lobby;
 
@@ -143,7 +143,6 @@ namespace BossRoom.Scripts.Client.UI
                 ConfirmApproval();
             }
 
-
             void OnLobbyUserStatus(UserStatus status)
             {
                 m_localUser.UserStatus = status;
@@ -179,7 +178,8 @@ namespace BossRoom.Scripts.Client.UI
         public void CreateLobbyRequest(LocalLobby.LobbyData lobbyData)
         {
             m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, (r) =>
-                {   ToLocalLobby.Convert(r, m_localLobby);
+                {
+                    m_localLobby.ApplyRemoteData(r);
                     OnCreatedLobby();
                 },
                 OnFailedJoin);
@@ -188,24 +188,36 @@ namespace BossRoom.Scripts.Client.UI
         public void QueryLobbiesRequest()
         {
             m_lobbyServiceData.State = LobbyQueryState.Fetching;
+
             m_LobbyAsyncRequests.RetrieveLobbyListAsync(
-                qr => {
-                    if (qr != null)
-                        OnLobbiesQueried(ToLocalLobby.Convert(qr));
-                },
-                er => {
-                    OnLobbyQueryFailed();
-                });
+                OnListRetrieved,
+                OnError);
+
+            void OnListRetrieved(QueryResponse qr)
+            {
+                if (qr != null)
+                {
+                    var localLobbies = m_LocalLobbyFactory.CreateLocalLobbies(qr);
+                    OnLobbiesQueried(localLobbies);
+                }
+            }
+
+            void OnError(QueryResponse er)
+            {
+                OnLobbyQueryFailed();
+            }
         }
 
 
         public void JoinLobbyRequest(LocalLobby.LobbyData lobbyData)
         {
-            m_LobbyAsyncRequests.JoinLobbyAsync(lobbyData.LobbyID, lobbyData.LobbyCode, m_localUser, (r) =>
-                {   ToLocalLobby.Convert(r, m_localLobby);
-                    OnJoinedLobby();
-                },
-                OnFailedJoin);
+            m_LobbyAsyncRequests.JoinLobbyAsync(lobbyData.LobbyID, lobbyData.LobbyCode, m_localUser, OnSuccess, OnFailedJoin);
+
+            void OnSuccess(Lobby r)
+            {
+                m_localLobby.ApplyRemoteData(r);
+                OnJoinedLobby();
+            }
         }
 
         private void UnusubscribeFromMessageChannels()
@@ -227,7 +239,7 @@ namespace BossRoom.Scripts.Client.UI
 
             void OnSuccess(Lobby r)
             {
-                ToLocalLobby.Convert(r, m_localLobby);
+                m_localLobby.ApplyRemoteData(r);
                 OnJoinedLobby();
             }
         }

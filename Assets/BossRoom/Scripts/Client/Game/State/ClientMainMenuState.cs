@@ -82,10 +82,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             _container.BindAsSingle<LobbyAPIInterface>();
             _container.BindAsSingle<LobbyAsyncRequests>();
             _container.BindAsSingle<LocalGameState>();
-            _container.BindAsSingle<LobbyUser>();
+            _container.BindAsSingle<LobbyUser>(); //a singleton for the local lobby user
             _container.BindAsSingle<LobbyServiceData>();
             _container.BindAsSingle<LobbyContentHeartbeat>();
-            _container.BindAsSingle<LocalLobby>();
+            _container.BindAsSingle<LocalLobby>(); //a singleton
             _container.BindAsSingle<UIFactory>();
 
             //var playerNetworkObject = Netcode.NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(Netcode.NetworkManager.Singleton.LocalClientId);

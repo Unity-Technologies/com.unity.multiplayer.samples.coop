@@ -25,4 +25,3 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
     }
 }
-
