@@ -117,7 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         [ServerRpc(RequireOwnership = false)]
         void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            ulong clientId = serverRpcParams.Receive.SenderClientId;
+            var clientId = serverRpcParams.Receive.SenderClientId;
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
