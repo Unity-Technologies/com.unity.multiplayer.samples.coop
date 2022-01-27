@@ -17,7 +17,7 @@ namespace BossRoom.Scripts.Client.UI
         {
             var copy = Object.Instantiate(source, parent);
             copy.SetActive(true);
-            m_Scope.Inject(copy);
+            m_Scope.InjectIn(copy);
             return copy;
         }
     }

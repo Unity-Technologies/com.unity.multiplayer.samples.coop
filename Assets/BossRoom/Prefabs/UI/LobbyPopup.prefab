@@ -1908,9 +1908,9 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BossRoom.Visual.PopupPanel, BossRoom.Client
-        m_MethodName: SanitizeInputText
+      - m_Target: {fileID: 5370165130166260100}
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.CreateLobbyUI, Unity.Multiplayer.Samples.BossRoom.Client
+        m_MethodName: SanitizePortText
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2287,7 +2287,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 10, y: 10}
+  m_AnchoredPosition: {x: 10, y: 9.999985}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &1751204743622399521
@@ -3035,8 +3035,8 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BossRoom.Visual.PopupPanel, BossRoom.Client
+      - m_Target: {fileID: 5370165130166260100}
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.CreateLobbyUI, Unity.Multiplayer.Samples.BossRoom.Client
         m_MethodName: SanitizeInputText
         m_Mode: 1
         m_Arguments:

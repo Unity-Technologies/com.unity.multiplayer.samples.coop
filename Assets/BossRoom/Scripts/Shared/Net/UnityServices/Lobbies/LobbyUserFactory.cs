@@ -20,7 +20,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public LobbyUser Create()
         {
             var user = new LobbyUser();
-            m_diScope.Inject(user);
+            m_diScope.InjectIn(user);
             return user;
         }
     }

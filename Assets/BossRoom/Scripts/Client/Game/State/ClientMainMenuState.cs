@@ -104,6 +104,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 _container.Inject(go);
             }
+
+            var localSinletonLobbyUser = _container.Resolve<LobbyUser>();
         }
         //
 

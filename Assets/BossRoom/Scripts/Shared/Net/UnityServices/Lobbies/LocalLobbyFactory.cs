@@ -38,7 +38,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private LocalLobby Create(Lobby lobby)
         {
             LocalLobby data = new LocalLobby();
-            m_diScope.Inject(data);
+            m_diScope.InjectIn(data);
             data.ApplyRemoteData(lobby);
             return data;
         }

@@ -72,7 +72,7 @@ namespace BossRoom.Scripts.Client.UI
         /// <summary>
         /// Added to the InputField component's OnValueChanged callback for the Room/IP UI text.
         /// </summary>
-        public void SanitizeInputText()
+        public void SanitizeIPInputText()
         {
             var inputFieldText = Sanitize(m_IPInputField.text, k_InputFieldIncludeChars);
             m_IPInputField.text = inputFieldText;
