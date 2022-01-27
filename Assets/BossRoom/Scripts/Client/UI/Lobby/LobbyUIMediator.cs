@@ -74,11 +74,6 @@ namespace BossRoom.Scripts.Client.UI
             SubscribeToMessageChannels();
         }
 
-        private void Awake()
-        {
-            ShowJoinLobbyUI();
-        }
-
         private void OnDestroy()
         {
             ForceLeaveAttempt();
@@ -409,7 +404,7 @@ namespace BossRoom.Scripts.Client.UI
             m_CanvasGroup.blocksRaycasts = false;
         }
 
-        public void ShowJoinLobbyUI()
+        public void ToggleJoinLobbyUI()
         {
 
             m_JoinLobbyUI.Show();
@@ -418,7 +413,7 @@ namespace BossRoom.Scripts.Client.UI
             m_CreateToggle.SetToColor(false);
         }
 
-        public void ShowCreateLobbyUI()
+        public void ToggleCreateLobbyUI()
         {
             m_JoinLobbyUI.Hide();
             m_CreateLobbyUI.Show();

@@ -110,7 +110,7 @@ namespace BossRoom.Scripts.Client.UI
                 RemoveLobbyButton(m_LocalLobby[key]);
             }
         }
-        
+
         public void OnQuickJoinClicked()
         {
             m_LobbyUIMediator.QuickJoinRequest();

@@ -130,6 +130,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void OnStartClicked()
         {
+
+            lobbyUIMediator.ToggleJoinLobbyUI();
             lobbyUIMediator.Show();
         }
 

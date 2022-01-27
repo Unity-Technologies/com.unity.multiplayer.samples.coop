@@ -921,8 +921,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1722388064424237406}
-        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.LobbyUIManager, Unity.Multiplayer.Samples.BossRoom.Client
-        m_MethodName: ShowJoinLobbyUI
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.LobbyUIMediator, Unity.Multiplayer.Samples.BossRoom.Client
+        m_MethodName: ToggleJoinLobbyUI
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1629,8 +1629,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1722388064424237406}
-        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.LobbyUIManager, Unity.Multiplayer.Samples.BossRoom.Client
-        m_MethodName: ShowCreateLobbyUI
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.LobbyUIMediator, Unity.Multiplayer.Samples.BossRoom.Client
+        m_MethodName: ToggleCreateLobbyUI
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
