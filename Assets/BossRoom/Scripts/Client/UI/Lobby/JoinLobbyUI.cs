@@ -11,7 +11,7 @@ namespace BossRoom.Scripts.Client.UI
     /// </summary>
     public class JoinLobbyUI : ObserverBehaviour<LobbyServiceData>
     {
-        private UIFactory m_UIFactory;
+        private GameObjectFactory m_GameObjectFactory;
         private LobbyUIMediator m_LobbyUIMediator;
         private LobbyServiceData m_LobbyServiceData;
 
@@ -32,9 +32,9 @@ namespace BossRoom.Scripts.Client.UI
 
 
         [Inject]
-        private void InjectDependencies(UIFactory uiFactory, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData)
+        private void InjectDependencies(GameObjectFactory gameObjectFactory, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData)
         {
-            m_UIFactory = uiFactory;
+            m_GameObjectFactory = gameObjectFactory;
             m_LobbyUIMediator = lobbyUIMediator;
             m_LobbyServiceData = lobbyServiceData;
         }
@@ -129,7 +129,7 @@ namespace BossRoom.Scripts.Client.UI
         /// </summary>
         private void CreateLobbyPanel(string lobbyCode, LocalLobby lobby)
         {
-            var lobbyPanel = m_UIFactory
+            var lobbyPanel = m_GameObjectFactory
                 .InstantiateActive(m_LobbyPanelPrototype.gameObject, m_LobbyPanelPrototype.transform.parent)
                 .GetComponent<LobbyPanelUI>();
 

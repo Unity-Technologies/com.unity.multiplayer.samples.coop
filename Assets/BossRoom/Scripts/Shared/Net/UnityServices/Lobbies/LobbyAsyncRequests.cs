@@ -12,7 +12,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     /// An abstraction layer between the direct calls into the Lobby API and the outcomes you actually want. E.g. you can request to get a readable list of
     /// current lobbies and not need to make the query call directly.
     /// </summary>
-    public class LobbyAsyncRequests
+    public class LobbyAsyncRequests : IDisposable
     {
         [Inject]
         public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, Identity localIdentity)
@@ -26,8 +26,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_rateLimitQuickJoin = new RateLimitCooldown(10f,  slowUpdate);
             m_rateLimitHost = new RateLimitCooldown(3f, slowUpdate);
 
-            // Shouldn't need to unsubscribe since this instance won't be replaced. 0.5s is arbitrary; the rate limits are tracked later.
-            slowUpdate.Subscribe(UpdateLobby, 0.5f);
+            // 0.5s update cadence is arbitrary - the actual rate limits are tracked later, via the RateLimitCooldown objects defined above
+            m_SlowUpdate.Subscribe(UpdateLobby, 0.5f);
+        }
+
+        public void Dispose()
+        {
+            m_SlowUpdate.Unsubscribe(UpdateLobby);
         }
 
         #region Once connected to a lobby, cache the local lobby object so we don't query for it for every lobby operation.

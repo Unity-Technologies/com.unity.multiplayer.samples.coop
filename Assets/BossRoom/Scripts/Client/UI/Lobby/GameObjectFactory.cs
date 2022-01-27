@@ -3,12 +3,12 @@ using UnityEngine;
 
 namespace BossRoom.Scripts.Client.UI
 {
-    public class UIFactory
+    public class GameObjectFactory
     {
         private readonly IInstanceResolver m_Scope;
 
         [Inject]
-        public UIFactory(IInstanceResolver scope)
+        public GameObjectFactory(IInstanceResolver scope)
         {
             m_Scope = scope;
         }

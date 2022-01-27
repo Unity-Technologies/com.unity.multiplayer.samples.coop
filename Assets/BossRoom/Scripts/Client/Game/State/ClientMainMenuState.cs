@@ -88,8 +88,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             _container.BindAsSingle<LobbyServiceData>();
             _container.BindAsSingle<LobbyContentHeartbeat>();
             _container.BindAsSingle<LocalLobby>(); //a singleton for the local lobby
-            _container.BindAsSingle<LocalLobbyFactory>(); //a factory to created injected local lobbies for lobbies that we query from the lobby service
-            _container.BindAsSingle<UIFactory>();
+            _container.BindAsSingle<LocalLobbyFactory>(); //a factory to create injected local lobbies for lobbies that we query from the lobby service
+            _container.BindAsSingle<GameObjectFactory>();
 
             //var playerNetworkObject = Netcode.NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(Netcode.NetworkManager.Singleton.LocalClientId);
            // var persistentPlayer = playerNetworkObject.GetComponent<PersistentPlayer>();

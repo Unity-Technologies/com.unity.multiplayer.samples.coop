@@ -303,21 +303,21 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public void ApplyRemoteData(Lobby lobby)
         {
-            var info = new LobbyData // Technically, this is largely redundant after the first assignment, but it won't do any harm to assign it again.
-            {   LobbyID             = lobby.Id,
-                LobbyCode           = lobby.LobbyCode,
-                Private             = lobby.IsPrivate,
-                LobbyName           = lobby.Name,
-                MaxPlayerCount      = lobby.MaxPlayers,
-                RelayCode           = lobby.Data?.ContainsKey("RelayCode") == true ? lobby.Data["RelayCode"].Value : null, // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
-                RelayNGOCode        = lobby.Data?.ContainsKey("RelayNGOCode") == true ? lobby.Data["RelayNGOCode"].Value : null,
-                State               = lobby.Data?.ContainsKey("State") == true ? (LobbyState) int.Parse(lobby.Data["State"].Value) : LobbyState.Lobby,
-                State_LastEdit        = lobby.Data?.ContainsKey("State_LastEdit") == true ? long.Parse(lobby.Data["State_LastEdit"].Value) : 0,
-                RelayNGOCode_LastEdit = lobby.Data?.ContainsKey("RelayNGOCode_LastEdit") == true ? long.Parse(lobby.Data["RelayNGOCode_LastEdit"].Value) : 0,
-                OnlineMode = lobby.Data?.ContainsKey("OnlineMode") == true ? (OnlineMode)int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset,
-                IP = lobby.Data?.ContainsKey("IP") == true ? lobby.Data["IP"].Value : string.Empty,
-                Port =  lobby.Data?.ContainsKey("Port") == true ? int.Parse(lobby.Data["Port"].Value) : 0
-            };
+            var info = new LobbyData(); // Technically, this is largely redundant after the first assignment, but it won't do any harm to assign it again.
+            info.LobbyID = lobby.Id;
+            info.LobbyCode = lobby.LobbyCode;
+            info.Private = lobby.IsPrivate;
+            info.LobbyName = lobby.Name;
+            info.MaxPlayerCount = lobby.MaxPlayers;
+            info.RelayCode = lobby.Data?.ContainsKey("RelayCode") == true ? lobby.Data["RelayCode"].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
+            info.RelayNGOCode = lobby.Data?.ContainsKey("RelayNGOCode") == true ? lobby.Data["RelayNGOCode"].Value : null;
+            info.State = lobby.Data?.ContainsKey("State") == true ? (LobbyState) int.Parse(lobby.Data["State"].Value) : LobbyState.Lobby;
+            info.State_LastEdit = lobby.Data?.ContainsKey("State_LastEdit") == true ? long.Parse(lobby.Data["State_LastEdit"].Value) : 0;
+            info.RelayNGOCode_LastEdit = lobby.Data?.ContainsKey("RelayNGOCode_LastEdit") == true ? long.Parse(lobby.Data["RelayNGOCode_LastEdit"].Value) : 0;
+            info.OnlineMode = lobby.Data?.ContainsKey("OnlineMode") == true ? (OnlineMode) int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset;
+            info.IP = lobby.Data?.ContainsKey("IP") == true ? lobby.Data["IP"].Value : string.Empty;
+            info.Port =  lobby.Data?.ContainsKey("Port") == true ? int.Parse(lobby.Data["Port"].Value) : 0;
+
 
             var lobbyUsers = new Dictionary<string, LobbyUser>();
             foreach (var player in lobby.Players)

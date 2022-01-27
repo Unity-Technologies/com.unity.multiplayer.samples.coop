@@ -12,7 +12,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
     {
         public static async void DoRequest<TException>(Task task, Action onComplete, Action<TException> parseException) where TException : Exception
         {
-            string currentTrace = System.Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
+            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
             try
             {
                 await task;
@@ -31,7 +31,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
 
         public static async void DoRequest<TResult, TException>(Task<TResult> task, Action<TResult> onComplete, Action<TException> parseException) where TException : Exception
         {
-            string currentTrace = System.Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
+            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
             try
             {
                 await task;

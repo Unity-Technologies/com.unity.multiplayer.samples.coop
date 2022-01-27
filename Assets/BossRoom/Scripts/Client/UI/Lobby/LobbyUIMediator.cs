@@ -177,12 +177,12 @@ namespace BossRoom.Scripts.Client.UI
 
         public void CreateLobbyRequest(LocalLobby.LobbyData lobbyData)
         {
-            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, (r) =>
-                {
-                    m_localLobby.ApplyRemoteData(r);
-                    OnCreatedLobby();
-                },
-                OnFailedJoin);
+            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, OnSuccess, OnFailedJoin);
+            void OnSuccess(Lobby r)
+            {
+                m_localLobby.ApplyRemoteData(r);
+                OnCreatedLobby();
+            }
         }
 
         public void QueryLobbiesRequest()
