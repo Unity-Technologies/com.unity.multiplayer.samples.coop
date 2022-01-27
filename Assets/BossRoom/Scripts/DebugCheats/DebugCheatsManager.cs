@@ -50,9 +50,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             SpawnBossServerRpc();
         }
 
-        public void KillRandomEnemy()
+        public void KillTarget()
         {
-            LogCheatNotImplemented("KillRandomEnemy");
+            LogCheatNotImplemented("KillTarget");
         }
 
         public void KillAllEnemies()
@@ -68,11 +68,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         public void HealPlayer()
         {
             LogCheatNotImplemented("HealPlayer");
-        }
-
-        public void KillPlayer()
-        {
-            LogCheatNotImplemented("KillPlayer");
         }
 
         public void ToggleSuperSpeed()
@@ -119,7 +114,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         [ServerRpc(RequireOwnership = false)]
         void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            ulong clientId = serverRpcParams.Receive.SenderClientId;
+            var clientId = serverRpcParams.Receive.SenderClientId;
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {

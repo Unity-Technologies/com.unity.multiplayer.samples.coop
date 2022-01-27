@@ -49,11 +49,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NetworkInstanceId: 0
-  PrefabHash: 2392659144527479458
-  PrefabHashGenerator: BreakablePillar
+  GlobalObjectIdHash: 951099334
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!114 &7561466626167410996
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,6 +109,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrokenPrefab: {fileID: 6418514439632820891, guid: 78436b90c00aaab49b4d522550dd9250, type: 3}
+  m_PrebrokenPrefab: {fileID: 0}
   m_BrokenPrefabPos: {fileID: 4505851899529102149}
   m_UnbrokenGameObjects:
   - {fileID: 3658718798844854089}
@@ -185,6 +185,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8184890942973508939, guid: db56f0a4295d95540b4d07fcd18c49e9, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 08a6ed3e19879c844a1bb6d8f07e2653, type: 2}
     m_RemovedComponents:
     - {fileID: 0}
     - {fileID: 0}
