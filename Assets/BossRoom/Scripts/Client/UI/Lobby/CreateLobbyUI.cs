@@ -47,6 +47,8 @@ namespace BossRoom.Scripts.Client.UI
 
         private static readonly char[] k_InputFieldIncludeChars = new[] {'.', '_'};
 
+        [SerializeField] private CanvasGroup m_CanvasGroup;
+
 
         /// <summary>
         /// Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
@@ -182,6 +184,20 @@ namespace BossRoom.Scripts.Client.UI
             };
 
             m_LobbyUIMediator.CreateLobbyRequest(lobbyData);
+        }
+
+        public void Show()
+        {
+            m_CanvasGroup.alpha = 1;
+            m_CanvasGroup.interactable = true;
+            m_CanvasGroup.blocksRaycasts = true;
+        }
+
+        public void Hide()
+        {
+            m_CanvasGroup.alpha = 0;
+            m_CanvasGroup.interactable = false;
+            m_CanvasGroup.blocksRaycasts = false;
         }
     }
 

@@ -18,8 +18,8 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         /// <param name="oldObserved"></param>
         public abstract void CopyObserved(T oldObserved);
 
-        public Action<T> onChanged { get; set; }
-        public Action<T> onDestroyed { get; set; }
+        public event Action<T> onChanged = delegate { };
+        public event Action<T> onDestroyed = delegate { };
 
         /// <summary>
         /// Should be implemented into every public property of the observed
@@ -27,12 +27,12 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         /// <param name="observed">Instance of the observed that changed.</param>
         protected void OnChanged(T observed)
         {
-            onChanged?.Invoke(observed);
+            onChanged.Invoke(observed);
         }
 
         protected void OnDestroyed(T observed)
         {
-            onDestroyed?.Invoke(observed);
+            onDestroyed.Invoke(observed);
         }
     }
 }

@@ -422,10 +422,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6702871171647363808}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 3432713757992463987}
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.JoinLobbyUI, Unity.Multiplayer.Samples.BossRoom.Client
+        m_MethodName: OnJoinButtonPressed
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -499,6 +499,7 @@ MonoBehaviour:
   m_IPToggle: {fileID: 3644525048027701234}
   m_UnityRelayToggle: {fileID: 2910413455996524368}
   m_IsPrivate: {fileID: 8780206513702589119}
+  m_CanvasGroup: {fileID: 2349919044805767479}
 --- !u!225 &2349919044805767479
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -2287,7 +2288,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 10, y: 9.999985}
+  m_AnchoredPosition: {x: 10, y: 10}
   m_SizeDelta: {x: 100, y: 100}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &1751204743622399521
@@ -2754,9 +2755,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5969994396107504951}
-        m_TargetAssemblyTypeName: NameDisplay, BossRoom.Client
-        m_MethodName: ChooseNewName
+      - m_Target: {fileID: 3432713757992463987}
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.JoinLobbyUI, Unity.Multiplayer.Samples.BossRoom.Client
+        m_MethodName: OnRefresh
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3484,9 +3485,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: baa903a3eece41eab81a9432f523ae3e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cg: {fileID: 6889764071769254414}
-  m_JoinLobbyCanvasGroup: {fileID: 5782144806807453527}
-  m_CreateLobbyCanvasGroup: {fileID: 2349919044805767479}
+  m_CanvasGroup: {fileID: 6889764071769254414}
+  m_JoinLobbyUI: {fileID: 3432713757992463987}
+  m_CreateLobbyUI: {fileID: 5370165130166260100}
   m_JoinToggle: {fileID: 6915400021973830416}
   m_CreateToggle: {fileID: 7081295359045549679}
 --- !u!222 &6702871171647363813
@@ -3595,6 +3596,7 @@ MonoBehaviour:
       m_Calls: []
   m_LobbyPanelPrototype: {fileID: 5912019979909014333}
   m_JoinCodeField: {fileID: 8248007993983070476}
+  m_CanvasGroup: {fileID: 5782144806807453527}
 --- !u!225 &5782144806807453527
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -4134,10 +4136,10 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 6702871171647363808}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 3432713757992463987}
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.JoinLobbyUI, Unity.Multiplayer.Samples.BossRoom.Client
+        m_MethodName: OnQuickJoinClicked
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine

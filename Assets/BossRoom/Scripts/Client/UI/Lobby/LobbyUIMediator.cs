@@ -8,6 +8,7 @@ using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using GameLobby.UI;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using UnityEngine.Serialization;
 using GameState = BossRoom.Scripts.Shared.Net.UnityServices.Lobbies.GameState;
 
 namespace BossRoom.Scripts.Client.UI
@@ -30,9 +31,9 @@ namespace BossRoom.Scripts.Client.UI
 
         private IDisposable m_DisposableSubscriptions;
 
-        [SerializeField] private CanvasGroup _cg;
-        [SerializeField] private CanvasGroup m_JoinLobbyCanvasGroup;
-        [SerializeField] private CanvasGroup m_CreateLobbyCanvasGroup;
+        [SerializeField] private CanvasGroup m_CanvasGroup;
+        [SerializeField] private JoinLobbyUI m_JoinLobbyUI;
+        [SerializeField] private CreateLobbyUI m_CreateLobbyUI;
         [SerializeField] private UITinter m_JoinToggle;
         [SerializeField] private UITinter m_CreateToggle;
 
@@ -396,42 +397,33 @@ namespace BossRoom.Scripts.Client.UI
 
         public void Show()
         {
-            ShowCanvasGroup(_cg);
+            m_CanvasGroup.alpha = 1;
+            m_CanvasGroup.interactable = true;
+            m_CanvasGroup.blocksRaycasts = true;
         }
 
         public void Hide()
         {
-            HideCanvasGroup(_cg);
+            m_CanvasGroup.alpha = 0;
+            m_CanvasGroup.interactable = false;
+            m_CanvasGroup.blocksRaycasts = false;
         }
 
         public void ShowJoinLobbyUI()
         {
-            HideCanvasGroup(m_CreateLobbyCanvasGroup);
-            ShowCanvasGroup(m_JoinLobbyCanvasGroup);
+
+            m_JoinLobbyUI.Show();
+            m_CreateLobbyUI.Hide();
             m_JoinToggle.SetToColor(true);
             m_CreateToggle.SetToColor(false);
         }
 
         public void ShowCreateLobbyUI()
         {
-            HideCanvasGroup(m_JoinLobbyCanvasGroup);
-            ShowCanvasGroup(m_CreateLobbyCanvasGroup);
+            m_JoinLobbyUI.Hide();
+            m_CreateLobbyUI.Show();
             m_JoinToggle.SetToColor(false);
             m_CreateToggle.SetToColor(true);
-        }
-
-        private void HideCanvasGroup(CanvasGroup cg)
-        {
-            cg.alpha = 0;
-            cg.interactable = false;
-            cg.blocksRaycasts = false;
-        }
-
-        private void ShowCanvasGroup(CanvasGroup cg)
-        {
-            cg.alpha = 1;
-            cg.interactable = true;
-            cg.blocksRaycasts = true;
         }
     }
 }

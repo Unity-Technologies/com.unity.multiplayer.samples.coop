@@ -31,12 +31,16 @@ namespace BossRoom.Scripts.Client.UI
         LocalLobby.LobbyData m_LocalLobbySelected;
 
 
+        [SerializeField] private CanvasGroup m_CanvasGroup;
+
         [Inject]
         private void InjectDependencies(GameObjectFactory gameObjectFactory, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData)
         {
             m_GameObjectFactory = gameObjectFactory;
             m_LobbyUIMediator = lobbyUIMediator;
             m_LobbyServiceData = lobbyServiceData;
+
+            BeginObserving(m_LobbyServiceData);
         }
 
         private void Awake()
@@ -68,6 +72,8 @@ namespace BossRoom.Scripts.Client.UI
 
         protected override void UpdateObserver(LobbyServiceData observed)
         {
+            base.UpdateObserver(observed);
+
             ///Check for new entries, We take CurrentLobbies as the source of truth
             var previousKeys = new List<string>(m_LobbyButtons.Keys);
 
@@ -104,16 +110,7 @@ namespace BossRoom.Scripts.Client.UI
                 RemoveLobbyButton(m_LocalLobby[key]);
             }
         }
-
-        public void JoinMenuChangedVisibility(bool show)
-        {
-            if (show)
-            {
-                m_JoinCodeField.text = "";
-                OnRefresh();
-            }
-        }
-
+        
         public void OnQuickJoinClicked()
         {
             m_LobbyUIMediator.QuickJoinRequest();
@@ -155,6 +152,23 @@ namespace BossRoom.Scripts.Client.UI
             m_LocalLobby.Remove(lobbyID);
             //todo: reuse lobby panel UIs instead of creating new ones
             Destroy(lobbyPanel.gameObject);
+        }
+
+        public void Show()
+        {
+            m_CanvasGroup.alpha = 1;
+            m_CanvasGroup.interactable = true;
+            m_CanvasGroup.blocksRaycasts = true;
+
+            m_JoinCodeField.text = "";
+            OnRefresh();
+        }
+
+        public void Hide()
+        {
+            m_CanvasGroup.alpha = 0;
+            m_CanvasGroup.interactable = false;
+            m_CanvasGroup.blocksRaycasts = false;
         }
     }
 }

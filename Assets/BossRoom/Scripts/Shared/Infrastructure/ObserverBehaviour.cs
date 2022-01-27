@@ -13,7 +13,6 @@ namespace BossRoom.Scripts.Shared.Infrastructure
 
         protected virtual void UpdateObserver(T obs)
         {
-            observed = obs;
             OnObservedUpdated?.Invoke(observed);
         }
 
@@ -24,7 +23,7 @@ namespace BossRoom.Scripts.Shared.Infrastructure
                 Debug.LogError($"Needs a Target of type {typeof(T)} to begin observing.", gameObject);
                 return;
             }
-
+            observed = target;
             UpdateObserver(target);
             observed.onChanged += UpdateObserver;
         }
@@ -32,9 +31,11 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         public void EndObserving()
         {
             if (observed == null)
+            {
                 return;
-            if (observed.onChanged != null)
-                observed.onChanged -= UpdateObserver;
+            }
+
+            observed.onChanged -= UpdateObserver;
             observed = null;
         }
 
