@@ -120,14 +120,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                 if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject obj))
                 {
                     var damageable = obj.GetComponent<IDamageable>();
-                    if (damageable != null)
+                    if (damageable != null && damageable.IsDamageable())
                     {
                         damageable.ReceiveHP(playerServerCharacter, int.MinValue);
                         LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillTarget");
                     }
                     else
                     {
-                        UnityEngine.Debug.LogError($"Target {targetId} has no IDamageable component.");
+                        UnityEngine.Debug.Log($"Target {targetId} has no IDamageable component or cannot be damaged.");
                     }
                 }
 
@@ -139,7 +139,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         {
             foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
             {
-                if (serverCharacter.IsNpc)
+                if (serverCharacter.IsNpc && serverCharacter.NetState.LifeState == LifeState.Alive)
                 {
                     serverCharacter.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
                 }
