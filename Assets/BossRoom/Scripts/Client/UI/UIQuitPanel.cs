@@ -24,8 +24,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (NetworkManager.Singleton.IsListening)
             {
                 // first disconnect then return to menu
-                var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
-                gameNetPortal.RequestDisconnect();
+                var gameNetPortal = GameNetPortal.Instance;
+                if (gameNetPortal != null)
+                {
+                    gameNetPortal.RequestDisconnect();
+                }
                 SceneManager.LoadScene("MainMenu");
             }
             else
