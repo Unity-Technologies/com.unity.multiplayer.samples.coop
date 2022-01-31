@@ -24,7 +24,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private IDisposable m_DisposableSubscription;
         private readonly ISubscriber<ClientUserSeekingDisapproval> m_UserSeekingApprovalSubscriber;
         private readonly LobbyAsyncRequests m_LobbyAsyncRequests;
-        private readonly IPublisher<DisplayErrorPopup> m_DisplayErrorPopupPublisher;
+        private readonly IPublisher<UnityServiceErrorMessage> m_DisplayErrorPopupPublisher;
         private readonly IPublisher<ChangeGameState> m_ChangeGameStatePublisher;
         private readonly IPublisher<EndGame> m_EndGamePublisher;
 
@@ -34,7 +34,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             ISubscriber<ClientUserSeekingDisapproval> userSeekingApprovalSubscriber,
             LobbyAsyncRequests lobbyAsyncRequests,
             IPublisher<ChangeGameState> changeGameStatePublisher,
-            IPublisher<DisplayErrorPopup> displayErrorPopupPublisher,
+            IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher,
             IPublisher<EndGame> endGamePublisher)
         {
             m_SlowUpdate = slowUpdate;
@@ -107,7 +107,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             if (!m_localUser.IsApproved && m_lifetime > k_approvalMaxTime)
             {
-                m_DisplayErrorPopupPublisher.Publish(new DisplayErrorPopup("Connection attempt timed out!"));
+                m_DisplayErrorPopupPublisher.Publish(new UnityServiceErrorMessage("Connection attempt timed out!"));
                 m_ChangeGameStatePublisher.Publish(new ChangeGameState(GameState.JoinMenu));
             }
 
@@ -157,7 +157,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                         if (lobbyUser.Value.IsHost)
                             return;
                     }
-                    m_DisplayErrorPopupPublisher.Publish(new DisplayErrorPopup("Host left the lobby, disconnecting."));
+                    m_DisplayErrorPopupPublisher.Publish(new UnityServiceErrorMessage("Host left the lobby, disconnecting."));
                     m_EndGamePublisher.Publish(new EndGame());
                     m_ChangeGameStatePublisher.Publish(new ChangeGameState(GameState.JoinMenu));
                 }

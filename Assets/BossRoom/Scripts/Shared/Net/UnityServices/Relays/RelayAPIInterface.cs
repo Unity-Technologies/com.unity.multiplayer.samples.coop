@@ -15,7 +15,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
     /// </summary>
     public class RelayAPIInterface
     {
-        private readonly IPublisher<DisplayErrorPopup> m_ErrorPopupPublisher;
+        private readonly IPublisher<UnityServiceErrorMessage> m_ErrorPopupPublisher;
 
         private void DoRequest(Task task, Action onComplete)
         {
@@ -28,7 +28,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
         }
 
         [Inject]
-        public RelayAPIInterface(IPublisher<DisplayErrorPopup> errorPopupPublisher)
+        public RelayAPIInterface(IPublisher<UnityServiceErrorMessage> errorPopupPublisher)
         {
             m_ErrorPopupPublisher = errorPopupPublisher;
         }
@@ -56,7 +56,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
             var reason = e.Reason == RelayExceptionReason.Unknown ?
                 "Relay Error: Relay service had an unknown error." :
                 $"Relay Error: {e.Message}";
-            m_ErrorPopupPublisher.Publish(new DisplayErrorPopup(reason));
+            m_ErrorPopupPublisher.Publish(new UnityServiceErrorMessage(reason));
         }
 
         /// <summary>

@@ -26,7 +26,7 @@ namespace BossRoom.Scripts.Client.UI
         private LocalLobby m_localLobby;
         private LobbyServiceData m_lobbyServiceData;
         private LobbyContentHeartbeat m_lobbyContentHeartbeat;
-        private IPublisher<DisplayErrorPopup> m_DisplayErrorPopupPublisher;
+        private IPublisher<UnityServiceErrorMessage> m_DisplayErrorPopupPublisher;
         private IPublisher<UserStatus> m_LobbyUserStatusPublisher;
         private Identity m_Identity;
         private LocalGameState m_localGameState;
@@ -46,7 +46,7 @@ namespace BossRoom.Scripts.Client.UI
         [Inject]
         private void InjectDependencies(
             LobbyAsyncRequests lobbyAsyncRequests,
-            IPublisher<DisplayErrorPopup> displayErrorPopupPublisher,
+            IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher,
             IPublisher<UserStatus> lobbyUserStatusPublisher,
             Identity identity,
             LocalGameState localGameState,

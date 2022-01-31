@@ -71,10 +71,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
 
     }
 
-    public struct DisplayErrorPopup
+    public struct UnityServiceErrorMessage
     {
         public string Message;
-        public DisplayErrorPopup(string message)
+        public UnityServiceErrorMessage(string message)
         {
             Message = message;
         }

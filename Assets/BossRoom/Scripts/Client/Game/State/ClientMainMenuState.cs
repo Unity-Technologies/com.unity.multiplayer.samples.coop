@@ -52,7 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             _container.BindInstanceAsSingle(m_NameGenerationData);
 
             _container.BindMessageChannel<ClientUserSeekingDisapproval>();
-            _container.BindMessageChannel<DisplayErrorPopup>();
+            _container.BindMessageChannel<UnityServiceErrorMessage>();
 
             //todo: remember to cleanup unused message channels
 

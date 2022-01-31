@@ -17,10 +17,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     {
         private const int k_maxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
 
-        private readonly IPublisher<DisplayErrorPopup> m_DisplayErrorPopupPublisher;
+        private readonly IPublisher<UnityServiceErrorMessage> m_DisplayErrorPopupPublisher;
 
         [Inject]
-        public LobbyAPIInterface(IPublisher<DisplayErrorPopup> displayErrorPopupPublisher)
+        public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher)
         {
             m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
         }
@@ -41,7 +41,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 return;
             var reason = $"Lobby Error: {e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
 
-            m_DisplayErrorPopupPublisher.Publish(new DisplayErrorPopup(reason));
+            m_DisplayErrorPopupPublisher.Publish(new UnityServiceErrorMessage(reason));
         }
 
         public void CreateLobbyAsync(string requesterUASId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete)
