@@ -23,10 +23,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             // hide the settings window at startup (this is just to handle the common case where an artist forgets to disable the window in the prefab)
             DisablePanels();
-            SceneManager.sceneLoaded += OnsceneLoaded;
+            SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        void OnsceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
+        void OnDestroy()
+        {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+        }
+
+        void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
             if (loadSceneMode == LoadSceneMode.Single)
             {
