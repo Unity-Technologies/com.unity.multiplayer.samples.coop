@@ -74,7 +74,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             _container.BindMessageChannel<StartCountdown>();
             _container.BindMessageChannel<CancelCountdown>();
             _container.BindMessageChannel<CompleteCountdown>();
-            _container.BindMessageChannel<ChangeGameState>();
             _container.BindMessageChannel<ConfirmInGameState>();
 
             _container.BindMessageChannel<EndGame>();
@@ -130,7 +129,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void OnStartClicked()
         {
-
             lobbyUIMediator.ToggleJoinLobbyUI();
             lobbyUIMediator.Show();
         }

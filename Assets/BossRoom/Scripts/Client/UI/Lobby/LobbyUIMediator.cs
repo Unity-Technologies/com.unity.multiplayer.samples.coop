@@ -117,7 +117,7 @@ namespace BossRoom.Scripts.Client.UI
             subscriptions.Add(_container.Resolve<ISubscriber<StartCountdown>>().Subscribe(OnStartCountdown));
             subscriptions.Add(_container.Resolve<ISubscriber<CancelCountdown>>().Subscribe(OnCancelCountdown));
             subscriptions.Add(_container.Resolve<ISubscriber<CompleteCountdown>>().Subscribe(OnCompleteCountdown));
-            subscriptions.Add(_container.Resolve<ISubscriber<ChangeGameState>>().Subscribe(OnChangeGameState));
+            //subscriptions.Add(_container.Resolve<ISubscriber<ChangeGameState>>().Subscribe(OnChangeGameState));
             subscriptions.Add(_container.Resolve<ISubscriber<ConfirmInGameState>>().Subscribe(OnConfirmInGameState));
 
             m_DisposableSubscriptions = subscriptions;
@@ -159,9 +159,9 @@ namespace BossRoom.Scripts.Client.UI
                 //     (m_relayClient as RelayUtpHost).SendInGameState();
             }
 
-            void OnChangeGameState(ChangeGameState msg)
-            {   SetGameState(msg.GameState);
-            }
+            // void OnChangeGameState(ChangeGameState msg)
+            // {   SetGameState(msg.GameState);
+            // }
 
             void OnConfirmInGameState(ConfirmInGameState _)
             {   m_localUser.UserStatus = UserStatus.InGame;
@@ -173,11 +173,14 @@ namespace BossRoom.Scripts.Client.UI
 
         public void CreateLobbyRequest(LocalLobby.LobbyData lobbyData)
         {
-            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, OnSuccess, OnFailedJoin);
-            void OnSuccess(Lobby r)
+            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, OnCreatedLobby, OnFailedJoin);
+
+            void OnCreatedLobby(Lobby r)
             {
                 m_localLobby.ApplyRemoteData(r);
-                OnCreatedLobby();
+                m_localUser.IsHost = true;
+                Debug.Log($"Created lobby code: {m_localLobby.LobbyCode}");
+                OnJoinedLobby();
             }
         }
 
@@ -194,13 +197,19 @@ namespace BossRoom.Scripts.Client.UI
                 if (qr != null)
                 {
                     var localLobbies = m_LocalLobbyFactory.CreateLocalLobbies(qr);
-                    OnLobbiesQueried(localLobbies);
+
+                    var newLobbyDict = new Dictionary<string, LocalLobby>();
+                    foreach (var lobby in localLobbies)
+                        newLobbyDict.Add(lobby.LobbyID, lobby);
+
+                    m_lobbyServiceData.State = LobbyQueryState.Fetched;
+                    m_lobbyServiceData.CurrentLobbies = newLobbyDict;
                 }
             }
 
             void OnError(QueryResponse er)
             {
-                OnLobbyQueryFailed();
+                m_lobbyServiceData.State = LobbyQueryState.Error;
             }
         }
 
@@ -254,28 +263,7 @@ namespace BossRoom.Scripts.Client.UI
                 OnLeftLobby();
         }
 
-        private void OnLobbiesQueried(IEnumerable<LocalLobby> lobbies)
-        {
-            var newLobbyDict = new Dictionary<string, LocalLobby>();
-            foreach (var lobby in lobbies)
-                newLobbyDict.Add(lobby.LobbyID, lobby);
-
-            m_lobbyServiceData.State = LobbyQueryState.Fetched;
-            m_lobbyServiceData.CurrentLobbies = newLobbyDict;
-        }
-
-        private void OnLobbyQueryFailed()
-        {
-            m_lobbyServiceData.State = LobbyQueryState.Error;
-        }
-
-        private void OnCreatedLobby()
-        {
-            m_localUser.IsHost = true;
-            OnJoinedLobby();
-        }
-
-        private void OnJoinedLobby()
+       private void OnJoinedLobby()
         {
             m_LobbyAsyncRequests.BeginTracking(m_localLobby.LobbyID);
             m_lobbyContentHeartbeat.BeginTracking(m_localLobby, m_localUser);
@@ -284,6 +272,8 @@ namespace BossRoom.Scripts.Client.UI
             // The host has the opportunity to reject incoming players, but to do so the player needs to connect to Relay without having game logic available.
             // In particular, we should prevent players from joining voice chat until they are approved.
             m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
+
+
 
             //todo: ADD ABILITY TO CONNECT VIA OTHER MEANS THAN JUST RELAY (DIRECT IP, Photon Relay??)
             StartRelayConnection();
