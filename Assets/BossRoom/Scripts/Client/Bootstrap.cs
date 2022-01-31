@@ -1,8 +1,9 @@
 using BossRoom.Scripts.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace BossRoom.Scripts.Client
 {
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope

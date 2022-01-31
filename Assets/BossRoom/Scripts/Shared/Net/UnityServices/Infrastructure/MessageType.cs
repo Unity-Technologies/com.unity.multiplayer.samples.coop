@@ -37,16 +37,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
         //DisplayErrorPopup = 300,
     }
 
-    public struct RenameRequest
-    {
-        public string Name;
-
-        public RenameRequest(string name)
-        {
-            Name = name;
-        }
-    }
-
     public struct EndGame
     {
 

@@ -44,8 +44,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         [Tooltip("This Button appears for popups that ask for player inputs")]
         private Button m_CancelButton;
-        [SerializeField]
-        private NameDisplay m_NameDisplay;
+        // [SerializeField]
+        // private NameDisplay m_NameDisplay;
 
         OnlineMode OnlineMode
         {
@@ -157,7 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_InputField.gameObject.SetActive(true);
             m_PortInputField.gameObject.SetActive(true);
 
-            m_NameDisplay.gameObject.SetActive(true);
+            // m_NameDisplay.gameObject.SetActive(true);
 
             gameObject.SetActive(true);
         }
@@ -198,7 +198,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             int.TryParse(m_PortInputField.text, out portNum);
             if (portNum <= 0)
                 portNum = m_DefaultPort;
-            m_ConfirmFunction.Invoke(m_InputField.text, portNum, m_NameDisplay.GetCurrentName(), OnlineMode);
+            m_ConfirmFunction.Invoke(m_InputField.text, portNum, ""/*m_NameDisplay.GetCurrentName()*/, OnlineMode);
         }
 
         /// <summary>
@@ -480,7 +480,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ReconnectingImage.SetActive(false);
             m_ConfirmationButton.gameObject.SetActive(false);
             m_CancelButton.gameObject.SetActive(false);
-            m_NameDisplay.gameObject.SetActive(false);
+            //m_NameDisplay.gameObject.SetActive(false);
 
             m_IPRadioButton.gameObject.SetActive(false);
             m_RelayRadioButton.gameObject.SetActive(false);

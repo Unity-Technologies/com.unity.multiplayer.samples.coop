@@ -6,9 +6,13 @@ using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using GameLobby.UI;
+using TMPro;
+using Unity.Multiplayer.Samples.BossRoom;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UI;
 using GameState = BossRoom.Scripts.Shared.Net.UnityServices.Lobbies.GameState;
 
 namespace BossRoom.Scripts.Client.UI
@@ -26,6 +30,7 @@ namespace BossRoom.Scripts.Client.UI
         private IPublisher<UserStatus> m_LobbyUserStatusPublisher;
         private Identity m_Identity;
         private LocalGameState m_localGameState;
+        private NameGenerationData m_NameGenerationData;
 
         private LocalLobbyFactory m_LocalLobbyFactory;
 
@@ -36,6 +41,7 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField] private CreateLobbyUI m_CreateLobbyUI;
         [SerializeField] private UITinter m_JoinToggle;
         [SerializeField] private UITinter m_CreateToggle;
+        [SerializeField] private TextMeshProUGUI m_PlayerNameLabel;
 
         [Inject]
         private void InjectDependencies(
@@ -49,16 +55,16 @@ namespace BossRoom.Scripts.Client.UI
             LobbyServiceData lobbyServiceData,
             LocalLobby localLobby,
             IInstanceResolver container,
-            LocalLobbyFactory localLobbyFactory
+            LocalLobbyFactory localLobbyFactory,
+            NameGenerationData nameGenerationData
         )
         {
             Application.wantsToQuit += OnWantToQuit;
 
             //m_persistentPlayer = persistentPlayer;
 
+            m_NameGenerationData = nameGenerationData;
             m_localUser = localUser;
-            m_localUser.DisplayName = "test";//m_persistentPlayer.NetworkNameState.Name.Value;
-
             _container = container;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
             m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
@@ -70,6 +76,8 @@ namespace BossRoom.Scripts.Client.UI
             m_LocalLobbyFactory = localLobbyFactory;
             m_localLobby = localLobby;
             m_localLobby.State = LobbyState.Lobby;
+
+            RegenerateName();
 
             SubscribeToMessageChannels();
         }
@@ -111,7 +119,6 @@ namespace BossRoom.Scripts.Client.UI
         {
             var subscriptions = new DisposableGroup();
 
-            subscriptions.Add(_container.Resolve<ISubscriber<RenameRequest>>().Subscribe(OnRenameRequest));
             subscriptions.Add(_container.Resolve<ISubscriber<ClientUserApproved>>().Subscribe(OnClientUserApproved));
             subscriptions.Add(_container.Resolve<ISubscriber<UserStatus>>().Subscribe(OnLobbyUserStatus));
             subscriptions.Add(_container.Resolve<ISubscriber<StartCountdown>>().Subscribe(OnStartCountdown));
@@ -123,16 +130,7 @@ namespace BossRoom.Scripts.Client.UI
             m_DisposableSubscriptions = subscriptions;
 
 
-            void OnRenameRequest(RenameRequest msg)
-            {
-                if (string.IsNullOrWhiteSpace(msg.Name))
-                {
-                    m_DisplayErrorPopupPublisher.Publish(new DisplayErrorPopup("Empty Name not allowed."));
-                    return;
-                }
 
-                m_localUser.DisplayName = msg.Name;
-            }
 
             void OnClientUserApproved(ClientUserApproved _)
             {
@@ -171,8 +169,29 @@ namespace BossRoom.Scripts.Client.UI
 
         }
 
-        public void CreateLobbyRequest(LocalLobby.LobbyData lobbyData)
+
+
+        public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
+            var lobbyData = new LocalLobby.LobbyData()
+            {
+                LobbyName = lobbyName,
+                //LobbyID = ,
+                //LobbyCode = ,
+                //RelayCode = ,
+                //RelayNGOCode = ,
+                Private = isPrivate,
+                MaxPlayerCount = maxPlayers,
+                //State = ,
+                //Color = ,
+                //State_LastEdit = ,
+                //Color_LastEdit = ,
+                //RelayNGOCode_LastEdit = ,
+                OnlineMode = onlineMode,
+                IP = ip,
+                Port = port
+            };
+
             m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, OnCreatedLobby, OnFailedJoin);
 
             void OnCreatedLobby(Lobby r)
@@ -230,13 +249,7 @@ namespace BossRoom.Scripts.Client.UI
             m_DisposableSubscriptions?.Dispose();
         }
 
-        private void OnAuthSignIn()
-        {
-            Debug.Log("Signed in.");
-            m_localUser.ID = m_Identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
-            m_localUser.DisplayName = "test";// m_persistentPlayer.NetworkNameState.Name.Value;
-            m_localLobby.AddPlayer(m_localUser); // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
-        }
+
 
         public void QuickJoinRequest()
         {
@@ -409,6 +422,12 @@ namespace BossRoom.Scripts.Client.UI
             m_CreateLobbyUI.Show();
             m_JoinToggle.SetToColor(false);
             m_CreateToggle.SetToColor(true);
+        }
+
+        public void RegenerateName()
+        {
+            m_localUser.DisplayName = m_NameGenerationData.GenerateName();
+            m_PlayerNameLabel.text = m_localUser.DisplayName;
         }
     }
 }

@@ -3,6 +3,7 @@ using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.Serialization;
@@ -30,8 +31,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] private GameObject[] _autoInjected;
         private DIScope _container;
 
-
-        [FormerlySerializedAs("m_lobbyUIManager")] [SerializeField] private LobbyUIMediator lobbyUIMediator;
+        [SerializeField] private NameGenerationData m_NameGenerationData;
+        [SerializeField] private LobbyUIMediator m_lobbyUIMediator;
 
         [SerializeField] private CanvasGroup m_mainMenuButtons;
         [SerializeField] private GameObject m_signInSpinner;
@@ -39,43 +40,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private void Awake()
         {
             m_mainMenuButtons.interactable = false;
-            lobbyUIMediator.Hide();
+            m_lobbyUIMediator.Hide();
             CreateDIScope();
         }
 
         private void CreateDIScope()
         {
-            void OnAuthSignIn()
-            {
-                Debug.Log("Signed in.");
-
-                m_mainMenuButtons.interactable = true;
-                m_signInSpinner.SetActive(false);
-
-                var localUser = _container.Resolve<LobbyUser>();
-                var identity = _container.Resolve<Identity>();
-                var localLobby = _container.Resolve<LocalLobby>();
-
-                localUser.ID = identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
-                // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
-                localLobby.AddPlayer(localUser);
-            }
 
             _container = new DIScope(DIScope.RootScope);
+
+            _container.BindInstanceAsSingle(m_NameGenerationData);
 
             _container.BindMessageChannel<ClientUserSeekingDisapproval>();
             _container.BindMessageChannel<DisplayErrorPopup>();
 
             //todo: remember to cleanup unused message channels
 
-            _container.BindMessageChannel<RenameRequest>();
             _container.BindMessageChannel<ClientUserApproved>();
             _container.BindMessageChannel<UserStatus>();
             _container.BindMessageChannel<StartCountdown>();
             _container.BindMessageChannel<CancelCountdown>();
             _container.BindMessageChannel<CompleteCountdown>();
             _container.BindMessageChannel<ConfirmInGameState>();
-
+            _container.BindMessageChannel<ChangeGameState>();
             _container.BindMessageChannel<EndGame>();
 
             _container.BindAsSingle<LobbyAPIInterface>();
@@ -94,19 +81,34 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
            // var persistentPlayer = playerNetworkObject.GetComponent<PersistentPlayer>();
            // _container.BindInstanceAsSingle(persistentPlayer);
 
-            _container.BindInstanceAsSingle(lobbyUIMediator);
+            _container.BindInstanceAsSingle(m_lobbyUIMediator);
             _container.BindInstanceAsSingle(new Identity(OnAuthSignIn));
 
-            _container.FinalizeScopeConstruction();
-
-            foreach (var go in _autoInjected)
+            void OnAuthSignIn()
             {
-                _container.Inject(go);
+                Debug.Log("Signed in.");
+
+                _container.FinalizeScopeConstruction();
+
+                foreach (var go in _autoInjected)
+                {
+                    _container.Inject(go);
+                }
+
+                m_mainMenuButtons.interactable = true;
+                m_signInSpinner.SetActive(false);
+
+                var localUser = _container.Resolve<LobbyUser>();
+                var identity = _container.Resolve<Identity>();
+                var localLobby = _container.Resolve<LocalLobby>();
+
+                localUser.ID = identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
+                localUser.DisplayName = m_NameGenerationData.GenerateName();
+                // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
+                localLobby.AddPlayer(localUser);
             }
 
-            var localSinletonLobbyUser = _container.Resolve<LobbyUser>();
         }
-        //
 
         protected override void Start()
         {
@@ -120,7 +122,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_ClientNetPortal.OnUnityRelayJoinFailed += OnRelayJoinFailed;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
-            lobbyUIMediator.Hide();
+            m_lobbyUIMediator.Hide();
 
             //any disconnect reason set? Show it to the user here.
             ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
@@ -129,8 +131,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void OnStartClicked()
         {
-            lobbyUIMediator.ToggleJoinLobbyUI();
-            lobbyUIMediator.Show();
+            m_lobbyUIMediator.ToggleJoinLobbyUI();
+            m_lobbyUIMediator.Show();
         }
 
         // public void OnHostClicked()

@@ -37,9 +37,6 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField]
         private Button m_ConfirmationButton;
 
-        [SerializeField]
-        private NameDisplay m_NameDisplay;
-
         [SerializeField] private Toggle m_IPToggle;
         [SerializeField] private Toggle m_UnityRelayToggle;
 
@@ -164,26 +161,7 @@ namespace BossRoom.Scripts.Client.UI
             if (portNum <= 0)
                 portNum = k_DefaultPort;
 
-            var lobbyData = new LocalLobby.LobbyData()
-            {
-                LobbyName = m_LobbyNameInputField.text,
-                //LobbyID = ,
-                //LobbyCode = ,
-                //RelayCode = ,
-                //RelayNGOCode = ,
-                Private = m_IsPrivate.isOn,
-                MaxPlayerCount = 8,
-                //State = ,
-                //Color = ,
-                //State_LastEdit = ,
-                //Color_LastEdit = ,
-                //RelayNGOCode_LastEdit = ,
-                OnlineMode = m_OnlineMode,
-                IP = m_IPInputField.text,
-                Port = portNum
-            };
-
-            m_LobbyUIMediator.CreateLobbyRequest(lobbyData);
+            m_LobbyUIMediator.CreateLobbyRequest( m_LobbyNameInputField.text, m_IsPrivate.isOn, 8, m_OnlineMode, m_IPInputField.text, portNum);
         }
 
         public void Show()
