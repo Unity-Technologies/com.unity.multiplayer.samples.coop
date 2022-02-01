@@ -113,9 +113,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
-            // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
-            //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
-            if (!NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsHost)
+            // Only handle client disconnect
+            if (!NetworkManager.Singleton.IsHost)
             {
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;

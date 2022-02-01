@@ -189,6 +189,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             else
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                // Don't apply damage if god mode is on
+                if (NetState.NetworkLifeState.IsGodMode.Value)
+                {
+                    return;
+                }
+#endif
+
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
@@ -196,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 serverAnimationHandler.NetworkAnimator.SetTrigger("HitReact1");
             }
 
-            NetState.HitPoints = Mathf.Min(NetState.CharacterClass.BaseHP.Value, NetState.HitPoints+HP);
+            NetState.HitPoints = Mathf.Clamp(NetState.HitPoints + HP, 0, NetState.CharacterClass.BaseHP.Value);
 
             if( m_AIBrain != null )
             {
