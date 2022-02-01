@@ -20,6 +20,8 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField]
         private InputField m_LobbyNameInputField;
 
+        [SerializeField] private CanvasGroup m_IPConnectionCanvasGroup;
+
         [SerializeField]
         private InputField m_IPInputField;
 
@@ -130,19 +132,21 @@ namespace BossRoom.Scripts.Client.UI
             {
                 case OnlineMode.IpHost:
                 {
-                    m_PortInputField.text = k_DefaultPort.ToString();
-                    m_IPInputField.gameObject.SetActive(true);
+                    m_IPConnectionCanvasGroup.alpha = 1;
+                    m_IPConnectionCanvasGroup.blocksRaycasts = true;
+                    m_IPConnectionCanvasGroup.interactable = true;
 
                     m_PortInputField.text = k_DefaultPort.ToString();
-                    m_PortInputField.gameObject.SetActive(true);
+                    m_PortInputField.text = k_DefaultPort.ToString();
                 }
                     break;
                 case OnlineMode.PhotonRelay:
                     throw new NotImplementedException();
                 case OnlineMode.UnityRelay:
                 {
-                    m_IPInputField.gameObject.SetActive(false);
-                    m_PortInputField.gameObject.SetActive(false);
+                    m_IPConnectionCanvasGroup.alpha = 0;
+                    m_IPConnectionCanvasGroup.blocksRaycasts = false;
+                    m_IPConnectionCanvasGroup.interactable = false;
                 }
                     break;
                 case OnlineMode.Unset:
@@ -150,7 +154,6 @@ namespace BossRoom.Scripts.Client.UI
                     throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
             }
 
-            m_ConfirmationButton.gameObject.SetActive(true);
             m_LoadingImage.SetActive(false);
         }
 

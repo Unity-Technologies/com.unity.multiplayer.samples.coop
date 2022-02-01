@@ -159,39 +159,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         //         m_ResponsePopup.SetupNotifierDisplay("Starting host", "Attempting to Start host...", true, false);
         //     }, k_DefaultIP, k_ConnectPort);
         // }
-        //
-        // public void OnConnectClicked()
-        // {
-        //     m_ResponsePopup.SetupEnterGameDisplay(false, "Join Game", "Input the host IP below", "Input the room name below", "Input the join code below", "iphost", "Join",
-        //         (string connectInput, int connectPort, string playerName, OnlineMode onlineMode) =>
-        //     {
-        //         m_GameNetPortal.PlayerName = playerName;
-        //
-        //         switch (onlineMode)
-        //         {
-        //             case OnlineMode.Relay:
-        //                 if (ClientGameNetPortal.StartClientRelayMode(m_GameNetPortal, connectInput, out string failMessage) == false)
-        //                 {
-        //                     m_ResponsePopup.SetupNotifierDisplay("Connection Failed", failMessage, false, true);
-        //                     return;
-        //                 }
-        //                 break;
-        //
-        //             case OnlineMode.IpHost:
-        //                 ClientGameNetPortal.StartClient(m_GameNetPortal, connectInput, connectPort);
-        //                 break;
-        //
-        //             case OnlineMode.UnityRelay:
-        //                 Debug.Log($"Unity Relay Client, join code {connectInput}");
-        //                 m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, connectInput);
-        //                 break;
-        //             case OnlineMode.Lobby:
-        //                 //todo - implement logic for OnConnect
-        //                 break;
-        //         }
-        //         m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false);
-        //     }, k_DefaultIP, k_ConnectPort);
-        // }
 
         private string PostProcessIpInput(string ipInput)
         {

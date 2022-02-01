@@ -14,6 +14,7 @@ namespace BossRoom.Scripts.Client.UI
         private GameObjectFactory m_GameObjectFactory;
         private LobbyUIMediator m_LobbyUIMediator;
         private LobbyServiceData m_LobbyServiceData;
+        private UpdateRunner m_UpdateRunner;
 
         [SerializeField] private LobbyPanelUI m_LobbyPanelPrototype;
 
@@ -34,13 +35,23 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField] private CanvasGroup m_CanvasGroup;
 
         [Inject]
-        private void InjectDependencies(GameObjectFactory gameObjectFactory, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData)
+        private void InjectDependencies(GameObjectFactory gameObjectFactory, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData, UpdateRunner updateRunner)
         {
             m_GameObjectFactory = gameObjectFactory;
             m_LobbyUIMediator = lobbyUIMediator;
             m_LobbyServiceData = lobbyServiceData;
+            m_UpdateRunner = updateRunner;
 
+            m_UpdateRunner.Subscribe(PeriodicRefresh, 10f);
             BeginObserving(m_LobbyServiceData);
+        }
+
+        private void OnDisable()
+        {
+            if (m_UpdateRunner != null)
+            {
+                m_UpdateRunner.Unsubscribe(PeriodicRefresh);
+            }
         }
 
         private void Awake()
@@ -64,6 +75,12 @@ namespace BossRoom.Scripts.Client.UI
             m_LobbyUIMediator.JoinLobbyRequest(m_LocalLobbySelected);
             m_LocalLobbySelected = default;
         }
+
+        public void PeriodicRefresh(float _)
+        {
+            m_LobbyUIMediator.QueryLobbiesRequest();
+        }
+
 
         public void OnRefresh()
         {

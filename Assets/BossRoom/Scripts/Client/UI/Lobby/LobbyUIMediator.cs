@@ -8,6 +8,7 @@ using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using GameLobby.UI;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -33,6 +34,7 @@ namespace BossRoom.Scripts.Client.UI
         private NameGenerationData m_NameGenerationData;
 
         private LocalLobbyFactory m_LocalLobbyFactory;
+        private GameNetPortal m_GameNetPortal;
 
         private IDisposable m_DisposableSubscriptions;
 
@@ -42,6 +44,7 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField] private UITinter m_JoinToggle;
         [SerializeField] private UITinter m_CreateToggle;
         [SerializeField] private TextMeshProUGUI m_PlayerNameLabel;
+        [SerializeField] private GameObject m_LoadingSpinner;
 
         [Inject]
         private void InjectDependencies(
@@ -56,7 +59,8 @@ namespace BossRoom.Scripts.Client.UI
             LocalLobby localLobby,
             IInstanceResolver container,
             LocalLobbyFactory localLobbyFactory,
-            NameGenerationData nameGenerationData
+            NameGenerationData nameGenerationData,
+            GameNetPortal gameNetPortal
         )
         {
             Application.wantsToQuit += OnWantToQuit;
@@ -75,6 +79,7 @@ namespace BossRoom.Scripts.Client.UI
             m_lobbyServiceData = lobbyServiceData;
             m_LocalLobbyFactory = localLobbyFactory;
             m_localLobby = localLobby;
+            m_GameNetPortal = gameNetPortal;
             m_localLobby.State = LobbyState.Lobby;
 
             RegenerateName();
@@ -194,6 +199,8 @@ namespace BossRoom.Scripts.Client.UI
 
             m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, OnCreatedLobby, OnFailedJoin);
 
+            BlockUIWhileLoadingIsInProgress();
+
             void OnCreatedLobby(Lobby r)
             {
                 m_localLobby.ApplyRemoteData(r);
@@ -210,7 +217,7 @@ namespace BossRoom.Scripts.Client.UI
             m_LobbyAsyncRequests.RetrieveLobbyListAsync(
                 OnSuccess,
                 OnFailure,
-                s_EmptyQuickJoinFilters
+                null
                 );
 
             void OnSuccess(QueryResponse qr)
@@ -233,12 +240,11 @@ namespace BossRoom.Scripts.Client.UI
             }
         }
 
-        private static List<QueryFilter> s_EmptyQuickJoinFilters = null;
-
 
         public void JoinLobbyRequest(LocalLobby.LobbyData lobbyData)
         {
             m_LobbyAsyncRequests.JoinLobbyAsync(lobbyData.LobbyID, lobbyData.LobbyCode, m_localUser, OnSuccess, OnFailedJoin);
+            BlockUIWhileLoadingIsInProgress();
 
             void OnSuccess(Lobby r)
             {
@@ -257,7 +263,7 @@ namespace BossRoom.Scripts.Client.UI
         public void QuickJoinRequest()
         {
             m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, OnSuccess, OnFailedJoin);
-
+            BlockUIWhileLoadingIsInProgress();
             void OnSuccess(Lobby r)
             {
                 m_localLobby.ApplyRemoteData(r);
@@ -290,11 +296,16 @@ namespace BossRoom.Scripts.Client.UI
             // In particular, we should prevent players from joining voice chat until they are approved.
             m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
 
+            Debug.Log("We;re in lobby, so now we are starting the actual connection OR fetching relay");
+            Hide();
 
+
+            StartConnection();
 
             //todo: ADD ABILITY TO CONNECT VIA OTHER MEANS THAN JUST RELAY (DIRECT IP, Photon Relay??)
-            StartRelayConnection();
+            //StartRelayConnection();
         }
+
 
         private void OnLeftLobby()
         {
@@ -334,7 +345,39 @@ namespace BossRoom.Scripts.Client.UI
         /// </summary>
         private void OnFailedJoin()
         {
+            UnblockUIAfterLoadingIsComplete();
             SetGameState(GameState.JoinMenu);
+        }
+
+        private void StartConnection()
+        {
+            m_GameNetPortal.PlayerName = m_localUser.DisplayName;
+
+            //relays need to actually start the relay and propagate that data to the lobby
+            //IP connection can continue directly - I should start with making that workable
+            //make the UI selection be IP be default and disable relay for now, while it's not implemented fully
+
+            //todo extract connection data from the local lobby
+
+            switch (m_localLobby.OnlineMode)
+            {
+                // case OnlineMode.UnityRelay:
+                //     Debug.Log($"Unity Relay Client, join code {connectInput}");
+                //     ClientGameNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, connectInput);
+                //     break;
+                // case OnlineMode.PhotonRelay:
+                //     if (ClientGameNetPortal.StartClientRelayMode(m_GameNetPortal, connectInput, out string failMessage) == false)
+                //     {
+                //         m_ResponsePopup.SetupNotifierDisplay("Connection Failed", failMessage, false, true);
+                //         return;
+                //     }
+                //     break;
+                case OnlineMode.IpHost:
+                {
+                    ClientGameNetPortal.StartClient(m_GameNetPortal, m_localLobby.Data.IP, m_localLobby.Data.Port);
+                }
+                    break;
+            }
         }
 
         private void StartRelayConnection()
@@ -400,20 +443,17 @@ namespace BossRoom.Scripts.Client.UI
         public void Show()
         {
             m_CanvasGroup.alpha = 1;
-            m_CanvasGroup.interactable = true;
-            m_CanvasGroup.blocksRaycasts = true;
+            UnblockUIAfterLoadingIsComplete();
         }
 
         public void Hide()
         {
             m_CanvasGroup.alpha = 0;
-            m_CanvasGroup.interactable = false;
-            m_CanvasGroup.blocksRaycasts = false;
+            BlockUIWhileLoadingIsInProgress();
         }
 
         public void ToggleJoinLobbyUI()
         {
-
             m_JoinLobbyUI.Show();
             m_CreateLobbyUI.Hide();
             m_JoinToggle.SetToColor(true);
@@ -432,6 +472,20 @@ namespace BossRoom.Scripts.Client.UI
         {
             m_localUser.DisplayName = m_NameGenerationData.GenerateName();
             m_PlayerNameLabel.text = m_localUser.DisplayName;
+        }
+
+        private void BlockUIWhileLoadingIsInProgress()
+        {
+            m_CanvasGroup.interactable = false;
+            m_CanvasGroup.blocksRaycasts = false;
+            m_LoadingSpinner.SetActive(true);
+        }
+
+        private void UnblockUIAfterLoadingIsComplete()
+        {
+            m_CanvasGroup.interactable = true;
+            m_CanvasGroup.blocksRaycasts = true;
+            m_LoadingSpinner.SetActive(false);
         }
     }
 }
