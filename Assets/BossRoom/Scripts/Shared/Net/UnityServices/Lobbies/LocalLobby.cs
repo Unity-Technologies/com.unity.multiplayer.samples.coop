@@ -300,6 +300,20 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             CopyObserved(oldObserved.Data, oldObserved.m_LobbyUsers);
         }
 
+        public Dictionary<string, DataObject> GetDataForUnityServices() =>
+            new Dictionary<string, DataObject>()
+            {
+                {"RelayCode", new DataObject(DataObject.VisibilityOptions.Public,  RelayCode)},
+                {"RelayNGOCode", new DataObject(DataObject.VisibilityOptions.Public, RelayNGOCode)},
+                {"State", new DataObject(DataObject.VisibilityOptions.Public, ((int)State).ToString())},
+                {"State_LastEdit", new DataObject(DataObject.VisibilityOptions.Public, Data.State_LastEdit.ToString())},
+                {"RelayNGOCode_LastEdit", new DataObject(DataObject.VisibilityOptions.Public, Data.RelayNGOCode_LastEdit.ToString())},
+                {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)Data.OnlineMode).ToString())},
+                {"IP", new DataObject(DataObject.VisibilityOptions.Public, Data.IP)},
+                {"Port", new DataObject(DataObject.VisibilityOptions.Public,  Data.Port.ToString())},
+            };
+
+
         public void ApplyRemoteData(Lobby lobby)
         {
             var info = new LobbyData(); // Technically, this is largely redundant after the first assignment, but it won't do any harm to assign it again.

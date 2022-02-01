@@ -47,12 +47,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_DisplayErrorPopupPublisher.Publish(new UnityServiceErrorMessage(reason));
         }
 
-        public void CreateLobbyAsync(string requesterUASId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public void CreateLobbyAsync(string requesterUASId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData, Action<Lobby> onComplete, Action onFailed)
         {
             CreateLobbyOptions createOptions = new CreateLobbyOptions
             {
                 IsPrivate = isPrivate,
-                Player = new Player(id: requesterUASId, data: localUserData)
+                Player = new Player(id: requesterUASId, data: hostUserData),
+                Data = lobbyData
             };
             var task = Lobbies.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createOptions);
             DoRequest(task, onComplete, onFailed);

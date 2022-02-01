@@ -136,12 +136,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             void DoLobbyDataPush()
             {
-                m_LobbyAsyncRequests.UpdateLobbyDataAsync(RetrieveLobbyData(m_localLobby), OnSuccess, null);
+                m_LobbyAsyncRequests.UpdateLobbyDataAsync(m_localLobby.GetDataForUnityServices(), OnSuccess, null);
             }
 
             void DoPlayerDataPush()
             {
-                m_LobbyAsyncRequests.UpdatePlayerDataAsync(RetrieveUserData(m_localUser), OnSuccess, null);
+                m_LobbyAsyncRequests.UpdatePlayerDataAsync(m_localUser.GetDataForUnityServices(), OnSuccess, null);
             }
 
             void OnSuccess()
@@ -176,29 +176,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        private static Dictionary<string, string> RetrieveLobbyData(LocalLobby lobby)
-        {
-            Dictionary<string, string> data = new Dictionary<string, string>();
 
-            data.Add("RelayCode", lobby.RelayCode);
-            data.Add("RelayNGOCode", lobby.RelayNGOCode);
-            data.Add("State", ((int)lobby.State).ToString()); // Using an int is smaller than using the enum state's name.
-            data.Add("State_LastEdit", lobby.Data.State_LastEdit.ToString());
-            data.Add("RelayNGOCode_LastEdit", lobby.Data.RelayNGOCode_LastEdit.ToString());
-            data.Add("OnlineMode", ((int)lobby.Data.OnlineMode).ToString());
-
-            return data;
-        }
-
-        private static Dictionary<string, string> RetrieveUserData(LobbyUser user)
-        {
-            Dictionary<string, string> data = new Dictionary<string, string>();
-            if (user == null || string.IsNullOrEmpty(user.ID))
-                return data;
-            data.Add("DisplayName", user.DisplayName); // The lobby doesn't need to know any data beyond the name and state; Relay will handle the rest.
-            data.Add("UserStatus", ((int)user.UserStatus).ToString());
-            return data;
-        }
 
 
     }

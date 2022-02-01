@@ -134,9 +134,6 @@ namespace BossRoom.Scripts.Client.UI
 
             m_DisposableSubscriptions = subscriptions;
 
-
-
-
             void OnClientUserApproved(ClientUserApproved _)
             {
                 ConfirmApproval();
@@ -148,11 +145,13 @@ namespace BossRoom.Scripts.Client.UI
             }
 
             void OnStartCountdown(StartCountdown _)
-            {   m_localLobby.State = LobbyState.CountDown;
+            {
+                m_localLobby.State = LobbyState.CountDown;
             }
 
             void OnCancelCountdown(CancelCountdown _)
-            {   m_localLobby.State = LobbyState.Lobby;
+            {
+                m_localLobby.State = LobbyState.Lobby;
             }
 
             void OnCompleteCountdown(CompleteCountdown _)
@@ -178,26 +177,7 @@ namespace BossRoom.Scripts.Client.UI
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
-            var lobbyData = new LocalLobby.LobbyData()
-            {
-                LobbyName = lobbyName,
-                //LobbyID = ,
-                //LobbyCode = ,
-                //RelayCode = ,
-                //RelayNGOCode = ,
-                Private = isPrivate,
-                MaxPlayerCount = maxPlayers,
-                //State = ,
-                //Color = ,
-                //State_LastEdit = ,
-                //Color_LastEdit = ,
-                //RelayNGOCode_LastEdit = ,
-                OnlineMode = onlineMode,
-                IP = ip,
-                Port = port
-            };
-
-            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyData.LobbyName, lobbyData.MaxPlayerCount, lobbyData.Private, m_localUser, OnCreatedLobby, OnFailedJoin);
+            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedJoin);
 
             BlockUIWhileLoadingIsInProgress();
 
@@ -220,8 +200,11 @@ namespace BossRoom.Scripts.Client.UI
                 null
                 );
 
+            BlockUIWhileLoadingIsInProgress();
+
             void OnSuccess(QueryResponse qr)
             {
+                UnblockUIAfterLoadingIsComplete();
                 var localLobbies = m_LocalLobbyFactory.CreateLocalLobbies(qr);
 
                 var newLobbyDict = new Dictionary<string, LocalLobby>();
@@ -236,6 +219,7 @@ namespace BossRoom.Scripts.Client.UI
 
             void OnFailure()
             {
+                UnblockUIAfterLoadingIsComplete();
                 m_lobbyServiceData.State = LobbyQueryState.Error;
             }
         }
@@ -296,11 +280,11 @@ namespace BossRoom.Scripts.Client.UI
             // In particular, we should prevent players from joining voice chat until they are approved.
             m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
 
-            Debug.Log("We;re in lobby, so now we are starting the actual connection OR fetching relay");
+            Debug.Log("We;re in lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection");
             Hide();
 
 
-            StartConnection();
+            //StartConnection();
 
             //todo: ADD ABILITY TO CONNECT VIA OTHER MEANS THAN JUST RELAY (DIRECT IP, Photon Relay??)
             //StartRelayConnection();

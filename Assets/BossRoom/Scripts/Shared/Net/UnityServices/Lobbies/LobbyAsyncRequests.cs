@@ -14,13 +14,22 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     /// </summary>
     public class LobbyAsyncRequests : IDisposable
     {
+        private float m_heartbeatTime = 0;
+        private readonly LobbyAPIInterface m_LobbyApiInterface;
+        private readonly UpdateRunner m_SlowUpdate;
+        private readonly IIdentity m_LocalPlayerIdentity;
+        private readonly LocalLobby m_LocalLobby;
+        private readonly LobbyUser m_LocalLobbyUser;
+        private const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
+
         [Inject]
-        public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, Identity localIdentity, LocalLobby localLobby)
+        public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, Identity localIdentity, LocalLobby localLobby, LobbyUser localLobbyUser)
         {
             m_LocalPlayerIdentity = localIdentity;
             m_LobbyApiInterface = lobbyAPIInterface;
             m_SlowUpdate = slowUpdate;
             m_LocalLobby = localLobby;
+            m_LocalLobbyUser = localLobbyUser;
 
             m_RateLimitQuery = new RateLimitCooldown(1.5f, slowUpdate); // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
             m_RateLimitJoin = new RateLimitCooldown(3f, slowUpdate);
@@ -104,18 +113,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         #endregion
 
-        private static Dictionary<string, PlayerDataObject> CreateInitialPlayerData(LobbyUser player)
-        {
-            Dictionary<string, PlayerDataObject> data = new Dictionary<string, PlayerDataObject>();
-            PlayerDataObject dataObjName = new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, player.DisplayName);
-            data.Add("DisplayName", dataObjName);
-            return data;
-        }
-
         /// <summary>
         /// Attempt to create a new lobby and then join it.
-        /// </summary>
-        public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure)
+        /// </
+
+        public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, OnlineMode onlineMode, string ip, int port, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitHost.CanCall())
             {
@@ -126,7 +128,19 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             string uasId = AuthenticationService.Instance.PlayerId;
 
-            m_LobbyApiInterface.CreateLobbyAsync(uasId, lobbyName, maxPlayers, isPrivate, CreateInitialPlayerData(localUser), onSuccess, onFailure);
+            var initialLobbyData = new Dictionary<string, DataObject>()
+            {
+                // {"RelayCode", new DataObject(DataObject.VisibilityOptions.Public,  RelayCode)},
+                // {"RelayNGOCode", new DataObject(DataObject.VisibilityOptions.Public, RelayNGOCode)},
+                // {"State", new DataObject(DataObject.VisibilityOptions.Public, ((int)State).ToString())},
+                // {"State_LastEdit", new DataObject(DataObject.VisibilityOptions.Public, Data.State_LastEdit.ToString())},
+                // {"RelayNGOCode_LastEdit", new DataObject(DataObject.VisibilityOptions.Public, Data.RelayNGOCode_LastEdit.ToString())},
+                {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())},
+                {"IP", new DataObject(DataObject.VisibilityOptions.Public, ip)},
+                {"Port", new DataObject(DataObject.VisibilityOptions.Public,  port.ToString())},
+            };
+
+            m_LobbyApiInterface.CreateLobbyAsync(uasId, lobbyName, maxPlayers, isPrivate, m_LocalLobbyUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);
         }
 
         /// <summary>
@@ -144,9 +158,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             string uasId = AuthenticationService.Instance.PlayerId;
             if (!string.IsNullOrEmpty(lobbyId))
-                m_LobbyApiInterface.JoinLobbyAsync_ById(uasId, lobbyId, CreateInitialPlayerData(localUser), onSuccess, onFailure);
+                m_LobbyApiInterface.JoinLobbyAsync_ById(uasId, lobbyId, m_LocalLobbyUser.GetDataForUnityServices(), onSuccess, onFailure);
             else
-                m_LobbyApiInterface.JoinLobbyAsync_ByCode(uasId, lobbyCode, CreateInitialPlayerData(localUser), onSuccess, onFailure);
+                m_LobbyApiInterface.JoinLobbyAsync_ByCode(uasId, lobbyCode, m_LocalLobbyUser.GetDataForUnityServices(), onSuccess, onFailure);
         }
 
         /// <summary>
@@ -162,7 +176,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
 
             string uasId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.QuickJoinLobbyAsync(uasId, filters, CreateInitialPlayerData(localUser), onSuccess, onFailure);
+            m_LobbyApiInterface.QuickJoinLobbyAsync(uasId, filters, m_LocalLobbyUser.GetDataForUnityServices(), onSuccess, onFailure);
         }
 
         /// <summary>
@@ -202,23 +216,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         }
 
         /// <param name="data">Key-value pairs, which will overwrite any existing data for these keys. Presumed to be available to all lobby members but not publicly.</param>
-        public void UpdatePlayerDataAsync(Dictionary<string, string> data, Action onSuccess, Action onFailure)
+        public void UpdatePlayerDataAsync(Dictionary<string, PlayerDataObject> data, Action onSuccess, Action onFailure)
         {
             if (!ShouldUpdateData(() => { UpdatePlayerDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
                 return;
 
             string playerId = m_LocalPlayerIdentity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
-            Dictionary<string, PlayerDataObject> dataCurr = new Dictionary<string, PlayerDataObject>();
-            foreach (var dataNew in data)
-            {
-                PlayerDataObject dataObj = new PlayerDataObject(visibility: PlayerDataObject.VisibilityOptions.Member, value: dataNew.Value);
-                if (dataCurr.ContainsKey(dataNew.Key))
-                    dataCurr[dataNew.Key] = dataObj;
-                else
-                    dataCurr.Add(dataNew.Key, dataObj);
-            }
 
-            m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, dataCurr, OnComplete,  onFailure,null, null);
+            m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, data, OnComplete,  onFailure,null, null);
 
             void OnComplete(Lobby result)
             {
@@ -241,29 +246,28 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         }
 
         /// <param name="data">Key-value pairs, which will overwrite any existing data for these keys. Presumed to be available to all lobby members but not publicly.</param>
-        public void UpdateLobbyDataAsync(Dictionary<string, string> data, Action onComplete, Action onFailure)
+        public void UpdateLobbyDataAsync(Dictionary<string, DataObject> data, Action onSuccess, Action onFailure)
         {
-            if (!ShouldUpdateData(() => { UpdateLobbyDataAsync(data, onComplete, onFailure); }, onComplete, false))
+            if (!ShouldUpdateData(() => { UpdateLobbyDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
                 return;
 
             Lobby lobby = m_lastKnownLobby;
-            Dictionary<string, DataObject> dataCurr = lobby.Data ?? new Dictionary<string, DataObject>();
+
+
+            var dataCurr = lobby.Data ?? new Dictionary<string, DataObject>();
 
             var shouldLock = false;
             foreach (var dataNew in data)
             {
-                // Special case: We want to be able to filter on our color data, so we need to supply an arbitrary index to retrieve later. Uses N# for numerics, instead of S# for strings.
-                DataObject.IndexOptions index = dataNew.Key == "Color" ? DataObject.IndexOptions.N1 : 0;
-                DataObject dataObj = new DataObject(DataObject.VisibilityOptions.Public, dataNew.Value, index); // Public so that when we request the list of lobbies, we can get info about them for filtering.
                 if (dataCurr.ContainsKey(dataNew.Key))
-                    dataCurr[dataNew.Key] = dataObj;
+                    dataCurr[dataNew.Key] = dataNew.Value;
                 else
-                    dataCurr.Add(dataNew.Key, dataObj);
+                    dataCurr.Add(dataNew.Key, dataNew.Value);
 
                 //Special Use: Get the state of the Local lobby so we can lock it from appearing in queries if it's not in the "Lobby" State
                 if (dataNew.Key == "State")
                 {
-                    Enum.TryParse(dataNew.Value, out LobbyState lobbyState);
+                    Enum.TryParse(dataNew.Value.Value, out LobbyState lobbyState);
                     shouldLock = lobbyState != LobbyState.Lobby;
                 }
             }
@@ -273,7 +277,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             void OnComplete(Lobby result)
             {
                 if (result != null) m_lastKnownLobby = result;
-                onComplete?.Invoke();
+                onSuccess?.Invoke();
             }
         }
 
@@ -300,14 +304,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             return true;
         }
-
-        private float m_heartbeatTime = 0;
-        private readonly LobbyAPIInterface m_LobbyApiInterface;
-        private readonly UpdateRunner m_SlowUpdate;
-        private readonly IIdentity m_LocalPlayerIdentity;
-        private readonly LocalLobby m_LocalLobby;
-
-        private const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
 
         /// <summary>
         /// Lobby requires a periodic ping to detect rooms that are still active, in order to mitigate "zombie" lobbies.

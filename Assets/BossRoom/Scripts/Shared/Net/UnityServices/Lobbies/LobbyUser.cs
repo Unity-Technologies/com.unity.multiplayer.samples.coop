@@ -1,6 +1,8 @@
 using System;
+using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
+using Unity.Services.Lobbies.Models;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
@@ -175,5 +177,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             OnChanged(this);
         }
+
+        public Dictionary<string, PlayerDataObject> GetDataForUnityServices() =>
+            new Dictionary<string, PlayerDataObject>()
+            {
+                {"DisplayName", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, DisplayName)},
+                {"UserStatus", new PlayerDataObject(PlayerDataObject.VisibilityOptions.Member, ((int) UserStatus).ToString())},
+            };
     }
 }

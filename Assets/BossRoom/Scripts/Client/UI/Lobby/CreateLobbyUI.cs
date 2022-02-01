@@ -98,7 +98,7 @@ namespace BossRoom.Scripts.Client.UI
 
         private void Awake()
         {
-            SetOnlineMode(OnlineMode.UnityRelay);
+            SetOnlineMode(OnlineMode.IpHost);
             m_IPToggle.onValueChanged.AddListener(IPRadioRadioButtonPressed);
             m_UnityRelayToggle.onValueChanged.AddListener(UnityRelayRadioRadioButtonPressed);
         }
