@@ -110,7 +110,7 @@ namespace BossRoom.Scripts.Client.UI
             UnusubscribeFromMessageChannels();
             if (!string.IsNullOrEmpty(m_localLobby?.LobbyID))
             {
-                m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby?.LobbyID, null);
+                m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby?.LobbyID, null, null);
                 m_localLobby = null;
             }
         }
@@ -208,28 +208,32 @@ namespace BossRoom.Scripts.Client.UI
             m_lobbyServiceData.State = LobbyQueryState.Fetching;
 
             m_LobbyAsyncRequests.RetrieveLobbyListAsync(
-                OnListRetrieved,
-                OnError);
+                OnSuccess,
+                OnFailure,
+                s_EmptyQuickJoinFilters
+                );
 
-            void OnListRetrieved(QueryResponse qr)
+            void OnSuccess(QueryResponse qr)
             {
-                if (qr != null)
+                var localLobbies = m_LocalLobbyFactory.CreateLocalLobbies(qr);
+
+                var newLobbyDict = new Dictionary<string, LocalLobby>();
+
+                foreach (var lobby in localLobbies)
                 {
-                    var localLobbies = m_LocalLobbyFactory.CreateLocalLobbies(qr);
-
-                    var newLobbyDict = new Dictionary<string, LocalLobby>();
-                    foreach (var lobby in localLobbies)
-                        newLobbyDict.Add(lobby.LobbyID, lobby);
-
-                    m_lobbyServiceData.FetchedLobbies(newLobbyDict);
+                    newLobbyDict.Add(lobby.LobbyID, lobby);
                 }
+
+                m_lobbyServiceData.FetchedLobbies(newLobbyDict);
             }
 
-            void OnError(QueryResponse er)
+            void OnFailure()
             {
                 m_lobbyServiceData.State = LobbyQueryState.Error;
             }
         }
+
+        private static List<QueryFilter> s_EmptyQuickJoinFilters = null;
 
 
         public void JoinLobbyRequest(LocalLobby.LobbyData lobbyData)
@@ -297,7 +301,7 @@ namespace BossRoom.Scripts.Client.UI
             m_lobbyContentHeartbeat.EndTracking();
             m_LobbyAsyncRequests.EndTracking();
             m_localUser.ResetState();
-            m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby.LobbyID, ResetLocalLobby);
+            m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby.LobbyID, ResetLocalLobby, null);
 
 
             //todo: CLEANUP WHATEVER CONNECTION SETUP FOR THE LOBBY TYPE WE WERE IN

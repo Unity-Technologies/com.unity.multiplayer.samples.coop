@@ -56,7 +56,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             public string IP { get; set; }
             public int Port { get; set; }
 
-
             public LobbyData(LobbyData existing)
             {
                 LobbyID = existing.LobbyID;
@@ -320,6 +319,17 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 info.OnlineMode = lobby.Data.ContainsKey("OnlineMode") ? (OnlineMode) int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset;
                 info.IP = lobby.Data.ContainsKey("IP") ? lobby.Data["IP"].Value : string.Empty;
                 info.Port =  lobby.Data.ContainsKey("Port") ? int.Parse(lobby.Data["Port"].Value) : 0;
+            }
+            else
+            {
+                info.RelayCode = null;
+                info.RelayNGOCode = null;
+                info.State = LobbyState.Lobby;
+                info.State_LastEdit = 0;
+                info.RelayNGOCode_LastEdit = 0;
+                info.OnlineMode = OnlineMode.Unset;
+                info.IP = string.Empty;
+                info.Port = 0;
             }
 
             var lobbyUsers = new Dictionary<string, LobbyUser>();

@@ -10,7 +10,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
     /// </summary>
     public static class AsyncUnityServiceRequest
     {
-        public static async void DoRequest<TException>(Task task, Action onComplete, Action<TException> parseException) where TException : Exception
+        public static async void DoRequest<TException>(Task task, Action onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
         {
             string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
             try
@@ -20,16 +20,23 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             catch (TException e)
             {
                 parseException?.Invoke(e);
-                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n"); // Note that we log here instead of creating a new Exception in case of a change in calling context during the async call. E.g. Relay has its own exception handling that would intercept this call stack.
-                throw;
+                Debug.LogWarning($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n"); // Note that we log here instead of creating a new Exception in case of a change in calling context during the async call. E.g. Relay has its own exception handling that would intercept this call stack.
+                //throw;
             }
             finally
             {
-                onComplete?.Invoke();
+                if (task.IsFaulted)
+                {
+                    onFailed?.Invoke();
+                }
+                else
+                {
+                    onComplete?.Invoke();
+                }
             }
         }
 
-        public static async void DoRequest<TResult, TException>(Task<TResult> task, Action<TResult> onComplete, Action<TException> parseException) where TException : Exception
+        public static async void DoRequest<TResult, TException>(Task<TResult> task, Action<TResult> onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
         {
             string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
             try
@@ -39,12 +46,19 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             catch (TException e)
             {
                 parseException?.Invoke(e);
-                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n"); // Note that we log here instead of creating a new Exception in case of a change in calling context during the async call. E.g. Relay has its own exception handling that would intercept this call stack.
-                throw;
+                Debug.LogWarning($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n"); // Note that we log here instead of creating a new Exception in case of a change in calling context during the async call. E.g. Relay has its own exception handling that would intercept this call stack.
+                //throw;
             }
             finally
             {
-                onComplete?.Invoke((task.Result));
+                if (task.IsFaulted)
+                {
+                    onFailed?.Invoke();
+                }
+                else
+                {
+                    onComplete?.Invoke(task.Result);
+                }
             }
         }
     }

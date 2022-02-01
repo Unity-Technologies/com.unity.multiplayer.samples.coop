@@ -64,14 +64,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private void UpdateLobby(float unused)
         {
-            RetrieveLobbyAsync(m_LocalLobby.LobbyID, OnComplete);
+            RetrieveLobbyAsync(m_LocalLobby.LobbyID, OnSuccess, null);
 
-            void OnComplete(Lobby lobby)
+            void OnSuccess(Lobby lobby)
             {
-                if (lobby != null)
-                {
-                    m_lastKnownLobby = lobby;
-                }
+                m_lastKnownLobby = lobby;
             }
         }
 
@@ -129,15 +126,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             string uasId = AuthenticationService.Instance.PlayerId;
 
-            m_LobbyApiInterface.CreateLobbyAsync(uasId, lobbyName, maxPlayers, isPrivate, CreateInitialPlayerData(localUser), OnLobbyCreated);
-
-            void OnLobbyCreated(Lobby response)
-            {
-                if (response == null)
-                    onFailure?.Invoke();
-                else
-                    onSuccess?.Invoke(response); // The Create request automatically joins the lobby, so we need not take further action.
-            }
+            m_LobbyApiInterface.CreateLobbyAsync(uasId, lobbyName, maxPlayers, isPrivate, CreateInitialPlayerData(localUser), onSuccess, onFailure);
         }
 
         /// <summary>
@@ -155,17 +144,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             string uasId = AuthenticationService.Instance.PlayerId;
             if (!string.IsNullOrEmpty(lobbyId))
-                m_LobbyApiInterface.JoinLobbyAsync_ById(uasId, lobbyId, CreateInitialPlayerData(localUser), OnLobbyJoined);
+                m_LobbyApiInterface.JoinLobbyAsync_ById(uasId, lobbyId, CreateInitialPlayerData(localUser), onSuccess, onFailure);
             else
-                m_LobbyApiInterface.JoinLobbyAsync_ByCode(uasId, lobbyCode, CreateInitialPlayerData(localUser), OnLobbyJoined);
-
-            void OnLobbyJoined(Lobby response)
-            {
-                if (response == null)
-                    onFailure?.Invoke();
-                else
-                    onSuccess?.Invoke(response);
-            }
+                m_LobbyApiInterface.JoinLobbyAsync_ByCode(uasId, lobbyCode, CreateInitialPlayerData(localUser), onSuccess, onFailure);
         }
 
         /// <summary>
@@ -181,80 +162,49 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
 
             string uasId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.QuickJoinLobbyAsync(uasId, filters, CreateInitialPlayerData(localUser), OnLobbyJoined);
-
-            void OnLobbyJoined(Lobby response)
-            {
-                if (response == null)
-                    onFailure?.Invoke();
-                else
-                    onSuccess?.Invoke(response);
-            }
+            m_LobbyApiInterface.QuickJoinLobbyAsync(uasId, filters, CreateInitialPlayerData(localUser), onSuccess, onFailure);
         }
 
         /// <summary>
         /// Used for getting the list of all active lobbies, without needing full info for each.
         /// </summary>
-        /// <param name="onListRetrieved">If called with null, retrieval was unsuccessful. Else, this will be given a list of contents to display, as pairs of a lobby code and a display string for that lobby.</param>
-        public void RetrieveLobbyListAsync(Action<QueryResponse> onListRetrieved, Action<QueryResponse> onError, List<QueryFilter> filters = null)
+        public void RetrieveLobbyListAsync(Action<QueryResponse> onSuccess, Action onFailure, List<QueryFilter> filters = null)
         {
             if (!m_RateLimitQuery.CanCall())
             {
-                onListRetrieved?.Invoke(null);
-                m_RateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onListRetrieved, onError, filters); });
+                onFailure?.Invoke();
+                m_RateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onSuccess, onFailure, filters); });
                 UnityEngine.Debug.LogWarning("Retrieve Lobby list hit the rate limit. Will try again soon...");
                 return;
             }
 
-            m_LobbyApiInterface.QueryAllLobbiesAsync(filters, OnLobbyListRetrieved);
-
-            void OnLobbyListRetrieved(QueryResponse response)
-            {
-                if (response != null)
-                    onListRetrieved?.Invoke(response);
-                else
-                    onError?.Invoke(response);
-            }
+            m_LobbyApiInterface.QueryAllLobbiesAsync(filters, onSuccess, onFailure);
         }
 
-        /// <param name="onComplete">If no lobby is retrieved, or if this call hits the rate limit, this is given null.</param>
-        private void RetrieveLobbyAsync(string lobbyId, Action<Lobby> onComplete)
+        private void RetrieveLobbyAsync(string lobbyId, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitQuery.CanCall())
             {
-                onComplete?.Invoke(null);
+                onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Retrieve Lobby hit the rate limit.");
                 return;
             }
-            m_LobbyApiInterface.GetLobbyAsync(lobbyId, OnGet);
-
-            void OnGet(Lobby response)
-            {
-                onComplete?.Invoke(response); // FUTURE: Consider passing in the exception code here (and elsewhere) to, e.g., specifically handle a 404 indicating a Relay auto-disconnect.
-            }
+            m_LobbyApiInterface.GetLobbyAsync(lobbyId, onSuccess, onFailure);
         }
 
         /// <summary>
         /// Attempt to leave a lobby, and then delete it if no players remain.
         /// </summary>
-        /// <param name="onComplete">Called once the request completes, regardless of success or failure.</param>
-        public void LeaveLobbyAsync(string lobbyId, Action onComplete)
+        public void LeaveLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
         {
             string uasId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, OnLeftLobby);
-
-            void OnLeftLobby()
-            {
-                onComplete?.Invoke();
-
-                // Lobbies will automatically delete the lobby if unoccupied, so we don't need to take further action.
-            }
+            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
         }
 
         /// <param name="data">Key-value pairs, which will overwrite any existing data for these keys. Presumed to be available to all lobby members but not publicly.</param>
-        public void UpdatePlayerDataAsync(Dictionary<string, string> data, Action onComplete)
+        public void UpdatePlayerDataAsync(Dictionary<string, string> data, Action onSuccess, Action onFailure)
         {
-            if (!ShouldUpdateData(() => { UpdatePlayerDataAsync(data, onComplete); }, onComplete, false))
+            if (!ShouldUpdateData(() => { UpdatePlayerDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
                 return;
 
             string playerId = m_LocalPlayerIdentity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
@@ -268,28 +218,32 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                     dataCurr.Add(dataNew.Key, dataObj);
             }
 
-            m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, dataCurr, (result) => {
-                if (result != null)
+            m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, dataCurr, OnComplete,  onFailure,null, null);
+
+            void OnComplete(Lobby result)
+            {
+                if (result != null) {
                     m_lastKnownLobby = result; // Store the most up-to-date lobby now since we have it, instead of waiting for the next heartbeat.
-                onComplete?.Invoke();
-            }, null, null);
+                }
+                onSuccess?.Invoke();
+            }
         }
 
         /// <summary>
         /// Lobby can be provided info about Relay (or any other remote allocation) so it can add automatic disconnect handling.
         /// </summary>
-        public void UpdatePlayerRelayInfoAsync(string allocationId, string connectionInfo, Action onComplete)
+        public void UpdatePlayerRelayInfoAsync(string allocationId, string connectionInfo, Action onComplete, Action onFailure)
         {
-            if (!ShouldUpdateData(() => { UpdatePlayerRelayInfoAsync(allocationId, connectionInfo, onComplete); }, onComplete, true)) // Do retry here since the RelayUtpSetup that called this might be destroyed right after this.
-                return;
-            string playerId = m_LocalPlayerIdentity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
-            m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), (r) => { onComplete?.Invoke(); }, allocationId, connectionInfo);
+            // if (!ShouldUpdateData(() => { UpdatePlayerRelayInfoAsync(allocationId, connectionInfo, onComplete, onFailure); }, onComplete, true)) // Do retry here since the RelayUtpSetup that called this might be destroyed right after this.
+            //     return;
+            // string playerId = m_LocalPlayerIdentity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
+            // m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), onComplete, onFailure, allocationId, connectionInfo);
         }
 
         /// <param name="data">Key-value pairs, which will overwrite any existing data for these keys. Presumed to be available to all lobby members but not publicly.</param>
-        public void UpdateLobbyDataAsync(Dictionary<string, string> data, Action onComplete)
+        public void UpdateLobbyDataAsync(Dictionary<string, string> data, Action onComplete, Action onFailure)
         {
-            if (!ShouldUpdateData(() => { UpdateLobbyDataAsync(data, onComplete); }, onComplete, false))
+            if (!ShouldUpdateData(() => { UpdateLobbyDataAsync(data, onComplete, onFailure); }, onComplete, false))
                 return;
 
             Lobby lobby = m_lastKnownLobby;
@@ -314,12 +268,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 }
             }
 
-            m_LobbyApiInterface.UpdateLobbyAsync(lobby.Id, dataCurr, shouldLock, (result) =>
+            m_LobbyApiInterface.UpdateLobbyAsync(lobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
+
+            void OnComplete(Lobby result)
             {
-                if (result != null)
-                    m_lastKnownLobby = result;
+                if (result != null) m_lastKnownLobby = result;
                 onComplete?.Invoke();
-            });
+            }
         }
 
         /// <summary>

@@ -17,14 +17,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
     {
         private readonly IPublisher<UnityServiceErrorMessage> m_ErrorPopupPublisher;
 
-        private void DoRequest(Task task, Action onComplete)
+        private void DoRequest(Task task, Action onSuccess, Action onFailed)
         {
-            AsyncUnityServiceRequest.DoRequest<RelayServiceException>(task, onComplete, ParseServiceException);
+            AsyncUnityServiceRequest.DoRequest<RelayServiceException>(task, onSuccess, onFailed, ParseServiceException);
         }
 
-        private void DoRequest<T>(Task<T> task, Action<T> onComplete)
+        private void DoRequest<T>(Task<T> task, Action<T> onSuccess, Action onFailed)
         {
-            AsyncUnityServiceRequest.DoRequest<T,RelayServiceException>(task, onComplete, ParseServiceException);
+            AsyncUnityServiceRequest.DoRequest<T,RelayServiceException>(task, onSuccess, onFailed, ParseServiceException);
         }
 
         [Inject]
@@ -37,18 +37,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
         /// <summary>
         /// A Relay Allocation represents a "server" for a new host.
         /// </summary>
-        public void AllocateAsync(int maxConnections, Action<Allocation> onComplete)
+        public void AllocateAsync(int maxConnections, Action<Allocation> onSuccess, Action onFailed)
         {
             var task = RelayService.Instance.CreateAllocationAsync(maxConnections);
-            DoRequest(task, OnResponse);
-
-            void OnResponse(Allocation response)
-            {
-                if (response == null)
-                    Debug.LogError("Relay returned a null Allocation. This might occur if the Relay service has an outage, if your cloud project ID isn't linked, or if your Relay package version is outdated.");
-                else
-                    onComplete?.Invoke(response);
-            };
+            DoRequest(task, onSuccess, onFailed);
         }
 
         private void ParseServiceException(RelayServiceException e)
@@ -63,35 +55,19 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
         /// Only after an Allocation has been completed can a Relay join code be obtained. This code will be stored in the lobby's data as non-public
         /// such that players can retrieve the Relay join code only after connecting to the lobby. (Note that this is not the same as the lobby code.)
         /// </summary>
-        public void GetJoinCodeAsync(Guid hostAllocationId, Action<string> onComplete)
+        public void GetJoinCodeAsync(Guid hostAllocationId, Action<string> onSuccess, Action onFailed)
         {
             var task = RelayService.Instance.GetJoinCodeAsync(hostAllocationId);
-            DoRequest(task, OnResponse);
-
-            void OnResponse(string response)
-            {
-                if (response == null)
-                    Debug.LogError("Could not retrieve a Relay join code.");
-                else
-                    onComplete?.Invoke(response);
-            }
+            DoRequest(task, onSuccess, onFailed);
         }
 
         /// <summary>
         /// Clients call this to retrieve the host's Allocation via a Relay join code.
         /// </summary>
-        public void JoinAsync(string joinCode, Action<JoinAllocation> onComplete)
+        public void JoinAsync(string joinCode, Action<JoinAllocation> onSuccess, Action onFailed)
         {
             var task = RelayService.Instance.JoinAllocationAsync(joinCode);
-            DoRequest(task, OnResponse);
-
-            void OnResponse(JoinAllocation response)
-            {
-                if (response == null)
-                    Debug.LogError("Could not join async with Relay join code " + joinCode);
-                else
-                    onComplete?.Invoke(response);
-            };
+            DoRequest(task, onSuccess, onFailed);
         }
     }
 }

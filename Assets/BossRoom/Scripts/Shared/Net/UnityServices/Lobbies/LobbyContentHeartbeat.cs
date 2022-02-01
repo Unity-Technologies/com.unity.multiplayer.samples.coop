@@ -112,9 +112,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
 
             if (m_shouldPushData)
+            {
                 PushDataToLobby();
+            }
             else
+            {
                 OnRetrieve();
+            }
 
 
             void PushDataToLobby()
@@ -132,12 +136,20 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             void DoLobbyDataPush()
             {
-                m_LobbyAsyncRequests.UpdateLobbyDataAsync(RetrieveLobbyData(m_localLobby), () => { if (--m_awaitingQueryCount <= 0) OnRetrieve(); });
+                m_LobbyAsyncRequests.UpdateLobbyDataAsync(RetrieveLobbyData(m_localLobby), OnSuccess, null);
             }
 
             void DoPlayerDataPush()
             {
-                m_LobbyAsyncRequests.UpdatePlayerDataAsync(RetrieveUserData(m_localUser), () => { if (--m_awaitingQueryCount <= 0) OnRetrieve(); });
+                m_LobbyAsyncRequests.UpdatePlayerDataAsync(RetrieveUserData(m_localUser), OnSuccess, null);
+            }
+
+            void OnSuccess()
+            {
+                if (--m_awaitingQueryCount <= 0)
+                {
+                    OnRetrieve();
+                }
             }
 
             void OnRetrieve()
