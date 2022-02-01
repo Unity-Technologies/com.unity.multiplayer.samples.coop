@@ -309,26 +309,32 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             info.Private = lobby.IsPrivate;
             info.LobbyName = lobby.Name;
             info.MaxPlayerCount = lobby.MaxPlayers;
-            info.RelayCode = lobby.Data?.ContainsKey("RelayCode") == true ? lobby.Data["RelayCode"].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
-            info.RelayNGOCode = lobby.Data?.ContainsKey("RelayNGOCode") == true ? lobby.Data["RelayNGOCode"].Value : null;
-            info.State = lobby.Data?.ContainsKey("State") == true ? (LobbyState) int.Parse(lobby.Data["State"].Value) : LobbyState.Lobby;
-            info.State_LastEdit = lobby.Data?.ContainsKey("State_LastEdit") == true ? long.Parse(lobby.Data["State_LastEdit"].Value) : 0;
-            info.RelayNGOCode_LastEdit = lobby.Data?.ContainsKey("RelayNGOCode_LastEdit") == true ? long.Parse(lobby.Data["RelayNGOCode_LastEdit"].Value) : 0;
-            info.OnlineMode = lobby.Data?.ContainsKey("OnlineMode") == true ? (OnlineMode) int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset;
-            info.IP = lobby.Data?.ContainsKey("IP") == true ? lobby.Data["IP"].Value : string.Empty;
-            info.Port =  lobby.Data?.ContainsKey("Port") == true ? int.Parse(lobby.Data["Port"].Value) : 0;
 
+            if (lobby.Data != null)
+            {
+                info.RelayCode = lobby.Data.ContainsKey("RelayCode") ? lobby.Data["RelayCode"].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
+                info.RelayNGOCode = lobby.Data.ContainsKey("RelayNGOCode") ? lobby.Data["RelayNGOCode"].Value : null;
+                info.State = lobby.Data.ContainsKey("State") ? (LobbyState) int.Parse(lobby.Data["State"].Value) : LobbyState.Lobby;
+                info.State_LastEdit = lobby.Data.ContainsKey("State_LastEdit") ? long.Parse(lobby.Data["State_LastEdit"].Value) : 0;
+                info.RelayNGOCode_LastEdit = lobby.Data.ContainsKey("RelayNGOCode_LastEdit") ? long.Parse(lobby.Data["RelayNGOCode_LastEdit"].Value) : 0;
+                info.OnlineMode = lobby.Data.ContainsKey("OnlineMode") ? (OnlineMode) int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset;
+                info.IP = lobby.Data.ContainsKey("IP") ? lobby.Data["IP"].Value : string.Empty;
+                info.Port =  lobby.Data.ContainsKey("Port") ? int.Parse(lobby.Data["Port"].Value) : 0;
+            }
 
             var lobbyUsers = new Dictionary<string, LobbyUser>();
             foreach (var player in lobby.Players)
             {
-                // If we already know about this player and this player is already connected to Relay, don't overwrite things that Relay might be changing.
-                if (player.Data?.ContainsKey("UserStatus") == true && int.TryParse(player.Data["UserStatus"].Value, out int status))
+                if (player.Data != null)
                 {
-                    if (status > (int)UserStatus.Connecting && LobbyUsers.ContainsKey(player.Id))
+                    // If we already know about this player and this player is already connected to Relay, don't overwrite things that Relay might be changing.
+                    if (player.Data.ContainsKey("UserStatus") == true && int.TryParse(player.Data["UserStatus"].Value, out int status))
                     {
-                        lobbyUsers.Add(player.Id, LobbyUsers[player.Id]);
-                        continue;
+                        if (status > (int)UserStatus.Connecting && LobbyUsers.ContainsKey(player.Id))
+                        {
+                            lobbyUsers.Add(player.Id, LobbyUsers[player.Id]);
+                            continue;
+                        }
                     }
                 }
 

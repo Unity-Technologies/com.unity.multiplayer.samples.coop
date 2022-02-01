@@ -131,7 +131,6 @@ namespace BossRoom.Scripts.Client.UI
                 .GetComponent<LobbyPanelUI>();
 
             lobbyPanel.BeginObserving(lobby);
-            lobbyPanel.OnClicked.AddListener(LobbyPanelSelected);
             lobby.onDestroyed += RemoveLobbyButton; // Set up to clean itself
 
             m_LobbyButtons.Add(lobbyCode, lobbyPanel);

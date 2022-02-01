@@ -35,7 +35,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             LobbyAsyncRequests lobbyAsyncRequests,
             IPublisher<ChangeGameState> changeGameStatePublisher,
             IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher,
-            IPublisher<EndGame> endGamePublisher)
+            IPublisher<EndGame> endGamePublisher,
+            LocalLobby localLobby,
+            LobbyUser localUser)
         {
             m_SlowUpdate = slowUpdate;
             m_UserSeekingApprovalSubscriber = userSeekingApprovalSubscriber;
@@ -43,6 +45,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_ChangeGameStatePublisher = changeGameStatePublisher;
             m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
             m_EndGamePublisher = endGamePublisher;
+            m_localLobby = localLobby;
+            m_localUser = localUser;
         }
 
         public void Dispose()
@@ -50,10 +54,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_DisposableSubscription?.Dispose();
         }
 
-        public void BeginTracking(LocalLobby lobby, LobbyUser localUser)
+        public void BeginTracking()
         {
-            m_localLobby = lobby;
-            m_localUser = localUser;
             m_SlowUpdate.Subscribe(OnUpdate, 1.5f);
 
             m_DisposableSubscription = m_UserSeekingApprovalSubscriber.Subscribe(OnReceiveMessage);
@@ -71,8 +73,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_DisposableSubscription?.Dispose();
             if (m_localLobby != null)
                 m_localLobby.onChanged -= OnLocalLobbyChanged;
-            m_localLobby = null;
-            m_localUser = null;
         }
 
         private void OnLocalLobbyChanged(LocalLobby changed)

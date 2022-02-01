@@ -53,5 +53,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_currentLobbies = oldObserved.CurrentLobbies;
             OnChanged(this);
         }
+
+        public void FetchedLobbies(Dictionary<string, LocalLobby> newLobbyDict)
+        {
+            m_CurrentState = LobbyQueryState.Fetched;
+            m_currentLobbies = newLobbyDict;
+            OnChanged(this);
+        }
     }
 }

@@ -8,12 +8,12 @@ namespace BossRoom.Scripts.Shared.Infrastructure
     /// </summary>
     public abstract class ObserverBehaviour<T> : MonoBehaviour where T : Observed<T>
     {
-        public T observed { get; set; }
+        public T Observed { get; set; }
         public UnityEvent<T> OnObservedUpdated;
 
         protected virtual void UpdateObserver(T obs)
         {
-            OnObservedUpdated?.Invoke(observed);
+            OnObservedUpdated?.Invoke(Observed);
         }
 
         public void BeginObserving(T target)
@@ -23,32 +23,32 @@ namespace BossRoom.Scripts.Shared.Infrastructure
                 Debug.LogError($"Needs a Target of type {typeof(T)} to begin observing.", gameObject);
                 return;
             }
-            observed = target;
+            Observed = target;
             UpdateObserver(target);
-            observed.onChanged += UpdateObserver;
+            Observed.onChanged += UpdateObserver;
         }
 
         public void EndObserving()
         {
-            if (observed == null)
+            if (Observed == null)
             {
                 return;
             }
 
-            observed.onChanged -= UpdateObserver;
-            observed = null;
+            Observed.onChanged -= UpdateObserver;
+            Observed = null;
         }
 
         void Awake()
         {
-            if (observed == null)
+            if (Observed == null)
                 return;
-            BeginObserving(observed);
+            BeginObserving(Observed);
         }
 
         void OnDestroy()
         {
-            if (observed == null)
+            if (Observed == null)
                 return;
             EndObserving();
         }

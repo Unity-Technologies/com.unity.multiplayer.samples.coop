@@ -11,7 +11,7 @@ namespace BossRoom.Scripts.Client.UI
     /// </summary>
     public class LobbyPanelUI : ObserverBehaviour<LocalLobby>
     {
-        public UnityEvent<LocalLobby> OnClicked;
+        private LobbyUIMediator m_LobbyUIMediator;
 
         [SerializeField]
         private TextMeshProUGUI m_lobbyNameText;
@@ -19,9 +19,11 @@ namespace BossRoom.Scripts.Client.UI
         private TextMeshProUGUI m_lobbyCountText;
         [SerializeField]
         private TextMeshProUGUI m_OnlineModeText;
-        public void OnPanelClicked()
+
+        [Inject]
+        private void InjectDependencies(LobbyUIMediator lobbyUIMediator)
         {
-            OnClicked?.Invoke(observed);
+            m_LobbyUIMediator = lobbyUIMediator;
         }
 
         protected override void UpdateObserver(LocalLobby data)
@@ -34,7 +36,12 @@ namespace BossRoom.Scripts.Client.UI
 
         public void UpdateLobby(LocalLobby lobby)
         {
-            observed.CopyObserved(lobby);
+            Observed.CopyObserved(lobby);
+        }
+
+        public void OnClick()
+        {
+            m_LobbyUIMediator.JoinLobbyRequest(Observed.Data);
         }
     }
 }

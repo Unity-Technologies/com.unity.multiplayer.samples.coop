@@ -221,8 +221,7 @@ namespace BossRoom.Scripts.Client.UI
                     foreach (var lobby in localLobbies)
                         newLobbyDict.Add(lobby.LobbyID, lobby);
 
-                    m_lobbyServiceData.State = LobbyQueryState.Fetched;
-                    m_lobbyServiceData.CurrentLobbies = newLobbyDict;
+                    m_lobbyServiceData.FetchedLobbies(newLobbyDict);
                 }
             }
 
@@ -278,8 +277,9 @@ namespace BossRoom.Scripts.Client.UI
 
        private void OnJoinedLobby()
         {
-            m_LobbyAsyncRequests.BeginTracking(m_localLobby.LobbyID);
-            m_lobbyContentHeartbeat.BeginTracking(m_localLobby, m_localUser);
+            m_LobbyAsyncRequests.BeginTracking();
+            m_lobbyContentHeartbeat.BeginTracking();
+
             SetUserLobbyState();
 
             // The host has the opportunity to reject incoming players, but to do so the player needs to connect to Relay without having game logic available.
@@ -294,14 +294,14 @@ namespace BossRoom.Scripts.Client.UI
 
         private void OnLeftLobby()
         {
-            m_localUser.ResetState();
-            m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby.LobbyID, ResetLocalLobby);
             m_lobbyContentHeartbeat.EndTracking();
             m_LobbyAsyncRequests.EndTracking();
+            m_localUser.ResetState();
+            m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby.LobbyID, ResetLocalLobby);
+
 
             //todo: CLEANUP WHATEVER CONNECTION SETUP FOR THE LOBBY TYPE WE WERE IN
-            CleanupRelayConnection();
-
+            //CleanupRelayConnection();
         }
 
         private void CleanupRelayConnection()

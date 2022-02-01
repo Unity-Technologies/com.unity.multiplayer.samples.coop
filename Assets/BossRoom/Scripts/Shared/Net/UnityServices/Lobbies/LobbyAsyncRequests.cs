@@ -15,49 +15,56 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     public class LobbyAsyncRequests : IDisposable
     {
         [Inject]
-        public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, Identity localIdentity)
+        public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, Identity localIdentity, LocalLobby localLobby)
         {
             m_LocalPlayerIdentity = localIdentity;
             m_LobbyApiInterface = lobbyAPIInterface;
             m_SlowUpdate = slowUpdate;
+            m_LocalLobby = localLobby;
 
-            m_rateLimitQuery = new RateLimitCooldown(1.5f, slowUpdate); // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
-            m_rateLimitJoin = new RateLimitCooldown(3f, slowUpdate);
-            m_rateLimitQuickJoin = new RateLimitCooldown(10f,  slowUpdate);
-            m_rateLimitHost = new RateLimitCooldown(3f, slowUpdate);
-
-            // 0.5s update cadence is arbitrary - the actual rate limits are tracked later, via the RateLimitCooldown objects defined above
-            m_SlowUpdate.Subscribe(UpdateLobby, 0.5f);
+            m_RateLimitQuery = new RateLimitCooldown(1.5f, slowUpdate); // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
+            m_RateLimitJoin = new RateLimitCooldown(3f, slowUpdate);
+            m_RateLimitQuickJoin = new RateLimitCooldown(10f,  slowUpdate);
+            m_RateLimitHost = new RateLimitCooldown(3f, slowUpdate);
         }
 
         public void Dispose()
         {
-            m_SlowUpdate.Unsubscribe(UpdateLobby);
+           EndTracking();
         }
 
         #region Once connected to a lobby, cache the local lobby object so we don't query for it for every lobby operation.
 
-        // (This assumes that the player will be actively in just one lobby at a time, though they could passively be in more.)
-        private string m_currentLobbyId = null;
         private Lobby m_lastKnownLobby;
         public Lobby CurrentLobby => m_lastKnownLobby;
 
-        public void BeginTracking(string lobbyId)
+        private bool m_isTracking = false;
+
+        public void BeginTracking()
         {
-            m_currentLobbyId = lobbyId;
+            if(!m_isTracking)
+            {
+                m_isTracking = true;
+                // 1.5s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
+                // the actual rate limits are tracked via the RateLimitCooldown objects defined above
+                m_SlowUpdate.Subscribe(UpdateLobby, 1.5f);
+            }
         }
 
         public void EndTracking()
         {
-            m_currentLobbyId = null;
-            m_lastKnownLobby = null;
-            m_heartbeatTime = 0;
+            if (m_isTracking)
+            {
+                m_SlowUpdate.Unsubscribe(UpdateLobby);
+                m_isTracking = false;
+                m_lastKnownLobby = null;
+                m_heartbeatTime = 0;
+            }
         }
 
         private void UpdateLobby(float unused)
         {
-            if (!string.IsNullOrEmpty(m_currentLobbyId))
-                RetrieveLobbyAsync(m_currentLobbyId, OnComplete);
+            RetrieveLobbyAsync(m_LocalLobby.LobbyID, OnComplete);
 
             void OnComplete(Lobby lobby)
             {
@@ -85,18 +92,18 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public RateLimitCooldown GetRateLimit(RequestType type)
         {
             if (type == RequestType.Join)
-                return m_rateLimitJoin;
+                return m_RateLimitJoin;
             else if (type == RequestType.QuickJoin)
-                return m_rateLimitQuickJoin;
+                return m_RateLimitQuickJoin;
             else if (type == RequestType.Host)
-                return m_rateLimitHost;
-            return m_rateLimitQuery;
+                return m_RateLimitHost;
+            return m_RateLimitQuery;
         }
 
-        private RateLimitCooldown m_rateLimitQuery; // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
-        private RateLimitCooldown m_rateLimitJoin;
-        private RateLimitCooldown m_rateLimitQuickJoin;
-        private RateLimitCooldown m_rateLimitHost;
+        private RateLimitCooldown m_RateLimitQuery; // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
+        private RateLimitCooldown m_RateLimitJoin;
+        private RateLimitCooldown m_RateLimitQuickJoin;
+        private RateLimitCooldown m_RateLimitHost;
 
         #endregion
 
@@ -113,7 +120,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure)
         {
-            if (!m_rateLimitHost.CanCall())
+            if (!m_RateLimitHost.CanCall())
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Create Lobby hit the rate limit.");
@@ -138,7 +145,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         public void JoinLobbyAsync(string lobbyId, string lobbyCode, LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure)
         {
-            if (!m_rateLimitJoin.CanCall() ||
+            if (!m_RateLimitJoin.CanCall() ||
                 (lobbyId == null && lobbyCode == null))
             {
                 onFailure?.Invoke();
@@ -166,7 +173,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         public void QuickJoinLobbyAsync(LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure, List<QueryFilter> filters = null)
         {
-            if (!m_rateLimitQuickJoin.CanCall())
+            if (!m_RateLimitQuickJoin.CanCall())
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Quick Join Lobby hit the rate limit.");
@@ -191,10 +198,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// <param name="onListRetrieved">If called with null, retrieval was unsuccessful. Else, this will be given a list of contents to display, as pairs of a lobby code and a display string for that lobby.</param>
         public void RetrieveLobbyListAsync(Action<QueryResponse> onListRetrieved, Action<QueryResponse> onError, List<QueryFilter> filters = null)
         {
-            if (!m_rateLimitQuery.CanCall())
+            if (!m_RateLimitQuery.CanCall())
             {
                 onListRetrieved?.Invoke(null);
-                m_rateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onListRetrieved, onError, filters); });
+                m_RateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onListRetrieved, onError, filters); });
                 UnityEngine.Debug.LogWarning("Retrieve Lobby list hit the rate limit. Will try again soon...");
                 return;
             }
@@ -213,7 +220,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// <param name="onComplete">If no lobby is retrieved, or if this call hits the rate limit, this is given null.</param>
         private void RetrieveLobbyAsync(string lobbyId, Action<Lobby> onComplete)
         {
-            if (!m_rateLimitQuery.CanCall())
+            if (!m_RateLimitQuery.CanCall())
             {
                 onComplete?.Invoke(null);
                 UnityEngine.Debug.LogWarning("Retrieve Lobby hit the rate limit.");
@@ -321,9 +328,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         private bool ShouldUpdateData(Action caller, Action onComplete, bool shouldRetryIfLobbyNull)
         {
-            if (m_rateLimitQuery.IsInCooldown)
+            if (m_RateLimitQuery.IsInCooldown)
             {
-                m_rateLimitQuery.EnqueuePendingOperation(caller);
+                m_RateLimitQuery.EnqueuePendingOperation(caller);
                 return false;
             }
 
@@ -331,7 +338,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             if (lobby == null)
             {
                 if (shouldRetryIfLobbyNull)
-                    m_rateLimitQuery.EnqueuePendingOperation(caller);
+                    m_RateLimitQuery.EnqueuePendingOperation(caller);
                 onComplete?.Invoke();
                 return false;
             }
@@ -343,6 +350,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private readonly LobbyAPIInterface m_LobbyApiInterface;
         private readonly UpdateRunner m_SlowUpdate;
         private readonly IIdentity m_LocalPlayerIdentity;
+        private readonly LocalLobby m_LocalLobby;
+
         private const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
 
         /// <summary>
