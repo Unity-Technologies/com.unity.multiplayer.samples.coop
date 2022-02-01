@@ -394,18 +394,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn );
         }
 
-        /// <summary>
-        /// Called directly by UI elements!
-        /// </summary>
-        public void OnPlayerExit()
-        {
-            // Player is leaving the group
-            // first disconnect then return to menu
-            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
-            gameNetPortal.RequestDisconnect();
-            SceneManager.LoadScene("MainMenu");
-        }
-
         GameObject GetCharacterGraphics(Avatar avatar)
         {
             if (!m_SpawnedCharacterGraphics.TryGetValue(avatar.Guid, out GameObject characterGraphics))
