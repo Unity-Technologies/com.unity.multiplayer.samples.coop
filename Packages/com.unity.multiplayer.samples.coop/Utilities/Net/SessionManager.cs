@@ -12,9 +12,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void Reinitialize();
     }
 
-    // GUID binds a player to a session
-    // Once that player connects to a host, the host associates the current ClientID to the player's session GUID.
-    // If the player disconnects and reconnects to the same host, the session is preserved.
+    /// <summary>
+    /// This class uses a GUID to bind a player to a session. Once that player connects to a host, the host associates
+    /// the current ClientID to the player's session GUID. If the player disconnects and reconnects to the same host,
+    /// the session is preserved.
+    /// </summary>
+    /// <remarks>
+    /// Using a client-generated GUID and sending it directly could be problematic, as a malicious user could intercept
+    /// it and reuse it to impersonate the original user. We are currently investigating this to offer a solution that
+    /// handles security better.
+    /// </remarks>
+    /// <typeparam name="T"></typeparam>
     public class SessionManager<T> where T : struct, ISessionPlayerData
     {
         const string k_HostGUID = "host_guid";
@@ -57,8 +65,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void AddHostData(T sessionPlayerData)
         {
-            m_ClientData.Add(k_HostGUID, sessionPlayerData);
-            m_ClientIDToGuid.Add(m_NetworkManager.LocalClientId, k_HostGUID);
+            if (sessionPlayerData.ClientID == m_NetworkManager.ServerClientId)
+            {
+                m_ClientData.Add(k_HostGUID, sessionPlayerData);
+                m_ClientIDToGuid.Add(sessionPlayerData.ClientID, k_HostGUID);
+            }
+            else
+            {
+                Debug.LogError($"Invalid ClientId for host. Got {sessionPlayerData.ClientID}, but should have gotten {m_NetworkManager.ServerClientId}.");
+            }
         }
 
         /// <summary>
@@ -102,16 +117,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
-        /// Handles the flow when a user is connecting by testing for duplicate logins and populating the session's data.
-        /// Invoked during the approval check and returns the connection status.
+        /// Adds a connecting player's session data if it is a new connection, or updates their session data in case of a reconnection. If the connection is not valid, simply returns false.
         /// </summary>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="clientGUID">This is the clientGUID that is unique to this client and persists accross multiple logins from the same client</param>
         /// <param name="sessionPlayerData">The player's initial data</param>
-        /// <returns></returns>
-        public ConnectStatus OnClientApprovalCheck(ulong clientId, string clientGUID, T sessionPlayerData)
+        /// <returns>True if the player connection is valid (i.e. not a duplicate connection)</returns>
+        public bool SetupConnectingPlayerSessionData(ulong clientId, string clientGUID, T sessionPlayerData)
         {
-            ConnectStatus gameReturnStatus = ConnectStatus.Success;
+            bool success = true;
 
             //Test for Duplicate Login.
             if (m_ClientData.ContainsKey(clientGUID))
@@ -137,7 +151,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     }
                     else
                     {
-                        gameReturnStatus = ConnectStatus.LoggedInAgain;
+                        success = false;
                     }
                 }
                 else
@@ -156,13 +170,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
 
             //Populate our dictionaries with the SessionPlayerData
-            if (gameReturnStatus == ConnectStatus.Success)
+            if (success)
             {
                 m_ClientIDToGuid[clientId] = clientGUID;
                 m_ClientData[clientGUID] = sessionPlayerData;
             }
 
-            return gameReturnStatus;
+            return success;
         }
 
         /// <summary>
@@ -179,7 +193,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return GetPlayerData(clientGUID);
             }
 
-            Debug.Log("No client guid found mapped to the given client ID");
+            Debug.LogError($"No client guid found mapped to the given client ID: {clientId}");
             return null;
         }
 
@@ -195,7 +209,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return data;
             }
 
-            Debug.Log("No PlayerData of matching guid found");
+            Debug.LogError($"No PlayerData of matching guid found: {clientGUID}");
             return null;
         }
 
@@ -209,6 +223,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (m_ClientIDToGuid.TryGetValue(clientId, out string clientGUID))
             {
                 m_ClientData[clientGUID] = sessionPlayerData;
+            }
+            else
+            {
+                Debug.LogError($"No client guid found mapped to the given client ID: {clientId}");
             }
         }
 

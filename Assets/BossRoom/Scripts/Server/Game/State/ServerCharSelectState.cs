@@ -28,12 +28,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
             {
-                //TODO-FIXME:Netcode See note about Netcode for GameObjects issue 745 in WaitToSeatNowPlayer.
-                //while this workaround is in place, we must simply ignore these update requests from the client.
-                //throw new System.Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats!");
-                return;
+                throw new Exception($"OnClientChangedSeat: client ID {clientId} is not a lobby player and cannot change seats! Shouldn't be here!");
             }
-
 
             if (CharSelectData.IsLobbyClosed.Value)
             {

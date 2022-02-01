@@ -146,11 +146,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // Approval check happens for Host too, but obviously we want it to be approved
             if (clientId == NetworkManager.Singleton.LocalClientId)
             {
+                SessionManager<SessionPlayerData>.Instance.AddHostData(
+                    new SessionPlayerData(clientId, m_Portal.PlayerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
+
                 connectionApprovedCallback(true, null, true, null, null);
                 return;
             }
 
-            ConnectStatus gameReturnStatus = ConnectStatus.Success;
+            ConnectStatus gameReturnStatus;
 
             // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
             // on invalid users trying to connect
@@ -175,8 +178,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
 
-            gameReturnStatus = SessionManager<SessionPlayerData>.Instance.OnClientApprovalCheck(clientId, connectionPayload.clientGUID,
-                new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true, false));
+            gameReturnStatus = SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.clientGUID,
+                new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true))
+                ? ConnectStatus.Success
+                : ConnectStatus.LoggedInAgain;
 
             //Test for Duplicate Login.
             if (gameReturnStatus == ConnectStatus.LoggedInAgain)
