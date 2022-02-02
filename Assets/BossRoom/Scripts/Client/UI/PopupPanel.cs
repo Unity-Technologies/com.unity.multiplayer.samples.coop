@@ -115,13 +115,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void SetupEnterGameDisplay(bool enterAsHost, string titleText, string ipHostMainText, string relayMainText, string unityRelayMainText, string inputFieldText,
             string confirmationText, System.Action<string, int, string, OnlineMode> confirmCallback, string defaultIpInput = "", int defaultPortInput = 0)
         {
+            m_DefaultIpInput = defaultIpInput;
+            m_DefaultPort = defaultPortInput;
+
             //Clear any previous settings of the Panel first
             ResetState();
 
             m_EnterAsHost = enterAsHost;
-
-            m_DefaultIpInput = defaultIpInput;
-            m_DefaultPort = defaultPortInput;
 
             m_IpHostMainText = ipHostMainText;
             m_RelayMainText = relayMainText;
@@ -251,11 +251,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private void OnOnlineModeChanged(OnlineMode value)
         {
-            if (value == OnlineMode.Unset)
-            {
-                return;
-            }
-
             // activate this so that it is always activated unless entering as relay host
             m_InputField.gameObject.SetActive(true);
 
@@ -457,7 +452,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ConfirmationButton.onClick.RemoveListener(OnConfirmClick);
             m_ConfirmFunction = null;
             m_CancelFunction = null;
-            OnlineMode = OnlineMode.Unset;
+            OnlineMode = OnlineMode.IpHost;
             m_UnityRelayHealthCheck = null;
         }
 

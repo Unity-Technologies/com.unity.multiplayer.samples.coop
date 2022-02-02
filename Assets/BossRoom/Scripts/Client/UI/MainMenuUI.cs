@@ -84,6 +84,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                         Debug.Log("Unity Relay Host clicked");
                         m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
                         break;
+
+                    default:
+                        throw new Exception("unhandled online mode!");
                 }
                 m_ResponsePopup.SetupNotifierDisplay("Starting host", "Attempting to Start host...", true, false, () =>
                 {
