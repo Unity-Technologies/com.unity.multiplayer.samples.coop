@@ -7,32 +7,43 @@ using UnityEngine.UI;
 namespace BossRoom.Scripts.Client.UI
 {
     /// <summary>
-    /// Handles the list of LobbyButtons and ensures it stays synchronized with the lobby list from the service.
+    ///     Handles the list of LobbyButtons and ensures it stays synchronized with the lobby list from the service.
     /// </summary>
     public class JoinLobbyUI : ObserverBehaviour<LobbyServiceData>
     {
-        private GameObjectFactory m_GameObjectFactory;
-        private LobbyUIMediator m_LobbyUIMediator;
-        private LobbyServiceData m_LobbyServiceData;
-        private UpdateRunner m_UpdateRunner;
-
         [SerializeField] private LobbyPanelUI m_LobbyPanelPrototype;
 
         //
         [SerializeField] private InputField m_JoinCodeField;
 
-        /// <summary>
-        /// Key: Lobby ID, Value Lobby UI
-        /// </summary>
-        private Dictionary<string, LobbyPanelUI> m_LobbyButtons = new Dictionary<string, LobbyPanelUI>();
 
-        private Dictionary<string, LocalLobby> m_LocalLobby = new Dictionary<string, LocalLobby>();
+        [SerializeField] private CanvasGroup m_CanvasGroup;
+        private GameObjectFactory m_GameObjectFactory;
+
+        /// <summary>
+        ///     Key: Lobby ID, Value Lobby UI
+        /// </summary>
+        private readonly Dictionary<string, LobbyPanelUI> m_LobbyButtons = new Dictionary<string, LobbyPanelUI>();
+
+        private LobbyServiceData m_LobbyServiceData;
+        private LobbyUIMediator m_LobbyUIMediator;
+
+        private readonly Dictionary<string, LocalLobby> m_LocalLobby = new Dictionary<string, LocalLobby>();
 
         /// <summary>Contains some amount of information used to join an existing lobby.</summary>
         private LocalLobby.LobbyData m_LocalLobbySelected;
 
+        private UpdateRunner m_UpdateRunner;
 
-        [SerializeField] private CanvasGroup m_CanvasGroup;
+        private void Awake()
+        {
+            m_LobbyPanelPrototype.gameObject.SetActive(false);
+        }
+
+        private void OnDisable()
+        {
+            if (m_UpdateRunner != null) m_UpdateRunner.Unsubscribe(PeriodicRefresh);
+        }
 
         [Inject]
         private void InjectDependencies(GameObjectFactory gameObjectFactory, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData, UpdateRunner updateRunner)
@@ -44,16 +55,6 @@ namespace BossRoom.Scripts.Client.UI
 
             m_UpdateRunner.Subscribe(PeriodicRefresh, 10f);
             BeginObserving(m_LobbyServiceData);
-        }
-
-        private void OnDisable()
-        {
-            if (m_UpdateRunner != null) m_UpdateRunner.Unsubscribe(PeriodicRefresh);
-        }
-
-        private void Awake()
-        {
-            m_LobbyPanelPrototype.gameObject.SetActive(false);
         }
 
         public void LobbyPanelSelected(LocalLobby lobby)
@@ -127,7 +128,7 @@ namespace BossRoom.Scripts.Client.UI
         }
 
         /// <summary>
-        /// Instantiates UI element and initializes the observer with the LobbyData
+        ///     Instantiates UI element and initializes the observer with the LobbyData
         /// </summary>
         private void CreateLobbyPanel(string lobbyCode, LocalLobby lobby)
         {

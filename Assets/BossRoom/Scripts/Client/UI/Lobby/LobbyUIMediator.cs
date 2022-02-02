@@ -13,8 +13,6 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UI;
 using GameState = BossRoom.Scripts.Shared.Net.UnityServices.Lobbies.GameState;
 
 namespace BossRoom.Scripts.Client.UI
@@ -53,6 +51,7 @@ namespace BossRoom.Scripts.Client.UI
         #endregion
 
         #region Lifetime
+
         [Inject]
         private void InjectDependencies(
             LobbyAsyncRequests lobbyAsyncRequests,
@@ -118,8 +117,8 @@ namespace BossRoom.Scripts.Client.UI
         }
 
         /// <summary>
-        /// In builds, if we are in a lobby and try to send a Leave request on application quit, it won't go through if we're quitting on the same frame.
-        /// So, we need to delay just briefly to let the request happen (though we don't need to wait for the result).
+        ///     In builds, if we are in a lobby and try to send a Leave request on application quit, it won't go through if we're quitting on the same frame.
+        ///     So, we need to delay just briefly to let the request happen (though we don't need to wait for the result).
         /// </summary>
         private IEnumerator LeaveBeforeQuit()
         {
@@ -130,7 +129,7 @@ namespace BossRoom.Scripts.Client.UI
 
         private bool OnWantToQuit()
         {
-            bool canQuit = string.IsNullOrEmpty(m_localLobby?.LobbyID);
+            var canQuit = string.IsNullOrEmpty(m_localLobby?.LobbyID);
             StartCoroutine(LeaveBeforeQuit());
             return canQuit;
         }
@@ -191,16 +190,16 @@ namespace BossRoom.Scripts.Client.UI
             // }
 
             void OnConfirmInGameState(ConfirmInGameState _)
-            {   m_localUser.UserStatus = UserStatus.InGame;
+            {
+                m_localUser.UserStatus = UserStatus.InGame;
                 m_localLobby.State = LobbyState.InGame;
             }
-
-
         }
 
         #endregion
 
         #region Lobby API
+
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
             m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedJoin);
@@ -214,14 +213,10 @@ namespace BossRoom.Scripts.Client.UI
 
             m_LobbyAsyncRequests.RetrieveLobbyListAsync(
                 OnSuccess,
-                OnFailure,
-                null
+                OnFailure
             );
 
-            if (blockUI)
-            {
-                BlockUIWhileLoadingIsInProgress();
-            }
+            if (blockUI) BlockUIWhileLoadingIsInProgress();
 
             void OnSuccess(QueryResponse qr)
             {
@@ -230,10 +225,7 @@ namespace BossRoom.Scripts.Client.UI
 
                 var newLobbyDict = new Dictionary<string, LocalLobby>();
 
-                foreach (var lobby in localLobbies)
-                {
-                    newLobbyDict.Add(lobby.LobbyID, lobby);
-                }
+                foreach (var lobby in localLobbies) newLobbyDict.Add(lobby.LobbyID, lobby);
 
                 m_lobbyServiceData.FetchedLobbies(newLobbyDict);
             }
@@ -271,7 +263,7 @@ namespace BossRoom.Scripts.Client.UI
 
         private void SetGameState(GameState state)
         {
-            bool isLeavingLobby = (state == GameState.Menu || state == GameState.JoinMenu) && m_localGameState.State == GameState.Lobby;
+            var isLeavingLobby = (state == GameState.Menu || state == GameState.JoinMenu) && m_localGameState.State == GameState.Lobby;
             m_localGameState.State = state;
             if (isLeavingLobby)
                 OnLeftLobby();
@@ -292,12 +284,13 @@ namespace BossRoom.Scripts.Client.UI
             // In particular, we should prevent players from joining voice chat until they are approved.
             m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
 
-            Debug.Log("We have created a lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
+            Debug.Log(
+                "We have created a lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
 
 
             m_GameNetPortal.PlayerName = m_localUser.DisplayName;
 
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            var cancellationTokenSource = new CancellationTokenSource();
 
 
             switch (m_localLobby.OnlineMode)
@@ -337,12 +330,13 @@ namespace BossRoom.Scripts.Client.UI
             // In particular, we should prevent players from joining voice chat until they are approved.
             m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
 
-            Debug.Log("We're in lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
+            Debug.Log(
+                "We're in lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
 
 
             m_GameNetPortal.PlayerName = m_localUser.DisplayName;
 
-            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            var cancellationTokenSource = new CancellationTokenSource();
 
             switch (m_localLobby.OnlineMode)
             {
@@ -377,6 +371,7 @@ namespace BossRoom.Scripts.Client.UI
         #endregion
 
         #region show/hide UI
+
         public void Show()
         {
             m_CanvasGroup.alpha = 1;
@@ -424,13 +419,14 @@ namespace BossRoom.Scripts.Client.UI
             m_CanvasGroup.blocksRaycasts = true;
             m_LoadingSpinner.SetActive(false);
         }
+
         #endregion
 
 
         #region m_clientNetPortal callbacks
 
         /// <summary>
-        /// Callback when the server sends us back a connection finished event.
+        ///     Callback when the server sends us back a connection finished event.
         /// </summary>
         /// <param name="status"></param>
         private void OnConnectFinished(ConnectStatus status)
@@ -445,8 +441,8 @@ namespace BossRoom.Scripts.Client.UI
         }
 
         /// <summary>
-        /// Invoked when the client sent a connection request to the server and didn't hear back at all.
-        /// This should create a UI letting the player know that something went wrong and to try again
+        ///     Invoked when the client sent a connection request to the server and didn't hear back at all.
+        ///     This should create a UI letting the player know that something went wrong and to try again
         /// </summary>
         private void OnNetworkTimeout()
         {
@@ -458,8 +454,9 @@ namespace BossRoom.Scripts.Client.UI
 
 
         #region Notifier panel stuff
+
         /// <summary>
-        /// Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
+        ///     Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
@@ -468,7 +465,6 @@ namespace BossRoom.Scripts.Client.UI
         /// <param name="subText">optional text in the middle of the panel.  Is not meant to coincide with the displayImage</param>
         public void SetupNotifierDisplay(string titleText, string mainText, bool displayImage, bool displayConfirmation, string subText = "")
         {
-
             Debug.Log($"{titleText}, {mainText}");
 
             // ResetState();
@@ -486,7 +482,7 @@ namespace BossRoom.Scripts.Client.UI
         }
 
         /// <summary>
-        /// Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
+        ///     Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
@@ -494,7 +490,7 @@ namespace BossRoom.Scripts.Client.UI
         /// <param name="displayConfirmation"> set to true if the panel expects the user to click the button to close the panel.</param>
         /// <param name="cancelCallback"> The delegate to invoke when the player cancels. </param>
         /// <param name="subText">optional text in the middle of the panel.  Is not meant to coincide with the displayImage</param>
-        public void SetupNotifierDisplay(string titleText, string mainText, bool displayImage, bool displayConfirmation, System.Action cancelCallback, string subText = "")
+        public void SetupNotifierDisplay(string titleText, string mainText, bool displayImage, bool displayConfirmation, Action cancelCallback, string subText = "")
         {
             SetupNotifierDisplay(titleText, mainText, displayImage, displayConfirmation, subText);
 
@@ -507,18 +503,14 @@ namespace BossRoom.Scripts.Client.UI
 
         #region OLD CODE
 
-
-
-
-
         /// <summary>
-        /// Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
-        /// (2) failed connect, (3) disconnect.
+        ///     Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
+        ///     (2) failed connect, (3) disconnect.
         /// </summary>
         /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
         private void ConnectStatusToMessage(ConnectStatus status, bool connecting)
         {
-            switch(status)
+            switch (status)
             {
                 case ConnectStatus.Undefined:
                 case ConnectStatus.UserRequestedDisconnect:
@@ -527,7 +519,8 @@ namespace BossRoom.Scripts.Client.UI
                     SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections", false, true);
                     break;
                 case ConnectStatus.Success:
-                    if(connecting) { SetupNotifierDisplay("Success!", "Joining Now", false, true); }
+                    if (connecting) SetupNotifierDisplay("Success!", "Joining Now", false, true);
+
                     break;
                 case ConnectStatus.LoggedInAgain:
                     SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account", false, true);
@@ -542,8 +535,6 @@ namespace BossRoom.Scripts.Client.UI
                     break;
             }
         }
-
-
 
 
         private void StartRelayConnection()
@@ -572,13 +563,6 @@ namespace BossRoom.Scripts.Client.UI
             //         Debug.Log("Client is now waiting for approval...");
             // }
         }
-
-
-
-
-
-
-
 
 
         private void OnLeftLobby()
@@ -615,7 +599,7 @@ namespace BossRoom.Scripts.Client.UI
         }
 
         /// <summary>
-        /// Back to Join menu if we fail to join for whatever reason.
+        ///     Back to Join menu if we fail to join for whatever reason.
         /// </summary>
         private void OnFailedJoin()
         {
@@ -633,10 +617,7 @@ namespace BossRoom.Scripts.Client.UI
 
         private void ConfirmApproval()
         {
-            if (!m_localUser.IsHost && m_localUser.IsApproved)
-            {
-                CompleteRelayConnection();
-            }
+            if (!m_localUser.IsHost && m_localUser.IsApproved) CompleteRelayConnection();
         }
 
         private void CompleteRelayConnection()
@@ -656,7 +637,7 @@ namespace BossRoom.Scripts.Client.UI
             m_localLobby.AddPlayer(m_localUser); // As before, the local player will need to be plugged into UI before the lobby join actually happens.
             m_localLobby.RelayServer = null;
         }
-        #endregion
 
+        #endregion
     }
 }

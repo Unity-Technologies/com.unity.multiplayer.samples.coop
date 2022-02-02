@@ -2,20 +2,18 @@ using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
 
 namespace BossRoom.Scripts.Client.UI
 {
     /// <summary>
-    /// An individual Lobby in the list of avaialble lobbies
+    ///     An individual Lobby in the list of avaialble lobbies
     /// </summary>
     public class LobbyPanelUI : ObserverBehaviour<LocalLobby>
     {
-        private LobbyUIMediator m_LobbyUIMediator;
-
         [SerializeField] private TextMeshProUGUI m_lobbyNameText;
         [SerializeField] private TextMeshProUGUI m_lobbyCountText;
         [SerializeField] private TextMeshProUGUI m_OnlineModeText;
+        private LobbyUIMediator m_LobbyUIMediator;
 
         [Inject]
         private void InjectDependencies(LobbyUIMediator lobbyUIMediator)

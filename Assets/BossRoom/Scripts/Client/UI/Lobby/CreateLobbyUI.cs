@@ -1,9 +1,7 @@
 using System;
 using System.Text;
 using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +12,7 @@ namespace BossRoom.Scripts.Client.UI
         public const string k_DefaultIP = "192.168.1.1";
         public const int k_DefaultPort = 9998;
 
-        private LobbyUIMediator m_LobbyUIMediator;
+        private static readonly char[] k_InputFieldIncludeChars = {'.', '_'};
 
         [SerializeField] private InputField m_LobbyNameInputField;
 
@@ -24,12 +22,7 @@ namespace BossRoom.Scripts.Client.UI
 
         [SerializeField] private InputField m_PortInputField;
 
-        private OnlineMode m_OnlineMode;
-
-        #region temp
-
-        [SerializeField] [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
-        private GameObject m_LoadingImage;
+        [SerializeField] private GameObject m_LoadingImage;
 
         [SerializeField] private Button m_ConfirmationButton;
 
@@ -38,59 +31,23 @@ namespace BossRoom.Scripts.Client.UI
 
         [SerializeField] private Toggle m_IsPrivate;
 
-        private static readonly char[] k_InputFieldIncludeChars = new[] {'.', '_'};
-
         [SerializeField] private CanvasGroup m_CanvasGroup;
 
+        private LobbyUIMediator m_LobbyUIMediator;
 
-        /// <summary>
-        /// Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
-        /// </summary>
-        /// <param name="dirtyString"> string to sanitize. </param>
-        /// <param name="includeChars"> Array of chars to include. </param>
-        /// <returns> Sanitized text string. </returns>
-        private static string Sanitize(string dirtyString, char[] includeChars = null)
-        {
-            var result = new StringBuilder(dirtyString.Length);
-            foreach (var c in dirtyString)
-                if (char.IsLetterOrDigit(c) ||
-                    includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c))
-                    result.Append(c);
-
-            return result.ToString();
-        }
-
-        /// <summary>
-        /// Added to the InputField component's OnValueChanged callback for the Room/IP UI text.
-        /// </summary>
-        public void SanitizeIPInputText()
-        {
-            var inputFieldText = Sanitize(m_IPInputField.text, k_InputFieldIncludeChars);
-            m_IPInputField.text = inputFieldText;
-        }
-
-        /// <summary>
-        /// Added to the InputField component's OnValueChanged callback for the Port UI text.
-        /// </summary>
-        public void SanitizePortText()
-        {
-            var inputFieldText = Sanitize(m_PortInputField.text);
-            m_PortInputField.text = inputFieldText;
-        }
-
-        #endregion
-
-        [Inject]
-        private void InjectDependencies(LobbyUIMediator lobbyUIMediator)
-        {
-            m_LobbyUIMediator = lobbyUIMediator;
-        }
+        private OnlineMode m_OnlineMode;
 
         private void Awake()
         {
             SetOnlineMode(OnlineMode.IpHost);
             m_IPToggle.onValueChanged.AddListener(IPRadioRadioButtonPressed);
             m_UnityRelayToggle.onValueChanged.AddListener(UnityRelayRadioRadioButtonPressed);
+        }
+
+        [Inject]
+        private void InjectDependencies(LobbyUIMediator lobbyUIMediator)
+        {
+            m_LobbyUIMediator = lobbyUIMediator;
         }
 
         private void IPRadioRadioButtonPressed(bool value)
@@ -165,6 +122,42 @@ namespace BossRoom.Scripts.Client.UI
             m_CanvasGroup.alpha = 0;
             m_CanvasGroup.interactable = false;
             m_CanvasGroup.blocksRaycasts = false;
+        }
+
+
+        /// <summary>
+        ///     Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
+        /// </summary>
+        /// <param name="dirtyString"> string to sanitize. </param>
+        /// <param name="includeChars"> Array of chars to include. </param>
+        /// <returns> Sanitized text string. </returns>
+        private static string Sanitize(string dirtyString, char[] includeChars = null)
+        {
+            var result = new StringBuilder(dirtyString.Length);
+            foreach (var c in dirtyString)
+                if (char.IsLetterOrDigit(c) ||
+                    includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c))
+                    result.Append(c);
+
+            return result.ToString();
+        }
+
+        /// <summary>
+        ///     Added to the InputField component's OnValueChanged callback for the Room/IP UI text.
+        /// </summary>
+        public void SanitizeIPInputText()
+        {
+            var inputFieldText = Sanitize(m_IPInputField.text, k_InputFieldIncludeChars);
+            m_IPInputField.text = inputFieldText;
+        }
+
+        /// <summary>
+        ///     Added to the InputField component's OnValueChanged callback for the Port UI text.
+        /// </summary>
+        public void SanitizePortText()
+        {
+            var inputFieldText = Sanitize(m_PortInputField.text);
+            m_PortInputField.text = inputFieldText;
         }
     }
 }
