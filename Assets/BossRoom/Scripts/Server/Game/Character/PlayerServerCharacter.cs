@@ -24,12 +24,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
+            {
+                s_ActivePlayers.Add(m_CachedServerCharacter);
+            }
+            else
             {
                 enabled = false;
             }
 
-            s_ActivePlayers.Add(m_CachedServerCharacter);
         }
 
         void OnDisable()
