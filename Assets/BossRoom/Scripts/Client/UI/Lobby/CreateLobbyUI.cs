@@ -164,7 +164,9 @@ namespace BossRoom.Scripts.Client.UI
             if (portNum <= 0)
                 portNum = k_DefaultPort;
 
-            m_LobbyUIMediator.CreateLobbyRequest( m_LobbyNameInputField.text, m_IsPrivate.isOn, 8, m_OnlineMode, m_IPInputField.text, portNum);
+            string ip = string.IsNullOrEmpty(m_IPInputField.text) ? k_DefaultIP : m_IPInputField.text;
+
+            m_LobbyUIMediator.CreateLobbyRequest( m_LobbyNameInputField.text, m_IsPrivate.isOn, 8, m_OnlineMode, ip, portNum);
         }
 
         public void Show()
