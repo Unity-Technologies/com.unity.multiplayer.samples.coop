@@ -27,7 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
 
         [SerializeField] private GameObject[] _autoInjected;
-        private DIScope _container;
+        private DIScope m_Scope;
 
         [SerializeField] private NameGenerationData m_NameGenerationData;
         [SerializeField] private LobbyUIMediator m_lobbyUIMediator;
@@ -44,61 +44,55 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void CreateDIScope()
         {
+            m_Scope = new DIScope(DIScope.RootScope);
 
-            _container = new DIScope(DIScope.RootScope);
+            m_Scope.BindInstanceAsSingle(m_NameGenerationData);
 
-            _container.BindInstanceAsSingle(m_NameGenerationData);
-
-            _container.BindMessageChannel<ClientUserSeekingDisapproval>();
-            _container.BindMessageChannel<UnityServiceErrorMessage>();
+            m_Scope.BindMessageChannel<ClientUserSeekingDisapproval>();
 
             //todo: remember to cleanup unused message channels
 
-            _container.BindMessageChannel<ClientUserApproved>();
-            _container.BindMessageChannel<UserStatus>();
-            _container.BindMessageChannel<StartCountdown>();
-            _container.BindMessageChannel<CancelCountdown>();
-            _container.BindMessageChannel<CompleteCountdown>();
-            _container.BindMessageChannel<ConfirmInGameState>();
-            _container.BindMessageChannel<ChangeGameState>();
-            _container.BindMessageChannel<EndGame>();
+            m_Scope.BindMessageChannel<ClientUserApproved>();
+            m_Scope.BindMessageChannel<UserStatus>();
+            m_Scope.BindMessageChannel<StartCountdown>();
+            m_Scope.BindMessageChannel<CancelCountdown>();
+            m_Scope.BindMessageChannel<CompleteCountdown>();
+            m_Scope.BindMessageChannel<ConfirmInGameState>();
+            m_Scope.BindMessageChannel<ChangeGameState>();
+            m_Scope.BindMessageChannel<EndGame>();
 
-            _container.BindAsSingle<LobbyAPIInterface>();
-            _container.BindAsSingle<LobbyAsyncRequests>();
-            _container.BindAsSingle<LocalGameState>();
+            m_Scope.BindAsSingle<LobbyAPIInterface>();
+            m_Scope.BindAsSingle<LobbyAsyncRequests>();
 
-            _container.BindAsSingle<LobbyUser>(); //a singleton for the local lobby user
-            _container.BindAsSingle<LobbyUserFactory>(); //a factory to create injected lobby users
-            _container.BindAsSingle<LobbyServiceData>();
-            _container.BindAsSingle<LobbyContentHeartbeat>();
-            _container.BindAsSingle<LocalLobby>(); //a singleton for the local lobby
-            _container.BindAsSingle<LocalLobbyFactory>(); //a factory to create injected local lobbies for lobbies that we query from the lobby service
-            _container.BindAsSingle<GameObjectFactory>();
+            m_Scope.BindAsSingle<LobbyUserFactory>(); //a factory to create injected lobby users
+
+            m_Scope.BindAsSingle<LocalLobbyFactory>(); //a factory to create injected local lobbies for lobbies that we query from the lobby service
+            m_Scope.BindAsSingle<GameObjectFactory>();
 
             //var playerNetworkObject = Netcode.NetworkManager.Singleton.SpawnManager.GetPlayerNetworkObject(Netcode.NetworkManager.Singleton.LocalClientId);
            // var persistentPlayer = playerNetworkObject.GetComponent<PersistentPlayer>();
            // _container.BindInstanceAsSingle(persistentPlayer);
 
-            _container.BindInstanceAsSingle(m_lobbyUIMediator);
-            _container.BindInstanceAsSingle(new Identity(OnAuthSignIn));
+            m_Scope.BindInstanceAsSingle(m_lobbyUIMediator);
+            m_Scope.BindInstanceAsSingle(new Identity(OnAuthSignIn));
 
             void OnAuthSignIn()
             {
                 Debug.Log("Signed in.");
 
-                _container.FinalizeScopeConstruction();
+                m_Scope.FinalizeScopeConstruction();
 
                 foreach (var go in _autoInjected)
                 {
-                    _container.Inject(go);
+                    m_Scope.Inject(go);
                 }
 
                 m_mainMenuButtons.interactable = true;
                 m_signInSpinner.SetActive(false);
 
-                var localUser = _container.Resolve<LobbyUser>();
-                var identity = _container.Resolve<Identity>();
-                var localLobby = _container.Resolve<LocalLobby>();
+                var localUser = m_Scope.Resolve<LobbyUser>();
+                var identity = m_Scope.Resolve<Identity>();
+                var localLobby = m_Scope.Resolve<LocalLobby>();
 
                 localUser.ID = identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
                 localUser.DisplayName = m_NameGenerationData.GenerateName();
@@ -227,7 +221,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public override void OnDestroy()
         {
-            _container?.Dispose();
+            m_Scope?.Dispose();
 
             if (m_ClientNetPortal != null)
             {

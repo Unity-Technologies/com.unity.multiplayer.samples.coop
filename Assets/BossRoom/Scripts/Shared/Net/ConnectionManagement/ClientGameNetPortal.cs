@@ -149,7 +149,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
-        public static void StartClient(GameNetPortal portal, string ipaddress, int port)
+        public void StartClient(GameNetPortal portal, string ipaddress, int port)
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -179,7 +179,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </remarks>
         /// <param name="portal"> </param>
         /// <param name="roomKey">The room name of the host to connect to.</param>
-        public static bool StartClientRelayMode(GameNetPortal portal, string roomKey, out string failMessage, CancellationToken cancellationToken)
+        public bool StartClientRelayMode(GameNetPortal portal, string roomKey, out string failMessage, CancellationToken cancellationToken)
         {
             var splits = roomKey.Split('_');
 
@@ -271,7 +271,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        private static void ConnectClient(GameNetPortal portal)
+        private void ConnectClient(GameNetPortal portal)
         {
             var clientGuid = ClientPrefs.GetGuid();
             var payload = JsonUtility.ToJson(new ConnectionPayload()
