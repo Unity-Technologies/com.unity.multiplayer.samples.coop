@@ -173,8 +173,6 @@ namespace BossRoom.Scripts.Client.UI
 
         }
 
-
-
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
             m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedJoin);
@@ -190,7 +188,7 @@ namespace BossRoom.Scripts.Client.UI
             }
         }
 
-        public void QueryLobbiesRequest()
+        public void QueryLobbiesRequest(bool blockUI)
         {
             m_lobbyServiceData.State = LobbyQueryState.Fetching;
 
@@ -200,7 +198,10 @@ namespace BossRoom.Scripts.Client.UI
                 null
                 );
 
-            BlockUIWhileLoadingIsInProgress();
+            if (blockUI)
+            {
+                BlockUIWhileLoadingIsInProgress();
+            }
 
             void OnSuccess(QueryResponse qr)
             {
@@ -280,11 +281,9 @@ namespace BossRoom.Scripts.Client.UI
             // In particular, we should prevent players from joining voice chat until they are approved.
             m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
 
-            Debug.Log("We;re in lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection");
-            Hide();
+            Debug.Log("We're in lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
 
-
-            //StartConnection();
+            StartConnection();
 
             //todo: ADD ABILITY TO CONNECT VIA OTHER MEANS THAN JUST RELAY (DIRECT IP, Photon Relay??)
             //StartRelayConnection();

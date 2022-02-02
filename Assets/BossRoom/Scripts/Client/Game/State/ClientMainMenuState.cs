@@ -21,8 +21,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         public override GameState ActiveState { get { return GameState.MainMenu;  } }
 
-        private const string k_DefaultIP = "127.0.0.1";
-
         private GameNetPortal m_GameNetPortal;
 
         private ClientGameNetPortal m_ClientNetPortal;
@@ -159,17 +157,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         //         m_ResponsePopup.SetupNotifierDisplay("Starting host", "Attempting to Start host...", true, false);
         //     }, k_DefaultIP, k_ConnectPort);
         // }
-
-        private string PostProcessIpInput(string ipInput)
-        {
-            string ipAddress = ipInput;
-            if (string.IsNullOrEmpty(ipInput))
-            {
-                ipAddress = k_DefaultIP;
-            }
-
-            return ipAddress;
-        }
 
         /// <summary>
         /// Callback when the server sends us back a connection finished event.
