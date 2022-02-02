@@ -128,7 +128,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (clientId == NetManager.LocalClientId)
             {
                 OnNetworkReady();
-                NetManager.SceneManager.OnSceneEvent += OnSceneEvent;
+                if (NetManager.IsServer)
+                {
+                    NetManager.SceneManager.OnSceneEvent += OnSceneEvent;
+                }
             }
         }
 
@@ -256,6 +259,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         public void RequestDisconnect()
         {
+            if (NetManager.IsServer)
+            {
+                NetManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+            }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
             SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();

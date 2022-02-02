@@ -93,10 +93,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public void OnClientSceneChanged(ulong clientId, int sceneIndex)
         {
-            if (m_Portal.NetManager.IsServer)
-            {
-                m_ClientSceneMap[clientId] = sceneIndex;
-            }
+            m_ClientSceneMap[clientId] = sceneIndex;
         }
 
         /// <summary>
