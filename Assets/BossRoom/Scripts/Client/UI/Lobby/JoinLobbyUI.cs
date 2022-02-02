@@ -76,15 +76,15 @@ namespace BossRoom.Scripts.Client.UI
             m_LocalLobbySelected = default;
         }
 
-        public void PeriodicRefresh(float _)
+        private void PeriodicRefresh(float _)
         {
-            m_LobbyUIMediator.QueryLobbiesRequest();
+            m_LobbyUIMediator.QueryLobbiesRequest(blockUI:false);
         }
 
 
         public void OnRefresh()
         {
-            m_LobbyUIMediator.QueryLobbiesRequest();
+            m_LobbyUIMediator.QueryLobbiesRequest(blockUI:true);
         }
 
         protected override void UpdateObserver(LobbyServiceData observed)
@@ -144,7 +144,7 @@ namespace BossRoom.Scripts.Client.UI
         private void CreateLobbyPanel(string lobbyCode, LocalLobby lobby)
         {
             var lobbyPanel = m_GameObjectFactory
-                .InstantiateActive(m_LobbyPanelPrototype.gameObject, m_LobbyPanelPrototype.transform.parent)
+                .InstantiateActiveAndInjected(m_LobbyPanelPrototype.gameObject, m_LobbyPanelPrototype.transform.parent)
                 .GetComponent<LobbyPanelUI>();
 
             lobbyPanel.BeginObserving(lobby);

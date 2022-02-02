@@ -13,7 +13,7 @@ namespace BossRoom.Scripts.Client.UI
             m_Scope = scope;
         }
 
-        public GameObject InstantiateActive(GameObject source, Transform parent)
+        public GameObject InstantiateActiveAndInjected(GameObject source, Transform parent)
         {
             var copy = Object.Instantiate(source, parent);
             copy.SetActive(true);
