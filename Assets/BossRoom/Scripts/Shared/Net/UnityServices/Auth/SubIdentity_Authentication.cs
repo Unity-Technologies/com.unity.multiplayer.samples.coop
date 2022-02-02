@@ -9,13 +9,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
     public class SubIdentity_Authentication : SubIdentity, IDisposable
     {
         private bool m_hasDisposed = false;
+        private bool m_needsCleanup = false;
 
         /// <summary>
         /// This will kick off a login.
         /// </summary>
-        public SubIdentity_Authentication(Action onSigninComplete = null)
+        public SubIdentity_Authentication()
         {
-            DoSignIn(onSigninComplete);
+
         }
         ~SubIdentity_Authentication()
         {
@@ -23,7 +24,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
         }
         public void Dispose()
         {
-            if (!m_hasDisposed)
+            if (!m_hasDisposed && m_needsCleanup)
             {
                 AuthenticationService.Instance.SignedIn -= OnSignInChange;
                 AuthenticationService.Instance.SignedOut -= OnSignInChange;
@@ -31,11 +32,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             }
         }
 
-        private async void DoSignIn(Action onSigninComplete)
+        public async void DoSignIn(Action onSigninComplete)
         {
             await Unity.Services.Core.UnityServices.InitializeAsync();
             AuthenticationService.Instance.SignedIn += OnSignInChange;
             AuthenticationService.Instance.SignedOut += OnSignInChange;
+            m_needsCleanup = true;
 
             try
             {   if (!AuthenticationService.Instance.IsSignedIn)

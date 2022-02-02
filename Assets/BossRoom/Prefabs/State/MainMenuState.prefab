@@ -671,6 +671,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 860301207315940462, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 860301207315940462, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 860301207315940462, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 860301207315940462, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2135246937953190407, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -697,6 +713,22 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2234904744820987572, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2975638553292857375, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2975638553292857375, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2975638553292857375, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2975638553292857375, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3221098757379936471, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
@@ -831,6 +863,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5843186486647850782, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5843186486647850782, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5843186486647850782, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5843186486647850782, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5912019979909014333, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_lobbyNameText
       value: 
@@ -839,6 +887,22 @@ PrefabInstance:
       propertyPath: m_lobbyCountText
       value: 
       objectReference: {fileID: 8698370797991132869}
+    - target: {fileID: 6403041760458951094, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403041760458951094, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403041760458951094, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6403041760458951094, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6702871171647363808, guid: 1bc4508935e434eb4867c367b55cca50, type: 3}
       propertyPath: m_Name
       value: LobbyPopup

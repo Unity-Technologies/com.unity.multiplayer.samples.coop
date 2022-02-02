@@ -11,10 +11,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
     {
         private Dictionary<IIdentityType, SubIdentity> m_subIdentities = new Dictionary<IIdentityType, SubIdentity>();
 
-        public Identity(Action callbackOnAuthLogin)
+        public Identity()
         {
             m_subIdentities.Add(IIdentityType.Local, new SubIdentity());
-            m_subIdentities.Add(IIdentityType.Auth, new SubIdentity_Authentication(callbackOnAuthLogin));
+            m_subIdentities.Add(IIdentityType.Auth, new SubIdentity_Authentication());
         }
 
         public SubIdentity GetSubIdentity(IIdentityType identityType)
@@ -37,6 +37,15 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             foreach (var sub in m_subIdentities)
                 if (sub.Value is IDisposable)
                     (sub.Value as IDisposable).Dispose();
+        }
+
+        public void DoAuthSignIn(Action callbackOnAuthLogin)
+        {
+            if (m_subIdentities.TryGetValue(IIdentityType.Auth, out var identity))
+            {
+                var authIdentity = (SubIdentity_Authentication) identity;
+                authIdentity.DoSignIn(callbackOnAuthLogin);
+            }
         }
     }
 }

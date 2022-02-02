@@ -1,5 +1,5 @@
-using System;
 using BossRoom.Scripts.Shared.Infrastructure;
+using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
@@ -41,6 +41,22 @@ namespace BossRoom.Scripts.Client
             scope.BindAsSingle<LobbyServiceData>();
             scope.BindAsSingle<LobbyContentHeartbeat>();
             scope.BindAsSingle<LocalGameState>();
+            scope.BindAsSingle<LobbyAPIInterface>();
+            scope.BindAsSingle<LobbyAsyncRequests>();
+            scope.BindAsSingle<LobbyUserFactory>(); //a factory to create injected lobby users
+            scope.BindAsSingle<LocalLobbyFactory>(); //a factory to create injected local lobbies for lobbies that we query from the lobby service
+            scope.BindAsSingle<Identity>(); //a manager entity that allows us to do anonymous authentication with unity services
+
+            //todo: remember to cleanup unused message channels
+            scope.BindMessageChannel<ClientUserSeekingDisapproval>();
+            scope.BindMessageChannel<ClientUserApproved>();
+            scope.BindMessageChannel<UserStatus>();
+            scope.BindMessageChannel<StartCountdown>();
+            scope.BindMessageChannel<CancelCountdown>();
+            scope.BindMessageChannel<CompleteCountdown>();
+            scope.BindMessageChannel<ConfirmInGameState>();
+            scope.BindMessageChannel<ChangeGameState>();
+            scope.BindMessageChannel<EndGame>();
 
             scope.FinalizeScopeConstruction();
         }
