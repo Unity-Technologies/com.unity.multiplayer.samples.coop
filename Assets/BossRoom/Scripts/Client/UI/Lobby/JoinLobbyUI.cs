@@ -19,17 +19,17 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField] private LobbyPanelUI m_LobbyPanelPrototype;
 
         //
-        [SerializeField]
-        InputField m_JoinCodeField;
+        [SerializeField] private InputField m_JoinCodeField;
 
         /// <summary>
         /// Key: Lobby ID, Value Lobby UI
         /// </summary>
-        Dictionary<string, LobbyPanelUI> m_LobbyButtons = new Dictionary<string, LobbyPanelUI>();
-        Dictionary<string, LocalLobby> m_LocalLobby = new Dictionary<string, LocalLobby>();
+        private Dictionary<string, LobbyPanelUI> m_LobbyButtons = new Dictionary<string, LobbyPanelUI>();
+
+        private Dictionary<string, LocalLobby> m_LocalLobby = new Dictionary<string, LocalLobby>();
 
         /// <summary>Contains some amount of information used to join an existing lobby.</summary>
-        LocalLobby.LobbyData m_LocalLobbySelected;
+        private LocalLobby.LobbyData m_LocalLobbySelected;
 
 
         [SerializeField] private CanvasGroup m_CanvasGroup;
@@ -48,10 +48,7 @@ namespace BossRoom.Scripts.Client.UI
 
         private void OnDisable()
         {
-            if (m_UpdateRunner != null)
-            {
-                m_UpdateRunner.Unsubscribe(PeriodicRefresh);
-            }
+            if (m_UpdateRunner != null) m_UpdateRunner.Unsubscribe(PeriodicRefresh);
         }
 
         private void Awake()
@@ -78,13 +75,13 @@ namespace BossRoom.Scripts.Client.UI
 
         private void PeriodicRefresh(float _)
         {
-            m_LobbyUIMediator.QueryLobbiesRequest(blockUI:false);
+            m_LobbyUIMediator.QueryLobbiesRequest(false);
         }
 
 
         public void OnRefresh()
         {
-            m_LobbyUIMediator.QueryLobbiesRequest(blockUI:true);
+            m_LobbyUIMediator.QueryLobbiesRequest(true);
         }
 
         protected override void UpdateObserver(LobbyServiceData observed)
@@ -101,31 +98,22 @@ namespace BossRoom.Scripts.Client.UI
 
                 if (!m_LobbyButtons.ContainsKey(lobbyCodeKey))
                 {
-                    if (CanDisplay(lobbyData))
-                    {
-                        CreateLobbyPanel(lobbyCodeKey, lobbyData);
-                    }
+                    if (CanDisplay(lobbyData)) CreateLobbyPanel(lobbyCodeKey, lobbyData);
                 }
                 else
                 {
                     if (CanDisplay(lobbyData))
-                    {
                         UpdateLobbyButton(lobbyCodeKey, lobbyData);
-                    }
                     else
-                    {
                         RemoveLobbyButton(lobbyData);
-                    }
                 }
 
                 previousKeys.Remove(lobbyCodeKey);
             }
 
             foreach (var key in previousKeys)
-            {
                 // Need to remove any lobbies from the list that no longer exist.
                 RemoveLobbyButton(m_LocalLobby[key]);
-            }
         }
 
         public void OnQuickJoinClicked()

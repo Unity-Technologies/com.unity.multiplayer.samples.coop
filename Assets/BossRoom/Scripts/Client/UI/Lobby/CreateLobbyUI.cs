@@ -9,7 +9,6 @@ using UnityEngine.UI;
 
 namespace BossRoom.Scripts.Client.UI
 {
-
     public class CreateLobbyUI : MonoBehaviour
     {
         public const string k_DefaultIP = "192.168.1.1";
@@ -17,27 +16,22 @@ namespace BossRoom.Scripts.Client.UI
 
         private LobbyUIMediator m_LobbyUIMediator;
 
-        [SerializeField]
-        private InputField m_LobbyNameInputField;
+        [SerializeField] private InputField m_LobbyNameInputField;
 
         [SerializeField] private CanvasGroup m_IPConnectionCanvasGroup;
 
-        [SerializeField]
-        private InputField m_IPInputField;
+        [SerializeField] private InputField m_IPInputField;
 
-        [SerializeField]
-        private InputField m_PortInputField;
+        [SerializeField] private InputField m_PortInputField;
 
         private OnlineMode m_OnlineMode;
 
         #region temp
 
-        [SerializeField]
-        [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
+        [SerializeField] [Tooltip("The Animating \"Connecting\" Image you want to animate to show the client is doing something")]
         private GameObject m_LoadingImage;
 
-        [SerializeField]
-        private Button m_ConfirmationButton;
+        [SerializeField] private Button m_ConfirmationButton;
 
         [SerializeField] private Toggle m_IPToggle;
         [SerializeField] private Toggle m_UnityRelayToggle;
@@ -58,14 +52,10 @@ namespace BossRoom.Scripts.Client.UI
         private static string Sanitize(string dirtyString, char[] includeChars = null)
         {
             var result = new StringBuilder(dirtyString.Length);
-            foreach (char c in dirtyString)
-            {
+            foreach (var c in dirtyString)
                 if (char.IsLetterOrDigit(c) ||
-                    (includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c)))
-                {
+                    includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c))
                     result.Append(c);
-                }
-            }
 
             return result.ToString();
         }
@@ -105,20 +95,14 @@ namespace BossRoom.Scripts.Client.UI
 
         private void IPRadioRadioButtonPressed(bool value)
         {
-            if (!value)
-            {
-                return;
-            }
+            if (!value) return;
 
             SetOnlineMode(OnlineMode.IpHost);
         }
 
         private void UnityRelayRadioRadioButtonPressed(bool value)
         {
-            if (!value)
-            {
-                return;
-            }
+            if (!value) return;
 
             SetOnlineMode(OnlineMode.UnityRelay);
         }
@@ -159,14 +143,14 @@ namespace BossRoom.Scripts.Client.UI
 
         public void OnCreateClick()
         {
-            int portNum = 0;
+            var portNum = 0;
             int.TryParse(m_PortInputField.text, out portNum);
             if (portNum <= 0)
                 portNum = k_DefaultPort;
 
-            string ip = string.IsNullOrEmpty(m_IPInputField.text) ? k_DefaultIP : m_IPInputField.text;
+            var ip = string.IsNullOrEmpty(m_IPInputField.text) ? k_DefaultIP : m_IPInputField.text;
 
-            m_LobbyUIMediator.CreateLobbyRequest( m_LobbyNameInputField.text, m_IsPrivate.isOn, 8, m_OnlineMode, ip, portNum);
+            m_LobbyUIMediator.CreateLobbyRequest(m_LobbyNameInputField.text, m_IsPrivate.isOn, 8, m_OnlineMode, ip, portNum);
         }
 
         public void Show()
@@ -183,5 +167,4 @@ namespace BossRoom.Scripts.Client.UI
             m_CanvasGroup.blocksRaycasts = false;
         }
     }
-
 }

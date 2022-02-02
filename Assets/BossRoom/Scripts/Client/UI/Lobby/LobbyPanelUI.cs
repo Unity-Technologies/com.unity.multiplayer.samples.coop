@@ -13,12 +13,9 @@ namespace BossRoom.Scripts.Client.UI
     {
         private LobbyUIMediator m_LobbyUIMediator;
 
-        [SerializeField]
-        private TextMeshProUGUI m_lobbyNameText;
-        [SerializeField]
-        private TextMeshProUGUI m_lobbyCountText;
-        [SerializeField]
-        private TextMeshProUGUI m_OnlineModeText;
+        [SerializeField] private TextMeshProUGUI m_lobbyNameText;
+        [SerializeField] private TextMeshProUGUI m_lobbyCountText;
+        [SerializeField] private TextMeshProUGUI m_OnlineModeText;
 
         [Inject]
         private void InjectDependencies(LobbyUIMediator lobbyUIMediator)
