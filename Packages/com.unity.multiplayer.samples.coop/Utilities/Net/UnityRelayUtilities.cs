@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             catch (Exception exception)
             {
-                throw new Exception($"Creating join code request has failed: \n {exception.Message}");
+                throw new Exception($"Joining with join code has failed: \n {exception.Message}");
             }
 
             Debug.Log($"client: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}");
