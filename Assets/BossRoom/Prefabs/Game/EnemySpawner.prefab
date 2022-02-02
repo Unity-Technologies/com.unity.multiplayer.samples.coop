@@ -422,9 +422,9 @@ MonoBehaviour:
   m_RestartDelay: 10
   m_ProximityDistance: 30
   m_DetectStealthyPlayers: 1
-  m_MinSpawnCap: 2
-  m_MaxSpawnCap: 10
-  m_SpawnCapIncreasePerPlayer: 1
+  m_MinSpawnCap: 1
+  m_MaxSpawnCap: 5
+  m_SpawnCapIncreasePerPlayer: 0.5
 --- !u!114 &2847004539442057774
 MonoBehaviour:
   m_ObjectHideFlags: 0

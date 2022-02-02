@@ -570,15 +570,11 @@ PrefabInstance:
       objectReference: {fileID: 8192964625146938244}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_MinSpawnCap
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_ProximityDistance
       value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
-      propertyPath: m_SpawnCapIncreasePerPlayer
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_SpawnedEntityDetectDistance
@@ -1621,15 +1617,11 @@ PrefabInstance:
       objectReference: {fileID: 8192964626818645629}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_MinSpawnCap
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_ProximityDistance
       value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
-      propertyPath: m_SpawnCapIncreasePerPlayer
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_SpawnedEntityDetectDistance
@@ -1847,15 +1839,11 @@ PrefabInstance:
       objectReference: {fileID: 8192964625951251031}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_MinSpawnCap
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_ProximityDistance
       value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
-      propertyPath: m_SpawnCapIncreasePerPlayer
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_SpawnedEntityDetectDistance
@@ -2689,15 +2677,11 @@ PrefabInstance:
       objectReference: {fileID: 4938561330712956744}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_MinSpawnCap
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_ProximityDistance
       value: 60
-      objectReference: {fileID: 0}
-    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
-      propertyPath: m_SpawnCapIncreasePerPlayer
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_SpawnedEntityDetectDistance

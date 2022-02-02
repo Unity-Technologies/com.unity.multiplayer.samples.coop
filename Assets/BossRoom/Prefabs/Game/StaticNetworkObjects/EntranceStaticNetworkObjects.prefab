@@ -2641,16 +2641,8 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 8450919248631857223}
     - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
-      propertyPath: m_MinSpawnCap
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_SpawnsPerWave
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4844841199312666291, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
-      propertyPath: m_SpawnCapIncreasePerPlayer
-      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6205854018081152875, guid: a6647793a8bc7c846abba94be1d257e5, type: 3}
       propertyPath: m_Name
