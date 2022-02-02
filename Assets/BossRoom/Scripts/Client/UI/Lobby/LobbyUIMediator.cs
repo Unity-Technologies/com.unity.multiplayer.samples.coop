@@ -178,14 +178,6 @@ namespace BossRoom.Scripts.Client.UI
             m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedJoin);
 
             BlockUIWhileLoadingIsInProgress();
-
-            void OnCreatedLobby(Lobby r)
-            {
-                m_localLobby.ApplyRemoteData(r);
-                m_localUser.IsHost = true;
-                Debug.Log($"Created lobby code: {m_localLobby.LobbyCode}");
-                OnJoinedLobby();
-            }
         }
 
         public void QueryLobbiesRequest(bool blockUI)
@@ -270,6 +262,31 @@ namespace BossRoom.Scripts.Client.UI
                 OnLeftLobby();
         }
 
+       private void OnCreatedLobby(Lobby r)
+       {
+           m_localLobby.ApplyRemoteData(r);
+           m_localUser.IsHost = true;
+           Debug.Log($"Created lobby code: {m_localLobby.LobbyCode}");
+
+           m_LobbyAsyncRequests.BeginTracking();
+           m_lobbyContentHeartbeat.BeginTracking();
+
+           SetUserLobbyState();
+
+           // The host has the opportunity to reject incoming players, but to do so the player needs to connect to Relay without having game logic available.
+           // In particular, we should prevent players from joining voice chat until they are approved.
+           m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
+
+           Debug.Log("We have created a lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
+
+           HostGame();
+
+           void HostGame()
+           {
+
+           }
+       }
+
        private void OnJoinedLobby()
         {
             m_LobbyAsyncRequests.BeginTracking();
@@ -283,56 +300,19 @@ namespace BossRoom.Scripts.Client.UI
 
             Debug.Log("We're in lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
 
-            StartConnection();
+            ConnectToGame();
 
-            //todo: ADD ABILITY TO CONNECT VIA OTHER MEANS THAN JUST RELAY (DIRECT IP, Photon Relay??)
-            //StartRelayConnection();
+            void ConnectToGame()
+            {
+
+            }
         }
 
 
-        private void OnLeftLobby()
-        {
-            m_lobbyContentHeartbeat.EndTracking();
-            m_LobbyAsyncRequests.EndTracking();
-            m_localUser.ResetState();
-            m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby.LobbyID, ResetLocalLobby, null);
 
 
-            //todo: CLEANUP WHATEVER CONNECTION SETUP FOR THE LOBBY TYPE WE WERE IN
-            //CleanupRelayConnection();
-        }
 
-        private void CleanupRelayConnection()
-        {
-            // if (m_relaySetup != null)
-            // {   Component.Destroy(m_relaySetup);
-            //     m_relaySetup = null;
-            // }
-            // if (m_relayClient != null)
-            // {
-            //     m_relayClient.Dispose();
-            //     StartCoroutine(FinishCleanup());
-            //
-            //     // We need to delay slightly to give the disconnect message sent during Dispose time to reach the host, so that we don't destroy the connection without it being flushed first.
-            //     IEnumerator FinishCleanup()
-            //     {
-            //         yield return null;
-            //         Component.Destroy(m_relayClient);
-            //         m_relayClient = null;
-            //     }
-            // }
-        }
-
-        /// <summary>
-        /// Back to Join menu if we fail to join for whatever reason.
-        /// </summary>
-        private void OnFailedJoin()
-        {
-            UnblockUIAfterLoadingIsComplete();
-            SetGameState(GameState.JoinMenu);
-        }
-
-        private void StartConnection()
+           private void StartConnection()
         {
             m_GameNetPortal.PlayerName = m_localUser.DisplayName;
 
@@ -389,6 +369,59 @@ namespace BossRoom.Scripts.Client.UI
             //         Debug.Log("Client is now waiting for approval...");
             // }
         }
+
+
+
+
+
+
+
+
+
+
+
+        private void OnLeftLobby()
+        {
+            m_lobbyContentHeartbeat.EndTracking();
+            m_LobbyAsyncRequests.EndTracking();
+            m_localUser.ResetState();
+            m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby.LobbyID, ResetLocalLobby, null);
+
+
+            //todo: CLEANUP WHATEVER CONNECTION SETUP FOR THE LOBBY TYPE WE WERE IN
+            //CleanupRelayConnection();
+        }
+
+        private void CleanupRelayConnection()
+        {
+            // if (m_relaySetup != null)
+            // {   Component.Destroy(m_relaySetup);
+            //     m_relaySetup = null;
+            // }
+            // if (m_relayClient != null)
+            // {
+            //     m_relayClient.Dispose();
+            //     StartCoroutine(FinishCleanup());
+            //
+            //     // We need to delay slightly to give the disconnect message sent during Dispose time to reach the host, so that we don't destroy the connection without it being flushed first.
+            //     IEnumerator FinishCleanup()
+            //     {
+            //         yield return null;
+            //         Component.Destroy(m_relayClient);
+            //         m_relayClient = null;
+            //     }
+            // }
+        }
+
+        /// <summary>
+        /// Back to Join menu if we fail to join for whatever reason.
+        /// </summary>
+        private void OnFailedJoin()
+        {
+            UnblockUIAfterLoadingIsComplete();
+            SetGameState(GameState.JoinMenu);
+        }
+
 
         private IEnumerator RetryConnection(Action doConnection, string lobbyId)
         {
