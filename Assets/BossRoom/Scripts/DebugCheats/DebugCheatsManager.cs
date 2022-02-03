@@ -130,7 +130,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             {
                 if (m_DestroyPortalsOnNextToggle)
                 {
-                    // this will only affect portals that are currently active in a scene that is currently loaded.
+                    // This will only affect portals that are currently active in a scene and are currently loaded.
                     // Portals that are already destroyed will not be affected by this, and won't have their cooldown
                     // reinitialized.
                     portal.ForceDestroy();
