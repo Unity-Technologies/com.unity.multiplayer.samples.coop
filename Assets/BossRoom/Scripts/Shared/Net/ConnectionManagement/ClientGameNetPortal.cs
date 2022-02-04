@@ -85,7 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public void OnUserDisconnectRequest()
         {
-            if( m_Portal.NetManager.IsClient )
+            if (m_Portal.NetManager.IsClient)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
             }
@@ -97,7 +97,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //on failure, we must raise an event so that the UI layer can display something.
             Debug.Log("RecvConnectFinished Got status: " + status);
 
-            if( status != ConnectStatus.Success )
+            if (status != ConnectStatus.Success)
             {
                 //this indicates a game level failure, rather than a network failure. See note in ServerGameNetPortal.
                 DisconnectReason.SetDisconnectReason(status);
@@ -162,7 +162,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     break;
                 case UnityTransport unityTransport:
                     // TODO: once this is exposed in the adapter we will be able to change it
-                    unityTransport.SetConnectionData(ipaddress, (ushort) port);
+                    unityTransport.SetConnectionData(ipaddress, (ushort)port);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
@@ -192,7 +192,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var region = splits[0];
             var roomName = splits[1];
 
-            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             switch (chosenTransport)
@@ -235,7 +235,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                             Debug.Log(playerId);
                         }
 
-                        var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
+                        var clientRelayUtilityTask = UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
                         await clientRelayUtilityTask;
                         var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);

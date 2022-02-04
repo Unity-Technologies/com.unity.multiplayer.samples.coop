@@ -44,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
 
         //helper wrapper for a FindIndex call on m_PlayingActions.
-        private int FindAction(ActionType action, bool anticipatedOnly )
+        private int FindAction(ActionType action, bool anticipatedOnly)
         {
             return m_PlayingActions.FindIndex(a => a.Description.ActionTypeEnum == action && (!anticipatedOnly || a.Anticipated));
         }
@@ -113,7 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             var anticipatedActionIndex = FindAction(data.ActionTypeEnum, true);
 
-            var actionFX = anticipatedActionIndex>=0 ? m_PlayingActions[anticipatedActionIndex] : ActionFX.MakeActionFX(ref data, Parent);
+            var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFX.MakeActionFX(ref data, Parent);
             if (actionFX.Start())
             {
                 m_PlayingActions.Add(actionFX);
