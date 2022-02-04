@@ -43,12 +43,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public void PlayAction(ref ActionRequestData action)
         {
-            if (!action.ShouldQueue && m_Queue.Count > 0 && m_Queue[0].Description.ActionInterruptible )
+            if (!action.ShouldQueue && m_Queue.Count > 0 && m_Queue[0].Description.ActionInterruptible)
             {
                 ClearActions(false);
             }
 
-            if( GetQueueTimeDepth() >= k_MaxQueueTimeDepth )
+            if (GetQueueTimeDepth() >= k_MaxQueueTimeDepth)
             {
                 //the queue is too big (in execution seconds) to accommodate any more actions, so this action must be discarded.
                 return;
@@ -143,7 +143,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_Queue.Count > 0)
             {
                 float reuseTime = m_Queue[0].Description.ReuseTimeSeconds;
-                if (   reuseTime > 0
+                if (reuseTime > 0
                     && m_LastUsedTimestamps.TryGetValue(m_Queue[0].Description.ActionTypeEnum, out float lastTimeUsed)
                     && Time.time - lastTimeUsed < reuseTime)
                 {
@@ -174,7 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 // remember the moment when we successfully used this Action!
                 m_LastUsedTimestamps[m_Queue[0].Description.ActionTypeEnum] = Time.time;
 
-                if (m_Queue[0].Description.ExecTimeSeconds==0 && m_Queue[0].Description.BlockingMode== BlockingMode.OnlyDuringExecTime)
+                if (m_Queue[0].Description.ExecTimeSeconds == 0 && m_Queue[0].Description.BlockingMode == BlockingMode.OnlyDuringExecTime)
                 {
                     //this is a non-blocking action with no exec time. It should never be hanging out at the front of the queue (not even for a frame),
                     //because it could get cleared if a new Action came in in that interval.
@@ -215,12 +215,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         /// <param name="baseIndex">The new index of the base action in m_Queue</param>
         /// <returns></returns>
-        private int SynthesizeTargetIfNecessary(int baseIndex )
+        private int SynthesizeTargetIfNecessary(int baseIndex)
         {
             Action baseAction = m_Queue[baseIndex];
             var targets = baseAction.Data.TargetIds;
 
-            if(targets != null && targets.Length == 1 && targets[0] != m_Parent.NetState.TargetId.Value )
+            if (targets != null && targets.Length == 1 && targets[0] != m_Parent.NetState.TargetId.Value)
             {
                 //if this is a targeted skill (with a single requested target), and it is different from our
                 //active target, then we synthesize a TargetAction to change  our target over.
@@ -326,14 +326,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <returns>The total "time depth" of the queue, or how long it would take to play in seconds, if no more actions were added. </returns>
         private float GetQueueTimeDepth()
         {
-            if(m_Queue.Count == 0 ) { return 0;  }
+            if (m_Queue.Count == 0) { return 0; }
 
             float totalTime = 0;
-            foreach( var action in m_Queue )
+            foreach (var action in m_Queue)
             {
                 var info = action.Description;
-                float actionTime =  info.BlockingMode == BlockingMode.OnlyDuringExecTime   ? info.ExecTimeSeconds :
-                                    info.BlockingMode == BlockingMode.EntireDuration       ? info.DurationSeconds :
+                float actionTime = info.BlockingMode == BlockingMode.OnlyDuringExecTime ? info.ExecTimeSeconds :
+                                    info.BlockingMode == BlockingMode.EntireDuration ? info.DurationSeconds :
                                     throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
                 totalTime += actionTime;
             }
@@ -397,21 +397,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <param name="logic">The ActionLogic to cancel</param>
         /// <param name="cancelAll">If true will cancel all instances; if false will just cancel the first running instance.</param>
         /// <param name="exceptThis">If set, will skip this action (useful for actions canceling other instances of themselves).</param>
-        public void CancelRunningActionsByLogic(ActionLogic logic, bool cancelAll, Action exceptThis=null )
+        public void CancelRunningActionsByLogic(ActionLogic logic, bool cancelAll, Action exceptThis = null)
         {
-            for( int i = m_NonBlockingActions.Count-1; i>=0; --i )
+            for (int i = m_NonBlockingActions.Count - 1; i >= 0; --i)
             {
-                if( m_NonBlockingActions[i].Description.Logic == logic && m_NonBlockingActions[i] != exceptThis )
+                if (m_NonBlockingActions[i].Description.Logic == logic && m_NonBlockingActions[i] != exceptThis)
                 {
                     m_NonBlockingActions[i].Cancel();
                     m_NonBlockingActions.RemoveAt(i);
-                    if(!cancelAll) { return;  }
+                    if (!cancelAll) { return; }
                 }
             }
 
-            if( m_Queue.Count > 0 )
+            if (m_Queue.Count > 0)
             {
-                if( m_Queue[0].Description.Logic == logic && m_Queue[0] != exceptThis )
+                if (m_Queue[0].Description.Logic == logic && m_Queue[0] != exceptThis)
                 {
                     m_Queue[0].Cancel();
                     m_Queue.RemoveAt(0);

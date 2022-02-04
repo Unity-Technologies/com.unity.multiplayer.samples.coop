@@ -32,7 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                         m_ArtificialLatencyEnabled = false;
                         break;
                     case UnityTransport unityTransport:
-// adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
+                        // adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                         SimulatorUtility.Parameters simulatorParameters = unityTransport.ClientSimulatorParameters;
                         m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMs > 0 ||

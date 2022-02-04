@@ -30,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 m_QualityBtnText.text = QualitySettings.names[QualitySettings.GetQualityLevel()];
             }
         }
-    }  
+    }
 }
 
 

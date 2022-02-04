@@ -48,7 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnButtonClicked(int buttonIndex)
         {
-            if( m_InputSender != null )
+            if (m_InputSender != null)
             {
                 switch (buttonIndex)
                 {
