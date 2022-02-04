@@ -25,6 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_OnFinished();
         }
 
-        public virtual void OnReleaseKey() {}
+        public virtual void OnReleaseKey() { }
     }
 }

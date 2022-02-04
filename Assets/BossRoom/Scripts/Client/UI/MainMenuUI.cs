@@ -159,7 +159,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
         private void ConnectStatusToMessage(ConnectStatus status, bool connecting)
         {
-            switch(status)
+            switch (status)
             {
                 case ConnectStatus.Undefined:
                 case ConnectStatus.UserRequestedDisconnect:
@@ -168,7 +168,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections", false, true);
                     break;
                 case ConnectStatus.Success:
-                    if(connecting) { m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now", false, true); }
+                    if (connecting) { m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now", false, true); }
                     break;
                 case ConnectStatus.LoggedInAgain:
                     m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account", false, true);
