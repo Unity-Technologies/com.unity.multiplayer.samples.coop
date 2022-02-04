@@ -25,7 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Scripts.Editor
                 index.GetComponent<Light>().enabled = realtimeLightsEnabled;
             }
 
-            Debug.Log( "Environment lights set to " + lightingStatus + ": " + realtimeLights.Length);
+            Debug.Log("Environment lights set to " + lightingStatus + ": " + realtimeLights.Length);
         }
 
         static void HandleLightProbes(bool lightProbesEnabled, string lightProbesStatus)

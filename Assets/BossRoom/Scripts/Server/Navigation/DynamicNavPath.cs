@@ -57,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             navigationSystem.OnNavigationMeshChanged += OnNavMeshChanged;
         }
 
-        Vector3 TargetPosition => m_TransformTarget != null  ? m_TransformTarget.position : m_PositionTarget;
+        Vector3 TargetPosition => m_TransformTarget != null ? m_TransformTarget.position : m_PositionTarget;
 
         /// <summary>
         /// Set the target of this path to follow a moving transform.

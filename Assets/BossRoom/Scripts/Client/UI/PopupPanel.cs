@@ -95,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private const string k_DefaultConfirmText = "OK";
 
-        static readonly char[] k_InputFieldIncludeChars = new[] {'.', '_'};
+        static readonly char[] k_InputFieldIncludeChars = new[] { '.', '_' };
 
         /// <summary>
         /// Setup this panel to be a panel view to have the player enter the game, complete with the ability for the player to
@@ -320,7 +320,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 // If no health check is currently running
                 if (m_UnityRelayHealthCheck == null || m_UnityRelayHealthCheck.IsCompleted)
                 {
-                    if (m_UnityRelayHealthCheck is {Result: true})
+                    if (m_UnityRelayHealthCheck is { Result: true })
                     {
                         // If it has already been completed successfully, setup display for entering game
                         SetupEnterGameDisplayForUnityRelay();
