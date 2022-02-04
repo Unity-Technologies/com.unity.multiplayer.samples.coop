@@ -1,0 +1,22 @@
+{% metadata_file .yamato/project.metafile %}
+---
+
+# Run all relevant tasks when a pull request targeting specified
+# branches is created or updated.
+pull_request_trigger:
+  name: Pull Request Trigger (main, develop, & release branches)
+  dependencies:
+    - .yamato/project-standards.yml#standards_{{ projects.first.name }}
+{% for project in projects -%}
+{% for platform in test_platforms -%}
+    - .yamato/project-tests.yml#test_{{ project.name }}_{{ project.test_editors.first }}_{{ platform.name }}
+{% endfor -%}
+{% endfor -%}
+  triggers:
+    cancel_old_ci: true
+    pull_requests:
+    - targets:
+        only:
+          - "main"
+          - "develop"
+          - "/release\/.*/"
