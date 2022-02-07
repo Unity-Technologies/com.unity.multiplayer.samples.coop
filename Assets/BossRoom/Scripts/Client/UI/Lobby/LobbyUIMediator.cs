@@ -113,7 +113,7 @@ namespace BossRoom.Scripts.Client.UI
                 m_ClientNetPortal.OnUnityRelayJoinFailed -= OnRelayJoinFailed;
             }
         }
-        
+
         private void SubscribeToMessageChannels()
         {
             var subscriptions = new DisposableGroup();
@@ -240,7 +240,7 @@ namespace BossRoom.Scripts.Client.UI
             Debug.Log($"Created lobby code: {m_localLobby.LobbyCode}");
 
             m_LobbyAsyncRequests.BeginTracking(r);
-            //m_lobbyContentHeartbeat.BeginTracking();
+            m_lobbyContentHeartbeat.BeginTracking();
 
             SetUserLobbyState();
 
@@ -286,7 +286,7 @@ namespace BossRoom.Scripts.Client.UI
             m_localLobby.ApplyRemoteData(remoteLobby);
 
              m_LobbyAsyncRequests.BeginTracking(remoteLobby);
-            //m_lobbyContentHeartbeat.BeginTracking();
+             m_lobbyContentHeartbeat.BeginTracking();
 
             SetUserLobbyState();
 
