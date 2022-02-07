@@ -47,20 +47,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void Awake()
         {
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
+            // disable this NetworkBehavior until it is spawned
+            enabled = false;
         }
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
             {
-                // Disable server component on clients
-                enabled = false;
-                return;
-            }
+                // Only enable server component on servers
+                enabled = true;
 
-            // On the server enable navMeshAgent and initialize
-            m_NavMeshAgent.enabled = true;
-            m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
+                // On the server enable navMeshAgent and initialize
+                m_NavMeshAgent.enabled = true;
+                m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
+            }
         }
 
         /// <summary>
@@ -161,6 +162,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_NavPath != null)
             {
                 m_NavPath.Dispose();
+            }
+            if (IsServer)
+            {
+                // Disable server components when despawning
+                enabled = false;
+                m_NavMeshAgent.enabled = false;
             }
         }
 
