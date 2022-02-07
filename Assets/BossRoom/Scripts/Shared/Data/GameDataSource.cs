@@ -28,12 +28,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             get
             {
-                if( m_CharacterDataMap == null )
+                if (m_CharacterDataMap == null)
                 {
                     m_CharacterDataMap = new Dictionary<CharacterTypeEnum, CharacterClass>();
                     foreach (CharacterClass data in m_CharacterData)
                     {
-                        if( m_CharacterDataMap.ContainsKey(data.CharacterType))
+                        if (m_CharacterDataMap.ContainsKey(data.CharacterType))
                         {
                             throw new System.Exception($"Duplicate character definition detected: {data.CharacterType}");
                         }
@@ -51,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             get
             {
-                if( m_ActionDataMap == null )
+                if (m_ActionDataMap == null)
                 {
                     m_ActionDataMap = new Dictionary<ActionType, ActionDescription>();
                     foreach (ActionDescription data in m_ActionData)

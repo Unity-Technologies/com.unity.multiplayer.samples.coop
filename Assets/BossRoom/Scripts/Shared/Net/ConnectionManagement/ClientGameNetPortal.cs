@@ -85,7 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public void OnUserDisconnectRequest()
         {
-            if( m_Portal.NetManager.IsClient )
+            if (m_Portal.NetManager.IsClient)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
             }
@@ -97,7 +97,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //on failure, we must raise an event so that the UI layer can display something.
             Debug.Log("RecvConnectFinished Got status: " + status);
 
-            if( status != ConnectStatus.Success )
+            if (status != ConnectStatus.Success)
             {
                 //this indicates a game level failure, rather than a network failure. See note in ServerGameNetPortal.
                 DisconnectReason.SetDisconnectReason(status);
@@ -113,9 +113,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
-            // we could also check whether the disconnect was us or the host, but the "interesting" question is whether
-            //following the disconnect, we're no longer a Connected Client, so we just explicitly check that scenario.
-            if (!NetworkManager.Singleton.IsConnectedClient && !NetworkManager.Singleton.IsHost)
+            // Only handle client disconnect
+            if (!NetworkManager.Singleton.IsHost)
             {
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
@@ -163,7 +162,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     break;
                 case UnityTransport unityTransport:
                     // TODO: once this is exposed in the adapter we will be able to change it
-                    unityTransport.SetConnectionData(ipaddress, (ushort) port);
+                    unityTransport.SetConnectionData(ipaddress, (ushort)port);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
@@ -193,7 +192,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var region = splits[0];
             var roomName = splits[1];
 
-            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             switch (chosenTransport)
@@ -236,7 +235,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                             Debug.Log(playerId);
                         }
 
-                        var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
+                        var clientRelayUtilityTask = UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
                         await clientRelayUtilityTask;
                         var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);

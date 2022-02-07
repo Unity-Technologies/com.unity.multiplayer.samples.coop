@@ -23,7 +23,7 @@
       "hash": "0fc6f532e4f47d66d173314efcb906bc7cf0d00f"
     },
     "com.unity.burst": {
-      "version": "1.5.5",
+      "version": "1.6.4",
       "depth": 2,
       "source": "registry",
       "dependencies": {
@@ -108,7 +108,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.mathematics": {
-      "version": "1.2.1",
+      "version": "1.2.5",
       "depth": 2,
       "source": "registry",
       "dependencies": {},
@@ -140,17 +140,17 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.adapter.utp": {
-      "version": "1.0.0-pre.4",
+      "version": "1.0.0-pre.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.netcode.gameobjects": "1.0.0-pre.4",
-        "com.unity.transport": "1.0.0-pre.10"
+        "com.unity.netcode.gameobjects": "1.0.0-pre.5",
+        "com.unity.transport": "1.0.0-pre.12"
       },
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.0.0-pre.4",
+      "version": "1.0.0-pre.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -305,13 +305,13 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "1.0.0-pre.10",
+      "version": "1.0.0-pre.12",
       "depth": 1,
       "source": "registry",
       "dependencies": {
         "com.unity.collections": "1.1.0",
-        "com.unity.burst": "1.5.5",
-        "com.unity.mathematics": "1.2.1"
+        "com.unity.burst": "1.6.4",
+        "com.unity.mathematics": "1.2.5"
       },
       "url": "https://packages.unity.com"
     },

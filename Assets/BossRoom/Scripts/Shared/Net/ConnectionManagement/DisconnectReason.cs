@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// When a disconnect is detected (or expected), set this to provide some context for why it occurred.
         /// </summary>
-        public void SetDisconnectReason( ConnectStatus reason)
+        public void SetDisconnectReason(ConnectStatus reason)
         {
             //using an explicit setter here rather than the auto-property, to make the code locations where disconnect information is set more obvious.
             Debug.Assert(reason != ConnectStatus.Success);
