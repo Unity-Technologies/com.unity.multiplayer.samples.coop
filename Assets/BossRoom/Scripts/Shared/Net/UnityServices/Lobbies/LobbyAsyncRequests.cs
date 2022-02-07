@@ -74,7 +74,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private void UpdateLobby(float unused)
         {
-            RetrieveLobbyAsync(m_LocalLobby.LobbyCode, OnSuccess, null);
+            RetrieveLobbyAsync(m_LocalLobby.LobbyID, OnSuccess, null);
 
             void OnSuccess(Lobby lobby)
             {

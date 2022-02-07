@@ -70,8 +70,6 @@ namespace BossRoom.Scripts.Client.UI
             ClientGameNetPortal clientGameNetPortal
         )
         {
-            Application.wantsToQuit += OnWantToQuit;
-
             //m_persistentPlayer = persistentPlayer;
 
             m_NameGenerationData = nameGenerationData;
@@ -106,44 +104,16 @@ namespace BossRoom.Scripts.Client.UI
 
         private void OnDestroy()
         {
+            m_DisposableSubscriptions?.Dispose();
+
             if (m_ClientNetPortal != null)
             {
                 m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
                 m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
                 m_ClientNetPortal.OnUnityRelayJoinFailed -= OnRelayJoinFailed;
             }
-
-            ForceLeaveAttempt();
         }
-
-        /// <summary>
-        ///     In builds, if we are in a lobby and try to send a Leave request on application quit, it won't go through if we're quitting on the same frame.
-        ///     So, we need to delay just briefly to let the request happen (though we don't need to wait for the result).
-        /// </summary>
-        private IEnumerator LeaveBeforeQuit()
-        {
-            ForceLeaveAttempt();
-            yield return null;
-            Application.Quit();
-        }
-
-        private bool OnWantToQuit()
-        {
-            var canQuit = string.IsNullOrEmpty(m_localLobby?.LobbyID);
-            StartCoroutine(LeaveBeforeQuit());
-            return canQuit;
-        }
-
-        private void ForceLeaveAttempt()
-        {
-            UnusubscribeFromMessageChannels();
-            if (!string.IsNullOrEmpty(m_localLobby?.LobbyID))
-            {
-                m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby?.LobbyID, null, null);
-                m_localLobby = null;
-            }
-        }
-
+        
         private void SubscribeToMessageChannels()
         {
             var subscriptions = new DisposableGroup();
@@ -202,9 +172,7 @@ namespace BossRoom.Scripts.Client.UI
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
-            Debug.Log("Create lobby reqyest");
             m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedJoin);
-
             BlockUIWhileLoadingIsInProgress();
         }
 
@@ -243,11 +211,6 @@ namespace BossRoom.Scripts.Client.UI
         {
             m_LobbyAsyncRequests.JoinLobbyAsync(lobbyData.LobbyID, lobbyData.LobbyCode, m_localUser, OnJoinedLobby, OnFailedJoin);
             BlockUIWhileLoadingIsInProgress();
-        }
-
-        private void UnusubscribeFromMessageChannels()
-        {
-            m_DisposableSubscriptions?.Dispose();
         }
 
         public void QuickJoinRequest()
@@ -321,28 +284,6 @@ namespace BossRoom.Scripts.Client.UI
         private void OnJoinedLobby(Lobby remoteLobby)
         {
             m_localLobby.ApplyRemoteData(remoteLobby);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
              m_LobbyAsyncRequests.BeginTracking(remoteLobby);
             //m_lobbyContentHeartbeat.BeginTracking();

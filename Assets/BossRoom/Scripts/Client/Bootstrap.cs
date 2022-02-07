@@ -1,3 +1,4 @@
+using System.Collections;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
@@ -18,8 +19,14 @@ namespace BossRoom.Scripts.Client
         [SerializeField] private GameNetPortal m_GameNetPortal;
         [SerializeField] private ClientGameNetPortal m_ClientNetPortal;
 
+
+        private LocalLobby m_LocalLobby;
+        private LobbyAsyncRequests m_LobbyAsyncRequests;
+
         private void Awake()
         {
+            Application.wantsToQuit += OnWantToQuit;
+
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(m_UpdateRunner.gameObject);
 
@@ -59,6 +66,9 @@ namespace BossRoom.Scripts.Client
             scope.BindMessageChannel<EndGame>();
 
             scope.FinalizeScopeConstruction();
+
+            m_LocalLobby = scope.Resolve<LocalLobby>();
+            m_LobbyAsyncRequests = scope.Resolve<LobbyAsyncRequests>();
         }
 
         private void Start()
@@ -68,7 +78,34 @@ namespace BossRoom.Scripts.Client
 
         private void OnDestroy()
         {
+            ForceLeaveLobbyAttempt();
             DIScope.RootScope.Dispose();
+        }
+
+        /// <summary>
+        ///     In builds, if we are in a lobby and try to send a Leave request on application quit, it won't go through if we're quitting on the same frame.
+        ///     So, we need to delay just briefly to let the request happen (though we don't need to wait for the result).
+        /// </summary>
+        private IEnumerator LeaveBeforeQuit()
+        {
+            ForceLeaveLobbyAttempt();
+            yield return null;
+            Application.Quit();
+        }
+
+        private bool OnWantToQuit()
+        {
+            var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
+            StartCoroutine(LeaveBeforeQuit());
+            return canQuit;
+        }
+
+        private void ForceLeaveLobbyAttempt()
+        {
+            if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
+            {
+                m_LobbyAsyncRequests.LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
+            }
         }
     }
 }
