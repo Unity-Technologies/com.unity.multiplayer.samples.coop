@@ -384,6 +384,11 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
+      name: Boss_Head1
+    second: {fileID: 2100000, guid: 3091d04ea639b8c48bbdd46bf02f2875, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
       name: Boss_Torso
     second: {fileID: 2100000, guid: b1c69213cc9aee34d96c07efb32c22d3, type: 2}
   - first:
@@ -540,7 +545,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: lambert1
-    second: {fileID: 2100000, guid: dfbad81dd57971342a53600d2b30ac91, type: 2}
+    second: {fileID: 2100000, guid: 0b59114e5443a7444a733c2e573f2637, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0
