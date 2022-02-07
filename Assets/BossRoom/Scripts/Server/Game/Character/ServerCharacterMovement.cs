@@ -45,8 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private Vector3 m_KnockbackVector;
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-        [SerializeField]
-        float m_CheatSpeed = 20;
+        const float k_CheatSpeed = 20;
 
         public bool SpeedCheatActivated { get; set; }
 #endif
@@ -231,7 +230,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             if (SpeedCheatActivated)
             {
-                return m_CheatSpeed;
+                return k_CheatSpeed;
             }
 #endif
             CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.NetState.CharacterType];
