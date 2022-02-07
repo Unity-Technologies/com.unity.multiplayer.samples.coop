@@ -61,16 +61,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void Awake()
         {
             m_ActionPlayer = new ActionPlayer(this);
-            // Disable this NetworkBehavior until it is spawned. This prevents unwanted behavior when this is loaded before being spawned, such as during client synchronization
-            enabled = false;
         }
 
         public override void OnNetworkSpawn()
         {
-            // Should only be enabled on server
-            if (IsServer)
+            if (!IsServer) { enabled = false; }
+            else
             {
-                enabled = true;
                 NetState.DoActionEventServer += OnActionPlayRequest;
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
@@ -105,11 +102,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 m_DamageReceiver.damageReceived -= ReceiveHP;
                 m_DamageReceiver.collisionEntered -= CollisionEntered;
-            }
-            if (IsServer)
-            {
-                // Disable server components when despawning
-                enabled = false;
             }
         }
 

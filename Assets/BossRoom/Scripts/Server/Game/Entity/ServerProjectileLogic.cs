@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
 using Unity.Netcode;
@@ -57,12 +56,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private bool m_IsDead;
 
-        void Awake()
-        {
-            // Disable this NetworkBehavior until it is spawned. This prevents unwanted behavior when this is loaded before being spawned, such as during client synchronization
-            enabled = false;
-        }
-
         /// <summary>
         /// Set everything up based on provided projectile information.
         /// (Note that this is called before OnNetworkSpawn(), so don't try to do any network stuff here.)
@@ -75,29 +68,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkSpawn()
         {
-            if (IsServer)
-            {
-                enabled = true;
-
-                m_Started = true;
-
-                m_HitTargets = new List<GameObject>();
-                m_IsDead = false;
-
-                m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
-
-                m_CollisionMask = LayerMask.GetMask(new[] {"NPCs", "Default", "Ground"});
-                m_BlockerMask = LayerMask.GetMask(new[] {"Default", "Ground"});
-                m_NPCLayer = LayerMask.NameToLayer("NPCs");
-            }
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            if (IsServer)
+            if (!IsServer)
             {
                 enabled = false;
+                return;
             }
+            m_Started = true;
+
+            m_HitTargets = new List<GameObject>();
+            m_IsDead = false;
+
+            m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
+
+            m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Ground" });
+            m_BlockerMask = LayerMask.GetMask(new[] { "Default", "Ground" });
+            m_NPCLayer = LayerMask.NameToLayer("NPCs");
         }
 
         private void FixedUpdate()

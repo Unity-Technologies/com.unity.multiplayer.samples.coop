@@ -95,22 +95,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         void Awake()
         {
             m_Transform = transform;
-            // Disable this NetworkBehavior until it is spawned. This prevents unwanted behavior when this is loaded before being spawned, such as during client synchronization
-            enabled = false;
         }
 
         public override void OnNetworkSpawn()
         {
-            if (IsServer)
+            if (!IsServer)
             {
-                enabled = true;
-
-                m_Hit = new RaycastHit[1];
-                m_IsStarted = true;
-                if (m_IsSpawnerEnabled)
-                {
-                    StartWaveSpawning();
-                }
+                enabled = false;
+                return;
+            }
+            m_Hit = new RaycastHit[1];
+            m_IsStarted = true;
+            if (m_IsSpawnerEnabled)
+            {
+                StartWaveSpawning();
             }
         }
 
@@ -152,11 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkDespawn()
         {
-            if (IsServer)
-            {
-                enabled = false;
-                StopWaveSpawning();
-            }
+            StopWaveSpawning();
         }
 
         /// <summary>

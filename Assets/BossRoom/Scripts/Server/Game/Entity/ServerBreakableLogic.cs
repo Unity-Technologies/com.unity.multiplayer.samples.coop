@@ -30,27 +30,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void Awake()
         {
             m_State = GetComponent<NetworkBreakableState>();
-            // Disable this NetworkBehavior until it is spawned. This prevents unwanted behavior when this is loaded before being spawned, such as during client synchronization
-            enabled = false;
         }
 
         public override void OnNetworkSpawn()
         {
-            if (IsServer)
+            if (!IsServer)
             {
-                enabled = true;
+                enabled = false;
+            }
+            else
+            {
                 if (m_MaxHealth && m_NetworkHealthState)
                 {
                     m_NetworkHealthState.HitPoints.Value = m_MaxHealth.Value;
                 }
-            }
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            if (IsServer)
-            {
-                enabled = false;
             }
         }
 
