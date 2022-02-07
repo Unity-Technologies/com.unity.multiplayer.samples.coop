@@ -202,6 +202,7 @@ namespace BossRoom.Scripts.Client.UI
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
+            Debug.Log("Create lobby reqyest");
             m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedJoin);
 
             BlockUIWhileLoadingIsInProgress();
@@ -275,8 +276,8 @@ namespace BossRoom.Scripts.Client.UI
             m_localUser.IsHost = true;
             Debug.Log($"Created lobby code: {m_localLobby.LobbyCode}");
 
-            m_LobbyAsyncRequests.BeginTracking();
-            m_lobbyContentHeartbeat.BeginTracking();
+            m_LobbyAsyncRequests.BeginTracking(r);
+            //m_lobbyContentHeartbeat.BeginTracking();
 
             SetUserLobbyState();
 
@@ -321,8 +322,30 @@ namespace BossRoom.Scripts.Client.UI
         {
             m_localLobby.ApplyRemoteData(remoteLobby);
 
-            m_LobbyAsyncRequests.BeginTracking();
-            m_lobbyContentHeartbeat.BeginTracking();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+             m_LobbyAsyncRequests.BeginTracking(remoteLobby);
+            //m_lobbyContentHeartbeat.BeginTracking();
 
             SetUserLobbyState();
 

@@ -49,11 +49,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private bool m_isTracking = false;
 
-        public void BeginTracking()
+        public void BeginTracking(Lobby lobby)
         {
             if(!m_isTracking)
             {
                 m_isTracking = true;
+                m_lastKnownLobby = lobby;
                 // 1.5s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
                 // the actual rate limits are tracked via the RateLimitCooldown objects defined above
                 m_SlowUpdate.Subscribe(UpdateLobby, 1.5f);
@@ -73,7 +74,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private void UpdateLobby(float unused)
         {
-            RetrieveLobbyAsync(m_LocalLobby.LobbyID, OnSuccess, null);
+            RetrieveLobbyAsync(m_LocalLobby.LobbyCode, OnSuccess, null);
 
             void OnSuccess(Lobby lobby)
             {

@@ -128,23 +128,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 if (m_localUser.IsHost)
                 {
                     m_awaitingQueryCount++;
-                    DoLobbyDataPush();
+                    m_LobbyAsyncRequests.UpdateLobbyDataAsync(m_localLobby.GetDataForUnityServices(), OnUpdatePushSuccess, null);
                 }
                 m_awaitingQueryCount++;
-                DoPlayerDataPush();
+                m_LobbyAsyncRequests.UpdatePlayerDataAsync(m_localUser.GetDataForUnityServices(), OnUpdatePushSuccess, null);
             }
 
-            void DoLobbyDataPush()
-            {
-                m_LobbyAsyncRequests.UpdateLobbyDataAsync(m_localLobby.GetDataForUnityServices(), OnSuccess, null);
-            }
-
-            void DoPlayerDataPush()
-            {
-                m_LobbyAsyncRequests.UpdatePlayerDataAsync(m_localUser.GetDataForUnityServices(), OnSuccess, null);
-            }
-
-            void OnSuccess()
+            void OnUpdatePushSuccess()
             {
                 if (--m_awaitingQueryCount <= 0)
                 {
