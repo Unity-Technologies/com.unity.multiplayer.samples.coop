@@ -29,9 +29,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [Flags]
         public enum SpecialDamageFlags
         {
-            None                = 0,
-            UnusedFlag          = 1 << 0, // does nothing; see comments below
-            StunOnTrample       = 1 << 1,
+            None = 0,
+            UnusedFlag = 1 << 0, // does nothing; see comments below
+            StunOnTrample = 1 << 1,
             NotDamagedByPlayers = 1 << 2,
 
             // The "UnusedFlag" flag does nothing. It exists to work around a Unity editor quirk involving [Flags] enums:

@@ -128,7 +128,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (clientId == NetManager.LocalClientId)
             {
                 OnNetworkReady();
-                NetManager.SceneManager.OnSceneEvent += OnSceneEvent;
+                if (NetManager.IsServer)
+                {
+                    NetManager.SceneManager.OnSceneEvent += OnSceneEvent;
+                }
             }
         }
 
@@ -159,7 +162,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="port">The port to connect to. </param>
         public void StartHost(string ipaddress, int port)
         {
-            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             // Note: In most cases, this switch case shouldn't be necessary. It becomes necessary when having to deal with multiple transports like this
@@ -171,7 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     unetTransport.ServerListenPort = port;
                     break;
                 case UnityTransport unityTransport:
-                    unityTransport.SetConnectionData(ipaddress, (ushort) port);
+                    unityTransport.SetConnectionData(ipaddress, (ushort)port);
                     break;
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
@@ -181,7 +184,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void StartPhotonRelayHost(string roomName, CancellationToken cancellationToken)
         {
-            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
+            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             switch (chosenTransport)
@@ -201,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public async void StartUnityRelayHost(CancellationToken cancellationToken)
         {
-            var chosenTransport  = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
             switch (chosenTransport)
@@ -256,6 +259,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         public void RequestDisconnect()
         {
+            if (NetManager.IsServer)
+            {
+                NetManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+            }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
             SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();

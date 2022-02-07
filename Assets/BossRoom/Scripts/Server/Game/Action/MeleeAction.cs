@@ -46,7 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
 
             // snap to face the right direction
-            if( Data.Direction != Vector3.zero )
+            if (Data.Direction != Vector3.zero)
             {
                 m_Parent.physicsWrapper.Transform.forward = Data.Direction;
             }

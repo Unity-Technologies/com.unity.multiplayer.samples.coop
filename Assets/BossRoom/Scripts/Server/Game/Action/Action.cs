@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <returns>true to become a non-blocking Action, false to remain a blocking Action</returns>
         public virtual bool ShouldBecomeNonBlocking()
         {
-            return Description.BlockingMode == BlockingMode.OnlyDuringExecTime ?  TimeRunning >= Description.ExecTimeSeconds : false;
+            return Description.BlockingMode == BlockingMode.OnlyDuringExecTime ? TimeRunning >= Description.ExecTimeSeconds : false;
         }
 
         /// <summary>
@@ -81,7 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         /// <param name="newAction">the new Action to immediately transition to</param>
         /// <returns>true if there's a new action, false otherwise</returns>
-        public virtual bool ChainIntoNewAction(ref ActionRequestData newAction) { return false;  }
+        public virtual bool ChainIntoNewAction(ref ActionRequestData newAction) { return false; }
 
         /// <summary>
         /// Called on the active ("blocking") Action when this character collides with another.

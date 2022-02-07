@@ -39,7 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         [Tooltip("The Anticipation Animation trigger that gets raised when user starts using this Action, but while the server confirmation hasn't returned")]
         public string AnimAnticipation;
-        
+
         [Tooltip("The primary Animation trigger that gets raised when visualizing this Action")]
         public string Anim;
 

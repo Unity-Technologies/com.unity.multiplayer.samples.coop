@@ -167,7 +167,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             int count = CharSelectData.LobbyPlayers.Count;
             var pstr = (count > 1) ? "players" : "player";
-            m_NumPlayersText.text = "<b>" + count + "</b> " + pstr +" connected";
+            m_NumPlayersText.text = "<b>" + count + "</b> " + pstr + " connected";
         }
 
         /// <summary>
@@ -290,7 +290,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 if (playerState.SeatIdx == -1 || playerState.SeatState == CharSelectData.SeatState.Inactive)
                     continue; // this player isn't seated at all!
-                if (    curSeats[playerState.SeatIdx].SeatState == CharSelectData.SeatState.Inactive
+                if (curSeats[playerState.SeatIdx].SeatState == CharSelectData.SeatState.Inactive
                     || (curSeats[playerState.SeatIdx].SeatState == CharSelectData.SeatState.Active && curSeats[playerState.SeatIdx].LastChangeTime < playerState.LastChangeTime))
                 {
                     // this is the best candidate to be displayed in this seat (so far)
@@ -342,7 +342,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             switch (mode)
             {
                 case LobbyMode.ChooseSeat:
-                    if ( m_LastSeatSelected == -1)
+                    if (m_LastSeatSelected == -1)
                     {
                         if (m_CurrentCharacterGraphics)
                         {
@@ -391,7 +391,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public void OnPlayerClickedReady()
         {
             // request to lock in or unlock if already locked in
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn );
+            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
         }
 
         GameObject GetCharacterGraphics(Avatar avatar)
