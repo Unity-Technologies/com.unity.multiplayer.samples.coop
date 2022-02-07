@@ -47,7 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private void Awake()
         {
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
-            // disable this NetworkBehavior until it is spawned
+            // Disable this NetworkBehavior until it is spawned. This prevents unwanted behavior when this is loaded before being spawned, such as during client synchronization
             enabled = false;
         }
 

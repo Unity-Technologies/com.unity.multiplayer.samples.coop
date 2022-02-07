@@ -41,33 +41,38 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             m_WaveSpawner = GetComponent<ServerWaveSpawner>();
             m_State = GetComponent<NetworkBreakableState>();
+            // Disable this NetworkBehavior until it is spawned. This prevents unwanted behavior when this is loaded before being spawned, such as during client synchronization
+            enabled = false;
         }
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
             {
-                enabled = false;
-                return;
-            }
+                enabled = true;
 
-            foreach (var breakable in m_BreakableElements)
-            {
-                breakable.IsBroken.OnValueChanged += OnBreakableBroken;
-            }
+                foreach (var breakable in m_BreakableElements)
+                {
+                    breakable.IsBroken.OnValueChanged += OnBreakableBroken;
+                }
 
-            MaintainState();
+                MaintainState();
+            }
         }
 
         public override void OnNetworkDespawn()
         {
-            if (m_CoroDormant != null)
-                StopCoroutine(m_CoroDormant);
-
-            foreach (var breakable in m_BreakableElements)
+            if (IsServer)
             {
-                if (breakable)
-                    breakable.IsBroken.OnValueChanged -= OnBreakableBroken;
+                enabled = false;
+                if (m_CoroDormant != null)
+                    StopCoroutine(m_CoroDormant);
+
+                foreach (var breakable in m_BreakableElements)
+                {
+                    if (breakable)
+                        breakable.IsBroken.OnValueChanged -= OnBreakableBroken;
+                }
             }
         }
 

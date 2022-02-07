@@ -28,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void Awake()
         {
-            // don't let Update() run until after OnNetworkSpawn()
+            // Disable this NetworkBehavior until it is spawned. This prevents unwanted behavior when this is loaded before being spawned, such as during client synchronization
             enabled = false;
 
             if (m_SwitchesThatOpenThisDoor.Length == 0)
@@ -37,11 +37,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkSpawn()
         {
-            enabled = IsServer;
+            if (IsServer)
+            {
+                enabled = true;
 
-            DoorStateChanged(false, m_NetworkDoorState.IsOpen.Value);
+                DoorStateChanged(false, m_NetworkDoorState.IsOpen.Value);
 
-            m_NetworkDoorState.IsOpen.OnValueChanged += DoorStateChanged;
+                m_NetworkDoorState.IsOpen.OnValueChanged += DoorStateChanged;
+            }
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (IsServer)
+            {
+                enabled = false;
+
+                m_NetworkDoorState.IsOpen.OnValueChanged -= DoorStateChanged;
+            }
         }
 
         void Update()

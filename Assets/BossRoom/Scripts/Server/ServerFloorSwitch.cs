@@ -29,19 +29,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void Awake()
         {
-            m_Collider.isTrigger = true;
+            // Disable this NetworkBehavior until it is spawned. This prevents unwanted behavior when this is loaded before being spawned, such as during client synchronization
+            enabled = false;
+            m_Collider.enabled = false;
         }
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
+            {
+                enabled = true;
+                m_Collider.enabled = true;
+                m_Collider.isTrigger = true;
+
+                FloorSwitchStateChanged(false, m_FloorSwitchState.IsSwitchedOn.Value);
+
+                m_FloorSwitchState.IsSwitchedOn.OnValueChanged += FloorSwitchStateChanged;
+            }
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (IsServer)
             {
                 enabled = false;
+
+                m_FloorSwitchState.IsSwitchedOn.OnValueChanged -= FloorSwitchStateChanged;
             }
-
-            FloorSwitchStateChanged(false, m_FloorSwitchState.IsSwitchedOn.Value);
-
-            m_FloorSwitchState.IsSwitchedOn.OnValueChanged += FloorSwitchStateChanged;
         }
 
         void OnTriggerEnter(Collider other)
