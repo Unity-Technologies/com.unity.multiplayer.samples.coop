@@ -64,13 +64,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         Quaternion m_LerpedRotation;
 
+        void Awake()
+        {
+            // don't let Update() run until after OnNetworkSpawn()
+            enabled = false;
+        }
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient || transform.parent == null)
             {
-                enabled = false;
                 return;
             }
+
+            enabled = true;
 
             m_ActionViz = new ActionVisualization(this);
 
