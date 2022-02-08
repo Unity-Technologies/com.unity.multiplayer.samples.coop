@@ -81,8 +81,6 @@ namespace BossRoom.Scripts.Client.UI
                     m_PortInputField.text = k_DefaultPort.ToString();
                 }
                     break;
-                case OnlineMode.PhotonRelay:
-                    throw new NotImplementedException();
                 case OnlineMode.UnityRelay:
                 {
                     m_IPConnectionCanvasGroup.alpha = 0;

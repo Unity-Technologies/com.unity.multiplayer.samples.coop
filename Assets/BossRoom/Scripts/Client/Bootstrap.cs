@@ -5,6 +5,7 @@ using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,9 +20,10 @@ namespace BossRoom.Scripts.Client
         [SerializeField] private GameNetPortal m_GameNetPortal;
         [SerializeField] private ClientGameNetPortal m_ClientNetPortal;
 
-
         private LocalLobby m_LocalLobby;
         private LobbyAsyncRequests m_LobbyAsyncRequests;
+
+        [SerializeField] private GameObject[] m_AutoInjected;
 
         private void Awake()
         {
@@ -32,6 +34,7 @@ namespace BossRoom.Scripts.Client
 
             var scope = DIScope.RootScope;
 
+            scope.BindInstanceAsSingle(this);
             scope.BindInstanceAsSingle(m_UpdateRunner);
             scope.BindInstanceAsSingle(m_GameNetPortal);
             scope.BindInstanceAsSingle(m_ClientNetPortal);
@@ -66,6 +69,11 @@ namespace BossRoom.Scripts.Client
             scope.BindMessageChannel<EndGame>();
 
             scope.FinalizeScopeConstruction();
+
+            foreach (var o in m_AutoInjected)
+            {
+                scope.InjectIn(o);
+            }
 
             m_LocalLobby = scope.Resolve<LocalLobby>();
             m_LobbyAsyncRequests = scope.Resolve<LobbyAsyncRequests>();
@@ -105,6 +113,26 @@ namespace BossRoom.Scripts.Client
             if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
             {
                 m_LobbyAsyncRequests.LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
+            }
+        }
+
+        public void QuitGame()
+        {
+            ForceLeaveLobbyAttempt();
+
+            if (NetworkManager.Singleton.IsListening)
+            {
+                // first disconnect then return to menu
+                var gameNetPortal = GameNetPortal.Instance;
+                if (gameNetPortal != null)
+                {
+                    gameNetPortal.RequestDisconnect();
+                }
+                SceneManager.LoadScene("MainMenu");
+            }
+            else
+            {
+                Application.Quit();
             }
         }
     }

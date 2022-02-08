@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using BossRoom.Scripts.Shared.Infrastructure;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
@@ -102,8 +103,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
+        [SerializeField] private GameObject[] _autoInjected;
+        private DIScope m_Scope;
+
         private void Awake()
         {
+            //creating a child scope just to have manual control over the lifetime of the things
+            //that shouldn't live past the current scene existence
+            m_Scope = new DIScope(DIScope.RootScope);
+
+            m_Scope.FinalizeScopeConstruction();
+
             Instance = this;
             CharSelectData = GetComponent<CharSelectData>();
             m_LobbyUIElementsByMode = new Dictionary<LobbyMode, List<GameObject>>()
@@ -113,6 +123,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 { LobbyMode.LobbyEnding, m_UIElementsForLobbyEnding },
                 { LobbyMode.FatalError, m_UIElementsForFatalError },
             };
+
+            foreach (var o in _autoInjected)
+            {
+                m_Scope.InjectIn(o);
+            }
+        }
+
+        public override void OnDestroy()
+        {
+            m_Scope.Dispose();
         }
 
         protected override void Start()

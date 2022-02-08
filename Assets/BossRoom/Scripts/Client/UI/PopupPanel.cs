@@ -143,7 +143,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_IPRadioButton.gameObject.SetActive(true);
             m_RelayRadioButton.gameObject.SetActive(true);
             m_IPRadioButton.onValueChanged.AddListener(IPRadioRadioButtonPressed);
-            m_RelayRadioButton.onValueChanged.AddListener(RelayRadioRadioButtonPressed);
+            // m_RelayRadioButton.onValueChanged.AddListener(RelayRadioRadioButtonPressed);
             m_RelayRadioButton.isOn = false;
             m_UnityRelayRadioButton.gameObject.SetActive(true);
             m_UnityRelayRadioButton.onValueChanged.AddListener(UnityRelayRadioRadioButtonPressed);
@@ -172,15 +172,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             OnlineMode = OnlineMode.IpHost;
         }
 
-        void RelayRadioRadioButtonPressed(bool value)
-        {
-            if (!value)
-            {
-                return;
-            }
-
-            OnlineMode = OnlineMode.PhotonRelay;
-        }
+        // void RelayRadioRadioButtonPressed(bool value)
+        // {
+        //     if (!value)
+        //     {
+        //         return;
+        //     }
+        //
+        //     OnlineMode = OnlineMode.PhotonRelay;
+        // }
 
         void UnityRelayRadioRadioButtonPressed(bool value)
         {
@@ -275,43 +275,43 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_PortInputField.gameObject.SetActive(true);
                 m_PortInputField.text = m_DefaultPort.ToString();
             }
-            else if (value == OnlineMode.PhotonRelay)
-            {
-                if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
-                {
-                    if (Application.isEditor)
-                    {
-                        // If there is no photon app id set tell the user they need to install
-                        SetupNotifierDisplay(
-                            "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
-                            "to setup Photon Realtime and use relay mode.", false, true);
-                    }
-                    else
-                    {
-                        // If there is no photon app id set tell the user they need to install
-                        SetupNotifierDisplay(
-                            "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project " +
-                            "by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
-                    }
-                    return;
-                }
-
-                // Relay
-                m_MainText.text = m_RelayMainText;
-
-                if (m_EnterAsHost)
-                {
-                    m_InputField.text = GenerateRandomRoomKey();
-                    m_InputField.gameObject.SetActive(false);
-                }
-                else
-                {
-                    m_InputField.text = "";
-                }
-
-                m_PortInputField.gameObject.SetActive(false);
-                m_PortInputField.text = "";
-            }
+            // else if (value == OnlineMode.PhotonRelay)
+            // {
+            //     if (string.IsNullOrEmpty(PhotonAppSettings.Instance.AppSettings.AppIdRealtime))
+            //     {
+            //         if (Application.isEditor)
+            //         {
+            //             // If there is no photon app id set tell the user they need to install
+            //             SetupNotifierDisplay(
+            //                 "Photon Realtime not Setup!", "Follow the instructions in the readme (<ProjectRoot>/Documents/Photon-Realtime/Readme.md) " +
+            //                 "to setup Photon Realtime and use relay mode.", false, true);
+            //         }
+            //         else
+            //         {
+            //             // If there is no photon app id set tell the user they need to install
+            //             SetupNotifierDisplay(
+            //                 "Photon Realtime not Setup!", "It needs to be setup in the Unity Editor for this project " +
+            //                 "by following the Photon-Realtime guide, then rebuild the project and distribute it.", false, true);
+            //         }
+            //         return;
+            //     }
+            //
+            //     // Relay
+            //     m_MainText.text = m_RelayMainText;
+            //
+            //     if (m_EnterAsHost)
+            //     {
+            //         m_InputField.text = GenerateRandomRoomKey();
+            //         m_InputField.gameObject.SetActive(false);
+            //     }
+            //     else
+            //     {
+            //         m_InputField.text = "";
+            //     }
+            //
+            //     m_PortInputField.gameObject.SetActive(false);
+            //     m_PortInputField.text = "";
+            // }
             else if (value == OnlineMode.UnityRelay)
             {
                 // set popup state to waiting for health check
@@ -486,7 +486,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_RelayRadioButton.gameObject.SetActive(false);
             m_UnityRelayRadioButton.gameObject.SetActive(false);
             m_IPRadioButton.onValueChanged.RemoveListener(IPRadioRadioButtonPressed);
-            m_RelayRadioButton.onValueChanged.RemoveListener(RelayRadioRadioButtonPressed);
+            // m_RelayRadioButton.onValueChanged.RemoveListener(RelayRadioRadioButtonPressed);
             m_UnityRelayRadioButton.onValueChanged.RemoveListener(UnityRelayRadioRadioButtonPressed);
 
             m_CancelButton.onClick.RemoveListener(OnCancelClick);

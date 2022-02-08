@@ -1,8 +1,7 @@
-using System;
-using Unity.Multiplayer.Samples.BossRoom;
+using BossRoom.Scripts.Client;
+using BossRoom.Scripts.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -11,6 +10,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         [SerializeField]
         Text m_QuitButtonText;
+
+        private Bootstrap m_Bootstrap;
+
+        [Inject]
+        private void InjectDependencies(Bootstrap bootstrap)
+        {
+            m_Bootstrap = bootstrap;
+        }
 
         void OnEnable()
         {
@@ -21,21 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void Quit()
         {
-            if (NetworkManager.Singleton.IsListening)
-            {
-                // first disconnect then return to menu
-                var gameNetPortal = GameNetPortal.Instance;
-                if (gameNetPortal != null)
-                {
-                    gameNetPortal.RequestDisconnect();
-                }
-                SceneManager.LoadScene("MainMenu");
-            }
-            else
-            {
-                Application.Quit();
-            }
-
+            m_Bootstrap.QuitGame();
             gameObject.SetActive(false);
         }
     }

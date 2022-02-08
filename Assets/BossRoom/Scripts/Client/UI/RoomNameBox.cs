@@ -1,3 +1,6 @@
+using System;
+using BossRoom.Scripts.Shared.Infrastructure;
+using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
 using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
@@ -6,7 +9,7 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine.UI;
 
-public class RoomNameBox : MonoBehaviour
+public class RoomNameBox : ObserverBehaviour<LocalLobby>
 {
     [SerializeField]
     TextMeshProUGUI m_RoomNameText;
@@ -17,36 +20,30 @@ public class RoomNameBox : MonoBehaviour
 
     bool m_ConnectionFinished = false;
 
-    void Awake()
-    {
-        Assert.IsNotNull(m_RoomNameText, $"{nameof(m_RoomNameText)} not assigned!");
 
-        var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-        bool isUsingRelay = true;
-        switch (transport)
+    [Inject]
+    private void InjectDependencies(LocalLobby localLobby)
+    {
+        BeginObserving(localLobby);
+    }
+
+    protected override void UpdateObserver(LocalLobby localLobby)
+    {
+        //todo: move the Update logic to here
+        switch (localLobby.OnlineMode)
         {
-            case PhotonRealtimeTransport realtimeTransport:
-                m_RoomNameText.text = $"Loading room key...";
+            case OnlineMode.IpHost:
+                m_RoomNameText.text = localLobby.LobbyCode;
                 break;
-            case UnityTransport utp:
-                if (utp.Protocol == UnityTransport.ProtocolType.RelayUnityTransport)
-                {
-                    m_RoomNameText.text = $"Loading join code...";
-                }
-                else
-                {
-                    isUsingRelay = false;
-                }
+            case OnlineMode.UnityRelay:
+                m_RoomNameText.text = localLobby.RelayCode;
+                break;
+            case OnlineMode.Unset:
+                //this can happen if we launch the game while circumventing lobby logic
+                m_RoomNameText.text = $"-----------";
                 break;
             default:
-                isUsingRelay = false;
-                break;
-        }
-
-        if (!isUsingRelay)
-        {
-            // RoomName should only be displayed when using relay.
-            Destroy(gameObject);
+                throw new ArgumentOutOfRangeException();
         }
     }
 
@@ -59,15 +56,7 @@ public class RoomNameBox : MonoBehaviour
         {
             var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
 
-            if (transport != null &&
-                transport is PhotonRealtimeTransport realtimeTransport &&
-                realtimeTransport.Client != null &&
-                string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
-            {
-                string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
-                ConnectionFinished(roomName);
-            }
-            else if (transport != null && transport is UnityTransport utp &&
+            if (transport != null && transport is UnityTransport utp &&
                      !string.IsNullOrEmpty(UnityRelayUtilities.JoinCode))
             {
                 ConnectionFinished(UnityRelayUtilities.JoinCode);

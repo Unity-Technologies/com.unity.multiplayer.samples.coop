@@ -259,9 +259,6 @@ namespace BossRoom.Scripts.Client.UI
 
             switch (m_localLobby.OnlineMode)
             {
-                case OnlineMode.PhotonRelay:
-                    throw new NotImplementedException();
-                //m_GameNetPortal.StartPhotonRelayHost(connectInput, cancellationTokenSource.Token);
                 case OnlineMode.IpHost:
                     m_GameNetPortal.StartHost(m_localLobby.Data.IP, m_localLobby.Data.Port);
                     break;
@@ -304,14 +301,6 @@ namespace BossRoom.Scripts.Client.UI
 
             switch (m_localLobby.OnlineMode)
             {
-                case OnlineMode.PhotonRelay:
-                    throw new NotImplementedException();
-                // if (ClientGameNetPortal.StartClientRelayMode(m_GameNetPortal, connectInput, out string failMessage, cancellationTokenSource.Token) == false)
-                // {
-                //     m_ResponsePopup.SetupNotifierDisplay("Connection Failed", failMessage, false, true);
-                //     return;
-                // }
-
                 case OnlineMode.IpHost:
                     m_ClientNetPortal.StartClient(m_GameNetPortal, m_localLobby.Data.IP, m_localLobby.Data.Port);
                     break;
