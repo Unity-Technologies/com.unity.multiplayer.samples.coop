@@ -45,7 +45,7 @@ Once you have downloaded the project, the steps below should get you up and runn
 In order to see the multiplayer functionality in action we can either run multiple instances of the game locally on your computer, using either ParrelSync or builds or choose to connect to a friend over the internet. See [how to test](https://docs-multiplayer.unity3d.com/docs/develop/tutorials/testing/testing_locally) for more info.
 
 ---------------
-** Local multiplayer setup**
+**Local multiplayer setup**
 
 First we need to build an executable.
 
