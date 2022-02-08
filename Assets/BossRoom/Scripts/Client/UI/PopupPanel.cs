@@ -390,19 +390,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     if (caughtException != null) Debug.LogException(caughtException);
                     if (healthCheckTask != null) Debug.LogException(healthCheckTask.Exception);
 
-                    if (Application.isEditor)
+                    if ((caughtException as RelayServiceException)?.Reason == RelayExceptionReason.RateLimited)
                     {
-                        // Error trying to get the list of available regions, something is not setup correctly
-                        SetupNotifierDisplay(
-                            "Unity Relay error!", "Something went wrong trying to reach Unity Relay. Please follow the instructions here https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html#how-do-I-enable-Relay-for-my-project" +
-                            "to setup Unity Relay and use relay mode.", false, true);
+                        SetupNotifierDisplay("Unity Relay error!", "Too many requests. Wait before trying again",false, true);
                     }
                     else
                     {
-                        // If there is no photon app id set tell the user they need to install
-                        SetupNotifierDisplay(
-                            "Unity Relay error!", "Something went wrong trying to reach Unity Relay. It needs to be setup in the Unity Editor for this project " +
-                            "by following the Unity Relay guide, then rebuild the project and distribute it.", false, true);
+                        if (Application.isEditor)
+                        {
+                            // Error trying to get the list of available regions, something is not setup correctly
+                            SetupNotifierDisplay(
+                                "Unity Relay error!", "Something went wrong trying to reach Unity Relay. Please follow the instructions here https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html#how-do-I-enable-Relay-for-my-project" +
+                                "to setup Unity Relay and use relay mode.", false, true);
+                        }
+                        else
+                        {
+                            // If there is no photon app id set tell the user they need to install
+                            SetupNotifierDisplay(
+                                "Unity Relay error!", "Something went wrong trying to reach Unity Relay. It needs to be setup in the Unity Editor for this project " +
+                                "by following the Unity Relay guide, then rebuild the project and distribute it.", false, true);
+                        }
                     }
                 }
                 else
