@@ -392,7 +392,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                     if ((caughtException as RelayServiceException)?.Reason == RelayExceptionReason.RateLimited)
                     {
-                        SetupNotifierDisplay("Unity Relay error!", "Too many requests. Wait before trying again",false, true);
+                        SetupNotifierDisplay("Unity Relay error!", "Too many requests. Wait before trying again", false, true);
                     }
                     else
                     {
