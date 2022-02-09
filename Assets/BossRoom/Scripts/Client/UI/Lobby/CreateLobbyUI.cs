@@ -9,7 +9,7 @@ namespace BossRoom.Scripts.Client.UI
 {
     public class CreateLobbyUI : MonoBehaviour
     {
-        public const string k_DefaultIP = "192.168.1.1";
+        public const string k_DefaultIP = "127.0.0.1";
         public const int k_DefaultPort = 9998;
 
         private static readonly char[] k_InputFieldIncludeChars = {'.', '_'};
