@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Unity.Services.Core;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 {
@@ -39,12 +40,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
                     (sub.Value as IDisposable).Dispose();
         }
 
-        public void DoAuthSignIn(Action callbackOnAuthLogin)
+        public void DoAuthSignIn(Action callbackOnAuthLogin, InitializationOptions initializationOptions)
         {
             if (m_subIdentities.TryGetValue(IIdentityType.Auth, out var identity))
             {
                 var authIdentity = (SubIdentity_Authentication) identity;
-                authIdentity.DoSignIn(callbackOnAuthLogin);
+                authIdentity.DoSignIn(callbackOnAuthLogin, initializationOptions);
             }
         }
     }

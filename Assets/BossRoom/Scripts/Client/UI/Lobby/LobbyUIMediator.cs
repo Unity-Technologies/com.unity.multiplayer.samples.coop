@@ -291,10 +291,6 @@ namespace BossRoom.Scripts.Client.UI
             // In particular, we should prevent players from joining voice chat until they are approved.
             m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
 
-            Debug.Log(
-                "We're in lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
-
-
             m_GameNetPortal.PlayerName = m_localUser.DisplayName;
 
             var cancellationTokenSource = new CancellationTokenSource();

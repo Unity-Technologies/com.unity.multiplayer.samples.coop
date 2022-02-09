@@ -12,7 +12,8 @@
         "Photon Realtime Transport for Netcode for GameObjects",
         "Unity.Services.Relay",
         "Unity.Multiplayer.Samples.Utilities",
-        "Unity.Services.Lobbies"
+        "Unity.Services.Lobbies",
+        "ParrelSync"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

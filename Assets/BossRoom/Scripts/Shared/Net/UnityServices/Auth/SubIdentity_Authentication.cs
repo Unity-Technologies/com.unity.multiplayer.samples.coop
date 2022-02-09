@@ -1,5 +1,6 @@
 ﻿using System;
 using Unity.Services.Authentication;
+using Unity.Services.Core;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 {
@@ -32,9 +33,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             }
         }
 
-        public async void DoSignIn(Action onSigninComplete)
+        public async void DoSignIn(Action onSigninComplete, InitializationOptions initializationOptions)
         {
-            await Unity.Services.Core.UnityServices.InitializeAsync();
+            await Unity.Services.Core.UnityServices.InitializeAsync(initializationOptions);
             AuthenticationService.Instance.SignedIn += OnSignInChange;
             AuthenticationService.Instance.SignedOut += OnSignInChange;
             m_needsCleanup = true;

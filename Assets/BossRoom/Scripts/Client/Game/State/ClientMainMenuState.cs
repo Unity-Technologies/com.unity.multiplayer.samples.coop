@@ -2,7 +2,10 @@ using BossRoom.Scripts.Client.UI;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
+using ParrelSync;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -48,12 +51,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_Scope.BindInstanceAsSingle(m_lobbyUIMediator);
             m_Scope.BindAsSingle<GameObjectFactory>();
 
-            identity.DoAuthSignIn(OnAuthSignIn);
+
+            var unityAuthenticationInitOptions = new InitializationOptions();
+
+#if UNITY_EDITOR
+            if (ClonesManager.IsClone())
+            {
+                Debug.Log("This is a clone project.");
+                var customArguments = ClonesManager.GetArgument().Split(',');
+
+                //second argument is our custom ID, but if it's not set we would just use some default.
+
+                var hardcodedProfileID = customArguments.Length > 1 ? customArguments[1] : "defaultCloneID";
+
+                unityAuthenticationInitOptions.SetProfile(hardcodedProfileID);
+            }
+#endif
+            identity.DoAuthSignIn(OnAuthSignIn, unityAuthenticationInitOptions);
+
 
             void OnAuthSignIn()
             {
-                Debug.Log("Signed in.");
-
                 m_Scope.FinalizeScopeConstruction();
 
                 foreach (var go in _autoInjected)
@@ -67,6 +85,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 var localUser = m_Scope.Resolve<LobbyUser>();
                 var identity = m_Scope.Resolve<Identity>();
                 var localLobby = m_Scope.Resolve<LocalLobby>();
+
+
+                Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
                 localUser.ID = identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
                 localUser.DisplayName = m_NameGenerationData.GenerateName();
