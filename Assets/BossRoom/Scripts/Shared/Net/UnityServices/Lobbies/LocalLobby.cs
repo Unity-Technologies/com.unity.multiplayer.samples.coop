@@ -114,14 +114,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public void AddPlayer(LobbyUser user)
         {
-            if (m_LobbyUsers.ContainsKey(user.ID))
+            if (!m_LobbyUsers.ContainsKey(user.ID))
             {
-                Debug.LogError($"Cant add player {user.DisplayName}({user.ID}) to lobby: {LobbyID} twice");
-                return;
+                DoAddPlayer(user);
+                OnChanged(this);
             }
-
-            DoAddPlayer(user);
-            OnChanged(this);
         }
 
         private void DoAddPlayer(LobbyUser user)
