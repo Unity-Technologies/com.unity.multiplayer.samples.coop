@@ -39,9 +39,9 @@ Currently three network transport mechanisms are supported:
 
 In the first, the clients connect directly to a host via IP address. This will only work if both are in the same local area network or if the host forwards ports.
 
-For Photon Relay based game sessions, some setup is required. Please see our guide [here](Documentation/Photon-Realtime/Readme.md) on how to setup our current relay.
+For Photon Relay based multiplayer sessions, some setup is required. Please see our guide [here](Documentation/Photon-Realtime/Readme.md) on how to setup our current relay.
 
-Similarly for Unity Relay based game sessions, please see the installation guide [here](Documentation/Unity-Relay/README.md). 
+Similarly for Unity Relay based multiplayer sessions, please see the installation guide [here](Documentation/Unity-Relay/README.md). 
 
 Please see [Multiplayer over internet](README.md) section of our Readme for more information on using either one.
 
