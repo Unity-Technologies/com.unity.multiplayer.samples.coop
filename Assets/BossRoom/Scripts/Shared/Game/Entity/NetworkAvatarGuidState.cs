@@ -34,12 +34,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        private void Awake()
+        void Awake()
         {
             m_CharacterClassContainer = GetComponent<CharacterClassContainer>();
         }
 
-        public void RegisterAvatar(Guid guid)
+        void RegisterAvatar(Guid guid)
         {
             if (guid.Equals(Guid.Empty))
             {
@@ -48,7 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
 
             // based on the Guid received, Avatar is fetched from AvatarRegistry
-            if (!m_AvatarRegistry.TryGetAvatar(guid, out Avatar avatar))
+            if (!m_AvatarRegistry.TryGetAvatar(guid, out var avatar))
             {
                 Debug.LogError("Avatar not found!");
                 return;
