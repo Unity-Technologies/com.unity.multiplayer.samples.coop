@@ -10,7 +10,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
     /// </summary>
     public static class AsyncUnityServiceRequest
     {
-        public static async void DoRequest<TException>(Task task, Action onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
+        public static async void RunTask<TException>(Task task, Action onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
         {
             string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
             try
@@ -36,7 +36,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             }
         }
 
-        public static async void DoRequest<TResult, TException>(Task<TResult> task, Action<TResult> onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
+        public static async void RunTask<TResult, TException>(Task<TResult> task, Action<TResult> onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
         {
             string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
             try

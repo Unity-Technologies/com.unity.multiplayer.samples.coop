@@ -116,8 +116,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         /// <summary>
         /// Attempt to create a new lobby and then join it.
-        /// </
-
+        /// </summary>
         public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, OnlineMode onlineMode, string ip, int port, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitHost.CanCall())

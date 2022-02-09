@@ -19,12 +19,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Relays
 
         private void DoRequest(Task task, Action onSuccess, Action onFailed)
         {
-            AsyncUnityServiceRequest.DoRequest<RelayServiceException>(task, onSuccess, onFailed, ParseServiceException);
+            AsyncUnityServiceRequest.RunTask<RelayServiceException>(task, onSuccess, onFailed, ParseServiceException);
         }
 
         private void DoRequest<T>(Task<T> task, Action<T> onSuccess, Action onFailed)
         {
-            AsyncUnityServiceRequest.DoRequest<T,RelayServiceException>(task, onSuccess, onFailed, ParseServiceException);
+            AsyncUnityServiceRequest.RunTask<T,RelayServiceException>(task, onSuccess, onFailed, ParseServiceException);
         }
 
         [Inject]
