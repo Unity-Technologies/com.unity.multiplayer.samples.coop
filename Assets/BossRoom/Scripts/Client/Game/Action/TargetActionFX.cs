@@ -22,7 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public override bool Start()
         {
             base.Start();
-            m_ParentState = m_Parent.Parent.GetComponent<NetworkCharacterState>();
+            m_ParentState = m_Parent.transform.parent.GetComponent<NetworkCharacterState>();
 
             m_ParentState.TargetId.OnValueChanged += OnTargetChanged;
             m_ParentState.GetComponent<Client.ClientInputSender>().ActionInputEvent += OnActionInput;

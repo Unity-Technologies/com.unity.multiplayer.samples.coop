@@ -120,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private bool IsParentAnNPC()
         {
-            var targetable = m_Parent.Parent.GetComponent<ITargetable>();
+            var targetable = m_Parent.transform.parent.GetComponent<ITargetable>();
             return targetable.IsNpc;
         }
 
