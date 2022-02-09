@@ -22,6 +22,7 @@ namespace BossRoom.Scripts.Client
 
         private LocalLobby m_LocalLobby;
         private LobbyAsyncRequests m_LobbyAsyncRequests;
+        private LobbyContentHeartbeat m_LobbyContentHeartbeat;
 
         [SerializeField] private GameObject[] m_AutoInjected;
 
@@ -77,6 +78,7 @@ namespace BossRoom.Scripts.Client
 
             m_LocalLobby = scope.Resolve<LocalLobby>();
             m_LobbyAsyncRequests = scope.Resolve<LobbyAsyncRequests>();
+            m_LobbyContentHeartbeat = scope.Resolve<LobbyContentHeartbeat>();
         }
 
         private void Start()
@@ -110,6 +112,9 @@ namespace BossRoom.Scripts.Client
 
         private void ForceLeaveLobbyAttempt()
         {
+            m_LobbyAsyncRequests.EndTracking();
+            m_LobbyContentHeartbeat.EndTracking();
+
             if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
             {
                 m_LobbyAsyncRequests.LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
