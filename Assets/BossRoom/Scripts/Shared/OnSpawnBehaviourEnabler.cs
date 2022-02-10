@@ -5,20 +5,23 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
+    public interface IClientOnlyMonoBehaviour
+    {
+        public void SetEnabled(bool enable);
+    }
+
+    public interface IServerOnlyMonoBehaviour
+    {
+        public void SetEnabled(bool enable);
+    }
+
+
     /// <summary>
     /// Disables a list of MonoBehaviours on Awake, then only enables them when spawning based on whether this game instance
     /// is a client or a server (or both in case of a client-hosted session).
     /// </summary>
     public class OnSpawnBehaviourEnabler : NetworkBehaviour
     {
-        [SerializeField]
-        [Tooltip("These MonoBehaviours will be disabled on Awake and only enabled when this NetworkBehaviour is spawned on a client.")]
-        List<MonoBehaviour> m_ClientOnlyBehaviours;
-
-        [SerializeField]
-        [Tooltip("These MonoBehaviours will be disabled on Awake and only enabled when this NetworkBehaviour is spawned on a server.")]
-        List<MonoBehaviour> m_ServerOnlyBehaviours;
-
         void Awake()
         {
             // Disable everything here to prevent those MonoBehaviours to be updated before this one is spawned.
@@ -29,17 +32,17 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsClient)
             {
-                foreach (var behaviour in m_ClientOnlyBehaviours)
+                foreach (var behaviour in gameObject.GetComponents<IClientOnlyMonoBehaviour>())
                 {
-                    behaviour.enabled = true;
+                    behaviour.SetEnabled(true);
                 }
             }
 
             if (IsServer)
             {
-                foreach (var behaviour in m_ServerOnlyBehaviours)
+                foreach (var behaviour in gameObject.GetComponents<IServerOnlyMonoBehaviour>())
                 {
-                    behaviour.enabled = true;
+                    behaviour.SetEnabled(true);
                 }
             }
         }
@@ -52,14 +55,14 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void DisableAll()
         {
-            foreach (var behaviour in m_ClientOnlyBehaviours)
+            foreach (var behaviour in gameObject.GetComponents<IClientOnlyMonoBehaviour>())
             {
-                behaviour.enabled = false;
+                behaviour.SetEnabled(false);
             }
 
-            foreach (var behaviour in m_ServerOnlyBehaviours)
+            foreach (var behaviour in gameObject.GetComponents<IServerOnlyMonoBehaviour>())
             {
-                behaviour.enabled = false;
+                behaviour.SetEnabled(false);
             }
         }
     }
