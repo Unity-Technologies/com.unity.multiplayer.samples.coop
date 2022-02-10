@@ -5,12 +5,11 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
-
     /// <summary>
     /// Disables a list of MonoBehaviours on Awake, then only enables them when spawning based on whether this game instance
     /// is a client or a server (or both in case of a client-hosted session).
     /// </summary>
-    public class OnSpawnBehaviorEnabler : NetworkBehaviour
+    public class OnSpawnBehaviourEnabler : NetworkBehaviour
     {
         [SerializeField]
         [Tooltip("These MonoBehaviours will be disabled on Awake and only enabled when this NetworkBehaviour is spawned on a client.")]
