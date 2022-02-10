@@ -100,16 +100,20 @@ To create a dynamic navigation object add a NavMeshObstacle to it and configure 
 
 ## Player Hierarchy
 
-The `Player Prefab` field inside of Boss Room's `NetworkManager` is populated with `PersistentPlayer` prefab. Netcode will spawn a PersistentPlayer per client connection, with the client designated as the owner of the prefab instance. All `Player Prefab` prefab instances will be migrated between scenes internally by Netcode's scene management, therefore it is not necessary to mark this object as a `DontDestroyOnLoad` object. This object is suitable for storing data, in some cases in the form of `NetworkVariable`s, that could be accessed across scenes (eg. name, avatar GUID, etc).
+The `Player Prefab` field inside of Boss Room's `NetworkManager` is populated with `PersistentPlayer` prefab. Netcode will spawn a PersistentPlayer per client connection, with the client designated as the owner of the prefab instance. All `Player Prefab` prefab instances will be migrated between scenes internally by Netcode's scene management, therefore it is not necessary to mark this object as a `DontDestroyOnLoad` object. This object is suitable for storing data, in some cases in the form of `NetworkVariable`s, that could be accessed across scenes (eg. name, avatar GUID, etc). PersistentPlayer's GameObject hierarchy is quite trivial as it is comprised of only one GameObject:
 
+* PersistentPlayer: a `NetworkObject` that will not be destroyed between scenes
+
+####CharSelect Scene
 Inside `CharSelect` scene, clients select from 8 possible avatar classes, and that selection is stored inside PersistentPlayer's `NetworkAvatarGuidState`.
 
+####BossRoom Scene
 Inside `BossRoom` scene, `ServerBossRoomState` spawns a `PlayerAvatar` per PersistentPlayer present. This `PlayerAvatar` prefab instance, that is owned by the corresponding connected client, is destroyed by Netcode when a scene load occurs (either to `PostGame` scene, or back to `MainMenu` scene), or through client disconnection.
 
 `ClientAvatarGuidHandler`, a `NetworkBehaviour` component residing on the `PlayerAvatar` prefab instance will fetch the validated avatar GUID from `NetworkAvatarGuidState`, and spawn a local, non-networked graphics GameObject corresponding to the avatar GUID. This GameObject is childed to PlayerAvatar's `PlayerGraphics` child GameObject.
 
-Once initialized successfully, the in-game PlayerAvatar GameObject hierarchy will look something like (in the case of a selected Archer Boy class):
+Once initialized successfully, the in-game PlayerAvatar GameObject hierarchy inside `BossRoom` scene will look something like (in the case of a selected Archer Boy class):
 
-* Player Avatar: the root `NetworkObject`
+* Player Avatar: a `NetworkObject` that *will* be destroyed when `BossRoom` scene is unloaded
   * Player Graphics: a child GameObject containing `NetworkAnimator` component responsible for replicating animations invoked on the server
     * PlayerGraphics_Archer_Boy: a purely graphical representation of the selected avatar class
