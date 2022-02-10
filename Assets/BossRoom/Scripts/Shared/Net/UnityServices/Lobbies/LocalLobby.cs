@@ -7,14 +7,6 @@ using UnityEngine;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
-    [Flags] // Some UI elements will want to specify multiple states in which to be active, so this is Flags.
-    public enum LobbyState
-    {
-        Lobby = 1,
-        CountDown = 2,
-        InGame = 4
-    }
-
     /// <summary>
     /// A local wrapper around a lobby's remote data, with additional functionality for providing that data to UI elements and tracking local player objects.
     /// (The way that the Lobby service handles its data doesn't necessarily match our needs, so we need to map from that to this LocalLobby for use in the sample code.)
@@ -22,16 +14,30 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     [Serializable]
     public class LocalLobby : Observed<LocalLobby>
     {
-        private LobbyUserFactory m_userFactory;
+
+        /// <summary>
+        /// Create a list of new LocalLobbies from the result of a lobby list query.
+        /// </summary>
+        public static List<LocalLobby> CreateLocalLobbies(QueryResponse response)
+        {
+            var retLst = new List<LocalLobby>();
+            foreach (var lobby in response.Results)
+            {
+                retLst.Add(Create(lobby));
+            }
+            return retLst;
+        }
+
+        public static LocalLobby Create(Lobby lobby)
+        {
+            LocalLobby data = new LocalLobby();
+            data.ApplyRemoteData(lobby);
+            return data;
+        }
 
         Dictionary<string, LobbyUser> m_LobbyUsers = new Dictionary<string, LobbyUser>();
         public Dictionary<string, LobbyUser> LobbyUsers => m_LobbyUsers;
 
-        [Inject]
-        public void InjectDependencies(LobbyUserFactory userFactory)
-        {
-            m_userFactory = userFactory;
-        }
 
         public LocalLobby()
         {
@@ -43,14 +49,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         {
             public string LobbyID { get; set; }
             public string LobbyCode { get; set; }
-            public string RelayCode { get; set; }
-            public string RelayNGOCode { get; set; }
+            public string RelayJoinCode { get; set; }
             public string LobbyName { get; set; }
             public bool Private { get; set; }
             public int MaxPlayerCount { get; set; }
-            public LobbyState State { get; set; }
-            public long State_LastEdit { get; set; }
-            public long RelayNGOCode_LastEdit { get; set; }
 
             public OnlineMode OnlineMode { get; set; }
             public string IP { get; set; }
@@ -60,14 +62,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             {
                 LobbyID = existing.LobbyID;
                 LobbyCode = existing.LobbyCode;
-                RelayCode = existing.RelayCode;
-                RelayNGOCode = existing.RelayNGOCode;
+                RelayJoinCode = existing.RelayJoinCode;
                 LobbyName = existing.LobbyName;
                 Private = existing.Private;
                 MaxPlayerCount = existing.MaxPlayerCount;
-                State = existing.State;
-                State_LastEdit = existing.State_LastEdit;
-                RelayNGOCode_LastEdit = existing.RelayNGOCode_LastEdit;
                 OnlineMode = existing.OnlineMode;
                 IP = existing.IP;
                 Port = existing.Port;
@@ -77,14 +75,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             {
                 LobbyID = null;
                 LobbyCode = lobbyCode;
-                RelayCode = null;
-                RelayNGOCode = null;
+                RelayJoinCode = null;
                 LobbyName = null;
                 Private = false;
                 MaxPlayerCount = -1;
-                State = LobbyState.Lobby;
-                State_LastEdit = 0;
-                RelayNGOCode_LastEdit = 0;
                 OnlineMode = OnlineMode.Unset;
                 IP = string.Empty;
                 Port = 0;
@@ -97,18 +91,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             get { return new LobbyData(m_data); }
         }
 
-        ServerAddress m_relayServer;
-
-        /// <summary>Used only for visual output of the Relay connection info. The obfuscated Relay server IP is obtained during allocation in the RelayUtpSetup.</summary>
-        public ServerAddress RelayServer
-        {
-            get => m_relayServer;
-            set
-            {
-                m_relayServer = value;
-                OnChanged(this);
-            }
-        }
 
         #endregion
 
@@ -170,26 +152,16 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public string RelayCode
+        public string RelayJoinCode
         {
-            get => m_data.RelayCode;
+            get => m_data.RelayJoinCode;
             set
             {
-                m_data.RelayCode = value;
+                m_data.RelayJoinCode = value;
                 OnChanged(this);
             }
         }
 
-        public string RelayNGOCode
-        {
-            get => m_data.RelayNGOCode;
-            set
-            {
-                m_data.RelayNGOCode = value;
-                m_data.RelayNGOCode_LastEdit = DateTime.Now.Ticks;
-                OnChanged(this);
-            }
-        }
 
         public string LobbyName
         {
@@ -197,17 +169,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             set
             {
                 m_data.LobbyName = value;
-                OnChanged(this);
-            }
-        }
-
-        public LobbyState State
-        {
-            get => m_data.State;
-            set
-            {
-                m_data.State = value;
-                m_data.State_LastEdit = DateTime.Now.Ticks;
                 OnChanged(this);
             }
         }
@@ -248,20 +209,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public void CopyObserved(LobbyData data, Dictionary<string, LobbyUser> currUsers)
         {
-            // It's possible for the host to edit the lobby in between the time they last pushed lobby data and the time their pull for new lobby data completes.
-            // If that happens, the edit will be lost, so instead we maintain the time of last edit to detect that case.
-            var pendingState = data.State;
-
-            var pendingNgoCode = data.RelayNGOCode;
-            if (m_data.State_LastEdit > data.State_LastEdit)
-                pendingState = m_data.State;
-
-            if (m_data.RelayNGOCode_LastEdit > data.RelayNGOCode_LastEdit)
-                pendingNgoCode = m_data.RelayNGOCode;
             m_data = data;
-            m_data.State = pendingState;
-
-            m_data.RelayNGOCode = pendingNgoCode;
 
             if (currUsers == null)
                 m_LobbyUsers = new Dictionary<string, LobbyUser>();
@@ -300,11 +248,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public Dictionary<string, DataObject> GetDataForUnityServices() =>
             new Dictionary<string, DataObject>()
             {
-                {"RelayCode", new DataObject(DataObject.VisibilityOptions.Public,  RelayCode)},
-                {"RelayNGOCode", new DataObject(DataObject.VisibilityOptions.Public, RelayNGOCode)},
-                {"State", new DataObject(DataObject.VisibilityOptions.Public, ((int)State).ToString())},
-                {"State_LastEdit", new DataObject(DataObject.VisibilityOptions.Public, Data.State_LastEdit.ToString())},
-                {"RelayNGOCode_LastEdit", new DataObject(DataObject.VisibilityOptions.Public, Data.RelayNGOCode_LastEdit.ToString())},
+                {"RelayJoinCode", new DataObject(DataObject.VisibilityOptions.Public,  RelayJoinCode)},
                 {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)Data.OnlineMode).ToString())},
                 {"IP", new DataObject(DataObject.VisibilityOptions.Public, Data.IP)},
                 {"Port", new DataObject(DataObject.VisibilityOptions.Public,  Data.Port.ToString())},
@@ -322,22 +266,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             if (lobby.Data != null)
             {
-                info.RelayCode = lobby.Data.ContainsKey("RelayCode") ? lobby.Data["RelayCode"].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
-                info.RelayNGOCode = lobby.Data.ContainsKey("RelayNGOCode") ? lobby.Data["RelayNGOCode"].Value : null;
-                info.State = lobby.Data.ContainsKey("State") ? (LobbyState) int.Parse(lobby.Data["State"].Value) : LobbyState.Lobby;
-                info.State_LastEdit = lobby.Data.ContainsKey("State_LastEdit") ? long.Parse(lobby.Data["State_LastEdit"].Value) : 0;
-                info.RelayNGOCode_LastEdit = lobby.Data.ContainsKey("RelayNGOCode_LastEdit") ? long.Parse(lobby.Data["RelayNGOCode_LastEdit"].Value) : 0;
+                info.RelayJoinCode = lobby.Data.ContainsKey("RelayJoinCode") ? lobby.Data["RelayJoinCode"].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
                 info.OnlineMode = lobby.Data.ContainsKey("OnlineMode") ? (OnlineMode) int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset;
                 info.IP = lobby.Data.ContainsKey("IP") ? lobby.Data["IP"].Value : string.Empty;
                 info.Port =  lobby.Data.ContainsKey("Port") ? int.Parse(lobby.Data["Port"].Value) : 0;
             }
             else
             {
-                info.RelayCode = null;
-                info.RelayNGOCode = null;
-                info.State = LobbyState.Lobby;
-                info.State_LastEdit = 0;
-                info.RelayNGOCode_LastEdit = 0;
+                info.RelayJoinCode = null;
                 info.OnlineMode = OnlineMode.Unset;
                 info.IP = string.Empty;
                 info.Port = 0;
@@ -348,29 +284,31 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             {
                 if (player.Data != null)
                 {
-                    // If we already know about this player and this player is already connected to Relay, don't overwrite things that Relay might be changing.
-                    if (player.Data.ContainsKey("UserStatus") == true && int.TryParse(player.Data["UserStatus"].Value, out int status))
+                    if (LobbyUsers.ContainsKey(player.Id))
                     {
-                        if (status > (int)UserStatus.Connecting && LobbyUsers.ContainsKey(player.Id))
-                        {
-                            lobbyUsers.Add(player.Id, LobbyUsers[player.Id]);
-                            continue;
-                        }
+                        lobbyUsers.Add(player.Id, LobbyUsers[player.Id]);
+                        continue;
                     }
                 }
 
                 // If the player isn't connected to Relay, get the most recent data that the lobby knows.
                 // (If we haven't seen this player yet, a new local representation of the player will have already been added by the LocalLobby.)
-                var incomingData = m_userFactory.Create();
-
-                incomingData.IsHost = lobby.HostId.Equals(player.Id);
-                incomingData.DisplayName = player.Data?.ContainsKey("DisplayName") == true ? player.Data["DisplayName"].Value : default;
-                incomingData.UserStatus = player.Data?.ContainsKey("UserStatus") == true ? (UserStatus) int.Parse(player.Data["UserStatus"].Value) : UserStatus.Connecting;
-                incomingData.ID = player.Id;
+                var incomingData = new LobbyUser
+                {
+                    IsHost = lobby.HostId.Equals(player.Id),
+                    DisplayName = player.Data?.ContainsKey("DisplayName") == true ? player.Data["DisplayName"].Value : default,
+                    ID = player.Id
+                };
 
                 lobbyUsers.Add(incomingData.ID, incomingData);
             }
             CopyObserved(info, lobbyUsers);
+        }
+
+        public void Reset(LobbyUser localUser)
+        {
+            CopyObserved(new LocalLobby.LobbyData(), new Dictionary<string, LobbyUser>());
+            AddPlayer(localUser);
         }
     }
 }

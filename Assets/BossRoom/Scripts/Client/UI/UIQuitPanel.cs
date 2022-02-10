@@ -1,4 +1,5 @@
 using BossRoom.Scripts.Client;
+using BossRoom.Scripts.Shared;
 using BossRoom.Scripts.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;

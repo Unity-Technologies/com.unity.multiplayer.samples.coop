@@ -8,8 +8,9 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.SocialPlatforms.Impl;
 
-namespace BossRoom.Scripts.Client
+namespace BossRoom.Scripts.Shared
 {
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
@@ -21,6 +22,7 @@ namespace BossRoom.Scripts.Client
         [SerializeField] private ClientGameNetPortal m_ClientNetPortal;
 
         private LocalLobby m_LocalLobby;
+        private LobbyUser m_LocalUser;
         private LobbyAsyncRequests m_LobbyAsyncRequests;
         private LobbyContentHeartbeat m_LobbyContentHeartbeat;
 
@@ -51,23 +53,10 @@ namespace BossRoom.Scripts.Client
             //all the lobby service stuff, bound here so that it persists through scene loads
             scope.BindAsSingle<LobbyServiceData>();
             scope.BindAsSingle<LobbyContentHeartbeat>();
-            scope.BindAsSingle<LocalGameState>();
             scope.BindAsSingle<LobbyAPIInterface>();
             scope.BindAsSingle<LobbyAsyncRequests>();
-            scope.BindAsSingle<LobbyUserFactory>(); //a factory to create injected lobby users
-            scope.BindAsSingle<LocalLobbyFactory>(); //a factory to create injected local lobbies for lobbies that we query from the lobby service
             scope.BindAsSingle<Identity>(); //a manager entity that allows us to do anonymous authentication with unity services
 
-            //todo: remember to cleanup unused message channels
-            scope.BindMessageChannel<ClientUserSeekingDisapproval>();
-            scope.BindMessageChannel<ClientUserApproved>();
-            scope.BindMessageChannel<UserStatus>();
-            scope.BindMessageChannel<StartCountdown>();
-            scope.BindMessageChannel<CancelCountdown>();
-            scope.BindMessageChannel<CompleteCountdown>();
-            scope.BindMessageChannel<ConfirmInGameState>();
-            scope.BindMessageChannel<ChangeGameState>();
-            scope.BindMessageChannel<EndGame>();
 
             scope.FinalizeScopeConstruction();
 
@@ -79,6 +68,7 @@ namespace BossRoom.Scripts.Client
             m_LocalLobby = scope.Resolve<LocalLobby>();
             m_LobbyAsyncRequests = scope.Resolve<LobbyAsyncRequests>();
             m_LobbyContentHeartbeat = scope.Resolve<LobbyContentHeartbeat>();
+            m_LocalUser = scope.Resolve<LobbyUser>();
         }
 
         private void Start()
@@ -119,6 +109,9 @@ namespace BossRoom.Scripts.Client
             {
                 m_LobbyAsyncRequests.LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
             }
+
+            m_LocalUser.ResetState();
+            m_LocalLobby.Reset(m_LocalUser);
         }
 
         public void QuitGame()

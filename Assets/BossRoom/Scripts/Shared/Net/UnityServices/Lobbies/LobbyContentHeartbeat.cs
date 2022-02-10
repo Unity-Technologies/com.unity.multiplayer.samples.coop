@@ -1,68 +1,49 @@
 ﻿using System;
-using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Relays;
-using LobbyRemote = Unity.Services.Lobbies.Models.Lobby;
+using UnityEngine;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// Keep updated on changes to a joined lobby, at a speed compliant with Lobby's rate limiting.
     /// </summary>
-    public class LobbyContentHeartbeat : IDisposable
+    public class LobbyContentHeartbeat
     {
-        private LocalLobby m_localLobby;
-        private LobbyUser m_localUser;
+        private readonly LocalLobby m_localLobby;
+        private readonly LobbyUser m_localUser;
         private int m_awaitingQueryCount = 0;
         private bool m_shouldPushData = false;
 
-        private const float k_approvalMaxTime = 10; // Used for determining if a user should timeout if they are unable to connect.
-        private float m_lifetime = 0;
-
         private readonly UpdateRunner m_SlowUpdate;
         private IDisposable m_DisposableSubscription;
-        private readonly ISubscriber<ClientUserSeekingDisapproval> m_UserSeekingApprovalSubscriber;
         private readonly LobbyAsyncRequests m_LobbyAsyncRequests;
         private readonly IPublisher<UnityServiceErrorMessage> m_DisplayErrorPopupPublisher;
-        private readonly IPublisher<ChangeGameState> m_ChangeGameStatePublisher;
-        private readonly IPublisher<EndGame> m_EndGamePublisher;
+        private readonly Bootstrap m_Bootstrap;
 
         [Inject]
         public LobbyContentHeartbeat(
             UpdateRunner slowUpdate,
-            ISubscriber<ClientUserSeekingDisapproval> userSeekingApprovalSubscriber,
             LobbyAsyncRequests lobbyAsyncRequests,
-            IPublisher<ChangeGameState> changeGameStatePublisher,
             IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher,
-            IPublisher<EndGame> endGamePublisher,
             LocalLobby localLobby,
-            LobbyUser localUser)
+            LobbyUser localUser,
+            Bootstrap bootstrap)
         {
             m_SlowUpdate = slowUpdate;
-            m_UserSeekingApprovalSubscriber = userSeekingApprovalSubscriber;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
-            m_ChangeGameStatePublisher = changeGameStatePublisher;
             m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
-            m_EndGamePublisher = endGamePublisher;
             m_localLobby = localLobby;
             m_localUser = localUser;
-        }
-
-        public void Dispose()
-        {
-            m_DisposableSubscription?.Dispose();
+            m_Bootstrap = bootstrap;
         }
 
         public void BeginTracking()
         {
             m_SlowUpdate.Subscribe(OnUpdate, 1.5f);
 
-            m_DisposableSubscription = m_UserSeekingApprovalSubscriber.Subscribe(OnReceiveMessage);
-
             m_localLobby.onChanged += OnLocalLobbyChanged;
             m_shouldPushData = true; // Ensure the initial presence of a new player is pushed to the lobby; otherwise, when a non-host joins, the LocalLobby never receives their data until they push something new.
-            m_lifetime = 0;
         }
 
         public void EndTracking()
@@ -82,14 +63,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_shouldPushData = true;
         }
 
-        public void OnReceiveMessage(ClientUserSeekingDisapproval message)
-        {
-            bool shouldDisapprove = m_localLobby.State != LobbyState.Lobby; // By not refreshing, it's possible to have a lobby in the lobby list UI after its countdown starts and then try joining.
-            if (shouldDisapprove)
-            {
-                message.DisapprovalAction?.Invoke(Approval.GameAlreadyStarted);
-            }
-        }
 
         /// <summary>
         /// If there have been any data changes since the last update, push them to Lobby. Regardless, pull for the most recent data.
@@ -97,18 +70,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         private void OnUpdate(float dt)
         {
-            m_lifetime += dt;
-            if (m_awaitingQueryCount > 0 || m_localLobby == null)
+            if (m_awaitingQueryCount > 0)
                 return;
+
             if (m_localUser.IsHost)
             {
                 m_LobbyAsyncRequests.DoLobbyHeartbeat(dt);
-            }
-
-            if (!m_localUser.IsApproved && m_lifetime > k_approvalMaxTime)
-            {
-                m_DisplayErrorPopupPublisher.Publish(new UnityServiceErrorMessage("Connection attempt timed out!"));
-                m_ChangeGameStatePublisher.Publish(new ChangeGameState(GameState.JoinMenu));
             }
 
             if (m_shouldPushData)
@@ -144,10 +111,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             void OnRetrieve()
             {
-                LobbyRemote lobbyRemote = m_LobbyAsyncRequests.CurrentLobby;
+                var lobbyRemote = m_LobbyAsyncRequests.CurrentLobby;
                 if (lobbyRemote == null) return;
                 bool prevShouldPush = m_shouldPushData;
-                var prevState = m_localLobby.State;
                 m_localLobby.ApplyRemoteData(lobbyRemote);
                 m_shouldPushData = prevShouldPush;
 
@@ -160,14 +126,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                             return;
                     }
                     m_DisplayErrorPopupPublisher.Publish(new UnityServiceErrorMessage("Host left the lobby, disconnecting."));
-                    m_EndGamePublisher.Publish(new EndGame());
-                    m_ChangeGameStatePublisher.Publish(new ChangeGameState(GameState.JoinMenu));
+                    Debug.LogWarning("Host left the lobby, disconnecting...");
+                    m_Bootstrap.QuitGame();
                 }
             }
         }
-
-
-
-
     }
 }

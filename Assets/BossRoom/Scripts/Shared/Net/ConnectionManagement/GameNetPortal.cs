@@ -1,5 +1,8 @@
 using System;
 using System.Threading;
+using System.Threading.Tasks;
+using BossRoom.Scripts.Shared.Infrastructure;
+using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Netcode.Transports.PhotonRealtime;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
@@ -85,6 +88,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public static GameNetPortal Instance;
         private ClientGameNetPortal m_ClientPortal;
         private ServerGameNetPortal m_ServerPortal;
+
+        private LocalLobby m_LocalLobby;
+        private LobbyAsyncRequests m_LobbyAsyncRequests;
+
+        [Inject]
+        private void InjectDependencies(LocalLobby localLobby, LobbyAsyncRequests lobbyAsyncRequests)
+        {
+            m_LocalLobby = localLobby;
+            m_LobbyAsyncRequests = lobbyAsyncRequests;
+        }
+
 
         private void Awake()
         {
@@ -198,7 +212,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        public async void StartUnityRelayHost(CancellationToken cancellationToken)
+        public async Task StartUnityRelayHost(CancellationToken cancellationToken)
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -210,6 +224,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                     try
                     {
+                        //todo - this should be redundant now that we ensure that auth happens before we are allowed to intereact with the main menu
                         await UnityServices.InitializeAsync();
                         if (!AuthenticationService.Instance.IsSignedIn)
                         {
@@ -222,7 +237,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
                         var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
                         await serverRelayUtilityTask;
                         // we now have the info from the relay service
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, _) = serverRelayUtilityTask.Result;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
+
+                        m_LocalLobby.RelayJoinCode = joinCode;
+                        m_LobbyAsyncRequests.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
 
                         // we now need to set the RelayCode somewhere :P
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);

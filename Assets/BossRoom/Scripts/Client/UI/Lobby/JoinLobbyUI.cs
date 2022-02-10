@@ -124,7 +124,7 @@ namespace BossRoom.Scripts.Client.UI
 
         private bool CanDisplay(LocalLobby lobby)
         {
-            return lobby.Data.State == LobbyState.Lobby && !lobby.Private;
+            return !lobby.Private && lobby.LobbyUsers.Count != lobby.MaxPlayerCount;
         }
 
         /// <summary>

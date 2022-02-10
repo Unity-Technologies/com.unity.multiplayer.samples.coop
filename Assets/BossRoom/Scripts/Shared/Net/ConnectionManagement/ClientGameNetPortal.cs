@@ -1,5 +1,6 @@
 using System;
 using System.Threading;
+using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -38,6 +39,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// time from the host.
         /// </summary>
         public event Action NetworkTimedOut;
+
+
+        private LobbyAsyncRequests m_LobbyAsyncRequests;
+
+        private void InjectDependencies(LobbyAsyncRequests lobbyAsyncRequests)
+        {
+            m_LobbyAsyncRequests = lobbyAsyncRequests;
+        }
 
         private void Awake()
         {
@@ -238,6 +247,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         var clientRelayUtilityTask = UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
                         await clientRelayUtilityTask;
                         var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+
+                        m_LobbyAsyncRequests.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
                     }
                     catch (Exception e)

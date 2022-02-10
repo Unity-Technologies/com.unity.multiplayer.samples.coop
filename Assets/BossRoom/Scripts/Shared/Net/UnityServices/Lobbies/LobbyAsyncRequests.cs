@@ -239,10 +239,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         public void UpdatePlayerRelayInfoAsync(string allocationId, string connectionInfo, Action onComplete, Action onFailure)
         {
-            // if (!ShouldUpdateData(() => { UpdatePlayerRelayInfoAsync(allocationId, connectionInfo, onComplete, onFailure); }, onComplete, true)) // Do retry here since the RelayUtpSetup that called this might be destroyed right after this.
-            //     return;
-            // string playerId = m_LocalPlayerIdentity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
-            // m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), onComplete, onFailure, allocationId, connectionInfo);
+            if (!ShouldUpdateData(() => { UpdatePlayerRelayInfoAsync(allocationId, connectionInfo, onComplete, onFailure); }, onComplete, true)) // Do retry here since the RelayUtpSetup that called this might be destroyed right after this.
+                return;
+            string playerId = m_LocalPlayerIdentity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
+            m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
         }
 
         /// <param name="data">Key-value pairs, which will overwrite any existing data for these keys. Presumed to be available to all lobby members but not publicly.</param>
@@ -251,12 +251,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             if (!ShouldUpdateData(() => { UpdateLobbyDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
                 return;
 
-            Lobby lobby = m_lastKnownLobby;
 
+            var dataCurr = m_lastKnownLobby.Data ?? new Dictionary<string, DataObject>();
 
-            var dataCurr = lobby.Data ?? new Dictionary<string, DataObject>();
-
-            var shouldLock = false;
             foreach (var dataNew in data)
             {
                 if (dataCurr.ContainsKey(dataNew.Key))
@@ -264,15 +261,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 else
                     dataCurr.Add(dataNew.Key, dataNew.Value);
 
-                //Special Use: Get the state of the Local lobby so we can lock it from appearing in queries if it's not in the "Lobby" State
-                if (dataNew.Key == "State")
-                {
-                    Enum.TryParse(dataNew.Value.Value, out LobbyState lobbyState);
-                    shouldLock = lobbyState != LobbyState.Lobby;
-                }
             }
 
-            m_LobbyApiInterface.UpdateLobbyAsync(lobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
+            //we would want to lock lobbies from appearing in queries if we're in relay mode and the relay isn't fully set up yet
+            var shouldLock = m_LocalLobby.OnlineMode == OnlineMode.UnityRelay && string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
+
+
+            m_LobbyApiInterface.UpdateLobbyAsync(m_lastKnownLobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
 
             void OnComplete(Lobby result)
             {

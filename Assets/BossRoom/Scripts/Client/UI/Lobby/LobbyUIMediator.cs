@@ -13,7 +13,6 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
-using GameState = BossRoom.Scripts.Shared.Net.UnityServices.Lobbies.GameState;
 
 namespace BossRoom.Scripts.Client.UI
 {
@@ -29,15 +28,10 @@ namespace BossRoom.Scripts.Client.UI
         private LobbyServiceData m_lobbyServiceData;
         private LobbyContentHeartbeat m_lobbyContentHeartbeat;
         private IPublisher<UnityServiceErrorMessage> m_DisplayErrorPopupPublisher;
-        private IPublisher<UserStatus> m_LobbyUserStatusPublisher;
         private Identity m_Identity;
-        private LocalGameState m_localGameState;
         private NameGenerationData m_NameGenerationData;
-        private LocalLobbyFactory m_LocalLobbyFactory;
         private GameNetPortal m_GameNetPortal;
         private ClientGameNetPortal m_ClientNetPortal;
-
-        private IDisposable m_DisposableSubscriptions;
 
         //Inspector fields
         [SerializeField] private CanvasGroup m_CanvasGroup;
@@ -56,15 +50,12 @@ namespace BossRoom.Scripts.Client.UI
         private void InjectDependencies(
             LobbyAsyncRequests lobbyAsyncRequests,
             IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher,
-            IPublisher<UserStatus> lobbyUserStatusPublisher,
             Identity identity,
-            LocalGameState localGameState,
             LobbyUser localUser,
             LobbyContentHeartbeat lobbyContentHeartbeat,
             LobbyServiceData lobbyServiceData,
             LocalLobby localLobby,
             IInstanceResolver container,
-            LocalLobbyFactory localLobbyFactory,
             NameGenerationData nameGenerationData,
             GameNetPortal gameNetPortal,
             ClientGameNetPortal clientGameNetPortal
@@ -77,20 +68,14 @@ namespace BossRoom.Scripts.Client.UI
             _container = container;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
             m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
-            m_LobbyUserStatusPublisher = lobbyUserStatusPublisher;
             m_Identity = identity;
-            m_localGameState = localGameState;
             m_lobbyContentHeartbeat = lobbyContentHeartbeat;
             m_lobbyServiceData = lobbyServiceData;
-            m_LocalLobbyFactory = localLobbyFactory;
             m_localLobby = localLobby;
             m_GameNetPortal = gameNetPortal;
             m_ClientNetPortal = clientGameNetPortal;
-            m_localLobby.State = LobbyState.Lobby;
 
             RegenerateName();
-
-            SubscribeToMessageChannels();
 
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
@@ -104,65 +89,12 @@ namespace BossRoom.Scripts.Client.UI
 
         private void OnDestroy()
         {
-            m_DisposableSubscriptions?.Dispose();
 
             if (m_ClientNetPortal != null)
             {
                 m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
                 m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
                 m_ClientNetPortal.OnUnityRelayJoinFailed -= OnRelayJoinFailed;
-            }
-        }
-
-        private void SubscribeToMessageChannels()
-        {
-            var subscriptions = new DisposableGroup();
-
-            subscriptions.Add(_container.Resolve<ISubscriber<ClientUserApproved>>().Subscribe(OnClientUserApproved));
-            subscriptions.Add(_container.Resolve<ISubscriber<UserStatus>>().Subscribe(OnLobbyUserStatus));
-            subscriptions.Add(_container.Resolve<ISubscriber<StartCountdown>>().Subscribe(OnStartCountdown));
-            subscriptions.Add(_container.Resolve<ISubscriber<CancelCountdown>>().Subscribe(OnCancelCountdown));
-            subscriptions.Add(_container.Resolve<ISubscriber<CompleteCountdown>>().Subscribe(OnCompleteCountdown));
-            //subscriptions.Add(_container.Resolve<ISubscriber<ChangeGameState>>().Subscribe(OnChangeGameState));
-            subscriptions.Add(_container.Resolve<ISubscriber<ConfirmInGameState>>().Subscribe(OnConfirmInGameState));
-
-            m_DisposableSubscriptions = subscriptions;
-
-            void OnClientUserApproved(ClientUserApproved _)
-            {
-                ConfirmApproval();
-            }
-
-            void OnLobbyUserStatus(UserStatus status)
-            {
-                m_localUser.UserStatus = status;
-            }
-
-            void OnStartCountdown(StartCountdown _)
-            {
-                m_localLobby.State = LobbyState.CountDown;
-            }
-
-            void OnCancelCountdown(CancelCountdown _)
-            {
-                m_localLobby.State = LobbyState.Lobby;
-            }
-
-            void OnCompleteCountdown(CompleteCountdown _)
-            {
-                //todo:
-                // if (m_relayClient is RelayUtpHost)
-                //     (m_relayClient as RelayUtpHost).SendInGameState();
-            }
-
-            // void OnChangeGameState(ChangeGameState msg)
-            // {   SetGameState(msg.GameState);
-            // }
-
-            void OnConfirmInGameState(ConfirmInGameState _)
-            {
-                m_localUser.UserStatus = UserStatus.InGame;
-                m_localLobby.State = LobbyState.InGame;
             }
         }
 
@@ -190,7 +122,7 @@ namespace BossRoom.Scripts.Client.UI
             void OnSuccess(QueryResponse qr)
             {
                 UnblockUIAfterLoadingIsComplete();
-                var localLobbies = m_LocalLobbyFactory.CreateLocalLobbies(qr);
+                var localLobbies = LocalLobby.CreateLocalLobbies(qr);
 
                 var newLobbyDict = new Dictionary<string, LocalLobby>();
 
@@ -219,21 +151,7 @@ namespace BossRoom.Scripts.Client.UI
             BlockUIWhileLoadingIsInProgress();
         }
 
-        public void EndGame()
-        {
-            m_localLobby.State = LobbyState.Lobby;
-            SetUserLobbyState();
-        }
-
-        private void SetGameState(GameState state)
-        {
-            var isLeavingLobby = (state == GameState.Menu || state == GameState.JoinMenu) && m_localGameState.State == GameState.Lobby;
-            m_localGameState.State = state;
-            if (isLeavingLobby)
-                OnLeftLobby();
-        }
-
-        private void OnCreatedLobby(Lobby r)
+        private async void OnCreatedLobby(Lobby r)
         {
             m_localLobby.ApplyRemoteData(r);
             m_localUser.IsHost = true;
@@ -241,12 +159,6 @@ namespace BossRoom.Scripts.Client.UI
 
             m_LobbyAsyncRequests.BeginTracking(r);
             m_lobbyContentHeartbeat.BeginTracking();
-
-            SetUserLobbyState();
-
-            // The host has the opportunity to reject incoming players, but to do so the player needs to connect to Relay without having game logic available.
-            // In particular, we should prevent players from joining voice chat until they are approved.
-            m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
 
             Debug.Log(
                 "We have created a lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
@@ -264,8 +176,10 @@ namespace BossRoom.Scripts.Client.UI
                     break;
 
                 case OnlineMode.UnityRelay:
-                    Debug.Log("Unity Relay Host clicked");
-                    m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
+
+                    //TODO: after we get unity relay data we must call LobbyAsyncRequests.UpdatePlayerRelayInfoAsync
+
+                     await m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
                     break;
             }
             //todo: add a "cancel" button and a label to show the current status. Cancel button would trigger cancellationTokenSource to cancel
@@ -285,12 +199,6 @@ namespace BossRoom.Scripts.Client.UI
              m_LobbyAsyncRequests.BeginTracking(remoteLobby);
              m_lobbyContentHeartbeat.BeginTracking();
 
-            SetUserLobbyState();
-
-            // The host has the opportunity to reject incoming players, but to do so the player needs to connect to Relay without having game logic available.
-            // In particular, we should prevent players from joining voice chat until they are approved.
-            m_LobbyUserStatusPublisher.Publish(UserStatus.Connecting);
-
             m_GameNetPortal.PlayerName = m_localUser.DisplayName;
 
             var cancellationTokenSource = new CancellationTokenSource();
@@ -302,8 +210,8 @@ namespace BossRoom.Scripts.Client.UI
                     break;
 
                 case OnlineMode.UnityRelay:
-                    Debug.Log($"Unity Relay Client, join code {m_localLobby.RelayCode}");
-                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_localLobby.RelayCode, cancellationTokenSource.Token);
+                    Debug.Log($"Unity Relay Client, join code {m_localLobby.RelayJoinCode}");
+                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_localLobby.RelayJoinCode, cancellationTokenSource.Token);
                     break;
             }
 
@@ -485,106 +393,12 @@ namespace BossRoom.Scripts.Client.UI
             }
         }
 
-
-        private void StartRelayConnection()
-        {
-            // if (m_localUser.IsHost)
-            //     m_relaySetup = gameObject.AddComponent<RelayUtpSetupHost>();
-            // else
-            //     m_relaySetup = gameObject.AddComponent<RelayUtpSetupClient>();
-            // m_relaySetup.BeginRelayJoin(m_localLobby, m_localUser, OnRelayConnected);
-            //
-            // void OnRelayConnected(bool didSucceed, RelayUtpClient client)
-            // {
-            //     Component.Destroy(m_relaySetup);
-            //     m_relaySetup = null;
-            //
-            //     if (!didSucceed)
-            //     {   Debug.LogError("Relay connection failed! Retrying in 5s...");
-            //         StartCoroutine(RetryConnection(StartRelayConnection, m_localLobby.LobbyID));
-            //         return;
-            //     }
-            //
-            //     m_relayClient = client;
-            //     if (m_localUser.IsHost)
-            //         CompleteRelayConnection();
-            //     else
-            //         Debug.Log("Client is now waiting for approval...");
-            // }
-        }
-
-
-        private void OnLeftLobby()
-        {
-            m_lobbyContentHeartbeat.EndTracking();
-            m_LobbyAsyncRequests.EndTracking();
-            m_localUser.ResetState();
-            m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby.LobbyID, ResetLocalLobby, null);
-
-
-            //todo: CLEANUP WHATEVER CONNECTION SETUP FOR THE LOBBY TYPE WE WERE IN
-            //CleanupRelayConnection();
-        }
-
-        private void CleanupRelayConnection()
-        {
-            // if (m_relaySetup != null)
-            // {   Component.Destroy(m_relaySetup);
-            //     m_relaySetup = null;
-            // }
-            // if (m_relayClient != null)
-            // {
-            //     m_relayClient.Dispose();
-            //     StartCoroutine(FinishCleanup());
-            //
-            //     // We need to delay slightly to give the disconnect message sent during Dispose time to reach the host, so that we don't destroy the connection without it being flushed first.
-            //     IEnumerator FinishCleanup()
-            //     {
-            //         yield return null;
-            //         Component.Destroy(m_relayClient);
-            //         m_relayClient = null;
-            //     }
-            // }
-        }
-
         /// <summary>
         ///     Back to Join menu if we fail to join for whatever reason.
         /// </summary>
         private void OnFailedJoin()
         {
             UnblockUIAfterLoadingIsComplete();
-            SetGameState(GameState.JoinMenu);
-        }
-
-
-        private IEnumerator RetryConnection(Action doConnection, string lobbyId)
-        {
-            yield return new WaitForSeconds(5);
-            if (m_localLobby != null && m_localLobby.LobbyID == lobbyId && !string.IsNullOrEmpty(lobbyId)) // Ensure we didn't leave the lobby during this waiting period.
-                doConnection?.Invoke();
-        }
-
-        private void ConfirmApproval()
-        {
-            if (!m_localUser.IsHost && m_localUser.IsApproved) CompleteRelayConnection();
-        }
-
-        private void CompleteRelayConnection()
-        {
-            m_LobbyUserStatusPublisher.Publish(UserStatus.Lobby);
-        }
-
-        private void SetUserLobbyState()
-        {
-            SetGameState(GameState.Lobby);
-            m_LobbyUserStatusPublisher.Publish(UserStatus.Lobby);
-        }
-
-        private void ResetLocalLobby()
-        {
-            m_localLobby.CopyObserved(new LocalLobby.LobbyData(), new Dictionary<string, LobbyUser>());
-            m_localLobby.AddPlayer(m_localUser); // As before, the local player will need to be plugged into UI before the lobby join actually happens.
-            m_localLobby.RelayServer = null;
         }
 
         #endregion
