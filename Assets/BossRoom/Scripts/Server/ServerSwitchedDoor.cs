@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// (Assign the floor switches for this door in the editor.)
     /// </summary>
     [RequireComponent(typeof(NetworkDoorState))]
-    public class ServerSwitchedDoor : NetworkBehaviour
+    public class ServerSwitchedDoor : MonoBehaviour, IServerOnlyMonoBehaviour
     {
         [SerializeField]
         NetworkFloorSwitchState[] m_SwitchesThatOpenThisDoor;
@@ -33,15 +34,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (m_SwitchesThatOpenThisDoor.Length == 0)
                 Debug.LogError("Door has no switches and can never be opened!", gameObject);
-        }
-
-        public override void OnNetworkSpawn()
-        {
-            enabled = IsServer;
-
-            DoorStateChanged(false, m_NetworkDoorState.IsOpen.Value);
-
-            m_NetworkDoorState.IsOpen.OnValueChanged += DoorStateChanged;
         }
 
         void Update()
@@ -67,6 +59,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         void OnValidate()
         {
             m_AnimatorDoorOpenBoolID = Animator.StringToHash(k_AnimatorDoorOpenBoolVarName);
+        }
+
+        public void SetEnabled(bool enable)
+        {
+            enabled = enable;
+            if (enable)
+            {
+                DoorStateChanged(false, m_NetworkDoorState.IsOpen.Value);
+
+                m_NetworkDoorState.IsOpen.OnValueChanged += DoorStateChanged;
+            }
+            else
+            {
+                m_NetworkDoorState.IsOpen.OnValueChanged -= DoorStateChanged;
+            }
         }
     }
 }

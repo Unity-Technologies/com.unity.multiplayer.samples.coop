@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -10,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// and vice versa.
     /// </summary>
     [RequireComponent(typeof(NetworkDoorState))]
-    public class ClientDoorVisualization : NetworkBehaviour
+    public class ClientDoorVisualization : MonoBehaviour, IClientOnlyMonoBehaviour
     {
         [SerializeField]
         [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]
@@ -19,32 +20,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         NetworkDoorState m_DoorState;
 
-        public override void OnNetworkSpawn()
+        void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
         {
-            if (!IsClient)
-            {
-                enabled = false;
-            }
-            else
+            m_PhysicsObject.SetActive(!isDoorOpen);
+        }
+
+        public void SetEnabled(bool enable)
+        {
+            enabled = enable;
+            if (enable)
             {
                 m_DoorState.IsOpen.OnValueChanged += OnDoorStateChanged;
 
                 // initialize visuals based on current server state (or else we default to "closed")
                 OnDoorStateChanged(false, m_DoorState.IsOpen.Value);
             }
-        }
-
-        public override void OnNetworkDespawn()
-        {
-            if (m_DoorState)
+            else
             {
                 m_DoorState.IsOpen.OnValueChanged -= OnDoorStateChanged;
             }
-        }
-
-        void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
-        {
-            m_PhysicsObject.SetActive(!isDoorOpen);
         }
     }
 }
