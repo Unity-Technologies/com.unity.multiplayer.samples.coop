@@ -139,9 +139,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         }
 
         /// <summary>
-        /// Attempt to join an existing lobby. Either ID xor code can be null.
+        /// Attempt to join an existing lobby. Will try to join via code, if code is null - will try to join via ID.
         /// </summary>
-        public void JoinLobbyAsync(string lobbyId, string lobbyCode, LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure)
+        public void JoinLobbyAsync(string lobbyId, string lobbyCode, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitJoin.CanCall() ||
                 (lobbyId == null && lobbyCode == null))
@@ -152,10 +152,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
 
             string uasId = AuthenticationService.Instance.PlayerId;
-            if (!string.IsNullOrEmpty(lobbyId))
-                m_LobbyApiInterface.JoinLobbyAsync_ById(uasId, lobbyId, m_LocalLobbyUser.GetDataForUnityServices(), onSuccess, onFailure);
-            else
+            if (!string.IsNullOrEmpty(lobbyCode))
+            {
                 m_LobbyApiInterface.JoinLobbyAsync_ByCode(uasId, lobbyCode, m_LocalLobbyUser.GetDataForUnityServices(), onSuccess, onFailure);
+            }
+            else
+            {
+                m_LobbyApiInterface.JoinLobbyAsync_ById(uasId, lobbyId, m_LocalLobbyUser.GetDataForUnityServices(), onSuccess, onFailure);
+            }
         }
 
         /// <summary>

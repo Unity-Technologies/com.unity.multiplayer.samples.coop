@@ -3,34 +3,13 @@ using BossRoom.Scripts.Shared.Infrastructure;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
-    /// <summary>
-    /// Used when displaying the lobby list, to indicate when we are awaiting an updated lobby query.
-    /// </summary>
-    public enum LobbyQueryState
-    {
-        Empty,
-        Fetching,
-        Error,
-        Fetched
-    }
 
     /// <summary>
-    /// Holds data related to the Lobby service itself - The latest retrieved lobby list, the state of retrieval.
+    /// Holds data related to the Lobby service itself - The latest retrieved lobby list
     /// </summary>
     [System.Serializable]
     public class LobbyServiceData : Observed<LobbyServiceData>
     {
-        LobbyQueryState m_CurrentState = LobbyQueryState.Empty;
-
-        public LobbyQueryState State
-        {
-            get { return m_CurrentState; }
-            set
-            {
-                m_CurrentState = value;
-                OnChanged(this);
-            }
-        }
 
         Dictionary<string, LocalLobby> m_currentLobbies = new Dictionary<string, LocalLobby>();
 
@@ -56,7 +35,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public void FetchedLobbies(Dictionary<string, LocalLobby> newLobbyDict)
         {
-            m_CurrentState = LobbyQueryState.Fetched;
             m_currentLobbies = newLobbyDict;
             OnChanged(this);
         }

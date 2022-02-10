@@ -16,7 +16,7 @@ public class RoomNameBox : ObserverBehaviour<LocalLobby>
     [SerializeField]
     Button m_CopyToClipboardButton;
 
-    string m_RoomName;
+    string m_LobbyCode;
 
 
     [Inject]
@@ -30,13 +30,14 @@ public class RoomNameBox : ObserverBehaviour<LocalLobby>
         switch (localLobby.OnlineMode)
         {
             case OnlineMode.IpHost:
-                ConnectionFinished(localLobby.LobbyCode);
-                break;
             case OnlineMode.UnityRelay:
-                ConnectionFinished(m_RoomNameText.text = localLobby.RelayJoinCode);
+                m_LobbyCode = localLobby.LobbyCode;
+                m_RoomNameText.text = $"Lobby Code: {m_LobbyCode}";
+                m_CopyToClipboardButton.gameObject.SetActive(true);
                 break;
             case OnlineMode.Unset:
                 //this can happen if we launch the game while circumventing lobby logic
+                m_LobbyCode = "";
                 m_RoomNameText.text = $"-----------";
                 m_CopyToClipboardButton.gameObject.SetActive(false);
                 break;
@@ -45,15 +46,8 @@ public class RoomNameBox : ObserverBehaviour<LocalLobby>
         }
     }
 
-    void ConnectionFinished(string roomName)
-    {
-        m_RoomName = roomName;
-        m_RoomNameText.text = $"Room Name: {m_RoomName}";
-        m_CopyToClipboardButton.gameObject.SetActive(true);
-    }
-
     public void CopyToClipboard()
     {
-        GUIUtility.systemCopyBuffer = m_RoomName;
+        GUIUtility.systemCopyBuffer = m_LobbyCode;
     }
 }

@@ -1,5 +1,8 @@
 using System;
+using System.Collections.Generic;
 using System.Threading;
+using System.Threading.Tasks;
+using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
@@ -9,6 +12,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using Unity.Services.Core;
 using Unity.Services.Authentication;
+using Unity.Services.Relay;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -32,7 +36,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private const int k_TimeoutDuration = 10;
 
         public event Action<ConnectStatus> ConnectFinished;
-        public event Action<string> OnUnityRelayJoinFailed; // todo put UI code as its own assembly so code can reference it. In theory, UI should be consumed by everyone
 
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
@@ -43,6 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private LobbyAsyncRequests m_LobbyAsyncRequests;
 
+        [Inject]
         private void InjectDependencies(LobbyAsyncRequests lobbyAsyncRequests)
         {
             m_LobbyAsyncRequests = lobbyAsyncRequests;
@@ -223,60 +227,38 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             return true;
         }
 
-        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode, CancellationToken cancellationToken)
+        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode, CancellationToken cancellationToken, Action<string> onFailure)
         {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+            var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
 
-            switch (chosenTransport)
+            Debug.Log($"Setting Unity Relay client with join code {joinCode}");
+
+            bool relayIsReady = false;
+
+            try
             {
-                case UnityTransport utp:
-                    Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-                    try
-                    {
-                        await UnityServices.InitializeAsync();
-                        Debug.Log(AuthenticationService.Instance);
+                var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
+                await clientRelayUtilityTask;
+                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
 
-                        if (!AuthenticationService.Instance.IsSignedIn)
-                        {
-                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                            var playerId = AuthenticationService.Instance.PlayerId;
-                            Debug.Log(playerId);
-                        }
-
-                        var clientRelayUtilityTask = UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
-                        await clientRelayUtilityTask;
-                        var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
-
-                        m_LobbyAsyncRequests.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
-                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
-                    }
-                    catch (Exception e)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            Debug.Log("Unity Relay join failed, but was cancelled: " + e.Message);
-                        }
-                        else
-                        {
-                            OnUnityRelayJoinFailed?.Invoke(e.Message);
-
-                            // todo remove the above callback and get the below uncommented when UI is its own assembly
-                            // var menuUI = MainMenuUI.Instance;
-                            // if (menuUI)
-                            // {
-                            //     menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
-                            // }
-                            throw;
-                        }
-                    }
-
-                    break;
-                default:
-                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+                m_LobbyAsyncRequests.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
+                relayIsReady = true;
+            }
+            catch (Exception e)
+            {
+                if (cancellationToken.IsCancellationRequested)
+                {
+                    Debug.Log("Unity Relay join failed, but was cancelled: " + e.Message);
+                }
+                else
+                {
+                    onFailure?.Invoke(e.Message);
+                }
             }
 
-            if (!cancellationToken.IsCancellationRequested)
+            if (!cancellationToken.IsCancellationRequested && relayIsReady)
             {
                 ConnectClient(portal);
             }

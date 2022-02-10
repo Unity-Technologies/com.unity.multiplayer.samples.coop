@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Threading;
 using BossRoom.Scripts.Shared.Infrastructure;
@@ -44,7 +42,7 @@ namespace BossRoom.Scripts.Client.UI
 
         #endregion
 
-        #region Lifetime
+        #region Lifecycle
 
         [Inject]
         private void InjectDependencies(
@@ -79,7 +77,6 @@ namespace BossRoom.Scripts.Client.UI
 
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
-            m_ClientNetPortal.OnUnityRelayJoinFailed += OnRelayJoinFailed;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
             //any disconnect reason set? Show it to the user here.
@@ -94,23 +91,21 @@ namespace BossRoom.Scripts.Client.UI
             {
                 m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
                 m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
-                m_ClientNetPortal.OnUnityRelayJoinFailed -= OnRelayJoinFailed;
             }
         }
 
         #endregion
 
-        #region Lobby API
+        #region Lobby and Relay calls
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
-            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedJoin);
+            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
         public void QueryLobbiesRequest(bool blockUI)
         {
-            m_lobbyServiceData.State = LobbyQueryState.Fetching;
 
             m_LobbyAsyncRequests.RetrieveLobbyListAsync(
                 OnSuccess,
@@ -126,7 +121,10 @@ namespace BossRoom.Scripts.Client.UI
 
                 var newLobbyDict = new Dictionary<string, LocalLobby>();
 
-                foreach (var lobby in localLobbies) newLobbyDict.Add(lobby.LobbyID, lobby);
+                foreach (var lobby in localLobbies)
+                {
+                    newLobbyDict.Add(lobby.LobbyID, lobby);
+                }
 
                 m_lobbyServiceData.FetchedLobbies(newLobbyDict);
             }
@@ -134,35 +132,53 @@ namespace BossRoom.Scripts.Client.UI
             void OnFailure()
             {
                 UnblockUIAfterLoadingIsComplete();
-                m_lobbyServiceData.State = LobbyQueryState.Error;
             }
         }
 
-
         public void JoinLobbyRequest(LocalLobby.LobbyData lobbyData)
         {
-            m_LobbyAsyncRequests.JoinLobbyAsync(lobbyData.LobbyID, lobbyData.LobbyCode, m_localUser, OnJoinedLobby, OnFailedJoin);
+            switch (m_localLobby.OnlineMode)
+            {
+                case OnlineMode.IpHost:
+                    Debug.Log($"Join lobby request. Lobby ID: {m_localLobby.LobbyID}, at IP:Port {m_localLobby.Data.IP}:{m_localLobby.Data.Port}");
+                    break;
+                case OnlineMode.UnityRelay:
+                    Debug.Log($"Join lobby request. Lobby ID: {m_localLobby.LobbyID}, Internal Relay Join Code{m_localLobby.RelayJoinCode}");
+                    break;
+            }
+
+            m_LobbyAsyncRequests.JoinLobbyAsync(lobbyData.LobbyID, lobbyData.LobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
         public void QuickJoinRequest()
         {
-            m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, OnJoinedLobby, OnFailedJoin);
+            m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
-        private async void OnCreatedLobby(Lobby r)
+        private void OnFailedLobbyCreateOrJoin()
+        {
+            UnblockUIAfterLoadingIsComplete();
+        }
+
+        private void OnCreatedLobby(Lobby r)
         {
             m_localLobby.ApplyRemoteData(r);
             m_localUser.IsHost = true;
-            Debug.Log($"Created lobby code: {m_localLobby.LobbyCode}");
 
             m_LobbyAsyncRequests.BeginTracking(r);
             m_lobbyContentHeartbeat.BeginTracking();
 
-            Debug.Log(
-                "We have created a lobby, so now we are starting the actual connection OR fetching relay codes to go into relay-based connection. This is not considered the final part of lobby being created: we would want the host to either start it's IP-based NGO game or the host needs to do that via relay");
-
+            switch (m_localLobby.OnlineMode)
+            {
+                case OnlineMode.IpHost:
+                    Debug.Log($"Created lobby with ID: {m_localLobby.LobbyID} and code {m_localLobby.LobbyCode}, at IP:Port {m_localLobby.Data.IP}:{m_localLobby.Data.Port}");
+                    break;
+                case OnlineMode.UnityRelay:
+                    Debug.Log($"Created lobby with ID: {m_localLobby.LobbyID} and code {m_localLobby.LobbyCode}, Internal Relay Join Code{m_localLobby.RelayJoinCode}");
+                    break;
+            }
 
             m_GameNetPortal.PlayerName = m_localUser.DisplayName;
 
@@ -179,7 +195,7 @@ namespace BossRoom.Scripts.Client.UI
 
                     //TODO: after we get unity relay data we must call LobbyAsyncRequests.UpdatePlayerRelayInfoAsync
 
-                     await m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
+                     m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
                     break;
             }
             //todo: add a "cancel" button and a label to show the current status. Cancel button would trigger cancellationTokenSource to cancel
@@ -201,6 +217,17 @@ namespace BossRoom.Scripts.Client.UI
 
             m_GameNetPortal.PlayerName = m_localUser.DisplayName;
 
+            switch (m_localLobby.OnlineMode)
+            {
+                case OnlineMode.IpHost:
+                    Debug.Log($"Joined lobby with code: {m_localLobby.LobbyCode}, at IP:Port {m_localLobby.Data.IP}:{m_localLobby.Data.Port}");
+                    break;
+                case OnlineMode.UnityRelay:
+                    Debug.Log($"Joined lobby with code: {m_localLobby.LobbyCode}, Internal Relay Join Code{m_localLobby.RelayJoinCode}");
+                    break;
+            }
+
+
             var cancellationTokenSource = new CancellationTokenSource();
 
             switch (m_localLobby.OnlineMode)
@@ -210,8 +237,8 @@ namespace BossRoom.Scripts.Client.UI
                     break;
 
                 case OnlineMode.UnityRelay:
-                    Debug.Log($"Unity Relay Client, join code {m_localLobby.RelayJoinCode}");
-                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_localLobby.RelayJoinCode, cancellationTokenSource.Token);
+
+                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_localLobby.RelayJoinCode, cancellationTokenSource.Token, OnRelayJoinFailed);
                     break;
             }
 
@@ -223,6 +250,25 @@ namespace BossRoom.Scripts.Client.UI
             //     // This token is used with Photon Relay and Unity Relay to prevent starting the connection if it hasn't yet
             //     cancellationTokenSource.Cancel();
             // });
+        }
+
+        private void OnRelayJoinFailed(string message)
+        {
+            Debug.Log($"Relay join failed: {message}");
+            //leave the lobby if relay failed for some reason
+            m_LobbyAsyncRequests.EndTracking();
+            m_lobbyContentHeartbeat.EndTracking();
+
+            if (!string.IsNullOrEmpty(m_localLobby?.LobbyID))
+            {
+                m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby?.LobbyID, null, null);
+            }
+
+            m_localUser.ResetState();
+            m_localLobby?.Reset(m_localUser);
+
+            UnblockUIAfterLoadingIsComplete();
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Unity Relay: Join Failed", message));
         }
 
         #endregion
@@ -283,7 +329,7 @@ namespace BossRoom.Scripts.Client.UI
         #region m_clientNetPortal callbacks
 
         /// <summary>
-        ///     Callback when the server sends us back a connection finished event.
+        /// Callback when the server sends us back a connection finished event.
         /// </summary>
         /// <param name="status"></param>
         private void OnConnectFinished(ConnectStatus status)
@@ -291,51 +337,14 @@ namespace BossRoom.Scripts.Client.UI
             ConnectStatusToMessage(status, true);
         }
 
-        private void OnRelayJoinFailed(string message)
-        {
-            UnblockUIAfterLoadingIsComplete();
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Unity Relay: Join Failed", message));
-        }
-
         /// <summary>
-        ///     Invoked when the client sent a connection request to the server and didn't hear back at all.
-        ///     This should create a UI letting the player know that something went wrong and to try again
+        /// Invoked when the client sent a connection request to the server and didn't hear back at all.
+        /// This should create a UI letting the player know that something went wrong and to try again
         /// </summary>
         private void OnNetworkTimeout()
         {
             UnblockUIAfterLoadingIsComplete();
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Connection failes", "Unable to Reach Host/Server"));
-        }
-
-        #endregion
-
-
-        #region Notifier panel stuff
-
-        /// <summary>
-        ///     Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
-        /// </summary>
-        /// <param name="titleText">The title text at the top of the panel</param>
-        /// <param name="mainText"> The text just under the title- the main body of text</param>
-        /// <param name="displayImage">set to true if the notifier should display the animating icon for being busy</param>
-        /// <param name="displayConfirmation"> set to true if the panel expects the user to click the button to close the panel.</param>
-        /// <param name="subText">optional text in the middle of the panel.  Is not meant to coincide with the displayImage</param>
-        public void SetupNotifierDisplay(string titleText, string mainText, bool displayImage, bool displayConfirmation, string subText = "")
-        {
-            Debug.Log($"{titleText}, {mainText}");
-
-            // ResetState();
-            //
-            // m_TitleText.text = titleText;
-            // m_MainText.text = mainText;
-            // m_SubText.text = subText;
-            //
-            // m_ReconnectingImage.SetActive(displayImage);
-            //
-            // m_ConfirmationButton.gameObject.SetActive(displayConfirmation);
-            // m_InputField.gameObject.SetActive(false);
-            // m_PortInputField.gameObject.SetActive(false);
-            // gameObject.SetActive(true);
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Connection failed", "Unable to Reach Host/Server"));
         }
 
         #endregion
@@ -355,32 +364,24 @@ namespace BossRoom.Scripts.Client.UI
                 case ConnectStatus.UserRequestedDisconnect:
                     break;
                 case ConnectStatus.ServerFull:
-                    SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections", false, true);
+                    Debug.Log($"{"Connection Failed"}, {"The Host is full and cannot accept any additional connections"}");
                     break;
                 case ConnectStatus.Success:
-                    if (connecting) SetupNotifierDisplay("Success!", "Joining Now", false, true);
+                    if (connecting) Debug.Log($"{"Success!"}, {"Joining Now"}");
 
                     break;
                 case ConnectStatus.LoggedInAgain:
-                    SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account", false, true);
+                    Debug.Log($"{"Connection Failed"}, {"You have logged in elsewhere using the same account"}");
                     break;
                 case ConnectStatus.GenericDisconnect:
                     var title = connecting ? "Connection Failed" : "Disconnected From Host";
                     var text = connecting ? "Something went wrong" : "The connection to the host was lost";
-                    SetupNotifierDisplay(title, text, false, true);
+                    Debug.Log($"{title}, {text}");
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
                     break;
             }
-        }
-
-        /// <summary>
-        ///     Back to Join menu if we fail to join for whatever reason.
-        /// </summary>
-        private void OnFailedJoin()
-        {
-            UnblockUIAfterLoadingIsComplete();
         }
 
         #endregion

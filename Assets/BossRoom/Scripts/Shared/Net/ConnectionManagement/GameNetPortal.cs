@@ -1,9 +1,7 @@
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
-using Netcode.Transports.PhotonRealtime;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
@@ -192,27 +190,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             StartHost();
         }
 
-        public void StartPhotonRelayHost(string roomName, CancellationToken cancellationToken)
-        {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            switch (chosenTransport)
-            {
-                case PhotonRealtimeTransport photonRealtimeTransport:
-                    photonRealtimeTransport.RoomName = roomName;
-                    break;
-                default:
-                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
-            }
-
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                StartHost();
-            }
-        }
-
-        public async Task StartUnityRelayHost(CancellationToken cancellationToken)
+        public async void StartUnityRelayHost(CancellationToken cancellationToken)
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -224,15 +202,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                     try
                     {
-                        //todo - this should be redundant now that we ensure that auth happens before we are allowed to intereact with the main menu
-                        await UnityServices.InitializeAsync();
-                        if (!AuthenticationService.Instance.IsSignedIn)
-                        {
-                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                            var playerId = AuthenticationService.Instance.PlayerId;
-                            Debug.Log(playerId);
-                        }
-
                         // we now need to get the joinCode?
                         var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
                         await serverRelayUtilityTask;
@@ -240,6 +209,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                         var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
 
                         m_LocalLobby.RelayJoinCode = joinCode;
+                        //next line enabled lobby and relay services integration
                         m_LobbyAsyncRequests.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
 
                         // we now need to set the RelayCode somewhere :P
