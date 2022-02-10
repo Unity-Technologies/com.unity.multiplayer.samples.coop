@@ -14,7 +14,6 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField] private TextMeshProUGUI m_lobbyNameText;
         [SerializeField] private TextMeshProUGUI m_lobbyCountText;
         [SerializeField] private TextMeshProUGUI m_OnlineModeText;
-        [SerializeField] private TextMeshProUGUI m_CodesText;
         private LobbyUIMediator m_LobbyUIMediator;
 
         [Inject]
@@ -29,16 +28,6 @@ namespace BossRoom.Scripts.Client.UI
             m_lobbyNameText.SetText(data.LobbyName);
             m_lobbyCountText.SetText($"{data.PlayerCount}/{data.MaxPlayerCount}");
             m_OnlineModeText.SetText(data.OnlineMode.ToString());
-            switch (data.OnlineMode)
-            {
-                case OnlineMode.IpHost:
-                case OnlineMode.Unset:
-                    m_CodesText.text = "";
-                    break;
-                case OnlineMode.UnityRelay:
-                    m_CodesText.text = $"Relay Join Code: {data.RelayJoinCode}";
-                    break;
-            }
         }
 
         public void UpdateLobby(LocalLobby lobby)
