@@ -19,7 +19,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private IDisposable m_DisposableSubscription;
         private readonly LobbyAsyncRequests m_LobbyAsyncRequests;
         private readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
-        private readonly Bootstrap m_Bootstrap;
+        private readonly ApplicationController m_ApplicationController;
 
         [Inject]
         public LobbyContentHeartbeat(
@@ -28,14 +28,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
             LocalLobby localLobby,
             LobbyUser localUser,
-            Bootstrap bootstrap)
+            ApplicationController applicationController)
         {
             m_SlowUpdate = slowUpdate;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
             m_localLobby = localLobby;
             m_localUser = localUser;
-            m_Bootstrap = bootstrap;
+            m_ApplicationController = applicationController;
         }
 
         public void BeginTracking()
@@ -126,7 +126,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                             return;
                     }
                     m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
-                    m_Bootstrap.QuitGame();
+                    m_ApplicationController.QuitGame();
                 }
             }
         }

@@ -8,14 +8,13 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.SocialPlatforms.Impl;
 
 namespace BossRoom.Scripts.Shared
 {
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
     /// </summary>
-    public class Bootstrap : MonoBehaviour
+    public class ApplicationController : MonoBehaviour
     {
         [SerializeField] private UpdateRunner m_UpdateRunner;
         [SerializeField] private GameNetPortal m_GameNetPortal;

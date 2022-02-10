@@ -12,12 +12,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         Text m_QuitButtonText;
 
-        private Bootstrap m_Bootstrap;
+        private ApplicationController m_ApplicationController;
 
         [Inject]
-        private void InjectDependencies(Bootstrap bootstrap)
+        private void InjectDependencies(ApplicationController applicationController)
         {
-            m_Bootstrap = bootstrap;
+            m_ApplicationController = applicationController;
         }
 
         void OnEnable()
@@ -29,7 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void Quit()
         {
-            m_Bootstrap.QuitGame();
+            m_ApplicationController.QuitGame();
             gameObject.SetActive(false);
         }
     }
