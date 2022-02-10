@@ -18,21 +18,21 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private readonly UpdateRunner m_SlowUpdate;
         private IDisposable m_DisposableSubscription;
         private readonly LobbyAsyncRequests m_LobbyAsyncRequests;
-        private readonly IPublisher<UnityServiceErrorMessage> m_DisplayErrorPopupPublisher;
+        private readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
         private readonly Bootstrap m_Bootstrap;
 
         [Inject]
         public LobbyContentHeartbeat(
             UpdateRunner slowUpdate,
             LobbyAsyncRequests lobbyAsyncRequests,
-            IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher,
+            IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
             LocalLobby localLobby,
             LobbyUser localUser,
             Bootstrap bootstrap)
         {
             m_SlowUpdate = slowUpdate;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
-            m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
+            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
             m_localLobby = localLobby;
             m_localUser = localUser;
             m_Bootstrap = bootstrap;
@@ -125,8 +125,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                         if (lobbyUser.Value.IsHost)
                             return;
                     }
-                    m_DisplayErrorPopupPublisher.Publish(new UnityServiceErrorMessage("Host left the lobby, disconnecting."));
-                    Debug.LogWarning("Host left the lobby, disconnecting...");
+                    m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
                     m_Bootstrap.QuitGame();
                 }
             }

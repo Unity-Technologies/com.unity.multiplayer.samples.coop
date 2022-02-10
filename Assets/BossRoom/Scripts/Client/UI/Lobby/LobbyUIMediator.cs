@@ -27,7 +27,7 @@ namespace BossRoom.Scripts.Client.UI
         private LocalLobby m_localLobby;
         private LobbyServiceData m_lobbyServiceData;
         private LobbyContentHeartbeat m_lobbyContentHeartbeat;
-        private IPublisher<UnityServiceErrorMessage> m_DisplayErrorPopupPublisher;
+        private IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
         private Identity m_Identity;
         private NameGenerationData m_NameGenerationData;
         private GameNetPortal m_GameNetPortal;
@@ -49,7 +49,7 @@ namespace BossRoom.Scripts.Client.UI
         [Inject]
         private void InjectDependencies(
             LobbyAsyncRequests lobbyAsyncRequests,
-            IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher,
+            IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
             Identity identity,
             LobbyUser localUser,
             LobbyContentHeartbeat lobbyContentHeartbeat,
@@ -67,7 +67,7 @@ namespace BossRoom.Scripts.Client.UI
             m_localUser = localUser;
             _container = container;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
-            m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
+            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
             m_Identity = identity;
             m_lobbyContentHeartbeat = lobbyContentHeartbeat;
             m_lobbyServiceData = lobbyServiceData;
@@ -294,7 +294,7 @@ namespace BossRoom.Scripts.Client.UI
         private void OnRelayJoinFailed(string message)
         {
             UnblockUIAfterLoadingIsComplete();
-            SetupNotifierDisplay("Unity Relay: Join Failed", $"{message}", false, true);
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Unity Relay: Join Failed", message));
         }
 
         /// <summary>
@@ -304,7 +304,7 @@ namespace BossRoom.Scripts.Client.UI
         private void OnNetworkTimeout()
         {
             UnblockUIAfterLoadingIsComplete();
-            SetupNotifierDisplay("Connection Failed", "Unable to Reach Host/Server", false, true, "Please try again");
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Connection failes", "Unable to Reach Host/Server"));
         }
 
         #endregion
@@ -336,24 +336,6 @@ namespace BossRoom.Scripts.Client.UI
             // m_InputField.gameObject.SetActive(false);
             // m_PortInputField.gameObject.SetActive(false);
             // gameObject.SetActive(true);
-        }
-
-        /// <summary>
-        ///     Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
-        /// </summary>
-        /// <param name="titleText">The title text at the top of the panel</param>
-        /// <param name="mainText"> The text just under the title- the main body of text</param>
-        /// <param name="displayImage">set to true if the notifier should display the animating icon for being busy</param>
-        /// <param name="displayConfirmation"> set to true if the panel expects the user to click the button to close the panel.</param>
-        /// <param name="cancelCallback"> The delegate to invoke when the player cancels. </param>
-        /// <param name="subText">optional text in the middle of the panel.  Is not meant to coincide with the displayImage</param>
-        public void SetupNotifierDisplay(string titleText, string mainText, bool displayImage, bool displayConfirmation, Action cancelCallback, string subText = "")
-        {
-            SetupNotifierDisplay(titleText, mainText, displayImage, displayConfirmation, subText);
-
-            // m_CancelFunction = cancelCallback;
-            // m_CancelButton.gameObject.SetActive(true);
-            // m_CancelButton.onClick.AddListener(OnCancelClick);
         }
 
         #endregion

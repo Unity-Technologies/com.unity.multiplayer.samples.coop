@@ -130,11 +130,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             var initialLobbyData = new Dictionary<string, DataObject>()
             {
-                // {"RelayCode", new DataObject(DataObject.VisibilityOptions.Public,  RelayCode)},
-                // {"RelayNGOCode", new DataObject(DataObject.VisibilityOptions.Public, RelayNGOCode)},
-                // {"State", new DataObject(DataObject.VisibilityOptions.Public, ((int)State).ToString())},
-                // {"State_LastEdit", new DataObject(DataObject.VisibilityOptions.Public, Data.State_LastEdit.ToString())},
-                // {"RelayNGOCode_LastEdit", new DataObject(DataObject.VisibilityOptions.Public, Data.RelayNGOCode_LastEdit.ToString())},
                 {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())},
                 {"IP", new DataObject(DataObject.VisibilityOptions.Public, ip)},
                 {"Port", new DataObject(DataObject.VisibilityOptions.Public,  port.ToString())},

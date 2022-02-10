@@ -18,12 +18,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     {
         private const int k_maxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
 
-        private readonly IPublisher<UnityServiceErrorMessage> m_DisplayErrorPopupPublisher;
+        private readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
         [Inject]
-        public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> displayErrorPopupPublisher)
+        public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
         {
-            m_DisplayErrorPopupPublisher = displayErrorPopupPublisher;
+            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
         private void RunTask(Task task, Action onComplete, Action onFailed)
@@ -42,9 +42,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             if (e.Reason == LobbyExceptionReason.RateLimited) // We have other ways of preventing players from hitting the rate limit, so the developer-facing 429 error is sufficient here.
                 return;
-            var reason = $"Lobby Error: {e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
+            var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
 
-            m_DisplayErrorPopupPublisher.Publish(new UnityServiceErrorMessage(reason));
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason));
         }
 
         public void CreateLobbyAsync(string requesterUASId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData, Action<Lobby> onComplete, Action onFailed)
