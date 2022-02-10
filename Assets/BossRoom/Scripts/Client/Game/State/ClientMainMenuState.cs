@@ -43,7 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         [Inject]
-        private void InjectDependenciesAndInitialize(Identity identity)
+        private void InjectDependenciesAndInitialize(AuthenticationAPIInterface authAPIInterface)
         {
             m_Scope = new DIScope(DIScope.RootScope);
 
@@ -67,8 +67,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 unityAuthenticationInitOptions.SetProfile(hardcodedProfileID);
             }
 #endif
-            identity.DoAuthSignIn(OnAuthSignIn, unityAuthenticationInitOptions);
-
+            authAPIInterface.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
 
             void OnAuthSignIn()
             {
@@ -83,16 +82,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 m_signInSpinner.SetActive(false);
 
                 var localUser = m_Scope.Resolve<LobbyUser>();
-                var identity = m_Scope.Resolve<Identity>();
                 var localLobby = m_Scope.Resolve<LocalLobby>();
 
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
-                localUser.ID = identity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
+                localUser.ID = AuthenticationService.Instance.PlayerId;
                 localUser.DisplayName = m_NameGenerationData.GenerateName();
                 // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
                 localLobby.AddPlayer(localUser);
+            }
+
+            void OnSignInFailed()
+            {
+                Debug.LogError("For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
             }
         }
 

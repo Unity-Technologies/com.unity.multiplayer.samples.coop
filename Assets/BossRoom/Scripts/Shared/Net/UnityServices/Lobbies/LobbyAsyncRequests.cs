@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
@@ -17,15 +16,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private float m_heartbeatTime = 0;
         private readonly LobbyAPIInterface m_LobbyApiInterface;
         private readonly UpdateRunner m_SlowUpdate;
-        private readonly IIdentity m_LocalPlayerIdentity;
         private readonly LocalLobby m_LocalLobby;
         private readonly LobbyUser m_LocalLobbyUser;
         private const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
 
         [Inject]
-        public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, Identity localIdentity, LocalLobby localLobby, LobbyUser localLobbyUser)
+        public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, LocalLobby localLobby, LobbyUser localLobbyUser)
         {
-            m_LocalPlayerIdentity = localIdentity;
             m_LobbyApiInterface = lobbyAPIInterface;
             m_SlowUpdate = slowUpdate;
             m_LocalLobby = localLobby;
@@ -220,7 +217,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             if (!ShouldUpdateData(() => { UpdatePlayerDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
                 return;
 
-            string playerId = m_LocalPlayerIdentity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
+            string playerId = AuthenticationService.Instance.PlayerId;
 
             m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, data, OnComplete,  onFailure,null, null);
 
@@ -240,7 +237,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         {
             if (!ShouldUpdateData(() => { UpdatePlayerRelayInfoAsync(allocationId, connectionInfo, onComplete, onFailure); }, onComplete, true)) // Do retry here since the RelayUtpSetup that called this might be destroyed right after this.
                 return;
-            string playerId = m_LocalPlayerIdentity.GetSubIdentity(IIdentityType.Auth).GetContent("id");
+            string playerId = AuthenticationService.Instance.PlayerId;
             m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
         }
 

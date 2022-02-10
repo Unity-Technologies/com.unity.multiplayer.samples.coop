@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using GameLobby.UI;
@@ -16,17 +15,13 @@ namespace BossRoom.Scripts.Client.UI
 {
     public class LobbyUIMediator : MonoBehaviour
     {
-        #region Fields
-
         //Injected dependencies
-        private IInstanceResolver _container;
         private LobbyAsyncRequests m_LobbyAsyncRequests;
         private LobbyUser m_localUser;
         private LocalLobby m_localLobby;
         private LobbyServiceData m_lobbyServiceData;
         private LobbyContentHeartbeat m_lobbyContentHeartbeat;
         private IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
-        private Identity m_Identity;
         private NameGenerationData m_NameGenerationData;
         private GameNetPortal m_GameNetPortal;
         private ClientGameNetPortal m_ClientNetPortal;
@@ -40,20 +35,16 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField] private TextMeshProUGUI m_PlayerNameLabel;
         [SerializeField] private GameObject m_LoadingSpinner;
 
-        #endregion
-
-        #region Lifecycle
+        //Lifecycle
 
         [Inject]
         private void InjectDependencies(
             LobbyAsyncRequests lobbyAsyncRequests,
             IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
-            Identity identity,
             LobbyUser localUser,
             LobbyContentHeartbeat lobbyContentHeartbeat,
             LobbyServiceData lobbyServiceData,
             LocalLobby localLobby,
-            IInstanceResolver container,
             NameGenerationData nameGenerationData,
             GameNetPortal gameNetPortal,
             ClientGameNetPortal clientGameNetPortal
@@ -63,10 +54,8 @@ namespace BossRoom.Scripts.Client.UI
 
             m_NameGenerationData = nameGenerationData;
             m_localUser = localUser;
-            _container = container;
             m_LobbyAsyncRequests = lobbyAsyncRequests;
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
-            m_Identity = identity;
             m_lobbyContentHeartbeat = lobbyContentHeartbeat;
             m_lobbyServiceData = lobbyServiceData;
             m_localLobby = localLobby;
@@ -94,9 +83,7 @@ namespace BossRoom.Scripts.Client.UI
             }
         }
 
-        #endregion
-
-        #region Lobby and Relay calls
+        //Lobby and Relay calls done from UI
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
@@ -184,7 +171,6 @@ namespace BossRoom.Scripts.Client.UI
 
             var cancellationTokenSource = new CancellationTokenSource();
 
-
             switch (m_localLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
@@ -198,14 +184,6 @@ namespace BossRoom.Scripts.Client.UI
                      m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
                     break;
             }
-            //todo: add a "cancel" button and a label to show the current status. Cancel button would trigger cancellationTokenSource to cancel
-            // m_ResponsePopup.SetupNotifierDisplay("Starting host", "Attempting to Start host...", true, false, () =>
-            // {
-            //     // Shutdown NetworkManager in case it started the hosting process
-            //     m_GameNetPortal.RequestDisconnect();
-            //     // This token is used with Photon Relay and Unity Relay to prevent starting the host if it hasn't yet
-            //     cancellationTokenSource.Cancel();
-            // });
         }
 
         private void OnJoinedLobby(Lobby remoteLobby)
@@ -237,19 +215,9 @@ namespace BossRoom.Scripts.Client.UI
                     break;
 
                 case OnlineMode.UnityRelay:
-
                     m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_localLobby.RelayJoinCode, cancellationTokenSource.Token, OnRelayJoinFailed);
                     break;
             }
-
-            //todo: add a "cancel" button and a label to show the current status. Cancel button would trigger cancellationTokenSource to cancel
-            // m_ResponsePopup.SetupNotifierDisplay("Connecting", "Attempting to Join...", true, false, () =>
-            // {
-            //     // Shutdown NetworkManager in case it started the connection process
-            //     m_GameNetPortal.RequestDisconnect();
-            //     // This token is used with Photon Relay and Unity Relay to prevent starting the connection if it hasn't yet
-            //     cancellationTokenSource.Cancel();
-            // });
         }
 
         private void OnRelayJoinFailed(string message)
@@ -271,9 +239,7 @@ namespace BossRoom.Scripts.Client.UI
             m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Unity Relay: Join Failed", message));
         }
 
-        #endregion
-
-        #region show/hide UI
+        //show/hide UI
 
         public void Show()
         {
@@ -323,10 +289,7 @@ namespace BossRoom.Scripts.Client.UI
             m_LoadingSpinner.SetActive(false);
         }
 
-        #endregion
-
-
-        #region m_clientNetPortal callbacks
+        //m_clientNetPortal callbacks
 
         /// <summary>
         /// Callback when the server sends us back a connection finished event.
@@ -347,9 +310,6 @@ namespace BossRoom.Scripts.Client.UI
             m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Connection failed", "Unable to Reach Host/Server"));
         }
 
-        #endregion
-
-        #region OLD CODE
 
         /// <summary>
         ///     Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
@@ -383,7 +343,5 @@ namespace BossRoom.Scripts.Client.UI
                     break;
             }
         }
-
-        #endregion
     }
 }

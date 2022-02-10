@@ -5,10 +5,10 @@ using UnityEngine;
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
 {
     /// <summary>
-    /// Both Lobby and Relay have need for asynchronous requests with some basic safety wrappers. This is a shared place for that.
+    /// Unity Services need for asynchronous requests with some basic safety wrappers. This is a shared place for that.
     /// This will also permit parsing incoming exceptions for any service-specific errors that should be displayed to the player.
     /// </summary>
-    public static class AsyncUnityServiceRequest
+    public static class UnityServiceCallsTaskWrapper
     {
         public static async void RunTask<TException>(Task task, Action onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
         {

@@ -28,12 +28,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private void RunTask(Task task, Action onComplete, Action onFailed)
         {
-            AsyncUnityServiceRequest.RunTask<LobbyServiceException>(task, onComplete, onFailed, ParseServiceException);
+            UnityServiceCallsTaskWrapper.RunTask<LobbyServiceException>(task, onComplete, onFailed, ParseServiceException);
         }
 
         private void RunTask<T>(Task<T> task, Action<T> onComplete, Action onFailed)
         {
-            AsyncUnityServiceRequest.RunTask<T,LobbyServiceException>(task, onComplete, onFailed, ParseServiceException);
+            UnityServiceCallsTaskWrapper.RunTask<T,LobbyServiceException>(task, onComplete, onFailed, ParseServiceException);
         }
 
         private void ParseServiceException(LobbyServiceException e)

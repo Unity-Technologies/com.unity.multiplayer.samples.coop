@@ -50,11 +50,11 @@ namespace BossRoom.Scripts.Shared
             scope.BindMessageChannel<UnityServiceErrorMessage>();
 
             //all the lobby service stuff, bound here so that it persists through scene loads
+            scope.BindAsSingle<AuthenticationAPIInterface>(); //a manager entity that allows us to do anonymous authentication with unity services
             scope.BindAsSingle<LobbyServiceData>();
             scope.BindAsSingle<LobbyContentHeartbeat>();
             scope.BindAsSingle<LobbyAPIInterface>();
             scope.BindAsSingle<LobbyAsyncRequests>();
-            scope.BindAsSingle<Identity>(); //a manager entity that allows us to do anonymous authentication with unity services
 
 
             scope.FinalizeScopeConstruction();
