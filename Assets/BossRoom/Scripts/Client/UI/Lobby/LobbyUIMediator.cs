@@ -236,7 +236,7 @@ namespace BossRoom.Scripts.Client.UI
 
         public void Hide()
         {
-            m_CanvasGroup.alpha = 0.5f;
+            m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
         }
 
