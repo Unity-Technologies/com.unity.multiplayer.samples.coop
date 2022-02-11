@@ -8,8 +8,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     {
         private float m_TimeSinceLastCall = float.MaxValue;
         private readonly float m_CooldownTime;
-        private Queue<Action> m_PendingOperations = new Queue<Action>();
         private readonly UpdateRunner m_SlowUpdate;
+        private Queue<Action> m_PendingOperations = new Queue<Action>();
 
         public void EnqueuePendingOperation(Action action)
         {

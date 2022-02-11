@@ -7,21 +7,18 @@ using UnityEngine.UI;
 namespace BossRoom.Scripts.Client.UI
 {
     /// <summary>
-    ///     Handles the list of LobbyButtons and ensures it stays synchronized with the lobby list from the service.
+    /// Handles the list of LobbyPanelUIs and ensures it stays synchronized with the lobby list from the service.
     /// </summary>
     public class JoinLobbyUI : ObserverBehaviour<LobbyServiceData>
     {
         [SerializeField] private LobbyPanelUI m_LobbyPanelPrototype;
-
-        //
         [SerializeField] private InputField m_JoinCodeField;
-
-
         [SerializeField] private CanvasGroup m_CanvasGroup;
-        private GameObjectFactory m_GameObjectFactory;
+
+        private IInstanceResolver m_Container;
 
         /// <summary>
-        ///     Key: Lobby ID, Value Lobby UI
+        /// Key: Lobby ID, Value Lobby UI
         /// </summary>
         private readonly Dictionary<string, LobbyPanelUI> m_LobbyButtons = new Dictionary<string, LobbyPanelUI>();
 
@@ -29,9 +26,6 @@ namespace BossRoom.Scripts.Client.UI
         private LobbyUIMediator m_LobbyUIMediator;
 
         private readonly Dictionary<string, LocalLobby> m_LocalLobby = new Dictionary<string, LocalLobby>();
-
-        /// <summary>Contains some amount of information used to join an existing lobby.</summary>
-        private LocalLobby.LobbyData m_LocalLobbySelected;
 
         private UpdateRunner m_UpdateRunner;
 
@@ -42,13 +36,16 @@ namespace BossRoom.Scripts.Client.UI
 
         private void OnDisable()
         {
-            if (m_UpdateRunner != null) m_UpdateRunner.Unsubscribe(PeriodicRefresh);
+            if (m_UpdateRunner != null)
+            {
+                m_UpdateRunner.Unsubscribe(PeriodicRefresh);
+            }
         }
 
         [Inject]
-        private void InjectDependencies(GameObjectFactory gameObjectFactory, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData, UpdateRunner updateRunner)
+        private void InjectDependencies(IInstanceResolver container, LobbyUIMediator lobbyUIMediator, LobbyServiceData lobbyServiceData, UpdateRunner updateRunner)
         {
-            m_GameObjectFactory = gameObjectFactory;
+            m_Container = container;
             m_LobbyUIMediator = lobbyUIMediator;
             m_LobbyServiceData = lobbyServiceData;
             m_UpdateRunner = updateRunner;
@@ -57,28 +54,15 @@ namespace BossRoom.Scripts.Client.UI
             BeginObserving(m_LobbyServiceData);
         }
 
-        public void LobbyPanelSelected(LocalLobby lobby)
-        {
-            m_LocalLobbySelected = lobby.Data;
-        }
-
-        public void OnLobbyCodeInputFieldChanged(string newCode)
-        {
-            if (!string.IsNullOrEmpty(newCode))
-                m_LocalLobbySelected = new LocalLobby.LobbyData(newCode.ToUpper());
-        }
-
         public void OnJoinButtonPressed()
         {
-            m_LobbyUIMediator.JoinLobbyRequest(m_LocalLobbySelected);
-            m_LocalLobbySelected = default;
+            m_LobbyUIMediator.JoinLobbyWithCodeRequest(m_JoinCodeField.text.ToUpper());
         }
 
         private void PeriodicRefresh(float _)
         {
             m_LobbyUIMediator.QueryLobbiesRequest(false);
         }
-
 
         public void OnRefresh()
         {
@@ -132,9 +116,10 @@ namespace BossRoom.Scripts.Client.UI
         /// </summary>
         private void CreateLobbyPanel(string lobbyCode, LocalLobby lobby)
         {
-            var lobbyPanel = m_GameObjectFactory
-                .InstantiateActiveAndInjected(m_LobbyPanelPrototype.gameObject, m_LobbyPanelPrototype.transform.parent)
+            var lobbyPanel = Instantiate(m_LobbyPanelPrototype.gameObject, m_LobbyPanelPrototype.transform.parent)
                 .GetComponent<LobbyPanelUI>();
+            lobbyPanel.gameObject.SetActive(true);
+            m_Container.InjectIn(lobbyPanel);
 
             lobbyPanel.BeginObserving(lobby);
             lobby.onDestroyed += RemoveLobbyButton; // Set up to clean itself
@@ -155,14 +140,14 @@ namespace BossRoom.Scripts.Client.UI
             lobbyPanel.EndObserving();
             m_LobbyButtons.Remove(lobbyID);
             m_LocalLobby.Remove(lobbyID);
+
             //todo: reuse lobby panel UIs instead of creating new ones
             Destroy(lobbyPanel.gameObject);
         }
 
         public void Show()
         {
-            m_CanvasGroup.alpha = 1;
-            m_CanvasGroup.interactable = true;
+            m_CanvasGroup.alpha = 1f;
             m_CanvasGroup.blocksRaycasts = true;
 
             m_JoinCodeField.text = "";
@@ -171,8 +156,7 @@ namespace BossRoom.Scripts.Client.UI
 
         public void Hide()
         {
-            m_CanvasGroup.alpha = 0;
-            m_CanvasGroup.interactable = false;
+            m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
         }
     }

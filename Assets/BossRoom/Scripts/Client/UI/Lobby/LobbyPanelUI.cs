@@ -1,19 +1,19 @@
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom;
 using UnityEngine;
 
 namespace BossRoom.Scripts.Client.UI
 {
     /// <summary>
-    ///     An individual Lobby in the list of avaialble lobbies
+    /// An individual Lobby in the list of avaialble lobbies
     /// </summary>
     public class LobbyPanelUI : ObserverBehaviour<LocalLobby>
     {
         [SerializeField] private TextMeshProUGUI m_lobbyNameText;
         [SerializeField] private TextMeshProUGUI m_lobbyCountText;
         [SerializeField] private TextMeshProUGUI m_OnlineModeText;
+
         private LobbyUIMediator m_LobbyUIMediator;
 
         [Inject]
@@ -37,7 +37,7 @@ namespace BossRoom.Scripts.Client.UI
 
         public void OnClick()
         {
-            m_LobbyUIMediator.JoinLobbyRequest(Observed.Data);
+            m_LobbyUIMediator.JoinLobbyRequest(Observed);
         }
     }
 }

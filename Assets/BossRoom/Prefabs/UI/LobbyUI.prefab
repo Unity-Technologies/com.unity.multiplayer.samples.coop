@@ -895,19 +895,7 @@ MonoBehaviour:
       m_Calls: []
   m_OnValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3432713757992463987}
-        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.JoinLobbyUI, Unity.Multiplayer.Samples.BossRoom.Client
-        m_MethodName: OnLobbyCodeInputFieldChanged
-        m_Mode: 0
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   m_CaretColor: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
   m_CustomCaretColor: 0
   m_SelectionColor: {r: 0.65882355, g: 0.80784315, b: 1, a: 0.7529412}
@@ -5523,7 +5511,6 @@ MonoBehaviour:
   m_lobbyNameText: {fileID: 1583053172819472216}
   m_lobbyCountText: {fileID: 1131054124500818674}
   m_OnlineModeText: {fileID: 4805371756271124143}
-  m_CodesText: {fileID: 0}
 --- !u!222 &1731687845091873337
 CanvasRenderer:
   m_ObjectHideFlags: 0

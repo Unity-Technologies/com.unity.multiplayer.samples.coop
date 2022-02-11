@@ -15,7 +15,14 @@ namespace BossRoom.Scripts.Client.UI
 {
     public class LobbyUIMediator : MonoBehaviour
     {
-        //Injected dependencies
+        [SerializeField] private CanvasGroup m_CanvasGroup;
+        [SerializeField] private JoinLobbyUI m_JoinLobbyUI;
+        [SerializeField] private CreateLobbyUI m_CreateLobbyUI;
+        [SerializeField] private UITinter m_JoinToggle;
+        [SerializeField] private UITinter m_CreateToggle;
+        [SerializeField] private TextMeshProUGUI m_PlayerNameLabel;
+        [SerializeField] private GameObject m_LoadingSpinner;
+
         private LobbyAsyncRequests m_LobbyAsyncRequests;
         private LobbyUser m_localUser;
         private LocalLobby m_localLobby;
@@ -25,17 +32,6 @@ namespace BossRoom.Scripts.Client.UI
         private NameGenerationData m_NameGenerationData;
         private GameNetPortal m_GameNetPortal;
         private ClientGameNetPortal m_ClientNetPortal;
-
-        //Inspector fields
-        [SerializeField] private CanvasGroup m_CanvasGroup;
-        [SerializeField] private JoinLobbyUI m_JoinLobbyUI;
-        [SerializeField] private CreateLobbyUI m_CreateLobbyUI;
-        [SerializeField] private UITinter m_JoinToggle;
-        [SerializeField] private UITinter m_CreateToggle;
-        [SerializeField] private TextMeshProUGUI m_PlayerNameLabel;
-        [SerializeField] private GameObject m_LoadingSpinner;
-
-        //Lifecycle
 
         [Inject]
         private void InjectDependencies(
@@ -64,7 +60,6 @@ namespace BossRoom.Scripts.Client.UI
 
             RegenerateName();
 
-
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
@@ -75,7 +70,6 @@ namespace BossRoom.Scripts.Client.UI
 
         private void OnDestroy()
         {
-
             if (m_ClientNetPortal != null)
             {
                 m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
@@ -122,19 +116,15 @@ namespace BossRoom.Scripts.Client.UI
             }
         }
 
-        public void JoinLobbyRequest(LocalLobby.LobbyData lobbyData)
+        public void JoinLobbyWithCodeRequest(string lobbyCode)
         {
-            switch (m_localLobby.OnlineMode)
-            {
-                case OnlineMode.IpHost:
-                    Debug.Log($"Join lobby request. Lobby ID: {m_localLobby.LobbyID}, at IP:Port {m_localLobby.Data.IP}:{m_localLobby.Data.Port}");
-                    break;
-                case OnlineMode.UnityRelay:
-                    Debug.Log($"Join lobby request. Lobby ID: {m_localLobby.LobbyID}, Internal Relay Join Code{m_localLobby.RelayJoinCode}");
-                    break;
-            }
+            m_LobbyAsyncRequests.JoinLobbyAsync(null, lobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
+            BlockUIWhileLoadingIsInProgress();
+        }
 
-            m_LobbyAsyncRequests.JoinLobbyAsync(lobbyData.LobbyID, lobbyData.LobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
+        public void JoinLobbyRequest(LocalLobby lobby)
+        {
+            m_LobbyAsyncRequests.JoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
@@ -178,10 +168,7 @@ namespace BossRoom.Scripts.Client.UI
                     break;
 
                 case OnlineMode.UnityRelay:
-
-                    //TODO: after we get unity relay data we must call LobbyAsyncRequests.UpdatePlayerRelayInfoAsync
-
-                     m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
+                    m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
                     break;
             }
         }
@@ -243,14 +230,14 @@ namespace BossRoom.Scripts.Client.UI
 
         public void Show()
         {
-            m_CanvasGroup.alpha = 1;
-            UnblockUIAfterLoadingIsComplete();
+            m_CanvasGroup.alpha = 1f;
+            m_CanvasGroup.blocksRaycasts = true;
         }
 
         public void Hide()
         {
-            m_CanvasGroup.alpha = 0;
-            BlockUIWhileLoadingIsInProgress();
+            m_CanvasGroup.alpha = 0.5f;
+            m_CanvasGroup.blocksRaycasts = false;
         }
 
         public void ToggleJoinLobbyUI()
@@ -278,14 +265,12 @@ namespace BossRoom.Scripts.Client.UI
         private void BlockUIWhileLoadingIsInProgress()
         {
             m_CanvasGroup.interactable = false;
-            m_CanvasGroup.blocksRaycasts = false;
             m_LoadingSpinner.SetActive(true);
         }
 
         private void UnblockUIAfterLoadingIsComplete()
         {
             m_CanvasGroup.interactable = true;
-            m_CanvasGroup.blocksRaycasts = true;
             m_LoadingSpinner.SetActive(false);
         }
 

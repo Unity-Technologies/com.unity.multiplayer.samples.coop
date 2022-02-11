@@ -49,8 +49,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             m_Scope.BindInstanceAsSingle(m_NameGenerationData);
             m_Scope.BindInstanceAsSingle(m_lobbyUIMediator);
-            m_Scope.BindAsSingle<GameObjectFactory>();
-
 
             var unityAuthenticationInitOptions = new InitializationOptions();
 

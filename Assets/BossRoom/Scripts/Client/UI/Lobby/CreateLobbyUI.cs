@@ -11,26 +11,16 @@ namespace BossRoom.Scripts.Client.UI
     {
         public const string k_DefaultIP = "127.0.0.1";
         public const int k_DefaultPort = 9998;
-
         private static readonly char[] k_InputFieldIncludeChars = {'.', '_'};
 
         [SerializeField] private InputField m_LobbyNameInputField;
-
         [SerializeField] private CanvasGroup m_IPConnectionCanvasGroup;
-
         [SerializeField] private InputField m_IPInputField;
-
         [SerializeField] private InputField m_PortInputField;
-
         [SerializeField] private GameObject m_LoadingImage;
-
-        [SerializeField] private Button m_ConfirmationButton;
-
         [SerializeField] private Toggle m_IPToggle;
         [SerializeField] private Toggle m_UnityRelayToggle;
-
         [SerializeField] private Toggle m_IsPrivate;
-
         [SerializeField] private CanvasGroup m_CanvasGroup;
 
         private LobbyUIMediator m_LobbyUIMediator;
@@ -110,15 +100,13 @@ namespace BossRoom.Scripts.Client.UI
 
         public void Show()
         {
-            m_CanvasGroup.alpha = 1;
-            m_CanvasGroup.interactable = true;
+            m_CanvasGroup.alpha = 1f;
             m_CanvasGroup.blocksRaycasts = true;
         }
 
         public void Hide()
         {
-            m_CanvasGroup.alpha = 0;
-            m_CanvasGroup.interactable = false;
+            m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
         }
 
