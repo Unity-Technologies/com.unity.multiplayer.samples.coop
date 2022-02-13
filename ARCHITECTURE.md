@@ -4,20 +4,20 @@ If you want to familiarize yourself with the code base, you are just in the righ
 
 Boss Room is an 8-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey. 
 
-Code is organized into three separate assemblies: `Client`, `Server` and `Shared` (which, as it's name implies, contains shared functionality that both client and the server require).
+Code is organized into three separate assemblies: `Client`, `Server` and `Shared` (which, as its name implies, contains shared functionality that both client and the server require).
 
 ## Host model
 Boss Room uses a Host model for its server. This means one client acts as a server and hosts the other clients. 
 
 A common pitfall of this pattern is writing the game in such a way that it is virtually impossible to adapt to a dedicated server model. 
 
-We attempted to combat this by using a compositional model for our client and server logic (rather than having it all combined is single modules):
+We attempted to combat this by using a compositional model for our client and server logic (rather than having it all combined in single modules):
  - On the Host, each GameObject has `{Server, Shared, Client}` components. 
  - If you start up the game as a dedicated server, the client components will disable themselves, leaving you with `{Server, Shared}` components.
  - If you start up as a client, you get the complementary set of `{Shared, Client}` components. 
 
 This approach works, but requires some care: 
- - if you have server and clients of a shared base class, you need to remember that the shared code will run twice on the host; 
+ - if you have server and clients of a shared base class, you need to remember that the shared code will run twice on the host.
  - you also need to take care about code executing in `Start` and `Awake`: if this code runs contemporaneously with the `NetworkingManager`'s initialization, it may not know yet whether the player is a host or client.
  - We judged this extra complexity worth it, as it provides a clear road-map to supporting true dedicated servers. 
  - Client server separation also allows not having god-classes where both client and server code are intermingled. This way, when reading server code, you do not have to mentally skip client code and vice versa. This helps making bigger classes more readable and maintainable. Please note that this pattern can be applied on a case by case basis. If your class never grows too big, having a single `NetworkBehaviour` is perfectly fine.
@@ -36,13 +36,13 @@ Currently two network transport mechanisms are supported:
 - IP based
 - Relay Based
 
-In the former, the clients connect directy to a host via IP address. This will only work if both are in the same local area network or if the host forwards ports.
+In the former, the clients connect directly to a host via IP address. This will only work if both are in the same local area network or if the host forwards ports.
 
 In the latter, some setup is required. Please see our guide [here](Documentation/Photon-Realtime/Readme.md) on how to setup our current relay.  
 
 Please see [Multiplayer over internet](README.md) section of our Readme for more information on using either one.
 
-To allow for both of these options to be chosen at runtime we created `TransportPicker`. It allows to chose between an IP-based and a Relay-based transport and will hook up the game UI to use those transports. The transport field in the `NetworkManager` will be ignored. Currently we support the following transports:
+To allow for both of these options to be chosen at runtime we created `TransportPicker`. It allows to choose between an IP-based and a Relay-based transport and will hook up the game UI to use those transports. The transport field in the `NetworkManager` will be ignored. Currently we support the following transports:
 - **UNet(IP):** UNet is the default MLAPI transport and the default IP transport for Boss Room.
 - **LiteNetLib(IP):** We use LiteNetLib in Boss Room because it has a built in way to simulate latency which is useful for spotting networking issues early during development.
 - **Photon Realtime (Relay):** Photon Realtime is a relay transport using the [Photon Realtime Service](https://www.photonengine.com/Realtime).
@@ -81,7 +81,7 @@ Each scene has exactly one `GameStateBehaviour` (a specialization of `MLAPI.Netw
  - Client->server RPC, containing target destination. 
  - Anticipatory animation plays immediately on client. 
  - Server performs pathfinding.
- - Once pathfinding is finished, server representation of entity starts updating it's NetworkVariables at 30fps.
+ - Once pathfinding is finished, server representation of entity starts updating its NetworkVariables at 30fps.
  - Visuals GameObject never outpaces the simulation GameObject, always slightly behind and interpolating towards the networked position and rotation.
 
 ## Navigation System
@@ -91,5 +91,5 @@ Each scene which uses navigation or dynamic navigation objects should have a `Na
 The project is using `NavMeshComponents`. This means direct building from the Navigation window will not give the desired results. Instead find a `NavMeshComponent` in the given scene e.g. a **NavMeshSurface** and use the **Bake** button of that script. Also make sure that there is always only one navmesh file per scene. Navmesh files are stored in a folder with the same name as the corresponding scene. You can recognize them based on their icon in the editor. They follow the naming pattern "NavMesh-\<name-of-creating-object\.asset>"
 
 ### Dynamic Navigation Objects
-A dynamic navigation object is an object which affects the state of the navigation mesh such as a door which can be openend or closed.
+A dynamic navigation object is an object which affects the state of the navigation mesh such as a door which can be opened or closed.
 To create a dynamic navigation object add a NavMeshObstacle to it and configure the shape (in most cases this should just match the corresponding collider). Then add a DynamicNavObstacle component to it.
