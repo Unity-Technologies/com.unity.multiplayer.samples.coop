@@ -4,14 +4,14 @@ If you want to familiarize yourself with the code base, you are just in the righ
 
 Boss Room is an 8-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey. 
 
-Code is organized into three separate assemblies: `Client`, `Server` and `Shared` (which, as it's name implies, contains shared functionality that both client and the server require).
+Code is organized into three separate assemblies: `Client`, `Server` and `Shared` (which, as its name implies, contains shared functionality that both client and the server require).
 
 ## Host model
 Boss Room uses a Host model for its server. This means one client acts as a server and hosts the other clients. 
 
 A common pitfall of this pattern is writing the game in such a way that it is virtually impossible to adapt to a dedicated server model. 
 
-We attempted to combat this by using a compositional model for our client and server logic (rather than having it all combined is single modules):
+We attempted to combat this by using a compositional model for our client and server logic (rather than having it all combined in single modules):
  - On the Host, each GameObject has `{Server, Shared, Client}` components. 
  - If you start up the game as a dedicated server, the client components will disable themselves, leaving you with `{Server, Shared}` components.
  - If you start up as a client, you get the complementary set of `{Shared, Client}` components.
@@ -45,7 +45,7 @@ Similarly for Unity Relay based multiplayer sessions, please see the installatio
 
 Please see [Multiplayer over internet](README.md) section of our Readme for more information on using either one.
 
-To allow for any of these options to be chosen at runtime we created `TransportPicker`. It allows to chose between an IP-based and a Relay-based transport and will hook up the game UI to use those transports. The transport field in the `NetworkManager` will be ignored. Currently we support the following transports:
+To allow for any of these options to be chosen at runtime we created `TransportPicker`. It allows one to choose between an IP-based and a Relay-based transport and will hook up the game UI to use those transports. The transport field in the `NetworkManager` will be ignored. Currently we support the following transports:
 - **UNET(IP):** UNET is the default Netcode transport. However, it is not the default IP transport for Boss Room.
 - **UTP (IP):** Unity Transport Package is a network transport layer, packaged with network simulation tools which are useful for spotting networking issues early during development. This IP based protocol is the default IP transport for Boss Room. See the documentation on [Unity Transport Package](https://docs-multiplayer.unity3d.com/docs/transport-utp/about-transport-utp/#unity-transport-package-utp).
 - **Photon Realtime (Relay):** Photon Realtime is a relay transport using the [Photon Realtime Service](https://www.photonengine.com/Realtime).
