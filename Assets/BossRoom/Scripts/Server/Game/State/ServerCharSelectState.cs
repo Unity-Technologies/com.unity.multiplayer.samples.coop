@@ -17,6 +17,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private ServerGameNetPortal m_ServerNetPortal;
 
+        Coroutine m_WaitToEndLobbyCoroutine;
+
         private void Awake()
         {
             CharSelectData = GetComponent<CharSelectData>();
@@ -122,7 +124,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SaveLobbyResults();
 
             // Delay a few seconds to give the UI time to react, then switch scenes
-            StartCoroutine(WaitToEndLobby());
+            m_WaitToEndLobbyCoroutine = StartCoroutine(WaitToEndLobby());
+        }
+
+        /// <summary>
+        /// Cancels the process of closing the lobby, so that if a new player joins, they are able to chose a character.
+        /// </summary>
+        void CancelCloseLobby()
+        {
+            if (m_WaitToEndLobbyCoroutine != null)
+            {
+                StopCoroutine(m_WaitToEndLobbyCoroutine);
+            }
+            CharSelectData.IsLobbyClosed.Value = false;
         }
 
         private void SaveLobbyResults()
@@ -209,6 +223,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void SeatNewPlayer(ulong clientId)
         {
+            // If lobby is closing and waiting to start the game, cancel to allow that new player to select a character
+            if (CharSelectData.IsLobbyClosed.Value)
+            {
+                CancelCloseLobby();
+            }
+
             SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
             if (sessionPlayerData.HasValue)
             {
