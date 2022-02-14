@@ -278,7 +278,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 clientGUID = clientGuid,
                 clientScene = SceneManager.GetActiveScene().buildIndex,
-                playerName = portal.PlayerName
+                playerName = portal.PlayerName,
+                isDebug = Debug.isDebugBuild
             });
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);

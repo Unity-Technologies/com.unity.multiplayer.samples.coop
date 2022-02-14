@@ -174,6 +174,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             string payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
 
+            if (connectionPayload.isDebug != Debug.isDebugBuild)
+            {
+                gameReturnStatus = ConnectStatus.IncompatibleVersion;
+                SendServerToClientConnectResult(clientId, gameReturnStatus);
+                SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+                StartCoroutine(WaitToDisconnect(clientId));
+                return;
+            }
+
             int clientScene = connectionPayload.clientScene;
 
             Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);

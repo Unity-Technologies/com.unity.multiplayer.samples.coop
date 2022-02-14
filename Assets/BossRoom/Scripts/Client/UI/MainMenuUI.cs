@@ -178,6 +178,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     var text = connecting ? "Something went wrong" : "The connection to the host was lost";
                     m_ResponsePopup.SetupNotifierDisplay(title, text, false, true);
                     break;
+                case ConnectStatus.IncompatibleVersion:
+                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Game version not compatible with server", false, true);
+                    break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
                     break;
