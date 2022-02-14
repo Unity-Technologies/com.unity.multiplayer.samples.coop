@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Lobbies.Models;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
@@ -51,8 +50,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             IsHost = 1,
             DisplayName = 2,
             ID = 4,
-            UserStatus = 8,
-            IsApproved = 16
         }
 
         private UserMembers m_lastChanged;

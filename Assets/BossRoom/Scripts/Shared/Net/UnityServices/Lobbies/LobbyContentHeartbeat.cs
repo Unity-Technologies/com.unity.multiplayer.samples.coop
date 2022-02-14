@@ -1,7 +1,6 @@
 ﻿using System;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
-using UnityEngine;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {

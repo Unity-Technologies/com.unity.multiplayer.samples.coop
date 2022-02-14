@@ -9,7 +9,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// A local wrapper around a lobby's remote data, with additional functionality for providing that data to UI elements and tracking local player objects.
-    /// (The way that the Lobby service handles its data doesn't necessarily match our needs, so we need to map from that to this LocalLobby for use in the sample code.)
     /// </summary>
     [Serializable]
     public class LocalLobby : Observed<LocalLobby>

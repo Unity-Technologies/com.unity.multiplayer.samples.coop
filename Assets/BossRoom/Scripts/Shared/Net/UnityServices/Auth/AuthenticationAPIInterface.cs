@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
-using Unity.Services.Lobbies;
-using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
