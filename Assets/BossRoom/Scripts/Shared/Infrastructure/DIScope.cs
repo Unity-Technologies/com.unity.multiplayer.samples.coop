@@ -35,13 +35,39 @@ namespace BossRoom.Scripts.Shared.Infrastructure
 
     public sealed class DIScope : IInstanceResolver, IDisposable
     {
+        private struct LazyBindDescriptor
+        {
+            public readonly Type Type;
+            public readonly Type[] InterfaceTypes;
+
+            public LazyBindDescriptor(Type type, Type[] interfaceTypes)
+            {
+                Type = type;
+                InterfaceTypes = interfaceTypes;
+            }
+        }
+
         private static DIScope m_rootScope;
+
+        public static DIScope RootScope
+        {
+            get
+            {
+                if (m_rootScope == null)
+                {
+                    m_rootScope = new DIScope();
+                }
+
+                return m_rootScope;
+            }
+        }
 
         private readonly DisposableGroup m_DisposableGroup = new DisposableGroup();
         private readonly Dictionary<Type, LazyBindDescriptor> m_LazyBindDescriptors = new Dictionary<Type, LazyBindDescriptor>();
 
         private readonly DIScope m_Parent;
         private readonly Dictionary<Type, object> m_TypesToInstances = new Dictionary<Type, object>();
+        private readonly HashSet<object> m_ObjectsWithInjectedDependencies = new HashSet<object>();
         private bool m_Disposed;
 
         private bool m_ScopeConstructionComplete;
@@ -52,14 +78,9 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             BindInstanceAsSingle<IInstanceResolver, DIScope>(this);
         }
 
-        public static DIScope RootScope
+        ~DIScope()
         {
-            get
-            {
-                if (m_rootScope == null) m_rootScope = new DIScope();
-
-                return m_rootScope;
-            }
+            Dispose();
         }
 
         public void Dispose()
@@ -67,17 +88,20 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             if (!m_Disposed)
             {
                 m_TypesToInstances.Clear();
+                m_ObjectsWithInjectedDependencies.Clear();
                 m_DisposableGroup.Dispose();
                 m_Disposed = true;
             }
         }
 
-        public T Resolve<T>()
-            where T : class
+        public T Resolve<T>() where T : class
         {
             if (!m_ScopeConstructionComplete)
+            {
                 throw new ScopeNotFinalizedException(
                     $"Trying to Resolve type {typeof(T)}, but the DISCope is not yet finalized! You should call FinalizeScopeConstruction before any of the Resolve calls.");
+            }
+
             //if we have this type as lazy-bound instance - we are going to instantiate it now
             if (m_LazyBindDescriptors.TryGetValue(typeof(T), out var lazyBindDescriptor))
             {
@@ -88,7 +112,10 @@ namespace BossRoom.Scripts.Shared.Infrastructure
 
             if (!m_TypesToInstances.TryGetValue(typeof(T), out var value))
             {
-                if (m_Parent != null) return m_Parent.Resolve<T>();
+                if (m_Parent != null)
+                {
+                    return m_Parent.Resolve<T>();
+                }
 
                 throw new NoInstanceToInjectException($"Injection of type {typeof(T)} failed.");
             }
@@ -98,6 +125,11 @@ namespace BossRoom.Scripts.Shared.Infrastructure
 
         public void InjectIn(object obj)
         {
+            if (m_ObjectsWithInjectedDependencies.Contains(obj))
+            {
+                return;
+            }
+
             if (CachedReflectionUtility.TryGetInjectableMethod(obj.GetType(), out var injectionMethod))
             {
                 var parameters = CachedReflectionUtility.GetMethodParameters(injectionMethod);
@@ -114,19 +146,18 @@ namespace BossRoom.Scripts.Shared.Infrastructure
                 }
 
                 injectionMethod.Invoke(obj, paramColleciton);
+                m_ObjectsWithInjectedDependencies.Add(obj);
             }
         }
 
         public void InjectIn(GameObject go)
         {
-            var components = go.GetComponentsInChildren<Component>();
+            var components = go.GetComponentsInChildren<Component>(includeInactive:true);
 
-            foreach (var component in components) InjectIn(component);
-        }
-
-        ~DIScope()
-        {
-            Dispose();
+            foreach (var component in components)
+            {
+                InjectIn(component);
+            }
         }
 
         public void BindInstanceAsSingle<T>(T instance) where T : class
@@ -172,7 +203,10 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         {
             var descriptor = new LazyBindDescriptor(type, typeAliases);
 
-            foreach (var typeAlias in typeAliases) m_LazyBindDescriptors[typeAlias] = descriptor;
+            foreach (var typeAlias in typeAliases)
+            {
+                m_LazyBindDescriptors[typeAlias] = descriptor;
+            }
 
             m_LazyBindDescriptors[type] = descriptor;
         }
@@ -196,24 +230,34 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             BindInstanceToType(instance, descriptor.Type);
 
             if (descriptor.InterfaceTypes != null)
+            {
                 foreach (var interfaceType in descriptor.InterfaceTypes)
+                {
                     BindInstanceToType(instance, interfaceType);
+                }
+            }
 
             return instance;
         }
 
         private void AddToDisposableGroupIfDisposable(object instance)
         {
-            if (instance is IDisposable disposable) m_DisposableGroup.Add(disposable);
+            if (instance is IDisposable disposable)
+            {
+                m_DisposableGroup.Add(disposable);
+            }
         }
 
         /// <summary>
-        ///     This method forces the finalization of construction of DI Scope. It would inject all the instances passed to it directly.
-        ///     Objects that were bound by just type will be instantiated on their first use.
+        /// This method forces the finalization of construction of DI Scope. It would inject all the instances passed to it directly.
+        /// Objects that were bound by just type will be instantiated on their first use.
         /// </summary>
         public void FinalizeScopeConstruction()
         {
-            if (m_ScopeConstructionComplete) return;
+            if (m_ScopeConstructionComplete)
+            {
+                return;
+            }
 
             m_ScopeConstructionComplete = true;
 
@@ -261,7 +305,10 @@ namespace BossRoom.Scripts.Shared.Infrastructure
 
             private static void CacheTypeMethods(Type type)
             {
-                if (k_ProcessedTypes.Contains(type)) return;
+                if (k_ProcessedTypes.Contains(type))
+                {
+                    return;
+                }
 
                 var constructors = type.GetConstructors();
                 foreach (var constructorInfo in constructors)
@@ -309,24 +356,16 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             {
                 if (!k_CachedResolveMethods.TryGetValue(parameterType, out var resolveMethod))
                 {
-                    if (k_ResolveMethod == null) k_ResolveMethod = typeof(DIScope).GetMethod("Resolve");
+                    if (k_ResolveMethod == null)
+                    {
+                        k_ResolveMethod = typeof(DIScope).GetMethod("Resolve");
+                    }
+
                     resolveMethod = k_ResolveMethod.MakeGenericMethod(parameterType);
                     k_CachedResolveMethods[parameterType] = resolveMethod;
                 }
 
                 return resolveMethod;
-            }
-        }
-
-        private struct LazyBindDescriptor
-        {
-            public readonly Type Type;
-            public readonly Type[] InterfaceTypes;
-
-            public LazyBindDescriptor(Type type, Type[] interfaceTypes)
-            {
-                Type = type;
-                InterfaceTypes = interfaceTypes;
             }
         }
     }

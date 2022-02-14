@@ -9,7 +9,11 @@ namespace BossRoom.Scripts.Shared.Infrastructure
 
         public void Dispose()
         {
-            foreach (var disposable in m_Disposables) disposable.Dispose();
+            foreach (var disposable in m_Disposables)
+            {
+                disposable.Dispose();
+            }
+
             m_Disposables.Clear();
         }
 
