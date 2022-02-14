@@ -12,20 +12,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     [RequireComponent(typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.CharSelect; } }
+        public override GameState ActiveState => GameState.CharSelect;
         public CharSelectData CharSelectData { get; private set; }
-
-        private ServerGameNetPortal m_ServerNetPortal;
 
         Coroutine m_WaitToEndLobbyCoroutine;
 
-        private void Awake()
+        void Awake()
         {
             CharSelectData = GetComponent<CharSelectData>();
-            m_ServerNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<ServerGameNetPortal>();
         }
 
-        private void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
+        void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
         {
             int idx = FindLobbyPlayerIdx(clientId);
             if (idx == -1)
@@ -95,7 +92,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <summary>
         /// Returns the index of a client in the master LobbyPlayer list, or -1 if not found
         /// </summary>
-        private int FindLobbyPlayerIdx(ulong clientId)
+        int FindLobbyPlayerIdx(ulong clientId)
         {
             for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
@@ -109,7 +106,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Looks through all our connections and sees if everyone has locked in their choice;
         /// if so, we lock in the whole lobby, save state, and begin the transition to gameplay
         /// </summary>
-        private void CloseLobbyIfReady()
+        void CloseLobbyIfReady()
         {
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
@@ -153,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private void SaveLobbyResults()
+        void SaveLobbyResults()
         {
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
@@ -169,7 +166,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private IEnumerator WaitToEndLobby()
+        IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
             NetworkManager.SceneManager.LoadScene("BossRoom", LoadSceneMode.Single);
@@ -205,7 +202,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private void OnSceneEvent(SceneEvent sceneEvent)
+        void OnSceneEvent(SceneEvent sceneEvent)
         {
             // We need to filter out the event that are not a client has finished loading the scene
             if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
@@ -213,7 +210,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SeatNewPlayer(sceneEvent.ClientId);
         }
 
-        private int GetAvailablePlayerNum()
+        int GetAvailablePlayerNum()
         {
             for (int possiblePlayerNum = 0; possiblePlayerNum < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNum)
             {
@@ -235,7 +232,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return -1;
         }
 
-        private void SeatNewPlayer(ulong clientId)
+        void SeatNewPlayer(ulong clientId)
         {
             // If lobby is closing and waiting to start the game, cancel to allow that new player to select a character
             if (CharSelectData.IsLobbyClosed.Value)
@@ -263,7 +260,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private void OnClientDisconnectCallback(ulong clientId)
+        void OnClientDisconnectCallback(ulong clientId)
         {
             // clear this client's PlayerNumber and any associated visuals (so other players know they're gone).
             for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
@@ -274,7 +271,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     break;
                 }
             }
-            CancelCloseLobby();
+
+            // If lobby is closing and waiting to start the game, cancel so that other players can react to it
+            if (CharSelectData.IsLobbyClosed.Value)
+            {
+                CancelCloseLobby();
+            }
         }
     }
 }
