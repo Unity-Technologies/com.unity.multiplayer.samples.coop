@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
+using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
@@ -96,11 +97,18 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public RateLimitCooldown GetRateLimit(RequestType type)
         {
             if (type == RequestType.Join)
+            {
                 return m_RateLimitJoin;
+            }
             else if (type == RequestType.QuickJoin)
+            {
                 return m_RateLimitQuickJoin;
+            }
             else if (type == RequestType.Host)
+            {
                 return m_RateLimitHost;
+            }
+
             return m_RateLimitQuery;
         }
 
@@ -215,7 +223,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public void UpdatePlayerDataAsync(Dictionary<string, PlayerDataObject> data, Action onSuccess, Action onFailure)
         {
             if (!ShouldUpdateData(() => { UpdatePlayerDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
+            {
                 return;
+            }
 
             string playerId = AuthenticationService.Instance.PlayerId;
 
@@ -236,7 +246,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public void UpdatePlayerRelayInfoAsync(string allocationId, string connectionInfo, Action onComplete, Action onFailure)
         {
             if (!ShouldUpdateData(() => { UpdatePlayerRelayInfoAsync(allocationId, connectionInfo, onComplete, onFailure); }, onComplete, true)) // Do retry here since the RelayUtpSetup that called this might be destroyed right after this.
+            {
                 return;
+            }
+
             string playerId = AuthenticationService.Instance.PlayerId;
             m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
         }
@@ -245,7 +258,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public void UpdateLobbyDataAsync(Dictionary<string, DataObject> data, Action onSuccess, Action onFailure)
         {
             if (!ShouldUpdateData(() => { UpdateLobbyDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
+            {
                 return;
+            }
 
 
             var dataCurr = m_lastKnownLobby.Data ?? new Dictionary<string, DataObject>();
@@ -253,10 +268,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             foreach (var dataNew in data)
             {
                 if (dataCurr.ContainsKey(dataNew.Key))
+                {
                     dataCurr[dataNew.Key] = dataNew.Value;
+                }
                 else
+                {
                     dataCurr.Add(dataNew.Key, dataNew.Value);
-
+                }
             }
 
             //we would want to lock lobbies from appearing in queries if we're in relay mode and the relay isn't fully set up yet
@@ -267,7 +285,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             void OnComplete(Lobby result)
             {
-                if (result != null) m_lastKnownLobby = result;
+                if (result != null)
+                {
+                    m_lastKnownLobby = result;
+                }
+
                 onSuccess?.Invoke();
             }
         }
@@ -288,7 +310,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             if (lobby == null)
             {
                 if (shouldRetryIfLobbyNull)
+                {
                     m_RateLimitQuery.EnqueuePendingOperation(caller);
+                }
+
                 onComplete?.Invoke();
                 return false;
             }

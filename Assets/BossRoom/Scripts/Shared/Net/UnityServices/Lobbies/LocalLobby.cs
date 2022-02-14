@@ -212,16 +212,22 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_data = data;
 
             if (currUsers == null)
+            {
                 m_LobbyUsers = new Dictionary<string, LobbyUser>();
+            }
             else
             {
                 List<LobbyUser> toRemove = new List<LobbyUser>();
                 foreach (var oldUser in m_LobbyUsers)
                 {
                     if (currUsers.ContainsKey(oldUser.Key))
+                    {
                         oldUser.Value.CopyObserved(currUsers[oldUser.Key]);
+                    }
                     else
+                    {
                         toRemove.Add(oldUser.Value);
+                    }
                 }
 
                 foreach (var remove in toRemove)
@@ -232,7 +238,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 foreach (var currUser in currUsers)
                 {
                     if (!m_LobbyUsers.ContainsKey(currUser.Key))
+                    {
                         DoAddPlayer(currUser.Value);
+                    }
                 }
             }
 

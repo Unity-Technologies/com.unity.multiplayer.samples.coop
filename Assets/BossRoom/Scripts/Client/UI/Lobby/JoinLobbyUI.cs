@@ -83,14 +83,21 @@ namespace BossRoom.Scripts.Client.UI
 
                 if (!m_LobbyButtons.ContainsKey(lobbyCodeKey))
                 {
-                    if (CanDisplay(lobbyData)) CreateLobbyPanel(lobbyCodeKey, lobbyData);
+                    if (CanDisplay(lobbyData))
+                    {
+                        CreateLobbyPanel(lobbyCodeKey, lobbyData);
+                    }
                 }
                 else
                 {
                     if (CanDisplay(lobbyData))
+                    {
                         UpdateLobbyButton(lobbyCodeKey, lobbyData);
+                    }
                     else
+                    {
                         RemoveLobbyButton(lobbyData);
+                    }
                 }
 
                 previousKeys.Remove(lobbyCodeKey);
@@ -98,7 +105,9 @@ namespace BossRoom.Scripts.Client.UI
 
             foreach (var key in previousKeys)
                 // Need to remove any lobbies from the list that no longer exist.
+            {
                 RemoveLobbyButton(m_LocalLobby[key]);
+            }
         }
 
         public void OnQuickJoinClicked()

@@ -53,13 +53,18 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             //disposing of subscription automatically removes the subscription from MessageChannel
             m_DisposableSubscription?.Dispose();
             if (m_localLobby != null)
+            {
                 m_localLobby.onChanged -= OnLocalLobbyChanged;
+            }
         }
 
         private void OnLocalLobbyChanged(LocalLobby changed)
         {
             if (string.IsNullOrEmpty(changed.LobbyID)) // When the player leaves, their LocalLobby is cleared out but maintained.
+            {
                 EndTracking();
+            }
+
             m_shouldPushData = true;
         }
 
@@ -71,7 +76,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         private void OnUpdate(float dt)
         {
             if (m_awaitingQueryCount > 0)
+            {
                 return;
+            }
 
             if (m_localUser.IsHost)
             {
@@ -112,7 +119,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             void OnRetrieve()
             {
                 var lobbyRemote = m_LobbyAsyncRequests.CurrentLobby;
-                if (lobbyRemote == null) return;
+                if (lobbyRemote == null)
+                {
+                    return;
+                }
+
                 bool prevShouldPush = m_shouldPushData;
                 m_localLobby.ApplyRemoteData(lobbyRemote);
                 m_shouldPushData = prevShouldPush;
@@ -123,7 +134,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                     foreach (var lobbyUser in m_localLobby.LobbyUsers)
                     {
                         if (lobbyUser.Value.IsHost)
+                        {
                             return;
+                        }
                     }
                     m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
                     m_ApplicationController.QuitGame();

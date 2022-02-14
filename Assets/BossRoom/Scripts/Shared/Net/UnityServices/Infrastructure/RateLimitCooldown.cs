@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
+namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
 {
     public class RateLimitCooldown : Observed<RateLimitCooldown>
     {
@@ -40,7 +40,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public bool CanCall()
         {
             if (m_TimeSinceLastCall < m_CooldownTime)
+            {
                 return false;
+            }
             else
             {
                 m_SlowUpdate.Subscribe(OnUpdate, m_CooldownTime);
@@ -61,7 +63,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                     m_SlowUpdate.Unsubscribe(OnUpdate); // Note that this is after IsInCooldown is set, to prevent an Observer from kicking off CanCall again immediately.
                     int numPending = m_PendingOperations.Count; // It's possible a pending operation will re-enqueue itself or new operations, which should wait until the next loop.
                     for (; numPending > 0; numPending--)
+                    {
                         m_PendingOperations.Dequeue()?.Invoke(); // Note: If this ends up enqueuing many operations, we might need to batch them and/or ensure they don't all execute at once.
+                    }
                 }
             }
         }

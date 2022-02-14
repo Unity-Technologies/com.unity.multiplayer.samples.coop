@@ -41,7 +41,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             Debug.LogWarning(e.Message);
 
             if (e.Reason == LobbyExceptionReason.RateLimited) // We have other ways of preventing players from hitting the rate limit, so the developer-facing 429 error is sufficient here.
+            {
                 return;
+            }
+
             var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
 
             m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason));

@@ -110,7 +110,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 (m_data.ID == data.ID ? 0 : (int) UserMembers.ID);
 
             if (lastChanged == 0) // Ensure something actually changed.
+            {
                 return;
+            }
 
             m_data = data;
             m_lastChanged = (UserMembers)lastChanged;

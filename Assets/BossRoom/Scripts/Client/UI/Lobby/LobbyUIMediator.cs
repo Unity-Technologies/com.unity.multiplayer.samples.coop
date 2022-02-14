@@ -93,7 +93,10 @@ namespace BossRoom.Scripts.Client.UI
                 OnFailure
             );
 
-            if (blockUI) BlockUIWhileLoadingIsInProgress();
+            if (blockUI)
+            {
+                BlockUIWhileLoadingIsInProgress();
+            }
 
             void OnSuccess(QueryResponse qr)
             {
@@ -312,7 +315,10 @@ namespace BossRoom.Scripts.Client.UI
                     Debug.Log($"{"Connection Failed"}, {"The Host is full and cannot accept any additional connections"}");
                     break;
                 case ConnectStatus.Success:
-                    if (connecting) Debug.Log($"{"Success!"}, {"Joining Now"}");
+                    if (connecting)
+                    {
+                        Debug.Log($"{"Success!"}, {"Joining Now"}");
+                    }
 
                     break;
                 case ConnectStatus.LoggedInAgain:

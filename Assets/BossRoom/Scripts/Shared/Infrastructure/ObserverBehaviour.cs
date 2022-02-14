@@ -42,14 +42,20 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         void Awake()
         {
             if (Observed == null)
+            {
                 return;
+            }
+
             BeginObserving(Observed);
         }
 
         void OnDestroy()
         {
             if (Observed == null)
+            {
                 return;
+            }
+
             EndObserving();
         }
     }

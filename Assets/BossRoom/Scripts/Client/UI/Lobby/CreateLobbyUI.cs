@@ -42,14 +42,20 @@ namespace BossRoom.Scripts.Client.UI
 
         private void IPRadioRadioButtonPressed(bool value)
         {
-            if (!value) return;
+            if (!value)
+            {
+                return;
+            }
 
             SetOnlineMode(OnlineMode.IpHost);
         }
 
         private void UnityRelayRadioRadioButtonPressed(bool value)
         {
-            if (!value) return;
+            if (!value)
+            {
+                return;
+            }
 
             SetOnlineMode(OnlineMode.UnityRelay);
         }
@@ -91,7 +97,9 @@ namespace BossRoom.Scripts.Client.UI
             var portNum = 0;
             int.TryParse(m_PortInputField.text, out portNum);
             if (portNum <= 0)
+            {
                 portNum = k_DefaultPort;
+            }
 
             var ip = string.IsNullOrEmpty(m_IPInputField.text) ? k_DefaultIP : m_IPInputField.text;
 
@@ -121,9 +129,13 @@ namespace BossRoom.Scripts.Client.UI
         {
             var result = new StringBuilder(dirtyString.Length);
             foreach (var c in dirtyString)
+            {
                 if (char.IsLetterOrDigit(c) ||
                     includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c))
+                {
                     result.Append(c);
+                }
+            }
 
             return result.ToString();
         }

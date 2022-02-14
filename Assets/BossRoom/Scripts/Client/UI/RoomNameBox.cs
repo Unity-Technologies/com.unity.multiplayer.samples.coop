@@ -18,7 +18,6 @@ public class RoomNameBox : ObserverBehaviour<LocalLobby>
 
     string m_LobbyCode;
 
-
     [Inject]
     private void InjectDependencies(LocalLobby localLobby)
     {
