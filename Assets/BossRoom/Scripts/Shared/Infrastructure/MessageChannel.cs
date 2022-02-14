@@ -33,9 +33,15 @@ namespace BossRoom.Scripts.Shared.Infrastructure
 
         public void Publish(T message)
         {
-            while (m_PendingHandlers.Count > 0) m_PendingHandlers.Dequeue()?.Invoke();
+            while (m_PendingHandlers.Count > 0)
+            {
+                m_PendingHandlers.Dequeue()?.Invoke();
+            }
 
-            foreach (var messageHandler in m_MessageHandlers) messageHandler?.Invoke(message);
+            foreach (var messageHandler in m_MessageHandlers)
+            {
+                messageHandler?.Invoke(message);
+            }
         }
 
         public IDisposable Subscribe(Action<T> handler)
@@ -48,7 +54,9 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             void DoSubscribe(Action<T> _h)
             {
                 if (_h != null && !m_MessageHandlers.Contains(_h))
+                {
                     m_MessageHandlers.Add(_h);
+                }
             }
         }
 
@@ -80,7 +88,10 @@ namespace BossRoom.Scripts.Shared.Infrastructure
                 {
                     m_isDisposed = true;
 
-                    if (!m_MessageChannel.m_IsDisposed) m_MessageChannel.Unsubscribe(m_Handler);
+                    if (!m_MessageChannel.m_IsDisposed)
+                    {
+                        m_MessageChannel.Unsubscribe(m_Handler);
+                    }
 
                     m_Handler = null;
                     m_MessageChannel = null;
