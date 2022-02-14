@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace BossRoom.Scripts.Shared.Infrastructure
 {
-
     /// <summary>
     /// Some objects might need to be on a slower update loop than the usual MonoBehaviour Update and without precise timing, e.g. to refresh data from services.
     /// Some might also not want to be coupled to a Unity object at all but still need an update loop.
@@ -16,11 +15,12 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             public Action<float> updateMethod;
             public readonly float period;
             public float periodCurrent;
+
             public Subscriber(Action<float> updateMethod, float period)
             {
                 this.updateMethod = updateMethod;
                 this.period = period;
-                this.periodCurrent = 0;
+                periodCurrent = 0;
             }
         }
 
@@ -54,18 +54,27 @@ namespace BossRoom.Scripts.Shared.Infrastructure
                 return;
             }
 
-            foreach (Subscriber currSub in m_subscribers)
+            foreach (var currSub in m_subscribers)
+            {
                 if (currSub.updateMethod.Equals(onUpdate))
+                {
                     return;
+                }
+            }
+
             m_subscribers.Add(new Subscriber(onUpdate, period));
         }
+
         /// <summary>Safe to call even if onUpdate was not previously Subscribed.</summary>
         public void Unsubscribe(Action<float> onUpdate)
         {
-            for (int sub = m_subscribers.Count - 1; sub >= 0; sub--)
+            for (var sub = m_subscribers.Count - 1; sub >= 0; sub--)
+            {
                 if (m_subscribers[sub].updateMethod.Equals(onUpdate))
+                {
                     m_subscribers.RemoveAt(sub);
-
+                }
+            }
         }
 
         private void Update()
@@ -78,14 +87,14 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         /// </summary>
         public void OnUpdate(float dt)
         {
-            for (int subscriberIndex = m_subscribers.Count - 1; subscriberIndex >= 0; subscriberIndex--) // Iterate in reverse in case we need to remove something.
+            for (var subscriberIndex = m_subscribers.Count - 1; subscriberIndex >= 0; subscriberIndex--) // Iterate in reverse in case we need to remove something.
             {
                 var subscriber = m_subscribers[subscriberIndex];
                 subscriber.periodCurrent += dt;
 
                 if (subscriber.periodCurrent > subscriber.period)
                 {
-                    Action<float> onUpdate = subscriber.updateMethod;
+                    var onUpdate = subscriber.updateMethod;
 
                     if (onUpdate == null)
                     {
