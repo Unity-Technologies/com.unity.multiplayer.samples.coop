@@ -274,6 +274,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     break;
                 }
             }
+            CancelCloseLobby();
         }
     }
 }
