@@ -137,6 +137,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 StopCoroutine(m_WaitToEndLobbyCoroutine);
             }
             CharSelectData.IsLobbyClosed.Value = false;
+            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
+            {
+                // Set all locked players to active so that they have to confirm their choice again
+                if (CharSelectData.LobbyPlayers[i].SeatState == CharSelectData.SeatState.LockedIn)
+                {
+                    CharSelectData.LobbyPlayers[i] = new CharSelectData.LobbyPlayerState(
+                        CharSelectData.LobbyPlayers[i].ClientId,
+                        CharSelectData.LobbyPlayers[i].PlayerName,
+                        CharSelectData.LobbyPlayers[i].PlayerNum,
+                        CharSelectData.SeatState.Active,
+                        CharSelectData.LobbyPlayers[i].SeatIdx,
+                        CharSelectData.LobbyPlayers[i].LastChangeTime);
+                }
+            }
         }
 
         private void SaveLobbyResults()

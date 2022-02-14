@@ -313,6 +313,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (isLobbyClosed)
             {
                 ConfigureUIForLobbyMode(LobbyMode.LobbyEnding);
+                // Reset LastSeatSelected so that if the lobby is reopened we can consider it a new seat and reset the character preview;
+                m_LastSeatSelected = -1;
             }
         }
 
