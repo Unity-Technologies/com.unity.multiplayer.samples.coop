@@ -176,7 +176,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (connectionPayload.isDebug != Debug.isDebugBuild)
             {
-                gameReturnStatus = ConnectStatus.IncompatibleVersion;
+                gameReturnStatus = ConnectStatus.IncompatibleBuildType;
                 SendServerToClientConnectResult(clientId, gameReturnStatus);
                 SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
                 StartCoroutine(WaitToDisconnect(clientId));
