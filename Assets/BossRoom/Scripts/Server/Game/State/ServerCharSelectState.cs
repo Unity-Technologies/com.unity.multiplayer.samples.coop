@@ -134,6 +134,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 StopCoroutine(m_WaitToEndLobbyCoroutine);
             }
             CharSelectData.IsLobbyClosed.Value = false;
+            // Set all players unready so they can react to this cancellation
+            SetAllUnready();
+        }
+
+        void SetAllUnready()
+        {
             for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
             {
                 // Set all locked players to active so that they have to confirm their choice again
@@ -272,10 +278,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 }
             }
 
-            // If lobby is closing and waiting to start the game, cancel so that other players can react to it
+
             if (CharSelectData.IsLobbyClosed.Value)
             {
+                // If lobby is closing and waiting to start the game, cancel so that other players can react to it, and
+                // wait for the player coming back if they want to.
                 CancelCloseLobby();
+            }
+            else
+            {
+                // If it is not closing, set everyone as unready for the same reason
+                SetAllUnready();
             }
         }
     }
