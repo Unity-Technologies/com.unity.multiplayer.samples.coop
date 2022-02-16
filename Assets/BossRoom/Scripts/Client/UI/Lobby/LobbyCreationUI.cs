@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace BossRoom.Scripts.Client.UI
 {
-    public class CreateLobbyUI : MonoBehaviour
+    public class LobbyCreationUI : MonoBehaviour
     {
         public const string k_DefaultIP = "127.0.0.1";
         public const int k_DefaultPort = 9998;

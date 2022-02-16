@@ -446,7 +446,7 @@ GameObject:
   - component: {fileID: 5370165130166260100}
   - component: {fileID: 2349919044805767479}
   m_Layer: 5
-  m_Name: CreateLobbyUI
+  m_Name: LobbyCreationUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -493,7 +493,7 @@ MonoBehaviour:
   m_IPConnectionCanvasGroup: {fileID: 3812285187249015425}
   m_IPInputField: {fileID: 422614542781742396}
   m_PortInputField: {fileID: 4323878281714235668}
-  m_LoadingIndicatorObject: {fileID: 0}
+  m_LoadingIndicatorObject: {fileID: 8767408865020753479}
   m_IPToggle: {fileID: 3644525048027701234}
   m_UnityRelayToggle: {fileID: 2910413455996524368}
   m_IsPrivate: {fileID: 8780206513702589119}
@@ -4046,8 +4046,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CanvasGroup: {fileID: 6889764071769254414}
-  m_JoinLobbyUI: {fileID: 3432713757992463987}
-  m_CreateLobbyUI: {fileID: 5370165130166260100}
+  lobbyJoiningUI: {fileID: 3432713757992463987}
+  lobbyCreationUI: {fileID: 5370165130166260100}
   m_JoinToggle: {fileID: 6915400021973830416}
   m_CreateToggle: {fileID: 7081295359045549679}
   m_PlayerNameLabel: {fileID: 7676773602323508701}
@@ -4114,7 +4114,7 @@ GameObject:
   - component: {fileID: 3432713757992463987}
   - component: {fileID: 5782144806807453527}
   m_Layer: 5
-  m_Name: JoinLobbyUI
+  m_Name: LobbyJoiningUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

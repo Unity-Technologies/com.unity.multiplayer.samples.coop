@@ -8,9 +8,9 @@ using UnityEngine.UI;
 namespace BossRoom.Scripts.Client.UI
 {
     /// <summary>
-    /// Handles the list of LobbyPanelUIs and ensures it stays synchronized with the lobby list from the service.
+    /// Handles the list of LobbyListItemUIs and ensures it stays synchronized with the lobby list from the service.
     /// </summary>
-    public class JoinLobbyUI : MonoBehaviour
+    public class LobbyJoiningUI : MonoBehaviour
     {
         [SerializeField] private LobbyListItemUI m_LobbyListItemPrototype;
         [SerializeField] private InputField m_JoinCodeField;

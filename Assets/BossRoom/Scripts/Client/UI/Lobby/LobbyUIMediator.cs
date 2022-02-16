@@ -16,8 +16,8 @@ namespace BossRoom.Scripts.Client.UI
     public class LobbyUIMediator : MonoBehaviour
     {
         [SerializeField] private CanvasGroup m_CanvasGroup;
-        [SerializeField] private JoinLobbyUI m_JoinLobbyUI;
-        [SerializeField] private CreateLobbyUI m_CreateLobbyUI;
+        [SerializeField] private LobbyJoiningUI lobbyJoiningUI;
+        [SerializeField] private LobbyCreationUI lobbyCreationUI;
         [SerializeField] private UITinter m_JoinToggle;
         [SerializeField] private UITinter m_CreateToggle;
         [SerializeField] private TextMeshProUGUI m_PlayerNameLabel;
@@ -245,16 +245,16 @@ namespace BossRoom.Scripts.Client.UI
 
         public void ToggleJoinLobbyUI()
         {
-            m_JoinLobbyUI.Show();
-            m_CreateLobbyUI.Hide();
+            lobbyJoiningUI.Show();
+            lobbyCreationUI.Hide();
             m_JoinToggle.SetToColor(1);
             m_CreateToggle.SetToColor(0);
         }
 
         public void ToggleCreateLobbyUI()
         {
-            m_JoinLobbyUI.Hide();
-            m_CreateLobbyUI.Show();
+            lobbyJoiningUI.Hide();
+            lobbyCreationUI.Show();
             m_JoinToggle.SetToColor(0);
             m_CreateToggle.SetToColor(1);
         }
