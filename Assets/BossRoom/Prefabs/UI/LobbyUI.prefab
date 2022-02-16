@@ -3462,8 +3462,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 5370165130166260100}
-        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.CreateLobbyUI, Unity.Multiplayer.Samples.BossRoom.Client
-        m_MethodName: SanitizeInputText
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.LobbyCreationUI, Unity.Multiplayer.Samples.BossRoom.Client
+        m_MethodName: SanitizeIPInputText
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
