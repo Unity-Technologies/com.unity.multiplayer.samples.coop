@@ -27,12 +27,13 @@ namespace GameLobby.UI
             m_Image.color = m_TintColors[colorInt];
         }
 
-        public void SetToColor(int colorInt)
+        public void SetToColor(int colorIndex)
         {
-            if (colorInt >= m_TintColors.Length)
+            if (colorIndex >= m_TintColors.Length)
                 return;
-            m_Image.color = m_TintColors[colorInt];
+            m_Image.color = m_TintColors[colorIndex];
         }
+
     }
 
 
