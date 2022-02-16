@@ -21,18 +21,16 @@ namespace GameLobby.UI
 
         public void SetToColor(bool firstTwoColors)
         {
-            int colorInt =   firstTwoColors ? 1 : 0;
-            if (colorInt >= m_TintColors.Length)
-                return;
-            m_Image.color = m_TintColors[colorInt];
+            SetToColor(firstTwoColors ? 1 : 0);
         }
 
-        public void SetToColor(int colorInt)
+        public void SetToColor(int colorIndex)
         {
-            if (colorInt >= m_TintColors.Length)
+            if (colorIndex >= m_TintColors.Length)
                 return;
-            m_Image.color = m_TintColors[colorInt];
+            m_Image.color = m_TintColors[colorIndex];
         }
+
     }
 
 
