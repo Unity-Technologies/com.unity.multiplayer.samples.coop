@@ -3,7 +3,7 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-namespace Tests
+namespace Unity.Multiplayer.Samples.Coop.Tests.Runtime
 {
     public class RuntimeExampleTest
     {
