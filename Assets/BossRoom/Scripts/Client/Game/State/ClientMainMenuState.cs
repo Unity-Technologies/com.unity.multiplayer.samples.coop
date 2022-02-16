@@ -2,11 +2,14 @@ using BossRoom.Scripts.Client.UI;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
-using ParrelSync;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
+
+#if UNITY_EDITOR
+using ParrelSync;
+#endif
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
