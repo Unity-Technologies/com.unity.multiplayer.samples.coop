@@ -1,5 +1,6 @@
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using BossRoom.Scripts.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom;
 using UnityEngine;
@@ -11,7 +12,6 @@ namespace BossRoom.Scripts.Client.UI
     {
         public const string k_DefaultIP = "127.0.0.1";
         public const int k_DefaultPort = 9998;
-        private static readonly char[] k_InputFieldIncludeChars = {'.', '_'};
 
         [SerializeField] private InputField m_LobbyNameInputField;
         [SerializeField] private CanvasGroup m_IPConnectionCanvasGroup;
@@ -29,7 +29,7 @@ namespace BossRoom.Scripts.Client.UI
 
         private void Awake()
         {
-            SetOnlineMode(OnlineMode.IpHost);
+            EnableIPHostUI();
             m_IPToggle.onValueChanged.AddListener(IPRadioRadioButtonPressed);
             m_UnityRelayToggle.onValueChanged.AddListener(UnityRelayRadioRadioButtonPressed);
         }
@@ -47,7 +47,7 @@ namespace BossRoom.Scripts.Client.UI
                 return;
             }
 
-            SetOnlineMode(OnlineMode.IpHost);
+            EnableIPHostUI();
         }
 
         private void UnityRelayRadioRadioButtonPressed(bool value)
@@ -57,40 +57,30 @@ namespace BossRoom.Scripts.Client.UI
                 return;
             }
 
-            SetOnlineMode(OnlineMode.UnityRelay);
+            EnableUnityRelayUI();
         }
 
-
-        private void SetOnlineMode(OnlineMode mode)
+        private void EnableUnityRelayUI()
         {
-            m_OnlineMode = mode;
-
-            switch (mode)
-            {
-                case OnlineMode.IpHost:
-                {
-                    m_IPConnectionCanvasGroup.alpha = 1;
-                    m_IPConnectionCanvasGroup.blocksRaycasts = true;
-                    m_IPConnectionCanvasGroup.interactable = true;
-
-                    m_PortInputField.text = k_DefaultPort.ToString();
-                    m_PortInputField.text = k_DefaultPort.ToString();
-                }
-                    break;
-                case OnlineMode.UnityRelay:
-                {
-                    m_IPConnectionCanvasGroup.alpha = 0;
-                    m_IPConnectionCanvasGroup.blocksRaycasts = false;
-                    m_IPConnectionCanvasGroup.interactable = false;
-                }
-                    break;
-                case OnlineMode.Unset:
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(mode), mode, null);
-            }
+            m_IPConnectionCanvasGroup.alpha = 0;
+            m_IPConnectionCanvasGroup.blocksRaycasts = false;
+            m_IPConnectionCanvasGroup.interactable = false;
 
             m_LoadingImage.SetActive(false);
         }
+
+        private void EnableIPHostUI()
+        {
+            m_IPConnectionCanvasGroup.alpha = 1;
+            m_IPConnectionCanvasGroup.blocksRaycasts = true;
+            m_IPConnectionCanvasGroup.interactable = true;
+
+            m_PortInputField.text = k_DefaultPort.ToString();
+            m_PortInputField.text = k_DefaultPort.ToString();
+
+            m_LoadingImage.SetActive(false);
+        }
+
 
         public void OnCreateClick()
         {
@@ -120,37 +110,26 @@ namespace BossRoom.Scripts.Client.UI
 
 
         /// <summary>
-        ///     Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
+        /// Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
         /// </summary>
         /// <param name="dirtyString"> string to sanitize. </param>
         /// <param name="includeChars"> Array of chars to include. </param>
         /// <returns> Sanitized text string. </returns>
-        private static string Sanitize(string dirtyString, char[] includeChars = null)
+        private static string Sanitize(string dirtyString)
         {
-            var result = new StringBuilder(dirtyString.Length);
-            foreach (var c in dirtyString)
-            {
-                if (char.IsLetterOrDigit(c) ||
-                    includeChars != null && Array.Exists(includeChars, includeChar => includeChar == c))
-                {
-                    result.Append(c);
-                }
-            }
-
-            return result.ToString();
+            return Regex.Replace(dirtyString, "[A-Za-z0-9]", "");
         }
 
         /// <summary>
-        ///     Added to the InputField component's OnValueChanged callback for the Room/IP UI text.
+        /// Added to the InputField component's OnValueChanged callback for the Room/IP UI text.
         /// </summary>
         public void SanitizeIPInputText()
         {
-            var inputFieldText = Sanitize(m_IPInputField.text, k_InputFieldIncludeChars);
-            m_IPInputField.text = inputFieldText;
+            m_IPInputField.text = Sanitize(m_IPInputField.text);
         }
 
         /// <summary>
-        ///     Added to the InputField component's OnValueChanged callback for the Port UI text.
+        /// Added to the InputField component's OnValueChanged callback for the Port UI text.
         /// </summary>
         public void SanitizePortText()
         {

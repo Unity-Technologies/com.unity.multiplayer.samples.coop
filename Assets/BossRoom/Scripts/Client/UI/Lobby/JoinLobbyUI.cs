@@ -73,26 +73,26 @@ namespace BossRoom.Scripts.Client.UI
         {
             base.UpdateObserver(observed);
 
-            ///Check for new entries, We take CurrentLobbies as the source of truth
+            //Check for new entries, We take CurrentLobbies as the source of truth
             var previousKeys = new List<string>(m_LobbyButtons.Keys);
 
-            foreach (var codeLobby in observed.CurrentLobbies)
+            foreach (var idToLobby in observed.CurrentLobbies)
             {
-                var lobbyCodeKey = codeLobby.Key;
-                var lobbyData = codeLobby.Value;
+                var lobbyIDKey = idToLobby.Key;
+                var lobbyData = idToLobby.Value;
 
-                if (!m_LobbyButtons.ContainsKey(lobbyCodeKey))
+                if (!m_LobbyButtons.ContainsKey(lobbyIDKey))
                 {
                     if (CanDisplay(lobbyData))
                     {
-                        CreateLobbyPanel(lobbyCodeKey, lobbyData);
+                        CreateLobbyPanel(lobbyIDKey, lobbyData);
                     }
                 }
                 else
                 {
                     if (CanDisplay(lobbyData))
                     {
-                        UpdateLobbyButton(lobbyCodeKey, lobbyData);
+                        UpdateLobbyButton(lobbyIDKey, lobbyData);
                     }
                     else
                     {
@@ -100,11 +100,11 @@ namespace BossRoom.Scripts.Client.UI
                     }
                 }
 
-                previousKeys.Remove(lobbyCodeKey);
+                previousKeys.Remove(lobbyIDKey);
             }
 
+            //remove the lobbies that no longer exist
             foreach (var key in previousKeys)
-                // Need to remove any lobbies from the list that no longer exist.
             {
                 RemoveLobbyButton(m_LocalLobby[key]);
             }
@@ -117,13 +117,13 @@ namespace BossRoom.Scripts.Client.UI
 
         private bool CanDisplay(LocalLobby lobby)
         {
-            return !lobby.Private && lobby.LobbyUsers.Count != lobby.MaxPlayerCount;
+            return lobby.LobbyUsers.Count != lobby.MaxPlayerCount;
         }
 
         /// <summary>
-        ///     Instantiates UI element and initializes the observer with the LobbyData
+        /// Instantiates UI element and initializes the observer with the LobbyData
         /// </summary>
-        private void CreateLobbyPanel(string lobbyCode, LocalLobby lobby)
+        private void CreateLobbyPanel(string lobbyID, LocalLobby lobby)
         {
             var lobbyPanel = Instantiate(m_LobbyPanelPrototype.gameObject, m_LobbyPanelPrototype.transform.parent)
                 .GetComponent<LobbyPanelUI>();
@@ -133,8 +133,8 @@ namespace BossRoom.Scripts.Client.UI
             lobbyPanel.BeginObserving(lobby);
             lobby.onDestroyed += RemoveLobbyButton; // Set up to clean itself
 
-            m_LobbyButtons.Add(lobbyCode, lobbyPanel);
-            m_LocalLobby.Add(lobbyCode, lobby);
+            m_LobbyButtons.Add(lobbyID, lobbyPanel);
+            m_LocalLobby.Add(lobbyID, lobby);
         }
 
         private void UpdateLobbyButton(string lobbyCode, LocalLobby lobby)

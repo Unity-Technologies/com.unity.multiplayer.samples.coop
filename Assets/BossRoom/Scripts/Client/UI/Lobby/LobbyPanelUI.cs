@@ -6,7 +6,7 @@ using UnityEngine;
 namespace BossRoom.Scripts.Client.UI
 {
     /// <summary>
-    /// An individual Lobby in the list of avaialble lobbies
+    /// An individual Lobby in the list of available lobbies
     /// </summary>
     public class LobbyPanelUI : ObserverBehaviour<LocalLobby>
     {

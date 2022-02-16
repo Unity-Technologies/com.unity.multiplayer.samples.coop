@@ -37,13 +37,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         Dictionary<string, LobbyUser> m_LobbyUsers = new Dictionary<string, LobbyUser>();
         public Dictionary<string, LobbyUser> LobbyUsers => m_LobbyUsers;
 
-
-        public LocalLobby()
-        {
-
-        }
-
-        #region LocalLobbyData
         public struct LobbyData
         {
             public string LobbyID { get; set; }
@@ -85,13 +78,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         }
 
         private LobbyData m_data;
-        public LobbyData Data
-        {
-            get { return new LobbyData(m_data); }
-        }
+        public LobbyData Data => new LobbyData(m_data);
 
-
-        #endregion
 
         public void AddPlayer(LobbyUser user)
         {
