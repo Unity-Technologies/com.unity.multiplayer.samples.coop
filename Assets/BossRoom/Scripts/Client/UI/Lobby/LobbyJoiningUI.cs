@@ -25,8 +25,6 @@ namespace BossRoom.Scripts.Client.UI
 
         private LobbyUIMediator m_LobbyUIMediator;
 
-        private readonly Dictionary<string, LocalLobby> m_LocalLobby = new Dictionary<string, LocalLobby>();
-
         private UpdateRunner m_UpdateRunner;
 
         private IDisposable m_Subscriptions;
@@ -50,7 +48,7 @@ namespace BossRoom.Scripts.Client.UI
         }
 
         [Inject]
-        private void InjectDependencies(IInstanceResolver container, LobbyUIMediator lobbyUIMediator, UpdateRunner updateRunner, ISubscriber<LocalLobbiesRefreshedMessage> localLobbiesRefreshedSub)
+        private void InjectDependenciesAndInstantiate(IInstanceResolver container, LobbyUIMediator lobbyUIMediator, UpdateRunner updateRunner, ISubscriber<LocalLobbiesRefreshedMessage> localLobbiesRefreshedSub)
         {
             m_Container = container;
             m_LobbyUIMediator = lobbyUIMediator;
@@ -79,7 +77,7 @@ namespace BossRoom.Scripts.Client.UI
         private void UpdateUI(LocalLobbiesRefreshedMessage message)
         {
             //Check for new entries, We take CurrentLobbies as the source of truth
-            var previousKeys = new List<string>(m_LobbyListItemUIs.Keys);
+            var lobbyIDsToRemove = new HashSet<string>(m_LobbyListItemUIs.Keys);
 
             foreach (var idToLobby in message.LobbyIDsToLocalLobbies)
             {
@@ -97,21 +95,21 @@ namespace BossRoom.Scripts.Client.UI
                 {
                     if (CanDisplay(lobbyData))
                     {
-                        UpdateLobbyButton(lobbyIDKey, lobbyData);
+                        UpdateLobbyListItem(lobbyIDKey, lobbyData);
                     }
                     else
                     {
-                        RemoveLobbyButton(lobbyData);
+                        RemoveLobbyListItem(lobbyData);
                     }
                 }
 
-                previousKeys.Remove(lobbyIDKey);
+                lobbyIDsToRemove.Remove(lobbyIDKey);
             }
 
             //remove the lobbies that no longer exist
-            foreach (var key in previousKeys)
+            foreach (var lobbyID in lobbyIDsToRemove)
             {
-                RemoveLobbyButton(m_LocalLobby[key]);
+                RemoveLobbyListItem(lobbyID);
             }
         }
 
@@ -136,24 +134,21 @@ namespace BossRoom.Scripts.Client.UI
             m_Container.InjectIn(lobbyPanel);
 
             lobbyPanel.BeginObserving(lobby);
-            lobby.onDestroyed += RemoveLobbyButton; // Set up to clean itself
+            lobby.onDestroyed += RemoveLobbyListItem; // Set up to clean itself
 
             m_LobbyListItemUIs.Add(lobbyID, lobbyPanel);
-            m_LocalLobby.Add(lobbyID, lobby);
         }
 
-        private void UpdateLobbyButton(string lobbyCode, LocalLobby lobby)
+        private void UpdateLobbyListItem(string lobbyCode, LocalLobby lobby)
         {
             m_LobbyListItemUIs[lobbyCode].UpdateLobby(lobby);
         }
 
-        private void RemoveLobbyButton(LocalLobby lobby)
+        private void RemoveLobbyListItem(string lobbyID)
         {
-            var lobbyID = lobby.LobbyID;
             var lobbyPanel = m_LobbyListItemUIs[lobbyID];
             lobbyPanel.EndObserving();
             m_LobbyListItemUIs.Remove(lobbyID);
-            m_LocalLobby.Remove(lobbyID);
 
             //todo: reuse lobby panel UIs instead of creating new ones
             Destroy(lobbyPanel.gameObject);

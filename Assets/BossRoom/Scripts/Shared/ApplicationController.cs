@@ -11,6 +11,12 @@ using UnityEngine.SceneManagement;
 
 namespace BossRoom.Scripts.Shared
 {
+
+    public struct ApplicationIsQuittingMessage
+    {
+
+    }
+
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
     /// </summary>
@@ -78,7 +84,7 @@ namespace BossRoom.Scripts.Shared
 
         private void OnDestroy()
         {
-            ForceLeaveLobbyAttempt();
+            m_LobbyAsyncRequests.ForceLeaveLobbyAttempt();
             DIScope.RootScope.Dispose();
         }
 
@@ -88,7 +94,7 @@ namespace BossRoom.Scripts.Shared
         /// </summary>
         private IEnumerator LeaveBeforeQuit()
         {
-            ForceLeaveLobbyAttempt();
+            m_LobbyAsyncRequests.ForceLeaveLobbyAttempt();
             yield return null;
             Application.Quit();
         }
@@ -100,24 +106,8 @@ namespace BossRoom.Scripts.Shared
             return canQuit;
         }
 
-        private void ForceLeaveLobbyAttempt()
-        {
-            m_LobbyAsyncRequests.EndTracking();
-            m_LobbyContentHeartbeat.EndTracking();
-
-            if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
-            {
-                m_LobbyAsyncRequests.LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
-            }
-
-            m_LocalUser.ResetState();
-            m_LocalLobby.Reset(m_LocalUser);
-        }
-
         public void QuitGame()
         {
-            ForceLeaveLobbyAttempt();
-
             if (NetworkManager.Singleton.IsListening)
             {
                 // first disconnect then return to menu
