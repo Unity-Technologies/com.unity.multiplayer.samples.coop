@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.Netcode;
 
@@ -103,7 +101,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
-        [SerializeField] private GameObject[] _autoInjected;
+        [SerializeField] private GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
         private DIScope m_Scope;
 
         private void Awake()
@@ -124,7 +122,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 { LobbyMode.FatalError, m_UIElementsForFatalError },
             };
 
-            foreach (var o in _autoInjected)
+            foreach (var o in m_GameObjectsThatWillBeInjectedAutomatically)
             {
                 m_Scope.InjectIn(o);
             }

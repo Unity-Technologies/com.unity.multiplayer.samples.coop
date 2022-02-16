@@ -26,33 +26,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private ClientGameNetPortal m_ClientNetPortal;
 
 
-        [SerializeField] private GameObject[] _autoInjected;
+        [SerializeField] private GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
         private DIScope m_Scope;
 
         [SerializeField] private NameGenerationData m_NameGenerationData;
-        [SerializeField] private LobbyUIMediator m_lobbyUIMediator;
+        [SerializeField] private LobbyUIMediator m_LobbyUIMediator;
 
-        [SerializeField] private CanvasGroup m_mainMenuButtons;
-        [SerializeField] private GameObject m_signInSpinner;
+        [SerializeField] private CanvasGroup m_MainMenuButtons;
+        [SerializeField] private GameObject m_SignInSpinner;
 
         private void Awake()
         {
-            m_mainMenuButtons.interactable = false;
-            m_lobbyUIMediator.Hide();
+            m_MainMenuButtons.interactable = false;
+            m_LobbyUIMediator.Hide();
             DIScope.RootScope.InjectIn(this);
         }
 
         [Inject]
-        private void InjectDependenciesAndInitialize(AuthenticationAPIInterface authAPIInterface)
+        private void InjectDependenciesAndInitialize(AuthenticationAPIInterface authAPIInterface, LobbyUser localUser, LocalLobby localLobby)
         {
             m_Scope = new DIScope(DIScope.RootScope);
 
             m_Scope.BindInstanceAsSingle(m_NameGenerationData);
-            m_Scope.BindInstanceAsSingle(m_lobbyUIMediator);
+            m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
 
             var unityAuthenticationInitOptions = new InitializationOptions();
 
 #if UNITY_EDITOR
+            //The code below makes it possible for the clone instance to log in as a different user profile in Authentication service.
+            //This allows us to test services integration locally by utilising Parrelsync.
             if (ClonesManager.IsClone())
             {
                 Debug.Log("This is a clone project.");
@@ -71,17 +73,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 m_Scope.FinalizeScopeConstruction();
 
-                foreach (var go in _autoInjected)
+                foreach (var go in m_GameObjectsThatWillBeInjectedAutomatically)
                 {
                     m_Scope.InjectIn(go);
                 }
 
-                m_mainMenuButtons.interactable = true;
-                m_signInSpinner.SetActive(false);
-
-                var localUser = m_Scope.Resolve<LobbyUser>();
-                var localLobby = m_Scope.Resolve<LocalLobby>();
-
+                m_MainMenuButtons.interactable = true;
+                m_SignInSpinner.SetActive(false);
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
@@ -104,8 +102,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void OnStartClicked()
         {
-            m_lobbyUIMediator.ToggleJoinLobbyUI();
-            m_lobbyUIMediator.Show();
+            m_LobbyUIMediator.ToggleJoinLobbyUI();
+            m_LobbyUIMediator.Show();
         }
     }
 }

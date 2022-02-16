@@ -247,16 +247,16 @@ namespace BossRoom.Scripts.Client.UI
         {
             m_JoinLobbyUI.Show();
             m_CreateLobbyUI.Hide();
-            m_JoinToggle.SetToColor(true);
-            m_CreateToggle.SetToColor(false);
+            m_JoinToggle.SetToColor(1);
+            m_CreateToggle.SetToColor(0);
         }
 
         public void ToggleCreateLobbyUI()
         {
             m_JoinLobbyUI.Hide();
             m_CreateLobbyUI.Show();
-            m_JoinToggle.SetToColor(false);
-            m_CreateToggle.SetToColor(true);
+            m_JoinToggle.SetToColor(0);
+            m_CreateToggle.SetToColor(1);
         }
 
         public void RegenerateName()
@@ -276,8 +276,6 @@ namespace BossRoom.Scripts.Client.UI
             m_CanvasGroup.interactable = true;
             m_LoadingSpinner.SetActive(false);
         }
-
-        //m_clientNetPortal callbacks
 
         /// <summary>
         /// Callback when the server sends us back a connection finished event.

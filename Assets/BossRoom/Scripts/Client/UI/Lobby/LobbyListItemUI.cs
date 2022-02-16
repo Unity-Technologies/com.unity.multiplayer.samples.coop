@@ -6,9 +6,9 @@ using UnityEngine;
 namespace BossRoom.Scripts.Client.UI
 {
     /// <summary>
-    /// An individual Lobby in the list of available lobbies
+    /// An individual Lobby UI in the list of available lobbies
     /// </summary>
-    public class LobbyPanelUI : ObserverBehaviour<LocalLobby>
+    public class LobbyListItemUI : ObserverBehaviour<LocalLobby>
     {
         [SerializeField] private TextMeshProUGUI m_lobbyNameText;
         [SerializeField] private TextMeshProUGUI m_lobbyCountText;

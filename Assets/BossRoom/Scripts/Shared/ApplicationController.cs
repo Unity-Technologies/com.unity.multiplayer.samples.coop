@@ -25,7 +25,7 @@ namespace BossRoom.Scripts.Shared
         private LobbyAsyncRequests m_LobbyAsyncRequests;
         private LobbyContentHeartbeat m_LobbyContentHeartbeat;
 
-        [SerializeField] private GameObject[] m_AutoInjected;
+        [SerializeField] private GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
 
         private void Awake()
         {
@@ -48,6 +48,7 @@ namespace BossRoom.Scripts.Shared
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
             scope.BindMessageChannel<UnityServiceErrorMessage>();
+            scope.BindMessageChannel<LocalLobbiesRefreshedMessage>();
 
             //all the lobby service stuff, bound here so that it persists through scene loads
             scope.BindAsSingle<AuthenticationAPIInterface>(); //a manager entity that allows us to do anonymous authentication with unity services
@@ -59,7 +60,7 @@ namespace BossRoom.Scripts.Shared
 
             scope.FinalizeScopeConstruction();
 
-            foreach (var o in m_AutoInjected)
+            foreach (var o in m_GameObjectsThatWillBeInjectedAutomatically)
             {
                 scope.InjectIn(o);
             }

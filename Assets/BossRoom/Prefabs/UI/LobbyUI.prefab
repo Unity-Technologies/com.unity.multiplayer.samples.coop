@@ -493,8 +493,7 @@ MonoBehaviour:
   m_IPConnectionCanvasGroup: {fileID: 3812285187249015425}
   m_IPInputField: {fileID: 422614542781742396}
   m_PortInputField: {fileID: 4323878281714235668}
-  m_LoadingImage: {fileID: 8767408865020753479}
-  m_ConfirmationButton: {fileID: 8736528447829798099}
+  m_LoadingIndicatorObject: {fileID: 0}
   m_IPToggle: {fileID: 3644525048027701234}
   m_UnityRelayToggle: {fileID: 2910413455996524368}
   m_IsPrivate: {fileID: 8780206513702589119}
@@ -4154,10 +4153,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5badc8e4e5a84afeae84746e5199ebaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnObservedUpdated:
-    m_PersistentCalls:
-      m_Calls: []
-  m_LobbyPanelPrototype: {fileID: 5912019979909014333}
+  m_LobbyListItemPrototype: {fileID: 6844302749700945984}
   m_JoinCodeField: {fileID: 8248007993983070476}
   m_CanvasGroup: {fileID: 5782144806807453527}
 --- !u!225 &5782144806807453527
@@ -5459,13 +5455,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3632019498769524828}
-  - component: {fileID: 5912019979909014333}
+  - component: {fileID: 6844302749700945984}
   - component: {fileID: 1731687845091873337}
   - component: {fileID: 1526944650360902530}
   - component: {fileID: 6432751663401761397}
   - component: {fileID: 4034168928220429643}
   m_Layer: 5
-  m_Name: LobbyPanelUIPrototype
+  m_Name: LobbyListItemUI Prototype
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5493,7 +5489,7 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 60}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &5912019979909014333
+--- !u!114 &6844302749700945984
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5505,9 +5501,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83ebc4f31452e4fc1b11263aed913c99, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnObservedUpdated:
-    m_PersistentCalls:
-      m_Calls: []
   m_lobbyNameText: {fileID: 1583053172819472216}
   m_lobbyCountText: {fileID: 1131054124500818674}
   m_OnlineModeText: {fileID: 4805371756271124143}
@@ -5593,8 +5586,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 5912019979909014333}
-        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.LobbyPanelUI, Unity.Multiplayer.Samples.BossRoom.Client
+      - m_Target: {fileID: 6844302749700945984}
+        m_TargetAssemblyTypeName: BossRoom.Scripts.Client.UI.LobbyListItemUI, Unity.Multiplayer.Samples.BossRoom.Client
         m_MethodName: OnClick
         m_Mode: 1
         m_Arguments:

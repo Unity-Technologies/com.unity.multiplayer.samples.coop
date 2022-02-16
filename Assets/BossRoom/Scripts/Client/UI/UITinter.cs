@@ -1,8 +1,4 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 namespace GameLobby.UI
@@ -19,11 +15,6 @@ namespace GameLobby.UI
             m_Image = GetComponent<Image>();
         }
 
-        public void SetToColor(bool firstTwoColors)
-        {
-            SetToColor(firstTwoColors ? 1 : 0);
-        }
-
         public void SetToColor(int colorIndex)
         {
             if (colorIndex >= m_TintColors.Length)
@@ -32,6 +23,4 @@ namespace GameLobby.UI
         }
 
     }
-
-
 }
