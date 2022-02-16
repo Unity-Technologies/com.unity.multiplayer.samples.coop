@@ -1,5 +1,3 @@
-using System;
-using System.Text;
 using System.Text.RegularExpressions;
 using BossRoom.Scripts.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom;
@@ -17,7 +15,7 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField] private CanvasGroup m_IPConnectionCanvasGroup;
         [SerializeField] private InputField m_IPInputField;
         [SerializeField] private InputField m_PortInputField;
-        [SerializeField] private GameObject m_LoadingImage;
+        [SerializeField] private GameObject m_LoadingIndicatorObject;
         [SerializeField] private Toggle m_IPToggle;
         [SerializeField] private Toggle m_UnityRelayToggle;
         [SerializeField] private Toggle m_IsPrivate;
@@ -66,7 +64,7 @@ namespace BossRoom.Scripts.Client.UI
             m_IPConnectionCanvasGroup.blocksRaycasts = false;
             m_IPConnectionCanvasGroup.interactable = false;
 
-            m_LoadingImage.SetActive(false);
+            m_LoadingIndicatorObject.SetActive(false);
         }
 
         private void EnableIPHostUI()
@@ -78,7 +76,7 @@ namespace BossRoom.Scripts.Client.UI
             m_PortInputField.text = k_DefaultPort.ToString();
             m_PortInputField.text = k_DefaultPort.ToString();
 
-            m_LoadingImage.SetActive(false);
+            m_LoadingIndicatorObject.SetActive(false);
         }
 
 
