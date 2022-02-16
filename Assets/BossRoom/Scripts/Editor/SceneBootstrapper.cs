@@ -1,6 +1,7 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Editor
 {
@@ -99,6 +100,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         static void EditorApplicationOnplayModeStateChanged(PlayModeStateChange obj)
         {
+            // detects whether playmode has been initiated by a TestRunner Playmode test; if so disable Boostrap loading
+            for (int i = 0; i < SceneManager.sceneCount; i++)
+            {
+                if (SceneManager.GetSceneAt(i).name.Contains("InitTestScene"))
+                {
+                    return;
+                }
+            }
+
             if (!LoadBootstrapScene)
             {
                 return;
