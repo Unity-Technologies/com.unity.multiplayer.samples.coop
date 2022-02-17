@@ -111,7 +111,6 @@ namespace BossRoom.Scripts.Client.UI
         /// Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
         /// </summary>
         /// <param name="dirtyString"> string to sanitize. </param>
-        /// <param name="includeChars"> Array of chars to include. </param>
         /// <returns> Sanitized text string. </returns>
         private static string Sanitize(string dirtyString)
         {
