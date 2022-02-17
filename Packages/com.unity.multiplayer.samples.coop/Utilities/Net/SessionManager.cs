@@ -129,41 +129,50 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="sessionPlayerData">The player's initial data</param>
         public void SetupConnectingPlayerSessionData(ulong clientId, string clientGUID, T sessionPlayerData)
         {
-            // If data already exists with this GUID, then this client is reconnecting
+            var isReconnecting = false;
+
+            // Test for duplicate connection
+            if (IsDuplicateConnection(clientGUID))
+            {
+                Debug.LogError($"Client GUID {clientGUID} already exists. This is a duplicate connection. Rejecting this session data.");
+                return;
+            }
+
+            // If another client exists with the same clientGUID
             if (m_ClientData.ContainsKey(clientGUID))
             {
-                bool isReconnecting = false;
-                // If another client is connected with the same clientGUID
-                if (m_ClientData[clientGUID].IsConnected)
+                if (!m_ClientData[clientGUID].IsConnected)
                 {
-                    if (Debug.isDebugBuild)
-                    {
-                        Debug.Log($"Client GUID {clientGUID} already exists. Because this is a debug build, we will still accept the connection");
-
-                        // If debug build, accept connection and manually update clientGUID until we get one that either is not connected or that does not already exist
-                        while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) clientGUID += "_Secondary";
-
-                        if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected)
-                        {
-                            // In this specific case, if the clients with the same GUID reconnect in a different order than when they originally connected,
-                            // they will swap characters, since their GUIDs are manually modified here at runtime.
-                            isReconnecting = true;
-                        }
-                    }
-                }
-                else
-                {
+                    // If this connecting client has the same guid as a disconnected client, this is a reconnection.
                     isReconnecting = true;
                 }
-
-                // Reconnecting. Give data from old player to new player
-                if (isReconnecting)
+                else if (Debug.isDebugBuild)
                 {
-                    // Update player session data
-                    sessionPlayerData = m_ClientData[clientGUID];
-                    sessionPlayerData.ClientID = clientId;
-                    sessionPlayerData.IsConnected = true;
+                    Debug.Log($"Client GUID {clientGUID} already exists and is connected. Because this is a debug build, we will still accept the connection");
+
+                    // If debug build, accept connection and manually update clientGUID until we get one that either is
+                    // not connected or that does not already exist
+                    while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) clientGUID += "_Secondary";
+
+                    // If we have a clientGUID match that is not connected, count this as a reconnection. Otherwise this
+                    // is a new connection.
+                    if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected)
+                    {
+                        // In this specific case, if the clients with the same GUID reconnect in a different order than
+                        // when they originally connected, they will swap characters, since their GUIDs are manually
+                        // modified here at runtime.
+                        isReconnecting = true;
+                    }
                 }
+            }
+
+            // Reconnecting. Give data from old player to new player
+            if (isReconnecting)
+            {
+                // Update player session data
+                sessionPlayerData = m_ClientData[clientGUID];
+                sessionPlayerData.ClientID = clientId;
+                sessionPlayerData.IsConnected = true;
             }
 
             //Populate our dictionaries with the SessionPlayerData
