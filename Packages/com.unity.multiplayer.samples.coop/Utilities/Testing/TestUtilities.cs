@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
-    public abstract class TestUtils
+    public abstract class TestUtilities
     {
         /// <summary>
         /// Finds an active Button GameObject by name. If Button component is present on GameObject, it will be clicked.
