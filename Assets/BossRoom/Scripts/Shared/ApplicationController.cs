@@ -27,9 +27,7 @@ namespace BossRoom.Scripts.Shared
         [SerializeField] private ClientGameNetPortal m_ClientNetPortal;
 
         private LocalLobby m_LocalLobby;
-        private LocalLobbyUser m_LocalUser;
         private LobbyServiceFacade m_LobbyServiceFacade;
-        private JoinedLobbyContentHeartbeat m_JoinedLobbyContentHeartbeat;
 
         [SerializeField] private GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
 
@@ -71,8 +69,6 @@ namespace BossRoom.Scripts.Shared
 
             m_LocalLobby = scope.Resolve<LocalLobby>();
             m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
-            m_JoinedLobbyContentHeartbeat = scope.Resolve<JoinedLobbyContentHeartbeat>();
-            m_LocalUser = scope.Resolve<LocalLobbyUser>();
         }
 
         private void Start()

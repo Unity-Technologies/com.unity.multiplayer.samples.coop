@@ -20,6 +20,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
+        [Inject]
         public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
         {
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;

@@ -22,6 +22,7 @@ public class RoomNameBox : MonoBehaviour
     [Inject]
     private void InjectDependencies(LocalLobby localLobby)
     {
+        m_LocalLobby = localLobby;
         m_LocalLobby.Changed += UpdateUI;
     }
 

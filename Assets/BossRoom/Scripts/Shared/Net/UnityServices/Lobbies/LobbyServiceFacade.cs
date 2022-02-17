@@ -53,6 +53,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_LobbyListFetchedPub = lobbyListFetchedPub;
 
             m_ServiceScope = new DIScope(DIScope.RootScope);
+            m_ServiceScope.BindInstanceAsSingle(this); //so that LobbyServiceFacade can get injected into whatever internal dependencies
             m_ServiceScope.BindAsSingle<JoinedLobbyContentHeartbeat>();
             m_ServiceScope.BindAsSingle<LobbyAPIInterface>();
             m_ServiceScope.FinalizeScopeConstruction();

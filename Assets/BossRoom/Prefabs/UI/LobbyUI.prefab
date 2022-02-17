@@ -4046,8 +4046,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CanvasGroup: {fileID: 6889764071769254414}
-  lobbyJoiningUI: {fileID: 3432713757992463987}
-  lobbyCreationUI: {fileID: 5370165130166260100}
+  m_LobbyJoiningUI: {fileID: 3432713757992463987}
+  m_LobbyCreationUI: {fileID: 5370165130166260100}
   m_JoinToggle: {fileID: 6915400021973830416}
   m_CreateToggle: {fileID: 7081295359045549679}
   m_PlayerNameLabel: {fileID: 7676773602323508701}
