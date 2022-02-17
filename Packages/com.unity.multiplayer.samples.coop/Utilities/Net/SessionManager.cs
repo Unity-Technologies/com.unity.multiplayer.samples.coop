@@ -118,7 +118,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public bool IsDuplicateConnection(string clientGUID)
         {
-            return m_ClientData[clientGUID].IsConnected && !Debug.isDebugBuild;
+            return m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected && !Debug.isDebugBuild;
         }
 
         /// <summary>
@@ -132,6 +132,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             // If data already exists with this GUID, then this client is reconnecting
             if (m_ClientData.ContainsKey(clientGUID))
             {
+                bool isReconnecting = false;
                 // If another client is connected with the same clientGUID
                 if (m_ClientData[clientGUID].IsConnected)
                 {
@@ -141,15 +142,28 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                         // If debug build, accept connection and manually update clientGUID until we get one that either is not connected or that does not already exist
                         while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) clientGUID += "_Secondary";
-                        // In this specific case, if the clients with the same GUID reconnect in a different order than when they originally connected,
-                        // they will swap characters, since their GUIDs are manually modified here at runtime.
+
+                        if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected)
+                        {
+                            // In this specific case, if the clients with the same GUID reconnect in a different order than when they originally connected,
+                            // they will swap characters, since their GUIDs are manually modified here at runtime.
+                            isReconnecting = true;
+                        }
                     }
+                }
+                else
+                {
+                    isReconnecting = true;
                 }
 
                 // Reconnecting. Give data from old player to new player
-                sessionPlayerData = m_ClientData[clientGUID];
-                sessionPlayerData.ClientID = clientId;
-                sessionPlayerData.IsConnected = true;
+                if (isReconnecting)
+                {
+                    // Update player session data
+                    sessionPlayerData = m_ClientData[clientGUID];
+                    sessionPlayerData.ClientID = clientId;
+                    sessionPlayerData.IsConnected = true;
+                }
             }
 
             //Populate our dictionaries with the SessionPlayerData
