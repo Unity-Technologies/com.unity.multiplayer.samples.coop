@@ -165,21 +165,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ConnectStatus.UserRequestedDisconnect:
                     break;
                 case ConnectStatus.ServerFull:
-                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections", false, true);
+                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections.", false, true);
                     break;
                 case ConnectStatus.Success:
-                    if (connecting) { m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now", false, true); }
+                    if (connecting) { m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now...", false, true); }
                     break;
                 case ConnectStatus.LoggedInAgain:
-                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account", false, true);
+                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account.", false, true);
                     break;
                 case ConnectStatus.GenericDisconnect:
-                    var title = connecting ? "Connection Failed" : "Disconnected From Host";
-                    var text = connecting ? "Something went wrong" : "The connection to the host was lost";
+                    var title = connecting ? "Connection Failed" : "Disconnected From Host.";
+                    var text = connecting ? "Something went wrong" : "The connection to the host was lost.";
                     m_ResponsePopup.SetupNotifierDisplay(title, text, false, true);
                     break;
                 case ConnectStatus.IncompatibleBuildType:
-                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Server and client builds are not compatible. You cannot connect a release build to a development build or an in-editor session", false, true);
+                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "Server and client builds are not compatible. You cannot connect a release build to a development build or an in-editor session.", false, true);
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
