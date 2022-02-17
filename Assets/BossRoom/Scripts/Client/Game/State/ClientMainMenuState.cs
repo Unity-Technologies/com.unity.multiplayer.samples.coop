@@ -46,7 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         [Inject]
-        private void InjectDependenciesAndInitialize(AuthenticationAPIInterface authAPIInterface, LobbyUser localUser, LocalLobby localLobby)
+        private void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
         {
             m_Scope = new DIScope(DIScope.RootScope);
 
@@ -70,7 +70,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 unityAuthenticationInitOptions.SetProfile(hardcodedProfileID);
             }
 #endif
-            authAPIInterface.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
+            authServiceFacade.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
 
             void OnAuthSignIn()
             {
@@ -89,7 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 localUser.ID = AuthenticationService.Instance.PlayerId;
                 localUser.DisplayName = m_NameGenerationData.GenerateName();
                 // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
-                localLobby.AddPlayer(localUser);
+                localLobby.AddUser(localUser);
             }
 
             void OnSignInFailed()

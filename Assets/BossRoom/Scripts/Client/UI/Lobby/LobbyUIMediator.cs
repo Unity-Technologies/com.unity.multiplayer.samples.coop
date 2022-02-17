@@ -16,18 +16,16 @@ namespace BossRoom.Scripts.Client.UI
     public class LobbyUIMediator : MonoBehaviour
     {
         [SerializeField] private CanvasGroup m_CanvasGroup;
-        [SerializeField] private LobbyJoiningUI lobbyJoiningUI;
-        [SerializeField] private LobbyCreationUI lobbyCreationUI;
+        [SerializeField] private LobbyJoiningUI m_LobbyJoiningUI;
+        [SerializeField] private LobbyCreationUI m_LobbyCreationUI;
         [SerializeField] private UITinter m_JoinToggle;
         [SerializeField] private UITinter m_CreateToggle;
         [SerializeField] private TextMeshProUGUI m_PlayerNameLabel;
         [SerializeField] private GameObject m_LoadingSpinner;
 
-        private LobbyAsyncRequests m_LobbyAsyncRequests;
-        private LobbyUser m_localUser;
-        private LocalLobby m_localLobby;
-        private LobbyServiceData m_lobbyServiceData;
-        private LobbyContentHeartbeat m_lobbyContentHeartbeat;
+        private LobbyServiceFacade m_LobbyServiceFacade;
+        private LocalLobbyUser m_LocalUser;
+        private LocalLobby m_LocalLobby;
         private IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
         private NameGenerationData m_NameGenerationData;
         private GameNetPortal m_GameNetPortal;
@@ -35,11 +33,9 @@ namespace BossRoom.Scripts.Client.UI
 
         [Inject]
         private void InjectDependencies(
-            LobbyAsyncRequests lobbyAsyncRequests,
+            LobbyServiceFacade lobbyServiceFacade,
             IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
-            LobbyUser localUser,
-            LobbyContentHeartbeat lobbyContentHeartbeat,
-            LobbyServiceData lobbyServiceData,
+            LocalLobbyUser localUser,
             LocalLobby localLobby,
             NameGenerationData nameGenerationData,
             GameNetPortal gameNetPortal,
@@ -49,12 +45,10 @@ namespace BossRoom.Scripts.Client.UI
             //m_persistentPlayer = persistentPlayer;
 
             m_NameGenerationData = nameGenerationData;
-            m_localUser = localUser;
-            m_LobbyAsyncRequests = lobbyAsyncRequests;
+            m_LocalUser = localUser;
+            m_LobbyServiceFacade = lobbyServiceFacade;
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
-            m_lobbyContentHeartbeat = lobbyContentHeartbeat;
-            m_lobbyServiceData = lobbyServiceData;
-            m_localLobby = localLobby;
+            m_LocalLobby = localLobby;
             m_GameNetPortal = gameNetPortal;
             m_ClientNetPortal = clientGameNetPortal;
 
@@ -81,14 +75,14 @@ namespace BossRoom.Scripts.Client.UI
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
         {
-            m_LobbyAsyncRequests.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
+            m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
         public void QueryLobbiesRequest(bool blockUI)
         {
 
-            m_LobbyAsyncRequests.RetrieveLobbyListAsync(
+            m_LobbyServiceFacade.RetrieveLobbyListAsync(
                 OnSuccess,
                 OnFailure
             );
@@ -101,16 +95,6 @@ namespace BossRoom.Scripts.Client.UI
             void OnSuccess(QueryResponse qr)
             {
                 UnblockUIAfterLoadingIsComplete();
-                var localLobbies = LocalLobby.CreateLocalLobbies(qr);
-
-                var newLobbyDict = new Dictionary<string, LocalLobby>();
-
-                foreach (var lobby in localLobbies)
-                {
-                    newLobbyDict.Add(lobby.LobbyID, lobby);
-                }
-
-                m_lobbyServiceData.FetchedLobbies(newLobbyDict);
             }
 
             void OnFailure()
@@ -121,19 +105,19 @@ namespace BossRoom.Scripts.Client.UI
 
         public void JoinLobbyWithCodeRequest(string lobbyCode)
         {
-            m_LobbyAsyncRequests.JoinLobbyAsync(null, lobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
+            m_LobbyServiceFacade.JoinLobbyAsync(null, lobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
         public void JoinLobbyRequest(LocalLobby lobby)
         {
-            m_LobbyAsyncRequests.JoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
+            m_LobbyServiceFacade.JoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
         public void QuickJoinRequest()
         {
-            m_LobbyAsyncRequests.QuickJoinLobbyAsync(m_localUser, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
+            m_LobbyServiceFacade.QuickJoinLobbyAsync(m_LocalUser, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
@@ -144,63 +128,57 @@ namespace BossRoom.Scripts.Client.UI
 
         private void OnCreatedLobby(Lobby r)
         {
-            m_localLobby.ApplyRemoteData(r);
-            m_localUser.IsHost = true;
+            m_LocalUser.IsHost = true;
+            m_LobbyServiceFacade.BeginTracking(r);
 
-            m_LobbyAsyncRequests.BeginTracking(r);
-            m_lobbyContentHeartbeat.BeginTracking();
-
-            switch (m_localLobby.OnlineMode)
+            switch (m_LocalLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
-                    Debug.Log($"Created lobby with ID: {m_localLobby.LobbyID} and code {m_localLobby.LobbyCode}, at IP:Port {m_localLobby.Data.IP}:{m_localLobby.Data.Port}");
+                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
                     break;
                 case OnlineMode.UnityRelay:
-                    Debug.Log($"Created lobby with ID: {m_localLobby.LobbyID} and code {m_localLobby.LobbyCode}, Internal Relay Join Code{m_localLobby.RelayJoinCode}");
+                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
                     break;
             }
 
-            m_GameNetPortal.PlayerName = m_localUser.DisplayName;
+            m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
-            switch (m_localLobby.OnlineMode)
+            switch (m_LocalLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
-                    m_GameNetPortal.StartHost(m_localLobby.Data.IP, m_localLobby.Data.Port);
+                    m_GameNetPortal.StartHost(m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
                     break;
 
                 case OnlineMode.UnityRelay:
-                    m_GameNetPortal.StartUnityRelayHost(cancellationTokenSource.Token);
+                    m_GameNetPortal.StartUnityRelayHost();
                     break;
             }
         }
 
         private void OnJoinedLobby(Lobby remoteLobby)
         {
-            m_localLobby.ApplyRemoteData(remoteLobby);
+            m_LobbyServiceFacade.BeginTracking(remoteLobby);
 
-             m_LobbyAsyncRequests.BeginTracking(remoteLobby);
-             m_lobbyContentHeartbeat.BeginTracking();
+            m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
-            m_GameNetPortal.PlayerName = m_localUser.DisplayName;
-
-            switch (m_localLobby.OnlineMode)
+            switch (m_LocalLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
-                    Debug.Log($"Joined lobby with code: {m_localLobby.LobbyCode}, at IP:Port {m_localLobby.Data.IP}:{m_localLobby.Data.Port}");
+                    Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
                     break;
                 case OnlineMode.UnityRelay:
-                    Debug.Log($"Joined lobby with code: {m_localLobby.LobbyCode}, Internal Relay Join Code{m_localLobby.RelayJoinCode}");
+                    Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
                     break;
             }
 
-            switch (m_localLobby.OnlineMode)
+            switch (m_LocalLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
-                    m_ClientNetPortal.StartClient(m_GameNetPortal, m_localLobby.Data.IP, m_localLobby.Data.Port);
+                    m_ClientNetPortal.StartClient(m_GameNetPortal, m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
                     break;
 
                 case OnlineMode.UnityRelay:
-                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_localLobby.RelayJoinCode, OnRelayJoinFailed);
+                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_LocalLobby.RelayJoinCode, OnRelayJoinFailed);
                     break;
             }
         }
@@ -209,16 +187,7 @@ namespace BossRoom.Scripts.Client.UI
         {
             Debug.Log($"Relay join failed: {message}");
             //leave the lobby if relay failed for some reason
-            m_LobbyAsyncRequests.EndTracking();
-            m_lobbyContentHeartbeat.EndTracking();
-
-            if (!string.IsNullOrEmpty(m_localLobby?.LobbyID))
-            {
-                m_LobbyAsyncRequests.LeaveLobbyAsync(m_localLobby?.LobbyID, null, null);
-            }
-
-            m_localUser.ResetState();
-            m_localLobby?.Reset(m_localUser);
+            m_LobbyServiceFacade.EndTracking();
 
             UnblockUIAfterLoadingIsComplete();
             m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Unity Relay: Join Failed", message));
@@ -240,24 +209,24 @@ namespace BossRoom.Scripts.Client.UI
 
         public void ToggleJoinLobbyUI()
         {
-            lobbyJoiningUI.Show();
-            lobbyCreationUI.Hide();
+            m_LobbyJoiningUI.Show();
+            m_LobbyCreationUI.Hide();
             m_JoinToggle.SetToColor(1);
             m_CreateToggle.SetToColor(0);
         }
 
         public void ToggleCreateLobbyUI()
         {
-            lobbyJoiningUI.Hide();
-            lobbyCreationUI.Show();
+            m_LobbyJoiningUI.Hide();
+            m_LobbyCreationUI.Show();
             m_JoinToggle.SetToColor(0);
             m_CreateToggle.SetToColor(1);
         }
 
         public void RegenerateName()
         {
-            m_localUser.DisplayName = m_NameGenerationData.GenerateName();
-            m_PlayerNameLabel.text = m_localUser.DisplayName;
+            m_LocalUser.DisplayName = m_NameGenerationData.GenerateName();
+            m_PlayerNameLabel.text = m_LocalUser.DisplayName;
         }
 
         private void BlockUIWhileLoadingIsInProgress()

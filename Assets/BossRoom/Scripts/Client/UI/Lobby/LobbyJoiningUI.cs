@@ -16,18 +16,16 @@ namespace BossRoom.Scripts.Client.UI
         [SerializeField] private InputField m_JoinCodeField;
         [SerializeField] private CanvasGroup m_CanvasGroup;
 
-        private IInstanceResolver m_Container;
 
-        /// <summary>
-        /// Key: Lobby ID, Value Lobby UI
-        /// </summary>
-        private readonly Dictionary<string, LobbyListItemUI> m_LobbyListItemUIs = new Dictionary<string, LobbyListItemUI>();
+        private IInstanceResolver m_Container;
 
         private LobbyUIMediator m_LobbyUIMediator;
 
         private UpdateRunner m_UpdateRunner;
 
         private IDisposable m_Subscriptions;
+
+        private List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
 
         private void Awake()
         {
@@ -48,7 +46,7 @@ namespace BossRoom.Scripts.Client.UI
         }
 
         [Inject]
-        private void InjectDependenciesAndInstantiate(IInstanceResolver container, LobbyUIMediator lobbyUIMediator, UpdateRunner updateRunner, ISubscriber<LocalLobbiesRefreshedMessage> localLobbiesRefreshedSub)
+        private void InjectDependenciesAndInstantiate(IInstanceResolver container, LobbyUIMediator lobbyUIMediator, UpdateRunner updateRunner, ISubscriber<LobbyListFetchedMessage> localLobbiesRefreshedSub)
         {
             m_Container = container;
             m_LobbyUIMediator = lobbyUIMediator;
@@ -74,43 +72,57 @@ namespace BossRoom.Scripts.Client.UI
             m_LobbyUIMediator.QueryLobbiesRequest(true);
         }
 
-        private void UpdateUI(LocalLobbiesRefreshedMessage message)
+        private void UpdateUI(LobbyListFetchedMessage message)
         {
-            //Check for new entries, We take CurrentLobbies as the source of truth
-            var lobbyIDsToRemove = new HashSet<string>(m_LobbyListItemUIs.Keys);
+            var displayableLobbies = GetDisplayableLobbies(message.LocalLobbies);
 
-            foreach (var idToLobby in message.LobbyIDsToLocalLobbies)
+            EnsureNumberOfActiveUISlots(displayableLobbies.Count);
+
+            for (var i = 0; i < displayableLobbies.Count; i++)
             {
-                var lobbyIDKey = idToLobby.Key;
-                var lobbyData = idToLobby.Value;
+                var localLobby = message.LocalLobbies[i];
+                m_LobbyListItems[i].SetData(localLobby);
+            }
+        }
 
-                if (!m_LobbyListItemUIs.ContainsKey(lobbyIDKey))
-                {
-                    if (CanDisplay(lobbyData))
-                    {
-                        CreateLobbyListItem(lobbyIDKey, lobbyData);
-                    }
-                }
-                else
-                {
-                    if (CanDisplay(lobbyData))
-                    {
-                        UpdateLobbyListItem(lobbyIDKey, lobbyData);
-                    }
-                    else
-                    {
-                        RemoveLobbyListItem(lobbyData);
-                    }
-                }
+        private List<LocalLobby> GetDisplayableLobbies(IReadOnlyList<LocalLobby> lobbies)
+        {
+            var displayable = new List<LocalLobby>();
 
-                lobbyIDsToRemove.Remove(lobbyIDKey);
+            foreach (var lobby in lobbies)
+            {
+                if (CanDisplay(lobby))
+                {
+                    displayable.Add(lobby);
+                }
             }
 
-            //remove the lobbies that no longer exist
-            foreach (var lobbyID in lobbyIDsToRemove)
+            return displayable;
+        }
+
+        private void EnsureNumberOfActiveUISlots(int requiredNumber)
+        {
+            int delta = requiredNumber - m_LobbyListItems.Count;
+
+            for (int i = 0; i < delta; i++)
             {
-                RemoveLobbyListItem(lobbyID);
+                m_LobbyListItems.Add(CreateLobbyListItem());
             }
+
+            for (int i = requiredNumber; i < m_LobbyListItems.Count; i++)
+            {
+                m_LobbyListItems[i].gameObject.SetActive(false);
+            }
+        }
+
+
+        private LobbyListItemUI CreateLobbyListItem()
+        {
+            var listItem = Instantiate(m_LobbyListItemPrototype.gameObject, m_LobbyListItemPrototype.transform.parent)
+                .GetComponent<LobbyListItemUI>();
+            listItem.gameObject.SetActive(true);
+            m_Container.InjectIn(listItem);
+            return listItem;
         }
 
         public void OnQuickJoinClicked()
@@ -121,37 +133,6 @@ namespace BossRoom.Scripts.Client.UI
         private bool CanDisplay(LocalLobby lobby)
         {
             return lobby.LobbyUsers.Count != lobby.MaxPlayerCount;
-        }
-
-        /// <summary>
-        /// Instantiates UI element and initializes the observer with the LobbyData
-        /// </summary>
-        private void CreateLobbyListItem(string lobbyID, LocalLobby lobby)
-        {
-            var lobbyPanel = Instantiate(m_LobbyListItemPrototype.gameObject, m_LobbyListItemPrototype.transform.parent)
-                .GetComponent<LobbyListItemUI>();
-            lobbyPanel.gameObject.SetActive(true);
-            m_Container.InjectIn(lobbyPanel);
-
-            lobbyPanel.BeginObserving(lobby);
-            lobby.onDestroyed += RemoveLobbyListItem; // Set up to clean itself
-
-            m_LobbyListItemUIs.Add(lobbyID, lobbyPanel);
-        }
-
-        private void UpdateLobbyListItem(string lobbyCode, LocalLobby lobby)
-        {
-            m_LobbyListItemUIs[lobbyCode].UpdateLobby(lobby);
-        }
-
-        private void RemoveLobbyListItem(string lobbyID)
-        {
-            var lobbyPanel = m_LobbyListItemUIs[lobbyID];
-            lobbyPanel.EndObserving();
-            m_LobbyListItemUIs.Remove(lobbyID);
-
-            //todo: reuse lobby panel UIs instead of creating new ones
-            Destroy(lobbyPanel.gameObject);
         }
 
         public void Show()

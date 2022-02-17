@@ -73,12 +73,11 @@ namespace BossRoom.Scripts.Client.UI
             m_IPConnectionCanvasGroup.blocksRaycasts = true;
             m_IPConnectionCanvasGroup.interactable = true;
 
-            m_PortInputField.text = k_DefaultPort.ToString();
+            m_IPInputField.text = k_DefaultIP;
             m_PortInputField.text = k_DefaultPort.ToString();
 
             m_LoadingIndicatorObject.SetActive(false);
         }
-
 
         public void OnCreateClick()
         {
