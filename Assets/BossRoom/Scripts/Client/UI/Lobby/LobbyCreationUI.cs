@@ -64,6 +64,8 @@ namespace BossRoom.Scripts.Client.UI
             m_IPConnectionCanvasGroup.blocksRaycasts = false;
             m_IPConnectionCanvasGroup.interactable = false;
 
+            m_OnlineMode = OnlineMode.UnityRelay;
+            
             m_LoadingIndicatorObject.SetActive(false);
         }
 
@@ -75,6 +77,8 @@ namespace BossRoom.Scripts.Client.UI
 
             m_IPInputField.text = k_DefaultIP;
             m_PortInputField.text = k_DefaultPort.ToString();
+
+            m_OnlineMode = OnlineMode.IpHost;
 
             m_LoadingIndicatorObject.SetActive(false);
         }

@@ -148,6 +148,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             string uasId = AuthenticationService.Instance.PlayerId;
 
+            //todo: replace this with something more suitable than this weird-form JSON
             var initialLobbyData = new Dictionary<string, DataObject>()
             {
                 {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())},
