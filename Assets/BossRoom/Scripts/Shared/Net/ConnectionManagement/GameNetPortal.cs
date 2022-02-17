@@ -88,13 +88,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         private ServerGameNetPortal m_ServerPortal;
 
         private LocalLobby m_LocalLobby;
-        private LobbyAsyncRequests m_LobbyAsyncRequests;
+        private LobbyServiceFacade m_LobbyServiceFacade;
 
         [Inject]
-        private void InjectDependencies(LocalLobby localLobby, LobbyAsyncRequests lobbyAsyncRequests)
+        private void InjectDependencies(LocalLobby localLobby, LobbyServiceFacade lobbyServiceFacade)
         {
             m_LocalLobby = localLobby;
-            m_LobbyAsyncRequests = lobbyAsyncRequests;
+            m_LobbyServiceFacade = lobbyServiceFacade;
         }
 
 
@@ -210,7 +210,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                         m_LocalLobby.RelayJoinCode = joinCode;
                         //next line enabled lobby and relay services integration
-                        m_LobbyAsyncRequests.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                        m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
 
                         // we now need to set the RelayCode somewhere :P
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);

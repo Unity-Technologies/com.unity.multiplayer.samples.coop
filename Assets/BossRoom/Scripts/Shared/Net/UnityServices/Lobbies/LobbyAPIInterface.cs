@@ -20,7 +20,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
-        [Inject]
         public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
         {
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
@@ -28,15 +27,15 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private void RunTask(Task task, Action onComplete, Action onFailed)
         {
-            UnityServiceCallsTaskWrapper.RunTask<LobbyServiceException>(task, onComplete, onFailed, ParseServiceException);
+            UnityServiceCallsTaskWrapper.RunTask<LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
         }
 
         private void RunTask<T>(Task<T> task, Action<T> onComplete, Action onFailed)
         {
-            UnityServiceCallsTaskWrapper.RunTask<T,LobbyServiceException>(task, onComplete, onFailed, ParseServiceException);
+            UnityServiceCallsTaskWrapper.RunTask<T,LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
         }
 
-        private void ParseServiceException(LobbyServiceException e)
+        private void OnServiceException(LobbyServiceException e)
         {
             Debug.LogWarning(e.Message);
 

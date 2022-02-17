@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using BossRoom.Scripts.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -11,8 +10,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     /// A local wrapper around a lobby's remote data, with additional functionality for providing that data to UI elements and tracking local player objects.
     /// </summary>
     [Serializable]
-    public class LocalLobby : Observed<LocalLobby>
+    public sealed class LocalLobby
     {
+        public event Action<LocalLobby> Changed;
 
         /// <summary>
         /// Create a list of new LocalLobbies from the result of a lobby list query.
@@ -34,8 +34,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             return data;
         }
 
-        Dictionary<string, LobbyUser> m_LobbyUsers = new Dictionary<string, LobbyUser>();
-        public Dictionary<string, LobbyUser> LobbyUsers => m_LobbyUsers;
+        Dictionary<string, LocalLobbyUser> m_LobbyUsers = new Dictionary<string, LocalLobbyUser>();
+        public Dictionary<string, LocalLobbyUser> LobbyUsers => m_LobbyUsers;
 
         public struct LobbyData
         {
@@ -81,28 +81,28 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public LobbyData Data => new LobbyData(m_data);
 
 
-        public void AddPlayer(LobbyUser user)
+        public void AddUser(LocalLobbyUser user)
         {
             if (!m_LobbyUsers.ContainsKey(user.ID))
             {
-                DoAddPlayer(user);
-                OnChanged(this);
+                DoAddUser(user);
+                OnChanged();
             }
         }
 
-        private void DoAddPlayer(LobbyUser user)
+        private void DoAddUser(LocalLobbyUser user)
         {
             m_LobbyUsers.Add(user.ID, user);
-            user.onChanged += OnChangedUser;
+            user.Changed += OnChangedUser;
         }
 
-        public void RemovePlayer(LobbyUser user)
+        public void RemoveUser(LocalLobbyUser user)
         {
             DoRemoveUser(user);
-            OnChanged(this);
+            OnChanged();
         }
 
-        private void DoRemoveUser(LobbyUser user)
+        private void DoRemoveUser(LocalLobbyUser user)
         {
             if (!m_LobbyUsers.ContainsKey(user.ID))
             {
@@ -111,12 +111,17 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
 
             m_LobbyUsers.Remove(user.ID);
-            user.onChanged -= OnChangedUser;
+            user.Changed -= OnChangedUser;
         }
 
-        private void OnChangedUser(LobbyUser user)
+        private void OnChangedUser(LocalLobbyUser user)
         {
-            OnChanged(this);
+            OnChanged();
+        }
+
+        private void OnChanged()
+        {
+            Changed?.Invoke(this);
         }
 
         public string LobbyID
@@ -125,7 +130,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             set
             {
                 m_data.LobbyID = value;
-                OnChanged(this);
+                OnChanged();
             }
         }
 
@@ -135,7 +140,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             set
             {
                 m_data.LobbyCode = value;
-                OnChanged(this);
+                OnChanged();
             }
         }
 
@@ -145,7 +150,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             set
             {
                 m_data.RelayJoinCode = value;
-                OnChanged(this);
+                OnChanged();
             }
         }
 
@@ -156,7 +161,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             set
             {
                 m_data.LobbyName = value;
-                OnChanged(this);
+                OnChanged();
             }
         }
 
@@ -166,7 +171,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             set
             {
                 m_data.Private = value;
-                OnChanged(this);
+                OnChanged();
             }
         }
 
@@ -178,7 +183,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             set
             {
                 m_data.MaxPlayerCount = value;
-                OnChanged(this);
+                OnChanged();
             }
         }
 
@@ -189,27 +194,27 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             {
                 if (m_data.OnlineMode != value)
                 {   m_data.OnlineMode = value;
-                    OnChanged(this);
+                    OnChanged();
                 }
             }
         }
 
-        public void CopyObserved(LobbyData data, Dictionary<string, LobbyUser> currUsers)
+        public void CopyDataFrom(LobbyData data, Dictionary<string, LocalLobbyUser> currUsers)
         {
             m_data = data;
 
             if (currUsers == null)
             {
-                m_LobbyUsers = new Dictionary<string, LobbyUser>();
+                m_LobbyUsers = new Dictionary<string, LocalLobbyUser>();
             }
             else
             {
-                List<LobbyUser> toRemove = new List<LobbyUser>();
+                List<LocalLobbyUser> toRemove = new List<LocalLobbyUser>();
                 foreach (var oldUser in m_LobbyUsers)
                 {
                     if (currUsers.ContainsKey(oldUser.Key))
                     {
-                        oldUser.Value.CopyObserved(currUsers[oldUser.Key]);
+                        oldUser.Value.CopyDataFrom(currUsers[oldUser.Key]);
                     }
                     else
                     {
@@ -226,18 +231,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 {
                     if (!m_LobbyUsers.ContainsKey(currUser.Key))
                     {
-                        DoAddPlayer(currUser.Value);
+                        DoAddUser(currUser.Value);
                     }
                 }
             }
 
-            OnChanged(this);
-        }
-
-        // This ends up being called from the lobby list when we get data about a lobby without having joined it yet.
-        public override void CopyObserved(LocalLobby oldObserved)
-        {
-            CopyObserved(oldObserved.Data, oldObserved.m_LobbyUsers);
+            OnChanged();
         }
 
         public Dictionary<string, DataObject> GetDataForUnityServices() =>
@@ -274,7 +273,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 info.Port = 0;
             }
 
-            var lobbyUsers = new Dictionary<string, LobbyUser>();
+            var lobbyUsers = new Dictionary<string, LocalLobbyUser>();
             foreach (var player in lobby.Players)
             {
                 if (player.Data != null)
@@ -288,7 +287,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
                 // If the player isn't connected to Relay, get the most recent data that the lobby knows.
                 // (If we haven't seen this player yet, a new local representation of the player will have already been added by the LocalLobby.)
-                var incomingData = new LobbyUser
+                var incomingData = new LocalLobbyUser
                 {
                     IsHost = lobby.HostId.Equals(player.Id),
                     DisplayName = player.Data?.ContainsKey("DisplayName") == true ? player.Data["DisplayName"].Value : default,
@@ -297,13 +296,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
                 lobbyUsers.Add(incomingData.ID, incomingData);
             }
-            CopyObserved(info, lobbyUsers);
+
+            CopyDataFrom(info, lobbyUsers);
         }
 
-        public void Reset(LobbyUser localUser)
+        public void Reset(LocalLobbyUser localUser)
         {
-            CopyObserved(new LocalLobby.LobbyData(), new Dictionary<string, LobbyUser>());
-            AddPlayer(localUser);
+            CopyDataFrom(new LobbyData(), new Dictionary<string, LocalLobbyUser>());
+            AddUser(localUser);
         }
     }
 }

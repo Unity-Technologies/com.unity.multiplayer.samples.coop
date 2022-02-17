@@ -44,12 +44,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public event Action NetworkTimedOut;
 
 
-        private LobbyAsyncRequests m_LobbyAsyncRequests;
+        private LobbyServiceFacade m_LobbyServiceFacade;
 
         [Inject]
-        private void InjectDependencies(LobbyAsyncRequests lobbyAsyncRequests)
+        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
         {
-            m_LobbyAsyncRequests = lobbyAsyncRequests;
+            m_LobbyServiceFacade = lobbyServiceFacade;
         }
 
         private void Awake()
@@ -242,7 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 await clientRelayUtilityTask;
                 var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
 
-                m_LobbyAsyncRequests.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
                 utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
                 relayIsReady = true;
             }

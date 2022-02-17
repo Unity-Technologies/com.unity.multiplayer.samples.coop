@@ -27,9 +27,9 @@ namespace BossRoom.Scripts.Shared
         [SerializeField] private ClientGameNetPortal m_ClientNetPortal;
 
         private LocalLobby m_LocalLobby;
-        private LobbyUser m_LocalUser;
-        private LobbyAsyncRequests m_LobbyAsyncRequests;
-        private LobbyContentHeartbeat m_LobbyContentHeartbeat;
+        private LocalLobbyUser m_LocalUser;
+        private LobbyServiceFacade m_LobbyServiceFacade;
+        private JoinedLobbyContentHeartbeat m_JoinedLobbyContentHeartbeat;
 
         [SerializeField] private GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
 
@@ -49,20 +49,18 @@ namespace BossRoom.Scripts.Shared
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
-            scope.BindAsSingle<LobbyUser>();
+            scope.BindAsSingle<LocalLobbyUser>();
             scope.BindAsSingle<LocalLobby>();
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
             scope.BindMessageChannel<UnityServiceErrorMessage>();
-            scope.BindMessageChannel<LocalLobbiesRefreshedMessage>();
+
+            //buffered message channels hold the latest received message in buffer and pass to any new subscribers
+            scope.BindBufferedMessageChannel<LobbyListFetchedMessage>();
 
             //all the lobby service stuff, bound here so that it persists through scene loads
-            scope.BindAsSingle<AuthenticationAPIInterface>(); //a manager entity that allows us to do anonymous authentication with unity services
-            scope.BindAsSingle<LobbyServiceData>();
-            scope.BindAsSingle<LobbyContentHeartbeat>();
-            scope.BindAsSingle<LobbyAPIInterface>();
-            scope.BindAsSingle<LobbyAsyncRequests>();
-
+            scope.BindAsSingle<AuthenticationServiceFacade>(); //a manager entity that allows us to do anonymous authentication with unity services
+            scope.BindAsSingle<LobbyServiceFacade>();
 
             scope.FinalizeScopeConstruction();
 
@@ -72,9 +70,9 @@ namespace BossRoom.Scripts.Shared
             }
 
             m_LocalLobby = scope.Resolve<LocalLobby>();
-            m_LobbyAsyncRequests = scope.Resolve<LobbyAsyncRequests>();
-            m_LobbyContentHeartbeat = scope.Resolve<LobbyContentHeartbeat>();
-            m_LocalUser = scope.Resolve<LobbyUser>();
+            m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
+            m_JoinedLobbyContentHeartbeat = scope.Resolve<JoinedLobbyContentHeartbeat>();
+            m_LocalUser = scope.Resolve<LocalLobbyUser>();
         }
 
         private void Start()
@@ -84,7 +82,7 @@ namespace BossRoom.Scripts.Shared
 
         private void OnDestroy()
         {
-            m_LobbyAsyncRequests.ForceLeaveLobbyAttempt();
+            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
             DIScope.RootScope.Dispose();
         }
 
@@ -94,7 +92,7 @@ namespace BossRoom.Scripts.Shared
         /// </summary>
         private IEnumerator LeaveBeforeQuit()
         {
-            m_LobbyAsyncRequests.ForceLeaveLobbyAttempt();
+            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
             yield return null;
             Application.Quit();
         }

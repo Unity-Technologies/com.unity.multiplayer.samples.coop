@@ -9,34 +9,56 @@ using Unity.Services.Lobbies.Models;
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
-    /// An abstraction layer between the direct calls into the Lobby API and the outcomes you actually want. E.g. you can request to get a readable list of
-    /// current lobbies and not need to make the query call directly.
+    /// An abstraction layer between the direct calls into the Lobby API and the outcomes you actually want.
     /// </summary>
-    public class LobbyAsyncRequests : IDisposable
+    public class LobbyServiceFacade : IDisposable
     {
         private readonly LobbyAPIInterface m_LobbyApiInterface;
         private readonly UpdateRunner m_SlowUpdate;
         private readonly LocalLobby m_LocalLobby;
-        private readonly LobbyUser m_LocalUser;
-        private readonly LobbyContentHeartbeat m_LobbyContentHeartbeat;
+        private readonly LocalLobbyUser m_LocalUser;
+        private readonly JoinedLobbyContentHeartbeat m_JoinedLobbyContentHeartbeat;
+        private readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
+        private readonly IPublisher<LobbyListFetchedMessage> m_LobbyListFetchedPub;
+        private readonly ApplicationController m_ApplicationController;
 
         private const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
 
-        private float m_heartbeatTime = 0;
+        private DIScope m_ServiceScope;
+
+        private float m_HeartbeatTime = 0;
 
         private RateLimitCooldown m_RateLimitQuery; // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
         private RateLimitCooldown m_RateLimitJoin;
         private RateLimitCooldown m_RateLimitQuickJoin;
         private RateLimitCooldown m_RateLimitHost;
 
+        public Lobby CurrentUnityLobby { get; private set; }
+        private bool m_IsTracking = false;
+
         [Inject]
-        public LobbyAsyncRequests(UpdateRunner slowUpdate, LobbyAPIInterface lobbyAPIInterface, LocalLobby localLobby, LobbyUser localUser, LobbyContentHeartbeat lobbyContentHeartbeat)
+        public LobbyServiceFacade(
+            ApplicationController applicationController,
+            UpdateRunner slowUpdate,
+            LocalLobby localLobby,
+            LocalLobbyUser localUser,
+            IPublisher<UnityServiceErrorMessage> serviceErrorMessagePub,
+            IPublisher<LobbyListFetchedMessage> lobbyListFetchedPub)
         {
-            m_LobbyApiInterface = lobbyAPIInterface;
             m_SlowUpdate = slowUpdate;
             m_LocalLobby = localLobby;
             m_LocalUser = localUser;
-            m_LobbyContentHeartbeat = lobbyContentHeartbeat;
+            m_UnityServiceErrorMessagePub = serviceErrorMessagePub;
+            m_ApplicationController = applicationController;
+            m_LobbyListFetchedPub = lobbyListFetchedPub;
+
+            m_ServiceScope = new DIScope(DIScope.RootScope);
+            m_ServiceScope.BindAsSingle<JoinedLobbyContentHeartbeat>();
+            m_ServiceScope.BindAsSingle<LobbyAPIInterface>();
+            m_ServiceScope.FinalizeScopeConstruction();
+
+            m_LobbyApiInterface = m_ServiceScope.Resolve<LobbyAPIInterface>();
+            m_JoinedLobbyContentHeartbeat = m_ServiceScope.Resolve<JoinedLobbyContentHeartbeat>();
 
             m_RateLimitQuery = new RateLimitCooldown(1.5f, slowUpdate);
             m_RateLimitJoin = new RateLimitCooldown(3f, slowUpdate);
@@ -46,34 +68,41 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public void Dispose()
         {
-           EndTracking();
+            EndTracking();
+            m_ServiceScope?.Dispose();
         }
-
-        private Lobby m_lastKnownLobby;
-        public Lobby CurrentLobby => m_lastKnownLobby;
-
-        private bool m_isTracking = false;
 
         public void BeginTracking(Lobby lobby)
         {
-            if(!m_isTracking)
+            if(!m_IsTracking)
             {
-                m_isTracking = true;
-                m_lastKnownLobby = lobby;
+                m_IsTracking = true;
+                CurrentUnityLobby = lobby;
+                m_LocalLobby.ApplyRemoteData(lobby);
                 // 1.5s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
                 // the actual rate limits are tracked via the RateLimitCooldown objects defined above
                 m_SlowUpdate.Subscribe(UpdateLobby, 1.5f);
+                m_JoinedLobbyContentHeartbeat.BeginTracking();
             }
         }
 
         public void EndTracking()
         {
-            if (m_isTracking)
+            if (m_IsTracking)
             {
                 m_SlowUpdate.Unsubscribe(UpdateLobby);
-                m_isTracking = false;
-                m_lastKnownLobby = null;
-                m_heartbeatTime = 0;
+                m_IsTracking = false;
+                m_HeartbeatTime = 0;
+                m_JoinedLobbyContentHeartbeat.EndTracking();
+                CurrentUnityLobby = null;
+
+                if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
+                {
+                    LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
+                }
+
+                m_LocalUser.ResetState();
+                m_LocalLobby?.Reset(m_LocalUser);
             }
         }
 
@@ -83,8 +112,22 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             void OnSuccess(Lobby lobby)
             {
-                //todo: send a messagechannel message that lobby was updated
-                m_lastKnownLobby = lobby;
+                CurrentUnityLobby = lobby;
+                m_LocalLobby.ApplyRemoteData(lobby);
+
+                if (!m_LocalUser.IsHost)
+                {
+                    foreach (var lobbyUser in m_LocalLobby.LobbyUsers)
+                    {
+                        if (lobbyUser.Value.IsHost)
+                        {
+                            return;
+                        }
+                    }
+                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
+                    ForceLeaveLobbyAttempt();
+                    m_ApplicationController.QuitGame();
+                }
             }
         }
 
@@ -93,12 +136,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, OnlineMode onlineMode, string ip, int port, Action<Lobby> onSuccess, Action onFailure)
         {
-            if (!m_RateLimitHost.CanCall())
+            if (!m_RateLimitHost.IsOnCooldown)
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Create Lobby hit the rate limit.");
                 return;
             }
+
+            m_RateLimitHost.PutOnCooldown();
 
             string uasId = AuthenticationService.Instance.PlayerId;
 
@@ -117,13 +162,14 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         public void JoinLobbyAsync(string lobbyId, string lobbyCode, Action<Lobby> onSuccess, Action onFailure)
         {
-            if (!m_RateLimitJoin.CanCall() ||
+            if (!m_RateLimitJoin.IsOnCooldown ||
                 (lobbyId == null && lobbyCode == null))
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Join Lobby hit the rate limit.");
                 return;
             }
+            m_RateLimitJoin.PutOnCooldown();
 
             string uasId = AuthenticationService.Instance.PlayerId;
             if (!string.IsNullOrEmpty(lobbyCode))
@@ -139,14 +185,16 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to join the first lobby among the available lobbies that match the filtered onlineMode.
         /// </summary>
-        public void QuickJoinLobbyAsync(LobbyUser localUser, Action<Lobby> onSuccess, Action onFailure, List<QueryFilter> filters = null)
+        public void QuickJoinLobbyAsync(LocalLobbyUser localUser, Action<Lobby> onSuccess, Action onFailure, List<QueryFilter> filters = null)
         {
-            if (!m_RateLimitQuickJoin.CanCall())
+            if (!m_RateLimitQuickJoin.IsOnCooldown)
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Quick Join Lobby hit the rate limit.");
                 return;
             }
+
+            m_RateLimitQuickJoin.PutOnCooldown();
 
             string uasId = AuthenticationService.Instance.PlayerId;
             m_LobbyApiInterface.QuickJoinLobbyAsync(uasId, filters, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
@@ -157,25 +205,32 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         public void RetrieveLobbyListAsync(Action<QueryResponse> onSuccess, Action onFailure, List<QueryFilter> filters = null)
         {
-            if (!m_RateLimitQuery.CanCall())
+            if (!m_RateLimitQuery.IsOnCooldown)
             {
                 onFailure?.Invoke();
                 m_RateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onSuccess, onFailure, filters); });
                 UnityEngine.Debug.LogWarning("Retrieve Lobby list hit the rate limit. Will try again soon...");
                 return;
             }
+            m_RateLimitQuery.PutOnCooldown();
+            m_LobbyApiInterface.QueryAllLobbiesAsync(filters, OnSuccess, onFailure);
 
-            m_LobbyApiInterface.QueryAllLobbiesAsync(filters, onSuccess, onFailure);
+            void OnSuccess(QueryResponse qr)
+            {
+                onSuccess?.Invoke(qr);
+                m_LobbyListFetchedPub.Publish(new LobbyListFetchedMessage(LocalLobby.CreateLocalLobbies(qr)));
+            }
         }
 
         private void RetrieveLobbyAsync(string lobbyId, Action<Lobby> onSuccess, Action onFailure)
         {
-            if (!m_RateLimitQuery.CanCall())
+            if (!m_RateLimitQuery.IsOnCooldown)
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Retrieve Lobby hit the rate limit.");
                 return;
             }
+            m_RateLimitQuery.PutOnCooldown();
             m_LobbyApiInterface.GetLobbyAsync(lobbyId, onSuccess, onFailure);
         }
 
@@ -198,12 +253,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             string playerId = AuthenticationService.Instance.PlayerId;
 
-            m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, data, OnComplete,  onFailure,null, null);
+            m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, playerId, data, OnComplete,  onFailure,null, null);
 
             void OnComplete(Lobby result)
             {
                 if (result != null) {
-                    m_lastKnownLobby = result; // Store the most up-to-date lobby now since we have it, instead of waiting for the next heartbeat.
+                    CurrentUnityLobby = result; // Store the most up-to-date lobby now since we have it, instead of waiting for the next heartbeat.
                 }
                 onSuccess?.Invoke();
             }
@@ -220,7 +275,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
 
             string playerId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.UpdatePlayerAsync(m_lastKnownLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
+            m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
         }
 
         /// <param name="data">Key-value pairs, which will overwrite any existing data for these keys. Presumed to be available to all lobby members but not publicly.</param>
@@ -232,7 +287,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
 
 
-            var dataCurr = m_lastKnownLobby.Data ?? new Dictionary<string, DataObject>();
+            var dataCurr = CurrentUnityLobby.Data ?? new Dictionary<string, DataObject>();
 
             foreach (var dataNew in data)
             {
@@ -250,13 +305,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             var shouldLock = m_LocalLobby.OnlineMode == OnlineMode.UnityRelay && string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
 
 
-            m_LobbyApiInterface.UpdateLobbyAsync(m_lastKnownLobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
+            m_LobbyApiInterface.UpdateLobbyAsync(CurrentUnityLobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
 
             void OnComplete(Lobby result)
             {
                 if (result != null)
                 {
-                    m_lastKnownLobby = result;
+                    CurrentUnityLobby = result;
                 }
 
                 onSuccess?.Invoke();
@@ -269,13 +324,13 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         private bool ShouldUpdateData(Action caller, Action onComplete, bool shouldRetryIfLobbyNull)
         {
-            if (m_RateLimitQuery.IsInCooldown)
+            if (m_RateLimitQuery.IsOnCooldown)
             {
                 m_RateLimitQuery.EnqueuePendingOperation(caller);
                 return false;
             }
 
-            Lobby lobby = m_lastKnownLobby;
+            Lobby lobby = CurrentUnityLobby;
             if (lobby == null)
             {
                 if (shouldRetryIfLobbyNull)
@@ -295,26 +350,22 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         /// </summary>
         public void DoLobbyHeartbeat(float dt)
         {
-            m_heartbeatTime += dt;
-            if (m_heartbeatTime > k_heartbeatPeriod)
+            m_HeartbeatTime += dt;
+            if (m_HeartbeatTime > k_heartbeatPeriod)
             {
-                m_heartbeatTime -= k_heartbeatPeriod;
-                m_LobbyApiInterface.HeartbeatPlayerAsync(m_lastKnownLobby.Id);
+                m_HeartbeatTime -= k_heartbeatPeriod;
+                m_LobbyApiInterface.HeartbeatPlayerAsync(CurrentUnityLobby.Id);
             }
         }
 
         public void ForceLeaveLobbyAttempt()
         {
             EndTracking();
-            m_LobbyContentHeartbeat.EndTracking();
 
             if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
             {
                 LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
             }
-
-            m_LocalUser.ResetState();
-            m_LocalLobby.Reset(m_LocalUser);
         }
     }
 }

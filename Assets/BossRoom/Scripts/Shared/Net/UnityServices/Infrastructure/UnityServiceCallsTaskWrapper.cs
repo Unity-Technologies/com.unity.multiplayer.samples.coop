@@ -10,7 +10,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
     /// </summary>
     public static class UnityServiceCallsTaskWrapper
     {
-        public static async void RunTask<TException>(Task task, Action onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
+        public static async void RunTask<TException>(Task task, Action onComplete, Action onFailed, Action<TException> onException) where TException : Exception
         {
             string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
             try
@@ -19,7 +19,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             }
             catch (TException e)
             {
-                parseException?.Invoke(e);
+                onException?.Invoke(e);
                 Debug.LogWarning($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n"); // Note that we log here instead of creating a new Exception in case of a change in calling context during the async call. E.g. Relay has its own exception handling that would intercept this call stack.
             }
             finally
@@ -35,7 +35,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             }
         }
 
-        public static async void RunTask<TResult, TException>(Task<TResult> task, Action<TResult> onComplete, Action onFailed, Action<TException> parseException) where TException : Exception
+        public static async void RunTask<TResult, TException>(Task<TResult> task, Action<TResult> onComplete, Action onFailed, Action<TException> onException) where TException : Exception
         {
             string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
             try
@@ -44,7 +44,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             }
             catch (TException e)
             {
-                parseException?.Invoke(e);
+                onException?.Invoke(e);
                 Debug.LogWarning($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n"); // Note that we log here instead of creating a new Exception in case of a change in calling context during the async call. E.g. Relay has its own exception handling that would intercept this call stack.
             }
             finally

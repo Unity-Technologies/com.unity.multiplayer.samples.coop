@@ -2,6 +2,10 @@ using System;
 
 namespace BossRoom.Scripts.Shared.Infrastructure
 {
+    /// <summary>
+    /// This class is a handle to an active Message Channel subscription and when disposed it unsubscribes from said channel.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class DisposableSubscription<T> : IDisposable
     {
         private Action<T> m_Handler;
