@@ -83,39 +83,10 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             void OnSuccess(Lobby lobby)
             {
+                //todo: send a messagechannel message that lobby was updated
                 m_lastKnownLobby = lobby;
             }
         }
-
-
-        // Note that some APIs limit to 1 call per N seconds, while others limit to M calls per N seconds. We'll treat all APIs as though they limited to 1 call per N seconds.
-        // Also, this is seralized, so don't reorder the values unless you know what that will affect.
-        public enum RequestType
-        {
-            Query = 0,
-            Join,
-            QuickJoin,
-            Host
-        }
-
-        public RateLimitCooldown GetRateLimit(RequestType type)
-        {
-            if (type == RequestType.Join)
-            {
-                return m_RateLimitJoin;
-            }
-            else if (type == RequestType.QuickJoin)
-            {
-                return m_RateLimitQuickJoin;
-            }
-            else if (type == RequestType.Host)
-            {
-                return m_RateLimitHost;
-            }
-
-            return m_RateLimitQuery;
-        }
-
 
         /// <summary>
         /// Attempt to create a new lobby and then join it.
