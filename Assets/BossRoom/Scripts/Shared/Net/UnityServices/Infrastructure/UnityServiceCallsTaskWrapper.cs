@@ -21,7 +21,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             {
                 parseException?.Invoke(e);
                 Debug.LogWarning($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n"); // Note that we log here instead of creating a new Exception in case of a change in calling context during the async call. E.g. Relay has its own exception handling that would intercept this call stack.
-                //throw;
             }
             finally
             {
@@ -47,7 +46,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             {
                 parseException?.Invoke(e);
                 Debug.LogWarning($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n"); // Note that we log here instead of creating a new Exception in case of a change in calling context during the async call. E.g. Relay has its own exception handling that would intercept this call stack.
-                //throw;
             }
             finally
             {
