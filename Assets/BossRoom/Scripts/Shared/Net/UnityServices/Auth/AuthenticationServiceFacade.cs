@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 {
-    public class AuthenticationAPIInterface
+    public class AuthenticationServiceFacade
     {
         private IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
@@ -18,7 +18,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
-        private void ParseServiceException(AuthenticationException e)
+        private void OnServiceException(AuthenticationException e)
         {
             Debug.LogWarning(e.Message);
 
@@ -30,7 +30,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
         public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)
         {
             var task = TrySignIn(initializationOptions);
-            UnityServiceCallsTaskWrapper.RunTask<AuthenticationException>(task, onSigninComplete, onFailed, ParseServiceException);
+            UnityServiceCallsTaskWrapper.RunTask<AuthenticationException>(task, onSigninComplete, onFailed, OnServiceException);
         }
 
         private async Task TrySignIn(InitializationOptions initializationOptions)
