@@ -1,13 +1,11 @@
 {
-    "name": "Unity.Multiplayer.Samples.Coop.Tests.Editor",
+    "name": "Unity.Multiplayer.Samples.BossRoom.Tests.Runtime",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": true,
