@@ -116,22 +116,22 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ClientIDToGuid.Clear();
         }
 
+        public bool IsDuplicateConnection(string clientGUID)
+        {
+            return m_ClientData[clientGUID].IsConnected && !Debug.isDebugBuild;
+        }
+
         /// <summary>
-        /// Adds a connecting player's session data if it is a new connection, or updates their session data in case of a reconnection. If the connection is not valid, simply returns false.
+        /// Adds a connecting player's session data if it is a new connection, or updates their session data in case of a reconnection.
         /// </summary>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="clientGUID">This is the clientGUID that is unique to this client and persists accross multiple logins from the same client</param>
         /// <param name="sessionPlayerData">The player's initial data</param>
-        /// <returns>True if the player connection is valid (i.e. not a duplicate connection)</returns>
-        public bool SetupConnectingPlayerSessionData(ulong clientId, string clientGUID, T sessionPlayerData)
+        public void SetupConnectingPlayerSessionData(ulong clientId, string clientGUID, T sessionPlayerData)
         {
-            bool success = true;
-
-            //Test for Duplicate Login.
+            // If data already exists with this GUID, then this client is reconnecting
             if (m_ClientData.ContainsKey(clientGUID))
             {
-                bool isReconnecting = false;
-
                 // If another client is connected with the same clientGUID
                 if (m_ClientData[clientGUID].IsConnected)
                 {
@@ -141,42 +141,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                         // If debug build, accept connection and manually update clientGUID until we get one that either is not connected or that does not already exist
                         while (m_ClientData.ContainsKey(clientGUID) && m_ClientData[clientGUID].IsConnected) clientGUID += "_Secondary";
-
-                        if (m_ClientData.ContainsKey(clientGUID) && !m_ClientData[clientGUID].IsConnected)
-                        {
-                            // In this specific case, if the clients with the same GUID reconnect in a different order than when they originally connected,
-                            // they will swap characters, since their GUIDs are manually modified here at runtime.
-                            isReconnecting = true;
-                        }
+                        // In this specific case, if the clients with the same GUID reconnect in a different order than when they originally connected,
+                        // they will swap characters, since their GUIDs are manually modified here at runtime.
                     }
-                    else
-                    {
-                        success = false;
-                    }
-                }
-                else
-                {
-                    isReconnecting = true;
                 }
 
                 // Reconnecting. Give data from old player to new player
-                if (isReconnecting)
-                {
-                    // Update player session data
-                    sessionPlayerData = m_ClientData[clientGUID];
-                    sessionPlayerData.ClientID = clientId;
-                    sessionPlayerData.IsConnected = true;
-                }
+                sessionPlayerData = m_ClientData[clientGUID];
+                sessionPlayerData.ClientID = clientId;
+                sessionPlayerData.IsConnected = true;
             }
 
             //Populate our dictionaries with the SessionPlayerData
-            if (success)
-            {
-                m_ClientIDToGuid[clientId] = clientGUID;
-                m_ClientData[clientGUID] = sessionPlayerData;
-            }
-
-            return success;
+            m_ClientIDToGuid[clientId] = clientGUID;
+            m_ClientData[clientGUID] = sessionPlayerData;
         }
 
         /// <summary>

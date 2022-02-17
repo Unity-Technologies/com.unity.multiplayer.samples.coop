@@ -18,7 +18,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private GameNetPortal m_Portal;
 
-        // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
         private const int k_MaxConnectPayload = 1024;
 
         /// <summary>
@@ -139,6 +138,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (connectionData.Length > k_MaxConnectPayload)
             {
+                // If connectionData too high, deny immediately to avoid wasting time on the server. This is intended as
+                // a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
                 connectionApprovedCallback(false, 0, false, null, null);
                 return;
             }
@@ -153,76 +154,67 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
+            var payload = System.Text.Encoding.UTF8.GetString(connectionData);
+            var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
+            var gameReturnStatus = GetConnectStatus(connectionPayload);
+
+            if (gameReturnStatus == ConnectStatus.Success)
+            {
+                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.clientGUID,
+                    new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
+                SendServerToClientConnectResult(clientId, gameReturnStatus);
+
+                //Populate our client scene map
+                m_ClientSceneMap[clientId] = connectionPayload.clientScene;
+
+                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
+                // connection approval will create a player object for you
+            }
+            else
+            {
+                //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
+                //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of the
+                //approval callback, so that we can provide more context on a reject. In the meantime we must provide
+                //the extra information ourselves, and then wait a short time before manually close down the connection.
+                SendServerToClientConnectResult(clientId, gameReturnStatus);
+                SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+                StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
+            }
+        }
+
+        ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
+        {
             ConnectStatus gameReturnStatus;
 
-            // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
-            // on invalid users trying to connect
+            // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap
+            // and don't spend useless time server side on invalid users trying to connect
             // todo this is currently still spending too much time server side.
             if (m_Portal.NetManager.ConnectedClientsIds.Count >= CharSelectData.k_MaxLobbyPlayers)
             {
                 gameReturnStatus = ConnectStatus.ServerFull;
-                //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
-                //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of
-                //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
-                //and then manually close down the connection.
-                SendServerToClientConnectResult(clientId, gameReturnStatus);
-                SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                StartCoroutine(WaitToDisconnect(clientId));
-                return;
             }
-
-            string payload = System.Text.Encoding.UTF8.GetString(connectionData);
-            var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
-
-            if (connectionPayload.isDebug != Debug.isDebugBuild)
+            else
             {
-                gameReturnStatus = ConnectStatus.IncompatibleBuildType;
-                SendServerToClientConnectResult(clientId, gameReturnStatus);
-                SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                StartCoroutine(WaitToDisconnect(clientId));
-                return;
+                if (connectionPayload.isDebug != Debug.isDebugBuild)
+                {
+                    gameReturnStatus = ConnectStatus.IncompatibleBuildType;
+                }
+                else if (SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.clientGUID))
+                {
+                    gameReturnStatus = ConnectStatus.LoggedInAgain;
+                }
+                else
+                {
+                    gameReturnStatus = ConnectStatus.Success;
+                }
             }
-
-            int clientScene = connectionPayload.clientScene;
-
-            Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
-
-            gameReturnStatus = SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.clientGUID,
-                new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true))
-                ? ConnectStatus.Success
-                : ConnectStatus.LoggedInAgain;
-
-            //Test for Duplicate Login.
-            if (gameReturnStatus == ConnectStatus.LoggedInAgain)
-            {
-                SessionPlayerData? sessionPlayerData =
-                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(connectionPayload.clientGUID);
-
-                ulong oldClientId = sessionPlayerData?.ClientID ?? 0;
-                // kicking old client to leave only current
-                SendServerToClientSetDisconnectReason(oldClientId, ConnectStatus.LoggedInAgain);
-
-                StartCoroutine(WaitToDisconnect(clientId));
-                return;
-            }
-
-            if (gameReturnStatus == ConnectStatus.Success)
-            {
-                SendServerToClientConnectResult(clientId, gameReturnStatus);
-
-                //Populate our dictionaries with the playerData
-                m_ClientSceneMap[clientId] = clientScene;
-
-                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
-
-                // connection approval will create a player object for you
-            }
+            return gameReturnStatus;
         }
 
-        private IEnumerator WaitToDisconnect(ulong clientId)
+        static IEnumerator WaitToDenyApproval(NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
             yield return new WaitForSeconds(0.5f);
-            m_Portal.NetManager.DisconnectClient(clientId);
+            connectionApprovedCallback(false, 0, false, null, null);
         }
 
         /// <summary>
