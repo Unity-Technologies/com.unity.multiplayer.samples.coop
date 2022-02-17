@@ -9,22 +9,28 @@ using TMPro;
 using Unity.Netcode;
 using UnityEngine.UI;
 
-public class RoomNameBox : ObserverBehaviour<LocalLobby>
+public class RoomNameBox : MonoBehaviour
 {
     [SerializeField]
-    TextMeshProUGUI m_RoomNameText;
+    private TextMeshProUGUI m_RoomNameText;
     [SerializeField]
-    Button m_CopyToClipboardButton;
+    private Button m_CopyToClipboardButton;
 
-    string m_LobbyCode;
+    private LocalLobby m_LocalLobby;
+    private string m_LobbyCode;
 
     [Inject]
     private void InjectDependencies(LocalLobby localLobby)
     {
-        BeginObserving(localLobby);
+        m_LocalLobby.Changed += UpdateUI;
     }
 
-    protected override void UpdateObserver(LocalLobby localLobby)
+    private void OnDestroy()
+    {
+        m_LocalLobby.Changed -= UpdateUI;
+    }
+
+    private void UpdateUI(LocalLobby localLobby)
     {
         switch (localLobby.OnlineMode)
         {
