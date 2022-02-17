@@ -24,6 +24,7 @@ public class RoomNameBox : MonoBehaviour
     {
         m_LocalLobby = localLobby;
         m_LocalLobby.Changed += UpdateUI;
+        UpdateUI(localLobby);
     }
 
     private void OnDestroy()
