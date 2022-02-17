@@ -104,6 +104,8 @@ namespace BossRoom.Scripts.Shared
         {
             if (NetworkManager.Singleton.IsListening)
             {
+                m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+                
                 // first disconnect then return to menu
                 var gameNetPortal = GameNetPortal.Instance;
                 if (gameNetPortal != null)
