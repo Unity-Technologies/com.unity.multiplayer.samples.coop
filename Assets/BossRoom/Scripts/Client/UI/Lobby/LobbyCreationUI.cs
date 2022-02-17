@@ -115,7 +115,7 @@ namespace BossRoom.Scripts.Client.UI
         /// <returns> Sanitized text string. </returns>
         private static string Sanitize(string dirtyString)
         {
-            return Regex.Replace(dirtyString, "[A-Za-z0-9]", "");
+            return Regex.Replace(dirtyString, "[^A-Za-z0-9]", "");
         }
 
         /// <summary>
