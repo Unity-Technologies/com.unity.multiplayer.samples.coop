@@ -29,11 +29,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 
         public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)
         {
-            var task = DoSignIn(initializationOptions);
+            var task = TrySignIn(initializationOptions);
             UnityServiceCallsTaskWrapper.RunTask<AuthenticationException>(task, onSigninComplete, onFailed, ParseServiceException);
         }
 
-        private async Task DoSignIn(InitializationOptions initializationOptions)
+        private async Task TrySignIn(InitializationOptions initializationOptions)
         {
             await Unity.Services.Core.UnityServices.InitializeAsync(initializationOptions);
 
