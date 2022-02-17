@@ -107,13 +107,13 @@ namespace BossRoom.Scripts.Client.UI
 
 
         /// <summary>
-        /// Sanitize user port InputField box allowing only alphanumerics, plus any matching chars, if provided.
+        /// Sanitize user port InputField box allowing only alphanumerics and '.'
         /// </summary>
         /// <param name="dirtyString"> string to sanitize. </param>
         /// <returns> Sanitized text string. </returns>
         private static string Sanitize(string dirtyString)
         {
-            return Regex.Replace(dirtyString, "[^A-Za-z0-9]", "");
+            return Regex.Replace(dirtyString, "[^A-Za-z0-9.]", "");
         }
 
         /// <summary>
