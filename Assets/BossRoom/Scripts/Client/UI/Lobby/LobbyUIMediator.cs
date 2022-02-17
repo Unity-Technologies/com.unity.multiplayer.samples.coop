@@ -162,8 +162,6 @@ namespace BossRoom.Scripts.Client.UI
 
             m_GameNetPortal.PlayerName = m_localUser.DisplayName;
 
-            var cancellationTokenSource = new CancellationTokenSource();
-
             switch (m_localLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
@@ -195,9 +193,6 @@ namespace BossRoom.Scripts.Client.UI
                     break;
             }
 
-
-            var cancellationTokenSource = new CancellationTokenSource();
-
             switch (m_localLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
@@ -205,7 +200,7 @@ namespace BossRoom.Scripts.Client.UI
                     break;
 
                 case OnlineMode.UnityRelay:
-                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_localLobby.RelayJoinCode, cancellationTokenSource.Token, OnRelayJoinFailed);
+                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_localLobby.RelayJoinCode, OnRelayJoinFailed);
                     break;
             }
         }

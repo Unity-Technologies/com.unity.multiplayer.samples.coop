@@ -190,7 +190,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             StartHost();
         }
 
-        public async void StartUnityRelayHost(CancellationToken cancellationToken)
+        public async void StartUnityRelayHost()
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -226,10 +226,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                StartHost();
-            }
+            StartHost();
         }
 
         void StartHost()

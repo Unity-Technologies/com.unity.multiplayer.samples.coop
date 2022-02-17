@@ -227,7 +227,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             return true;
         }
 
-        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode, CancellationToken cancellationToken, Action<string> onFailure)
+        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode, Action<string> onFailure)
         {
             var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
@@ -248,17 +248,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
             catch (Exception e)
             {
-                if (cancellationToken.IsCancellationRequested)
-                {
-                    Debug.Log("Unity Relay join failed, but was cancelled: " + e.Message);
-                }
-                else
-                {
-                    onFailure?.Invoke(e.Message);
-                }
+                onFailure?.Invoke(e.Message);
+                return;//not re-throwing, but still not allowing to connect
             }
 
-            if (!cancellationToken.IsCancellationRequested && relayIsReady)
+            if (relayIsReady)
             {
                 ConnectClient(portal);
             }
