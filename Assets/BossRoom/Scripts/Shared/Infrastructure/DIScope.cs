@@ -96,28 +96,34 @@ namespace BossRoom.Scripts.Shared.Infrastructure
 
         public T Resolve<T>() where T : class
         {
+            var type = typeof(T);
+
             if (!m_ScopeConstructionComplete)
             {
                 throw new ScopeNotFinalizedException(
-                    $"Trying to Resolve type {typeof(T)}, but the DISCope is not yet finalized! You should call FinalizeScopeConstruction before any of the Resolve calls.");
+                    $"Trying to Resolve type {type}, but the DISCope is not yet finalized! You should call FinalizeScopeConstruction before any of the Resolve calls.");
             }
 
             //if we have this type as lazy-bound instance - we are going to instantiate it now
-            if (m_LazyBindDescriptors.TryGetValue(typeof(T), out var lazyBindDescriptor))
+            if (m_LazyBindDescriptors.TryGetValue(type, out var lazyBindDescriptor))
             {
                 var instance = (T) InstantiateLazyBoundObject(lazyBindDescriptor);
-                m_LazyBindDescriptors.Remove(typeof(T));
+                m_LazyBindDescriptors.Remove(type);
+                foreach (var interfaceType in lazyBindDescriptor.InterfaceTypes)
+                {
+                    m_LazyBindDescriptors.Remove(interfaceType);
+                }
                 return instance;
             }
 
-            if (!m_TypesToInstances.TryGetValue(typeof(T), out var value))
+            if (!m_TypesToInstances.TryGetValue(type, out var value))
             {
                 if (m_Parent != null)
                 {
                     return m_Parent.Resolve<T>();
                 }
 
-                throw new NoInstanceToInjectException($"Injection of type {typeof(T)} failed.");
+                throw new NoInstanceToInjectException($"Injection of type {type} failed.");
             }
 
             return (T) value;
