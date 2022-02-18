@@ -8,7 +8,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
     {
         private float m_TimeSinceLastCall = float.MaxValue;
         private readonly float m_CooldownTime;
-        private readonly UpdateRunner m_SlowUpdate;
+        private readonly UpdateRunner m_UpdateRunner;
         private Queue<Action> m_PendingOperations = new Queue<Action>();
 
         public void EnqueuePendingOperation(Action action)
@@ -16,17 +16,17 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             m_PendingOperations.Enqueue(action);
         }
 
-        public RateLimitCooldown(float cooldownTime, UpdateRunner slowUpdate)
+        public RateLimitCooldown(float cooldownTime, UpdateRunner updateRunner)
         {
             m_CooldownTime = cooldownTime;
-            m_SlowUpdate = slowUpdate;
+            m_UpdateRunner = updateRunner;
         }
 
         public bool CanCall => m_TimeSinceLastCall >= m_CooldownTime;
 
         public void PutOnCooldown()
         {
-            m_SlowUpdate.Subscribe(OnUpdate, m_CooldownTime);
+            m_UpdateRunner.Subscribe(OnUpdate, m_CooldownTime);
             m_TimeSinceLastCall = 0;
         }
 
@@ -36,7 +36,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
 
             if (CanCall)
             {
-                m_SlowUpdate.Unsubscribe(OnUpdate);
+                m_UpdateRunner.Unsubscribe(OnUpdate);
 
                 while (m_PendingOperations.Count > 0)
                 {

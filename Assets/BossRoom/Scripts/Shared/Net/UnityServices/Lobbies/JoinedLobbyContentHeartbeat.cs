@@ -10,7 +10,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     {
         private readonly LocalLobby m_LocalLobby;
         private readonly LocalLobbyUser m_LocalUser;
-        private readonly UpdateRunner m_SlowUpdate;
+        private readonly UpdateRunner m_UpdateRunner;
         private readonly LobbyServiceFacade m_LobbyServiceFacade;
 
         private int m_AwaitingQueryCount = 0;
@@ -19,12 +19,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         [Inject]
         public JoinedLobbyContentHeartbeat(
-            UpdateRunner slowUpdate,
+            UpdateRunner updateRunner,
             LobbyServiceFacade lobbyServiceFacade,
             LocalLobby localLobby,
             LocalLobbyUser localUser)
         {
-            m_SlowUpdate = slowUpdate;
+            m_UpdateRunner = updateRunner;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
             m_LocalUser = localUser;
@@ -32,7 +32,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public void BeginTracking()
         {
-            m_SlowUpdate.Subscribe(OnUpdate, 1.5f);
+            m_UpdateRunner.Subscribe(OnUpdate, 1.5f);
             m_LocalLobby.Changed += OnLocalLobbyChanged;
             m_ShouldPushData = true; // Ensure the initial presence of a new player is pushed to the lobby; otherwise, when a non-host joins, the LocalLobby never receives their data until they push something new.
         }
@@ -40,7 +40,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public void EndTracking()
         {
             m_ShouldPushData = false;
-            m_SlowUpdate.Unsubscribe(OnUpdate);
+            m_UpdateRunner.Unsubscribe(OnUpdate);
             m_LocalLobby.Changed -= OnLocalLobbyChanged;
         }
 
