@@ -75,7 +75,7 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         public DIScope(DIScope parent = null)
         {
             m_Parent = parent;
-            BindInstanceAsSingle<IInstanceResolver, DIScope>(this);
+            BindInstanceAsSingle<DIScope, IInstanceResolver>(this);
         }
 
         ~DIScope()
@@ -171,7 +171,7 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             BindInstanceToType(instance, typeof(T));
         }
 
-        public void BindInstanceAsSingle<TInterface, TImplementation>(TImplementation instance)
+        public void BindInstanceAsSingle<TImplementation, TInterface>(TImplementation instance)
             where TImplementation : class, TInterface
             where TInterface : class
         {
@@ -195,6 +195,15 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             where TImplementation : class, TInterface, TInterface2
             where TInterface : class
             where TInterface2 : class
+        {
+            LazyBind(typeof(TImplementation), typeof(TInterface), typeof(TInterface2));
+        }
+
+        public void BindAsSingle<TImplementation, TInterface, TInterface2, TInterface3>()
+            where TImplementation : class, TInterface, TInterface2, TInterface3
+            where TInterface : class
+            where TInterface2 : class
+            where TInterface3 : class
         {
             LazyBind(typeof(TImplementation), typeof(TInterface), typeof(TInterface2));
         }

@@ -4,12 +4,12 @@ namespace BossRoom.Scripts.Shared.Infrastructure
     {
         public static void BindMessageChannel<TMessage>(this DIScope scope)
         {
-            scope.BindAsSingle< MessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>>();
+            scope.BindAsSingle< MessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>();
         }
 
         public static void BindBufferedMessageChannel<TMessage>(this DIScope scope)
         {
-            scope.BindAsSingle< BufferedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>>();
+            scope.BindAsSingle< BufferedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IBufferedMessageChannel<TMessage>>();
         }
     }
 }
