@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
@@ -7,16 +8,11 @@ using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
 namespace BossRoom.Scripts.Shared
 {
-
-    public struct ApplicationIsQuittingMessage
-    {
-
-    }
-
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
     /// </summary>
@@ -105,7 +101,7 @@ namespace BossRoom.Scripts.Shared
             if (NetworkManager.Singleton.IsListening)
             {
                 m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
-                
+
                 // first disconnect then return to menu
                 var gameNetPortal = GameNetPortal.Instance;
                 if (gameNetPortal != null)

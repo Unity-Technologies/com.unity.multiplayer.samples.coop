@@ -22,7 +22,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
             m_SlowUpdate = slowUpdate;
         }
 
-        public bool IsOnCooldown => m_TimeSinceLastCall >= m_CooldownTime;
+        public bool CanCall => m_TimeSinceLastCall >= m_CooldownTime;
 
         public void PutOnCooldown()
         {
@@ -34,7 +34,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
         {
             m_TimeSinceLastCall += dt;
 
-            if (!IsOnCooldown)
+            if (CanCall)
             {
                 m_SlowUpdate.Unsubscribe(OnUpdate);
 

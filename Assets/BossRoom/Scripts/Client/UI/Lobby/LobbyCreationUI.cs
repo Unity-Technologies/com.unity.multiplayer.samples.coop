@@ -65,7 +65,7 @@ namespace BossRoom.Scripts.Client.UI
             m_IPConnectionCanvasGroup.interactable = false;
 
             m_OnlineMode = OnlineMode.UnityRelay;
-            
+
             m_LoadingIndicatorObject.SetActive(false);
         }
 

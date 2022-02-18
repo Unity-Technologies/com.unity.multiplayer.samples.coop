@@ -237,8 +237,13 @@ namespace BossRoom.Scripts.Client.UI
 
         private void UnblockUIAfterLoadingIsComplete()
         {
-            m_CanvasGroup.interactable = true;
-            m_LoadingSpinner.SetActive(false);
+            //this callback can happen after we've already switched to a different scene
+            //in that case the canvas group would be null
+            if (m_CanvasGroup != null)
+            {
+                m_CanvasGroup.interactable = true;
+                m_LoadingSpinner.SetActive(false);
+            }
         }
 
         /// <summary>

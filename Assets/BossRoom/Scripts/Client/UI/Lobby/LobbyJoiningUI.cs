@@ -46,7 +46,11 @@ namespace BossRoom.Scripts.Client.UI
         }
 
         [Inject]
-        private void InjectDependenciesAndInstantiate(IInstanceResolver container, LobbyUIMediator lobbyUIMediator, UpdateRunner updateRunner, ISubscriber<LobbyListFetchedMessage> localLobbiesRefreshedSub)
+        private void InjectDependenciesAndInstantiate(
+            IInstanceResolver container,
+            LobbyUIMediator lobbyUIMediator,
+            UpdateRunner updateRunner,
+            ISubscriber<LobbyListFetchedMessage> localLobbiesRefreshedSub)
         {
             m_Container = container;
             m_LobbyUIMediator = lobbyUIMediator;
