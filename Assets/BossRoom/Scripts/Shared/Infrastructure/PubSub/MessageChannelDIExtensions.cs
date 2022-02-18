@@ -1,6 +1,6 @@
 namespace BossRoom.Scripts.Shared.Infrastructure
 {
-    public static class MessageChannelDIExtenstions
+    public static class MessageChannelDIExtensions
     {
         public static void BindMessageChannel<TMessage>(this DIScope scope)
         {
