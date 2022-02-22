@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using Unity.Services.Relay;
@@ -40,8 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 throw new Exception($"Creating join code request has failed: \n {exception.Message}");
             }
 
-            var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.Secure);
-            return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes,
+            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.Key, joinCode);
         }
 
@@ -64,8 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             Debug.Log($"host: {allocation.HostConnectionData[0]} {allocation.HostConnectionData[1]}");
             Debug.Log($"client: {allocation.AllocationId}");
 
-            var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.Secure);
-            return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes,
+            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.HostConnectionData, allocation.Key);
         }
     }
