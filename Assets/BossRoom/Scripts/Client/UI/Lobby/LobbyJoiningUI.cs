@@ -68,11 +68,14 @@ namespace BossRoom.Scripts.Client.UI
 
         private void PeriodicRefresh(float _)
         {
+            //this is a soft refresh without needing to lock the UI and such
             m_LobbyUIMediator.QueryLobbiesRequest(false);
         }
 
         public void OnRefresh()
         {
+            //this will hide all the lobby list items while we're refreshing the list
+            EnsureNumberOfActiveUISlots(0);
             m_LobbyUIMediator.QueryLobbiesRequest(true);
         }
 
@@ -145,6 +148,7 @@ namespace BossRoom.Scripts.Client.UI
             m_CanvasGroup.blocksRaycasts = true;
 
             m_JoinCodeField.text = "";
+
             OnRefresh();
         }
 

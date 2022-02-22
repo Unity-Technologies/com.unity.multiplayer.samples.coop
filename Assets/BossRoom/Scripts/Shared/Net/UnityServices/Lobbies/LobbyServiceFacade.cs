@@ -173,21 +173,20 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
             m_RateLimitJoin.PutOnCooldown();
 
-            string uasId = AuthenticationService.Instance.PlayerId;
             if (!string.IsNullOrEmpty(lobbyCode))
             {
-                m_LobbyApiInterface.JoinLobbyAsync_ByCode(uasId, lobbyCode, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+                m_LobbyApiInterface.JoinLobbyAsync_ByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
             }
             else
             {
-                m_LobbyApiInterface.JoinLobbyAsync_ById(uasId, lobbyId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+                m_LobbyApiInterface.JoinLobbyAsync_ById(AuthenticationService.Instance.PlayerId, lobbyId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
             }
         }
 
         /// <summary>
         /// Attempt to join the first lobby among the available lobbies that match the filtered onlineMode.
         /// </summary>
-        public void QuickJoinLobbyAsync(LocalLobbyUser localUser, Action<Lobby> onSuccess, Action onFailure, List<QueryFilter> filters = null)
+        public void QuickJoinLobbyAsync(Action<Lobby> onSuccess, Action onFailure, List<QueryFilter> filters = null)
         {
             if (!m_RateLimitQuickJoin.CanCall)
             {
@@ -198,8 +197,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             m_RateLimitQuickJoin.PutOnCooldown();
 
-            string uasId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.QuickJoinLobbyAsync(uasId, filters, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+            m_LobbyApiInterface.QuickJoinLobbyAsync(AuthenticationService.Instance.PlayerId, filters, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
         }
 
         /// <summary>
@@ -214,6 +212,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 UnityEngine.Debug.LogWarning("Retrieve Lobby list hit the rate limit. Will try again soon...");
                 return;
             }
+
             m_RateLimitQuery.PutOnCooldown();
             m_LobbyApiInterface.QueryAllLobbiesAsync(filters, OnSuccess, onFailure);
 

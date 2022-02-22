@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Threading;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
@@ -81,7 +79,6 @@ namespace BossRoom.Scripts.Client.UI
 
         public void QueryLobbiesRequest(bool blockUI)
         {
-
             m_LobbyServiceFacade.RetrieveLobbyListAsync(
                 OnSuccess,
                 OnFailure
@@ -117,7 +114,7 @@ namespace BossRoom.Scripts.Client.UI
 
         public void QuickJoinRequest()
         {
-            m_LobbyServiceFacade.QuickJoinLobbyAsync(m_LocalUser, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
+            m_LobbyServiceFacade.QuickJoinLobbyAsync(OnJoinedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
@@ -131,25 +128,17 @@ namespace BossRoom.Scripts.Client.UI
             m_LocalUser.IsHost = true;
             m_LobbyServiceFacade.BeginTracking(r);
 
-            switch (m_LocalLobby.OnlineMode)
-            {
-                case OnlineMode.IpHost:
-                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
-                    break;
-                case OnlineMode.UnityRelay:
-                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                    break;
-            }
-
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             switch (m_LocalLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
+                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
                     m_GameNetPortal.StartHost(m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
                     break;
 
                 case OnlineMode.UnityRelay:
+                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
                     m_GameNetPortal.StartUnityRelayHost();
                     break;
             }
@@ -158,26 +147,17 @@ namespace BossRoom.Scripts.Client.UI
         private void OnJoinedLobby(Lobby remoteLobby)
         {
             m_LobbyServiceFacade.BeginTracking(remoteLobby);
-
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             switch (m_LocalLobby.OnlineMode)
             {
                 case OnlineMode.IpHost:
                     Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
-                    break;
-                case OnlineMode.UnityRelay:
-                    Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                    break;
-            }
-
-            switch (m_LocalLobby.OnlineMode)
-            {
-                case OnlineMode.IpHost:
                     m_ClientNetPortal.StartClient(m_GameNetPortal, m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
                     break;
 
                 case OnlineMode.UnityRelay:
+                    Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
                     m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_LocalLobby.RelayJoinCode, OnRelayJoinFailed);
                     break;
             }

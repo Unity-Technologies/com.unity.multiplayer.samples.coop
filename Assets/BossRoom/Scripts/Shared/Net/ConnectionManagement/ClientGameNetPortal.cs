@@ -1,18 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
-using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Photon.Realtime;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
-using Unity.Services.Core;
-using Unity.Services.Authentication;
-using Unity.Services.Relay;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -184,57 +176,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             ConnectClient(portal);
         }
 
-        /// <summary>
-        /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload.
-        /// </summary>
-        /// <remarks>
-        /// Relay version of <see cref="StartClient"/>, see start client remarks for more information.
-        /// </remarks>
-        /// <param name="portal"> </param>
-        /// <param name="roomKey">The room name of the host to connect to.</param>
-        public bool StartClientRelayMode(GameNetPortal portal, string roomKey, out string failMessage, CancellationToken cancellationToken)
-        {
-            var splits = roomKey.Split('_');
-
-            if (splits.Length != 2)
-            {
-                failMessage = "Malformatted Room Key!";
-                return false;
-            }
-
-            var region = splits[0];
-            var roomName = splits[1];
-
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            switch (chosenTransport)
-            {
-                case PhotonRealtimeTransport photonRealtimeTransport:
-                    photonRealtimeTransport.RoomName = roomName;
-                    PhotonAppSettings.Instance.AppSettings.FixedRegion = region;
-                    break;
-                default:
-                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
-            }
-
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                ConnectClient(portal);
-            }
-
-            failMessage = String.Empty;
-            return true;
-        }
-
         public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode, Action<string> onFailure)
         {
             var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
 
             Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-
-            bool relayIsReady = false;
 
             try
             {
@@ -244,7 +191,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
                 utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
-                relayIsReady = true;
             }
             catch (Exception e)
             {
@@ -252,10 +198,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;//not re-throwing, but still not allowing to connect
             }
 
-            if (relayIsReady)
-            {
-                ConnectClient(portal);
-            }
+            ConnectClient(portal);
         }
 
         private void ConnectClient(GameNetPortal portal)
