@@ -1,7 +1,9 @@
 {
     "name": "Unity.Multiplayer.Samples.Utilities.Testing",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "GUID:1491147abca9d7d4bb7105af628b223e"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,

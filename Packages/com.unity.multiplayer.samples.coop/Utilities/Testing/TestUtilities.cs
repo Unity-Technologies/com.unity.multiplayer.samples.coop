@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using NUnit.Framework;
+using Unity.Netcode;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -9,6 +10,8 @@ namespace Unity.Multiplayer.Samples.Utilities
 {
     public abstract class TestUtilities
     {
+        const float k_MaxSceneLoadDuration = 10f;
+
         /// <summary>
         /// Finds an active Button GameObject by name. If Button component is present on GameObject, it will be clicked.
         /// </summary>
@@ -34,7 +37,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// is either loaded successfully, or the loading process has timed out.
         /// </summary>
         /// <param name="sceneName"> Name of scene </param>
-        /// <returns></returns>
+        /// <returns> IEnumerator to track scene load process </returns>
         public static IEnumerator AssertIsSceneLoaded(string sceneName)
         {
             var waitUntilSceneLoaded = new WaitForSceneLoad(sceneName);
@@ -43,46 +46,118 @@ namespace Unity.Multiplayer.Samples.Utilities
 
             Assert.That(!waitUntilSceneLoaded.timedOut);
         }
-    }
 
-    /// <summary>
-    /// Custom IEnumerator class to validate the loading of a Scene by name. If a scene load lasts longer than
-    /// k_MaxSceneLoadDuration it is considered a timeout.
-    /// </summary>
-    public class WaitForSceneLoad : CustomYieldInstruction
-    {
-        const float k_MaxSceneLoadDuration = 10f;
-
-        string m_SceneName;
-
-        float m_LoadSceneStart;
-
-        float m_MaxLoadDuration;
-
-        public bool timedOut { get; private set; }
-
-        public override bool keepWaiting
+        /// <summary>
+        /// Helper wrapper method for asserting the completion of a scene load to be used inside Playmode tests. A scene
+        /// is either loaded successfully, or the loading process has timed out.
+        /// </summary>
+        /// <param name="sceneName"> Name of scene </param>
+        /// <param name="networkSceneManager"> NetworkSceneManager instance </param>
+        /// <returns> IEnumerator to track scene load process </returns>
+        public static IEnumerator AssertIsNetworkSceneLoaded(string sceneName, NetworkSceneManager networkSceneManager)
         {
-            get
+            Assert.That(networkSceneManager != null, "NetworkSceneManager instance is null!");
+
+            var waitForNetworkSceneLoad = new WaitForNetworkSceneLoad(sceneName, networkSceneManager);
+
+            yield return waitForNetworkSceneLoad;
+
+            Assert.That(!waitForNetworkSceneLoad.timedOut);
+        }
+
+        /// <summary>
+        /// Custom IEnumerator class to validate the loading of a Scene by name. If a scene load lasts longer than
+        /// k_MaxSceneLoadDuration it is considered a timeout.
+        /// </summary>
+        class WaitForSceneLoad : CustomYieldInstruction
+        {
+            string m_SceneName;
+
+            float m_LoadSceneStart;
+
+            float m_MaxLoadDuration;
+
+            public bool timedOut { get; private set; }
+
+            public override bool keepWaiting
             {
-                var scene = SceneManager.GetSceneByName(m_SceneName);
-
-                var isSceneLoaded = scene.IsValid() && scene.isLoaded;
-
-                if (Time.time - m_LoadSceneStart >= m_MaxLoadDuration)
+                get
                 {
-                    timedOut = true;
-                }
+                    var scene = SceneManager.GetSceneByName(m_SceneName);
 
-                return !isSceneLoaded && !timedOut;
+                    var isSceneLoaded = scene.IsValid() && scene.isLoaded;
+
+                    if (Time.time - m_LoadSceneStart >= m_MaxLoadDuration)
+                    {
+                        timedOut = true;
+                    }
+
+                    return !isSceneLoaded && !timedOut;
+                }
+            }
+
+            public WaitForSceneLoad(string sceneName, float maxLoadDuration = k_MaxSceneLoadDuration)
+            {
+                m_LoadSceneStart = Time.time;
+                m_SceneName = sceneName;
+                m_MaxLoadDuration = maxLoadDuration;
             }
         }
 
-        public WaitForSceneLoad(string sceneName, float maxLoadDuration = k_MaxSceneLoadDuration)
+        /// <summary>
+        /// Custom IEnumerator class to validate the loading of a Scene by name. If a scene load lasts longer than
+        /// k_MaxSceneLoadDuration it is considered a timeout.
+        /// </summary>
+        class WaitForNetworkSceneLoad : CustomYieldInstruction
         {
-            m_LoadSceneStart = Time.time;
-            m_SceneName = sceneName;
-            m_MaxLoadDuration = maxLoadDuration;
+            string m_SceneName;
+
+            float m_LoadSceneStart;
+
+            float m_MaxLoadDuration;
+
+            bool m_IsNetworkSceneLoaded;
+
+            NetworkSceneManager m_NetworkSceneManager;
+
+            public bool timedOut { get; private set; }
+
+            public override bool keepWaiting
+            {
+                get
+                {
+                    if (Time.time - m_LoadSceneStart >= m_MaxLoadDuration)
+                    {
+                        timedOut = true;
+
+                        m_NetworkSceneManager.OnSceneEvent -= ConfirmSceneLoad;
+                    }
+
+                    return !m_IsNetworkSceneLoaded && !timedOut;
+                }
+            }
+
+            public WaitForNetworkSceneLoad(string sceneName, NetworkSceneManager networkSceneManager, float maxLoadDuration = k_MaxSceneLoadDuration)
+            {
+                m_LoadSceneStart = Time.time;
+                m_SceneName = sceneName;
+                m_MaxLoadDuration = maxLoadDuration;
+
+                m_NetworkSceneManager = networkSceneManager;
+
+                m_NetworkSceneManager.OnSceneEvent += ConfirmSceneLoad;
+            }
+
+            void ConfirmSceneLoad(SceneEvent sceneEvent)
+            {
+                if (sceneEvent.SceneName == m_SceneName &&
+                    sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
+                {
+                    m_IsNetworkSceneLoaded = true;
+
+                    m_NetworkSceneManager.OnSceneEvent -= ConfirmSceneLoad;
+                }
+            }
         }
     }
 }
