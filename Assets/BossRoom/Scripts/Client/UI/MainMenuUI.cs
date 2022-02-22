@@ -171,7 +171,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     if (connecting) { m_ResponsePopup.SetupNotifierDisplay("Success!", "Joining Now...", false, true); }
                     break;
                 case ConnectStatus.LoggedInAgain:
-                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account.", false, true);
+                    m_ResponsePopup.SetupNotifierDisplay("Connection Failed", "You are already logged in elsewhere using the same account.", false, true);
                     break;
                 case ConnectStatus.GenericDisconnect:
                     var title = connecting ? "Connection Failed" : "Disconnected From Host.";
