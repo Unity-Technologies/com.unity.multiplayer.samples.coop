@@ -244,7 +244,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
         }
 
-        /// <param name="data">Key-value pairs, which will overwrite any existing data for these keys. Presumed to be available to all lobby members but not publicly.</param>
+        /// <summary>
+        /// Attempt to push a set of key-value pairs associated with the local player which will overwrite any existing data for these keys.
+        /// </summary>
         public void UpdatePlayerDataAsync(Dictionary<string, PlayerDataObject> data, Action onSuccess, Action onFailure)
         {
             if (!ShouldUpdateData(() => { UpdatePlayerDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
@@ -279,7 +281,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
         }
 
-        /// <param name="data">Key-value pairs, which will overwrite any existing data for these keys. Presumed to be available to all lobby members but not publicly.</param>
+        /// <summary>
+        /// Attempt to update a set of key-value pairs associated with a given lobby.
+        /// </summary>
         public void UpdateLobbyDataAsync(Dictionary<string, DataObject> data, Action onSuccess, Action onFailure)
         {
             if (!ShouldUpdateData(() => { UpdateLobbyDataAsync(data, onSuccess, onFailure); }, onSuccess, false))
