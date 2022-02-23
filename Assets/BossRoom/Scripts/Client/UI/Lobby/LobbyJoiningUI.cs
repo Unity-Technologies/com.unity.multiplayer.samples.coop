@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
 
         [Inject]
-        void InjectDependenciesAndInstantiate(
+        void InjectDependenciesAndInitialize(
             IInstanceResolver container,
             LobbyUIMediator lobbyUIMediator,
             UpdateRunner updateRunner,
