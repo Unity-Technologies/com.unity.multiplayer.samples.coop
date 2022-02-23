@@ -39,8 +39,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             ClientGameNetPortal clientGameNetPortal
         )
         {
-            //m_persistentPlayer = persistentPlayer;
-
             m_NameGenerationData = nameGenerationData;
             m_LocalUser = localUser;
             m_LobbyServiceFacade = lobbyServiceFacade;
