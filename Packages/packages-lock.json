@@ -1,12 +1,5 @@
 {
   "dependencies": {
-    "com.community.netcode.transport.photon-realtime": {
-      "version": "https://github.com/Unity-Technologies/mlapi-community-contributions.git?path=/Transports/com.community.netcode.transport.photon-realtime#develop",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {},
-      "hash": "ae9ed5f768a9abca0907919889f055b499f80b3d"
-    },
     "com.unity.2d.sprite": {
       "version": "1.0.0",
       "depth": 0,
