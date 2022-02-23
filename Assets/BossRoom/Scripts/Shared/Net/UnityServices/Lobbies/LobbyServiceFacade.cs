@@ -208,7 +208,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             if (!m_RateLimitQuery.CanCall)
             {
                 onFailure?.Invoke();
-                m_RateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onSuccess, onFailure, filters); });
                 UnityEngine.Debug.LogWarning("Retrieve Lobby list hit the rate limit. Will try again soon...");
                 return;
             }
@@ -290,7 +289,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             {
                 return;
             }
-
 
             var dataCurr = CurrentUnityLobby.Data ?? new Dictionary<string, DataObject>();
 
