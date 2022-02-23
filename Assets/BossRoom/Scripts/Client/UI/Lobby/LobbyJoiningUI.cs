@@ -74,8 +74,6 @@ namespace BossRoom.Scripts.Client.UI
 
         public void OnRefresh()
         {
-            //this will hide all the lobby list items while we're refreshing the list
-            EnsureNumberOfActiveUISlots(0);
             m_LobbyUIMediator.QueryLobbiesRequest(true);
         }
 
@@ -116,9 +114,9 @@ namespace BossRoom.Scripts.Client.UI
                 m_LobbyListItems.Add(CreateLobbyListItem());
             }
 
-            for (int i = requiredNumber; i < m_LobbyListItems.Count; i++)
+            for (int i = 0; i < m_LobbyListItems.Count; i++)
             {
-                m_LobbyListItems[i].gameObject.SetActive(false);
+                m_LobbyListItems[i].gameObject.SetActive( i < requiredNumber );
             }
         }
 

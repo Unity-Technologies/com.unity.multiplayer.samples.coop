@@ -147,8 +147,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
             m_RateLimitHost.PutOnCooldown();
 
-            string uasId = AuthenticationService.Instance.PlayerId;
-
             var initialLobbyData = new Dictionary<string, DataObject>()
             {
                 {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())},
@@ -156,7 +154,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 {"Port", new DataObject(DataObject.VisibilityOptions.Public,  port.ToString())},
             };
 
-            m_LobbyApiInterface.CreateLobbyAsync(uasId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);
+            m_LobbyApiInterface.CreateLobbyAsync(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);
         }
 
         /// <summary>
@@ -208,6 +206,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             if (!m_RateLimitQuery.CanCall)
             {
                 onFailure?.Invoke();
+                m_RateLimitQuery.EnqueuePendingOperation(() => { RetrieveLobbyListAsync(onSuccess, onFailure, filters); });
                 UnityEngine.Debug.LogWarning("Retrieve Lobby list hit the rate limit. Will try again soon...");
                 return;
             }
@@ -253,9 +252,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 return;
             }
 
-            string playerId = AuthenticationService.Instance.PlayerId;
-
-            m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, playerId, data, OnComplete,  onFailure,null, null);
+            m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, data, OnComplete,  onFailure,null, null);
 
             void OnComplete(Lobby result)
             {
@@ -276,8 +273,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
                 return;
             }
 
-            string playerId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, playerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
+            m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
         }
 
         /// <summary>
@@ -363,11 +359,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public void ForceLeaveLobbyAttempt()
         {
             EndTracking();
-
-            if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
-            {
-                LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
-            }
         }
     }
 }
