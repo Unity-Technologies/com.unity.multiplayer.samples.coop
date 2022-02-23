@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Threading;
 using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
@@ -19,6 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         public static ClientGameNetPortal Instance;
         private GameNetPortal m_Portal;
+        Coroutine m_TryToReconnectCoroutine;
 
         /// <summary>
         /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
@@ -120,16 +122,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
                 {
-                    // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
-                    // Just shut down networking and switch back to main menu.
                     NetworkManager.Singleton.Shutdown();
-                    if (!DisconnectReason.HasTransitionReason)
-                    {
-                        //disconnect that happened for some other reason than user UI interaction--should display a message.
-                        DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
-                    }
-
                     SceneManager.LoadScene("MainMenu");
+                    m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect());
                 }
                 else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
                 {
@@ -137,6 +132,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     NetworkTimedOut?.Invoke();
                 }
             }
+        }
+
+        private IEnumerator TryToReconnect()
+        {
+            int nbTries = 0;
+            yield return new WaitForSeconds(k_TimeoutDuration);
+            while (!NetworkManager.Singleton.IsClient && nbTries < 3)
+            {
+                ConnectClient(m_Portal);
+                yield return new WaitForSeconds(k_TimeoutDuration);
+                nbTries++;
+            }
+
+            if (!NetworkManager.Singleton.IsConnectedClient)
+            {
+                // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
+                // Just shut down networking and switch back to main menu.
+                NetworkManager.Singleton.Shutdown();
+                if (!DisconnectReason.HasTransitionReason)
+                {
+                    //disconnect that happened for some other reason than user UI interaction--should display a message.
+                    DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
+                }
+
+            }
+
+            m_TryToReconnectCoroutine = null;
         }
 
         /// <summary>
