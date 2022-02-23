@@ -69,7 +69,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 unityAuthenticationInitOptions.SetProfile(hardcodedProfileID);
             }
+#else
+            var arguments = System.Environment.GetCommandLineArgs();
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                if (arguments[i] == "-AuthProfile")
+                {
+                    var profileId = arguments[i + 1];
+                    unityAuthenticationInitOptions.SetProfile(profileId);
+                    break;
+                }
+            }
 #endif
+
             authServiceFacade.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
 
             void OnAuthSignIn()
