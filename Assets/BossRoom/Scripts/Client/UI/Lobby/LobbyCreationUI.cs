@@ -109,7 +109,6 @@ namespace BossRoom.Scripts.Client.UI
             m_CanvasGroup.blocksRaycasts = false;
         }
 
-
         /// <summary>
         /// Sanitize user port InputField box allowing only alphanumerics and '.'
         /// </summary>
