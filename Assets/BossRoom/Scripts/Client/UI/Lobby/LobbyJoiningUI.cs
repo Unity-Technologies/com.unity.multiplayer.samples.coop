@@ -73,30 +73,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void UpdateUI(LobbyListFetchedMessage message)
         {
-            var displayableLobbies = GetDisplayableLobbies(message.LocalLobbies);
+            EnsureNumberOfActiveUISlots(message.LocalLobbies.Count);
 
-            EnsureNumberOfActiveUISlots(displayableLobbies.Count);
-
-            for (var i = 0; i < displayableLobbies.Count; i++)
+            for (var i = 0; i < message.LocalLobbies.Count; i++)
             {
                 var localLobby = message.LocalLobbies[i];
                 m_LobbyListItems[i].SetData(localLobby);
             }
-        }
-
-        List<LocalLobby> GetDisplayableLobbies(IReadOnlyList<LocalLobby> lobbies)
-        {
-            var displayable = new List<LocalLobby>();
-
-            foreach (var lobby in lobbies)
-            {
-                if (CanDisplay(lobby))
-                {
-                    displayable.Add(lobby);
-                }
-            }
-
-            return displayable;
         }
 
         void EnsureNumberOfActiveUISlots(int requiredNumber)
@@ -126,11 +109,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void OnQuickJoinClicked()
         {
             m_LobbyUIMediator.QuickJoinRequest();
-        }
-
-        bool CanDisplay(LocalLobby lobby)
-        {
-            return lobby.LobbyUsers.Count != lobby.MaxPlayerCount;
         }
 
         public void Show()

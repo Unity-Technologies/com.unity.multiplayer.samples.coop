@@ -19,11 +19,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         const int k_MaxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
 
         readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
+        readonly List<QueryFilter> m_Filters;
+        readonly List<QueryOrder> m_Order;
 
         [Inject]
         public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
         {
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
+
+            // Filter for open lobbies only
+            m_Filters = new List<QueryFilter>()
+            {
+                new QueryFilter(
+                    field: QueryFilter.FieldOptions.AvailableSlots,
+                    op: QueryFilter.OpOptions.GT,
+                    value: "0")
+            };
+
+            // Order by newest lobbies first
+            m_Order = new List<QueryOrder>()
+            {
+                new QueryOrder(
+                    asc: false,
+                    field: QueryOrder.FieldOptions.Created)
+            };
         }
 
         void RunTask(Task task, Action onComplete, Action onFailed)
@@ -82,11 +101,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             RunTask(task, onComplete, onFailed);
         }
 
-        public void QuickJoinLobbyAsync(string requesterUasId, List<QueryFilter> filters, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public void QuickJoinLobbyAsync(string requesterUasId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
         {
             var joinRequest = new QuickJoinLobbyOptions
             {
-                Filter = filters,
+                Filter = m_Filters,
                 Player = new Player(id: requesterUasId, data: localUserData)
             };
 
@@ -100,13 +119,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             RunTask(task, onComplete, onFailed);
         }
 
-        public void QueryAllLobbiesAsync(List<QueryFilter> filters, Action<QueryResponse> onComplete, Action onFailed)
+        public void QueryAllLobbiesAsync(Action<QueryResponse> onComplete, Action onFailed)
         {
             QueryLobbiesOptions queryOptions = new QueryLobbiesOptions
             {
                 Count = k_MaxLobbiesToShow,
-                Filters = filters
+                Filters = m_Filters,
+                Order = m_Order
             };
+
             var task = Lobbies.Instance.QueryLobbiesAsync(queryOptions);
             RunTask(task, onComplete, onFailed);
         }

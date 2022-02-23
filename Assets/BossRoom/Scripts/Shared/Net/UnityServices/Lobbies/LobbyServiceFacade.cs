@@ -184,7 +184,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to join the first lobby among the available lobbies that match the filtered onlineMode.
         /// </summary>
-        public void QuickJoinLobbyAsync(Action<Lobby> onSuccess, Action onFailure, List<QueryFilter> filters = null)
+        public void QuickJoinLobbyAsync(Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitQuickJoin.CanCall)
             {
@@ -195,13 +195,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             m_RateLimitQuickJoin.PutOnCooldown();
 
-            m_LobbyApiInterface.QuickJoinLobbyAsync(AuthenticationService.Instance.PlayerId, filters, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+            m_LobbyApiInterface.QuickJoinLobbyAsync(AuthenticationService.Instance.PlayerId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
         }
 
         /// <summary>
         /// Used for getting the list of all active lobbies, without needing full info for each.
         /// </summary>
-        public void RetrieveLobbyListAsync(Action<QueryResponse> onSuccess, Action onFailure, List<QueryFilter> filters = null)
+        public void RetrieveLobbyListAsync(Action<QueryResponse> onSuccess, Action onFailure)
         {
             if (!m_RateLimitQuery.CanCall)
             {
@@ -211,7 +211,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
 
             m_RateLimitQuery.PutOnCooldown();
-            m_LobbyApiInterface.QueryAllLobbiesAsync(filters, OnSuccess, onFailure);
+            m_LobbyApiInterface.QueryAllLobbiesAsync(OnSuccess, onFailure);
 
             void OnSuccess(QueryResponse qr)
             {
