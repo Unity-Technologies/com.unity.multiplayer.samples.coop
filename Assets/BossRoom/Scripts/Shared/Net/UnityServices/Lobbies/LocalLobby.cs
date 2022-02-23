@@ -12,7 +12,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     [Serializable]
     public sealed class LocalLobby
     {
-        public event Action<LocalLobby> Changed;
+        public event Action<LocalLobby> changed;
 
         /// <summary>
         /// Create a list of new LocalLobbies from the result of a lobby list query.
@@ -77,8 +77,8 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        private LobbyData m_data;
-        public LobbyData Data => new LobbyData(m_data);
+        private LobbyData m_Data;
+        public LobbyData Data => new LobbyData(m_Data);
 
 
         public void AddUser(LocalLobbyUser user)
@@ -121,35 +121,35 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         private void OnChanged()
         {
-            Changed?.Invoke(this);
+            changed?.Invoke(this);
         }
 
         public string LobbyID
         {
-            get => m_data.LobbyID;
+            get => m_Data.LobbyID;
             set
             {
-                m_data.LobbyID = value;
+                m_Data.LobbyID = value;
                 OnChanged();
             }
         }
 
         public string LobbyCode
         {
-            get => m_data.LobbyCode;
+            get => m_Data.LobbyCode;
             set
             {
-                m_data.LobbyCode = value;
+                m_Data.LobbyCode = value;
                 OnChanged();
             }
         }
 
         public string RelayJoinCode
         {
-            get => m_data.RelayJoinCode;
+            get => m_Data.RelayJoinCode;
             set
             {
-                m_data.RelayJoinCode = value;
+                m_Data.RelayJoinCode = value;
                 OnChanged();
             }
         }
@@ -157,20 +157,20 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public string LobbyName
         {
-            get => m_data.LobbyName;
+            get => m_Data.LobbyName;
             set
             {
-                m_data.LobbyName = value;
+                m_Data.LobbyName = value;
                 OnChanged();
             }
         }
 
         public bool Private
         {
-            get => m_data.Private;
+            get => m_Data.Private;
             set
             {
-                m_data.Private = value;
+                m_Data.Private = value;
                 OnChanged();
             }
         }
@@ -179,21 +179,21 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public int MaxPlayerCount
         {
-            get => m_data.MaxPlayerCount;
+            get => m_Data.MaxPlayerCount;
             set
             {
-                m_data.MaxPlayerCount = value;
+                m_Data.MaxPlayerCount = value;
                 OnChanged();
             }
         }
 
         public OnlineMode OnlineMode
         {
-            get => m_data.OnlineMode;
+            get => m_Data.OnlineMode;
             set
             {
-                if (m_data.OnlineMode != value)
-                {   m_data.OnlineMode = value;
+                if (m_Data.OnlineMode != value)
+                {   m_Data.OnlineMode = value;
                     OnChanged();
                 }
             }
@@ -201,7 +201,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public void CopyDataFrom(LobbyData data, Dictionary<string, LocalLobbyUser> currUsers)
         {
-            m_data = data;
+            m_Data = data;
 
             if (currUsers == null)
             {

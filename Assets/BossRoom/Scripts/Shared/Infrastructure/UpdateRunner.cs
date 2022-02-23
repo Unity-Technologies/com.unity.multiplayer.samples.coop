@@ -12,23 +12,23 @@ namespace BossRoom.Scripts.Shared.Infrastructure
     {
         private class Subscriber
         {
-            public Action<float> updateMethod;
-            public readonly float period;
-            public float periodCurrent;
+            public Action<float> UpdateMethod;
+            public readonly float Period;
+            public float PeriodCurrent;
 
             public Subscriber(Action<float> updateMethod, float period)
             {
-                this.updateMethod = updateMethod;
-                this.period = period;
-                periodCurrent = 0;
+                this.UpdateMethod = updateMethod;
+                this.Period = period;
+                PeriodCurrent = 0;
             }
         }
 
-        private List<Subscriber> m_subscribers = new List<Subscriber>();
+        private List<Subscriber> m_Subscribers = new List<Subscriber>();
 
         public void OnDestroy()
         {
-            m_subscribers.Clear(); // We should clean up references in case they would prevent garbage collection.
+            m_Subscribers.Clear(); // We should clean up references in case they would prevent garbage collection.
         }
 
         /// <summary>
@@ -54,63 +54,57 @@ namespace BossRoom.Scripts.Shared.Infrastructure
                 return;
             }
 
-            foreach (var currSub in m_subscribers)
+            foreach (var currSub in m_Subscribers)
             {
-                if (currSub.updateMethod.Equals(onUpdate))
+                if (currSub.UpdateMethod.Equals(onUpdate))
                 {
                     return;
                 }
             }
 
-            m_subscribers.Add(new Subscriber(onUpdate, period));
+            m_Subscribers.Add(new Subscriber(onUpdate, period));
         }
 
-        /// <summary>Safe to call even if onUpdate was not previously Subscribed.</summary>
+        /// <summary>
+        /// Safe to call even if onUpdate was not previously Subscribed.
+        /// </summary>
         public void Unsubscribe(Action<float> onUpdate)
         {
-            for (var sub = m_subscribers.Count - 1; sub >= 0; sub--)
+            for (var sub = m_Subscribers.Count - 1; sub >= 0; sub--)
             {
-                if (m_subscribers[sub].updateMethod.Equals(onUpdate))
+                if (m_Subscribers[sub].UpdateMethod.Equals(onUpdate))
                 {
-                    m_subscribers.RemoveAt(sub);
+                    m_Subscribers.RemoveAt(sub);
                 }
             }
-        }
-
-        private void Update()
-        {
-            OnUpdate(Time.deltaTime);
         }
 
         /// <summary>
         /// Each frame, advance all subscribers. Any that have hit their period should then act, though if they take too long they could be removed.
         /// </summary>
-        public void OnUpdate(float dt)
+        private void Update()
         {
-            for (var subscriberIndex = m_subscribers.Count - 1; subscriberIndex >= 0; subscriberIndex--) // Iterate in reverse in case we need to remove something.
-            {
-                var subscriber = m_subscribers[subscriberIndex];
-                subscriber.periodCurrent += dt;
+            float dt = Time.deltaTime;
 
-                if (subscriber.periodCurrent > subscriber.period)
+            for (var subscriberIndex = m_Subscribers.Count - 1; subscriberIndex >= 0; subscriberIndex--) // Iterate in reverse in case we need to remove something.
+            {
+                var subscriber = m_Subscribers[subscriberIndex];
+                subscriber.PeriodCurrent += dt;
+
+                if (subscriber.PeriodCurrent > subscriber.Period)
                 {
-                    var onUpdate = subscriber.updateMethod;
+                    var onUpdate = subscriber.UpdateMethod;
 
                     if (onUpdate == null)
                     {
-                        Remove(subscriberIndex, $"Did not Unsubscribe from UpdateSlow: {onUpdate.Target} : {onUpdate.Method}");
+                        m_Subscribers.RemoveAt(subscriberIndex);
+                        Debug.LogError($"Did not Unsubscribe from UpdateSlow: {onUpdate.Target} : {onUpdate.Method}");
                         continue;
                     }
 
-                    onUpdate.Invoke(subscriber.periodCurrent);
-                    subscriber.periodCurrent = 0;
+                    onUpdate.Invoke(subscriber.PeriodCurrent);
+                    subscriber.PeriodCurrent = 0;
                 }
-            }
-
-            void Remove(int index, string msg)
-            {
-                m_subscribers.RemoveAt(index);
-                Debug.LogError(msg);
             }
         }
     }

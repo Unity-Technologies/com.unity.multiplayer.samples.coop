@@ -33,7 +33,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         public void BeginTracking()
         {
             m_UpdateRunner.Subscribe(OnUpdate, 1.5f);
-            m_LocalLobby.Changed += OnLocalLobbyChanged;
+            m_LocalLobby.changed += OnLocalLobbyChanged;
             m_ShouldPushData = true; // Ensure the initial presence of a new player is pushed to the lobby; otherwise, when a non-host joins, the LocalLobby never receives their data until they push something new.
         }
 
@@ -41,7 +41,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
         {
             m_ShouldPushData = false;
             m_UpdateRunner.Unsubscribe(OnUpdate);
-            m_LocalLobby.Changed -= OnLocalLobbyChanged;
+            m_LocalLobby.changed -= OnLocalLobbyChanged;
         }
 
         private void OnLocalLobbyChanged(LocalLobby lobby)

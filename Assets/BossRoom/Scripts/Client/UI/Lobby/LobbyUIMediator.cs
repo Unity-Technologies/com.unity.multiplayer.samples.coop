@@ -153,12 +153,12 @@ namespace BossRoom.Scripts.Client.UI
             {
                 case OnlineMode.IpHost:
                     Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
-                    m_ClientNetPortal.StartClient(m_GameNetPortal, m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
+                    m_ClientNetPortal.StartClient(m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
                     break;
 
                 case OnlineMode.UnityRelay:
                     Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_GameNetPortal, m_LocalLobby.RelayJoinCode, OnRelayJoinFailed);
+                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_LocalLobby.RelayJoinCode, OnRelayJoinFailed);
                     break;
             }
         }

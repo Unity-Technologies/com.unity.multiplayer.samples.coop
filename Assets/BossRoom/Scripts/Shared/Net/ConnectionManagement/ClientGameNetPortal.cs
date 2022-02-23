@@ -154,7 +154,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
-        public void StartClient(GameNetPortal portal, string ipaddress, int port)
+        public void StartClient(string ipaddress, int port)
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -173,10 +173,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
             }
 
-            ConnectClient(portal);
+            ConnectClient();
         }
 
-        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode, Action<string> onFailure)
+        public async void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
         {
             var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
@@ -198,28 +198,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;//not re-throwing, but still not allowing to connect
             }
 
-            ConnectClient(portal);
+            ConnectClient();
         }
 
-        private void ConnectClient(GameNetPortal portal)
+        private void ConnectClient()
         {
             var clientGuid = ClientPrefs.GetGuid();
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
                 clientGUID = clientGuid,
                 clientScene = SceneManager.GetActiveScene().buildIndex,
-                playerName = portal.PlayerName
+                playerName = m_Portal.PlayerName
             });
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
-            portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
-            portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
+            m_Portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
+            m_Portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! Netcode will establish a socket connection to the host.
             //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
-            portal.NetManager.StartClient();
+            m_Portal.NetManager.StartClient();
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
             NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult_CustomMessage), ReceiveServerToClientConnectResult_CustomMessage);

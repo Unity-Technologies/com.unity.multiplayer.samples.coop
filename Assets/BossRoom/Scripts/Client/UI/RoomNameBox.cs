@@ -23,13 +23,13 @@ public class RoomNameBox : MonoBehaviour
     private void InjectDependencies(LocalLobby localLobby)
     {
         m_LocalLobby = localLobby;
-        m_LocalLobby.Changed += UpdateUI;
+        m_LocalLobby.changed += UpdateUI;
         UpdateUI(localLobby);
     }
 
     private void OnDestroy()
     {
-        m_LocalLobby.Changed -= UpdateUI;
+        m_LocalLobby.changed -= UpdateUI;
     }
 
     private void UpdateUI(LocalLobby localLobby)
