@@ -42,7 +42,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         public virtual IDisposable Subscribe(Action<T> handler)
         {
             Assert.IsTrue(!m_MessageHandlers.Contains(handler), "Attempting to subscribe with the same handler more than once");
+           // so we don't modify the handler list while iterating on it (which could happen if the handler unsubscribes). With this, we'd unsubscribe on next publish.
             m_PendingHandlers.Enqueue(() => { DoSubscribe(handler); });
+
             var subscription = new DisposableSubscription<T>(this, handler);
             return subscription;
 
