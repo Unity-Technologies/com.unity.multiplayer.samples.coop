@@ -120,10 +120,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             UnblockUIAfterLoadingIsComplete();
         }
 
-        void OnCreatedLobby(Lobby r)
+        void OnCreatedLobby(Lobby lobby)
         {
             m_LocalUser.IsHost = true;
-            m_LobbyServiceFacade.BeginTracking(r);
+            m_LobbyServiceFacade.BeginTracking(lobby);
 
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
