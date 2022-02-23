@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using GameLobby.UI;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;

@@ -1,12 +1,11 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace GameLobby.UI
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     [RequireComponent(typeof(Image))]
     public class UITinter : MonoBehaviour
     {
-
         [SerializeField]
         Color[] m_TintColors;
         Image m_Image;
@@ -21,6 +20,5 @@ namespace GameLobby.UI
                 return;
             m_Image.color = m_TintColors[colorIndex];
         }
-
     }
 }
