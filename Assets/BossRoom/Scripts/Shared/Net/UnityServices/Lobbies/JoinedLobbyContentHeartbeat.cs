@@ -15,7 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         int m_AwaitingQueryCount = 0;
         bool m_ShouldPushData = false;
 
-
         [Inject]
         public JoinedLobbyContentHeartbeat(
             UpdateRunner updateRunner,
@@ -43,7 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_LocalLobby.changed -= OnLocalLobbyChanged;
         }
 
-        private void OnLocalLobbyChanged(LocalLobby lobby)
+        void OnLocalLobbyChanged(LocalLobby lobby)
         {
             if (string.IsNullOrEmpty(lobby.LobbyID)) // When the player leaves, their LocalLobby is cleared out but maintained.
             {
@@ -53,12 +52,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_ShouldPushData = true;
         }
 
-
         /// <summary>
         /// If there have been any data changes since the last update, push them to Lobby.
         /// (Unless we're already awaiting a query, in which case continue waiting.)
         /// </summary>
-        private void OnUpdate(float dt)
+        void OnUpdate(float dt)
         {
             if (m_AwaitingQueryCount > 0)
             {

@@ -13,12 +13,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
         IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
         [Inject]
-        private void InjectDependencies(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
+        void InjectDependencies(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
         {
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
-        private void OnServiceException(AuthenticationException e)
+        void OnServiceException(AuthenticationException e)
         {
             Debug.LogWarning(e.Message);
 
@@ -33,7 +33,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             UnityServiceCallsTaskWrapper.RunTask<AuthenticationException>(task, onSigninComplete, onFailed, OnServiceException);
         }
 
-        private async Task TrySignIn(InitializationOptions initializationOptions)
+        async Task TrySignIn(InitializationOptions initializationOptions)
         {
             await Unity.Services.Core.UnityServices.InitializeAsync(initializationOptions);
 

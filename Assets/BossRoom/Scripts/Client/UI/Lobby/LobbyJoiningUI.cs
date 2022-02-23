@@ -26,12 +26,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
 
-        private void Awake()
+        void Awake()
         {
             m_LobbyListItemPrototype.gameObject.SetActive(false);
         }
 
-        private void OnDisable()
+        void OnDisable()
         {
             if (m_UpdateRunner != null)
             {
@@ -39,13 +39,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             m_Subscriptions?.Dispose();
         }
 
         [Inject]
-        private void InjectDependenciesAndInstantiate(
+        void InjectDependenciesAndInstantiate(
             IInstanceResolver container,
             LobbyUIMediator lobbyUIMediator,
             UpdateRunner updateRunner,
@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyUIMediator.JoinLobbyWithCodeRequest(m_JoinCodeField.text.ToUpper());
         }
 
-        private void PeriodicRefresh(float _)
+        void PeriodicRefresh(float _)
         {
             //this is a soft refresh without needing to lock the UI and such
             m_LobbyUIMediator.QueryLobbiesRequest(false);
@@ -76,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyUIMediator.QueryLobbiesRequest(true);
         }
 
-        private void UpdateUI(LobbyListFetchedMessage message)
+        void UpdateUI(LobbyListFetchedMessage message)
         {
             var displayableLobbies = GetDisplayableLobbies(message.LocalLobbies);
 
@@ -89,7 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        private List<LocalLobby> GetDisplayableLobbies(IReadOnlyList<LocalLobby> lobbies)
+        List<LocalLobby> GetDisplayableLobbies(IReadOnlyList<LocalLobby> lobbies)
         {
             var displayable = new List<LocalLobby>();
 
@@ -104,7 +104,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return displayable;
         }
 
-        private void EnsureNumberOfActiveUISlots(int requiredNumber)
+        void EnsureNumberOfActiveUISlots(int requiredNumber)
         {
             int delta = requiredNumber - m_LobbyListItems.Count;
 
@@ -119,8 +119,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-
-        private LobbyListItemUI CreateLobbyListItem()
+        LobbyListItemUI CreateLobbyListItem()
         {
             var listItem = Instantiate(m_LobbyListItemPrototype.gameObject, m_LobbyListItemPrototype.transform.parent)
                 .GetComponent<LobbyListItemUI>();
@@ -134,7 +133,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyUIMediator.QuickJoinRequest();
         }
 
-        private bool CanDisplay(LocalLobby lobby)
+        bool CanDisplay(LocalLobby lobby)
         {
             return lobby.LobbyUsers.Count != lobby.MaxPlayerCount;
         }

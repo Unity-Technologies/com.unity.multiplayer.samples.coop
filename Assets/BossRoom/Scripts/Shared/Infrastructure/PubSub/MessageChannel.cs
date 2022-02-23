@@ -48,11 +48,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             var subscription = new DisposableSubscription<T>(this, handler);
             return subscription;
 
-            void DoSubscribe(Action<T> _h)
+            void DoSubscribe(Action<T> h)
             {
-                if (_h != null && !m_MessageHandlers.Contains(_h))
+                if (h != null && !m_MessageHandlers.Contains(h))
                 {
-                    m_MessageHandlers.Add(_h);
+                    m_MessageHandlers.Add(h);
                 }
             }
         }
@@ -61,9 +61,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             m_PendingHandlers.Enqueue(() => { DoUnsubscribe(handler); });
 
-            void DoUnsubscribe(Action<T> _h)
+            void DoUnsubscribe(Action<T> h)
             {
-                m_MessageHandlers.Remove(_h);
+                m_MessageHandlers.Remove(h);
             }
         }
     }

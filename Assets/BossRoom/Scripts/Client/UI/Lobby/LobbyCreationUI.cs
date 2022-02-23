@@ -7,8 +7,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     public class LobbyCreationUI : MonoBehaviour
     {
-        public const string k_DefaultIP = "127.0.0.1";
-        public const int k_DefaultPort = 9998;
+        const string k_DefaultIP = "127.0.0.1";
+        const int k_DefaultPort = 9998;
 
         [SerializeField] InputField m_LobbyNameInputField;
         [SerializeField] CanvasGroup m_IPConnectionCanvasGroup;
@@ -24,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         OnlineMode m_OnlineMode;
 
-        private void Awake()
+        void Awake()
         {
             EnableIPHostUI();
             m_IPToggle.onValueChanged.AddListener(IPRadioRadioButtonPressed);
@@ -32,12 +32,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
 
         [Inject]
-        private void InjectDependencies(LobbyUIMediator lobbyUIMediator)
+        void InjectDependencies(LobbyUIMediator lobbyUIMediator)
         {
             m_LobbyUIMediator = lobbyUIMediator;
         }
 
-        private void IPRadioRadioButtonPressed(bool value)
+        void IPRadioRadioButtonPressed(bool value)
         {
             if (!value)
             {
@@ -47,7 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             EnableIPHostUI();
         }
 
-        private void UnityRelayRadioRadioButtonPressed(bool value)
+        void UnityRelayRadioRadioButtonPressed(bool value)
         {
             if (!value)
             {
@@ -57,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             EnableUnityRelayUI();
         }
 
-        private void EnableUnityRelayUI()
+        void EnableUnityRelayUI()
         {
             m_IPConnectionCanvasGroup.alpha = 0;
             m_IPConnectionCanvasGroup.blocksRaycasts = false;
@@ -68,7 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LoadingIndicatorObject.SetActive(false);
         }
 
-        private void EnableIPHostUI()
+        void EnableIPHostUI()
         {
             m_IPConnectionCanvasGroup.alpha = 1;
             m_IPConnectionCanvasGroup.blocksRaycasts = true;
@@ -84,8 +84,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnCreateClick()
         {
-            var portNum = 0;
-            int.TryParse(m_PortInputField.text, out portNum);
+            int.TryParse(m_PortInputField.text, out var portNum);
             if (portNum <= 0)
             {
                 portNum = k_DefaultPort;
@@ -113,7 +112,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         /// <param name="dirtyString"> string to sanitize. </param>
         /// <returns> Sanitized text string. </returns>
-        private static string Sanitize(string dirtyString)
+        static string Sanitize(string dirtyString)
         {
             return Regex.Replace(dirtyString, "[^A-Za-z0-9.]", "");
         }

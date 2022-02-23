@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
     [Serializable]
     public class LocalLobbyUser
     {
-        public event Action<LocalLobbyUser> Changed;
+        public event Action<LocalLobbyUser> changed;
 
         public LocalLobbyUser()
         {
@@ -50,7 +50,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         }
 
         UserMembers m_LastChanged;
-        public UserMembers LastChanged => m_LastChanged;
 
         public bool IsHost
         {
@@ -114,9 +113,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             OnChanged();
         }
 
-        private void OnChanged()
+        void OnChanged()
         {
-            Changed?.Invoke(this);
+            changed?.Invoke(this);
         }
 
         public Dictionary<string, PlayerDataObject> GetDataForUnityServices() =>

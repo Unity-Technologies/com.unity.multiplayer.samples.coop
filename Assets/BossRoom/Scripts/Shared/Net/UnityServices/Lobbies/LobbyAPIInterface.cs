@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
     /// </summary>
     public class LobbyAPIInterface
     {
-        const int k_maxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
+        const int k_MaxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
 
         readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
@@ -26,17 +26,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
-        private void RunTask(Task task, Action onComplete, Action onFailed)
+        void RunTask(Task task, Action onComplete, Action onFailed)
         {
             UnityServiceCallsTaskWrapper.RunTask<LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
         }
 
-        private void RunTask<T>(Task<T> task, Action<T> onComplete, Action onFailed)
+        void RunTask<T>(Task<T> task, Action<T> onComplete, Action onFailed)
         {
             UnityServiceCallsTaskWrapper.RunTask<T,LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
         }
 
-        private void OnServiceException(LobbyServiceException e)
+        void OnServiceException(LobbyServiceException e)
         {
             Debug.LogWarning(e.Message);
 
@@ -50,12 +50,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason));
         }
 
-        public void CreateLobbyAsync(string requesterUASId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData, Action<Lobby> onComplete, Action onFailed)
+        public void CreateLobbyAsync(string requesterUasId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData, Action<Lobby> onComplete, Action onFailed)
         {
             CreateLobbyOptions createOptions = new CreateLobbyOptions
             {
                 IsPrivate = isPrivate,
-                Player = new Player(id: requesterUASId, data: hostUserData),
+                Player = new Player(id: requesterUasId, data: hostUserData),
                 Data = lobbyData
             };
             var task = Lobbies.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createOptions);
@@ -68,35 +68,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             RunTask(task, onComplete, onFailed);
         }
 
-        public void JoinLobbyAsync_ByCode(string requesterUASId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public void JoinLobbyAsync_ByCode(string requesterUasId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
         {
-            JoinLobbyByCodeOptions joinOptions = new JoinLobbyByCodeOptions { Player = new Player(id: requesterUASId, data: localUserData) };
+            JoinLobbyByCodeOptions joinOptions = new JoinLobbyByCodeOptions { Player = new Player(id: requesterUasId, data: localUserData) };
             var task = Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions);
             RunTask(task, onComplete, onFailed);
         }
 
-        public void JoinLobbyAsync_ById(string requesterUASId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public void JoinLobbyAsync_ById(string requesterUasId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
         {
-            JoinLobbyByIdOptions joinOptions = new JoinLobbyByIdOptions { Player = new Player(id: requesterUASId, data: localUserData) };
+            JoinLobbyByIdOptions joinOptions = new JoinLobbyByIdOptions { Player = new Player(id: requesterUasId, data: localUserData) };
             var task = Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, joinOptions);
             RunTask(task, onComplete, onFailed);
         }
 
-        public void QuickJoinLobbyAsync(string requesterUASId, List<QueryFilter> filters, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public void QuickJoinLobbyAsync(string requesterUasId, List<QueryFilter> filters, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
         {
             var joinRequest = new QuickJoinLobbyOptions
             {
                 Filter = filters,
-                Player = new Player(id: requesterUASId, data: localUserData)
+                Player = new Player(id: requesterUasId, data: localUserData)
             };
 
             var task = Lobbies.Instance.QuickJoinLobbyAsync(joinRequest);
             RunTask(task, onComplete, onFailed);
         }
 
-        public void LeaveLobbyAsync(string requesterUASId, string lobbyId, Action onComplete, Action onFailed)
+        public void LeaveLobbyAsync(string requesterUasId, string lobbyId, Action onComplete, Action onFailed)
         {
-            var task = Lobbies.Instance.RemovePlayerAsync(lobbyId, requesterUASId);
+            var task = Lobbies.Instance.RemovePlayerAsync(lobbyId, requesterUasId);
             RunTask(task, onComplete, onFailed);
         }
 
@@ -104,7 +104,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         {
             QueryLobbiesOptions queryOptions = new QueryLobbiesOptions
             {
-                Count = k_maxLobbiesToShow,
+                Count = k_MaxLobbiesToShow,
                 Filters = filters
             };
             var task = Lobbies.Instance.QueryLobbiesAsync(queryOptions);

@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
     /// </summary>
     public class UpdateRunner : MonoBehaviour
     {
-        private class SubscriberData
+        class SubscriberData
         {
             public float Period;
             public float PeriodCurrent;
@@ -22,7 +22,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public void OnDestroy()
         {
-            m_Subscribers.Clear(); // We should clean up references in case they would prevent garbage collection.
+            m_PendingHandlers.Clear();
+            m_Subscribers.Clear();
+            m_SubscriberData.Clear();
         }
 
         /// <summary>
@@ -73,7 +75,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         /// <summary>
         /// Each frame, advance all subscribers. Any that have hit their period should then act, though if they take too long they could be removed.
         /// </summary>
-        private void Update()
+        void Update()
         {
             while (m_PendingHandlers.Count > 0)
             {

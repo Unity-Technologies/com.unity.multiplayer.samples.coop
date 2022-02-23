@@ -9,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
     public class DisposableSubscription<T> : IDisposable
     {
         Action<T> m_Handler;
-        bool m_isDisposed;
+        bool m_IsDisposed;
         IMessageChannel<T> m_MessageChannel;
 
         public DisposableSubscription(IMessageChannel<T> messageChannel, Action<T> handler)
@@ -20,9 +20,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public void Dispose()
         {
-            if (!m_isDisposed)
+            if (!m_IsDisposed)
             {
-                m_isDisposed = true;
+                m_IsDisposed = true;
 
                 if (!m_MessageChannel.IsDisposed)
                 {

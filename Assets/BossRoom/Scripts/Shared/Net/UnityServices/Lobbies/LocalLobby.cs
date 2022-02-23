@@ -28,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public static LocalLobby Create(Lobby lobby)
         {
-            LocalLobby data = new LocalLobby();
+            var data = new LocalLobby();
             data.ApplyRemoteData(lobby);
             return data;
         }
@@ -79,7 +79,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         LobbyData m_Data;
         public LobbyData Data => new LobbyData(m_Data);
 
-
         public void AddUser(LocalLobbyUser user)
         {
             if (!m_LobbyUsers.ContainsKey(user.ID))
@@ -89,10 +88,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        private void DoAddUser(LocalLobbyUser user)
+        void DoAddUser(LocalLobbyUser user)
         {
             m_LobbyUsers.Add(user.ID, user);
-            user.Changed += OnChangedUser;
+            user.changed += OnChangedUser;
         }
 
         public void RemoveUser(LocalLobbyUser user)
@@ -101,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             OnChanged();
         }
 
-        private void DoRemoveUser(LocalLobbyUser user)
+        void DoRemoveUser(LocalLobbyUser user)
         {
             if (!m_LobbyUsers.ContainsKey(user.ID))
             {
@@ -110,15 +109,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
 
             m_LobbyUsers.Remove(user.ID);
-            user.Changed -= OnChangedUser;
+            user.changed -= OnChangedUser;
         }
 
-        private void OnChangedUser(LocalLobbyUser user)
+        void OnChangedUser(LocalLobbyUser user)
         {
             OnChanged();
         }
 
-        private void OnChanged()
+        void OnChanged()
         {
             changed?.Invoke(this);
         }
@@ -152,7 +151,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 OnChanged();
             }
         }
-
 
         public string LobbyName
         {
@@ -246,7 +244,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 {"IP", new DataObject(DataObject.VisibilityOptions.Public, Data.IP)},
                 {"Port", new DataObject(DataObject.VisibilityOptions.Public,  Data.Port.ToString())},
             };
-
 
         public void ApplyRemoteData(Lobby lobby)
         {

@@ -94,7 +94,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_LobbyServiceFacade = lobbyServiceFacade;
         }
 
-
         private void Awake()
         {
             Debug.Assert(Instance == null);

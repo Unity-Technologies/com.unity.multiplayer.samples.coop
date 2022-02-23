@@ -18,7 +18,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         LocalLobby m_Data;
 
         [Inject]
-        private void InjectDependencies(LobbyUIMediator lobbyUIMediator)
+        void InjectDependencies(LobbyUIMediator lobbyUIMediator)
         {
             m_LobbyUIMediator = lobbyUIMediator;
         }

@@ -35,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
     public sealed class DIScope : IInstanceResolver, IDisposable
     {
-        private struct LazyBindDescriptor
+        struct LazyBindDescriptor
         {
             public readonly Type Type;
             public readonly Type[] InterfaceTypes;
@@ -179,7 +179,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             BindInstanceAsSingle(instance);
         }
 
-        private void BindInstanceToType(object instance, Type type)
+        void BindInstanceToType(object instance, Type type)
         {
             m_TypesToInstances[type] = instance;
         }
@@ -214,7 +214,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             LazyBind(typeof(T));
         }
 
-        private void LazyBind(Type type, params Type[] typeAliases)
+        void LazyBind(Type type, params Type[] typeAliases)
         {
             var descriptor = new LazyBindDescriptor(type, typeAliases);
 
@@ -226,7 +226,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             m_LazyBindDescriptors[type] = descriptor;
         }
 
-        private object InstantiateLazyBoundObject(LazyBindDescriptor descriptor)
+        object InstantiateLazyBoundObject(LazyBindDescriptor descriptor)
         {
             object instance;
             if (CachedReflectionUtility.TryGetInjectableConstructor(descriptor.Type, out var constructor))
@@ -255,7 +255,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             return instance;
         }
 
-        private void AddToDisposableGroupIfDisposable(object instance)
+        void AddToDisposableGroupIfDisposable(object instance)
         {
             if (instance is IDisposable disposable)
             {
@@ -284,7 +284,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             }
         }
 
-        private object[] GetResolvedInjectionMethodParameters(MethodBase injectionMethod)
+        object[] GetResolvedInjectionMethodParameters(MethodBase injectionMethod)
         {
             var parameters = CachedReflectionUtility.GetMethodParameters(injectionMethod);
 
@@ -302,15 +302,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             return paramColleciton;
         }
 
-        private static class CachedReflectionUtility
+        static class CachedReflectionUtility
         {
-            private static readonly Dictionary<Type, MethodBase> k_CachedInjectableMethods = new Dictionary<Type, MethodBase>();
-            private static readonly Dictionary<Type, ConstructorInfo> k_CachedInjectableConstructors = new Dictionary<Type, ConstructorInfo>();
-            private static readonly Dictionary<MethodBase, ParameterInfo[]> k_CachedMethodParameters = new Dictionary<MethodBase, ParameterInfo[]>();
-            private static readonly Dictionary<Type, MethodInfo> k_CachedResolveMethods = new Dictionary<Type, MethodInfo>();
-            private static readonly Type k_InjectAttributeType = typeof(Inject);
-            private static readonly HashSet<Type> k_ProcessedTypes = new HashSet<Type>();
-            private static MethodInfo k_ResolveMethod;
+            static readonly Dictionary<Type, MethodBase> k_CachedInjectableMethods = new Dictionary<Type, MethodBase>();
+            static readonly Dictionary<Type, ConstructorInfo> k_CachedInjectableConstructors = new Dictionary<Type, ConstructorInfo>();
+            static readonly Dictionary<MethodBase, ParameterInfo[]> k_CachedMethodParameters = new Dictionary<MethodBase, ParameterInfo[]>();
+            static readonly Dictionary<Type, MethodInfo> k_CachedResolveMethods = new Dictionary<Type, MethodInfo>();
+            static readonly Type k_InjectAttributeType = typeof(Inject);
+            static readonly HashSet<Type> k_ProcessedTypes = new HashSet<Type>();
+            static MethodInfo k_ResolveMethod;
 
             public static bool TryGetInjectableConstructor(Type type, out ConstructorInfo method)
             {
@@ -318,7 +318,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
                 return k_CachedInjectableConstructors.TryGetValue(type, out method);
             }
 
-            private static void CacheTypeMethods(Type type)
+            static void CacheTypeMethods(Type type)
             {
                 if (k_ProcessedTypes.Contains(type))
                 {
@@ -351,7 +351,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
                         break;
                     }
                 }
-
 
                 k_ProcessedTypes.Add(type);
             }

@@ -21,13 +21,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         readonly IPublisher<LobbyListFetchedMessage> m_LobbyListFetchedPub;
         readonly ApplicationController m_ApplicationController;
 
-        const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
+        const float k_HeartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
 
         DIScope m_ServiceScope;
 
         float m_HeartbeatTime = 0;
 
-        RateLimitCooldown m_RateLimitQuery; // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
+        RateLimitCooldown m_RateLimitQuery;
         RateLimitCooldown m_RateLimitJoin;
         RateLimitCooldown m_RateLimitQuickJoin;
         RateLimitCooldown m_RateLimitHost;
@@ -108,7 +108,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        private void UpdateLobby(float unused)
+        void UpdateLobby(float unused)
         {
             RetrieveLobbyAsync(m_LocalLobby.LobbyID, OnSuccess, null);
 
@@ -220,7 +220,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        private void RetrieveLobbyAsync(string lobbyId, Action<Lobby> onSuccess, Action onFailure)
+        void RetrieveLobbyAsync(string lobbyId, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitQuery.CanCall)
             {
@@ -302,7 +302,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             //we would want to lock lobbies from appearing in queries if we're in relay mode and the relay isn't fully set up yet
             var shouldLock = m_LocalLobby.OnlineMode == OnlineMode.UnityRelay && string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
 
-
             m_LobbyApiInterface.UpdateLobbyAsync(CurrentUnityLobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
 
             void OnComplete(Lobby result)
@@ -320,7 +319,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// If we are in the middle of another operation, hold onto any pending ones until after that.
         /// If we aren't in a lobby yet, leave it to the caller to decide what to do, since some callers might need to retry and others might not.
         /// </summary>
-        private bool ShouldUpdateData(Action caller, Action onComplete, bool shouldRetryIfLobbyNull)
+        bool ShouldUpdateData(Action caller, Action onComplete, bool shouldRetryIfLobbyNull)
         {
             if (!m_RateLimitQuery.CanCall)
             {
@@ -348,9 +347,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         public void DoLobbyHeartbeat(float dt)
         {
             m_HeartbeatTime += dt;
-            if (m_HeartbeatTime > k_heartbeatPeriod)
+            if (m_HeartbeatTime > k_HeartbeatPeriod)
             {
-                m_HeartbeatTime -= k_heartbeatPeriod;
+                m_HeartbeatTime -= k_HeartbeatPeriod;
                 m_LobbyApiInterface.HeartbeatPlayerAsync(CurrentUnityLobby.Id);
             }
         }

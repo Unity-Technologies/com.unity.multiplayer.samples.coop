@@ -28,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         ClientGameNetPortal m_ClientNetPortal;
 
         [Inject]
-        private void InjectDependencies(
+        void InjectDependencies(
             LobbyServiceFacade lobbyServiceFacade,
             IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
             LocalLobbyUser localUser,
@@ -58,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ClientNetPortal.DisconnectReason.Clear();
         }
 
-        private void OnDestroy()
+        void OnDestroy()
         {
             if (m_ClientNetPortal != null)
             {
@@ -116,12 +116,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             BlockUIWhileLoadingIsInProgress();
         }
 
-        private void OnFailedLobbyCreateOrJoin()
+        void OnFailedLobbyCreateOrJoin()
         {
             UnblockUIAfterLoadingIsComplete();
         }
 
-        private void OnCreatedLobby(Lobby r)
+        void OnCreatedLobby(Lobby r)
         {
             m_LocalUser.IsHost = true;
             m_LobbyServiceFacade.BeginTracking(r);
@@ -142,7 +142,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        private void OnJoinedLobby(Lobby remoteLobby)
+        void OnJoinedLobby(Lobby remoteLobby)
         {
             m_LobbyServiceFacade.BeginTracking(remoteLobby);
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
@@ -161,7 +161,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        private void OnRelayJoinFailed(string message)
+        void OnRelayJoinFailed(string message)
         {
             Debug.Log($"Relay join failed: {message}");
             //leave the lobby if relay failed for some reason
@@ -207,13 +207,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_PlayerNameLabel.text = m_LocalUser.DisplayName;
         }
 
-        private void BlockUIWhileLoadingIsInProgress()
+        void BlockUIWhileLoadingIsInProgress()
         {
             m_CanvasGroup.interactable = false;
             m_LoadingSpinner.SetActive(true);
         }
 
-        private void UnblockUIAfterLoadingIsComplete()
+        void UnblockUIAfterLoadingIsComplete()
         {
             //this callback can happen after we've already switched to a different scene
             //in that case the canvas group would be null
@@ -228,7 +228,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// Callback when the server sends us back a connection finished event.
         /// </summary>
         /// <param name="status"></param>
-        private void OnConnectFinished(ConnectStatus status)
+        void OnConnectFinished(ConnectStatus status)
         {
             ConnectStatusToMessage(status, true);
         }
@@ -237,19 +237,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// Invoked when the client sent a connection request to the server and didn't hear back at all.
         /// This should create a UI letting the player know that something went wrong and to try again
         /// </summary>
-        private void OnNetworkTimeout()
+        void OnNetworkTimeout()
         {
             UnblockUIAfterLoadingIsComplete();
             m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Connection failed", "Unable to Reach Host/Server"));
         }
-
 
         /// <summary>
         ///     Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
         ///     (2) failed connect, (3) disconnect.
         /// </summary>
         /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
-        private void ConnectStatusToMessage(ConnectStatus status, bool connecting)
+        void ConnectStatusToMessage(ConnectStatus status, bool connecting)
         {
             switch (status)
             {

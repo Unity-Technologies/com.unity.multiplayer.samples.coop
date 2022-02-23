@@ -30,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastruc
             m_TimeSinceLastCall = 0;
         }
 
-        private void OnUpdate(float dt)
+        void OnUpdate(float dt)
         {
             m_TimeSinceLastCall += dt;
 

@@ -35,7 +35,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public event Action NetworkTimedOut;
 
-
         private LobbyServiceFacade m_LobbyServiceFacade;
 
         [Inject]

@@ -32,7 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
         [SerializeField] GameObject m_SignInSpinner;
 
-        private void Awake()
+        void Awake()
         {
             m_MainMenuButtonsCanvasGroup.interactable = false;
             m_LobbyUIMediator.Hide();
@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         [Inject]
-        private void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
+        void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
         {
             m_Scope = new DIScope(DIScope.RootScope);
 
