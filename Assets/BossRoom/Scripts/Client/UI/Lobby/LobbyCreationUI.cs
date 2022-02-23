@@ -3,7 +3,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client.UI
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     public class LobbyCreationUI : MonoBehaviour
     {
@@ -107,7 +107,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client.UI
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
         }
-
 
         /// <summary>
         /// Sanitize user port InputField box allowing only alphanumerics and '.'

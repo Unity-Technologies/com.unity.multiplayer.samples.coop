@@ -14,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public LocalLobbyUser()
         {
-            m_Data = new UserData(isHost: false, displayName: null, id: null);
+            m_UserData = new UserData(isHost: false, displayName: null, id: null);
         }
 
         public struct UserData
@@ -31,11 +31,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        UserData m_Data;
+        UserData m_UserData;
 
         public void ResetState()
         {
-            m_Data = new UserData(false, m_Data.DisplayName, m_Data.ID);
+            m_UserData = new UserData(false, m_UserData.DisplayName, m_UserData.ID);
         }
 
         /// <summary>
@@ -49,18 +49,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             ID = 4,
         }
 
-        UserMembers m_lastChanged;
-        public UserMembers LastChanged => m_lastChanged;
+        UserMembers m_LastChanged;
+        public UserMembers LastChanged => m_LastChanged;
 
         public bool IsHost
         {
-            get { return m_Data.IsHost; }
+            get { return m_UserData.IsHost; }
             set
             {
-                if (m_Data.IsHost != value)
+                if (m_UserData.IsHost != value)
                 {
-                    m_Data.IsHost = value;
-                    m_lastChanged = UserMembers.IsHost;
+                    m_UserData.IsHost = value;
+                    m_LastChanged = UserMembers.IsHost;
                     OnChanged();
                 }
             }
@@ -68,13 +68,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public string DisplayName
         {
-            get => m_Data.DisplayName;
+            get => m_UserData.DisplayName;
             set
             {
-                if (m_Data.DisplayName != value)
+                if (m_UserData.DisplayName != value)
                 {
-                    m_Data.DisplayName = value;
-                    m_lastChanged = UserMembers.DisplayName;
+                    m_UserData.DisplayName = value;
+                    m_LastChanged = UserMembers.DisplayName;
                     OnChanged();
                 }
             }
@@ -82,13 +82,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public string ID
         {
-            get => m_Data.ID;
+            get => m_UserData.ID;
             set
             {
-                if (m_Data.ID != value)
+                if (m_UserData.ID != value)
                 {
-                    m_Data.ID = value;
-                    m_lastChanged = UserMembers.ID;
+                    m_UserData.ID = value;
+                    m_LastChanged = UserMembers.ID;
                     OnChanged();
                 }
             }
@@ -97,19 +97,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public void CopyDataFrom(LocalLobbyUser lobby)
         {
-            UserData data = lobby.m_Data;
+            var data = lobby.m_UserData;
             int lastChanged = // Set flags just for the members that will be changed.
-                (m_Data.IsHost == data.IsHost ? 0 : (int) UserMembers.IsHost) |
-                (m_Data.DisplayName == data.DisplayName ? 0 : (int) UserMembers.DisplayName) |
-                (m_Data.ID == data.ID ? 0 : (int) UserMembers.ID);
+                (m_UserData.IsHost == data.IsHost ? 0 : (int) UserMembers.IsHost) |
+                (m_UserData.DisplayName == data.DisplayName ? 0 : (int) UserMembers.DisplayName) |
+                (m_UserData.ID == data.ID ? 0 : (int) UserMembers.ID);
 
             if (lastChanged == 0) // Ensure something actually changed.
             {
                 return;
             }
 
-            m_Data = data;
-            m_lastChanged = (UserMembers)lastChanged;
+            m_UserData = data;
+            m_LastChanged = (UserMembers)lastChanged;
 
             OnChanged();
         }

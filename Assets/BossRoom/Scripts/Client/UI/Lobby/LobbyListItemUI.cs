@@ -3,7 +3,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client.UI
+namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// An individual Lobby UI in the list of available lobbies
