@@ -115,9 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_CanvasGroup.alpha = 1f;
             m_CanvasGroup.blocksRaycasts = true;
-
             m_JoinCodeField.text = "";
-
             OnRefresh();
         }
 
