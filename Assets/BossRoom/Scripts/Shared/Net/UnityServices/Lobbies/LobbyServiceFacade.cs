@@ -81,9 +81,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 m_IsTracking = true;
                 CurrentUnityLobby = lobby;
                 m_LocalLobby.ApplyRemoteData(lobby);
-                // 1.5s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
+                // 2s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
                 // the actual rate limits are tracked via the RateLimitCooldown objects defined above
-                m_UpdateRunner.Subscribe(UpdateLobby, 1.5f);
+                m_UpdateRunner.Subscribe(UpdateLobby, 2f);
                 m_JoinedLobbyContentHeartbeat.BeginTracking();
             }
         }

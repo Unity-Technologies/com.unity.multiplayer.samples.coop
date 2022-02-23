@@ -19,9 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] Toggle m_UnityRelayToggle;
         [SerializeField] Toggle m_IsPrivate;
         [SerializeField] CanvasGroup m_CanvasGroup;
-
         LobbyUIMediator m_LobbyUIMediator;
-
         OnlineMode m_OnlineMode;
 
         void Awake()

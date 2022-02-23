@@ -15,15 +15,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] LobbyListItemUI m_LobbyListItemPrototype;
         [SerializeField] InputField m_JoinCodeField;
         [SerializeField] CanvasGroup m_CanvasGroup;
-
         IInstanceResolver m_Container;
-
         LobbyUIMediator m_LobbyUIMediator;
-
         UpdateRunner m_UpdateRunner;
-
         IDisposable m_Subscriptions;
-
         List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
 
         void Awake()

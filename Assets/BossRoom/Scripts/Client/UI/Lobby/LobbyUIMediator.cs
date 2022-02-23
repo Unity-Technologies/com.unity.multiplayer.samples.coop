@@ -244,8 +244,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
 
         /// <summary>
-        ///     Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
-        ///     (2) failed connect, (3) disconnect.
+        /// Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
+        /// (2) failed connect, (3) disconnect.
         /// </summary>
         /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
         void ConnectStatusToMessage(ConnectStatus status, bool connecting)
@@ -256,17 +256,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ConnectStatus.UserRequestedDisconnect:
                     break;
                 case ConnectStatus.ServerFull:
-                    Debug.Log($"{"Connection Failed"}, {"The Host is full and cannot accept any additional connections"}");
+                    Debug.Log("Connection Failed, The Host is full and cannot accept any additional connections");
                     break;
                 case ConnectStatus.Success:
                     if (connecting)
                     {
-                        Debug.Log($"{"Success!"}, {"Joining Now"}");
+                        Debug.Log("Success!, Joining Now");
                     }
-
                     break;
                 case ConnectStatus.LoggedInAgain:
-                    Debug.Log($"{"Connection Failed"}, {"You have logged in elsewhere using the same account"}");
+                    Debug.Log("Connection Failed, You have logged in elsewhere using the same account");
                     break;
                 case ConnectStatus.GenericDisconnect:
                     var title = connecting ? "Connection Failed" : "Disconnected From Host";
