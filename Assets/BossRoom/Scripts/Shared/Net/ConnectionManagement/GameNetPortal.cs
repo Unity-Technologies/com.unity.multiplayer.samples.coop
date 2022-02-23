@@ -229,7 +229,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                         var (ipv4Address, port, allocationIdBytes, connectionData, key, _) = serverRelayUtilityTask.Result;
 
                         // we now need to set the RelayCode somewhere :P
-                        utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, true);
+                        utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
                     }
                     catch (Exception e)
                     {
