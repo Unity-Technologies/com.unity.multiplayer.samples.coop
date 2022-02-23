@@ -10,21 +10,15 @@ namespace BossRoom.Scripts.Shared.Infrastructure
     /// </summary>
     public class UpdateRunner : MonoBehaviour
     {
-        private class Subscriber
+        private class SubscriberData
         {
-            public Action<float> UpdateMethod;
-            public readonly float Period;
+            public float Period;
             public float PeriodCurrent;
-
-            public Subscriber(Action<float> updateMethod, float period)
-            {
-                this.UpdateMethod = updateMethod;
-                this.Period = period;
-                PeriodCurrent = 0;
-            }
         }
 
-        private List<Subscriber> m_Subscribers = new List<Subscriber>();
+        private readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
+        private readonly HashSet<Action<float>> m_Subscribers = new HashSet<Action<float>>();
+        private readonly Dictionary<Action<float>, SubscriberData> m_SubscriberData = new Dictionary<Action<float>, SubscriberData>();
 
         public void OnDestroy()
         {
@@ -54,15 +48,14 @@ namespace BossRoom.Scripts.Shared.Infrastructure
                 return;
             }
 
-            foreach (var currSub in m_Subscribers)
+            if (!m_Subscribers.Contains(onUpdate))
             {
-                if (currSub.UpdateMethod.Equals(onUpdate))
+                m_PendingHandlers.Enqueue(() =>
                 {
-                    return;
-                }
+                    m_Subscribers.Add(onUpdate);
+                    m_SubscriberData.Add(onUpdate, new SubscriberData(){Period = period, PeriodCurrent = 0});
+                });
             }
-
-            m_Subscribers.Add(new Subscriber(onUpdate, period));
         }
 
         /// <summary>
@@ -70,13 +63,11 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         /// </summary>
         public void Unsubscribe(Action<float> onUpdate)
         {
-            for (var sub = m_Subscribers.Count - 1; sub >= 0; sub--)
+            m_PendingHandlers.Enqueue(() =>
             {
-                if (m_Subscribers[sub].UpdateMethod.Equals(onUpdate))
-                {
-                    m_Subscribers.RemoveAt(sub);
-                }
-            }
+                m_Subscribers.Remove(onUpdate);
+                m_SubscriberData.Remove(onUpdate);
+            } );
         }
 
         /// <summary>
@@ -84,26 +75,22 @@ namespace BossRoom.Scripts.Shared.Infrastructure
         /// </summary>
         private void Update()
         {
+            while (m_PendingHandlers.Count > 0)
+            {
+                m_PendingHandlers.Dequeue()?.Invoke();
+            }
+
             float dt = Time.deltaTime;
 
-            for (var subscriberIndex = m_Subscribers.Count - 1; subscriberIndex >= 0; subscriberIndex--) // Iterate in reverse in case we need to remove something.
+            foreach (var subscriber in m_Subscribers)
             {
-                var subscriber = m_Subscribers[subscriberIndex];
-                subscriber.PeriodCurrent += dt;
+                var subscriberData = m_SubscriberData[subscriber];
+                subscriberData.PeriodCurrent += dt;
 
-                if (subscriber.PeriodCurrent > subscriber.Period)
+                if (subscriberData.PeriodCurrent > subscriberData.Period)
                 {
-                    var onUpdate = subscriber.UpdateMethod;
-
-                    if (onUpdate == null)
-                    {
-                        m_Subscribers.RemoveAt(subscriberIndex);
-                        Debug.LogError($"Did not Unsubscribe from UpdateSlow: {onUpdate.Target} : {onUpdate.Method}");
-                        continue;
-                    }
-
-                    onUpdate.Invoke(subscriber.PeriodCurrent);
-                    subscriber.PeriodCurrent = 0;
+                    subscriber.Invoke(subscriberData.PeriodCurrent);
+                    subscriberData.PeriodCurrent = 0;
                 }
             }
         }
