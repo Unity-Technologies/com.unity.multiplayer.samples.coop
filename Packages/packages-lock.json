@@ -261,7 +261,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.relay": {
-      "version": "1.0.1-pre.4",
+      "version": "1.0.1-pre.5",
       "depth": 0,
       "source": "registry",
       "dependencies": {
