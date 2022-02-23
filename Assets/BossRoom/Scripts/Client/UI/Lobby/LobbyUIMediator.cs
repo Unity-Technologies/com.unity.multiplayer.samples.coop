@@ -29,7 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         ClientGameNetPortal m_ClientNetPortal;
 
         [Inject]
-        void InjectDependencies(
+        void InjectDependenciesAndInitialize(
             LobbyServiceFacade lobbyServiceFacade,
             IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
             LocalLobbyUser localUser,
