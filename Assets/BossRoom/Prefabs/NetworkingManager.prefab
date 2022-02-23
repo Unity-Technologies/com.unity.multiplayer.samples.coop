@@ -44,16 +44,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ProtocolType: 0
-  m_MaximumPacketSize: 2000
   m_MaxPacketQueueSize: 512
-  m_SendQueueBatchSize: 16000
+  m_MaxPayloadSize: 16000
+  m_MaxSendQueueSize: 98304
   m_HeartbeatTimeoutMS: 500
   m_ConnectTimeoutMS: 1000
   m_MaxConnectAttempts: 60
-  m_DisconnectTimeoutMS: 30000
+  m_DisconnectTimeoutMS: 5000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
+    ServerListenAddress: 
 --- !u!1 &409269880
 GameObject:
   m_ObjectHideFlags: 0
@@ -150,16 +151,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ProtocolType: 1
-  m_MaximumPacketSize: 1400
   m_MaxPacketQueueSize: 256
-  m_SendQueueBatchSize: 32000
+  m_MaxPayloadSize: 32000
+  m_MaxSendQueueSize: 98304
   m_HeartbeatTimeoutMS: 500
   m_ConnectTimeoutMS: 1000
   m_MaxConnectAttempts: 60
-  m_DisconnectTimeoutMS: 30000
+  m_DisconnectTimeoutMS: 5000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
+    ServerListenAddress: 
 --- !u!1 &5436007408952557947
 GameObject:
   m_ObjectHideFlags: 0
@@ -223,7 +225,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 593a2fe42fa9d37498c96f9a383b6521, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DontDestroy: 1
   RunInBackground: 1
   LogLevel: 1
   NetworkConfig:
