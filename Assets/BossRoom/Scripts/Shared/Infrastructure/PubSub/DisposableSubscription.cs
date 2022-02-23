@@ -1,6 +1,6 @@
 using System;
 
-namespace BossRoom.Scripts.Shared.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     /// <summary>
     /// This class is a handle to an active Message Channel subscription and when disposed it unsubscribes from said channel.
@@ -8,9 +8,9 @@ namespace BossRoom.Scripts.Shared.Infrastructure
     /// <typeparam name="T"></typeparam>
     public class DisposableSubscription<T> : IDisposable
     {
-        private Action<T> m_Handler;
-        private bool m_isDisposed;
-        private IMessageChannel<T> m_MessageChannel;
+        Action<T> m_Handler;
+        bool m_isDisposed;
+        IMessageChannel<T> m_MessageChannel;
 
         public DisposableSubscription(IMessageChannel<T> messageChannel, Action<T> handler)
         {

@@ -1,6 +1,5 @@
-using BossRoom.Scripts.Client;
-using BossRoom.Scripts.Shared;
-using BossRoom.Scripts.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
@@ -12,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         Text m_QuitButtonText;
 
-        private ApplicationController m_ApplicationController;
+        ApplicationController m_ApplicationController;
 
         [Inject]
         private void InjectDependencies(ApplicationController applicationController)

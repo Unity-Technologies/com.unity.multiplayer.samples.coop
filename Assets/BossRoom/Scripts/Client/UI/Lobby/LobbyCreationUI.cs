@@ -1,29 +1,28 @@
 using System.Text.RegularExpressions;
-using BossRoom.Scripts.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BossRoom.Scripts.Client.UI
+namespace Unity.Multiplayer.Samples.BossRoom.Client.UI
 {
     public class LobbyCreationUI : MonoBehaviour
     {
         public const string k_DefaultIP = "127.0.0.1";
         public const int k_DefaultPort = 9998;
 
-        [SerializeField] private InputField m_LobbyNameInputField;
-        [SerializeField] private CanvasGroup m_IPConnectionCanvasGroup;
-        [SerializeField] private InputField m_IPInputField;
-        [SerializeField] private InputField m_PortInputField;
-        [SerializeField] private GameObject m_LoadingIndicatorObject;
-        [SerializeField] private Toggle m_IPToggle;
-        [SerializeField] private Toggle m_UnityRelayToggle;
-        [SerializeField] private Toggle m_IsPrivate;
-        [SerializeField] private CanvasGroup m_CanvasGroup;
+        [SerializeField] InputField m_LobbyNameInputField;
+        [SerializeField] CanvasGroup m_IPConnectionCanvasGroup;
+        [SerializeField] InputField m_IPInputField;
+        [SerializeField] InputField m_PortInputField;
+        [SerializeField] GameObject m_LoadingIndicatorObject;
+        [SerializeField] Toggle m_IPToggle;
+        [SerializeField] Toggle m_UnityRelayToggle;
+        [SerializeField] Toggle m_IsPrivate;
+        [SerializeField] CanvasGroup m_CanvasGroup;
 
-        private LobbyUIMediator m_LobbyUIMediator;
+        LobbyUIMediator m_LobbyUIMediator;
 
-        private OnlineMode m_OnlineMode;
+        OnlineMode m_OnlineMode;
 
         private void Awake()
         {

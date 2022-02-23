@@ -1,11 +1,11 @@
 using System;
 using System.Collections.Generic;
 
-namespace BossRoom.Scripts.Shared.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     public class DisposableGroup : IDisposable
     {
-        private readonly List<IDisposable> m_Disposables = new List<IDisposable>();
+        readonly List<IDisposable> m_Disposables = new List<IDisposable>();
 
         public void Dispose()
         {

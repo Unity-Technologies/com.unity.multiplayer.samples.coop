@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
     public struct LobbyListFetchedMessage
     {

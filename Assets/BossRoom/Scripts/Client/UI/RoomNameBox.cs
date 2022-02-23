@@ -1,23 +1,20 @@
 using System;
-using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom;
-using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
-using UnityEngine.Assertions;
 using TMPro;
-using Unity.Netcode;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine.UI;
 
 public class RoomNameBox : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI m_RoomNameText;
+    TextMeshProUGUI m_RoomNameText;
     [SerializeField]
-    private Button m_CopyToClipboardButton;
+    Button m_CopyToClipboardButton;
 
-    private LocalLobby m_LocalLobby;
-    private string m_LobbyCode;
+    LocalLobby m_LocalLobby;
+    string m_LobbyCode;
 
     [Inject]
     private void InjectDependencies(LocalLobby localLobby)

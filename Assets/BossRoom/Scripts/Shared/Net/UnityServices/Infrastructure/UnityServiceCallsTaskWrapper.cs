@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure
 {
     /// <summary>
     /// Unity Services need for asynchronous requests with some basic safety wrappers. This is a shared place for that.

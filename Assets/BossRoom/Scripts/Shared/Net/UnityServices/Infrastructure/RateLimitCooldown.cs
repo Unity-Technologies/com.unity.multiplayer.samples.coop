@@ -1,15 +1,15 @@
 using System;
 using System.Collections.Generic;
-using BossRoom.Scripts.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure
 {
     public class RateLimitCooldown
     {
-        private float m_TimeSinceLastCall = float.MaxValue;
-        private readonly float m_CooldownTime;
-        private readonly UpdateRunner m_UpdateRunner;
-        private Queue<Action> m_PendingOperations = new Queue<Action>();
+        float m_TimeSinceLastCall = float.MaxValue;
+        readonly float m_CooldownTime;
+        readonly UpdateRunner m_UpdateRunner;
+        Queue<Action> m_PendingOperations = new Queue<Action>();
 
         public void EnqueuePendingOperation(Action action)
         {

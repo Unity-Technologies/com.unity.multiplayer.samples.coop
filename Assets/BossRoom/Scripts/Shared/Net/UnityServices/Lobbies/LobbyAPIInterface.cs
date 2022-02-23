@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
     using Lobbies = Unity.Services.Lobbies.Lobbies;
 
@@ -16,9 +16,9 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
     /// </summary>
     public class LobbyAPIInterface
     {
-        private const int k_maxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
+        const int k_maxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
 
-        private readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
+        readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
         [Inject]
         public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)

@@ -1,33 +1,31 @@
-using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using GameLobby.UI;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Client.UI
+namespace Unity.Multiplayer.Samples.BossRoom.Client.UI
 {
     public class LobbyUIMediator : MonoBehaviour
     {
-        [SerializeField] private CanvasGroup m_CanvasGroup;
-        [SerializeField] private LobbyJoiningUI m_LobbyJoiningUI;
-        [SerializeField] private LobbyCreationUI m_LobbyCreationUI;
-        [SerializeField] private UITinter m_JoinToggle;
-        [SerializeField] private UITinter m_CreateToggle;
-        [SerializeField] private TextMeshProUGUI m_PlayerNameLabel;
-        [SerializeField] private GameObject m_LoadingSpinner;
+        [SerializeField] CanvasGroup m_CanvasGroup;
+        [SerializeField] LobbyJoiningUI m_LobbyJoiningUI;
+        [SerializeField] LobbyCreationUI m_LobbyCreationUI;
+        [SerializeField] UITinter m_JoinToggle;
+        [SerializeField] UITinter m_CreateToggle;
+        [SerializeField] TextMeshProUGUI m_PlayerNameLabel;
+        [SerializeField] GameObject m_LoadingSpinner;
 
-        private LobbyServiceFacade m_LobbyServiceFacade;
-        private LocalLobbyUser m_LocalUser;
-        private LocalLobby m_LocalLobby;
-        private IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
-        private NameGenerationData m_NameGenerationData;
-        private GameNetPortal m_GameNetPortal;
-        private ClientGameNetPortal m_ClientNetPortal;
+        LobbyServiceFacade m_LobbyServiceFacade;
+        LocalLobbyUser m_LocalUser;
+        LocalLobby m_LocalLobby;
+        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
+        NameGenerationData m_NameGenerationData;
+        GameNetPortal m_GameNetPortal;
+        ClientGameNetPortal m_ClientNetPortal;
 
         [Inject]
         private void InjectDependencies(

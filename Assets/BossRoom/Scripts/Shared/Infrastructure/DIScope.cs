@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Shared.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
     public sealed class Inject : Attribute
@@ -47,7 +47,7 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             }
         }
 
-        private static DIScope m_rootScope;
+        static DIScope m_rootScope;
 
         public static DIScope RootScope
         {
@@ -62,15 +62,15 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             }
         }
 
-        private readonly DisposableGroup m_DisposableGroup = new DisposableGroup();
-        private readonly Dictionary<Type, LazyBindDescriptor> m_LazyBindDescriptors = new Dictionary<Type, LazyBindDescriptor>();
+        readonly DisposableGroup m_DisposableGroup = new DisposableGroup();
+        readonly Dictionary<Type, LazyBindDescriptor> m_LazyBindDescriptors = new Dictionary<Type, LazyBindDescriptor>();
 
-        private readonly DIScope m_Parent;
-        private readonly Dictionary<Type, object> m_TypesToInstances = new Dictionary<Type, object>();
-        private readonly HashSet<object> m_ObjectsWithInjectedDependencies = new HashSet<object>();
-        private bool m_Disposed;
+        readonly DIScope m_Parent;
+        readonly Dictionary<Type, object> m_TypesToInstances = new Dictionary<Type, object>();
+        readonly HashSet<object> m_ObjectsWithInjectedDependencies = new HashSet<object>();
+        bool m_Disposed;
 
-        private bool m_ScopeConstructionComplete;
+        bool m_ScopeConstructionComplete;
 
         public DIScope(DIScope parent = null)
         {

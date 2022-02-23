@@ -1,6 +1,6 @@
 using System;
-using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Netcode;

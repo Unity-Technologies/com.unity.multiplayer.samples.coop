@@ -1,40 +1,40 @@
 ﻿using System;
 using System.Collections.Generic;
-using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// An abstraction layer between the direct calls into the Lobby API and the outcomes you actually want.
     /// </summary>
     public class LobbyServiceFacade : IDisposable
     {
-        private readonly LobbyAPIInterface m_LobbyApiInterface;
-        private readonly UpdateRunner m_UpdateRunner;
-        private readonly LocalLobby m_LocalLobby;
-        private readonly LocalLobbyUser m_LocalUser;
-        private readonly JoinedLobbyContentHeartbeat m_JoinedLobbyContentHeartbeat;
-        private readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
-        private readonly IPublisher<LobbyListFetchedMessage> m_LobbyListFetchedPub;
-        private readonly ApplicationController m_ApplicationController;
+        readonly LobbyAPIInterface m_LobbyApiInterface;
+        readonly UpdateRunner m_UpdateRunner;
+        readonly LocalLobby m_LocalLobby;
+        readonly LocalLobbyUser m_LocalUser;
+        readonly JoinedLobbyContentHeartbeat m_JoinedLobbyContentHeartbeat;
+        readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
+        readonly IPublisher<LobbyListFetchedMessage> m_LobbyListFetchedPub;
+        readonly ApplicationController m_ApplicationController;
 
-        private const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
+        const float k_heartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
 
-        private DIScope m_ServiceScope;
+        DIScope m_ServiceScope;
 
-        private float m_HeartbeatTime = 0;
+        float m_HeartbeatTime = 0;
 
-        private RateLimitCooldown m_RateLimitQuery; // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
-        private RateLimitCooldown m_RateLimitJoin;
-        private RateLimitCooldown m_RateLimitQuickJoin;
-        private RateLimitCooldown m_RateLimitHost;
+        RateLimitCooldown m_RateLimitQuery; // Used for both the lobby list UI and the in-lobby updating. In the latter case, updates can be cached.
+        RateLimitCooldown m_RateLimitJoin;
+        RateLimitCooldown m_RateLimitQuickJoin;
+        RateLimitCooldown m_RateLimitHost;
 
         public Lobby CurrentUnityLobby { get; private set; }
-        private bool m_IsTracking = false;
+
+        bool m_IsTracking = false;
 
         [Inject]
         public LobbyServiceFacade(

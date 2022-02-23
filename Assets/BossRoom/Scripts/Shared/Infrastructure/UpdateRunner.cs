@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Shared.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     /// <summary>
     /// Some objects might need to be on a slower update loop than the usual MonoBehaviour Update and without precise timing, e.g. to refresh data from services.
@@ -16,9 +16,9 @@ namespace BossRoom.Scripts.Shared.Infrastructure
             public float PeriodCurrent;
         }
 
-        private readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
-        private readonly HashSet<Action<float>> m_Subscribers = new HashSet<Action<float>>();
-        private readonly Dictionary<Action<float>, SubscriberData> m_SubscriberData = new Dictionary<Action<float>, SubscriberData>();
+        readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
+        readonly HashSet<Action<float>> m_Subscribers = new HashSet<Action<float>>();
+        readonly Dictionary<Action<float>, SubscriberData> m_SubscriberData = new Dictionary<Action<float>, SubscriberData>();
 
         public void OnDestroy()
         {

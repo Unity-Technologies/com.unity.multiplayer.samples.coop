@@ -1,20 +1,19 @@
-﻿using System;
-using BossRoom.Scripts.Shared.Infrastructure;
+﻿using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// Keep updated on changes to a joined lobby, at a speed compliant with Lobby's rate limiting.
     /// </summary>
     public class JoinedLobbyContentHeartbeat
     {
-        private readonly LocalLobby m_LocalLobby;
-        private readonly LocalLobbyUser m_LocalUser;
-        private readonly UpdateRunner m_UpdateRunner;
-        private readonly LobbyServiceFacade m_LobbyServiceFacade;
+        readonly LocalLobby m_LocalLobby;
+        readonly LocalLobbyUser m_LocalUser;
+        readonly UpdateRunner m_UpdateRunner;
+        readonly LobbyServiceFacade m_LobbyServiceFacade;
 
-        private int m_AwaitingQueryCount = 0;
-        private bool m_ShouldPushData = false;
+        int m_AwaitingQueryCount = 0;
+        bool m_ShouldPushData = false;
 
 
         [Inject]

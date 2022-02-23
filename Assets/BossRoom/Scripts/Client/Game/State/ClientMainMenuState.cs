@@ -1,7 +1,7 @@
-using BossRoom.Scripts.Client.UI;
-using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom.Client.UI;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -24,23 +24,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         public override GameState ActiveState { get { return GameState.MainMenu; } }
 
-        private GameNetPortal m_GameNetPortal;
+        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
+        DIScope m_Scope;
 
-        private ClientGameNetPortal m_ClientNetPortal;
+        [SerializeField] NameGenerationData m_NameGenerationData;
+        [SerializeField] LobbyUIMediator m_LobbyUIMediator;
 
-
-        [SerializeField] private GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-        private DIScope m_Scope;
-
-        [SerializeField] private NameGenerationData m_NameGenerationData;
-        [SerializeField] private LobbyUIMediator m_LobbyUIMediator;
-
-        [SerializeField] private CanvasGroup m_MainMenuButtons;
-        [SerializeField] private GameObject m_SignInSpinner;
+        [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
+        [SerializeField] GameObject m_SignInSpinner;
 
         private void Awake()
         {
-            m_MainMenuButtons.interactable = false;
+            m_MainMenuButtonsCanvasGroup.interactable = false;
             m_LobbyUIMediator.Hide();
             DIScope.RootScope.InjectIn(this);
         }
@@ -88,12 +83,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 m_Scope.FinalizeScopeConstruction();
 
-                foreach (var go in m_GameObjectsThatWillBeInjectedAutomatically)
+                foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
                 {
-                    m_Scope.InjectIn(go);
+                    m_Scope.InjectIn(autoInjectedGameObject);
                 }
 
-                m_MainMenuButtons.interactable = true;
+                m_MainMenuButtonsCanvasGroup.interactable = true;
                 m_SignInSpinner.SetActive(false);
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");

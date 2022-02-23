@@ -1,4 +1,4 @@
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure
 {
     public struct UnityServiceErrorMessage
     {

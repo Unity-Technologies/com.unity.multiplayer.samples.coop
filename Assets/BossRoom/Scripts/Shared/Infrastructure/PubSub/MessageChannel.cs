@@ -2,17 +2,17 @@ using System;
 using System.Collections.Generic;
 using UnityEngine.Assertions;
 
-namespace BossRoom.Scripts.Shared.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     public class MessageChannel<T> : IMessageChannel<T>
     {
-        private readonly List<Action<T>> m_MessageHandlers = new List<Action<T>>();
+        readonly List<Action<T>> m_MessageHandlers = new List<Action<T>>();
 
         /// <summary>
         /// This queue of actions that would either add or remove subscriber is used to prevent problems from immediate modification
         /// of the list of subscribers. It could happen if one decides to unsubscribe in a message handler etc.
         /// </summary>
-        private readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
+        readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
 
         public bool IsDisposed { get; private set; } = false;
 

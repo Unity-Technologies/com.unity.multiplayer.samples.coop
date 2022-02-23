@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// A local wrapper around a lobby's remote data, with additional functionality for providing that data to UI elements and tracking local player objects.
@@ -77,7 +76,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        private LobbyData m_Data;
+        LobbyData m_Data;
         public LobbyData Data => new LobbyData(m_Data);
 
 

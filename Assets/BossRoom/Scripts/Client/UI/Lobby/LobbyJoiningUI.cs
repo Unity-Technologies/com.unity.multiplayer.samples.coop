@@ -1,31 +1,30 @@
 using System;
 using System.Collections.Generic;
-using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace BossRoom.Scripts.Client.UI
+namespace Unity.Multiplayer.Samples.BossRoom.Client.UI
 {
     /// <summary>
     /// Handles the list of LobbyListItemUIs and ensures it stays synchronized with the lobby list from the service.
     /// </summary>
     public class LobbyJoiningUI : MonoBehaviour
     {
-        [SerializeField] private LobbyListItemUI m_LobbyListItemPrototype;
-        [SerializeField] private InputField m_JoinCodeField;
-        [SerializeField] private CanvasGroup m_CanvasGroup;
+        [SerializeField] LobbyListItemUI m_LobbyListItemPrototype;
+        [SerializeField] InputField m_JoinCodeField;
+        [SerializeField] CanvasGroup m_CanvasGroup;
 
+        IInstanceResolver m_Container;
 
-        private IInstanceResolver m_Container;
+        LobbyUIMediator m_LobbyUIMediator;
 
-        private LobbyUIMediator m_LobbyUIMediator;
+        UpdateRunner m_UpdateRunner;
 
-        private UpdateRunner m_UpdateRunner;
+        IDisposable m_Subscriptions;
 
-        private IDisposable m_Subscriptions;
-
-        private List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
+        List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
 
         private void Awake()
         {

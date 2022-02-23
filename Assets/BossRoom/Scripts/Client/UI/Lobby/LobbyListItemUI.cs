@@ -1,21 +1,21 @@
-using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 
-namespace BossRoom.Scripts.Client.UI
+namespace Unity.Multiplayer.Samples.BossRoom.Client.UI
 {
     /// <summary>
     /// An individual Lobby UI in the list of available lobbies
     /// </summary>
     public class LobbyListItemUI : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI m_lobbyNameText;
-        [SerializeField] private TextMeshProUGUI m_lobbyCountText;
-        [SerializeField] private TextMeshProUGUI m_OnlineModeText;
+        [SerializeField] TextMeshProUGUI m_lobbyNameText;
+        [SerializeField] TextMeshProUGUI m_lobbyCountText;
+        [SerializeField] TextMeshProUGUI m_OnlineModeText;
 
-        private LobbyUIMediator m_LobbyUIMediator;
-        private LocalLobby m_Data;
+        LobbyUIMediator m_LobbyUIMediator;
+        LocalLobby m_Data;
 
         [Inject]
         private void InjectDependencies(LobbyUIMediator lobbyUIMediator)

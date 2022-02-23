@@ -1,31 +1,28 @@
 using System.Collections;
-using System.Collections.Generic;
-using BossRoom.Scripts.Shared.Infrastructure;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
-using BossRoom.Scripts.Shared.Net.UnityServices.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 
-namespace BossRoom.Scripts.Shared
+namespace Unity.Multiplayer.Samples.BossRoom.Shared
 {
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
     /// </summary>
     public class ApplicationController : MonoBehaviour
     {
-        [SerializeField] private UpdateRunner m_UpdateRunner;
-        [SerializeField] private GameNetPortal m_GameNetPortal;
-        [SerializeField] private ClientGameNetPortal m_ClientNetPortal;
+        [SerializeField] UpdateRunner m_UpdateRunner;
+        [SerializeField] GameNetPortal m_GameNetPortal;
+        [SerializeField] ClientGameNetPortal m_ClientNetPortal;
 
-        private LocalLobby m_LocalLobby;
-        private LobbyServiceFacade m_LobbyServiceFacade;
+        LocalLobby m_LocalLobby;
+        LobbyServiceFacade m_LobbyServiceFacade;
 
-        [SerializeField] private GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
+        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
 
         private void Awake()
         {

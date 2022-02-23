@@ -1,4 +1,4 @@
-namespace BossRoom.Scripts.Shared.Infrastructure
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     public static class MessageChannelDIExtensions
     {

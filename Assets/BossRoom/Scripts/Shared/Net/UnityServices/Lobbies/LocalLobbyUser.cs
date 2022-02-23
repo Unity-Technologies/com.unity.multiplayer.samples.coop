@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
-using BossRoom.Scripts.Shared.Infrastructure;
 using Unity.Services.Lobbies.Models;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
+namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
     /// <summary>
     /// Data for a local lobby user instance. This will update data and is observed to know when to push local user changes to the entire lobby.
@@ -15,7 +14,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public LocalLobbyUser()
         {
-            m_data = new UserData(isHost: false, displayName: null, id: null);
+            m_Data = new UserData(isHost: false, displayName: null, id: null);
         }
 
         public struct UserData
@@ -32,11 +31,11 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        private UserData m_data;
+        UserData m_Data;
 
         public void ResetState()
         {
-            m_data = new UserData(false, m_data.DisplayName, m_data.ID);
+            m_Data = new UserData(false, m_Data.DisplayName, m_Data.ID);
         }
 
         /// <summary>
@@ -50,17 +49,17 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
             ID = 4,
         }
 
-        private UserMembers m_lastChanged;
+        UserMembers m_lastChanged;
         public UserMembers LastChanged => m_lastChanged;
 
         public bool IsHost
         {
-            get { return m_data.IsHost; }
+            get { return m_Data.IsHost; }
             set
             {
-                if (m_data.IsHost != value)
+                if (m_Data.IsHost != value)
                 {
-                    m_data.IsHost = value;
+                    m_Data.IsHost = value;
                     m_lastChanged = UserMembers.IsHost;
                     OnChanged();
                 }
@@ -69,12 +68,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public string DisplayName
         {
-            get => m_data.DisplayName;
+            get => m_Data.DisplayName;
             set
             {
-                if (m_data.DisplayName != value)
+                if (m_Data.DisplayName != value)
                 {
-                    m_data.DisplayName = value;
+                    m_Data.DisplayName = value;
                     m_lastChanged = UserMembers.DisplayName;
                     OnChanged();
                 }
@@ -83,12 +82,12 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public string ID
         {
-            get => m_data.ID;
+            get => m_Data.ID;
             set
             {
-                if (m_data.ID != value)
+                if (m_Data.ID != value)
                 {
-                    m_data.ID = value;
+                    m_Data.ID = value;
                     m_lastChanged = UserMembers.ID;
                     OnChanged();
                 }
@@ -98,18 +97,18 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Lobbies
 
         public void CopyDataFrom(LocalLobbyUser lobby)
         {
-            UserData data = lobby.m_data;
+            UserData data = lobby.m_Data;
             int lastChanged = // Set flags just for the members that will be changed.
-                (m_data.IsHost == data.IsHost ? 0 : (int) UserMembers.IsHost) |
-                (m_data.DisplayName == data.DisplayName ? 0 : (int) UserMembers.DisplayName) |
-                (m_data.ID == data.ID ? 0 : (int) UserMembers.ID);
+                (m_Data.IsHost == data.IsHost ? 0 : (int) UserMembers.IsHost) |
+                (m_Data.DisplayName == data.DisplayName ? 0 : (int) UserMembers.DisplayName) |
+                (m_Data.ID == data.ID ? 0 : (int) UserMembers.ID);
 
             if (lastChanged == 0) // Ensure something actually changed.
             {
                 return;
             }
 
-            m_data = data;
+            m_Data = data;
             m_lastChanged = (UserMembers)lastChanged;
 
             OnChanged();

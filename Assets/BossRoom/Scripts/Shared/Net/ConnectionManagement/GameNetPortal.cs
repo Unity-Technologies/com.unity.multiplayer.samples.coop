@@ -1,15 +1,12 @@
 using System;
-using System.Threading;
-using BossRoom.Scripts.Shared.Infrastructure;
-using BossRoom.Scripts.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
