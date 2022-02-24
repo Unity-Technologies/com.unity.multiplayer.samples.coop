@@ -92,22 +92,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
             yield return TestUtilities.AssertIsNetworkSceneLoaded(k_BossRoomSceneName, m_NetworkManager.SceneManager);
 
-            // once loaded into BossRoom scene, wait and disconnect
-            yield return new WaitForEndOfFrame();
-
-            // findings: when doing a regular playthrough, if one quits out, NetworkManager.Shutdown() jumps
-            // immediately to NetworkManager.ShutdownInternal()
-            // HOWEVER: if invoked through this test WITHOUT the line below, NetworkManager jumps from
-            // NetworkManager.Shutdown() immediately to NetworkObjects' OnNetworkDespawn() BEFORE
-            // NetworkManager.ShutdownInternal()..
+            // shutting down NetworkManager too soon after loading networked scene generates undefined behaviour
+            // the wait below is just a temporary workaround to assure NetworkManager is ready to shut down
             yield return new WaitForSeconds(1f);
 
+            // once loaded into BossRoom scene, disconnect
             var uiQuitPanel = GameObject.FindObjectOfType<UIQuitPanel>(true);
             Assert.That(uiQuitPanel != null, $"{nameof(UIQuitPanel)} component not found!");
             uiQuitPanel.Quit();
 
-            // wait for NetworkUpdate?
-            yield return null;
+            // wait until shutdown is complete
+            yield return new WaitUntil(() => !m_NetworkManager.ShutdownInProgress);
 
             Assert.That(!NetworkManager.Singleton.IsListening, "NetworkManager not fully shut down!");
 
