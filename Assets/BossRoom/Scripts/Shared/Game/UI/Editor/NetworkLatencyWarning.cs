@@ -1,5 +1,4 @@
 using System;
-using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
@@ -28,7 +27,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                 switch (chosenTransport)
                 {
                     case UNetTransport unetTransport:
-                    case PhotonRealtimeTransport photonTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
                     case UnityTransport unityTransport:

@@ -999,7 +999,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Room Name: '
+  m_text: 'Join Code: '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9641ce046d2227445b9684161a165f68, type: 2}
   m_sharedMaterial: {fileID: -4106257185398102161, guid: 9641ce046d2227445b9684161a165f68, type: 2}
@@ -3757,14 +3757,14 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: bb7d37d2a40813048883c2696e975eac, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff848390065bf914fb60582f4d872815, type: 3}
---- !u!224 &4148434299776943719 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7773346133266671123, guid: ff848390065bf914fb60582f4d872815, type: 3}
-  m_PrefabInstance: {fileID: 5940892340993679476}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8367260898428394609 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2768642224677944325, guid: ff848390065bf914fb60582f4d872815, type: 3}
+  m_PrefabInstance: {fileID: 5940892340993679476}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &4148434299776943719 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7773346133266671123, guid: ff848390065bf914fb60582f4d872815, type: 3}
   m_PrefabInstance: {fileID: 5940892340993679476}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5940892341121358677
@@ -4829,14 +4829,14 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 9781ab5273dea1c4e94c1ab8d4d18b31, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff848390065bf914fb60582f4d872815, type: 3}
---- !u!224 &8367260899810866543 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2768642224677944325, guid: ff848390065bf914fb60582f4d872815, type: 3}
-  m_PrefabInstance: {fileID: 5940892341839497578}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &4148434300538892153 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7773346133266671123, guid: ff848390065bf914fb60582f4d872815, type: 3}
+  m_PrefabInstance: {fileID: 5940892341839497578}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &8367260899810866543 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2768642224677944325, guid: ff848390065bf914fb60582f4d872815, type: 3}
   m_PrefabInstance: {fileID: 5940892341839497578}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5940892341869088767
