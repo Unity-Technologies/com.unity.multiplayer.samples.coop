@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using Unity.Netcode;
+using Unity.Services.Authentication;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
@@ -146,7 +147,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // Approval check happens for Host too, but obviously we want it to be approved
             if (clientId == NetworkManager.Singleton.LocalClientId)
             {
-                SessionManager<SessionPlayerData>.Instance.AddHostData(
+                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, AuthenticationService.Instance.PlayerId,
                     new SessionPlayerData(clientId, m_Portal.PlayerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
 
                 connectionApprovedCallback(true, null, true, null, null);

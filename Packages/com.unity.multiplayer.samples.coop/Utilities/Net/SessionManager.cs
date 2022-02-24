@@ -63,19 +63,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private Dictionary<ulong, string> m_ClientIDToPlayerId;
 
-        public void AddHostData(T sessionPlayerData)
-        {
-            if (sessionPlayerData.ClientID == m_NetworkManager.ServerClientId)
-            {
-                m_ClientData.Add(k_HostGUID, sessionPlayerData);
-                m_ClientIDToPlayerId.Add(sessionPlayerData.ClientID, k_HostGUID);
-            }
-            else
-            {
-                Debug.LogError($"Invalid ClientId for host. Got {sessionPlayerData.ClientID}, but should have gotten {m_NetworkManager.ServerClientId}.");
-            }
-        }
-
         /// <summary>
         /// Handles the case where NetworkManager has told us a client has disconnected. This includes ourselves, if we're the host,
         /// and the server is stopped."
@@ -120,7 +107,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Adds a connecting player's session data if it is a new connection, or updates their session data in case of a reconnection. If the connection is not valid, simply returns false.
         /// </summary>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
-        /// <param name="playerId">This is the playerId that is unique to this client and persists accross multiple logins from the same client</param>
+        /// <param name="playerId">This is the playerId that is unique to this client and persists across multiple logins from the same client</param>
         /// <param name="sessionPlayerData">The player's initial data</param>
         /// <returns>True if the player connection is valid (i.e. not a duplicate connection)</returns>
         public bool SetupConnectingPlayerSessionData(ulong clientId, string playerId, T sessionPlayerData)
