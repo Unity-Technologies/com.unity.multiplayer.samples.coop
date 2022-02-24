@@ -135,24 +135,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 // If another client is connected with the same playerId
                 if (m_ClientData[playerId].IsConnected)
                 {
-                    if (Debug.isDebugBuild)
-                    {
-                        Debug.Log($"Client PlayerId {playerId} already exists. Because this is a debug build, we will still accept the connection");
-
-                        // If debug build, accept connection and manually update playerId until we get one that either is not connected or that does not already exist
-                        while (m_ClientData.ContainsKey(playerId) && m_ClientData[playerId].IsConnected) playerId += "_Secondary";
-
-                        if (m_ClientData.ContainsKey(playerId) && !m_ClientData[playerId].IsConnected)
-                        {
-                            // In this specific case, if the clients with the same PlayerId reconnect in a different order than when they originally connected,
-                            // they will swap characters, since their PlayerIds are manually modified here at runtime.
-                            isReconnecting = true;
-                        }
-                    }
-                    else
-                    {
-                        success = false;
-                    }
+                    success = false;
                 }
                 else
                 {
