@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (!m_ImpactedTarget && m_TimeUntilImpact <= TimeRunning)
             {
                 m_ImpactedTarget = true;
-                if (m_Target != null )
+                if (m_Target != null)
                 {
                     m_Target.ReceiveHP(m_Parent, -Description.Projectiles[0].Damage);
                 }

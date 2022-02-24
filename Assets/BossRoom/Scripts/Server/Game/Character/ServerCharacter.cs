@@ -23,7 +23,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
         /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
         /// </summary>
-        public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
+        public ActionPlayer RunningActions { get { return m_ActionPlayer; } }
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
@@ -178,7 +178,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
-        public void ReceiveHP(ServerCharacter inflicter, int HP)
+        void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
             if (HP > 0)
@@ -206,7 +206,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             NetState.HitPoints = Mathf.Clamp(NetState.HitPoints + HP, 0, NetState.CharacterClass.BaseHP.Value);
 
-            if( m_AIBrain != null )
+            if (m_AIBrain != null)
             {
                 //let the brain know about the modified amount of damage we received.
                 m_AIBrain.ReceiveHP(inflicter, HP);

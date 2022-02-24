@@ -9,6 +9,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// </remarks>
     public class ClientMainMenuState : GameStateBehaviour
     {
-        public override GameState ActiveState { get { return GameState.MainMenu;  } }
+        public override GameState ActiveState { get { return GameState.MainMenu; } }
     }
 }
