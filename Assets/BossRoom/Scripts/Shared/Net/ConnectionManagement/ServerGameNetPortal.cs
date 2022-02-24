@@ -177,7 +177,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             int clientScene = connectionPayload.clientScene;
 
-            Debug.Log("Host ApprovalCheck: connecting client with player id: " + connectionPayload.playerId);
+            Debug.Log("Host ApprovalCheck: connecting client with player ID: " + connectionPayload.playerId);
 
             gameReturnStatus = SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                 new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true))

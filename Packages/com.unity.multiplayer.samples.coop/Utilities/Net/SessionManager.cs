@@ -25,11 +25,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// <typeparam name="T"></typeparam>
     public class SessionManager<T> where T : struct, ISessionPlayerData
     {
-        const string k_HostGUID = "host_guid";
-
         NetworkManager m_NetworkManager;
 
-        protected SessionManager()
+        SessionManager()
         {
             m_NetworkManager = NetworkManager.Singleton;
             if (m_NetworkManager)
@@ -51,23 +49,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public static SessionManager<T> Instance => s_Instance ??= new SessionManager<T>();
 
-        private static SessionManager<T> s_Instance;
+        static SessionManager<T> s_Instance;
 
         /// <summary>
         /// Maps a given client player id to the data for a given client player.
         /// </summary>
-        private Dictionary<string, T> m_ClientData;
+        Dictionary<string, T> m_ClientData;
 
         /// <summary>
         /// Map to allow us to cheaply map from player id to player data.
         /// </summary>
-        private Dictionary<ulong, string> m_ClientIDToPlayerId;
+        Dictionary<ulong, string> m_ClientIDToPlayerId;
 
         /// <summary>
         /// Handles the case where NetworkManager has told us a client has disconnected. This includes ourselves, if we're the host,
         /// and the server is stopped."
         /// </summary>
-        private void OnClientDisconnect(ulong clientId)
+        void OnClientDisconnect(ulong clientId)
         {
             if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
             {
@@ -96,7 +94,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             Clear();
         }
 
-        private void Clear()
+        void Clear()
         {
             //resets all our runtime state.
             m_ClientData.Clear();
@@ -203,7 +201,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <summary>
         /// Called after the server is created-  This is primarily meant for the host server to clean up or handle/set state as its starting up
         /// </summary>
-        private void ServerStartedHandler()
+        void ServerStartedHandler()
         {
             if (m_NetworkManager.IsServer)
             {
