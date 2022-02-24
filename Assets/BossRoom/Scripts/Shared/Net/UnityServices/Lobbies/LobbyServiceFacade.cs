@@ -22,10 +22,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         readonly ApplicationController m_ApplicationController;
 
         const float k_HeartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
+        float m_HeartbeatTime = 0;
 
         DIScope m_ServiceScope;
-
-        float m_HeartbeatTime = 0;
 
         RateLimitCooldown m_RateLimitQuery;
         RateLimitCooldown m_RateLimitJoin;
@@ -45,7 +44,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             IPublisher<UnityServiceErrorMessage> serviceErrorMessagePub,
             IPublisher<LobbyListFetchedMessage> lobbyListFetchedPub)
         {
-
             m_ApplicationController = applicationController;
             m_UpdateRunner = updateRunner;
             m_LocalLobby = localLobby;
@@ -194,7 +192,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
 
             m_RateLimitQuickJoin.PutOnCooldown();
-
             m_LobbyApiInterface.QuickJoinLobbyAsync(AuthenticationService.Instance.PlayerId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
         }
 

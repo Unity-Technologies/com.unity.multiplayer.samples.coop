@@ -21,7 +21,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         LobbyServiceFacade m_LobbyServiceFacade;
         LocalLobbyUser m_LocalUser;
         LocalLobby m_LocalLobby;
-        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
         NameGenerationData m_NameGenerationData;
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
@@ -40,7 +39,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_NameGenerationData = nameGenerationData;
             m_LocalUser = localUser;
             m_LobbyServiceFacade = lobbyServiceFacade;
-            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
             m_LocalLobby = localLobby;
             m_GameNetPortal = gameNetPortal;
             m_ClientNetPortal = clientGameNetPortal;
@@ -156,16 +154,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     m_ClientNetPortal.StartClientUnityRelayModeAsync(m_LocalLobby.RelayJoinCode, OnRelayJoinFailed);
                     break;
             }
-        }
 
-        void OnRelayJoinFailed(string message)
-        {
-            Debug.Log($"Relay join failed: {message}");
-            //leave the lobby if relay failed for some reason
-            m_LobbyServiceFacade.EndTracking();
-
-            UnblockUIAfterLoadingIsComplete();
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Unity Relay: Join Failed", message));
+            void OnRelayJoinFailed(string message)
+            {
+                Debug.Log($"Relay join failed: {message}");
+                //leave the lobby if relay failed for some reason
+                m_LobbyServiceFacade.EndTracking();
+                UnblockUIAfterLoadingIsComplete();
+            }
         }
 
         //show/hide UI
@@ -237,7 +233,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void OnNetworkTimeout()
         {
             UnblockUIAfterLoadingIsComplete();
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Connection failed", "Unable to Reach Host/Server"));
         }
 
         /// <summary>
