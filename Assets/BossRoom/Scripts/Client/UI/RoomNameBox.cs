@@ -1,9 +1,9 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom;
-using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
-using UnityEngine.Assertions;
 using TMPro;
-using Unity.Netcode;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine.UI;
 
 public class RoomNameBox : MonoBehaviour
@@ -13,85 +13,45 @@ public class RoomNameBox : MonoBehaviour
     [SerializeField]
     Button m_CopyToClipboardButton;
 
-    string m_RoomName;
+    LocalLobby m_LocalLobby;
+    string m_LobbyCode;
 
-    bool m_ConnectionFinished = false;
-
-    void Awake()
+    [Inject]
+    private void InjectDependencies(LocalLobby localLobby)
     {
-        Assert.IsNotNull(m_RoomNameText, $"{nameof(m_RoomNameText)} not assigned!");
+        m_LocalLobby = localLobby;
+        m_LocalLobby.changed += UpdateUI;
+        UpdateUI(localLobby);
+    }
 
-        var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-        bool isUsingRelay = true;
-        switch (transport)
+    private void OnDestroy()
+    {
+        m_LocalLobby.changed -= UpdateUI;
+    }
+
+    private void UpdateUI(LocalLobby localLobby)
+    {
+        switch (localLobby.OnlineMode)
         {
-            case PhotonRealtimeTransport realtimeTransport:
-                m_RoomNameText.text = $"Loading room key...";
+            case OnlineMode.IpHost:
+            case OnlineMode.UnityRelay:
+                m_LobbyCode = localLobby.LobbyCode;
+                m_RoomNameText.text = $"Lobby Code: {m_LobbyCode}";
+                m_CopyToClipboardButton.gameObject.SetActive(true);
                 break;
-            case UnityTransport utp:
-                if (utp.Protocol == UnityTransport.ProtocolType.RelayUnityTransport)
-                {
-                    m_RoomNameText.text = $"Loading join code...";
-                }
-                else
-                {
-                    isUsingRelay = false;
-                }
+            case OnlineMode.Unset:
+                //this can happen if we launch the game while circumventing lobby logic
+                m_LobbyCode = "";
+                m_RoomNameText.text = $"-----------";
+                m_CopyToClipboardButton.gameObject.SetActive(false);
                 break;
             default:
-                isUsingRelay = false;
-                break;
+                throw new ArgumentOutOfRangeException();
         }
-
-        if (!isUsingRelay)
-        {
-            // RoomName should only be displayed when using relay.
-            Destroy(gameObject);
-        }
-    }
-
-    // This update loop exists because there is currently a bug in Netcode for GameObjects which runs client connected callbacks before the transport has
-    // fully finished the asynchronous connection. That's why are loading the character select screen too early and need this update loop to
-    // update the room key once we are fully connected to the Photon cloud.
-    void Update()
-    {
-        if (m_ConnectionFinished == false)
-        {
-            var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-
-            if (transport != null &&
-                transport is PhotonRealtimeTransport realtimeTransport &&
-                realtimeTransport.Client != null &&
-                string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
-            {
-                string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
-                ConnectionFinished(roomName);
-            }
-            else if (transport != null && transport is UnityTransport utp &&
-                     !string.IsNullOrEmpty(UnityRelayUtilities.JoinCode))
-            {
-                ConnectionFinished(UnityRelayUtilities.JoinCode);
-            }
-        }
-    }
-
-    void ConnectionFinished(string roomName)
-    {
-        m_RoomName = roomName;
-        m_RoomNameText.text = $"Room Name: {m_RoomName}";
-        m_ConnectionFinished = true;
-        m_CopyToClipboardButton.gameObject.SetActive(true);
     }
 
     public void CopyToClipboard()
     {
-        if (m_ConnectionFinished)
-        {
-            GUIUtility.systemCopyBuffer = m_RoomName;
-        }
-        else
-        {
-            Debug.Log("Connection not finished, can't copy to clipboard yet.");
-        }
+        GUIUtility.systemCopyBuffer = m_LobbyCode;
     }
 }
