@@ -31,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     [Serializable]
     public class ConnectionPayload
     {
-        public string clientGUID;
+        public string playerId;
         public int clientScene = -1;
         public string playerName;
     }

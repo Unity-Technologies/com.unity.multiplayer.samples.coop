@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Services.Authentication;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -203,10 +204,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void ConnectClient()
         {
-            var clientGuid = ClientPrefs.GetGuid();
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
-                clientGUID = clientGuid,
+                playerId = AuthenticationService.Instance.PlayerId,
                 clientScene = SceneManager.GetActiveScene().buildIndex,
                 playerName = m_Portal.PlayerName
             });
