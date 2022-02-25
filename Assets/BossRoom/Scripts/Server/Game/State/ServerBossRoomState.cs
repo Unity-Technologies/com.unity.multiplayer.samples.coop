@@ -181,7 +181,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (lateJoin)
             {
                 SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
-                if (sessionPlayerData is {HasCharacterSpawned: true})
+                if (sessionPlayerData is { HasCharacterSpawned: true })
                 {
                     physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, sessionPlayerData.Value.PlayerRotation);
                 }

@@ -305,7 +305,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             int totalErrors = 0;
             for (int i = 0; i < fx.m_EventsOnNodeEntry.Length; ++i)
             {
-                for (int j = i+1; j < fx.m_EventsOnNodeEntry.Length; ++j)
+                for (int j = i + 1; j < fx.m_EventsOnNodeEntry.Length; ++j)
                 {
                     if (fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash == fx.m_EventsOnNodeEntry[j].m_AnimatorNodeNameHash
                         && fx.m_EventsOnNodeEntry[i].m_AnimatorNodeNameHash != 0

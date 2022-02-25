@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using Unity.Multiplayer.Samples.Utilities;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -24,16 +25,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         [SerializeField]
         [Tooltip("This is triggered when the player chooses a character")]
-        private string m_AnimationTriggerOnCharSelect = "BeginRevive";
+        string m_AnimationTriggerOnCharSelect = "BeginRevive";
 
         [SerializeField]
         [Tooltip("This is triggered when the player presses the \"Ready\" button")]
-        private string m_AnimationTriggerOnCharChosen = "BeginRevive";
+        string m_AnimationTriggerOnCharChosen = "BeginRevive";
 
         [Header("Lobby Seats")]
         [SerializeField]
         [Tooltip("Collection of 8 portrait-boxes, one for each potential lobby member")]
-        private List<UICharSelectPlayerSeat> m_PlayerSeats;
+        List<UICharSelectPlayerSeat> m_PlayerSeats;
 
         [System.Serializable]
         public class ColorAndIndicator
@@ -46,39 +47,39 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         [SerializeField]
         [Tooltip("Text element containing player count which updates as players connect")]
-        private TextMeshProUGUI m_NumPlayersText;
+        TextMeshProUGUI m_NumPlayersText;
 
         [SerializeField]
         [Tooltip("Text element for the Ready button")]
-        private TextMeshProUGUI m_ReadyButtonText;
+        TextMeshProUGUI m_ReadyButtonText;
 
         [Header("UI Elements for different lobby modes")]
         [SerializeField]
         [Tooltip("UI elements to turn on when the player hasn't chosen their seat yet. Turned off otherwise!")]
-        private List<GameObject> m_UIElementsForNoSeatChosen;
+        List<GameObject> m_UIElementsForNoSeatChosen;
 
         [SerializeField]
         [Tooltip("UI elements to turn on when the player has locked in their seat choice (and is now waiting for other players to do the same). Turned off otherwise!")]
-        private List<GameObject> m_UIElementsForSeatChosen;
+        List<GameObject> m_UIElementsForSeatChosen;
 
         [SerializeField]
         [Tooltip("UI elements to turn on when the lobby is closed (and game is about to start). Turned off otherwise!")]
-        private List<GameObject> m_UIElementsForLobbyEnding;
+        List<GameObject> m_UIElementsForLobbyEnding;
 
         [SerializeField]
         [Tooltip("UI elements to turn on when there's been a fatal error (and the client cannot proceed). Turned off otherwise!")]
-        private List<GameObject> m_UIElementsForFatalError;
+        List<GameObject> m_UIElementsForFatalError;
 
         [Header("Misc")]
         [SerializeField]
         [Tooltip("The controller for the class-info box")]
-        private UICharSelectClassInfoBox m_ClassInfoBox;
+        UICharSelectClassInfoBox m_ClassInfoBox;
 
         [SerializeField]
         Transform m_CharacterGraphicsParent;
 
-        private int m_LastSeatSelected = -1;
-        private bool m_HasLocalPlayerLockedIn = false;
+        int m_LastSeatSelected = -1;
+        bool m_HasLocalPlayerLockedIn = false;
 
         GameObject m_CurrentCharacterGraphics;
 
@@ -92,7 +93,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// an abstraction that makes it easier to configure which UI elements should
         /// be enabled/disabled in each stage of the lobby.
         /// </summary>
-        private enum LobbyMode
+        enum LobbyMode
         {
             ChooseSeat, // "Choose your seat!" stage
             SeatChosen, // "Waiting for other players!" stage
@@ -100,10 +101,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             FatalError, // "Fatal Error" stage
         }
 
-        private Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
+        Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
-        private void Awake()
+        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
+        DIScope m_Scope;
+
+        void Awake()
         {
+            //creating a child scope just to have manual control over the lifetime of the things
+            //that shouldn't live past the current scene existence
+            m_Scope = new DIScope(DIScope.RootScope);
+
+            m_Scope.FinalizeScopeConstruction();
+
             Instance = this;
             CharSelectData = GetComponent<CharSelectData>();
             m_LobbyUIElementsByMode = new Dictionary<LobbyMode, List<GameObject>>()
@@ -113,6 +123,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 { LobbyMode.LobbyEnding, m_UIElementsForLobbyEnding },
                 { LobbyMode.FatalError, m_UIElementsForFatalError },
             };
+
+            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
+            {
+                m_Scope.InjectIn(autoInjectedGameObject);
+            }
+        }
+
+        public override void OnDestroy()
+        {
+            m_Scope.Dispose();
         }
 
         protected override void Start()
@@ -158,22 +178,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// Called when our PlayerNumber (e.g. P1, P2, etc.) has been assigned by the server
         /// </summary>
         /// <param name="playerNum"></param>
-        private void OnAssignedPlayerNumber(int playerNum)
+        void OnAssignedPlayerNumber(int playerNum)
         {
             m_ClassInfoBox.OnSetPlayerNumber(playerNum);
         }
 
-        private void UpdatePlayerCount()
+        void UpdatePlayerCount()
         {
             int count = CharSelectData.LobbyPlayers.Count;
             var pstr = (count > 1) ? "players" : "player";
-            m_NumPlayersText.text = "<b>" + count + "</b> " + pstr +" connected";
+            m_NumPlayersText.text = "<b>" + count + "</b> " + pstr + " connected";
         }
 
         /// <summary>
         /// Called by the server when any of the seats in the lobby have changed. (Including ours!)
         /// </summary>
-        private void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> changeEvent)
+        void OnLobbyPlayerStateChanged(NetworkListEvent<CharSelectData.LobbyPlayerState> changeEvent)
         {
             UpdateSeats();
             UpdatePlayerCount();
@@ -216,7 +236,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         /// <param name="state">Our current seat state</param>
         /// <param name="seatIdx">Which seat we're sitting in, or -1 if SeatState is Inactive</param>
-        private void UpdateCharacterSelection(CharSelectData.SeatState state, int seatIdx = -1)
+        void UpdateCharacterSelection(CharSelectData.SeatState state, int seatIdx = -1)
         {
             bool isNewSeat = m_LastSeatSelected != seatIdx;
 
@@ -279,7 +299,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Internal utility that sets the graphics for the eight lobby-seats (based on their current networked state)
         /// </summary>
-        private void UpdateSeats()
+        void UpdateSeats()
         {
             // Players can hop between seats -- and can even SHARE seats -- while they're choosing a class.
             // Once they have chosen their class (by "locking in" their seat), other players in that seat are kicked out.
@@ -290,7 +310,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 if (playerState.SeatIdx == -1 || playerState.SeatState == CharSelectData.SeatState.Inactive)
                     continue; // this player isn't seated at all!
-                if (    curSeats[playerState.SeatIdx].SeatState == CharSelectData.SeatState.Inactive
+                if (curSeats[playerState.SeatIdx].SeatState == CharSelectData.SeatState.Inactive
                     || (curSeats[playerState.SeatIdx].SeatState == CharSelectData.SeatState.Active && curSeats[playerState.SeatIdx].LastChangeTime < playerState.LastChangeTime))
                 {
                     // this is the best candidate to be displayed in this seat (so far)
@@ -308,7 +328,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Called by the server when the lobby closes (because all players are seated and locked in)
         /// </summary>
-        private void OnLobbyClosedChanged(bool wasLobbyClosed, bool isLobbyClosed)
+        void OnLobbyClosedChanged(bool wasLobbyClosed, bool isLobbyClosed)
         {
             if (isLobbyClosed)
             {
@@ -321,7 +341,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// It can also disable/enable the lobby seats and the "Ready" button if they are inappropriate for the
         /// given mode.
         /// </summary>
-        private void ConfigureUIForLobbyMode(LobbyMode mode)
+        void ConfigureUIForLobbyMode(LobbyMode mode)
         {
             // first the easy bit: turn off all the inappropriate ui elements, and turn the appropriate ones on!
             foreach (var list in m_LobbyUIElementsByMode.Values)
@@ -342,7 +362,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             switch (mode)
             {
                 case LobbyMode.ChooseSeat:
-                    if ( m_LastSeatSelected == -1)
+                    if (m_LastSeatSelected == -1)
                     {
                         if (m_CurrentCharacterGraphics)
                         {
@@ -391,19 +411,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public void OnPlayerClickedReady()
         {
             // request to lock in or unlock if already locked in
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn );
-        }
-
-        /// <summary>
-        /// Called directly by UI elements!
-        /// </summary>
-        public void OnPlayerExit()
-        {
-            // Player is leaving the group
-            // first disconnect then return to menu
-            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
-            gameNetPortal.RequestDisconnect();
-            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
         }
 
         GameObject GetCharacterGraphics(Avatar avatar)
@@ -418,7 +426,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
 #if UNITY_EDITOR
-        private void OnValidate()
+        void OnValidate()
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {

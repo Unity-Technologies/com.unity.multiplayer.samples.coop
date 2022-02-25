@@ -38,7 +38,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
-            if ( newSeatIdx ==-1)
+            if (newSeatIdx == -1)
             {
                 // we can't lock in with no seat
                 lockedIn = false;

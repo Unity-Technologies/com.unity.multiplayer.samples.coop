@@ -44,9 +44,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void OnDestroy()
         {
-            if( m_Portal != null )
+            if (m_Portal != null)
             {
-                if( m_Portal.NetManager != null)
+                if (m_Portal.NetManager != null)
                 {
                     m_Portal.NetManager.ConnectionApprovalCallback -= ApprovalCheck;
                     m_Portal.NetManager.OnServerStarted -= ServerStartedHandler;
@@ -71,7 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //may do this differently.
                 SceneLoaderWrapper.Instance.LoadScene("CharSelect");
 
-                if( m_Portal.NetManager.IsHost)
+                if (m_Portal.NetManager.IsHost)
                 {
                     m_ClientSceneMap[m_Portal.NetManager.LocalClientId] = ServerScene;
                 }
@@ -86,7 +86,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             m_ClientSceneMap.Remove(clientId);
 
-            if( clientId == m_Portal.NetManager.LocalClientId )
+            if (clientId == m_Portal.NetManager.LocalClientId)
             {
                 //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
@@ -116,9 +116,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public bool AreAllClientsInServerScene()
         {
-            foreach( var kvp in m_ClientSceneMap )
+            foreach (var kvp in m_ClientSceneMap)
             {
-                if( kvp.Value != ServerScene ) { return false; }
+                if (kvp.Value != ServerScene) { return false; }
             }
 
             return true;
