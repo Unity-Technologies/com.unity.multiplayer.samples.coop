@@ -189,16 +189,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             for (int possiblePlayerNum = 0; possiblePlayerNum < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNum)
             {
-                bool found = false;
-                foreach (CharSelectData.LobbyPlayerState playerState in CharSelectData.LobbyPlayers)
-                {
-                    if (playerState.PlayerNum == possiblePlayerNum)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
+                if (IsPlayerNumAvailable(possiblePlayerNum))
                 {
                     return possiblePlayerNum;
                 }
@@ -207,15 +198,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return -1;
         }
 
+        bool IsPlayerNumAvailable(int playerNum)
+        {
+            bool found = false;
+            foreach (CharSelectData.LobbyPlayerState playerState in CharSelectData.LobbyPlayers)
+            {
+                if (playerState.PlayerNum == playerNum)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            return !found;
+        }
+
         private void SeatNewPlayer(ulong clientId)
         {
             SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
             if (sessionPlayerData.HasValue)
             {
                 var playerData = sessionPlayerData.Value;
-                if (playerData.PlayerNum == -1)
+                if (playerData.PlayerNum == -1 || !IsPlayerNumAvailable(playerData.PlayerNum))
                 {
-                    // If no player num already assigned, get an available one.
+                    // If no player num already assigned or if player num is no longer available, get an available one.
                     playerData.PlayerNum = GetAvailablePlayerNum();
                 }
                 if (playerData.PlayerNum == -1)
