@@ -868,7 +868,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: HealPlayerBtn
+      value: HealPlayerButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -978,7 +978,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: KillTargetBtn
+      value: KillTargetButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1088,7 +1088,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: ToggleGodModeBtn
+      value: ToggleGodModeButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1198,7 +1198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: GoToPostGameBtn
+      value: GoToPostGameButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1308,7 +1308,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: SpawnImpBtn
+      value: SpawnImpButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1418,7 +1418,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: SpawnBossBtn
+      value: SpawnBossButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1528,7 +1528,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: DestroyRepairPortalsBtn
+      value: DestroyRepairPortalsButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1638,7 +1638,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: ToggleTeleportModeBtn
+      value: ToggleTeleportModeButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1748,7 +1748,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: ToggleSuperSpeedBtn
+      value: ToggleSuperSpeedButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1858,7 +1858,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: KillAllEnemiesBtn
+      value: KillAllEnemiesButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
@@ -1968,7 +1968,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5700619323602338841, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
       propertyPath: m_Name
-      value: ToggleDoorBtn
+      value: ToggleDoorButton
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2f2de97a89d7bef42919fd16c2f87f10, type: 3}
