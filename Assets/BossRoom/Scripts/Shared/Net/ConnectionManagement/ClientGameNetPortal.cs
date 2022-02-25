@@ -220,7 +220,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //and...we're off! Netcode will establish a socket connection to the host.
             //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
-            m_portal.NetManager.StartClient();
+            m_Portal.NetManager.StartClient();
             SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
