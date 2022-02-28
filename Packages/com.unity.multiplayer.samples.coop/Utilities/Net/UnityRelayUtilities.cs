@@ -10,7 +10,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public static class UnityRelayUtilities
     {
         private const string kDtlsConnType = "dtls";
-        public static string JoinCode { get; private set; } = string.Empty;
 
         public static async
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
@@ -34,7 +33,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             try
             {
                 joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
-                JoinCode = joinCode;
             }
             catch (Exception exception)
             {
@@ -54,7 +52,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             try
             {
                 allocation = await Relay.Instance.JoinAllocationAsync(joinCode);
-                JoinCode = joinCode;
             }
             catch (Exception exception)
             {
