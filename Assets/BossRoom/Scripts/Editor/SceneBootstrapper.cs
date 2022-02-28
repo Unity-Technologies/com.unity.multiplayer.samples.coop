@@ -1,7 +1,6 @@
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Editor
 {
@@ -34,6 +33,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         const string k_LoadBootstrapSceneOnPlay = "Boss Room/Load Bootstrap Scene On Play";
         const string k_DoNotLoadBootstrapSceneOnPlay = "Boss Room/Don't Load Bootstrap Scene On Play";
+
+        const string k_TestRunnerObjectName = "Code-based tests runner";
 
         static bool s_StoppingAndStarting;
 
@@ -100,13 +101,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         static void EditorApplicationOnplayModeStateChanged(PlayModeStateChange obj)
         {
-            // detects whether playmode has been initiated by a TestRunner Playmode test; if so disable Boostrap loading
-            for (int i = 0; i < SceneManager.sceneCount; i++)
+            if (IsTestRunnerActive())
             {
-                if (SceneManager.GetSceneAt(i).name.Contains("InitTestScene"))
-                {
-                    return;
-                }
+                return;
             }
 
             if (!LoadBootstrapScene)
@@ -166,6 +163,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                     EditorSceneManager.OpenScene(PreviousScene);
                 }
             }
+        }
+
+        static bool IsTestRunnerActive()
+        {
+            return GameObject.Find(k_TestRunnerObjectName);
         }
     }
 }
