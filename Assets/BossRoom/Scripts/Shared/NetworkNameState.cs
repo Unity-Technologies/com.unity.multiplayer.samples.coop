@@ -30,6 +30,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         public static implicit operator string(FixedPlayerName s) => s.ToString();
-        public static implicit operator FixedPlayerName(string s) => new FixedPlayerName() {m_Name = new FixedString32Bytes(s)};
+        public static implicit operator FixedPlayerName(string s) => new FixedPlayerName() { m_Name = new FixedString32Bytes(s) };
     }
 }

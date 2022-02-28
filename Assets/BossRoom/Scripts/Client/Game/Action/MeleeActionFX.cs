@@ -93,7 +93,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
             }
         }
-        
+
         private void PlayHitReact()
         {
             if (m_ImpactPlayed) { return; }
@@ -127,7 +127,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     if (targetNetworkObj.NetworkObjectId != m_Parent.NetworkObjectId)
                     {
                         string hitAnim = Description.ReactAnim;
-                        if(string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
+                        if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
                         var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
                         if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
                         {
