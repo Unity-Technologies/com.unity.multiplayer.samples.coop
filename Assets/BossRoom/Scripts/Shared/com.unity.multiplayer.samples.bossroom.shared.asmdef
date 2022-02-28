@@ -7,6 +7,7 @@
         "Unity.Services.Core",
         "Unity.Services.Authentication",
         "Unity.Services.Relay",
+        "Unity.Services.Lobbies",
         "Unity.Netcode.Adapter.UTP",
         "Unity.Collections",
         "Photon Realtime Transport for Netcode for GameObjects",

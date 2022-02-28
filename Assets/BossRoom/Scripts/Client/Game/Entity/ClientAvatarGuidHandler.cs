@@ -11,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     [RequireComponent(typeof(NetworkAvatarGuidState))]
     public class ClientAvatarGuidHandler : NetworkBehaviour
     {
-		[SerializeField]
+        [SerializeField]
         Animator m_GraphicsAnimator;
 
         [SerializeField]

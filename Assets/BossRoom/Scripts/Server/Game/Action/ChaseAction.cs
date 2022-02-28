@@ -72,7 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private bool StopIfDone()
         {
-            if(m_TargetTransform == null )
+            if (m_TargetTransform == null)
             {
                 //if the target disappeared on us, then just stop.
                 Cancel();

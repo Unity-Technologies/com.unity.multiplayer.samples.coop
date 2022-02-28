@@ -12,9 +12,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         public NetworkVariable<bool> IsBroken;
 
-        public bool IsNpc { get { return true;  } }
+        public bool IsNpc { get { return true; } }
 
-        public bool IsValidTarget {  get { return !IsBroken.Value; } }
+        public bool IsValidTarget { get { return !IsBroken.Value; } }
     }
 
 }
