@@ -14,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <summary>
         /// Event that gets invoked when the navigation mesh changed. This happens when dynamic obstacles move or get active
         /// </summary>
-        public event System.Action OnNavigationMeshChanged = delegate{};
+        public event System.Action OnNavigationMeshChanged = delegate { };
 
         /// <summary>
         /// Whether all paths need to be recalculated in the next fixed update.
