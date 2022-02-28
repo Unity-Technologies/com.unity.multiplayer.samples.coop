@@ -36,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override void OnNetworkDespawn()
         {
-            if( m_NetState != null )
+            if (m_NetState != null)
             {
                 transform.parent = m_Parent;
                 m_NetState.HitEnemyEvent -= OnEnemyHit;

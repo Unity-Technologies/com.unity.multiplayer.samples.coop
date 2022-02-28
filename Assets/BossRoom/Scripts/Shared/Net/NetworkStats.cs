@@ -71,7 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             InitializeTextLine("No Stat", out m_TextStat);
         }
 
-        private void InitializeTextLine(string defaultText, out Text textComponent )
+        private void InitializeTextLine(string defaultText, out Text textComponent)
         {
             GameObject rootGO = new GameObject("UI Stat Text");
             textComponent = rootGO.AddComponent<Text>();
@@ -120,13 +120,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
 
         [ServerRpc]
-        public void PingServerRPC(int pingId, ServerRpcParams serverParams=default)
+        public void PingServerRPC(int pingId, ServerRpcParams serverParams = default)
         {
             PongClientRPC(pingId, m_PongClientParams);
         }
 
         [ClientRpc]
-        public void PongClientRPC(int pingId, ClientRpcParams clientParams=default)
+        public void PongClientRPC(int pingId, ClientRpcParams clientParams = default)
         {
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);
@@ -156,7 +156,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 Destroy(m_TextStat.gameObject);
             }
-            if( m_TextHostType != null )
+            if (m_TextHostType != null)
             {
                 Destroy(m_TextHostType.gameObject);
             }

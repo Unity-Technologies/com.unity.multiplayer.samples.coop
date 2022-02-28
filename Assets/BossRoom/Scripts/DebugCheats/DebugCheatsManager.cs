@@ -45,11 +45,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         void Update()
         {
-            if (Input.touchCount == k_NbTouchesToOpenWindow ||
+            if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
                 m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
             {
                 m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
             }
+        }
+
+        static bool AnyTouchDown()
+        {
+            foreach (var touch in Input.touches)
+            {
+                if (touch.phase == TouchPhase.Began)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void SpawnEnemy()
@@ -62,9 +74,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             SpawnBossServerRpc();
         }
 
-        public void KillRandomEnemy()
+        public void KillTarget()
         {
-            LogCheatNotImplemented("KillRandomEnemy");
+            LogCheatNotImplemented("KillTarget");
         }
 
         public void KillAllEnemies()
@@ -80,11 +92,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         public void HealPlayer()
         {
             LogCheatNotImplemented("HealPlayer");
-        }
-
-        public void KillPlayer()
-        {
-            LogCheatNotImplemented("KillPlayer");
         }
 
         public void ToggleSuperSpeed()
@@ -131,12 +138,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         [ServerRpc(RequireOwnership = false)]
         void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            ulong clientId = serverRpcParams.Receive.SenderClientId;
+            var clientId = serverRpcParams.Receive.SenderClientId;
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
                 playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
-                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
+                LogCheatUsedClientRPC(clientId, "ToggleGodMode");
             }
         }
 
@@ -167,7 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             UnityEngine.Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
         }
 
-        void LogCheatNotImplemented(string cheat)
+        static void LogCheatNotImplemented(string cheat)
         {
             UnityEngine.Debug.Log($"Cheat {cheat} not implemented");
         }

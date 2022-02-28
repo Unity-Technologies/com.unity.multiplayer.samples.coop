@@ -12,7 +12,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private GameObject m_BrokenPrefab;
 
-        [SerializeField][Tooltip("If set, will be used instead of BrokenPrefab when new players join, skipping transition effects.")]
+        [SerializeField]
+        [Tooltip("If set, will be used instead of BrokenPrefab when new players join, skipping transition effects.")]
         private GameObject m_PrebrokenPrefab;
 
         [SerializeField]

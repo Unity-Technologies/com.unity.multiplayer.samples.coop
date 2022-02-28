@@ -1,5 +1,4 @@
 using System;
-using Netcode.Transports.PhotonRealtime;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
@@ -28,11 +27,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                 switch (chosenTransport)
                 {
                     case UNetTransport unetTransport:
-                    case PhotonRealtimeTransport photonTransport:
                         m_ArtificialLatencyEnabled = false;
                         break;
                     case UnityTransport unityTransport:
-// adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
+                        // adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
                         SimulatorUtility.Parameters simulatorParameters = unityTransport.ClientSimulatorParameters;
                         m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMs > 0 ||

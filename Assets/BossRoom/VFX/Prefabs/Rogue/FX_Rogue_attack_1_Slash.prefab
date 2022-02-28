@@ -6245,7 +6245,7 @@ ParticleSystem:
       maxColor: {r: 1, g: 1, b: 1, a: 1}
       maxGradient:
         serializedVersion: 2
-        key0: {r: 1, g: 1, b: 1, a: 0.49019608}
+        key0: {r: 1, g: 1, b: 1, a: 0}
         key1: {r: 1, g: 1, b: 1, a: 1}
         key2: {r: 0, g: 0, b: 0, a: 0.19607843}
         key3: {r: 0, g: 0, b: 0, a: 0}
@@ -6261,7 +6261,7 @@ ParticleSystem:
         ctime5: 0
         ctime6: 0
         ctime7: 0
-        atime0: 0
+        atime0: 19661
         atime1: 32768
         atime2: 65346
         atime3: 0
@@ -9761,4 +9761,3 @@ MonoBehaviour:
   m_ParticleSystemsToTurnOffOnShutdown: []
   m_AutoShutdownTime: 1
   m_PostShutdownSelfDestructTime: -1
-  m_SoundsToTurnOffOnShutdown: []
