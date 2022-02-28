@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
         /// </summary>
-        public DisconnectReason DisconnectReason { get; private set; } = new DisconnectReason();
+        public DisconnectReason DisconnectReason { get; } = new DisconnectReason();
 
         /// <summary>
         /// Time in seconds before the client considers a lack of server response a timeout
@@ -37,11 +37,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public event Action NetworkTimedOut;
 
         private LobbyServiceFacade m_LobbyServiceFacade;
+        IPublisher<ConnectStatus> m_ConnectStatusPub;
 
         [Inject]
-        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
+        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub)
         {
             m_LobbyServiceFacade = lobbyServiceFacade;
+            m_ConnectStatusPub = connectStatusPub;
         }
 
         private void Awake()
@@ -133,14 +135,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
-
-                    SceneManager.LoadScene("MainMenu");
+                    SceneManager.LoadSceneAsync("MainMenu");
                 }
                 else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
                 {
                     // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
+                m_ConnectStatusPub.Publish(DisconnectReason.Reason);
+                DisconnectReason.Clear();
             }
         }
 

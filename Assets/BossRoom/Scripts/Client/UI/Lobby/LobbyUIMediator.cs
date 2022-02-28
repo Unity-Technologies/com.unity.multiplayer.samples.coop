@@ -49,8 +49,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ClientNetPortal.ConnectFinished += OnConnectFinished;
 
             //any disconnect reason set? Show it to the user here.
-            ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
-            m_ClientNetPortal.DisconnectReason.Clear();
+            /*ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
+            m_ClientNetPortal.DisconnectReason.Clear();*/
         }
 
         void OnDestroy()
@@ -157,6 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             void OnRelayJoinFailed(string message)
             {
+                PopupPanel.ShowPopupPanel("Relay join failed", message);
                 Debug.Log($"Relay join failed: {message}");
                 //leave the lobby if relay failed for some reason
                 m_LobbyServiceFacade.EndTracking();
@@ -248,21 +249,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ConnectStatus.UserRequestedDisconnect:
                     break;
                 case ConnectStatus.ServerFull:
-                    Debug.Log("Connection Failed, The Host is full and cannot accept any additional connections");
+                    PopupPanel.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
                     break;
                 case ConnectStatus.Success:
                     if (connecting)
                     {
-                        Debug.Log("Success!, Joining Now");
+                        PopupPanel.ShowPopupPanel("Success!", "Joining Now...");
                     }
                     break;
                 case ConnectStatus.LoggedInAgain:
-                    Debug.Log("Connection Failed, You have logged in elsewhere using the same account");
+                    PopupPanel.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account.");
                     break;
                 case ConnectStatus.GenericDisconnect:
                     var title = connecting ? "Connection Failed" : "Disconnected From Host";
                     var text = connecting ? "Something went wrong" : "The connection to the host was lost";
-                    Debug.Log($"{title}, {text}");
+                    PopupPanel.ShowPopupPanel(title, text);
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
