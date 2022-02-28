@@ -60,14 +60,49 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             SpawnBossServerRpc();
         }
 
-        public void GoToPostGame()
+        public void KillTarget()
         {
-            GoToPostGameServerRpc();
+            LogCheatNotImplemented("KillTarget");
+        }
+
+        public void KillAllEnemies()
+        {
+            LogCheatNotImplemented("KillAllEnemies");
         }
 
         public void ToggleGodMode()
         {
             ToggleGodModeServerRpc();
+        }
+
+        public void HealPlayer()
+        {
+            LogCheatNotImplemented("HealPlayer");
+        }
+
+        public void ToggleSuperSpeed()
+        {
+            LogCheatNotImplemented("ToggleSuperSpeed");
+        }
+
+        public void ToggleTeleportMode()
+        {
+            LogCheatNotImplemented("ToggleTeleportMode");
+        }
+
+        public void ToggleDoor()
+        {
+            LogCheatNotImplemented("ToggleDoor");
+        }
+
+        public void TogglePortals()
+        {
+            LogCheatNotImplemented("TogglePortals");
+        }
+
+        public void GoToPostGame()
+        {
+            GoToPostGameServerRpc();
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -87,30 +122,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         }
 
         [ServerRpc(RequireOwnership = false)]
+        void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            var clientId = serverRpcParams.Receive.SenderClientId;
+            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
+            if (playerServerCharacter != null)
+            {
+                playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
+                LogCheatUsedClientRPC(clientId, "ToggleGodMode");
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
         void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
         {
             NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
         }
 
-        [ServerRpc(RequireOwnership = false)]
-        void ToggleGodModeServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            ulong clientId = serverRpcParams.Receive.SenderClientId;
-            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
-            {
-                if (playerServerCharacter.OwnerClientId == clientId)
-                {
-                    playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
-                }
-            }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleGodMode");
-        }
-
         [ClientRpc]
         void LogCheatUsedClientRPC(ulong clientId, string cheatUsed)
         {
             UnityEngine.Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
+        }
+
+        static void LogCheatNotImplemented(string cheat)
+        {
+            UnityEngine.Debug.Log($"Cheat {cheat} not implemented");
         }
 
 #else
