@@ -6,12 +6,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// </summary>
     public class ClientBossRoomState : GameStateBehaviour
     {
-        public override GameState ActiveState {  get { return GameState.BossRoom; } }
+        public override GameState ActiveState { get { return GameState.BossRoom; } }
 
 
         public override void OnNetworkSpawn()
         {
-            if( !IsClient ) { this.enabled = false; }
+            if (!IsClient) { this.enabled = false; }
         }
 
     }
