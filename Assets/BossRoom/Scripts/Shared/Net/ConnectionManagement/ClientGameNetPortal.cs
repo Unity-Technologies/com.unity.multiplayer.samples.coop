@@ -131,7 +131,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
-                    SceneManager.LoadSceneAsync("MainMenu");
+                    SceneManager.LoadScene("MainMenu");
                 }
                 else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
                 {
