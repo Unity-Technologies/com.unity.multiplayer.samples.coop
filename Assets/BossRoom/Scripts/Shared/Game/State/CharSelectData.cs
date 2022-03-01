@@ -26,17 +26,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             private FixedPlayerName m_PlayerName; // I'm sad there's no 256Bytes fixed list :(
 
-            public int PlayerNum; // this player's assigned "P#". (0=P1, 1=P2, etc.)
+            public int PlayerNumber; // this player's assigned "P#". (0=P1, 1=P2, etc.)
             public int SeatIdx; // the latest seat they were in. -1 means none
             public float LastChangeTime;
 
             public SeatState SeatState;
 
 
-            public LobbyPlayerState(ulong clientId, string name, int playerNum, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
+            public LobbyPlayerState(ulong clientId, string name, int playerNumber, SeatState state, int seatIdx = -1, float lastChangeTime = 0)
             {
                 ClientId = clientId;
-                PlayerNum = playerNum;
+                PlayerNumber = playerNumber;
                 SeatState = state;
                 SeatIdx = seatIdx;
                 LastChangeTime = lastChangeTime;
@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 serializer.SerializeValue(ref ClientId);
                 serializer.SerializeValue(ref m_PlayerName);
-                serializer.SerializeValue(ref PlayerNum);
+                serializer.SerializeValue(ref PlayerNumber);
                 serializer.SerializeValue(ref SeatState);
                 serializer.SerializeValue(ref SeatIdx);
                 serializer.SerializeValue(ref LastChangeTime);
@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 return ClientId == other.ClientId &&
                        m_PlayerName.Equals(other.m_PlayerName) &&
-                       PlayerNum == other.PlayerNum &&
+                       PlayerNumber == other.PlayerNumber &&
                        SeatIdx == other.SeatIdx &&
                        LastChangeTime.Equals(other.LastChangeTime) &&
                        SeatState == other.SeatState;
