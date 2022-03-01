@@ -1,10 +1,6 @@
 using System;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -18,10 +14,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         TextMeshProUGUI m_MainText;
 
+        bool m_IsPopupShown;
+
         static PopupPanel s_Instance;
 
         void Awake()
         {
+            if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
             s_Instance = this;
             ResetState();
         }
@@ -44,6 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_TitleText.text = string.Empty;
             m_MainText.text = string.Empty;
             gameObject.SetActive(false);
+            m_IsPopupShown = false;
         }
 
         /// <summary>
@@ -51,12 +51,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
-        /// <param name="confirmFunction"> The function to call when the confirm button is pressed.</param>
-        public static void ShowPopupPanel(string titleText, string mainText, Action confirmFunction = null)
+        public static void ShowPopupPanel(string titleText, string mainText)
         {
             if (s_Instance != null)
             {
-                s_Instance.SetupPopupPanel(titleText, mainText, confirmFunction);
+                s_Instance.SetupPopupPanel(titleText, mainText);
             }
             else
             {
@@ -64,14 +63,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void SetupPopupPanel(string titleText, string mainText, Action confirmFunction = null)
+        void SetupPopupPanel(string titleText, string mainText)
         {
-            ResetState();
+            if (m_IsPopupShown)
+            {
+                Debug.Log("Trying to show popup, but another popup is already being shown.");
+                Debug.Log($"{titleText}. {mainText}");
+            }
+            else
+            {
+                ResetState();
 
-            m_TitleText.text = titleText;
-            m_MainText.text = mainText;
+                m_TitleText.text = titleText;
+                m_MainText.text = mainText;
 
-            gameObject.SetActive(true);
+                gameObject.SetActive(true);
+                m_IsPopupShown = true;
+            }
         }
     }
 }
