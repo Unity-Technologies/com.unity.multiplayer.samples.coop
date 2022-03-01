@@ -17,14 +17,30 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
+      - name: Checkout github repo (+ download lfs dependencies)
+        # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+        uses: actions/checkout@v2
+        with:
+          lfs: true
+      - name: Checkout LFS objects
+        run: git lfs checkout
 
       # Find in project settings if there's any value in between "cloudProjectId: " and end of line.
       - name: Run a one-line script
-        run: python3 -c "import re; import sys;res = re.search(r'.*cloudProjectId:.*\w+\n', open('ProjectSettings/ProjectSettings.asset').read())!=None;status = 1 if res else 0; sys.exit(res)"
+        run: python3 -c "import re; import sys;content=open('ProjectSettings/ProjectSettings.asset').read();res = re.search(r'.*cloudProjectId:.*\w+\s*\n', content)!=None;status = 1 if res else 0; print('status '+str(status)); sys.exit(res)"
 
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         run: |
           echo Action done checking
+      - name: Post to slack on failure
+        if: ${{ failure() }}
+        uses: slackapi/slack-github-action@v1.18.0
+        with:
+            # Slack channel id, channel name, or user id to post message.
+            # See also: https://api.slack.com/methods/chat.postMessage#channels
+            channel-id: 'C034Z1T2MPC' # sam-test-github TODO change to actual channel
+            # For posting a simple plain text message
+            slack-message: "Project ID LEAK DETECTED: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+        env:
+            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
