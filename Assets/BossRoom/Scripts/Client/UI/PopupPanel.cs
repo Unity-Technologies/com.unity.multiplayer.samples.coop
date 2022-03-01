@@ -18,11 +18,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         TextMeshProUGUI m_MainText;
 
-        /// <summary>
-        /// Confirm function invoked when confirm is hit on popup
-        /// </summary>
-        Action m_ConfirmFunction;
-
         static PopupPanel s_Instance;
 
         void Awake()
@@ -38,7 +33,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnConfirmClick()
         {
-            m_ConfirmFunction?.Invoke();
             ResetState();
         }
 
@@ -49,7 +43,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_TitleText.text = string.Empty;
             m_MainText.text = string.Empty;
-            m_ConfirmFunction = null;
             gameObject.SetActive(false);
         }
 
@@ -78,7 +71,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_TitleText.text = titleText;
             m_MainText.text = mainText;
 
-            m_ConfirmFunction = confirmFunction;
             gameObject.SetActive(true);
         }
     }
