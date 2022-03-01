@@ -43,4 +43,4 @@ jobs:
             # For posting a simple plain text message
             slack-message: "Project ID LEAK DETECTED: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
-            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+            SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} # can be found in https://api.slack.com/apps/
