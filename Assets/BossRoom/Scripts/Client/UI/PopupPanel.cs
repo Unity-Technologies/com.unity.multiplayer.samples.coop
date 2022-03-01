@@ -1,10 +1,7 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -13,10 +10,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// </summary>
     public class PopupPanel : MonoBehaviour
     {
+        struct PopupPanelData
+        {
+            public string TitleText;
+            public string MainText;
+
+            public PopupPanelData(string titleText, string mainText)
+            {
+                TitleText = titleText;
+                MainText = mainText;
+            }
+        }
+
         [SerializeField]
         TextMeshProUGUI m_TitleText;
         [SerializeField]
         TextMeshProUGUI m_MainText;
+
+        Stack<PopupPanelData> m_PopupStack = new Stack<PopupPanelData>();
 
         static PopupPanel s_Instance;
 
@@ -34,6 +45,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void OnConfirmClick()
         {
             ResetState();
+            if (m_PopupStack.Count > 0)
+            {
+                SetupPopupPanel(m_PopupStack.Pop());
+            }
         }
 
         /// <summary>
@@ -52,11 +67,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
         /// <param name="confirmFunction"> The function to call when the confirm button is pressed.</param>
-        public static void ShowPopupPanel(string titleText, string mainText, Action confirmFunction = null)
+        public static void ShowPopupPanel(string titleText, string mainText)
         {
             if (s_Instance != null)
             {
-                s_Instance.SetupPopupPanel(titleText, mainText, confirmFunction);
+                s_Instance.StackPopupPanel(new PopupPanelData(titleText, mainText));
             }
             else
             {
@@ -64,12 +79,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void SetupPopupPanel(string titleText, string mainText, Action confirmFunction = null)
+        void StackPopupPanel(PopupPanelData data)
+        {
+            m_PopupStack.Push(data);
+            SetupPopupPanel(data);
+        }
+
+        void SetupPopupPanel(PopupPanelData data)
         {
             ResetState();
 
-            m_TitleText.text = titleText;
-            m_MainText.text = mainText;
+            m_TitleText.text = data.TitleText;
+            m_MainText.text = data.MainText;
 
             gameObject.SetActive(true);
         }

@@ -3,18 +3,21 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
 public class ConnectionStatusMessageUIManager : MonoBehaviour
 {
 
-    IDisposable m_Subscriptions;
+    DisposableGroup m_Subscriptions = new DisposableGroup();
 
     [Inject]
-    void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSub)
+    void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSub,
+        ISubscriber<UnityServiceErrorMessage> unityServiceErrorMessageSub)
     {
-        m_Subscriptions = connectStatusSub.Subscribe(OnConnectStatus);
+        m_Subscriptions.Add(connectStatusSub.Subscribe(OnConnectStatus));
+        m_Subscriptions.Add(unityServiceErrorMessageSub.Subscribe(OnUnityServiceErrorMessage));
     }
 
     void Awake()
@@ -25,6 +28,11 @@ public class ConnectionStatusMessageUIManager : MonoBehaviour
     void OnDestroy()
     {
         m_Subscriptions?.Dispose();
+    }
+
+    void OnUnityServiceErrorMessage(UnityServiceErrorMessage unityServiceErrorMessage)
+    {
+        PopupPanel.ShowPopupPanel(unityServiceErrorMessage.Title, unityServiceErrorMessage.Message);
     }
 
     void OnConnectStatus(ConnectStatus status)

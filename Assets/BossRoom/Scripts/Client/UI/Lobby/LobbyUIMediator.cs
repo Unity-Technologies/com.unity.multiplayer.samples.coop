@@ -24,6 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         NameGenerationData m_NameGenerationData;
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
+        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
         [Inject]
         void InjectDependenciesAndInitialize(
@@ -42,6 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LocalLobby = localLobby;
             m_GameNetPortal = gameNetPortal;
             m_ClientNetPortal = clientGameNetPortal;
+            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
 
             RegenerateName();
 
@@ -151,7 +153,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             void OnRelayJoinFailed(string message)
             {
-                PopupPanel.ShowPopupPanel("Relay join failed", message);
+                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Relay join failed", message));
                 Debug.Log($"Relay join failed: {message}");
                 //leave the lobby if relay failed for some reason
                 m_LobbyServiceFacade.EndTracking();
