@@ -117,9 +117,8 @@ namespace Unity.Multiplayer.Samples.Utilities
                     case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
                         m_ClientLoadingScreen.StopLoadingScreen();
                         break;
-                    case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
-                        // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing
-                        m_ClientLoadingScreen.StopLoadingScreen();
+                    case SceneEventType.SynchronizeComplete: // Client has finished synchronizing
+                        m_ClientLoadingScreen.StopLoadingScreen(true);
                         break;
                 }
             }

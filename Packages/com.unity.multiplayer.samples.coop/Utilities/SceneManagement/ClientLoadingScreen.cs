@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         CanvasGroup m_CanvasGroup;
 
         [SerializeField]
-        float m_DelayBeforeFadeOut = 1;
+        float m_DelayBeforeFadeOut = 0.5f;
 
         [SerializeField]
         float m_FadeOutDuration = 1;
@@ -51,7 +51,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        public void StopLoadingScreen()
+        public void StopLoadingScreen(bool isLateJoin = false)
         {
             if (m_LoadingScreenRunning)
             {
@@ -80,11 +80,12 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        IEnumerator FadeOutCoroutine()
+        IEnumerator FadeOutCoroutine(bool isLateJoin = false)
         {
             m_ProgressBar.value = 1;
             float currentTime = 0;
-            while (currentTime < m_DelayBeforeFadeOut)
+            float delayBeforeFadeOut = isLateJoin ? 2 * m_DelayBeforeFadeOut : m_DelayBeforeFadeOut;
+            while (currentTime < delayBeforeFadeOut)
             {
                 yield return null;
                 currentTime += Time.deltaTime;
