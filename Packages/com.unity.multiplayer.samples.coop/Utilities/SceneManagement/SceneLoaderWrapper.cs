@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
-    public class SceneLoaderWrapper : NetworkBehaviour
+    public class SceneLoaderWrapper : MonoBehaviour
     {
         /// <summary>
         /// Manages a loading screen by wrapping around scene management APIs. It loads scene using the SceneManager,
@@ -15,6 +15,9 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         [SerializeField]
         ClientLoadingScreen m_ClientLoadingScreen;
+
+        [SerializeField]
+        NetworkManager m_NetworkManager;
 
         public static SceneLoaderWrapper Instance { get; private set; }
 
@@ -36,14 +39,13 @@ namespace Unity.Multiplayer.Samples.Utilities
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        public override void OnDestroy()
+        public void OnDestroy()
         {
-            if (NetworkManager != null && NetworkManager.SceneManager != null)
+            if (m_NetworkManager != null && m_NetworkManager.SceneManager != null)
             {
-                NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+                m_NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
             SceneManager.sceneLoaded -= OnSceneLoaded;
-            base.OnDestroy();
         }
 
         /// <summary>
@@ -52,9 +54,9 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// </summary>
         public void AddOnSceneEventCallback()
         {
-            if (NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement)
+            if (m_NetworkManager != null && m_NetworkManager.SceneManager != null && m_NetworkManager.NetworkConfig.EnableSceneManagement)
             {
-                NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
+                m_NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
             }
         }
 
@@ -67,12 +69,12 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
         public void LoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
-            if (NetworkManager != null && NetworkManager.IsListening && NetworkManager.NetworkConfig.EnableSceneManagement)
+            if (m_NetworkManager != null && m_NetworkManager.IsListening && m_NetworkManager.NetworkConfig.EnableSceneManagement)
             {
-                if (NetworkManager.IsServer)
+                if (m_NetworkManager.IsServer)
                 {
                     // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
-                    NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+                    m_NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
                 }
             }
             else
@@ -88,7 +90,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (NetworkManager == null || !NetworkManager.IsListening || !NetworkManager.NetworkConfig.EnableSceneManagement)
+            if (m_NetworkManager == null || !m_NetworkManager.IsListening || !m_NetworkManager.NetworkConfig.EnableSceneManagement)
             {
                 m_ClientLoadingScreen.StopLoadingScreen();
             }
@@ -96,12 +98,12 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneEvent(SceneEvent sceneEvent)
         {
-            switch (sceneEvent.SceneEventType)
+            // Only executes on client
+            if (m_NetworkManager.IsClient)
             {
-                case SceneEventType.Load: // Server told client to load a scene
-                    // Only executes on client
-                    if (IsClient)
-                    {
+                switch (sceneEvent.SceneEventType)
+                {
+                    case SceneEventType.Load: // Server told client to load a scene
                         // Only start a new loading screen if scene loaded in Single mode, else simply update
                         if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
                         {
@@ -111,30 +113,16 @@ namespace Unity.Multiplayer.Samples.Utilities
                         {
                             m_ClientLoadingScreen.UpdateLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
                         }
-                    }
-                    break;
-                case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
-                    // Only executes on client
-                    if (IsClient)
-                    {
+                        break;
+                    case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
                         m_ClientLoadingScreen.StopLoadingScreen();
-                    }
-                    break;
-                case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
-                    // Only executes on server
-                    if (IsServer)
-                    {
+                        break;
+                    case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
                         // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing
-                        StopLoadingScreenClientRpc(new ClientRpcParams {Send = new ClientRpcSendParams {TargetClientIds = new[] {sceneEvent.ClientId}}});
-                    }
-                    break;
+                        m_ClientLoadingScreen.StopLoadingScreen();
+                        break;
+                }
             }
-        }
-
-        [ClientRpc]
-        void StopLoadingScreenClientRpc(ClientRpcParams clientRpcParams = default)
-        {
-            m_ClientLoadingScreen.StopLoadingScreen();
         }
     }
 }

@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         CanvasGroup m_CanvasGroup;
 
         [SerializeField]
-        float m_DelayBeforeFadeOut = 0.5f;
+        float m_DelayBeforeFadeOut = 1;
 
         [SerializeField]
         float m_FadeOutDuration = 1;
