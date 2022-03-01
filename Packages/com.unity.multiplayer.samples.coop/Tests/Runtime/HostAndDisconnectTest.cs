@@ -92,10 +92,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
             yield return TestUtilities.AssertIsNetworkSceneLoaded(k_BossRoomSceneName, m_NetworkManager.SceneManager);
 
-            // shutting down NetworkManager too soon after loading networked scene generates undefined behaviour
-            // the wait below is just a temporary workaround to assure NetworkManager is ready to shut down
-            yield return new WaitForSeconds(1f);
-
             // once loaded into BossRoom scene, disconnect
             var uiQuitPanel = GameObject.FindObjectOfType<UIQuitPanel>(true);
             Assert.That(uiQuitPanel != null, $"{nameof(UIQuitPanel)} component not found!");
