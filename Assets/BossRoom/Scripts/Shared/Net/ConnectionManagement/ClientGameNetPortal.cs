@@ -28,8 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         private const int k_TimeoutDuration = 10;
 
-        public event Action<ConnectStatus> ConnectFinished;
-
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
         /// time from the host.
@@ -109,8 +107,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //this indicates a game level failure, rather than a network failure. See note in ServerGameNetPortal.
                 DisconnectReason.SetDisconnectReason(status);
             }
-
-            ConnectFinished?.Invoke(status);
         }
 
         private void OnDisconnectReasonReceived(ConnectStatus status)

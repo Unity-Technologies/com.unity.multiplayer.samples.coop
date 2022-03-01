@@ -23,8 +23,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         Action m_ConfirmFunction;
 
-        IDisposable m_Subscriptions;
-
         static PopupPanel s_Instance;
 
         void Awake()
@@ -36,41 +34,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void OnDestroy()
         {
             s_Instance = null;
-            m_Subscriptions?.Dispose();
-        }
-
-        [Inject]
-        void InjectDependencies(
-            ISubscriber<UnityServiceErrorMessage> unityServiceErrorMessageSub,
-            ISubscriber<ConnectStatus> connectStatusSub)
-        {
-            m_Subscriptions = connectStatusSub.Subscribe(OnConnectStatus);
-        }
-
-        void OnConnectStatus(ConnectStatus status)
-        {
-            switch (status)
-            {
-                case ConnectStatus.Undefined:
-                case ConnectStatus.UserRequestedDisconnect:
-                    break;
-                case ConnectStatus.ServerFull:
-                    SetupNotifierDisplay("Connection Failed", "The Host is full and cannot accept any additional connections.");
-                    break;
-                case ConnectStatus.Success:
-                    break;
-                case ConnectStatus.LoggedInAgain:
-                    SetupNotifierDisplay("Connection Failed", "You have logged in elsewhere using the same account.");
-                    break;
-                case ConnectStatus.GenericDisconnect:
-                    var title = false ? "Connection Failed" : "Disconnected From Host";
-                    var text = false ? "Something went wrong" : "The connection to the host was lost";
-                    SetupNotifierDisplay(title, text);
-                    break;
-                default:
-                    Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
-                    break;
-            }
         }
 
         public void OnConfirmClick()
@@ -100,7 +63,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (s_Instance != null)
             {
-                s_Instance.SetupNotifierDisplay(titleText, mainText, confirmFunction);
+                s_Instance.SetupPopupPanel(titleText, mainText, confirmFunction);
             }
             else
             {
@@ -108,7 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void SetupNotifierDisplay(string titleText, string mainText, Action confirmFunction = null)
+        void SetupPopupPanel(string titleText, string mainText, Action confirmFunction = null)
         {
             ResetState();
 
