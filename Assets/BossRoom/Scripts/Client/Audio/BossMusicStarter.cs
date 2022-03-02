@@ -29,10 +29,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         void OnDestroy()
         {
             var netState = GetComponent<NetworkCharacterState>();
-            if( netState != null )
+            if (netState != null)
             {
                 netState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
-                if( netState.HealthState != null )
+                if (netState.HealthState != null)
                 {
                     netState.HealthState.HitPoints.OnValueChanged -= OnHealthChanged;
                 }
@@ -41,7 +41,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
-            if (newValue!= LifeState.Alive)
+            if (newValue != LifeState.Alive)
             {
                 // players won! Start victory theme
                 ClientMusicPlayer.Instance.PlayVictoryMusic();

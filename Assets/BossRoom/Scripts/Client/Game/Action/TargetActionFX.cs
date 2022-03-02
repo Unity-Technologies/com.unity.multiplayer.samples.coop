@@ -30,15 +30,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return true;
         }
 
-        private void OnTargetChanged(ulong oldTarget, ulong newTarget )
+        private void OnTargetChanged(ulong oldTarget, ulong newTarget)
         {
             m_NewTarget = newTarget;
         }
 
-        private void OnActionInput(ActionRequestData data )
+        private void OnActionInput(ActionRequestData data)
         {
             //this method runs on the owning client, and allows us to anticipate our new target for purposes of FX visualization.
-            if( data.ActionTypeEnum == ActionType.GeneralTarget )
+            if (data.ActionTypeEnum == ActionType.GeneralTarget)
             {
                 m_NewTarget = data.TargetIds[0];
             }
@@ -46,20 +46,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Update()
         {
-            if( m_CurrentTarget != m_NewTarget )
+            if (m_CurrentTarget != m_NewTarget)
             {
                 m_CurrentTarget = m_NewTarget;
 
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject ) )
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_CurrentTarget, out NetworkObject targetObject))
                 {
                     var targetEntity = targetObject != null ? targetObject.GetComponent<ITargetable>() : null;
-                    if( targetEntity != null )
+                    if (targetEntity != null)
                     {
                         ValidateReticule(targetObject);
                         m_TargetReticule.SetActive(true);
 
                         var parentTransform = targetObject.transform;
-                        if( targetObject.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject )
+                        if (targetObject.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject)
                         {
                             //for characters, attach the reticule to the child graphics object.
                             parentTransform = clientCharacter.ChildVizObject.transform;
@@ -90,7 +90,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private void ValidateReticule(NetworkObject targetObject)
         {
-            if( m_TargetReticule == null )
+            if (m_TargetReticule == null)
             {
                 m_TargetReticule = Object.Instantiate(m_Parent.TargetReticulePrefab);
             }
@@ -108,7 +108,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             GameObject.Destroy(m_TargetReticule);
 
             m_ParentState.TargetId.OnValueChanged -= OnTargetChanged;
-            if( m_ParentState.TryGetComponent(out Client.ClientInputSender inputSender))
+            if (m_ParentState.TryGetComponent(out Client.ClientInputSender inputSender))
             {
                 inputSender.ActionInputEvent -= OnActionInput;
             }

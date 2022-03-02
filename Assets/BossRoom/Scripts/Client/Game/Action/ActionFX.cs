@@ -95,17 +95,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <returns>If true ActionVisualization should pre-emptively create the ActionFX on the owning client, before hearing back from the server.</returns>
         public static bool ShouldAnticipate(ActionVisualization parent, ref ActionRequestData data)
         {
-            if( !parent.Parent.CanPerformActions ) { return false; }
+            if (!parent.Parent.CanPerformActions) { return false; }
 
             var actionDescription = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
 
             //for actions with ShouldClose set, we check our range locally. If we are out of range, we shouldn't anticipate, as we will
             //need to execute a ChaseAction (synthesized on the server) prior to actually playing the skill.
             bool isTargetEligible = true;
-            if( data.ShouldClose == true )
+            if (data.ShouldClose == true)
             {
                 ulong targetId = (data.TargetIds != null && data.TargetIds.Length > 0) ? data.TargetIds[0] : 0;
-                if(NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject networkObject ) )
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject networkObject))
                 {
                     float rangeSquared = actionDescription.Range * actionDescription.Range;
                     isTargetEligible = (networkObject.transform.position - parent.Parent.transform.position).sqrMagnitude < rangeSquared;
@@ -169,8 +169,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             Anticipated = true;
             TimeStarted = UnityEngine.Time.time;
-            
-            if(!string.IsNullOrEmpty(Description.AnimAnticipation))
+
+            if (!string.IsNullOrEmpty(Description.AnimAnticipation))
             {
                 m_Parent.OurAnimator.SetTrigger(Description.AnimAnticipation);
             }

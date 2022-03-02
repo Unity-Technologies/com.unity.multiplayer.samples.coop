@@ -165,7 +165,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (m_MoveRequest)
             {
                 m_MoveRequest = false;
-                if ( (Time.time - m_LastSentMove) > k_MoveSendRateSeconds)
+                if ((Time.time - m_LastSentMove) > k_MoveSendRateSeconds)
                 {
                     m_LastSentMove = Time.time;
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
@@ -229,7 +229,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 SendInput(playerAction);
             }
-            else if(actionType != ActionType.GeneralTarget )
+            else if (actionType != ActionType.GeneralTarget)
             {
                 // clicked on nothing... perform an "untargeted" attack on the spot they clicked on.
                 // (Different Actions will deal with this differently. For some, like archer arrows, this will fire an arrow
@@ -265,7 +265,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             //sanity check that this is indeed a valid target.
-            if(targetNetObj==null || !ActionUtils.IsValidTarget(targetNetObj.NetworkObjectId))
+            if (targetNetObj == null || !ActionUtils.IsValidTarget(targetNetObj.NetworkObjectId))
             {
                 return false;
             }
@@ -414,7 +414,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
             }
 
-            if ( !EventSystem.current.IsPointerOverGameObject() && m_CurrentSkillInput == null)
+            if (!EventSystem.current.IsPointerOverGameObject() && m_CurrentSkillInput == null)
             {
                 //IsPointerOverGameObject() is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
                 //to model the button "blocking" mouse clicks from falling through and interacting with the world.

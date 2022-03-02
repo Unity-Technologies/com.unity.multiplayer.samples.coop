@@ -33,11 +33,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         void Update()
         {
-            if (Input.touchCount == k_NbTouchesToOpenWindow ||
+            if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
                 m_OpenWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenWindowKeyCode))
             {
                 m_DebugCheatsPanel.SetActive(!m_DebugCheatsPanel.activeSelf);
             }
+        }
+
+        static bool AnyTouchDown()
+        {
+            foreach (var touch in Input.touches)
+            {
+                if (touch.phase == TouchPhase.Began)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         public void SpawnEnemy()
