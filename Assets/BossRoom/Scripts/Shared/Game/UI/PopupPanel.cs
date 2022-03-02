@@ -16,18 +16,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         bool m_IsPopupShown;
 
-        static PopupPanel s_Instance;
-
         void Awake()
         {
-            if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
-            s_Instance = this;
             ResetState();
-        }
-
-        void OnDestroy()
-        {
-            s_Instance = null;
         }
 
         public void OnConfirmClick()
@@ -51,16 +42,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
-        public static void ShowPopupPanel(string titleText, string mainText)
+        public void ShowPopupPanel(string titleText, string mainText)
         {
-            if (s_Instance != null)
-            {
-                s_Instance.SetupPopupPanel(titleText, mainText);
-            }
-            else
-            {
-                Debug.LogError($"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}");
-            }
+            SetupPopupPanel(titleText, mainText);
         }
 
         void SetupPopupPanel(string titleText, string mainText)
