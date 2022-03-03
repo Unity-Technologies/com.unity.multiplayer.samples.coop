@@ -107,6 +107,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //this indicates a game level failure, rather than a network failure. See note in ServerGameNetPortal.
                 DisconnectReason.SetDisconnectReason(status);
             }
+            else
+            {
+                m_ConnectStatusPub.Publish(status);
+            }
         }
 
         private void OnDisconnectReasonReceived(ConnectStatus status)
