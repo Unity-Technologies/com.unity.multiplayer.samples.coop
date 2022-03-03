@@ -20,7 +20,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 
         void OnServiceException(AuthenticationException e)
         {
-            Debug.LogWarning(e.Message);
+            Debug.LogException(e);
 
             var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
 
@@ -30,7 +30,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
         public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)
         {
             var task = TrySignIn(initializationOptions);
-            UnityServiceCallsTaskWrapper.RunTask<AuthenticationException>(task, onSigninComplete, onFailed, OnServiceException);
+            UnityServiceCallsTaskWrapper.RunTaskAsync<AuthenticationException>(task, onSigninComplete, onFailed, OnServiceException);
         }
 
         async Task TrySignIn(InitializationOptions initializationOptions)

@@ -1,39 +1,42 @@
 using System;
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure
 {
     public class RateLimitCooldown
     {
-        float m_TimeSinceLastCall = float.MaxValue;
-        readonly float m_CooldownTime;
+        readonly float m_CooldownTimeLength;
+        private float m_CooldownFinishedTime;
         readonly UpdateRunner m_UpdateRunner;
         Queue<Action> m_PendingOperations = new Queue<Action>();
+
+        public RateLimitCooldown(float cooldownTimeLength, UpdateRunner updateRunner)
+        {
+            m_CooldownTimeLength = cooldownTimeLength;
+            m_CooldownFinishedTime = 0f;
+            m_UpdateRunner = updateRunner;
+        }
 
         public void EnqueuePendingOperation(Action action)
         {
             m_PendingOperations.Enqueue(action);
         }
 
-        public RateLimitCooldown(float cooldownTime, UpdateRunner updateRunner)
-        {
-            m_CooldownTime = cooldownTime;
-            m_UpdateRunner = updateRunner;
-        }
+        public bool CanCall => Time.unscaledTime > m_CooldownFinishedTime;
 
-        public bool CanCall => m_TimeSinceLastCall >= m_CooldownTime;
+        public bool CanCallSam { get; set; } = true; // todo
 
         public void PutOnCooldown()
         {
-            m_UpdateRunner.Subscribe(OnUpdate, m_CooldownTime);
-            m_TimeSinceLastCall = 0;
+            m_CooldownFinishedTime = Time.unscaledTime + m_CooldownTimeLength;
+            m_UpdateRunner.Subscribe(OnUpdate, 1 / 10f);
         }
 
+        // the below should disappear once the SDK handles automatic retries
         void OnUpdate(float dt)
         {
-            m_TimeSinceLastCall += dt;
-
             if (CanCall)
             {
                 m_UpdateRunner.Unsubscribe(OnUpdate);

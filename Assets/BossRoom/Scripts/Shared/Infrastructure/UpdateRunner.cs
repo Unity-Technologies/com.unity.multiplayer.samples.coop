@@ -13,7 +13,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         class SubscriberData
         {
             public float Period;
-            public float PeriodCurrent;
+            public float NextCallTime;
         }
 
         readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
@@ -31,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         /// Subscribe in order to have onUpdate called approximately every period seconds (or every frame, if period <= 0).
         /// Don't assume that onUpdate will be called in any particular order compared to other subscribers.
         /// </summary>
-        public void Subscribe(Action<float> onUpdate, float period)
+        public void Subscribe(Action<float> onUpdate, float updatePeriod)
         {
             if (onUpdate == null)
             {
@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
                 m_PendingHandlers.Enqueue(() =>
                 {
                     m_Subscribers.Add(onUpdate);
-                    m_SubscriberData.Add(onUpdate, new SubscriberData(){Period = period, PeriodCurrent = 0});
+                    m_SubscriberData.Add(onUpdate, new SubscriberData() {Period = updatePeriod, NextCallTime = 0});
                 });
             }
         }
@@ -82,17 +82,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
                 m_PendingHandlers.Dequeue()?.Invoke();
             }
 
-            float dt = Time.deltaTime;
-
             foreach (var subscriber in m_Subscribers)
             {
                 var subscriberData = m_SubscriberData[subscriber];
-                subscriberData.PeriodCurrent += dt;
 
-                if (subscriberData.PeriodCurrent > subscriberData.Period)
+                if (Time.time >= subscriberData.NextCallTime)
                 {
-                    subscriber.Invoke(subscriberData.PeriodCurrent);
-                    subscriberData.PeriodCurrent = 0;
+                    subscriber.Invoke(Time.deltaTime);
+                    subscriberData.NextCallTime = Time.time + subscriberData.Period;
                 }
             }
         }

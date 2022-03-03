@@ -47,20 +47,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         void RunTask(Task task, Action onComplete, Action onFailed)
         {
-            UnityServiceCallsTaskWrapper.RunTask<LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
+            UnityServiceCallsTaskWrapper.RunTaskAsync<LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
         }
 
         void RunTask<T>(Task<T> task, Action<T> onComplete, Action onFailed)
         {
-            UnityServiceCallsTaskWrapper.RunTask<T,LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
+            UnityServiceCallsTaskWrapper.RunTaskAsync<T,LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
         }
 
         void OnServiceException(LobbyServiceException e)
         {
-            Debug.LogWarning(e.Message);
+            Debug.LogException(e);
 
             if (e.Reason == LobbyExceptionReason.RateLimited) // We have other ways of preventing players from hitting the rate limit, so the developer-facing 429 error is sufficient here.
             {
+                // todo trigger client side rate limit here
                 return;
             }
 
@@ -119,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             RunTask(task, onComplete, onFailed);
         }
 
-        public void QueryAllLobbiesAsync(Action<QueryResponse> onComplete, Action onFailed)
+        public async Task<QueryResponse> QueryAllLobbiesAsync()
         {
             QueryLobbiesOptions queryOptions = new QueryLobbiesOptions
             {
@@ -128,8 +129,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 Order = m_Order
             };
 
-            var task = Lobbies.Instance.QueryLobbiesAsync(queryOptions);
-            RunTask(task, onComplete, onFailed);
+            try
+            {
+                return await Lobbies.Instance.QueryLobbiesAsync(queryOptions);
+            }
+            catch (LobbyServiceException serviceE)
+            {
+                OnServiceException(serviceE);
+                throw;
+            }
         }
 
         public void GetLobbyAsync(string lobbyId, Action<Lobby> onComplete, Action onFailed)
