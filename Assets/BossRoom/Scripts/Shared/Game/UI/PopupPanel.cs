@@ -44,6 +44,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <param name="mainText"> The text just under the title- the main body of text</param>
         public void ShowPopupPanel(string titleText, string mainText)
         {
+            SetupPopupPanel(titleText, mainText);
+        }
+
+        void SetupPopupPanel(string titleText, string mainText)
+        {
             if (m_IsPopupShown)
             {
                 Debug.Log("Trying to show popup, but another popup is already being shown.");
