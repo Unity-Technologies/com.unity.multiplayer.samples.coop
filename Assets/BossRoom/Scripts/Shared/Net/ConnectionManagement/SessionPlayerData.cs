@@ -5,7 +5,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public struct SessionPlayerData : ISessionPlayerData
     {
         public string PlayerName;
-        public int PlayerNum;
+        public int PlayerNumber;
         public Vector3 PlayerPosition;
         public Quaternion PlayerRotation;
         public NetworkGuid AvatarNetworkGuid;
@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             ClientID = clientID;
             PlayerName = name;
-            PlayerNum = -1;
+            PlayerNumber = -1;
             PlayerPosition = Vector3.zero;
             PlayerRotation = Quaternion.identity;
             AvatarNetworkGuid = avatarNetworkGuid;
