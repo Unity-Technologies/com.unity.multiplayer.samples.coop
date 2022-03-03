@@ -32,8 +32,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
         [SerializeField] GameObject m_SignInSpinner;
 
-        PopupPanel m_PopupPanel;
-
         void Awake()
         {
             m_MainMenuButtonsCanvasGroup.interactable = false;
@@ -42,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         [Inject]
-        void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby, PopupPanel popupPanel)
+        void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
         {
             m_Scope = new DIScope(DIScope.RootScope);
 
@@ -50,8 +48,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
 
             var unityAuthenticationInitOptions = new InitializationOptions();
-
-            m_PopupPanel = popupPanel;
 
 #if UNITY_EDITOR
             //The code below makes it possible for the clone instance to log in as a different user profile in Authentication service.
@@ -104,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             void OnSignInFailed()
             {
-                m_PopupPanel.ShowPopupPanel("Authentication Error", "For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
+                PopupPanel.ShowPopupPanel("Authentication Error", "For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
             }
         }
 
