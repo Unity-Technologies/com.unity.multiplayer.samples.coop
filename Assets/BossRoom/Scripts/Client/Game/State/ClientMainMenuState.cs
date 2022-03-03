@@ -78,15 +78,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             authServiceFacade.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
 
+            m_Scope.FinalizeScopeConstruction();
+
+            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
+            {
+                m_Scope.InjectIn(autoInjectedGameObject);
+            }
+
             void OnAuthSignIn()
             {
-                m_Scope.FinalizeScopeConstruction();
-
-                foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
-                {
-                    m_Scope.InjectIn(autoInjectedGameObject);
-                }
-
                 m_MainMenuButtonsCanvasGroup.interactable = true;
                 m_SignInSpinner.SetActive(false);
 
@@ -100,6 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             void OnSignInFailed()
             {
+                m_SignInSpinner.SetActive(false);
                 Debug.LogError("For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
             }
         }
