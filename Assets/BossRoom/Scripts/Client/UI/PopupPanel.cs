@@ -5,7 +5,7 @@ using TMPro;
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
-    /// responsible for driving all the functionality of the popup panel players see when connecting to the game
+    /// Simple popup panel to display information to players.
     /// </summary>
     public class PopupPanel : MonoBehaviour
     {
@@ -36,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
 
         /// <summary>
-        /// Helper method to help us reset all state for the popup manager.
+        /// Helper method to help us reset all state for the popup.
         /// </summary>
         void ResetState()
         {

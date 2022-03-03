@@ -4,6 +4,9 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
+    /// <summary>
+    /// Subscribes to connection status messages to display them through the popup panel.
+    /// </summary>
     public class ConnectionStatusMessageUIManager : MonoBehaviour
     {
         IDisposable m_Subscriptions;
