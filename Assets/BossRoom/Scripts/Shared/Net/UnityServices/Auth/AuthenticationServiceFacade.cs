@@ -20,7 +20,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 
         void OnServiceException(Exception e)
         {
-            Debug.LogWarning(e.Message);
+            Debug.LogException(e);
             var reason = $"{e.Message} ({e.InnerException?.Message})";
             m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
         }
@@ -28,7 +28,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
         public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)
         {
             var task = TrySignIn(initializationOptions);
-            UnityServiceCallsTaskWrapper.RunTask<Exception>(task, onSigninComplete, onFailed, OnServiceException);
+            UnityServiceCallsTaskWrapper.RunTaskAsync<AuthenticationException>(task, onSigninComplete, onFailed, OnServiceException);
         }
 
         async Task TrySignIn(InitializationOptions initializationOptions)

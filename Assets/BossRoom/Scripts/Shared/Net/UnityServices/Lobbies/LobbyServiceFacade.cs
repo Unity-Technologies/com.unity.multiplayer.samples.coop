@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Authentication;
+using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -63,9 +64,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_JoinedLobbyContentHeartbeat = m_ServiceScope.Resolve<JoinedLobbyContentHeartbeat>();
 
             m_RateLimitQuery = new RateLimitCooldown(1.5f, updateRunner);
-            m_RateLimitJoin = new RateLimitCooldown(3f, updateRunner);
-            m_RateLimitQuickJoin = new RateLimitCooldown(10f,  updateRunner);
-            m_RateLimitHost = new RateLimitCooldown(3f, updateRunner);
+            m_RateLimitJoin = new RateLimitCooldown(0, updateRunner);
+            m_RateLimitQuickJoin = new RateLimitCooldown(0, updateRunner);
+            m_RateLimitHost = new RateLimitCooldown(0, updateRunner);
         }
 
         public void Dispose()
@@ -154,14 +155,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 return;
             }
 
-            m_RateLimitHost.PutOnCooldown();
-
             var initialLobbyData = new Dictionary<string, DataObject>()
             {
                 {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())}
             };
 
-            m_LobbyApiInterface.CreateLobbyAsync(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);
+            try
+            {
+                m_LobbyApiInterface.CreateLobbyAsync(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);
+            }
+            catch (LobbyServiceException e)
+            {
+                if (e.Reason == LobbyExceptionReason.RateLimited)
+                {
+                    m_RateLimitHost.PutOnCooldown();
+                }
+            }
         }
 
         /// <summary>
@@ -207,22 +216,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Used for getting the list of all active lobbies, without needing full info for each.
         /// </summary>
-        public void RetrieveLobbyListAsync(Action<QueryResponse> onSuccess, Action onFailure)
+        public async Task RetrieveAndPublishLobbyListAsync()
         {
-            if (!m_RateLimitQuery.CanCall)
+            if (!m_RateLimitQuery.CanCallSam)
             {
-                onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Retrieve Lobby list hit the rate limit. Will try again soon...");
                 return;
             }
 
-            m_RateLimitQuery.PutOnCooldown();
-            m_LobbyApiInterface.QueryAllLobbiesAsync(OnSuccess, onFailure);
-
-            void OnSuccess(QueryResponse qr)
+            try
             {
-                onSuccess?.Invoke(qr);
-                m_LobbyListFetchedPub.Publish(new LobbyListFetchedMessage(LocalLobby.CreateLocalLobbies(qr)));
+                var response = await m_LobbyApiInterface.QueryAllLobbiesAsync();
+                m_LobbyListFetchedPub.Publish(new LobbyListFetchedMessage(LocalLobby.CreateLocalLobbies(response)));
+            }
+            catch (LobbyServiceException e)
+            {
+                if (e.Reason == LobbyExceptionReason.RateLimited)
+                {
+                    // todo put in RateLimitQuery
+                    m_RateLimitQuery.CanCallSam = false;
+                    await Task.Delay(1500);
+                    m_RateLimitQuery.CanCallSam = true;
+                }
             }
         }
 

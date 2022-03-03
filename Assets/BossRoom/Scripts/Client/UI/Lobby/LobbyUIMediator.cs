@@ -3,6 +3,7 @@ using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Services.Lobbies;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -74,31 +75,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             BlockUIWhileLoadingIsInProgress();
         }
 
-        public void QueryLobbiesRequest(bool blockUI)
+        public async void QueryLobbiesRequest(bool blockUI)
         {
-            if (!AuthenticationService.Instance.IsAuthorized)
+            try
             {
-                return;
-            }
+                if (blockUI)
+                {
+                    BlockUIWhileLoadingIsInProgress();
+                }
 
-            m_LobbyServiceFacade.RetrieveLobbyListAsync(
-                OnSuccess,
-                OnFailure
-            );
-
-            if (blockUI)
-            {
-                BlockUIWhileLoadingIsInProgress();
-            }
-
-            void OnSuccess(QueryResponse qr)
-            {
+                await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
                 UnblockUIAfterLoadingIsComplete();
             }
-
-            void OnFailure()
+            catch (LobbyServiceException e)
+            {
+                if (e.Reason != LobbyExceptionReason.RateLimited)
+                {
+                    // let rate limiting handle this in above code
+                    UnblockUIAfterLoadingIsComplete();
+                }
+            }
+            catch (Exception)
             {
                 UnblockUIAfterLoadingIsComplete();
+                throw;
             }
         }
 
