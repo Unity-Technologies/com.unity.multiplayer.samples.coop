@@ -93,7 +93,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
                 localUser.ID = AuthenticationService.Instance.PlayerId;
-                localUser.DisplayName = m_NameGenerationData.GenerateName();
                 // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
                 localLobby.AddUser(localUser);
             }
