@@ -28,7 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         TextMeshProUGUI m_MainText;
 
         Stack<PopupPanelData> m_PopupStack = new Stack<PopupPanelData>();
-        bool m_IsPopupShown;
 
         static PopupPanel s_Instance;
 
@@ -61,7 +60,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_TitleText.text = string.Empty;
             m_MainText.text = string.Empty;
             gameObject.SetActive(false);
-            m_IsPopupShown = false;
         }
 
         /// <summary>
