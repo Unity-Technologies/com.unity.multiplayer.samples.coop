@@ -191,37 +191,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         }
 
         [ServerRpc(RequireOwnership = false)]
-        void ToggleTeleportModeServerRpc(ServerRpcParams serverRpcParams = default)
-        void ToggleSuperSpeedServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            var clientId = serverRpcParams.Receive.SenderClientId;
-            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
-            {
-                if (playerServerCharacter.OwnerClientId == clientId)
-                {
-                    playerServerCharacter.Movement.SpeedCheatActivated = !playerServerCharacter.Movement.SpeedCheatActivated;
-                    break;
-                }
-            }
-            LogCheatUsedClientRPC(clientId, "ToggleSuperSpeed");
-        }
-
-        [ServerRpc(RequireOwnership = false)]
-        void ToggleSuperSpeedServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            var clientId = serverRpcParams.Receive.SenderClientId;
-            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
-            {
-                if (playerServerCharacter.OwnerClientId == clientId)
-                {
-                    playerServerCharacter.Movement.TeleportModeActivated = !playerServerCharacter.Movement.TeleportModeActivated;
-                    break;
-                }
-            }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleTeleportMode");
-        }
-        
-        [ServerRpc(RequireOwnership = false)]
         void HealPlayerServerRpc(ServerRpcParams serverRpcParams = default)
         {
             var clientId = serverRpcParams.Receive.SenderClientId;
@@ -243,7 +212,51 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                 LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "HealPlayer");
             }
         }
-        
+
+        [ServerRpc(RequireOwnership = false)]
+        void ToggleSuperSpeedServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            var clientId = serverRpcParams.Receive.SenderClientId;
+            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            {
+                if (playerServerCharacter.OwnerClientId == clientId)
+                {
+                    playerServerCharacter.Movement.SpeedCheatActivated = !playerServerCharacter.Movement.SpeedCheatActivated;
+                    break;
+                }
+            }
+            LogCheatUsedClientRPC(clientId, "ToggleSuperSpeed");
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void ToggleTeleportModeServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            var clientId = serverRpcParams.Receive.SenderClientId;
+            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            {
+                if (playerServerCharacter.OwnerClientId == clientId)
+                {
+                    playerServerCharacter.Movement.TeleportModeActivated = !playerServerCharacter.Movement.TeleportModeActivated;
+                    break;
+                }
+            }
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleTeleportMode");
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void ToggleDoorServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            if (ServerSwitchedDoor != null)
+            {
+                ServerSwitchedDoor.ForceOpen = !ServerSwitchedDoor.ForceOpen;
+                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleDoor");
+            }
+            else
+            {
+                UnityEngine.Debug.Log("Could not activate ToggleDoor cheat. Door not found.");
+            }
+        }
+
         [ServerRpc(RequireOwnership = false)]
         void TogglePortalsServerRpc(ServerRpcParams serverRpcParams = default)
         {
@@ -264,20 +277,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
             m_DestroyPortalsOnNextToggle = !m_DestroyPortalsOnNextToggle;
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "TogglePortals");
-        }
-
-    [ServerRpc(RequireOwnership = false)]
-        void ToggleDoorServerRpc(ServerRpcParams serverRpcParams = default)
-        {
-            if (ServerSwitchedDoor != null)
-            {
-                ServerSwitchedDoor.ForceOpen = !ServerSwitchedDoor.ForceOpen;
-                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleDoor");
-            }
-            else
-            {
-                UnityEngine.Debug.Log("Could not activate ToggleDoor cheat. Door not found.");
-            }
         }
 
         [ServerRpc(RequireOwnership = false)]
