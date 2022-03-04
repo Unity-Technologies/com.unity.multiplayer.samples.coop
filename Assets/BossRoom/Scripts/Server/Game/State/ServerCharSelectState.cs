@@ -53,7 +53,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                         // Instead of granting lock request, change this player to Inactive state.
                         CharSelectData.LobbyPlayers[idx] = new CharSelectData.LobbyPlayerState(clientId,
                             CharSelectData.LobbyPlayers[idx].PlayerName,
-                            CharSelectData.LobbyPlayers[idx].PlayerNum,
+                            CharSelectData.LobbyPlayers[idx].PlayerNumber,
                             CharSelectData.SeatState.Inactive);
 
                         // then early out
@@ -64,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             CharSelectData.LobbyPlayers[idx] = new CharSelectData.LobbyPlayerState(clientId,
                 CharSelectData.LobbyPlayers[idx].PlayerName,
-                CharSelectData.LobbyPlayers[idx].PlayerNum,
+                CharSelectData.LobbyPlayers[idx].PlayerNumber,
                 lockedIn ? CharSelectData.SeatState.LockedIn : CharSelectData.SeatState.Active,
                 newSeatIdx,
                 Time.time);
@@ -81,7 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                         CharSelectData.LobbyPlayers[i] = new CharSelectData.LobbyPlayerState(
                             CharSelectData.LobbyPlayers[i].ClientId,
                             CharSelectData.LobbyPlayers[i].PlayerName,
-                            CharSelectData.LobbyPlayers[i].PlayerNum,
+                            CharSelectData.LobbyPlayers[i].PlayerNumber,
                             CharSelectData.SeatState.Inactive);
                     }
                 }
@@ -185,26 +185,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SeatNewPlayer(sceneEvent.ClientId);
         }
 
-        private int GetAvailablePlayerNum()
+        private int GetAvailablePlayerNumber()
         {
-            for (int possiblePlayerNum = 0; possiblePlayerNum < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNum)
+            for (int possiblePlayerNumber = 0; possiblePlayerNumber < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNumber)
             {
-                bool found = false;
-                foreach (CharSelectData.LobbyPlayerState playerState in CharSelectData.LobbyPlayers)
+                if (IsPlayerNumberAvailable(possiblePlayerNumber))
                 {
-                    if (playerState.PlayerNum == possiblePlayerNum)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-                if (!found)
-                {
-                    return possiblePlayerNum;
+                    return possiblePlayerNumber;
                 }
             }
             // we couldn't get a Player# for this person... which means the lobby is full!
             return -1;
+        }
+
+        bool IsPlayerNumberAvailable(int playerNumber)
+        {
+            bool found = false;
+            foreach (CharSelectData.LobbyPlayerState playerState in CharSelectData.LobbyPlayers)
+            {
+                if (playerState.PlayerNumber == playerNumber)
+                {
+                    found = true;
+                    break;
+                }
+            }
+
+            return !found;
         }
 
         private void SeatNewPlayer(ulong clientId)
@@ -213,18 +219,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (sessionPlayerData.HasValue)
             {
                 var playerData = sessionPlayerData.Value;
-                if (playerData.PlayerNum == -1)
+                if (playerData.PlayerNumber == -1 || !IsPlayerNumberAvailable(playerData.PlayerNumber))
                 {
-                    // If no player num already assigned, get an available one.
-                    playerData.PlayerNum = GetAvailablePlayerNum();
+                    // If no player num already assigned or if player num is no longer available, get an available one.
+                    playerData.PlayerNumber = GetAvailablePlayerNumber();
                 }
-                if (playerData.PlayerNum == -1)
+                if (playerData.PlayerNumber == -1)
                 {
                     // Sanity check. We ran out of seats... there was no room!
-                    throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerData.PlayerNum}");
+                    throw new Exception($"we shouldn't be here, connection approval should have refused this connection already for client ID {clientId} and player num {playerData.PlayerNumber}");
                 }
 
-                CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerData.PlayerName, playerData.PlayerNum, CharSelectData.SeatState.Inactive));
+                CharSelectData.LobbyPlayers.Add(new CharSelectData.LobbyPlayerState(clientId, playerData.PlayerName, playerData.PlayerNumber, CharSelectData.SeatState.Inactive));
                 SessionManager<SessionPlayerData>.Instance.SetPlayerData(clientId, playerData);
             }
         }
