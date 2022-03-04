@@ -44,6 +44,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         // this one is specific to knockback mode
         private Vector3 m_KnockbackVector;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        const float k_CheatSpeed = 20;
+
+        public bool SpeedCheatActivated { get; set; }
+#endif
         private void Awake()
         {
             m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
@@ -222,6 +227,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private float GetBaseMovementSpeed()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (SpeedCheatActivated)
+            {
+                return k_CheatSpeed;
+            }
+#endif
             CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.NetState.CharacterType];
             Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.NetState.CharacterType}");
             return characterClass.Speed;

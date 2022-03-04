@@ -47,11 +47,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             RegenerateName();
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
-            m_ClientNetPortal.ConnectFinished += OnConnectFinished;
-
-            //any disconnect reason set? Show it to the user here.
-            ConnectStatusToMessage(m_ClientNetPortal.DisconnectReason.Reason, false);
-            m_ClientNetPortal.DisconnectReason.Clear();
         }
 
         void OnDestroy()
@@ -59,7 +54,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_ClientNetPortal != null)
             {
                 m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
-                m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
             }
         }
 
@@ -163,6 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             void OnRelayJoinFailed(string message)
             {
+                PopupPanel.ShowPopupPanel("Relay join failed", message);
                 Debug.Log($"Relay join failed: {message}");
                 //leave the lobby if relay failed for some reason
                 m_LobbyServiceFacade.EndTracking();
@@ -224,56 +219,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
 
         /// <summary>
-        /// Callback when the server sends us back a connection finished event.
-        /// </summary>
-        /// <param name="status"></param>
-        void OnConnectFinished(ConnectStatus status)
-        {
-            ConnectStatusToMessage(status, true);
-        }
-
-        /// <summary>
         /// Invoked when the client sent a connection request to the server and didn't hear back at all.
         /// This should create a UI letting the player know that something went wrong and to try again
         /// </summary>
         void OnNetworkTimeout()
         {
             UnblockUIAfterLoadingIsComplete();
-        }
-
-        /// <summary>
-        /// Takes a ConnectStatus and shows an appropriate message to the user. This can be called on: (1) successful connect,
-        /// (2) failed connect, (3) disconnect.
-        /// </summary>
-        /// <param name="connecting">pass true if this is being called in response to a connect finishing.</param>
-        void ConnectStatusToMessage(ConnectStatus status, bool connecting)
-        {
-            switch (status)
-            {
-                case ConnectStatus.Undefined:
-                case ConnectStatus.UserRequestedDisconnect:
-                    break;
-                case ConnectStatus.ServerFull:
-                    Debug.Log("Connection Failed, The Host is full and cannot accept any additional connections");
-                    break;
-                case ConnectStatus.Success:
-                    if (connecting)
-                    {
-                        Debug.Log("Success!, Joining Now");
-                    }
-                    break;
-                case ConnectStatus.LoggedInAgain:
-                    Debug.Log("Connection Failed, You have logged in elsewhere using the same account");
-                    break;
-                case ConnectStatus.GenericDisconnect:
-                    var title = connecting ? "Connection Failed" : "Disconnected From Host";
-                    var text = connecting ? "Something went wrong" : "The connection to the host was lost";
-                    Debug.Log($"{title}, {text}");
-                    break;
-                default:
-                    Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
-                    break;
-            }
         }
     }
 }

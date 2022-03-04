@@ -45,12 +45,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ProtocolType: 0
   m_MaxPacketQueueSize: 512
-  m_MaxPayloadSize: 16000
-  m_MaxSendQueueSize: 98304
+  m_MaxPayloadSize: 32000
+  m_MaxSendQueueSize: 50000000
   m_HeartbeatTimeoutMS: 500
   m_ConnectTimeoutMS: 1000
   m_MaxConnectAttempts: 60
-  m_DisconnectTimeoutMS: 30000
+  m_DisconnectTimeoutMS: 10000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
@@ -99,13 +99,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ProtocolType: 1
-  m_MaxPacketQueueSize: 256
+  m_MaxPacketQueueSize: 512
   m_MaxPayloadSize: 32000
-  m_MaxSendQueueSize: 98304
+  m_MaxSendQueueSize: 50000000
   m_HeartbeatTimeoutMS: 500
   m_ConnectTimeoutMS: 1000
   m_MaxConnectAttempts: 60
-  m_DisconnectTimeoutMS: 30000
+  m_DisconnectTimeoutMS: 10000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777

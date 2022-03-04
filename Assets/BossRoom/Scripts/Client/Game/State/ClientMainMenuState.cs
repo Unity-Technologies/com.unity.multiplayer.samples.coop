@@ -101,7 +101,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             void OnSignInFailed()
             {
                 m_SignInSpinner.SetActive(false);
-                Debug.LogError("For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
+                PopupPanel.ShowPopupPanel("Authentication Error", "For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
             }
         }
 
