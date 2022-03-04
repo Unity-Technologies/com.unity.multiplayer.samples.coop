@@ -124,7 +124,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                             return;
                         }
                     }
-                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
+                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
                     ForceLeaveLobbyAttempt();
                     m_ApplicationController.QuitGame();
                 }
