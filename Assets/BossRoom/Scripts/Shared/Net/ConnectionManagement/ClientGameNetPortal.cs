@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -134,21 +133,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
                 {
-                    // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
-                    // Just shut down networking and switch back to main menu.
-                    NetworkManager.Singleton.Shutdown();
-                    if (!DisconnectReason.HasTransitionReason)
+                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect)
                     {
-                        //disconnect that happened for some other reason than user UI interaction--should display a message.
-                        DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
+                        // simply shut down and go back to main menu
+                        NetworkManager.Singleton.Shutdown();
+                        SceneManager.LoadScene("MainMenu");
                     }
-                    SceneManager.LoadScene("MainMenu");
+                    else
+                    {
+                        DisconnectReason.SetDisconnectReason(ConnectStatus.Reconnecting);
+                        // try reconnecting
+                        SceneManager.LoadScene("Loading");
+                        m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect());
+                    }
                 }
                 else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
                 {
                     // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
+
                 m_ConnectStatusPub.Publish(DisconnectReason.Reason);
                 DisconnectReason.Clear();
             }
@@ -183,6 +187,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             m_TryToReconnectCoroutine = null;
+            m_ConnectStatusPub.Publish(ConnectStatus.GenericDisconnect);
         }
 
         /// <summary>
