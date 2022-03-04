@@ -77,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         public void HealPlayer()
         {
-            LogCheatNotImplemented("HealPlayer");
+            HealPlayerServerRpc();
         }
 
         public void ToggleSuperSpeed()
@@ -171,6 +171,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             {
                 playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
                 LogCheatUsedClientRPC(clientId, "ToggleGodMode");
+            }
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void HealPlayerServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            var clientId = serverRpcParams.Receive.SenderClientId;
+            var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
+            if (playerServerCharacter != null)
+            {
+                var baseHp = playerServerCharacter.NetState.CharacterClass.BaseHP.Value;
+                if (playerServerCharacter.NetState.LifeState == LifeState.Fainted)
+                {
+                    playerServerCharacter.Revive(null, baseHp);
+                }
+                else
+                {
+                    if (playerServerCharacter.gameObject.TryGetComponent(out IDamageable damageable))
+                    {
+                        damageable.ReceiveHP(null, baseHp);
+                    }
+                }
+                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "HealPlayer");
             }
         }
 
