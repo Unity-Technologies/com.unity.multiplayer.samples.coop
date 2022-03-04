@@ -199,7 +199,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     try
                     {
                         // we now need to get the joinCode?
-                        var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
+                        var GDCRegion = "us-west2";
+                        // var GDCRegion = "us-east4";
+                        var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections, region: GDCRegion);
                         await serverRelayUtilityTask;
                         // we now have the info from the relay service
                         var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
