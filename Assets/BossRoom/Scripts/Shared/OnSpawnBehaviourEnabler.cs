@@ -22,8 +22,21 @@ namespace Unity.Multiplayer.Samples.Utilities
     /// </summary>
     public class OnSpawnBehaviourEnabler : NetworkBehaviour
     {
+        List<IClientOnlyMonoBehaviour> m_ClientOnlyMonoBehaviours;
+        List<IServerOnlyMonoBehaviour> m_ServerOnlyMonoBehaviours;
+
         void Awake()
         {
+            m_ClientOnlyMonoBehaviours = new List<IClientOnlyMonoBehaviour>();
+            m_ServerOnlyMonoBehaviours = new List<IServerOnlyMonoBehaviour>();
+            foreach (var behaviour in gameObject.GetComponents<IClientOnlyMonoBehaviour>())
+            {
+                m_ClientOnlyMonoBehaviours.Add(behaviour);
+            }
+            foreach (var behaviour in gameObject.GetComponents<IServerOnlyMonoBehaviour>())
+            {
+                m_ServerOnlyMonoBehaviours.Add(behaviour);
+            }
             // Disable everything here to prevent those MonoBehaviours to be updated before this one is spawned.
             DisableAll();
         }
@@ -32,7 +45,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsClient)
             {
-                foreach (var behaviour in gameObject.GetComponents<IClientOnlyMonoBehaviour>())
+                foreach (var behaviour in m_ClientOnlyMonoBehaviours)
                 {
                     behaviour.SetEnabled(true);
                 }
@@ -40,7 +53,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
             if (IsServer)
             {
-                foreach (var behaviour in gameObject.GetComponents<IServerOnlyMonoBehaviour>())
+                foreach (var behaviour in m_ServerOnlyMonoBehaviours)
                 {
                     behaviour.SetEnabled(true);
                 }
@@ -55,12 +68,12 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void DisableAll()
         {
-            foreach (var behaviour in gameObject.GetComponents<IClientOnlyMonoBehaviour>())
+            foreach (var behaviour in m_ClientOnlyMonoBehaviours)
             {
                 behaviour.SetEnabled(false);
             }
 
-            foreach (var behaviour in gameObject.GetComponents<IServerOnlyMonoBehaviour>())
+            foreach (var behaviour in m_ServerOnlyMonoBehaviours)
             {
                 behaviour.SetEnabled(false);
             }
