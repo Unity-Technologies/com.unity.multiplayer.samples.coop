@@ -38,8 +38,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void InjectDependenciesAndInitialize(
             NameGenerationData nameGenerationData,
             GameNetPortal gameNetPortal,
-            ClientGameNetPortal clientGameNetPortal,
-            LobbyUIMediator lobbyUIMediator
+            ClientGameNetPortal clientGameNetPortal
         )
         {
             m_NameGenerationData = nameGenerationData;
@@ -47,16 +46,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ClientNetPortal = clientGameNetPortal;
 
             RegenerateName();
-
-            m_ClientNetPortal.ConnectFinished += OnConnectFinished;
-        }
-
-        void OnDestroy()
-        {
-            if (m_ClientNetPortal != null)
-            {
-                m_ClientNetPortal.ConnectFinished -= OnConnectFinished;
-            }
         }
 
         void Awake()
@@ -135,15 +124,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void RegenerateName()
         {
             m_PlayerNameLabel.text = m_NameGenerationData.GenerateName();
-        }
-
-        /// <summary>
-        /// Callback when the server sends us back a connection finished event.
-        /// </summary>
-        /// <param name="status"></param>
-        void OnConnectFinished(ConnectStatus status)
-        {
-            // TODO: publish ConnectStatus message
         }
 
         public void ToggleJoinIPUI()
