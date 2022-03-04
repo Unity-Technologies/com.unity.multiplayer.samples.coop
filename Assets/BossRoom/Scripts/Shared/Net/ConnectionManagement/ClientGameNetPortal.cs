@@ -107,6 +107,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //this indicates a game level failure, rather than a network failure. See note in ServerGameNetPortal.
                 DisconnectReason.SetDisconnectReason(status);
             }
+            else
+            {
+                m_ConnectStatusPub.Publish(status);
+            }
         }
 
         private void OnDisconnectReasonReceived(ConnectStatus status)
@@ -116,8 +120,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
-            // Only handle client disconnect
-            if (!NetworkManager.Singleton.IsHost)
+            // This is also called on the Host when a different client disconnects. To make sure we only handle our own disconnection, verify that we are either
+            // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
+            if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientID)
             {
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
@@ -189,7 +194,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
 
                 m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
-                utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
+                utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)
             {

@@ -6,7 +6,7 @@ using TMPro;
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
-    /// responsible for driving all the functionality of the popup panel players see when connecting to the game
+    /// Simple popup panel to display information to players.
     /// </summary>
     public class PopupPanel : MonoBehaviour
     {
@@ -28,11 +28,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         TextMeshProUGUI m_MainText;
 
         Stack<PopupPanelData> m_PopupStack = new Stack<PopupPanelData>();
+        bool m_IsPopupShown;
 
         static PopupPanel s_Instance;
 
         void Awake()
         {
+            if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
             s_Instance = this;
             ResetState();
         }
@@ -52,13 +54,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
 
         /// <summary>
-        /// Helper method to help us reset all state for the popup manager.
+        /// Helper method to help us reset all state for the popup.
         /// </summary>
         void ResetState()
         {
             m_TitleText.text = string.Empty;
             m_MainText.text = string.Empty;
             gameObject.SetActive(false);
+            m_IsPopupShown = false;
         }
 
         /// <summary>
@@ -66,7 +69,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
-        /// <param name="confirmFunction"> The function to call when the confirm button is pressed.</param>
         public static void ShowPopupPanel(string titleText, string mainText)
         {
             if (s_Instance != null)
