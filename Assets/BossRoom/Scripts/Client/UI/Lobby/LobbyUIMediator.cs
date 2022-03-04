@@ -25,7 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         NameGenerationData m_NameGenerationData;
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
-        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
         [Inject]
         void InjectDependenciesAndInitialize(
@@ -44,7 +43,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LocalLobby = localLobby;
             m_GameNetPortal = gameNetPortal;
             m_ClientNetPortal = clientGameNetPortal;
-            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
 
             RegenerateName();
 
