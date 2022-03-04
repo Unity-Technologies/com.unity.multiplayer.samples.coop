@@ -43,6 +43,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         const int k_NbTouchesToOpenWindow = 4;
 
+        bool m_DestroyPortalsOnNextToggle = true;
+
         void Update()
         {
             if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
@@ -111,7 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         public void TogglePortals()
         {
-            LogCheatNotImplemented("TogglePortals");
+            TogglePortalsServerRpc();
         }
 
         public void GoToPostGame()
@@ -224,6 +226,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                 }
                 LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "HealPlayer");
             }
+        }
+        
+        [ServerRpc(RequireOwnership = false)]
+        void TogglePortalsServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            foreach (var portal in FindObjectsOfType<ServerEnemyPortal>())
+            {
+                if (m_DestroyPortalsOnNextToggle)
+                {
+                    // This will only affect portals that are currently active in a scene and are currently loaded.
+                    // Portals that are already destroyed will not be affected by this, and won't have their cooldown
+                    // reinitialized.
+                    portal.ForceDestroy();
+                }
+                else
+                {
+                    portal.ForceRestart();
+                }
+            }
+
+            m_DestroyPortalsOnNextToggle = !m_DestroyPortalsOnNextToggle;
+            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "TogglePortals");
         }
 
     [ServerRpc(RequireOwnership = false)]
