@@ -1,13 +1,11 @@
 using System;
-using System.Threading;
-using Netcode.Transports.PhotonRealtime;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Photon.Realtime;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
-using Unity.Services.Core;
-using Unity.Services.Authentication;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -23,21 +21,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
         /// </summary>
-        public DisconnectReason DisconnectReason { get; private set; } = new DisconnectReason();
+        public DisconnectReason DisconnectReason { get; } = new DisconnectReason();
 
         /// <summary>
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
         private const int k_TimeoutDuration = 10;
 
-        public event Action<ConnectStatus> ConnectFinished;
-        public event Action<string> OnUnityRelayJoinFailed; // todo put UI code as its own assembly so code can reference it. In theory, UI should be consumed by everyone
-
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
         /// time from the host.
         /// </summary>
         public event Action NetworkTimedOut;
+
+        private LobbyServiceFacade m_LobbyServiceFacade;
+        IPublisher<ConnectStatus> m_ConnectStatusPub;
+
+        [Inject]
+        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub)
+        {
+            m_LobbyServiceFacade = lobbyServiceFacade;
+            m_ConnectStatusPub = connectStatusPub;
+        }
 
         private void Awake()
         {
@@ -102,8 +107,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //this indicates a game level failure, rather than a network failure. See note in ServerGameNetPortal.
                 DisconnectReason.SetDisconnectReason(status);
             }
-
-            ConnectFinished?.Invoke(status);
+            else
+            {
+                m_ConnectStatusPub.Publish(status);
+            }
         }
 
         private void OnDisconnectReasonReceived(ConnectStatus status)
@@ -128,7 +135,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
-
                     SceneManager.LoadScene("MainMenu");
                 }
                 else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
@@ -136,6 +142,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
+                m_ConnectStatusPub.Publish(DisconnectReason.Reason);
+                DisconnectReason.Clear();
             }
         }
 
@@ -149,7 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
-        public static void StartClient(GameNetPortal portal, string ipaddress, int port)
+        public void StartClient(string ipaddress, int port)
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -168,128 +176,53 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
             }
 
-            ConnectClient(portal);
+            ConnectClient();
         }
 
-        /// <summary>
-        /// Wraps the invocation of NetworkingManager.StartClient, including our GUID as the payload.
-        /// </summary>
-        /// <remarks>
-        /// Relay version of <see cref="StartClient"/>, see start client remarks for more information.
-        /// </remarks>
-        /// <param name="portal"> </param>
-        /// <param name="roomKey">The room name of the host to connect to.</param>
-        public static bool StartClientRelayMode(GameNetPortal portal, string roomKey, out string failMessage, CancellationToken cancellationToken)
+        public async void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
         {
-            var splits = roomKey.Split('_');
+            var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
 
-            if (splits.Length != 2)
+            Debug.Log($"Setting Unity Relay client with join code {joinCode}");
+
+            try
             {
-                failMessage = "Malformatted Room Key!";
-                return false;
+                var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
+                await clientRelayUtilityTask;
+                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+
+                m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
+            }
+            catch (Exception e)
+            {
+                onFailure?.Invoke(e.Message);
+                return;//not re-throwing, but still not allowing to connect
             }
 
-            var region = splits[0];
-            var roomName = splits[1];
-
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            switch (chosenTransport)
-            {
-                case PhotonRealtimeTransport photonRealtimeTransport:
-                    photonRealtimeTransport.RoomName = roomName;
-                    PhotonAppSettings.Instance.AppSettings.FixedRegion = region;
-                    break;
-                default:
-                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
-            }
-
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                ConnectClient(portal);
-            }
-
-            failMessage = String.Empty;
-            return true;
+            ConnectClient();
         }
 
-        public async void StartClientUnityRelayModeAsync(GameNetPortal portal, string joinCode, CancellationToken cancellationToken)
-        {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            switch (chosenTransport)
-            {
-                case UnityTransport utp:
-                    Debug.Log($"Setting Unity Relay client with join code {joinCode}");
-                    try
-                    {
-                        await UnityServices.InitializeAsync();
-                        Debug.Log(AuthenticationService.Instance);
-
-                        if (!AuthenticationService.Instance.IsSignedIn)
-                        {
-                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                            var playerId = AuthenticationService.Instance.PlayerId;
-                            Debug.Log(playerId);
-                        }
-
-                        var clientRelayUtilityTask = UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
-                        await clientRelayUtilityTask;
-                        var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
-                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
-                    }
-                    catch (Exception e)
-                    {
-                        if (cancellationToken.IsCancellationRequested)
-                        {
-                            Debug.Log("Unity Relay join failed, but was cancelled: " + e.Message);
-                        }
-                        else
-                        {
-                            OnUnityRelayJoinFailed?.Invoke(e.Message);
-
-                            // todo remove the above callback and get the below uncommented when UI is its own assembly
-                            // var menuUI = MainMenuUI.Instance;
-                            // if (menuUI)
-                            // {
-                            //     menuUI.PushConnectionResponsePopup("Unity Relay: Join Failed", $"{e.Message}", true, true);
-                            // }
-                            throw;
-                        }
-                    }
-
-                    break;
-                default:
-                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
-            }
-
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                ConnectClient(portal);
-            }
-        }
-
-        private static void ConnectClient(GameNetPortal portal)
+        private void ConnectClient()
         {
             var clientGuid = ClientPrefs.GetGuid();
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
                 clientGUID = clientGuid,
                 clientScene = SceneManager.GetActiveScene().buildIndex,
-                playerName = portal.PlayerName
+                playerName = m_Portal.PlayerName
             });
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
-            portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
-            portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
+            m_Portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
+            m_Portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! Netcode will establish a socket connection to the host.
             //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
-            portal.NetManager.StartClient();
+            m_Portal.NetManager.StartClient();
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
             NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult_CustomMessage), ReceiveServerToClientConnectResult_CustomMessage);

@@ -15,7 +15,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public void ReceiveHP(ServerCharacter inflicter, int HP)
         {
-            damageReceived?.Invoke(inflicter, HP);
+            if (IsDamageable())
+            {
+                damageReceived?.Invoke(inflicter, HP);
+            }
         }
 
         public IDamageable.SpecialDamageFlags GetSpecialDamageFlags()

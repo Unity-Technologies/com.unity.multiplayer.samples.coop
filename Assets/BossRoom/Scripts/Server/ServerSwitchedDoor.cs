@@ -27,6 +27,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField, HideInInspector]
         int m_AnimatorDoorOpenBoolID;
 
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public bool ForceOpen;
+#endif
+
         void Awake()
         {
             // don't let Update() run until after OnNetworkSpawn()
@@ -47,6 +51,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     break;
                 }
             }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            isAnySwitchOn |= ForceOpen;
+#endif
 
             m_NetworkDoorState.IsOpen.Value = isAnySwitchOn;
         }

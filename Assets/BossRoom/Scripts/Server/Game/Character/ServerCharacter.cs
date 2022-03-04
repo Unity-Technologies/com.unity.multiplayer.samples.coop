@@ -178,7 +178,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
-        public void ReceiveHP(ServerCharacter inflicter, int HP)
+        void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
             if (HP > 0)
