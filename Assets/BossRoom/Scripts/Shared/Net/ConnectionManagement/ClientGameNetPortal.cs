@@ -174,20 +174,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (!NetworkManager.Singleton.IsConnectedClient)
             {
                 Debug.Log("All tries failed, returning to main menu");
-                // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
-                // Just shut down networking and switch back to main menu.
-                //NetworkManager.Singleton.Shutdown();
+                NetworkManager.Singleton.Shutdown();
                 SceneManager.LoadScene("MainMenu");
                 if (!DisconnectReason.HasTransitionReason)
                 {
-                    //disconnect that happened for some other reason than user UI interaction--should display a message.
                     DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                 }
 
             }
 
             m_TryToReconnectCoroutine = null;
-            m_ConnectStatusPub.Publish(ConnectStatus.GenericDisconnect);
+            m_ConnectStatusPub.Publish(DisconnectReason.Reason);
         }
 
         /// <summary>
