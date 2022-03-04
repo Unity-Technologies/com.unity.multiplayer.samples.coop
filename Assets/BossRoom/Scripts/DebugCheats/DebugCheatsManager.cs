@@ -96,7 +96,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
 
         public void ToggleSuperSpeed()
         {
-            LogCheatNotImplemented("ToggleSuperSpeed");
+            ToggleSuperSpeedServerRpc();
         }
 
         public void ToggleTeleportMode()
@@ -188,6 +188,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             }
         }
 
+        [ServerRpc(RequireOwnership = false)]
+        void ToggleSuperSpeedServerRpc(ServerRpcParams serverRpcParams = default)
+        {
+            var clientId = serverRpcParams.Receive.SenderClientId;
+            foreach (var playerServerCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            {
+                if (playerServerCharacter.OwnerClientId == clientId)
+                {
+                    playerServerCharacter.Movement.SpeedCheatActivated = !playerServerCharacter.Movement.SpeedCheatActivated;
+                    break;
+                }
+            }
+            LogCheatUsedClientRPC(clientId, "ToggleSuperSpeed");
+        }
+        
         [ServerRpc(RequireOwnership = false)]
         void HealPlayerServerRpc(ServerRpcParams serverRpcParams = default)
         {
