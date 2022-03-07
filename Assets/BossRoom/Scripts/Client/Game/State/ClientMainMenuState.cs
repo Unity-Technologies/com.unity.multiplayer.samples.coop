@@ -78,29 +78,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             authServiceFacade.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
 
+            m_Scope.FinalizeScopeConstruction();
+
+            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
+            {
+                m_Scope.InjectIn(autoInjectedGameObject);
+            }
+
             void OnAuthSignIn()
             {
-                m_Scope.FinalizeScopeConstruction();
-
-                foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
-                {
-                    m_Scope.InjectIn(autoInjectedGameObject);
-                }
-
                 m_MainMenuButtonsCanvasGroup.interactable = true;
                 m_SignInSpinner.SetActive(false);
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
                 localUser.ID = AuthenticationService.Instance.PlayerId;
-                localUser.DisplayName = m_NameGenerationData.GenerateName();
                 // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
                 localLobby.AddUser(localUser);
             }
 
             void OnSignInFailed()
             {
-                Debug.LogError("For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
+                m_SignInSpinner.SetActive(false);
+                PopupPanel.ShowPopupPanel("Authentication Error", "For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
             }
         }
 

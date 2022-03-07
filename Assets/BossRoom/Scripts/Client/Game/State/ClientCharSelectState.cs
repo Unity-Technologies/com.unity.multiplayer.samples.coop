@@ -220,7 +220,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 // we haven't chosen a seat yet (or were kicked out of our seat by someone else)
                 UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
                 // make sure our player num is properly set in Lobby UI
-                OnAssignedPlayerNumber(CharSelectData.LobbyPlayers[localPlayerIdx].PlayerNum);
+                OnAssignedPlayerNumber(CharSelectData.LobbyPlayers[localPlayerIdx].PlayerNumber);
             }
             else
             {
@@ -321,7 +321,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // now actually update the seats in the UI
             for (int i = 0; i < m_PlayerSeats.Count; ++i)
             {
-                m_PlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNum, curSeats[i].PlayerName);
+                m_PlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNumber, curSeats[i].PlayerName);
             }
         }
 
