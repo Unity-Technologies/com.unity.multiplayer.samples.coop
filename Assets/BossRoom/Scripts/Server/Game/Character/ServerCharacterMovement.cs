@@ -153,7 +153,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             PerformMovement();
 
-            m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
+            if (IsServer)
+            {
+                m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
+            }
         }
 
         public override void OnNetworkDespawn()
