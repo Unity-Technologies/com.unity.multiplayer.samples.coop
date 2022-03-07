@@ -14,5 +14,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [Tooltip("The list of all possible strings the game can use as the second word in a player name")]
         public string[] SecondWordList;
+
+        public string GenerateName()
+        {
+            var firstWord = FirstWordList[Random.Range(0, FirstWordList.Length - 1)];
+            var secondWord = SecondWordList[Random.Range(0, SecondWordList.Length - 1)];
+
+            return firstWord + " " + secondWord;
+        }
     }
 }
