@@ -94,6 +94,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (m_Portal.NetManager.IsClient)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+                if (m_TryToReconnectCoroutine != null)
+                {
+                    StopCoroutine(m_TryToReconnectCoroutine);
+                    m_TryToReconnectCoroutine = null;
+                }
             }
         }
 
@@ -142,8 +147,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     else
                     {
                         DisconnectReason.SetDisconnectReason(ConnectStatus.Reconnecting);
+                        // load new scene to workaround MTT-2684
+                        SceneManager.LoadSceneAsync("Loading");
                         // try reconnecting
-                        SceneManager.LoadScene("Loading");
                         m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect());
                     }
                 }
@@ -162,9 +168,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
             int nbTries = 0;
-            yield return new WaitForSeconds(1);
             while (nbTries < 3)
             {
+                NetworkManager.Singleton.Shutdown();
+                yield return new WaitForSeconds(1); // wait a short while to leave time for NetworkManager to complete shutting down
                 Debug.Log($"Reconnecting attempt {nbTries+1}/3...");
                 ConnectClient();
                 yield return new WaitForSeconds(k_TimeoutDuration);
@@ -174,7 +181,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (!NetworkManager.Singleton.IsConnectedClient)
             {
                 Debug.Log("All tries failed, returning to main menu");
-                NetworkManager.Singleton.Shutdown();
                 SceneManager.LoadScene("MainMenu");
                 if (!DisconnectReason.HasTransitionReason)
                 {
