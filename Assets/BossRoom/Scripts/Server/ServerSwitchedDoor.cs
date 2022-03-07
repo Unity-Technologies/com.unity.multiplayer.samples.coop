@@ -11,6 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// (Assign the floor switches for this door in the editor.)
     /// </summary>
     [RequireComponent(typeof(NetworkDoorState))]
+    [RequireComponent(typeof(OnSpawnBehaviourEnabler))]
     public class ServerSwitchedDoor : MonoBehaviour, IServerOnlyMonoBehaviour
     {
         [SerializeField]
