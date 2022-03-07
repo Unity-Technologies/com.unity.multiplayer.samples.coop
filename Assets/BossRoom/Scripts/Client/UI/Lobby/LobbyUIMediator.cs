@@ -3,6 +3,7 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -58,14 +59,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         //Lobby and Relay calls done from UI
 
-        public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
+        public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
         {
-            m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
+            m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
         public void QueryLobbiesRequest(bool blockUI)
         {
+            if (!AuthenticationService.Instance.IsAuthorized)
+            {
+                return;
+            }
+
             m_LobbyServiceFacade.RetrieveLobbyListAsync(
                 OnSuccess,
                 OnFailure
