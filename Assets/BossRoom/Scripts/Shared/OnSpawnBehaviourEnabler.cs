@@ -5,11 +5,25 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
+    /// <summary>
+    /// Classes implementing this interface get disabled on Awake by the OnSpawnBehaviorEnabler, then only enabled when
+    /// it is spawned on a client.
+    ///<remarks>
+    /// Any class implementing this should add the "[RequireComponent(typeof(OnSpawnBehaviourEnabler))]" attribute
+    /// </remarks>
+    /// </summary>
     public interface IClientOnlyMonoBehaviour
     {
         public void SetEnabled(bool enable);
     }
 
+    /// <summary>
+    /// Classes implementing this interface get disabled on Awake by the OnSpawnBehaviorEnabler, then only enabled when
+    /// it is spawned on a server.
+    ///<remarks>
+    /// Any class implementing this should add the "[RequireComponent(typeof(OnSpawnBehaviourEnabler))]" attribute
+    /// </remarks>
+    /// </summary>
     public interface IServerOnlyMonoBehaviour
     {
         public void SetEnabled(bool enable);

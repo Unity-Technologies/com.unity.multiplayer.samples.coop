@@ -11,6 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// and vice versa.
     /// </summary>
     [RequireComponent(typeof(NetworkDoorState))]
+    [RequireComponent(typeof(OnSpawnBehaviourEnabler))]
     public class ClientDoorVisualization : MonoBehaviour, IClientOnlyMonoBehaviour
     {
         [SerializeField]
