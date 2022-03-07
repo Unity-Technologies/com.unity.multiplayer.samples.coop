@@ -123,6 +123,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // Only handle client disconnect
             if (!NetworkManager.Singleton.IsHost)
             {
+                // Leave the current lobby.
+                //TODO: When the SessionManager will use the PlayerId from AuthenticationService instead of our current custom GUID, this could be replaced by the host kicking the disconnecting client from the lobby
                 m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
