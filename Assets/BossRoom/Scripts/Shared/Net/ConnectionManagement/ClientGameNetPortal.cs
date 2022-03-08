@@ -188,7 +188,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 }
 
             }
-
+            NetworkManager.Singleton.Shutdown();
             m_TryToReconnectCoroutine = null;
             m_ConnectStatusPub.Publish(DisconnectReason.Reason);
         }
