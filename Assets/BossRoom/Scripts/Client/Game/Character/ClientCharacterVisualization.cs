@@ -64,13 +64,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         Quaternion m_LerpedRotation;
 
+        void Awake()
+        {
+            foreach (var rendererComponent in GetComponentsInChildren<Renderer>())
+            {
+                rendererComponent.enabled = false;
+            }
+
+            enabled = false;
+        }
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient || transform.parent == null)
             {
-                enabled = false;
                 return;
             }
+
+            foreach (var rendererComponent in GetComponentsInChildren<Renderer>())
+            {
+                rendererComponent.enabled = true;
+            }
+
+            enabled = true;
 
             m_ActionViz = new ActionVisualization(this);
 
