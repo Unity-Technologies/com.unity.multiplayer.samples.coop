@@ -96,24 +96,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return canQuit;
         }
 
+        public void LeaveSession()
+        {
+            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+
+            // first disconnect then return to menu
+            var gameNetPortal = GameNetPortal.Instance;
+            if (gameNetPortal != null)
+            {
+                gameNetPortal.RequestDisconnect();
+            }
+            SceneManager.LoadScene("MainMenu");
+        }
+
         public void QuitGame()
         {
-            if (NetworkManager.Singleton.IsListening)
-            {
-                m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
-
-                // first disconnect then return to menu
-                var gameNetPortal = GameNetPortal.Instance;
-                if (gameNetPortal != null)
-                {
-                    gameNetPortal.RequestDisconnect();
-                }
-                SceneManager.LoadScene("MainMenu");
-            }
-            else
-            {
-                Application.Quit();
-            }
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }
