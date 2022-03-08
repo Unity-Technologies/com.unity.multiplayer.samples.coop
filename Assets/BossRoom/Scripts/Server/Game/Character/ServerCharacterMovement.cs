@@ -151,6 +151,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void FixedUpdate()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             PerformMovement();
 
             m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
