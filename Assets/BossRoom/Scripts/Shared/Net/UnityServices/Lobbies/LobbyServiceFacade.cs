@@ -115,6 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 CurrentUnityLobby = lobby;
                 m_LocalLobby.ApplyRemoteData(lobby);
 
+                // as client, check if host is still in lobby
                 if (!m_LocalUser.IsHost)
                 {
                     foreach (var lobbyUser in m_LocalLobby.LobbyUsers)
@@ -126,7 +127,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                     }
                     m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
                     ForceLeaveLobbyAttempt();
-                    m_ApplicationController.QuitGame();
+                    // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
                 }
             }
         }
