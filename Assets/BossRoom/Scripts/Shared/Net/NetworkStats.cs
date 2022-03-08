@@ -104,7 +104,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (m_TextStat != null)
                 {
                     var transportRTT = NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId);
-                    textToDisplay = $"{textToDisplay}RTT: {(LastRTT * 1000f).ToString()} ms; UTP RTT {transportRTT} ms";
+                    textToDisplay = $"{textToDisplay}RTT: {(LastRTT * 1000).ToString("0")} ms;\nUTP RTT {transportRTT.ToString("0")} ms";
                 }
             }
 
