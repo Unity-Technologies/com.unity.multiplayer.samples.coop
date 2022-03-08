@@ -151,12 +151,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void FixedUpdate()
         {
+            if (!IsServer)
+            {
+                return;
+            }
+
             PerformMovement();
 
-            if (IsServer)
-            {
-                m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
-            }
+            m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
         }
 
         public override void OnNetworkDespawn()
