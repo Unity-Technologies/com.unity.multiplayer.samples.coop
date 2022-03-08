@@ -26,7 +26,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [SerializeField] UITinter m_JoinTabButtonTinter;
 
+        [SerializeField] UITinter m_JoinTabButtonBorderTinter;
+
         [SerializeField] UITinter m_HostTabButtonTinter;
+        
+        [SerializeField] UITinter m_HostTabButtonBorderTinter;
 
         [SerializeField] GameObject m_SignInSpinner;
 
@@ -131,7 +135,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_IPJoiningUI.Show();
             m_IPHostingUI.Hide();
             m_JoinTabButtonTinter.SetToColor(1);
+            m_JoinTabButtonBorderTinter.SetToColor(1);
             m_HostTabButtonTinter.SetToColor(0);
+            m_HostTabButtonBorderTinter.SetToColor(0);
         }
 
         public void ToggleCreateIPUI()
@@ -139,7 +145,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_IPJoiningUI.Hide();
             m_IPHostingUI.Show();
             m_JoinTabButtonTinter.SetToColor(0);
+            m_JoinTabButtonBorderTinter.SetToColor(0);
             m_HostTabButtonTinter.SetToColor(1);
+            m_HostTabButtonBorderTinter.SetToColor(1);
         }
 
         public void Show()
