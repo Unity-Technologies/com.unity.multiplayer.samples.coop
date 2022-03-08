@@ -250,7 +250,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TintColors:
-  - {r: 0.54901963, g: 0.54901963, b: 0.54901963, a: 1}
+  - {r: 0.681, g: 0.6342607, b: 0.584298, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1146989341565134001
 MonoBehaviour:
@@ -1671,7 +1671,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TintColors:
-  - {r: 0.54901963, g: 0.54901963, b: 0.54901963, a: 1}
+  - {r: 0.681, g: 0.6342607, b: 0.584298, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1998613087429313438
 MonoBehaviour:

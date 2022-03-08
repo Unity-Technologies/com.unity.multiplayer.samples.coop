@@ -1002,7 +1002,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TintColors:
-  - {r: 0.779673, g: 0.835324, b: 0.88699996, a: 1}
+  - {r: 0.681, g: 0.6342607, b: 0.584298, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &60699266497995633
 MonoBehaviour:
@@ -1652,7 +1652,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_TintColors:
-  - {r: 0.779673, g: 0.835324, b: 0.88699996, a: 1}
+  - {r: 0.681, g: 0.6342607, b: 0.584298, a: 1}
   - {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1477683225176343646
 MonoBehaviour:
@@ -4059,7 +4059,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6773627913577560496}
   m_HandleRect: {fileID: 2234904744820987572}
   m_Direction: 2
-  m_Value: 0
+  m_Value: 1
   m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
