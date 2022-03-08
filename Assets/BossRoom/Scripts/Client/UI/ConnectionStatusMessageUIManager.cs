@@ -33,7 +33,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             switch (status)
             {
                 case ConnectStatus.Undefined:
+                    break;
                 case ConnectStatus.UserRequestedDisconnect:
+                    PopupPanel.ClosePopupPanel();
                     break;
                 case ConnectStatus.ServerFull:
                     PopupPanel.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");

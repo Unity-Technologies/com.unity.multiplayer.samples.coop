@@ -70,6 +70,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
+        /// <summary>
+        /// Closes the currently displayed popup.
+        /// </summary>
+        //TODO: when stacking is added to the popup panel, we should specify which one to close
         public static void ClosePopupPanel()
         {
             if (s_Instance != null)
