@@ -141,7 +141,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
                 {
-                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect)
+                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect || NetworkManager.Singleton.IsHost)
                     {
                         // simply shut down and go back to main menu
                         NetworkManager.Singleton.Shutdown();
