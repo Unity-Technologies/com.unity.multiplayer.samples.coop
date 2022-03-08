@@ -1,3 +1,5 @@
+using System;
+using System.Text;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -6,6 +8,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -61,6 +64,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
         {
+            // before sending request to lobby service, populate an empty lobby name, if necessary
+            if (string.IsNullOrEmpty(lobbyName))
+            {
+                lobbyName = GenerateRandomRoomKey();
+            }
+
             m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
@@ -225,6 +234,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void OnNetworkTimeout()
         {
             UnblockUIAfterLoadingIsComplete();
+        }
+
+        /// <summary>
+        /// Generates a random room key to use as a default value.
+        /// </summary>
+        /// <returns> A 6 character-long randomized string. </returns>
+        string GenerateRandomRoomKey()
+        {
+            var sb = new StringBuilder();
+            for (int i = 0; i < 6; i++)
+            {
+                var val = Convert.ToChar(Random.Range(65, 90));
+                sb.Append(val);
+            }
+
+            return sb.ToString();
         }
     }
 }
