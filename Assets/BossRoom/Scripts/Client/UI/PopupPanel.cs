@@ -13,6 +13,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         TextMeshProUGUI m_TitleText;
         [SerializeField]
         TextMeshProUGUI m_MainText;
+        [SerializeField]
+        GameObject m_ConfirmButton;
+        [SerializeField]
+        GameObject m_LoadingImage;
 
         bool m_IsPopupShown;
 
@@ -42,6 +46,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_TitleText.text = string.Empty;
             m_MainText.text = string.Empty;
+            m_ConfirmButton.SetActive(false);
+            m_LoadingImage.SetActive(false);
             gameObject.SetActive(false);
             m_IsPopupShown = false;
         }
@@ -51,19 +57,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
-        public static void ShowPopupPanel(string titleText, string mainText)
+        /// <param name="isCloseableByUser">If true, this popup can be closed by the user, else, it has to be closed manually</param>
+        public static void ShowPopupPanel(string titleText, string mainText, bool isCloseableByUser = true)
         {
             if (s_Instance != null)
             {
-                s_Instance.SetupPopupPanel(titleText, mainText);
+                s_Instance.SetupPopupPanel(titleText, mainText, isCloseableByUser);
             }
             else
             {
-                Debug.LogError($"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}");
+                Debug.LogError($"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}.");
             }
         }
 
-        void SetupPopupPanel(string titleText, string mainText)
+        public static void ClosePopupPanel()
+        {
+            if (s_Instance != null)
+            {
+                s_Instance.ResetState();
+            }
+            else
+            {
+                Debug.LogError($"No PopupPanel instance found. Cannot close popup.");
+            }
+        }
+
+        void SetupPopupPanel(string titleText, string mainText, bool isCloseableByUser = false)
         {
             if (m_IsPopupShown)
             {
@@ -76,6 +95,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                 m_TitleText.text = titleText;
                 m_MainText.text = mainText;
+                m_ConfirmButton.SetActive(isCloseableByUser);
+                m_LoadingImage.SetActive(!isCloseableByUser);
 
                 gameObject.SetActive(true);
                 m_IsPopupShown = true;
