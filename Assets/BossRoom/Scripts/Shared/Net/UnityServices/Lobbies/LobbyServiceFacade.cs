@@ -60,10 +60,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_LobbyApiInterface = m_ServiceScope.Resolve<LobbyAPIInterface>();
             m_JoinedLobbyContentHeartbeat = m_ServiceScope.Resolve<JoinedLobbyContentHeartbeat>();
 
-            m_RateLimitQuery = new RateLimitCooldown(1.5f, updateRunner);
-            m_RateLimitJoin = new RateLimitCooldown(3f, updateRunner);
-            m_RateLimitQuickJoin = new RateLimitCooldown(10f,  updateRunner);
-            m_RateLimitHost = new RateLimitCooldown(3f, updateRunner);
+            m_RateLimitQuery = new RateLimitCooldown(0f, updateRunner);
+            m_RateLimitJoin = new RateLimitCooldown(0f, updateRunner);
+            m_RateLimitQuickJoin = new RateLimitCooldown(0f, updateRunner);
+            m_RateLimitHost = new RateLimitCooldown(0f, updateRunner);
         }
 
         public void Dispose()
@@ -115,6 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 CurrentUnityLobby = lobby;
                 m_LocalLobby.ApplyRemoteData(lobby);
 
+                // as client, check if host is still in lobby
                 if (!m_LocalUser.IsHost)
                 {
                     foreach (var lobbyUser in m_LocalLobby.LobbyUsers)
@@ -126,7 +127,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                     }
                     m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
                     ForceLeaveLobbyAttempt();
-                    m_ApplicationController.QuitGame();
+                    // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
                 }
             }
         }
