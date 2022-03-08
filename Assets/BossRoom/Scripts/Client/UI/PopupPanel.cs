@@ -20,6 +20,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         bool m_IsPopupShown;
 
+        long m_DisplayedPopupId = -1;
+        static long s_NextPopupId = 0;
+
         static PopupPanel s_Instance;
 
         void Awake()
@@ -58,27 +61,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
         /// <param name="isCloseableByUser">If true, this popup can be closed by the user, else, it has to be closed manually</param>
-        public static void ShowPopupPanel(string titleText, string mainText, bool isCloseableByUser = true)
+        /// <returns>The popup's id</returns>
+        public static long ShowPopupPanel(string titleText, string mainText, bool isCloseableByUser = true)
         {
-            if (s_Instance != null)
-            {
-                s_Instance.SetupPopupPanel(titleText, mainText, isCloseableByUser);
-            }
-            else
+            if (s_Instance == null)
             {
                 Debug.LogError($"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}.");
+                return -1;
             }
+
+            return s_Instance.SetupPopupPanel(titleText, mainText, isCloseableByUser);
         }
 
         /// <summary>
-        /// Closes the currently displayed popup.
+        /// Closes the currently displayed popup if it has the requested id.
         /// </summary>
-        //TODO: when stacking is added to the popup panel, we should specify which one to close
-        public static void ClosePopupPanel()
+        public static void RequestClosePopupPanel(long popupId)
         {
             if (s_Instance != null)
             {
-                s_Instance.ResetState();
+                s_Instance.ClosePopupPanel(popupId);
             }
             else
             {
@@ -86,24 +88,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void SetupPopupPanel(string titleText, string mainText, bool isCloseableByUser = false)
+        long SetupPopupPanel(string titleText, string mainText, bool isCloseableByUser = false)
         {
             if (m_IsPopupShown)
             {
                 Debug.Log("Trying to show popup, but another popup is already being shown.");
                 Debug.Log($"{titleText}. {mainText}");
+                return -1;
             }
-            else
+
+            ResetState();
+
+            m_TitleText.text = titleText;
+            m_MainText.text = mainText;
+            m_ConfirmButton.SetActive(isCloseableByUser);
+            m_LoadingImage.SetActive(!isCloseableByUser);
+
+            gameObject.SetActive(true);
+            m_IsPopupShown = true;
+            m_DisplayedPopupId = s_NextPopupId++;
+            return m_DisplayedPopupId;
+        }
+
+        void ClosePopupPanel(long popupId)
+        {
+            if (m_DisplayedPopupId == popupId)
             {
                 ResetState();
-
-                m_TitleText.text = titleText;
-                m_MainText.text = mainText;
-                m_ConfirmButton.SetActive(isCloseableByUser);
-                m_LoadingImage.SetActive(!isCloseableByUser);
-
-                gameObject.SetActive(true);
-                m_IsPopupShown = true;
             }
         }
     }

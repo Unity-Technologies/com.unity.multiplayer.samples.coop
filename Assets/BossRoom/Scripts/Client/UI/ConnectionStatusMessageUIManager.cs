@@ -12,6 +12,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     {
         IDisposable m_Subscriptions;
 
+        long m_PopupIdToClose = -1;
+
         [Inject]
         void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSub)
         {
@@ -30,19 +32,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnConnectStatus(ConnectStatus status)
         {
+            PopupPanel.RequestClosePopupPanel(m_PopupIdToClose);
             switch (status)
             {
                 case ConnectStatus.Undefined:
-                    break;
                 case ConnectStatus.UserRequestedDisconnect:
-                    PopupPanel.ClosePopupPanel();
                     break;
                 case ConnectStatus.ServerFull:
                     PopupPanel.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
                     break;
                 case ConnectStatus.Success:
-                    PopupPanel.ClosePopupPanel();
-                    PopupPanel.ShowPopupPanel("Success!", "Joining Now", false);
+                    m_PopupIdToClose = PopupPanel.ShowPopupPanel("Success!", "Joining Now", false);
                     SceneManager.sceneLoaded += ClosePopupOnsceneLoaded;
                     break;
                 case ConnectStatus.LoggedInAgain:
@@ -52,7 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     PopupPanel.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost");
                     break;
                 case ConnectStatus.Reconnecting:
-                    PopupPanel.ShowPopupPanel("Attempting reconnection", "Lost connection to the Host, attempting to reconnect...", false);
+                    m_PopupIdToClose = PopupPanel.ShowPopupPanel("Attempting reconnection", "Lost connection to the Host, attempting to reconnect...", false);
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
@@ -62,7 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void ClosePopupOnsceneLoaded(Scene scene, LoadSceneMode mode)
         {
-            PopupPanel.ClosePopupPanel();
+            PopupPanel.RequestClosePopupPanel(m_PopupIdToClose);
             SceneManager.sceneLoaded -= ClosePopupOnsceneLoaded;
         }
     }
