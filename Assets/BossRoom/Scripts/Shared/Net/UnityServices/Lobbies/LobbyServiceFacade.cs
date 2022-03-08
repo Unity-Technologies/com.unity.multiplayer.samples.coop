@@ -127,7 +127,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                     }
                     m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
                     ForceLeaveLobbyAttempt();
-                    // no need to disconnect NGO, it should already be handled by NGO callback to disconnect
+                    // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
                 }
             }
         }
