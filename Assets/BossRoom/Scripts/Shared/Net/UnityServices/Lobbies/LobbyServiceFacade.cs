@@ -60,10 +60,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_LobbyApiInterface = m_ServiceScope.Resolve<LobbyAPIInterface>();
             m_JoinedLobbyContentHeartbeat = m_ServiceScope.Resolve<JoinedLobbyContentHeartbeat>();
 
-            m_RateLimitQuery = new RateLimitCooldown(1.5f, updateRunner);
-            m_RateLimitJoin = new RateLimitCooldown(3f, updateRunner);
-            m_RateLimitQuickJoin = new RateLimitCooldown(10f,  updateRunner);
-            m_RateLimitHost = new RateLimitCooldown(3f, updateRunner);
+            m_RateLimitQuery = new RateLimitCooldown(0f, updateRunner);
+            m_RateLimitJoin = new RateLimitCooldown(0f, updateRunner);
+            m_RateLimitQuickJoin = new RateLimitCooldown(0f, updateRunner);
+            m_RateLimitHost = new RateLimitCooldown(0f, updateRunner);
         }
 
         public void Dispose()
@@ -134,7 +134,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to create a new lobby and then join it.
         /// </summary>
-        public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, OnlineMode onlineMode, string ip, int port, Action<Lobby> onSuccess, Action onFailure)
+        public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, OnlineMode onlineMode, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitHost.CanCall)
             {
@@ -147,9 +147,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             var initialLobbyData = new Dictionary<string, DataObject>()
             {
-                {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())},
-                {"IP", new DataObject(DataObject.VisibilityOptions.Public, ip)},
-                {"Port", new DataObject(DataObject.VisibilityOptions.Public,  port.ToString())},
+                {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())}
             };
 
             m_LobbyApiInterface.CreateLobbyAsync(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);

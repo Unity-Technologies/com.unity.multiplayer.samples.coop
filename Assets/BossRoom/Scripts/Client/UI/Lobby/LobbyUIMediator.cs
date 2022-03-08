@@ -3,6 +3,7 @@ using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -14,7 +15,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] LobbyJoiningUI m_LobbyJoiningUI;
         [SerializeField] LobbyCreationUI m_LobbyCreationUI;
         [SerializeField] UITinter m_JoinToggle;
+        [SerializeField] UITinter m_JoinToggleBorder;
         [SerializeField] UITinter m_CreateToggle;
+        [SerializeField] UITinter m_CreateToggleBorder;
         [SerializeField] TextMeshProUGUI m_PlayerNameLabel;
         [SerializeField] GameObject m_LoadingSpinner;
 
@@ -57,14 +60,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         //Lobby and Relay calls done from UI
 
-        public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode, string ip, int port)
+        public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
         {
-            m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, ip, port, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
+            m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
 
         public void QueryLobbiesRequest(bool blockUI)
         {
+            if (!AuthenticationService.Instance.IsAuthorized)
+            {
+                return;
+            }
+
             m_LobbyServiceFacade.RetrieveLobbyListAsync(
                 OnSuccess,
                 OnFailure
@@ -177,7 +185,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyJoiningUI.Show();
             m_LobbyCreationUI.Hide();
             m_JoinToggle.SetToColor(1);
+            m_JoinToggleBorder.SetToColor(1);
             m_CreateToggle.SetToColor(0);
+            m_CreateToggleBorder.SetToColor(0);
         }
 
         public void ToggleCreateLobbyUI()
@@ -185,7 +195,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyJoiningUI.Hide();
             m_LobbyCreationUI.Show();
             m_JoinToggle.SetToColor(0);
+            m_JoinToggleBorder.SetToColor(0);
             m_CreateToggle.SetToColor(1);
+            m_CreateToggleBorder.SetToColor(1);
         }
 
         public void RegenerateName()

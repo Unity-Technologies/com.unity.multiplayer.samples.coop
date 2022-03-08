@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
@@ -64,9 +65,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
 
+                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
-                NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
+                SceneLoaderWrapper.Instance.LoadScene("CharSelect");
 
                 if (m_Portal.NetManager.IsHost)
                 {
