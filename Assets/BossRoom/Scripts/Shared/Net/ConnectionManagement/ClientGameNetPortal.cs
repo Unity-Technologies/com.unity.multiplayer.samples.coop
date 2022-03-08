@@ -1,6 +1,6 @@
 using System;
+using System.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +18,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         public static ClientGameNetPortal Instance;
         private GameNetPortal m_Portal;
+        Coroutine m_TryToReconnectCoroutine;
+        string m_JoinCode;
+        OnlineMode m_OnlineMode;
 
         /// <summary>
         /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
@@ -94,6 +97,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (m_Portal.NetManager.IsClient)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+                if (m_TryToReconnectCoroutine != null)
+                {
+                    StopCoroutine(m_TryToReconnectCoroutine);
+                    m_TryToReconnectCoroutine = null;
+                }
             }
         }
 
@@ -110,6 +118,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
             else
             {
+                if (m_TryToReconnectCoroutine != null)
+                {
+                    StopCoroutine(m_TryToReconnectCoroutine);
+                    m_TryToReconnectCoroutine = null;
+                }
                 m_ConnectStatusPub.Publish(status);
             }
         }
@@ -129,25 +142,59 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
                 {
-                    // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
-                    // Just shut down networking and switch back to main menu.
-                    NetworkManager.Singleton.Shutdown();
-                    if (!DisconnectReason.HasTransitionReason)
+                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect || NetworkManager.Singleton.IsHost)
                     {
-                        //disconnect that happened for some other reason than user UI interaction--should display a message.
-                        DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
+                        // simply shut down and go back to main menu
+                        NetworkManager.Singleton.Shutdown();
+                        SceneLoaderWrapper.Instance.LoadScene("MainMenu");
                     }
-
-                    SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+                    else
+                    {
+                        DisconnectReason.SetDisconnectReason(ConnectStatus.Reconnecting);
+                        // load new scene to workaround MTT-2684
+                        SceneManager.LoadScene("Loading");
+                        // try reconnecting
+                        m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect());
+                    }
                 }
                 else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
                 {
                     // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
+
                 m_ConnectStatusPub.Publish(DisconnectReason.Reason);
                 DisconnectReason.Clear();
             }
+        }
+
+        private IEnumerator TryToReconnect()
+        {
+            Debug.Log("Lost connection to host, trying to reconnect...");
+            int nbTries = 0;
+            while (nbTries < 3)
+            {
+                NetworkManager.Singleton.Shutdown();
+                yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
+                Debug.Log($"Reconnecting attempt {nbTries + 1}/3...");
+                ConnectClient(null);
+                yield return new WaitForSeconds(1.1f * k_TimeoutDuration); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
+                nbTries++;
+            }
+
+            if (!NetworkManager.Singleton.IsConnectedClient)
+            {
+                Debug.Log("All tries failed, returning to main menu");
+                SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+                if (!DisconnectReason.HasTransitionReason)
+                {
+                    DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
+                }
+
+            }
+            NetworkManager.Singleton.Shutdown();
+            m_TryToReconnectCoroutine = null;
+            m_ConnectStatusPub.Publish(DisconnectReason.Reason);
         }
 
         /// <summary>
@@ -157,11 +204,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
         /// yet initialized its client and server GNP-Logic objects yet (which it does in OnNetworkSpawn, based on the role that the current player is performing).
         /// </remarks>
-        /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
+            m_OnlineMode = OnlineMode.IpHost;
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -179,36 +226,42 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
             }
 
-            ConnectClient();
+            ConnectClient(null);
         }
 
-        public async void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
+        public void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
         {
-            var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            m_OnlineMode = OnlineMode.UnityRelay;
+            m_JoinCode = joinCode;
+            var utp = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
 
             Debug.Log($"Setting Unity Relay client with join code {joinCode}");
 
-            try
-            {
-                var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
-                await clientRelayUtilityTask;
-                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
-
-                m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
-                utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
-            }
-            catch (Exception e)
-            {
-                onFailure?.Invoke(e.Message);
-                return;//not re-throwing, but still not allowing to connect
-            }
-
-            ConnectClient();
+            ConnectClient(onFailure);
         }
 
-        private void ConnectClient()
+        async void ConnectClient(Action<string> onFailure)
         {
+            if (m_OnlineMode == OnlineMode.UnityRelay)
+            {
+                try
+                {
+                    var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(m_JoinCode);
+                    await clientRelayUtilityTask;
+                    var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+
+                    m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_JoinCode, null, null);
+                    var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+                    utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
+                }
+                catch (Exception e)
+                {
+                    onFailure?.Invoke(e.Message);
+                    return;//not re-throwing, but still not allowing to connect
+                }
+            }
+
             var clientGuid = ClientPrefs.GetGuid();
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
