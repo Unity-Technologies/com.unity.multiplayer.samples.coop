@@ -13,6 +13,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         ApplicationController m_ApplicationController;
 
+        private bool m_QuitMode = true;
+
         [Inject]
         private void InjectDependencies(ApplicationController applicationController)
         {
@@ -21,14 +23,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void OnEnable()
         {
-            m_QuitButtonText.text = NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening ?
-                "Leave session?" :
-                "Exit Game?";
+            m_QuitMode = NetworkManager.Singleton == null || !NetworkManager.Singleton.IsListening;
+            m_QuitButtonText.text = m_QuitMode ? "Exit Game?" : "Leave session?";
         }
 
         public void Quit()
         {
-            m_ApplicationController.QuitGame();
+            if (m_QuitMode)
+            {
+                m_ApplicationController.QuitGame();
+            }
+            else
+            {
+                m_ApplicationController.LeaveSession();
+            }
+
             gameObject.SetActive(false);
         }
     }
