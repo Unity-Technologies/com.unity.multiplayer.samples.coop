@@ -47,6 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         void ResetState()
         {
+            m_DisplayedPopupId = -1;
             m_TitleText.text = string.Empty;
             m_MainText.text = string.Empty;
             m_ConfirmButton.SetActive(false);
@@ -110,6 +111,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return m_DisplayedPopupId;
         }
 
+        /// <summary>
+        /// Closes the currently displayed popup if it has the requested id.
+        /// </summary>
         void ClosePopupPanel(long popupId)
         {
             if (m_DisplayedPopupId == popupId)
