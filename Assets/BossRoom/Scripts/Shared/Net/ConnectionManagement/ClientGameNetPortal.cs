@@ -152,7 +152,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     {
                         DisconnectReason.SetDisconnectReason(ConnectStatus.Reconnecting);
                         // load new scene to workaround MTT-2684
-                        SceneLoaderWrapper.Instance.LoadScene("Loading");
+                        SceneManager.LoadScene("Loading");
                         // try reconnecting
                         m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect());
                     }
