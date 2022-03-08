@@ -171,10 +171,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             while (nbTries < 3)
             {
                 NetworkManager.Singleton.Shutdown();
-                yield return new WaitForSeconds(1); // wait a short while to leave time for NetworkManager to complete shutting down
-                Debug.Log($"Reconnecting attempt {nbTries+1}/3...");
+                yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
+                Debug.Log($"Reconnecting attempt {nbTries + 1}/3...");
                 ConnectClient();
-                yield return new WaitForSeconds(k_TimeoutDuration);
+                yield return new WaitForSeconds(1.1f * k_TimeoutDuration); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
                 nbTries++;
             }
 
