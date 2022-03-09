@@ -19,13 +19,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         const int k_MaxLobbiesToShow = 16; // If more are necessary, consider retrieving paginated results or using filters.
 
         readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
+        readonly IPublisher<LobbyServiceExceptionMessage> m_LobbyServiceExceptionMessagePublisher;
         readonly List<QueryFilter> m_Filters;
         readonly List<QueryOrder> m_Order;
 
         [Inject]
-        public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
+        public LobbyAPIInterface(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher, IPublisher<LobbyServiceExceptionMessage> lobbyServiceExceptionMessagePublisher)
         {
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
+            m_LobbyServiceExceptionMessagePublisher = lobbyServiceExceptionMessagePublisher;
 
             // Filter for open lobbies only
             m_Filters = new List<QueryFilter>()
@@ -66,6 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
 
+            m_LobbyServiceExceptionMessagePublisher.Publish(new LobbyServiceExceptionMessage(e));
             m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason));
         }
 
