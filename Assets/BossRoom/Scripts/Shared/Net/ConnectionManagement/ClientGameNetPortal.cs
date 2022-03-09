@@ -182,17 +182,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 nbTries++;
             }
 
-            if (!NetworkManager.Singleton.IsConnectedClient)
-            {
-                Debug.Log("All tries failed, returning to main menu");
-                SceneLoaderWrapper.Instance.LoadScene("MainMenu");
-                if (!DisconnectReason.HasTransitionReason)
-                {
-                    DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
-                }
-
-            }
+            // If the coroutine has not been stopped before this, it means we failed to connect during all attempts
+            Debug.Log("All tries failed, returning to main menu");
             NetworkManager.Singleton.Shutdown();
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+            if (!DisconnectReason.HasTransitionReason)
+            {
+                DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
+            }
             m_TryToReconnectCoroutine = null;
             m_ConnectStatusPub.Publish(DisconnectReason.Reason);
         }
