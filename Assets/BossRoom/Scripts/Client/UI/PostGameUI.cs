@@ -15,7 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// </summary>
     public class PostGameUI : MonoBehaviour
     {
-        private ApplicationController m_ApplicationController;
+        ApplicationController m_ApplicationController;
 
         [SerializeField]
         private Light m_SceneLight;
@@ -42,7 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         private Color m_LoseLightColor;
 
         [Inject]
-        private void InjectDependencies(ApplicationController applicationController)
+        void InjectDependencies(ApplicationController applicationController)
         {
             m_ApplicationController = applicationController;
         }
