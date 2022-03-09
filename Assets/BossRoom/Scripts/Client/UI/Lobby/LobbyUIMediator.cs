@@ -1,7 +1,7 @@
+using System;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
@@ -33,7 +33,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [Inject]
         void InjectDependenciesAndInitialize(
             LobbyServiceFacade lobbyServiceFacade,
-            IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
             LocalLobbyUser localUser,
             LocalLobby localLobby,
             NameGenerationData nameGenerationData,
