@@ -247,7 +247,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
 
             if (NetManager.IsServer)
             {
@@ -255,14 +254,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             else
             {
-                NetManager.Shutdown();
+                ShutDown();
             }
+        }
+
+        void ShutDown()
+        {
+            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
+            NetManager.Shutdown();
         }
 
         IEnumerator WaitToShutdown()
         {
             yield return new WaitForSeconds(0.5f);
-            NetManager.Shutdown();
+            ShutDown();
         }
     }
 }
