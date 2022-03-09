@@ -21,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// </remarks>
     public class ClientMainMenuState : GameStateBehaviour
     {
+        public const string AuthProfileCommandLineArg = "-AuthProfile";
         public override GameState ActiveState { get { return GameState.MainMenu; } }
 
         [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
@@ -67,7 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var arguments = System.Environment.GetCommandLineArgs();
             for (int i = 0; i < arguments.Length; i++)
             {
-                if (arguments[i] == "-AuthProfile")
+                if (arguments[i] == AuthProfileCommandLineArg)
                 {
                     var profileId = arguments[i + 1];
                     unityAuthenticationInitOptions.SetProfile(profileId);

@@ -1,7 +1,7 @@
+using System;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
@@ -28,10 +28,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
 
+        const string k_DefaultLobbyName = "no-name";
+
         [Inject]
         void InjectDependenciesAndInitialize(
             LobbyServiceFacade lobbyServiceFacade,
-            IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
             LocalLobbyUser localUser,
             LocalLobby localLobby,
             NameGenerationData nameGenerationData,
@@ -63,6 +64,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
         {
+            // before sending request to lobby service, populate an empty lobby name, if necessary
+            if (string.IsNullOrEmpty(lobbyName))
+            {
+                lobbyName = k_DefaultLobbyName;
+            }
+
             m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
