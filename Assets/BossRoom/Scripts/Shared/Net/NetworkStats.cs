@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             public float LastRTT { get; private set; }
             Queue<float> m_MovingWindow = new Queue<float>();
             const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to react to change
-            float m_MaxWindowSize => k_MaxWindowSizeSeconds / m_PingIntervalSeconds;
+            const float k_MaxWindowSize = k_MaxWindowSizeSeconds / k_PingIntervalSeconds;
 
             public void Add(float value)
             {
@@ -31,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             void UpdateRTTSlidingWindowAverage()
             {
-                if (m_MovingWindow.Count > m_MaxWindowSize)
+                if (m_MovingWindow.Count > k_MaxWindowSize)
                 {
                     m_MovingWindow.Dequeue();
                 }
@@ -42,7 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     rttSum += singleRTT;
                 }
 
-                LastRTT = rttSum / m_MaxWindowSize;
+                LastRTT = rttSum / k_MaxWindowSize;
             }
         }
         // RTT
@@ -54,10 +54,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         // Note: when adding more stats, it might be worth it to abstract these in their own classes instead of having a bunch
         // of attributes floating around.
 
-        MovingWindowAverage BossRoomRTT = new MovingWindowAverage();
-        MovingWindowAverage UTP_RTT = new MovingWindowAverage();
+        const float k_PingIntervalSeconds = 0.1f;
 
-        const float m_PingIntervalSeconds = 0.1f;
+        MovingWindowAverage m_BossRoomRTT = new MovingWindowAverage();
+        MovingWindowAverage m_UtpRTT = new MovingWindowAverage();
+
         float m_LastPingTime;
         Text m_TextStat;
         Text m_TextHostType;
@@ -69,7 +70,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         ClientRpcParams m_PongClientParams;
 
-
         public override void OnNetworkSpawn()
         {
             bool isClientOnly = IsClient && !IsServer;
@@ -78,10 +78,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 Destroy(this);
                 return;
             }
+
             if (IsOwner)
             {
                 CreateNetworkStatsText();
             }
+
             m_PongClientParams = new ClientRpcParams() { Send = new ClientRpcSendParams() { TargetClientIds = new[] { OwnerClientId } } };
         }
 
@@ -96,7 +98,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             InitializeTextLine("No Stat", out m_TextStat);
         }
 
-        private void InitializeTextLine(string defaultText, out Text textComponent)
+        void InitializeTextLine(string defaultText, out Text textComponent)
         {
             GameObject rootGO = new GameObject("UI Stat Text");
             textComponent = rootGO.AddComponent<Text>();
@@ -116,7 +118,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var textToDisplay = string.Empty;
             if (!IsServer)
             {
-                if (Time.realtimeSinceStartup - m_LastPingTime > m_PingIntervalSeconds)
+                if (Time.realtimeSinceStartup - m_LastPingTime > k_PingIntervalSeconds)
                 {
                     // We could have had a ping/pong where the ping sends the pong and the pong sends the ping. Issue with this
                     // is the higher the latency, the lower the sampling would be. We need pings to be sent at a regular interval
@@ -125,13 +127,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     m_CurrentRTTPingId++;
                     m_LastPingTime = Time.realtimeSinceStartup;
 
-                    UTP_RTT.Add(NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId));
+                    m_UtpRTT.Add(NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId));
                 }
 
                 if (m_TextStat != null)
                 {
-
-                    textToDisplay = $"{textToDisplay}RTT: {(BossRoomRTT.LastRTT * 1000).ToString("0")} ms;\nUTP RTT {UTP_RTT.LastRTT.ToString("0")} ms";
+                    textToDisplay = $"{textToDisplay}RTT: {(m_BossRoomRTT.LastRTT * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.LastRTT.ToString("0")} ms";
                 }
             }
 
@@ -146,19 +147,18 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-
         [ServerRpc]
-        public void PingServerRPC(int pingId, ServerRpcParams serverParams = default)
+        void PingServerRPC(int pingId, ServerRpcParams serverParams = default)
         {
             PongClientRPC(pingId, m_PongClientParams);
         }
 
         [ClientRpc]
-        public void PongClientRPC(int pingId, ClientRpcParams clientParams = default)
+        void PongClientRPC(int pingId, ClientRpcParams clientParams = default)
         {
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);
-            BossRoomRTT.Add(Time.realtimeSinceStartup - startTime);
+            m_BossRoomRTT.Add(Time.realtimeSinceStartup - startTime);
         }
 
         public override void OnNetworkDespawn()
@@ -167,6 +167,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 Destroy(m_TextStat.gameObject);
             }
+
             if (m_TextHostType != null)
             {
                 Destroy(m_TextHostType.gameObject);
