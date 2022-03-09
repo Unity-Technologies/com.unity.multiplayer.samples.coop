@@ -69,7 +69,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
         public void LoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
-            if (m_NetworkManager != null && m_NetworkManager.IsListening && m_NetworkManager.NetworkConfig.EnableSceneManagement)
+            if (m_NetworkManager != null && m_NetworkManager.IsListening && !m_NetworkManager.ShutdownInProgress && m_NetworkManager.NetworkConfig.EnableSceneManagement)
             {
                 if (m_NetworkManager.IsServer)
                 {
@@ -90,7 +90,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (m_NetworkManager == null || !m_NetworkManager.IsListening || !m_NetworkManager.NetworkConfig.EnableSceneManagement)
+            if (m_NetworkManager == null || !m_NetworkManager.IsListening || m_NetworkManager.ShutdownInProgress || !m_NetworkManager.NetworkConfig.EnableSceneManagement)
             {
                 m_ClientLoadingScreen.StopLoadingScreen();
             }
