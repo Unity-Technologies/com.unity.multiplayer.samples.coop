@@ -31,6 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
         private const int k_TimeoutDuration = 10;
+        const int k_NbReconnectAttempts = 3;
 
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
@@ -150,7 +151,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
                 {
-                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect || NetworkManager.Singleton.IsHost)
+                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect || DisconnectReason.Reason == ConnectStatus.HostDisconnected || NetworkManager.Singleton.IsHost)
                     {
                         // simply shut down and go back to main menu
                         NetworkManager.Singleton.Shutdown();
@@ -180,11 +181,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
             int nbTries = 0;
-            while (nbTries < 3)
+            while (nbTries < k_NbReconnectAttempts)
             {
                 NetworkManager.Singleton.Shutdown();
                 yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
-                Debug.Log($"Reconnecting attempt {nbTries + 1}/3...");
+                Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
                 ConnectClient(null);
                 yield return new WaitForSeconds(1.1f * k_TimeoutDuration); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
                 nbTries++;

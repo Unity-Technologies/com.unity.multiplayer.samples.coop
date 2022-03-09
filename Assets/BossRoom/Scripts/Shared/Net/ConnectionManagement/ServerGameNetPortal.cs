@@ -106,6 +106,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public void OnUserDisconnectRequest()
         {
             Clear();
+            if (m_Portal.NetManager.IsServer)
+            {
+                SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostDisconnected);
+            }
         }
 
         private void Clear()
@@ -229,6 +233,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
+        }
+        /// <summary>
+        /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the clients.
+        /// </summary>
+        /// <param name="status"> The reason for the upcoming disconnect.</param>
+        public void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)
+        {
+            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            writer.WriteValueSafe(status);
+            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessageToAll(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
         }
 
         /// <summary>
