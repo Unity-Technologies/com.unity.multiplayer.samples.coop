@@ -102,6 +102,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     StopCoroutine(m_TryToReconnectCoroutine);
                     m_TryToReconnectCoroutine = null;
                 }
+
+                if (!m_Portal.NetManager.IsConnectedClient)
+                {
+                    // If we are here, it means we will not receive the OnClientDisconnectCallback since we are already disconnected.
+                    // In that case, publish the disconnect reason and clear it now.
+                    m_ConnectStatusPub.Publish(DisconnectReason.Reason);
+                    DisconnectReason.Clear();
+                }
             }
         }
 
