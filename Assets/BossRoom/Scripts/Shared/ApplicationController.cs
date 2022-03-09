@@ -46,9 +46,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             //this message channel is essential and persists for the lifetime of the lobby and relay services
             scope.BindMessageChannel<UnityServiceErrorMessage>();
 
-            // A message channel for lobby exceptions which is essential and persists for the lifetime of the lobby service
-            scope.BindMessageChannel<LobbyServiceExceptionMessage>();
-
             //this message channel is essential and persists for the lifetime of the lobby and relay services
             scope.BindMessageChannel<ConnectStatus>();
 
