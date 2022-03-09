@@ -24,7 +24,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 
             var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
 
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason));
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
         }
 
         public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)

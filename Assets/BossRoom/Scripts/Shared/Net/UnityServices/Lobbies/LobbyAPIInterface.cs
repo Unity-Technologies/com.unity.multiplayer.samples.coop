@@ -68,8 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
 
-            m_LobbyServiceExceptionMessagePublisher.Publish(new LobbyServiceExceptionMessage(e));
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason));
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
         }
 
         public void CreateLobbyAsync(string requesterUasId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData, Action<Lobby> onComplete, Action onFailed)

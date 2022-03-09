@@ -2,7 +2,6 @@ using System;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
@@ -29,13 +28,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         NameGenerationData m_NameGenerationData;
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
-        IDisposable m_LobbyServiceExceptionMessageSubscription;
+
+        const string k_DefaultLobbyName = "no-name";
 
         [Inject]
         void InjectDependenciesAndInitialize(
             LobbyServiceFacade lobbyServiceFacade,
-            IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
-            ISubscriber<LobbyServiceExceptionMessage> lobbyServiceExceptionMessagePublisher,
             LocalLobbyUser localUser,
             LocalLobby localLobby,
             NameGenerationData nameGenerationData,
@@ -53,7 +51,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             RegenerateName();
 
             m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
-            m_LobbyServiceExceptionMessageSubscription = lobbyServiceExceptionMessagePublisher.Subscribe(OnLobbyServiceExceptionMessage);
         }
 
         void OnDestroy()
@@ -62,13 +59,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
             }
-            m_LobbyServiceExceptionMessageSubscription?.Dispose();
         }
 
         //Lobby and Relay calls done from UI
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
         {
+            // before sending request to lobby service, populate an empty lobby name, if necessary
+            if (string.IsNullOrEmpty(lobbyName))
+            {
+                lobbyName = k_DefaultLobbyName;
+            }
+
             m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
@@ -122,16 +124,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void OnFailedLobbyCreateOrJoin()
         {
             UnblockUIAfterLoadingIsComplete();
-        }
-
-        void OnLobbyServiceExceptionMessage(LobbyServiceExceptionMessage exceptionMessage)
-        {
-            switch (exceptionMessage.Exception.Reason)
-            {
-                case LobbyExceptionReason.LobbyFull:
-                    PopupPanel.ShowPopupPanel("Failed to join lobby", "Lobby is full and can't accept more players");
-                    break;
-            }
         }
 
         void OnCreatedLobby(Lobby lobby)
