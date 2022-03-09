@@ -28,6 +28,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
 
+        const string k_DefaultLobbyName = "no-name";
+
         [Inject]
         void InjectDependenciesAndInitialize(
             LobbyServiceFacade lobbyServiceFacade,
@@ -62,6 +64,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
         {
+            // before sending request to lobby service, populate an empty lobby name, if necessary
+            if (string.IsNullOrEmpty(lobbyName))
+            {
+                lobbyName = k_DefaultLobbyName;
+            }
+
             m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
