@@ -16,6 +16,35 @@ namespace Unity.Multiplayer.Samples.BossRoom
     [RequireComponent(typeof(NetworkObject))]
     public class NetworkStats : NetworkBehaviour
     {
+        private class MovingWindowAverage
+        {
+            public float LastRTT { get; private set; }
+            Queue<float> m_MovingWindow = new Queue<float>();
+            const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to react to change
+            float m_MaxWindowSize => k_MaxWindowSizeSeconds / m_PingIntervalSeconds;
+
+            public void Add(float value)
+            {
+                m_MovingWindow.Enqueue(value);
+                UpdateRTTSlidingWindowAverage();
+            }
+
+            void UpdateRTTSlidingWindowAverage()
+            {
+                if (m_MovingWindow.Count > m_MaxWindowSize)
+                {
+                    m_MovingWindow.Dequeue();
+                }
+
+                float rttSum = 0;
+                foreach (var singleRTT in m_MovingWindow)
+                {
+                    rttSum += singleRTT;
+                }
+
+                LastRTT = rttSum / m_MaxWindowSize;
+            }
+        }
         // RTT
         // Client sends a ping RPC to the server and starts it's timer.
         // The server receives the ping and sends a pong response to the client.
@@ -25,11 +54,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         // Note: when adding more stats, it might be worth it to abstract these in their own classes instead of having a bunch
         // of attributes floating around.
 
-        public float LastRTT { get; private set; }
+        MovingWindowAverage BossRoomRTT = new MovingWindowAverage();
+        MovingWindowAverage UTP_RTT = new MovingWindowAverage();
 
-        [SerializeField]
-        [Tooltip("The interval to send ping RPCs to calculate the RTT. The bigger the number, the less reactive the stat will be to RTT changes")]
-        float m_PingIntervalSeconds = 0.1f;
+        const float m_PingIntervalSeconds = 0.1f;
         float m_LastPingTime;
         Text m_TextStat;
         Text m_TextHostType;
@@ -37,9 +65,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         // When receiving pong client RPCs, we need to know when the initiating ping sent it so we can calculate its individual RTT
         int m_CurrentRTTPingId;
 
-        Queue<float> m_MovingWindow = new Queue<float>();
-        const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to react to change
-        float m_MaxWindowSize => k_MaxWindowSizeSeconds / m_PingIntervalSeconds;
         Dictionary<int, float> m_PingHistoryStartTimes = new Dictionary<int, float>();
 
         ClientRpcParams m_PongClientParams;
@@ -99,12 +124,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     m_PingHistoryStartTimes[m_CurrentRTTPingId] = Time.realtimeSinceStartup;
                     m_CurrentRTTPingId++;
                     m_LastPingTime = Time.realtimeSinceStartup;
+
+                    UTP_RTT.Add(NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId));
                 }
 
                 if (m_TextStat != null)
                 {
-                    var transportRTT = NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId);
-                    textToDisplay = $"{textToDisplay}RTT: {(LastRTT * 1000).ToString("0")} ms;\nUTP RTT {transportRTT.ToString("0")} ms";
+
+                    textToDisplay = $"{textToDisplay}RTT: {(BossRoomRTT.LastRTT * 1000).ToString("0")} ms;\nUTP RTT {UTP_RTT.LastRTT.ToString("0")} ms";
                 }
             }
 
@@ -131,24 +158,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);
-            m_MovingWindow.Enqueue(Time.realtimeSinceStartup - startTime);
-            UpdateRTTSlidingWindowAverage();
-        }
-
-        void UpdateRTTSlidingWindowAverage()
-        {
-            if (m_MovingWindow.Count > m_MaxWindowSize)
-            {
-                m_MovingWindow.Dequeue();
-            }
-
-            float rttSum = 0;
-            foreach (var singleRTT in m_MovingWindow)
-            {
-                rttSum += singleRTT;
-            }
-
-            LastRTT = rttSum / m_MaxWindowSize;
+            BossRoomRTT.Add(Time.realtimeSinceStartup - startTime);
         }
 
         public override void OnNetworkDespawn()
