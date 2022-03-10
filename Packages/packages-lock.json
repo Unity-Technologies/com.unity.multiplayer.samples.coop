@@ -142,19 +142,19 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.adapter.utp": {
-      "version": "1.0.0-pre.6",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.adapter.utp#gdc/adapter-relay-heartbeat-fix",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {
         "com.unity.netcode.gameobjects": "1.0.0-pre.6",
         "com.unity.transport": "1.0.0-pre.14"
       },
-      "url": "https://packages.unity.com"
+      "hash": "912dd0e87aaafd4c4f158f9101b90ff2b4515dcd"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.0.0-pre.6",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#gdc/adapter-relay-heartbeat-fix",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {
         "com.unity.modules.animation": "1.0.0",
         "com.unity.modules.physics": "1.0.0",
@@ -162,7 +162,7 @@
         "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.collections": "1.1.0"
       },
-      "url": "https://packages.unity.com"
+      "hash": "912dd0e87aaafd4c4f158f9101b90ff2b4515dcd"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.10.1",
