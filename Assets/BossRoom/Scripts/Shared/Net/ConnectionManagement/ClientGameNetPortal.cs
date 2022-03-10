@@ -19,7 +19,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private GameNetPortal m_Portal;
 
         string m_JoinCode;
-        OnlineMode m_OnlineMode;
 
         /// <summary>
         /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
@@ -162,7 +161,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
-            m_OnlineMode = OnlineMode.IpHost;
+            m_Portal.OnlineMode = OnlineMode.IpHost;
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -185,7 +184,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
         {
-            m_OnlineMode = OnlineMode.UnityRelay;
+            m_Portal.OnlineMode = OnlineMode.UnityRelay;
             m_JoinCode = joinCode;
             var utp = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
@@ -197,8 +196,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         async void ConnectClient(Action<string> onFailure)
         {
-            string playerId;
-            if (m_OnlineMode == OnlineMode.UnityRelay)
+            if (m_Portal.OnlineMode == OnlineMode.UnityRelay)
             {
                 try
                 {
@@ -216,16 +214,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     return;//not re-throwing, but still not allowing to connect
                 }
 
-                playerId = AuthenticationService.Instance.PlayerId;
-            }
-            else
-            {
-                playerId = ClientPrefs.GetGuid() + ProfileManager.Profile;
             }
 
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
-                playerId = playerId,
+                playerId = m_Portal.GetPlayerId(),
                 clientScene = SceneManager.GetActiveScene().buildIndex,
                 playerName = m_Portal.PlayerName
             });

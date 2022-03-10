@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -87,6 +88,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         private LocalLobby m_LocalLobby;
         private LobbyServiceFacade m_LobbyServiceFacade;
 
+        public OnlineMode OnlineMode { get; set; }
+
         [Inject]
         private void InjectDependencies(LocalLobby localLobby, LobbyServiceFacade lobbyServiceFacade)
         {
@@ -166,6 +169,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="port">The port to connect to. </param>
         public void StartHost(string ipaddress, int port)
         {
+            OnlineMode = OnlineMode.IpHost;
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -188,6 +192,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public async void StartUnityRelayHost()
         {
+            OnlineMode = OnlineMode.UnityRelay;
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -244,6 +249,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ServerPortal.OnUserDisconnectRequest();
             SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
             NetManager.Shutdown();
+        }
+
+        public string GetPlayerId()
+        {
+            if (OnlineMode == OnlineMode.IpHost)
+            {
+                return ClientPrefs.GetGuid() + ProfileManager.Profile;
+            }
+            if (OnlineMode == OnlineMode.UnityRelay)
+            {
+                return AuthenticationService.Instance.PlayerId;
+            }
+            Debug.LogError($"OnlineMode not set to a valid value: {OnlineMode}");
+            return "";
         }
     }
 }
