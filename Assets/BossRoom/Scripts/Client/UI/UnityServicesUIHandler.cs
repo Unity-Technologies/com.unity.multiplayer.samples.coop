@@ -27,7 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             var errorMessage = error.Message;
             if (error.AffectedService == UnityServiceErrorMessage.Service.Lobby)
             {
-                if ((error.OriginalException as LobbyServiceException).Reason == LobbyExceptionReason.LobbyConflict)
+                if (error.OriginalException is LobbyServiceException {Reason: LobbyExceptionReason.LobbyConflict})
                 {
                     // LobbyConflict can have multiple causes. Let's add other solutions here if there's other situations that arise for this.
                     errorMessage += "\nSee logs for possible causes and solution.";
