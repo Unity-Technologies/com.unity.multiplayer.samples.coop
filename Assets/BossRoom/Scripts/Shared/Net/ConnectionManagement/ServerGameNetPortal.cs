@@ -4,7 +4,6 @@ using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using Unity.Netcode;
-using Unity.Services.Authentication;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
