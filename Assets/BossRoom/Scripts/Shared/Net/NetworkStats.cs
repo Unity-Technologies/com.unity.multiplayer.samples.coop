@@ -16,35 +16,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
     [RequireComponent(typeof(NetworkObject))]
     public class NetworkStats : NetworkBehaviour
     {
-        private class MovingWindowAverage
+        // For a value like RTT an exponential moving average is a better indication of the current rtt and fluctuates less.
+        struct ExponentialMovingAverageCalculator
         {
-            public float LastRTT { get; private set; }
-            Queue<float> m_MovingWindow = new Queue<float>();
-            const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to react to change
-            const float k_MaxWindowSize = k_MaxWindowSizeSeconds / k_PingIntervalSeconds;
+            readonly float m_Alpha;
+            float m_Average;
 
-            public void Add(float value)
+            public float Average => m_Average;
+
+            public ExponentialMovingAverageCalculator(int lookBack, float average)
             {
-                m_MovingWindow.Enqueue(value);
-                UpdateRTTSlidingWindowAverage();
+                m_Alpha = 2f / (lookBack + 1);
+                m_Average = average;
             }
 
-            void UpdateRTTSlidingWindowAverage()
-            {
-                if (m_MovingWindow.Count > k_MaxWindowSize)
-                {
-                    m_MovingWindow.Dequeue();
-                }
-
-                float rttSum = 0;
-                foreach (var singleRTT in m_MovingWindow)
-                {
-                    rttSum += singleRTT;
-                }
-
-                LastRTT = rttSum / k_MaxWindowSize;
-            }
+            public float NextValue(float value) => m_Average = (value - m_Average) * m_Alpha + m_Average;
         }
+
         // RTT
         // Client sends a ping RPC to the server and starts it's timer.
         // The server receives the ping and sends a pong response to the client.
@@ -56,8 +44,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         const float k_PingIntervalSeconds = 0.1f;
 
-        MovingWindowAverage m_BossRoomRTT = new MovingWindowAverage();
-        MovingWindowAverage m_UtpRTT = new MovingWindowAverage();
+        ExponentialMovingAverageCalculator m_BossRoomRTT = new ExponentialMovingAverageCalculator(30, 0);
+        ExponentialMovingAverageCalculator m_UtpRTT = new ExponentialMovingAverageCalculator(30, 0);
 
         float m_LastPingTime;
         Text m_TextStat;
@@ -127,12 +115,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     m_CurrentRTTPingId++;
                     m_LastPingTime = Time.realtimeSinceStartup;
 
-                    m_UtpRTT.Add(NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId));
+                    m_UtpRTT.NextValue(NetworkManager.NetworkConfig.NetworkTransport.GetCurrentRtt(NetworkManager.ServerClientId));
                 }
 
                 if (m_TextStat != null)
                 {
-                    textToDisplay = $"{textToDisplay}RTT: {(m_BossRoomRTT.LastRTT * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.LastRTT.ToString("0")} ms";
+                    textToDisplay = $"{textToDisplay}RTT: {(m_BossRoomRTT.Average * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.Average.ToString("0")} ms";
                 }
             }
 
@@ -158,7 +146,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             var startTime = m_PingHistoryStartTimes[pingId];
             m_PingHistoryStartTimes.Remove(pingId);
-            m_BossRoomRTT.Add(Time.realtimeSinceStartup - startTime);
+            m_BossRoomRTT.NextValue(Time.realtimeSinceStartup - startTime);
         }
 
         public override void OnNetworkDespawn()
