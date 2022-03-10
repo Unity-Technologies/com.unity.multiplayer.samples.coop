@@ -29,6 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         [SerializeField] NameGenerationData m_NameGenerationData;
         [SerializeField] LobbyUIMediator m_LobbyUIMediator;
+        [SerializeField] IPUIMediator m_IPUIMediator;
 
         [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
         [SerializeField] GameObject m_SignInSpinner;
@@ -47,6 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             m_Scope.BindInstanceAsSingle(m_NameGenerationData);
             m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
+            m_Scope.BindInstanceAsSingle(m_IPUIMediator);
 
             var unityAuthenticationInitOptions = new InitializationOptions();
 
@@ -114,6 +116,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             m_LobbyUIMediator.ToggleJoinLobbyUI();
             m_LobbyUIMediator.Show();
+        }
+
+        public void OnDirectIPClicked()
+        {
+            m_LobbyUIMediator.Hide();
+            m_IPUIMediator.Show();
         }
     }
 }
