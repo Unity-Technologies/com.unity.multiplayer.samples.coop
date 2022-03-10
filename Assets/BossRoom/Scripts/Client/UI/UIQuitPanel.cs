@@ -29,15 +29,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void SceneManagerOnsceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            var currentGameState = FindObjectOfType<GameStateBehaviour>();
-            if (currentGameState != null)
+            // If switching to new scene, check current game state to determine quit mode
+            if (loadSceneMode == LoadSceneMode.Single)
             {
-                m_QuitMode = (currentGameState.ActiveState == GameState.MainMenu);
-                m_QuitButtonText.text = m_QuitMode ? "Exit Game?" : "Return to menu?";
-            }
-            else
-            {
-                Debug.LogError($"Scene {scene.name} does not contain a GameStateBehavior");
+                var currentGameState = FindObjectOfType<GameStateBehaviour>();
+                if (currentGameState != null)
+                {
+                    m_QuitMode = (currentGameState.ActiveState == GameState.MainMenu);
+                    m_QuitButtonText.text = m_QuitMode ? "Exit Game?" : "Return to menu?";
+                }
+                else
+                {
+                    Debug.LogError($"Scene {scene.name} does not contain a GameStateBehavior");
+                }
             }
         }
 
