@@ -24,9 +24,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             public float Average => m_Average;
 
-            public ExponentialMovingAverageCalculator(int lookBack, float average)
+            public ExponentialMovingAverageCalculator(float average)
             {
-                m_Alpha = 2f / (lookBack + 1);
+                m_Alpha = 2f / (k_MaxWindowSize + 1);
                 m_Average = average;
             }
 
@@ -38,14 +38,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         // The server receives the ping and sends a pong response to the client.
         // The client receives that pong response and stops its time.
         // The RPC value is using a moving average, so we don't have a value that moves too much, but is still reactive to RTT changes.
-        //
-        // Note: when adding more stats, it might be worth it to abstract these in their own classes instead of having a bunch
-        // of attributes floating around.
 
+        const int k_MaxWindowSizeSeconds = 3; // it should take x seconds for the value to react to change
         const float k_PingIntervalSeconds = 0.1f;
+        const float k_MaxWindowSize = k_MaxWindowSizeSeconds / k_PingIntervalSeconds;
 
-        ExponentialMovingAverageCalculator m_BossRoomRTT = new ExponentialMovingAverageCalculator(30, 0);
-        ExponentialMovingAverageCalculator m_UtpRTT = new ExponentialMovingAverageCalculator(30, 0);
+        ExponentialMovingAverageCalculator m_BossRoomRTT = new ExponentialMovingAverageCalculator(0);
+        ExponentialMovingAverageCalculator m_UtpRTT = new ExponentialMovingAverageCalculator(0);
 
         float m_LastPingTime;
         Text m_TextStat;
