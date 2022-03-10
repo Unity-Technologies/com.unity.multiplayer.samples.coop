@@ -8,7 +8,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         MainMenu,
         CharSelect,
         BossRoom,
-        PostGame
+        PostGame,
+        Loading
     }
 
     /// <summary>
