@@ -1,4 +1,3 @@
-using System;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
@@ -14,31 +13,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         ApplicationController m_ApplicationController;
 
-        bool m_QuitMode = true;
+        private bool m_QuitMode = true;
 
         [Inject]
-        void InjectDependencies(ApplicationController applicationController)
+        private void InjectDependencies(ApplicationController applicationController)
         {
             m_ApplicationController = applicationController;
         }
 
-        void Awake()
+        void OnEnable()
         {
-            SceneManager.sceneLoaded += SceneManagerOnsceneLoaded;
-        }
-
-        void SceneManagerOnsceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
-        {
-            var currentGameState = FindObjectOfType<GameStateBehaviour>();
-            if (currentGameState != null)
-            {
-                m_QuitMode = (currentGameState.ActiveState == GameState.MainMenu);
-                m_QuitButtonText.text = m_QuitMode ? "Exit Game?" : "Return to menu?";
-            }
-            else
-            {
-                Debug.LogError($"Scene {scene.name} does not contain a GameStateBehavior");
-            }
+            m_QuitMode = SceneManager.GetActiveScene().name == "MainMenu";
+            m_QuitButtonText.text = m_QuitMode ? "Exit Game?" : "Return to menu?";
         }
 
         public void Quit()
