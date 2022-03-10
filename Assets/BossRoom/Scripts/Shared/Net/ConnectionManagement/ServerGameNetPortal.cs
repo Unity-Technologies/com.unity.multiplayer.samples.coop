@@ -109,7 +109,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_Portal.NetManager.IsServer)
             {
                 SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostDisconnected);
+                // wait before shutting down to make sure those messages get sent before the clients disconnect.
+                StartCoroutine(WaitToShutdown());
             }
+        }
+
+        IEnumerator WaitToShutdown()
+        {
+            yield return new WaitForSeconds(0.5f);
+            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
+            m_Portal.NetManager.Shutdown();
         }
 
         private void Clear()

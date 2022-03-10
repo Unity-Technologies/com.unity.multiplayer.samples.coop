@@ -111,6 +111,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     m_ConnectStatusPub.Publish(DisconnectReason.Reason);
                     DisconnectReason.Clear();
                 }
+
+                // only do it here if we are not the host. The host will do it in ServerGameNetPortal
+                if (!m_Portal.NetManager.IsHost)
+                {
+                    m_Portal.NetManager.Shutdown();
+                }
             }
         }
 
