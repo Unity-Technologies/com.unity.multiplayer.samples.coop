@@ -253,16 +253,24 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public string GetPlayerId()
         {
-            if (OnlineMode == OnlineMode.IpHost)
+            var playerId = "";
+            if (AuthenticationService.Instance.IsSignedIn)
             {
-                return ClientPrefs.GetGuid() + ProfileManager.Profile;
+                playerId = AuthenticationService.Instance.PlayerId;
             }
-            if (OnlineMode == OnlineMode.UnityRelay)
+            else if (OnlineMode == OnlineMode.IpHost)
             {
-                return AuthenticationService.Instance.PlayerId;
+                playerId = ClientPrefs.GetGuid() + ProfileManager.Profile;
             }
-            Debug.LogError($"OnlineMode not set to a valid value: {OnlineMode}");
-            return "";
+            else if (OnlineMode == OnlineMode.UnityRelay)
+            {
+                Debug.LogError("OnlineMode set to UnityRelay, but not signed in through AuthenticationService.");
+            }
+            else
+            {
+                Debug.LogError($"OnlineMode not set to a valid value: {OnlineMode}");
+            }
+            return playerId;
         }
     }
 }
