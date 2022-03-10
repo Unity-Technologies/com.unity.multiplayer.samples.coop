@@ -31,6 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
         private const int k_TimeoutDuration = 10;
+        const int k_NbReconnectAttempts = 1;
 
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
@@ -102,6 +103,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     StopCoroutine(m_TryToReconnectCoroutine);
                     m_TryToReconnectCoroutine = null;
                 }
+
+                if (!m_Portal.NetManager.IsConnectedClient)
+                {
+                    // If we are here, it means we will not receive the OnClientDisconnectCallback since we are already disconnected.
+                    // In that case, publish the disconnect reason and clear it now.
+                    m_ConnectStatusPub.Publish(DisconnectReason.Reason);
+                    DisconnectReason.Clear();
+                }
+
+                // only do it here if we are not the host. The host will do it in ServerGameNetPortal
+                if (!m_Portal.NetManager.IsHost)
+                {
+                    m_Portal.NetManager.Shutdown();
+                }
             }
         }
 
@@ -142,7 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
                 {
-                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect || NetworkManager.Singleton.IsHost)
+                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect || DisconnectReason.Reason == ConnectStatus.HostDisconnected || NetworkManager.Singleton.IsHost)
                     {
                         // simply shut down and go back to main menu
                         NetworkManager.Singleton.Shutdown();
@@ -172,27 +187,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
             int nbTries = 0;
-            while (nbTries < 3)
+            while (nbTries < k_NbReconnectAttempts)
             {
                 NetworkManager.Singleton.Shutdown();
                 yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
-                Debug.Log($"Reconnecting attempt {nbTries + 1}/3...");
+                Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
                 ConnectClient(null);
                 yield return new WaitForSeconds(1.1f * k_TimeoutDuration); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
                 nbTries++;
             }
 
-            if (!NetworkManager.Singleton.IsConnectedClient)
-            {
-                Debug.Log("All tries failed, returning to main menu");
-                SceneLoaderWrapper.Instance.LoadScene("MainMenu");
-                if (!DisconnectReason.HasTransitionReason)
-                {
-                    DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
-                }
-
-            }
+            // If the coroutine has not been stopped before this, it means we failed to connect during all attempts
+            Debug.Log("All tries failed, returning to main menu");
             NetworkManager.Singleton.Shutdown();
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+            if (!DisconnectReason.HasTransitionReason)
+            {
+                DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
+            }
             m_TryToReconnectCoroutine = null;
             m_ConnectStatusPub.Publish(DisconnectReason.Reason);
         }
