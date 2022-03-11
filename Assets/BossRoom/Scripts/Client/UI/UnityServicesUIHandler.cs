@@ -1,9 +1,7 @@
 using System;
-using System.Runtime.CompilerServices;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
-using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using UnityEngine;
 
@@ -44,14 +42,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
                 case UnityServiceErrorMessage.Service.Authentication:
                 {
-                    if (error.OriginalException is AuthenticationException exception)
-                    {
-                        PopupPanel.ShowPopupPanel("Authentication Error",
-                            $"For some reason we can't authenticate the user anonymously - that typically means that project is not properly " +
-                            $"set up with Unity services or that there is no internet connection." +
-                            $" You can still use the Direct IP connection option. {exception.Message}");
-
-                    }
+                    PopupPanel.ShowPopupPanel(
+                        "Authentication Error",
+                        $"{error.Message} \n\n tip: You can still use the Direct IP connection option.");
                     break;
                 }
                 default:
