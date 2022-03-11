@@ -149,7 +149,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public string GetPlayerId(ulong clientId)
         {
-            if (m_ClientIDToGuid.TryGetValue(clientId, out string playerId))
+            if (m_ClientIDToPlayerId.TryGetValue(clientId, out string playerId))
             {
                 return playerId;
             }

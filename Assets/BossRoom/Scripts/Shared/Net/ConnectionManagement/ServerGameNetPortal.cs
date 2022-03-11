@@ -33,13 +33,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public int ServerScene { get { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; } }
 
-        private LocalLobby m_LocalLobby;
         private LobbyServiceFacade m_LobbyServiceFacade;
 
         [Inject]
-        private void InjectDependencies(LocalLobby localLobby, LobbyServiceFacade lobbyServiceFacade)
+        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
         {
-            m_LocalLobby = localLobby;
             m_LobbyServiceFacade = lobbyServiceFacade;
         }
 
@@ -102,14 +100,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
-                m_LobbyServiceFacade.DeleteLobbyAsync(m_LocalLobby.LobbyID, null, null);
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                }
             }
             else
             {
                 var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 if (playerId != null)
                 {
-                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LocalLobby.LobbyID, null, null);
+                    if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                    {
+                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                    }
                 }
             }
         }

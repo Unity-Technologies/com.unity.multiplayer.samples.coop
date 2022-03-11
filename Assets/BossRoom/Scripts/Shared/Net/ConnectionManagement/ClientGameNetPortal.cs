@@ -41,14 +41,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private LobbyServiceFacade m_LobbyServiceFacade;
         IPublisher<ConnectStatus> m_ConnectStatusPub;
-        LocalLobby m_LocalLobby;
 
         [Inject]
-        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub, LocalLobby localLobby)
+        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub)
         {
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_ConnectStatusPub = connectStatusPub;
-            m_LocalLobby = localLobby;
         }
 
         private void Awake()
@@ -195,10 +193,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 NetworkManager.Singleton.Shutdown();
                 yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
                 Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
-                if (m_LocalLobby.LobbyID != null)
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
                     bool joiningLobby = true;
-                    m_LobbyServiceFacade.JoinLobbyAsync(m_LocalLobby.LobbyID, m_LocalLobby.LobbyCode, onSuccess: lobby =>
+                    m_LobbyServiceFacade.JoinLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode, onSuccess: lobby =>
                         {
                             ConnectClient(null);
                             joiningLobby = false;
