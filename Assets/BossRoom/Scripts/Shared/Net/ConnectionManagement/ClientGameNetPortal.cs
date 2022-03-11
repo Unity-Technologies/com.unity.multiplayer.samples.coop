@@ -291,10 +291,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 }
             }
 
-            var clientGuid = ClientPrefs.GetGuid();
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
-                clientGUID = clientGuid,
+                playerId = m_Portal.GetPlayerId(),
                 clientScene = SceneManager.GetActiveScene().buildIndex,
                 playerName = m_Portal.PlayerName
             });
