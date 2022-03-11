@@ -161,7 +161,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Initializes host mode on this client. Call this and then other clients should connect to us!
         /// </summary>
         /// <remarks>
-        /// See notes in GNH_Client.StartClient about why this must be static.
+        /// See notes in ClientGameNetPortal.StartClient about why this must be static.
         /// </remarks>
         /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
         /// <param name="port">The port to connect to. </param>
