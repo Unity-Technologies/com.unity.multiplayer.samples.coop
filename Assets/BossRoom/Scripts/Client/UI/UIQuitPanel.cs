@@ -1,8 +1,7 @@
-using System;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -12,28 +11,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         Text m_QuitButtonText;
 
+        ApplicationController m_ApplicationController;
+
+        private bool m_QuitMode = true;
+
+        [Inject]
+        private void InjectDependencies(ApplicationController applicationController)
+        {
+            m_ApplicationController = applicationController;
+        }
+
         void OnEnable()
         {
-            m_QuitButtonText.text = NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening ?
-                "Leave session?" :
-                "Exit Game?";
+            m_QuitMode = NetworkManager.Singleton == null || !NetworkManager.Singleton.IsListening;
+            m_QuitButtonText.text = m_QuitMode ? "Exit Game?" : "Leave session?";
         }
 
         public void Quit()
         {
-            if (NetworkManager.Singleton.IsListening)
+            if (m_QuitMode)
             {
-                // first disconnect then return to menu
-                var gameNetPortal = GameNetPortal.Instance;
-                if (gameNetPortal != null)
-                {
-                    gameNetPortal.RequestDisconnect();
-                }
-                SceneManager.LoadScene("MainMenu");
+                m_ApplicationController.QuitGame();
             }
             else
             {
-                Application.Quit();
+                m_ApplicationController.LeaveSession();
             }
 
             gameObject.SetActive(false);
