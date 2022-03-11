@@ -186,7 +186,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private IEnumerator TryToReconnect()
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
-            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
             int nbTries = 0;
             while (nbTries < k_NbReconnectAttempts)
             {
@@ -195,14 +194,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
+                    string lobbyId = m_LobbyServiceFacade.CurrentUnityLobby.Id;
+                    m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
                     bool joiningLobby = true;
-                    m_LobbyServiceFacade.JoinLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode, onSuccess: lobby =>
+                    m_LobbyServiceFacade.JoinLobbyAsync(lobbyId, "", onSuccess: lobby =>
                         {
                             ConnectClient(null);
                             joiningLobby = false;
                         }
                         , onFailure: () => joiningLobby = false);
-                    while (joiningLobby); // This is not a clean way of doing this, ideally we would want to replace that logic with a proper await.
+                    yield return new WaitWhile(() => joiningLobby); // This is not a clean way of doing this, ideally we would want to replace that logic with a proper await.
                 }
                 else
                 {
