@@ -242,7 +242,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         {
             if (m_LocalUser.IsHost)
             {
-                m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+                RetrieveLobbyAsync(lobbyId, OnRetrieveSuccess, onFailure);
+
+
+                void OnRetrieveSuccess(Lobby lobby)
+                {
+                    bool playerFound = false;
+                    foreach (var player in lobby.Players)
+                    {
+                        if (player.Id == uasId)
+                        {
+                            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+                            playerFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!playerFound)
+                    {
+                        Debug.Log($"Player {uasId} has already left the lobby.");
+                    }
+                }
+
             }
             else
             {
