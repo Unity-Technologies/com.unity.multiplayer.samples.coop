@@ -45,7 +45,7 @@ Once you have downloaded the project, the steps below should get you up and runn
 In order to see the multiplayer functionality in action we can either run multiple instances of the game locally on your computer, using either ParrelSync or builds or choose to connect to a friend over the internet. See [how to test](https://docs-multiplayer.unity3d.com/docs/develop/tutorials/testing/testing_locally) for more info.
 
 ---------------
-** Local multiplayer setup**
+**Local multiplayer setup**
 
 First we need to build an executable.
 
@@ -64,10 +64,9 @@ To play over internet, we need to build an executable that is shared between all
 
 It is possible to connect between multiple instances of the same executable OR between executables and the editor that produced said executable.
 
-Running the game over internet currently requires setting up a relay. Boss Room provides integrations with [Unity Relay](https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html) and [Photon Transport for Netcode](https://github.com/Unity-Technologies/multiplayer-community-contributions).
+Running the game over internet currently requires setting up a relay. Boss Room provides an integration with [Unity Relay](https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html).
 
 > Checkout our Unity Relay setup guide [here](https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html)
-> Checkout our Photon-Realtime setup guide [here](Documentation/Photon-Realtime/Readme.md)
 
 Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. Make sure your host's address listens on 0.0.0.0 (127.0.0.1 is for local development only).
 
