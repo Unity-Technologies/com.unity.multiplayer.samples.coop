@@ -2,6 +2,8 @@ using System;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using UnityEngine;
 
@@ -44,7 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 {
                     PopupPanel.ShowPopupPanel(
                         "Authentication Error",
-                        $"{error.Message} \n\n tip: You can still use the Direct IP connection option.");
+                        $"{error.OriginalException.Message} \n tip: You can still use the Direct IP connection option.");
                     break;
                 }
                 default:
