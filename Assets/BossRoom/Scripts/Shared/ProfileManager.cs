@@ -8,24 +8,9 @@ public static class ProfileManager
 {
     public const string AuthProfileCommandLineArg = "-AuthProfile";
 
-    static bool s_IsProfileSet = false;
+    static string s_Profile;
 
-    static string s_Profile = "";
-
-    public static string Profile
-    {
-        get
-        {
-            if (!s_IsProfileSet)
-            {
-                s_Profile = GetProfile();
-                s_IsProfileSet = true;
-            }
-
-            return s_Profile;
-        }
-        private set => s_Profile = value;
-    }
+    public static string Profile => s_Profile ??= GetProfile();
 
     static string GetProfile()
     {
