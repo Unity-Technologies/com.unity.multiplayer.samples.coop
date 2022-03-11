@@ -179,6 +179,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
             return success;
         }
 
+        public string GetPlayerId(ulong clientId)
+        {
+            if (m_ClientIDToGuid.TryGetValue(clientId, out string playerId))
+            {
+                return playerId;
+            }
+
+            Debug.LogError($"No client guid found mapped to the given client ID: {clientId}");
+            return null;
+        }
+
         /// <summary>
         ///
         /// </summary>
@@ -186,11 +197,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <returns>Player data struct matching the given ID</returns>
         public T? GetPlayerData(ulong clientId)
         {
-            //First see if we have a guid matching the clientID given.
-
-            if (m_ClientIDToGuid.TryGetValue(clientId, out string clientGUID))
+            //First see if we have a playerId matching the clientID given.
+            var playerId = GetPlayerId(clientId);
+            if (playerId != null)
             {
-                return GetPlayerData(clientGUID);
+                return GetPlayerData(playerId);
             }
 
             Debug.LogError($"No client guid found mapped to the given client ID: {clientId}");

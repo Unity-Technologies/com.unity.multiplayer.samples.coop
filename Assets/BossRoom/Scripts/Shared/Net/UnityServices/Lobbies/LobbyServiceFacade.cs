@@ -4,6 +4,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
@@ -235,6 +236,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         {
             string uasId = AuthenticationService.Instance.PlayerId;
             m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+        }
+
+        public void RemovePlayerFromLobbyAsync(string uasId, string lobbyId, Action onSuccess, Action onFailure)
+        {
+            if (m_LocalUser.IsHost)
+            {
+                m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+            }
+            else
+            {
+                Debug.LogError("Only the host can remove other players from the lobby.");
+            }
+        }
+
+        public void DeleteLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
+        {
+            if (m_LocalUser.IsHost)
+            {
+                m_LobbyApiInterface.DeleteLobbyAsync(lobbyId, onSuccess, onFailure);
+            }
+            else
+            {
+                Debug.LogError("Only the host can delete a lobby.");
+            }
         }
 
         /// <summary>
