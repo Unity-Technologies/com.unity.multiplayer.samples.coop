@@ -24,8 +24,8 @@ This approach works, but requires some care:
 
 ## Connection flow
 The Boss Room network connection flow is owned by the `GameNetPortal`:
- - The Host will invoke either `GameNetPortal.StartHost`, `StartPhotonRelayHost` if Photon relay is being used, and `StartUnityRelayHost` if Unity Relay is being used. 
- - The client will invoke either `ClientGameNetPortal.StartClient`, `StartClientRelayMode`, or `StartClientUnityRelayModeAsync`. 
+ - The Host will invoke either `GameNetPortal.StartHost` or `StartUnityRelayHost` if Unity Relay is being used.
+ - The client will invoke either `ClientGameNetPortal.StartClient` or `StartClientUnityRelayModeAsync`.
  - Boss Room's own connection validation logic is performed in `ServerGameNetPortal.ApprovalCheck`, which is plugged in to the `NetworkManager`'s connection approval callback. Here, some basic information about the connection is recorded (including a GUID, to facilitate future reconnect logic), and success or failure is returned. In the future, additional game-level failures will be detected and returned (such as a `ServerFull` scenario). 
 
 ## Data model
@@ -34,21 +34,17 @@ Game data in Boss Room is defined in `ScriptableObjects`. The `ScriptableObjects
 ## Transports
 Currently three network transport mechanisms are supported: 
 - IP based
-- Photon Relay Based
 - Unity Relay Based
 
 In the first, the clients connect directly to a host via IP address. This will only work if both are in the same local area network or if the host forwards ports.
 
-For Photon Relay based multiplayer sessions, some setup is required. Please see our guide [here](Documentation/Photon-Realtime/Readme.md) on how to setup our current relay.
-
-Similarly for Unity Relay based multiplayer sessions, please see the installation guide [here](Documentation/Unity-Relay/README.md). 
+For Unity Relay based multiplayer sessions, some setup is required. Please see our guide [here](Documentation/Unity-Relay/README.md). 
 
 Please see [Multiplayer over internet](README.md) section of our Readme for more information on using either one.
 
 To allow for any of these options to be chosen at runtime we created `TransportPicker`. It allows one to choose between an IP-based and a Relay-based transport and will hook up the game UI to use those transports. The transport field in the `NetworkManager` will be ignored. Currently we support the following transports:
 - **UNET(IP):** UNET is the default Netcode transport. However, it is not the default IP transport for Boss Room.
 - **UTP (IP):** Unity Transport Package is a network transport layer, packaged with network simulation tools which are useful for spotting networking issues early during development. This IP based protocol is the default IP transport for Boss Room. See the documentation on [Unity Transport Package](https://docs-multiplayer.unity3d.com/docs/transport-utp/about-transport-utp/#unity-transport-package-utp).
-- **Photon Realtime (Relay):** Photon Realtime is a relay transport using the [Photon Realtime Service](https://www.photonengine.com/Realtime).
 - **Unity (Relay):** Unity Relay is a relay service provided by Unity services, supported by Unity Transport. Read more about [Unity Relay](https://docs-multiplayer.unity3d.com/docs/relay/relay).
 
 To add new transports in the project, parts of `GameNetPortal` and `ClientGameNetPortal` (transport switches) need to be extended.
