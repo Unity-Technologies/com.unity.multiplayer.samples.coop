@@ -10,7 +10,6 @@
         "Unity.Services.Lobbies",
         "Unity.Netcode.Adapter.UTP",
         "Unity.Collections",
-        "Photon Realtime Transport for Netcode for GameObjects",
         "Unity.Multiplayer.Samples.Utilities",
         "Unity.Networking.Transport"
     ],
