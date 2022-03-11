@@ -17,8 +17,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public static ClientGameNetPortal Instance;
         private GameNetPortal m_Portal;
 
-        string m_JoinCode;
-
         /// <summary>
         /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
         /// </summary>
@@ -178,42 +176,38 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
             }
 
-            ConnectClient(null);
+            ConnectClient();
         }
 
-        public void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
+        public async void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
         {
             m_Portal.OnlineMode = OnlineMode.UnityRelay;
-            m_JoinCode = joinCode;
-            var utp = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
 
             Debug.Log($"Setting Unity Relay client with join code {joinCode}");
 
-            ConnectClient(onFailure);
+            try
+            {
+                var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
+                await clientRelayUtilityTask;
+                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+
+                m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
+            }
+            catch (Exception e)
+            {
+                onFailure?.Invoke(e.Message);
+                return;//not re-throwing, but still not allowing to connect
+            }
+
+
+            ConnectClient();
         }
 
-        async void ConnectClient(Action<string> onFailure)
+        void ConnectClient()
         {
-            if (m_Portal.OnlineMode == OnlineMode.UnityRelay)
-            {
-                try
-                {
-                    var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(m_JoinCode);
-                    await clientRelayUtilityTask;
-                    var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
-
-                    m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_JoinCode, null, null);
-                    var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-                    utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
-                }
-                catch (Exception e)
-                {
-                    onFailure?.Invoke(e.Message);
-                    return;//not re-throwing, but still not allowing to connect
-                }
-
-            }
 
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
