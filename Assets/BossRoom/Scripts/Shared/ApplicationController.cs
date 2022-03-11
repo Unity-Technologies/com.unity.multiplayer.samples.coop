@@ -4,6 +4,7 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -96,24 +97,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return canQuit;
         }
 
+        public void LeaveSession()
+        {
+            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+
+            // first disconnect then return to menu
+            var gameNetPortal = GameNetPortal.Instance;
+            if (gameNetPortal != null)
+            {
+                gameNetPortal.RequestDisconnect();
+            }
+
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+        }
+
         public void QuitGame()
         {
-            if (NetworkManager.Singleton.IsListening)
-            {
-                m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
-
-                // first disconnect then return to menu
-                var gameNetPortal = GameNetPortal.Instance;
-                if (gameNetPortal != null)
-                {
-                    gameNetPortal.RequestDisconnect();
-                }
-                SceneManager.LoadScene("MainMenu");
-            }
-            else
-            {
-                Application.Quit();
-            }
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }

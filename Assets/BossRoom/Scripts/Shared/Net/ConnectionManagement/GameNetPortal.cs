@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -18,6 +19,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
         UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
+        Reconnecting,             //client lost connection and is attempting to reconnect.
+        HostDisconnected,         //Intentional Disconnect from the host
     }
 
     public enum OnlineMode
@@ -244,8 +247,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
-            NetManager.Shutdown();
         }
     }
 }

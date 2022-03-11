@@ -20,7 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         void Update()
         {
-            if (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton != null && (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer))
             {
                 var chosenTransport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
 

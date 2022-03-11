@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
@@ -64,9 +65,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
 
+                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
-                NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
+                SceneLoaderWrapper.Instance.LoadScene("CharSelect");
 
                 if (m_Portal.NetManager.IsHost)
                 {
@@ -103,6 +106,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public void OnUserDisconnectRequest()
         {
             Clear();
+            if (m_Portal.NetManager.IsServer)
+            {
+                SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostDisconnected);
+                // wait before shutting down to make sure those messages get sent before the clients disconnect.
+                StartCoroutine(WaitToShutdown());
+            }
+        }
+
+        IEnumerator WaitToShutdown()
+        {
+            yield return new WaitForSeconds(0.5f);
+            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
+            m_Portal.NetManager.Shutdown();
         }
 
         private void Clear()
@@ -226,6 +242,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
+        }
+        /// <summary>
+        /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the clients.
+        /// </summary>
+        /// <param name="status"> The reason for the upcoming disconnect.</param>
+        public void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)
+        {
+            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            writer.WriteValueSafe(status);
+            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessageToAll(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
         }
 
         /// <summary>

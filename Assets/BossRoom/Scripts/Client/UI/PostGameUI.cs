@@ -2,7 +2,11 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using UnityEngine.Assertions;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -11,6 +15,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// </summary>
     public class PostGameUI : MonoBehaviour
     {
+        ApplicationController m_ApplicationController;
+
         [SerializeField]
         private Light m_SceneLight;
 
@@ -34,6 +40,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [SerializeField]
         private Color m_LoseLightColor;
+
+        [Inject]
+        void InjectDependencies(ApplicationController applicationController)
+        {
+            m_ApplicationController = applicationController;
+        }
+
+        void Awake()
+        {
+            // This is needed because the post game UI is part of the PostGame scene so we need to manually inject dependencies on awake.
+            DIScope.RootScope.InjectIn(this);
+        }
 
         void Start()
         {
@@ -76,18 +94,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void OnPlayAgainClicked()
         {
             // this should only ever be called by the Host - so just go ahead and switch scenes
-            NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
+            Assert.IsTrue(NetworkManager.Singleton.IsServer);
+            SceneLoaderWrapper.Instance.LoadScene("CharSelect");
 
             // FUTURE: could be improved to better support a dedicated server architecture
         }
 
         public void OnMainMenuClicked()
         {
-            // Player is leaving this group - leave current network connection first
-            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
-            gameNetPortal.RequestDisconnect();
-
-            SceneManager.LoadScene("MainMenu");
+            m_ApplicationController.LeaveSession();
         }
     }
 }

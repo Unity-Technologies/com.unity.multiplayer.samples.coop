@@ -21,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// </remarks>
     public class ClientMainMenuState : GameStateBehaviour
     {
+        public const string AuthProfileCommandLineArg = "-AuthProfile";
         public override GameState ActiveState { get { return GameState.MainMenu; } }
 
         [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
@@ -28,6 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         [SerializeField] NameGenerationData m_NameGenerationData;
         [SerializeField] LobbyUIMediator m_LobbyUIMediator;
+        [SerializeField] IPUIMediator m_IPUIMediator;
 
         [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
         [SerializeField] GameObject m_SignInSpinner;
@@ -46,6 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             m_Scope.BindInstanceAsSingle(m_NameGenerationData);
             m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
+            m_Scope.BindInstanceAsSingle(m_IPUIMediator);
 
             var unityAuthenticationInitOptions = new InitializationOptions();
 
@@ -67,7 +70,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var arguments = System.Environment.GetCommandLineArgs();
             for (int i = 0; i < arguments.Length; i++)
             {
-                if (arguments[i] == "-AuthProfile")
+                if (arguments[i] == AuthProfileCommandLineArg)
                 {
                     var profileId = arguments[i + 1];
                     unityAuthenticationInitOptions.SetProfile(profileId);
@@ -113,6 +116,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             m_LobbyUIMediator.ToggleJoinLobbyUI();
             m_LobbyUIMediator.Show();
+        }
+
+        public void OnDirectIPClicked()
+        {
+            m_LobbyUIMediator.Hide();
+            m_IPUIMediator.Show();
         }
     }
 }
