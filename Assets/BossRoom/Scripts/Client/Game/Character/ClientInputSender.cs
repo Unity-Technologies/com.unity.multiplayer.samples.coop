@@ -1,6 +1,7 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.AI;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
 
@@ -12,6 +13,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkBehaviour
     {
+        Collider m_GroundCollider;
+
         private const float k_MouseInputRaycastDistance = 100f;
 
         //The movement input rate is capped at 50ms (or 20 fps). This provides a nice balance between responsiveness and
@@ -120,6 +123,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_MainCamera = Camera.main;
         }
 
+        void Start()
+        {
+            var groundGameObject = GameObject.FindGameObjectWithTag("GroundPlane").GetComponent<Collider>();
+            m_GroundCollider = groundGameObject.GetComponent<Collider>();
+        }
+
         void FinishSkill()
         {
             m_CurrentSkillInput = null;
@@ -169,12 +178,49 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     m_LastSentMove = Time.time;
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+
+                    // clear previous results
+                    for (int i = 0; i < k_CachedHit.Length; i++)
+                    {
+                        k_CachedHit[i] = default;
+                    }
+
                     if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                     {
-                        m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
+                        // iterate through cached hits and validate only ground is intersected
 
-                        //Send our client only click request
-                        ClientMoveEvent?.Invoke(k_CachedHit[0].point);
+                        var hitGround = false;
+                        RaycastHit groundRaycastHit = default;
+
+                        for (int i = 0; i < k_CachedHit.Length; i++)
+                        {
+                            if (k_CachedHit[i].collider == null)
+                            {
+                                continue;
+                            }
+
+                            if (k_CachedHit[i].collider == m_GroundCollider)
+                            {
+                                // hit ground; cache to retrieve the intersecting position
+                                hitGround = true;
+                                groundRaycastHit = k_CachedHit[i];
+                            }
+                            else
+                            {
+                                // found another "blocking" ground collider; ignore this clicked position
+                                return;
+                            }
+                        }
+
+                        // verify point is indeed on navmesh surface
+                        if (hitGround &&
+                            NavMesh.SamplePosition(groundRaycastHit.point, out var hit, 1f, NavMesh.AllAreas))
+                        {
+                            m_NetworkCharacter.SendCharacterInputServerRpc(hit.position);
+
+                            //Send our client only click request
+                            ClientMoveEvent?.Invoke(hit.position);
+                        }
                     }
                 }
             }
