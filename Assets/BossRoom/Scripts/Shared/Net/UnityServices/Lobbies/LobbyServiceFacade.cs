@@ -87,7 +87,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public void EndTracking()
+        public void EndTracking(Action onSuccess = null, Action onFailure = null)
         {
             if (m_IsTracking)
             {
@@ -99,7 +99,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
                 if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
                 {
-                    LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
+                    LeaveLobbyAsync(m_LocalLobby?.LobbyID, onSuccess, onFailure);
+                }
+                else
+                {
+                    onSuccess?.Invoke();
                 }
 
                 m_LocalUser.ResetState();
@@ -396,9 +400,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public void ForceLeaveLobbyAttempt()
+        public void ForceLeaveLobbyAttempt(Action onSuccess = null, Action onFailure = null)
         {
-            EndTracking();
+            EndTracking(onSuccess, onFailure);
         }
     }
 }

@@ -157,7 +157,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
                     lobbyCode = m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode;
-                    m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
                 }
 
                 //On a client disconnect we want to take them back to the main menu.
@@ -167,6 +166,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect || DisconnectReason.Reason == ConnectStatus.HostDisconnected || NetworkManager.Singleton.IsHost)
                     {
                         // simply shut down and go back to main menu
+                        m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
                         NetworkManager.Singleton.Shutdown();
                         SceneLoaderWrapper.Instance.LoadScene("MainMenu");
                     }
@@ -201,7 +201,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
                 if (!string.IsNullOrEmpty(lobbyCode))
                 {
-                    bool joiningLobby = true;
+                    var leavingLobby = true;
+                    m_LobbyServiceFacade.ForceLeaveLobbyAttempt(() => leavingLobby = false, () => leavingLobby = false);
+                    yield return new WaitWhile(() => leavingLobby); // This is not a clean way of doing this, ideally we would want to replace that logic with a proper await.
+                    var joiningLobby = true;
                     m_LobbyServiceFacade.JoinLobbyAsync("", lobbyCode, onSuccess: lobby =>
                         {
                             m_LobbyServiceFacade.BeginTracking(lobby);
@@ -221,6 +224,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             // If the coroutine has not been stopped before this, it means we failed to connect during all attempts
             Debug.Log("All tries failed, returning to main menu");
+            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
             NetworkManager.Singleton.Shutdown();
             SceneLoaderWrapper.Instance.LoadScene("MainMenu");
             if (!DisconnectReason.HasTransitionReason)
