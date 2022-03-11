@@ -158,7 +158,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
-            m_Portal.OnlineMode = OnlineMode.IpHost;
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -181,7 +180,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public async void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
         {
-            m_Portal.OnlineMode = OnlineMode.UnityRelay;
             var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
 

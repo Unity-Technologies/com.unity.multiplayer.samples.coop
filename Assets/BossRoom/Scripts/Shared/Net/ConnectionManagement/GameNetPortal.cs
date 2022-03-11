@@ -88,8 +88,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         private LocalLobby m_LocalLobby;
         private LobbyServiceFacade m_LobbyServiceFacade;
 
-        public OnlineMode OnlineMode { get; set; }
-
         [Inject]
         private void InjectDependencies(LocalLobby localLobby, LobbyServiceFacade lobbyServiceFacade)
         {
@@ -169,7 +167,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="port">The port to connect to. </param>
         public void StartHost(string ipaddress, int port)
         {
-            OnlineMode = OnlineMode.IpHost;
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -192,7 +189,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public async void StartUnityRelayHost()
         {
-            OnlineMode = OnlineMode.UnityRelay;
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
@@ -253,24 +249,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public string GetPlayerId()
         {
-            var playerId = "";
-            if (AuthenticationService.Instance.IsSignedIn)
-            {
-                playerId = AuthenticationService.Instance.PlayerId;
-            }
-            else if (OnlineMode == OnlineMode.IpHost)
-            {
-                playerId = ClientPrefs.GetGuid() + ProfileManager.Profile;
-            }
-            else if (OnlineMode == OnlineMode.UnityRelay)
-            {
-                Debug.LogError("OnlineMode set to UnityRelay, but not signed in through AuthenticationService.");
-            }
-            else
-            {
-                Debug.LogError($"OnlineMode not set to a valid value: {OnlineMode}");
-            }
-            return playerId;
+            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + ProfileManager.Profile;
         }
     }
 }
