@@ -27,12 +27,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             var errorMessage = error.Message;
             if (error.AffectedService == UnityServiceErrorMessage.Service.Lobby)
             {
-                if ((error.OriginalException as LobbyServiceException).Reason == LobbyExceptionReason.LobbyConflict)
+                if (error.OriginalException is LobbyServiceException lobbyServiceException)
                 {
-                    // LobbyConflict can have multiple causes. Let's add other solutions here if there's other situations that arise for this.
-                    errorMessage += "\nSee logs for possible causes and solution.";
-                    Debug.LogError($"Got service error {error.Message} with LobbyConflict. Possible conflict cause: Trying to play with two builds on the " +
-                                   $"same machine. Please use command line arg '{ClientMainMenuState.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
+                    if (lobbyServiceException.Reason == LobbyExceptionReason.LobbyConflict)
+                    {
+                        // LobbyConflict can have multiple causes. Let's add other solutions here if there's other situations that arise for this.
+                        errorMessage += "\nSee logs for possible causes and solution.";
+                        Debug.LogError($"Got service error {error.Message} with LobbyConflict. Possible conflict cause: Trying to play with two builds on the " +
+                            $"same machine. Please use command line arg '{ClientMainMenuState.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
+                    }
                 }
             }
 
