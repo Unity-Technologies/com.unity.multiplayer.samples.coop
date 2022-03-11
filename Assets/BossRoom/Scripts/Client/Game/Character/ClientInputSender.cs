@@ -125,8 +125,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void Start()
         {
-            var groundGameObject = GameObject.FindGameObjectWithTag("GroundPlane").GetComponent<Collider>();
-            m_GroundCollider = groundGameObject.GetComponent<Collider>();
+            m_GroundCollider = GameObject.FindGameObjectWithTag("GroundPlane").GetComponent<Collider>();
         }
 
         void FinishSkill()
