@@ -18,7 +18,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
-        void OnServiceException(AuthenticationException e)
+        void OnServiceException(RequestFailedException e)
         {
             Debug.LogWarning(e.Message);
 
@@ -30,7 +30,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
         public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)
         {
             var task = TrySignIn(initializationOptions);
-            UnityServiceCallsTaskWrapper.RunTask<AuthenticationException>(task, onSigninComplete, onFailed, OnServiceException);
+            UnityServiceCallsTaskWrapper.RunTask<RequestFailedException>(task, onSigninComplete, onFailed, OnServiceException);
         }
 
         async Task TrySignIn(InitializationOptions initializationOptions)
