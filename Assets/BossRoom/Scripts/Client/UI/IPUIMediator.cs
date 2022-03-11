@@ -31,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] UITinter m_JoinTabButtonTabBlockerTinter;
 
         [SerializeField] UITinter m_HostTabButtonTinter;
-        
+
         [SerializeField] UITinter m_HostTabButtonHighlightTinter;
         
         [SerializeField] UITinter m_HostTabButtonTabBlockerTinter;
@@ -65,22 +65,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             // show create IP as default
             ToggleCreateIPUI();
-        }
-
-        void Update()
-        {
-            if (Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown() ||
-                m_OpenIPWindowKeyCode != KeyCode.None && Input.GetKeyDown(m_OpenIPWindowKeyCode))
-            {
-                if (m_CanvasGroup.interactable)
-                {
-                    Hide();
-                }
-                else
-                {
-                    Show();
-                }
-            }
         }
 
         static bool AnyTouchDown()
