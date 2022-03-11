@@ -41,12 +41,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private LobbyServiceFacade m_LobbyServiceFacade;
         IPublisher<ConnectStatus> m_ConnectStatusPub;
+        LocalLobby m_LocalLobby;
 
         [Inject]
-        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub)
+        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub, LocalLobby localLobby)
         {
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_ConnectStatusPub = connectStatusPub;
+            m_LocalLobby = localLobby;
         }
 
         private void Awake()
@@ -186,13 +188,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private IEnumerator TryToReconnect()
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
+            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
             int nbTries = 0;
             while (nbTries < k_NbReconnectAttempts)
             {
                 NetworkManager.Singleton.Shutdown();
                 yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
                 Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
-                ConnectClient(null);
+                if (m_LocalLobby.LobbyID != null)
+                {
+                    bool joiningLobby = true;
+                    m_LobbyServiceFacade.JoinLobbyAsync(m_LocalLobby.LobbyID, m_LocalLobby.LobbyCode, onSuccess: lobby =>
+                        {
+                            ConnectClient(null);
+                            joiningLobby = false;
+                        }
+                        , onFailure: () => joiningLobby = false);
+                    while (joiningLobby); // This is not a clean way of doing this, ideally we would want to replace that logic with a proper await.
+                }
+                else
+                {
+                    ConnectClient(null);
+                }
                 yield return new WaitForSeconds(1.1f * k_TimeoutDuration); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
                 nbTries++;
             }
