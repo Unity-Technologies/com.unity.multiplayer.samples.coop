@@ -105,7 +105,6 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneEvent(SceneEvent sceneEvent)
         {
-            Debug.Log($"on scene event: {sceneEvent.SceneEventType}");
             // Only executes on client
             if (m_NetworkManager.IsClient)
             {
