@@ -142,17 +142,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        private void OnDisconnectReasonReceived(ConnectStatus status)
-        {
-            DisconnectReason.SetDisconnectReason(status);
-        }
-
-        private void OnDisconnectOrTimeout(ulong clientID)
+        void OnDisconnectOrTimeout(ulong clientID)
         {
             // This is also called on the Host when a different client disconnects. To make sure we only handle our own disconnection, verify that we are either
             // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
             if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientID)
             {
+                SceneLoaderWrapper.Instance.IsClosingClients = false; // disconnect done
+
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
@@ -307,7 +304,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public static void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
         {
             reader.ReadValueSafe(out ConnectStatus status);
-            Instance.OnDisconnectReasonReceived(status);
+            Instance.DisconnectReason.SetDisconnectReason(status);
+            SceneLoaderWrapper.Instance.IsClosingClients = true;
         }
     }
 }

@@ -110,15 +110,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostDisconnected);
                 // wait before shutting down to make sure those messages get sent before the clients disconnect.
-                StartCoroutine(WaitToShutdown());
+                StartCoroutine(WaitToShutdown()); // todo in theory, according to "Shutdown"'s doc, we shouldn't need this wait anymore.
             }
         }
 
         IEnumerator WaitToShutdown()
         {
-            yield return new WaitForSeconds(0.5f);
+            // todo netmanager should really be shutting down instead of us having to manually flag that we're shutting down
+            SceneLoaderWrapper.Instance.IsClosingClients = true;
+            yield return null; // todo still needed? wait for UTP's update for it to send it's batched messages
+            yield return null;
             SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
+            Debug.Log("shutdown");
             m_Portal.NetManager.Shutdown();
+            SceneLoaderWrapper.Instance.IsClosingClients = false;
         }
 
         private void Clear()
@@ -243,6 +248,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             writer.WriteValueSafe(status);
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
         }
+
         /// <summary>
         /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the clients.
         /// </summary>
