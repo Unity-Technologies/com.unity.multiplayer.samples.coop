@@ -67,8 +67,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (m_IsPopupShown)
             {
-                Debug.Log("Trying to show popup, but another popup is already being shown.");
-                Debug.Log($"{titleText}. {mainText}");
+                Debug.LogWarning($"Trying to show popup, but another popup is already being shown. Popup: {titleText}. {mainText}");
             }
             else
             {
