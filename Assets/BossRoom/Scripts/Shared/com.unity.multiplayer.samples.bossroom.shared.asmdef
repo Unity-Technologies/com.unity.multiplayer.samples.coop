@@ -11,7 +11,8 @@
         "Unity.Netcode.Adapter.UTP",
         "Unity.Collections",
         "Unity.Multiplayer.Samples.Utilities",
-        "Unity.Networking.Transport"
+        "Unity.Networking.Transport",
+        "ParrelSync"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

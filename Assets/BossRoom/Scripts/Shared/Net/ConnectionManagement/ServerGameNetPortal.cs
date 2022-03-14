@@ -146,7 +146,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // Approval check happens for Host too, but obviously we want it to be approved
             if (clientId == NetworkManager.Singleton.LocalClientId)
             {
-                SessionManager<SessionPlayerData>.Instance.AddHostData(
+                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, m_Portal.GetPlayerId(),
                     new SessionPlayerData(clientId, m_Portal.PlayerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
 
                 connectionApprovedCallback(true, null, true, null, null);
@@ -176,9 +176,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             int clientScene = connectionPayload.clientScene;
 
-            Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
+            Debug.Log("Host ApprovalCheck: connecting client with player ID: " + connectionPayload.playerId);
 
-            gameReturnStatus = SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.clientGUID,
+            gameReturnStatus = SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                 new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true))
                 ? ConnectStatus.Success
                 : ConnectStatus.LoggedInAgain;
@@ -187,7 +187,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (gameReturnStatus == ConnectStatus.LoggedInAgain)
             {
                 SessionPlayerData? sessionPlayerData =
-                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(connectionPayload.clientGUID);
+                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(connectionPayload.playerId);
 
                 ulong oldClientId = sessionPlayerData?.ClientID ?? 0;
                 // kicking old client to leave only current

@@ -11,8 +11,7 @@
         "Unity.Netcode.Adapter.UTP",
         "Unity.Services.Relay",
         "Unity.Multiplayer.Samples.Utilities",
-        "Unity.Services.Lobbies",
-        "ParrelSync"
+        "Unity.Services.Lobbies"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
