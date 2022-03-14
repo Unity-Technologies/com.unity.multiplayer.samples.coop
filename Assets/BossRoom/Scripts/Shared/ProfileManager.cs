@@ -4,17 +4,20 @@ using UnityEngine;
 using ParrelSync;
 #endif
 
-public static class ProfileManager
+namespace Unity.Multiplayer.Samples.BossRoom.Shared
 {
-    public const string AuthProfileCommandLineArg = "-AuthProfile";
-
-    static string s_Profile;
-
-    public static string Profile => s_Profile ??= GetProfile();
-
-    static string GetProfile()
+    public static class ProfileManager
     {
+        public const string AuthProfileCommandLineArg = "-AuthProfile";
+
+        static string s_Profile;
+
+        public static string Profile => s_Profile ??= GetProfile();
+
+        static string GetProfile()
+        {
 #if UNITY_EDITOR
+
             //The code below makes it possible for the clone instance to log in as a different user profile in Authentication service.
             //This allows us to test services integration locally by utilising Parrelsync.
             if (ClonesManager.IsClone())
@@ -39,6 +42,7 @@ public static class ProfileManager
             }
         }
 #endif
-        return "";
+            return "";
+        }
     }
 }

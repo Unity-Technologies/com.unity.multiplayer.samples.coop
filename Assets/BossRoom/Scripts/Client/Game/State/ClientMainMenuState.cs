@@ -1,4 +1,5 @@
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
