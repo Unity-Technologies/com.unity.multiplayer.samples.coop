@@ -88,9 +88,16 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
+        public bool IsClosingClients { get; set; }
+
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (m_NetworkManager == null || !m_NetworkManager.IsListening || m_NetworkManager.ShutdownInProgress || !m_NetworkManager.NetworkConfig.EnableSceneManagement)
+            // we're letting networked scene loading handle our loading screen, since there's still some loading happening after unity scene loading is done.
+            // in case we're offline, then we let unity's scene loader tell us when to turn off the loading screen.
+            var isOffline = m_NetworkManager == null || !m_NetworkManager.IsListening || m_NetworkManager.ShutdownInProgress || !m_NetworkManager.NetworkConfig.EnableSceneManagement;
+            // TODO this can be called while we're still in the WaitForSeconds(0.5) while shutting down host side. which means we'll still be in theory connected. Waiting on fix
+            // for this in MTT-2821
+            if (isOffline || IsClosingClients)
             {
                 m_ClientLoadingScreen.StopLoadingScreen();
             }
