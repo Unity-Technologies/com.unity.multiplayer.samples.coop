@@ -74,11 +74,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
                 if (m_LocalUser.IsHost)
                 {
-                    m_AwaitingQueryCount++;
-                    m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices(), OnSuccess, null);
+                    m_AwaitingQueryCount++; // todo this should disapear once we use await correctly. This causes issues at the moment if OnSuccess isn't called properly
+                    m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices(), OnSuccess, () => m_AwaitingQueryCount--);
                 }
                 m_AwaitingQueryCount++;
-                m_LobbyServiceFacade.UpdatePlayerDataAsync(m_LocalUser.GetDataForUnityServices(), OnSuccess, null);
+                m_LobbyServiceFacade.UpdatePlayerDataAsync(m_LocalUser.GetDataForUnityServices(), OnSuccess, () => m_AwaitingQueryCount--);
             }
 
             void OnSuccess()

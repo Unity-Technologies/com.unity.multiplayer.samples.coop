@@ -36,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
             }
 
-            PopupPanel.ShowPopupPanel("Service error", errorMessage);
+            PopupPanel.ShowPopupPanel("Service error: "+error.Title, errorMessage);
         }
 
         void OnDestroy()
