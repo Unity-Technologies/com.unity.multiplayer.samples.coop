@@ -31,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
         private const int k_TimeoutDuration = 10;
-        const int k_NbReconnectAttempts = 2;
+        const int k_NbReconnectAttempts = 1;
 
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
