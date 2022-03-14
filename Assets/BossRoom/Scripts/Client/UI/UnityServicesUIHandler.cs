@@ -48,7 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
                 default:
                 {
-                    PopupPanel.ShowPopupPanel("Service error", errorMessage);
+            		PopupPanel.ShowPopupPanel("Service error: "+error.Title, errorMessage);
                     break;
                 }
             }
