@@ -139,6 +139,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     m_TryToReconnectCoroutine = null;
                 }
                 m_ConnectStatusPub.Publish(status);
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.BeginTracking();
+                }
             }
         }
 
@@ -179,9 +183,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect(lobbyCode));
                     }
                 }
-                else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
+                else
                 {
-                    // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
 
@@ -208,7 +211,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     var joiningLobby = true;
                     m_LobbyServiceFacade.JoinLobbyAsync("", lobbyCode, onSuccess: lobby =>
                         {
-                            m_LobbyServiceFacade.BeginTracking(lobby);
+                            m_LobbyServiceFacade.SetRemoteLobby(lobby);
                             ConnectClient(null);
                             joiningLobby = false;
                         }

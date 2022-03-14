@@ -73,13 +73,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_ServiceScope?.Dispose();
         }
 
-        public void BeginTracking(Lobby lobby)
+        public void SetRemoteLobby(Lobby lobby)
+        {
+            CurrentUnityLobby = lobby;
+            m_LocalLobby.ApplyRemoteData(lobby);
+        }
+
+        public void BeginTracking()
         {
             if(!m_IsTracking)
             {
                 m_IsTracking = true;
-                CurrentUnityLobby = lobby;
-                m_LocalLobby.ApplyRemoteData(lobby);
                 // 2s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
                 // the actual rate limits are tracked via the RateLimitCooldown objects defined above
                 m_UpdateRunner.Subscribe(UpdateLobby, 2f);
@@ -89,12 +93,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public void EndTracking(Action onSuccess = null, Action onFailure = null)
         {
-            if (m_IsTracking)
+            if (CurrentUnityLobby != null)
             {
-                m_UpdateRunner.Unsubscribe(UpdateLobby);
-                m_IsTracking = false;
-                m_HeartbeatTime = 0;
-                m_JoinedLobbyContentHeartbeat.EndTracking();
                 CurrentUnityLobby = null;
 
                 if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
@@ -108,6 +108,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
                 m_LocalUser.ResetState();
                 m_LocalLobby?.Reset(m_LocalUser);
+            }
+
+            if (m_IsTracking)
+            {
+                m_UpdateRunner.Unsubscribe(UpdateLobby);
+                m_IsTracking = false;
+                m_HeartbeatTime = 0;
+                m_JoinedLobbyContentHeartbeat.EndTracking();
             }
         }
 

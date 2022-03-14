@@ -130,7 +130,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void OnCreatedLobby(Lobby lobby)
         {
             m_LocalUser.IsHost = true;
-            m_LobbyServiceFacade.BeginTracking(lobby);
+            m_LobbyServiceFacade.SetRemoteLobby(lobby);
 
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
@@ -150,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnJoinedLobby(Lobby remoteLobby)
         {
-            m_LobbyServiceFacade.BeginTracking(remoteLobby);
+            m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             switch (m_LocalLobby.OnlineMode)
