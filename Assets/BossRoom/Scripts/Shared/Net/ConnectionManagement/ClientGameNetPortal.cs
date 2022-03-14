@@ -1,6 +1,5 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -153,9 +152,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         /// <remarks>
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
-        /// yet initialized its client and server GNP-Logic objects yet (which it does in OnNetworkSpawn, based on the role that the current player is performing).
+        /// yet initialized its client and server GameNetPortal objects yet (which it does in OnNetworkSpawn, based on the role that the current player is performing).
         /// </remarks>
-        /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
@@ -202,15 +200,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;//not re-throwing, but still not allowing to connect
             }
 
+
             ConnectClient();
         }
 
-        private void ConnectClient()
+        void ConnectClient()
         {
-            var clientGuid = ClientPrefs.GetGuid();
+
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
-                clientGUID = clientGuid,
+                playerId = m_Portal.GetPlayerId(),
                 clientScene = SceneManager.GetActiveScene().buildIndex,
                 playerName = m_Portal.PlayerName
             });
@@ -221,8 +220,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_Portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! Netcode will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves and get a message telling us the reason
-            //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
+            //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
+            //  If the socket connection succeeds, we'll get our ReceiveServerToClientConnectResult_CustomMessage invoked. This is where game-layer failures will be reported.
             m_Portal.NetManager.StartClient();
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager

@@ -1,9 +1,7 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
 using Unity.Services.Lobbies;
 using UnityEngine;
 
@@ -36,8 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                         // LobbyConflict can have multiple causes. Let's add other solutions here if there's other situations that arise for this.
                         errorMessage += "\nSee logs for possible causes and solution.";
                         Debug.LogError($"Got service error {error.Message} with LobbyConflict. Possible conflict cause: Trying to play with two builds on the " +
-                            $"same machine. Please use command line arg '{ClientMainMenuState.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
-
+                                $"same machine. Please use command line arg '{ProfileManager.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
                     }
                     PopupPanel.ShowPopupPanel("Service error", errorMessage);
                     break;
