@@ -294,51 +294,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public void RemovePlayerFromLobbyAsync(string uasId, string lobbyId, Action onSuccess, Action onFailure)
-        {
-            if (m_LocalUser.IsHost)
-            {
-                RetrieveLobbyAsync(lobbyId, OnRetrieveSuccess, onFailure);
-
-
-                void OnRetrieveSuccess(Lobby lobby)
-                {
-                    bool playerFound = false;
-                    foreach (var player in lobby.Players)
-                    {
-                        if (player.Id == uasId)
-                        {
-                            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
-                            playerFound = true;
-                            break;
-                        }
-                    }
-
-                    if (!playerFound)
-                    {
-                        Debug.Log($"Player {uasId} has already left the lobby.");
-                    }
-                }
-
-            }
-            else
-            {
-                Debug.LogError("Only the host can remove other players from the lobby.");
-            }
-        }
-
-        public void DeleteLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
-        {
-            if (m_LocalUser.IsHost)
-            {
-                m_LobbyApiInterface.DeleteLobbyAsync(lobbyId, onSuccess, onFailure);
-            }
-            else
-            {
-                Debug.LogError("Only the host can delete a lobby.");
-            }
-        }
-
         /// <summary>
         /// Attempt to push a set of key-value pairs associated with the local player which will overwrite any existing data for these keys.
         /// </summary>
@@ -452,9 +407,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public void ForceLeaveLobbyAttempt(Action onSuccess = null, Action onFailure = null)
+        public void ForceLeaveLobbyAttempt()
         {
-            EndTracking(onSuccess, onFailure);
+            EndTracking();
         }
     }
 }

@@ -209,7 +209,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     yield return new WaitUntil(() => leavingLobby.IsCompleted);
                     var joiningLobby = m_LobbyServiceFacade.JoinLobbyAsync("", lobbyCode, onSuccess: lobby =>
                         {
-                            m_LobbyServiceFacade.BeginTracking(lobby);
+                            m_LobbyServiceFacade.SetRemoteLobby(lobby);
                             ConnectClient(null);
                         }
                         , null);
