@@ -1,4 +1,5 @@
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
@@ -77,7 +78,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             void OnSignInFailed()
             {
                 m_SignInSpinner.SetActive(false);
-                PopupPanel.ShowPopupPanel("Authentication Error", "For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
             }
         }
 
