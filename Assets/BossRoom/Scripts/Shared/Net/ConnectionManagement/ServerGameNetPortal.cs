@@ -121,7 +121,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             yield return null; // todo still needed? wait for UTP's update for it to send it's batched messages
             yield return null;
             SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
-            Debug.Log("shutdown");
             m_Portal.NetManager.Shutdown();
             SceneLoaderWrapper.Instance.IsClosingClients = false;
         }
