@@ -204,6 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     var leavingLobby = true;
                     m_LobbyServiceFacade.ForceLeaveLobbyAttempt(() => leavingLobby = false, () => leavingLobby = false);
                     yield return new WaitWhile(() => leavingLobby); // This is not a clean way of doing this, ideally we would want to replace that logic with a proper await.
+                    // todo should use yield return new WaitUntil(() => task.IsCompleted);
                     var joiningLobby = true;
                     m_LobbyServiceFacade.JoinLobbyAsync("", lobbyCode, onSuccess: lobby =>
                         {
