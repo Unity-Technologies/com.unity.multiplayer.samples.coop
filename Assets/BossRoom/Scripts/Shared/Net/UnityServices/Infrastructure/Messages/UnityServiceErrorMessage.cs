@@ -1,4 +1,4 @@
-using Unity.Services.Core;
+using System;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure
 {
@@ -13,9 +13,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastruc
         public string Title;
         public string Message;
         public Service AffectedService;
-        public RequestFailedException OriginalException;
+        public Exception OriginalException;
 
-        public UnityServiceErrorMessage(string title, string message, Service service, RequestFailedException originalException = null)
+        public UnityServiceErrorMessage(string title, string message, Service service, Exception originalException = null)
         {
             Title = title;
             Message = message;
