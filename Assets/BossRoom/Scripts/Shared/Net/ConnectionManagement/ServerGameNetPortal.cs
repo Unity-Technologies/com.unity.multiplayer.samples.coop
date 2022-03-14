@@ -33,10 +33,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public int ServerScene { get { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; } }
 
-        private LobbyServiceFacade m_LobbyServiceFacade;
+        LobbyServiceFacade m_LobbyServiceFacade;
 
         [Inject]
-        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
+        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
         {
             m_LobbyServiceFacade = lobbyServiceFacade;
         }
