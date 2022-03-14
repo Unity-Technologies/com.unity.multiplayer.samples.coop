@@ -243,6 +243,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         void OnNetworkTimeout()
         {
+            m_LobbyServiceFacade.EndTracking();
             UnblockUIAfterLoadingIsComplete();
         }
     }
