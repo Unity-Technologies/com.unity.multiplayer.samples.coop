@@ -1,5 +1,5 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Lobbies;
@@ -25,21 +25,49 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void ServiceErrorHandler(UnityServiceErrorMessage error)
         {
             var errorMessage = error.Message;
-            if (error.AffectedService == UnityServiceErrorMessage.Service.Lobby)
+            switch (error.AffectedService)
             {
-                switch ((error.OriginalException as LobbyServiceException).Reason)
+                case UnityServiceErrorMessage.Service.Lobby:
                 {
-                    case LobbyExceptionReason.LobbyConflict:
-                        // LobbyConflict can have multiple causes. Let's add other solutions here if there's other situations that arise for this.
-                        Debug.LogError($"Got service error {error.Message} with LobbyConflict. Possible conflict cause: Trying to play with two builds on the " +
-                            $"same machine. Please use command line arg '{ClientMainMenuState.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
-                        PopupPanel.ShowPopupPanel("Service error", error.Message + "\nSee logs for possible causes and solution.");
-                        break;
-                    case LobbyExceptionReason.LobbyFull:
-                        PopupPanel.ShowPopupPanel("Failed to join lobby", "Lobby is full and can't accept more players");
-                        break;
+                    HandleLobbyError(error);
+                    break;
+                }
+                case UnityServiceErrorMessage.Service.Authentication:
+                {
+                    PopupPanel.ShowPopupPanel(
+                        "Authentication Error",
+                        $"{error.OriginalException.Message} \n tip: You can still use the Direct IP connection option.");
+                    break;
+                }
+                default:
+                {
+                    PopupPanel.ShowPopupPanel("Service error: " + error.Title, errorMessage);
+                    break;
                 }
             }
+        }
+
+        void HandleLobbyError(UnityServiceErrorMessage error)
+        {
+            var errorMessage = error.Message;
+            switch (((LobbyServiceException)error.OriginalException).Reason)
+            {
+                case LobbyExceptionReason.LobbyConflict:
+                {
+                    errorMessage += "\nSee logs for possible causes and solution.";
+                    Debug.LogError($"Got service error {error.Message} with LobbyConflict. Possible conflict cause: Trying to play with two builds on the " +
+                        $"same machine. Please use command line arg '{ProfileManager.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
+                    break;
+                }
+                case LobbyExceptionReason.LobbyFull:
+                {
+                    PopupPanel.ShowPopupPanel("Failed to join lobby", "Lobby is full and can't accept more players");
+                    // Returning out of the function because we replace default popup panel with this.
+                    return;
+                }
+            }
+
+            PopupPanel.ShowPopupPanel("Service error: " + error.Title, errorMessage);
         }
 
         void OnDestroy()

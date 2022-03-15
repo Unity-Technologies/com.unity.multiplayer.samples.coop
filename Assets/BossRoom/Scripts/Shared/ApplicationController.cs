@@ -1,9 +1,11 @@
 using System.Collections;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -18,6 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         [SerializeField] UpdateRunner m_UpdateRunner;
         [SerializeField] GameNetPortal m_GameNetPortal;
         [SerializeField] ClientGameNetPortal m_ClientNetPortal;
+        [SerializeField] ServerGameNetPortal m_ServerGameNetPortal;
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -37,6 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindInstanceAsSingle(m_UpdateRunner);
             scope.BindInstanceAsSingle(m_GameNetPortal);
             scope.BindInstanceAsSingle(m_ClientNetPortal);
+            scope.BindInstanceAsSingle(m_ServerGameNetPortal);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
@@ -106,7 +110,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             {
                 gameNetPortal.RequestDisconnect();
             }
-            SceneManager.LoadScene("MainMenu");
+
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
         }
 
         public void QuitGame()

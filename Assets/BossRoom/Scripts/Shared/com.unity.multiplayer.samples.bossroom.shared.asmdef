@@ -12,7 +12,8 @@
         "Unity.Collections",
         "Photon Realtime Transport for Netcode for GameObjects",
         "Unity.Multiplayer.Samples.Utilities",
-        "Unity.Networking.Transport"
+        "Unity.Networking.Transport",
+        "ParrelSync"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

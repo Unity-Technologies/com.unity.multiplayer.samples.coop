@@ -1,10 +1,12 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -19,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
         Reconnecting,             //client lost connection and is attempting to reconnect.
+        HostDisconnected,         //Intentional Disconnect from the host
     }
 
     public enum OnlineMode
@@ -32,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     [Serializable]
     public class ConnectionPayload
     {
-        public string clientGUID;
+        public string playerId;
         public int clientScene = -1;
         public string playerName;
     }
@@ -105,7 +108,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             //we synthesize a "OnNetworkSpawn" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
-            NetManager.OnServerStarted += OnNetworkReady;
             NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
         }
 
@@ -121,7 +123,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (NetManager != null)
             {
-                NetManager.OnServerStarted -= OnNetworkReady;
                 NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
             }
 
@@ -245,8 +246,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
-            NetManager.Shutdown();
+        }
+
+        public string GetPlayerId()
+        {
+            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + ProfileManager.Profile;
         }
     }
 }
