@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -216,5 +217,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         public const bool Stop = false;
         public const bool Continue = true;
+    }
+
+    /// <summary>
+    /// Utility comparer to sort through RaycastHits by distance.
+    /// </summary>
+    public class RaycastHitComparer : IComparer<RaycastHit>
+    {
+        public int Compare(RaycastHit x, RaycastHit y)
+        {
+            return x.distance.CompareTo(y.distance);
+        }
     }
 }

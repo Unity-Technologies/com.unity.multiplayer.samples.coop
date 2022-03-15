@@ -102,6 +102,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         const float k_MaxNavMeshDistance = 1f;
 
+        RaycastHitComparer m_RaycastHitComparer;
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient || !IsOwner)
@@ -113,6 +115,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             m_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
             m_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
+
+            m_RaycastHitComparer = new RaycastHitComparer();
         }
 
         void Awake()
@@ -177,16 +181,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         k_CachedHit[i] = default;
                     }
 
-                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_GroundLayerMask) > 0)
+                    var groundHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_GroundLayerMask);
+                    if (groundHits > 0)
                     {
-                        // sort hits by distance
-                        Array.Sort(k_CachedHit, (hit1, hit2) => hit1.distance.CompareTo(hit2.distance));
-
-                        // find shortest-distance RaycastHit
-                        var closestHit = Array.Find(k_CachedHit, (sortedHit) => sortedHit.collider != null);
+                        if (groundHits > 1)
+                        {
+                            // sort hits by distance
+                            Array.Sort(k_CachedHit, 0, groundHits, m_RaycastHitComparer);
+                        }
 
                         // verify point is indeed on navmesh surface
-                        if (NavMesh.SamplePosition(closestHit.point, out var hit, k_MaxNavMeshDistance, NavMesh.AllAreas))
+                        if (NavMesh.SamplePosition(k_CachedHit[0].point, out var hit, k_MaxNavMeshDistance, NavMesh.AllAreas))
                         {
                             m_NetworkCharacter.SendCharacterInputServerRpc(hit.position);
 
