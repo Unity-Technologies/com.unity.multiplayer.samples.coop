@@ -6,26 +6,26 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public static class ActionUtils
     {
         //cache Physics Cast hits, to minimize allocs.
-        private static RaycastHit[] s_Hits = new RaycastHit[4];
+        static RaycastHit[] s_Hits = new RaycastHit[4];
         // cache layer IDs (after first use). -1 is a sentinel value meaning "uninitialized"
-        private static int s_layer_PCs = -1;
-        private static int s_layer_NPCs = -1;
-        private static int s_layer_Ground = -1;
+        static int s_PCLayer = -1;
+        static int s_NpcLayer = -1;
+        static int s_EnvironmentLayer = -1;
 
         /// <summary>
         /// When doing line-of-sight checks we assume the characters' "eyes" are at this height above their transform
         /// </summary>
-        private static readonly Vector3 k_CharacterEyelineOffset = new Vector3(0, 1, 0);
+        static readonly Vector3 k_CharacterEyelineOffset = new Vector3(0, 1, 0);
 
         /// <summary>
         /// When teleporting to a destination, this is how far away from the destination spot to arrive
         /// </summary>
-        private const float k_CloseDistanceOffset = 1;
+        const float k_CloseDistanceOffset = 1;
 
         /// <summary>
         /// When checking if a teleport-destination is "too close" to the starting spot, anything less than this is too close
         /// </summary>
-        private const float k_VeryCloseTeleportRange = k_CloseDistanceOffset + 1;
+        const float k_VeryCloseTeleportRange = k_CloseDistanceOffset + 1;
 
         /// <summary>
         /// Does a melee foe hit detect.
@@ -59,16 +59,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             var myBounds = attacker.bounds;
 
-            if (s_layer_PCs == -1)
-                s_layer_PCs = LayerMask.NameToLayer("PCs");
-            if (s_layer_NPCs == -1)
-                s_layer_NPCs = LayerMask.NameToLayer("NPCs");
+            if (s_PCLayer == -1)
+                s_PCLayer = LayerMask.NameToLayer("PCs");
+            if (s_NpcLayer == -1)
+                s_NpcLayer = LayerMask.NameToLayer("NPCs");
 
             int mask = 0;
             if (wantPcs)
-                mask |= (1 << s_layer_PCs);
+                mask |= (1 << s_PCLayer);
             if (wantNpcs)
-                mask |= (1 << s_layer_NPCs);
+                mask |= (1 << s_NpcLayer);
 
             int numResults = Physics.BoxCastNonAlloc(attacker.transform.position, myBounds.extents,
                 attacker.transform.forward, s_Hits, Quaternion.identity, range, mask);
@@ -109,9 +109,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <returns>true if no obstructions, false if there is a Ground-layer object in the way</returns>
         public static bool HasLineOfSight(Vector3 character1Pos, Vector3 character2Pos, out Vector3 missPos)
         {
-            if (s_layer_Ground == -1)
-                s_layer_Ground = LayerMask.NameToLayer("Ground");
-            int mask = 1 << s_layer_Ground;
+            if (s_EnvironmentLayer == -1)
+                s_EnvironmentLayer = LayerMask.NameToLayer("Environment");
+            int mask = 1 << s_EnvironmentLayer;
 
             character1Pos += k_CharacterEyelineOffset;
             character2Pos += k_CharacterEyelineOffset;

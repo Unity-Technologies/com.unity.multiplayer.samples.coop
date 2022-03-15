@@ -237,7 +237,7 @@ GameObject:
   - component: {fileID: 4897062626467851486}
   - component: {fileID: 8778471712971589033}
   - component: {fileID: 9048744774741283463}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: env_spawn_door
   m_TagString: Untagged
   m_Icon: {fileID: 0}

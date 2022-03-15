@@ -13,27 +13,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientInputSender : NetworkBehaviour
     {
-        Collider m_GroundCollider;
-
-        private const float k_MouseInputRaycastDistance = 100f;
+        const float k_MouseInputRaycastDistance = 100f;
 
         //The movement input rate is capped at 50ms (or 20 fps). This provides a nice balance between responsiveness and
         //upstream network conservation. This matters when holding down your mouse button to move.
-        private const float k_MoveSendRateSeconds = 0.05f; //20 fps.
+        const float k_MoveSendRateSeconds = 0.05f; //20 fps.
 
+        const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
 
-        private const float k_TargetMoveTimeout = 0.45f;  //prevent moves for this long after targeting someone (helps prevent walking to the guy you clicked).
-
-        private float m_LastSentMove;
+        float m_LastSentMove;
 
         // Cache raycast hit array so that we can use non alloc raycasts
-        private readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
+        readonly RaycastHit[] k_CachedHit = new RaycastHit[4];
 
         // This is basically a constant but layer masks cannot be created in the constructor, that's why it's assigned int Awake.
-        private LayerMask k_GroundLayerMask;
-        private LayerMask k_ActionLayerMask;
+        LayerMask m_GroundLayerMask;
+        LayerMask m_ActionLayerMask;
 
-        private NetworkCharacterState m_NetworkCharacter;
+        NetworkCharacterState m_NetworkCharacter;
 
         /// <summary>
         /// This event fires at the time when an action request is sent to the server.
@@ -54,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             UIRelease,   //represents letting go of the mouse-button on a UI button
         }
 
-        private bool IsReleaseStyle(SkillTriggerStyle style)
+        bool IsReleaseStyle(SkillTriggerStyle style)
         {
             return style == SkillTriggerStyle.KeyboardRelease || style == SkillTriggerStyle.UIRelease;
         }
@@ -67,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <remarks>
         /// Reference: https://answers.unity.com/questions/1141633/why-does-fixedupdate-work-when-update-doesnt.html
         /// </remarks>
-        private struct ActionRequest
+        struct ActionRequest
         {
             public SkillTriggerStyle TriggerStyle;
             public ActionType RequestedAction;
@@ -78,16 +75,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// List of ActionRequests that have been received since the last FixedUpdate ran. This is a static array, to avoid allocs, and
         /// because we don't really want to let this list grow indefinitely.
         /// </summary>
-        private readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
+        readonly ActionRequest[] m_ActionRequests = new ActionRequest[5];
 
         /// <summary>
         /// Number of ActionRequests that have been queued since the last FixedUpdate.
         /// </summary>
-        private int m_ActionRequestCount;
+        int m_ActionRequestCount;
 
-        private BaseActionInput m_CurrentSkillInput = null;
-        private bool m_MoveRequest = false;
-
+        BaseActionInput m_CurrentSkillInput;
+        bool m_MoveRequest;
 
         Camera m_MainCamera;
 
@@ -104,6 +100,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         PhysicsWrapper m_PhysicsWrapper;
 
+        const float k_MaxNavMeshDistance = 1f;
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient || !IsOwner)
@@ -113,19 +111,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;
             }
 
-            k_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
-            k_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
+            m_GroundLayerMask = LayerMask.GetMask(new[] { "Ground" });
+            m_ActionLayerMask = LayerMask.GetMask(new[] { "PCs", "NPCs", "Ground" });
         }
 
         void Awake()
         {
             m_NetworkCharacter = GetComponent<NetworkCharacterState>();
             m_MainCamera = Camera.main;
-        }
-
-        void Start()
-        {
-            m_GroundCollider = GameObject.FindGameObjectWithTag("GroundPlane").GetComponent<Collider>();
         }
 
         void FinishSkill()
@@ -184,36 +177,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         k_CachedHit[i] = default;
                     }
 
-                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
+                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_GroundLayerMask) > 0)
                     {
-                        // iterate through cached hits and validate only ground is intersected
+                        // sort hits by distance
+                        Array.Sort(k_CachedHit, (hit1, hit2) => hit1.distance.CompareTo(hit2.distance));
 
-                        var hitGround = false;
-                        RaycastHit groundRaycastHit = default;
-
-                        for (int i = 0; i < k_CachedHit.Length; i++)
-                        {
-                            if (k_CachedHit[i].collider == null)
-                            {
-                                continue;
-                            }
-
-                            if (k_CachedHit[i].collider == m_GroundCollider)
-                            {
-                                // hit ground; cache to retrieve the intersecting position
-                                hitGround = true;
-                                groundRaycastHit = k_CachedHit[i];
-                            }
-                            else
-                            {
-                                // found another "blocking" ground collider; ignore this clicked position
-                                return;
-                            }
-                        }
+                        // find shortest-distance RaycastHit
+                        var closestHit = Array.Find(k_CachedHit, (sortedHit) => sortedHit.collider != null);
 
                         // verify point is indeed on navmesh surface
-                        if (hitGround &&
-                            NavMesh.SamplePosition(groundRaycastHit.point, out var hit, 1f, NavMesh.AllAreas))
+                        if (NavMesh.SamplePosition(closestHit.point, out var hit, k_MaxNavMeshDistance, NavMesh.AllAreas))
                         {
                             m_NetworkCharacter.SendCharacterInputServerRpc(hit.position);
 
@@ -231,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
         /// <param name="triggerStyle">What sort of input triggered this skill?</param>
         /// <param name="targetId">(optional) Pass in a specific networkID to target for this action</param>
-        private void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
+        void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
 
@@ -251,7 +224,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 if (triggerStyle == SkillTriggerStyle.MouseClick)
                 {
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                    numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_ActionLayerMask);
+                    numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_ActionLayerMask);
                 }
 
                 int networkedHitIndex = -1;
@@ -296,7 +269,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="triggerStyle">How did this skill play get triggered? Mouse, Keyboard, UI etc.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
         /// <returns>true if we should play an action, false otherwise. </returns>
-        private bool GetActionRequestForTarget(Transform hit, ActionType actionType, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
+        bool GetActionRequestForTarget(Transform hit, ActionType actionType, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
         {
             resultData = new ActionRequestData();
 
@@ -352,7 +325,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
         /// <param name="action">The action to perform (will be stamped on the resultData)</param>
         /// <param name="resultData">The ActionRequestData to be filled out with additional information.</param>
-        private void PopulateSkillRequest(Vector3 hitPoint, ActionType action, ref ActionRequestData resultData)
+        void PopulateSkillRequest(Vector3 hitPoint, ActionType action, ref ActionRequestData resultData)
         {
             resultData.ActionTypeEnum = action;
             var actionInfo = GameDataSource.Instance.ActionDataByType[action];
@@ -393,8 +366,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Request an action be performed. This will occur on the next FixedUpdate.
         /// </summary>
-        /// <param name="action">the action you'd like to perform. </param>
-        /// <param name="triggerStyle">What input style triggered this action.</param>
+        /// <param name="action"> The action you'd like to perform. </param>
+        /// <param name="triggerStyle"> What input style triggered this action. </param>
+        /// <param name="targetId"> NetworkObjectId of target. </param>
         public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             // do not populate an action request unless said action is valid

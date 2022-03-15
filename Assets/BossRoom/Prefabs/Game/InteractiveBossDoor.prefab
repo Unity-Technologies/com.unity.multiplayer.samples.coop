@@ -71,7 +71,7 @@ GameObject:
   - component: {fileID: 3784045606710551546}
   - component: {fileID: 2576950312805496058}
   - component: {fileID: 6571099866620377078}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: DoorframePhysicsR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   - component: {fileID: 1067615519027872932}
   - component: {fileID: 3990117462104163279}
   - component: {fileID: 5235978757855661292}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: DoorframePhysicsL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -353,7 +353,7 @@ GameObject:
   - component: {fileID: 5694566148258285863}
   - component: {fileID: 4326426413896260864}
   - component: {fileID: 3339807916336369384}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DoorPhysics
   m_TagString: Untagged
   m_Icon: {fileID: 0}

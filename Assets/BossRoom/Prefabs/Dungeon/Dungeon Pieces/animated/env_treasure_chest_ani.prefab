@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 7463718357983197496}
   - component: {fileID: 3577683239110096990}
   - component: {fileID: 4533873789762061175}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: env_treasure_chest_ani
   m_TagString: Untagged
   m_Icon: {fileID: 0}
