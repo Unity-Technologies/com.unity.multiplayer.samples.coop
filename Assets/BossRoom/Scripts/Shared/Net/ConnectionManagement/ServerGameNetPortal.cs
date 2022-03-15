@@ -178,6 +178,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
+            string payload = System.Text.Encoding.UTF8.GetString(connectionData);
+            var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
+
             ConnectStatus gameReturnStatus;
 
             // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
@@ -186,6 +189,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_Portal.NetManager.ConnectedClientsIds.Count >= CharSelectData.k_MaxLobbyPlayers)
             {
                 gameReturnStatus = ConnectStatus.ServerFull;
+            }
+            else
+            {
+                Debug.Log("Host ApprovalCheck: connecting client with player ID: " + connectionPayload.playerId);
+
+                gameReturnStatus = SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
+                    new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true))
+                    ? ConnectStatus.Success
+                    : ConnectStatus.LoggedInAgain;
+            }
+
+            if (gameReturnStatus == ConnectStatus.Success)
+            {
+                int clientScene = connectionPayload.clientScene;
+                SendServerToClientConnectResult(clientId, gameReturnStatus);
+
+                //Populate our dictionaries with the playerData
+                m_ClientSceneMap[clientId] = clientScene;
+
+                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
+                // connection approval will create a player object for you
+            }
+            else
+            {
                 //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
                 //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of
                 //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
@@ -193,45 +220,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 SendServerToClientConnectResult(clientId, gameReturnStatus);
                 SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
                 StartCoroutine(WaitToDisconnect(clientId));
-                return;
-            }
-
-            string payload = System.Text.Encoding.UTF8.GetString(connectionData);
-            var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
-
-            int clientScene = connectionPayload.clientScene;
-
-            Debug.Log("Host ApprovalCheck: connecting client with player ID: " + connectionPayload.playerId);
-
-            gameReturnStatus = SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
-                new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true))
-                ? ConnectStatus.Success
-                : ConnectStatus.LoggedInAgain;
-
-            //Test for Duplicate Login.
-            if (gameReturnStatus == ConnectStatus.LoggedInAgain)
-            {
-                SessionPlayerData? sessionPlayerData =
-                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(connectionPayload.playerId);
-
-                ulong oldClientId = sessionPlayerData?.ClientID ?? 0;
-                // kicking old client to leave only current
-                SendServerToClientSetDisconnectReason(oldClientId, ConnectStatus.LoggedInAgain);
-
-                StartCoroutine(WaitToDisconnect(clientId));
-                return;
-            }
-
-            if (gameReturnStatus == ConnectStatus.Success)
-            {
-                SendServerToClientConnectResult(clientId, gameReturnStatus);
-
-                //Populate our dictionaries with the playerData
-                m_ClientSceneMap[clientId] = clientScene;
-
-                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
-
-                // connection approval will create a player object for you
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                }
             }
         }
 
