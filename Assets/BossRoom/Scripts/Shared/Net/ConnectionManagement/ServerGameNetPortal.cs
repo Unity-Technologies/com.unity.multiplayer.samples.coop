@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
@@ -16,20 +18,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         NetworkObject m_GameState;
 
-        private GameNetPortal m_Portal;
+        GameNetPortal m_Portal;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
-        private const int k_MaxConnectPayload = 1024;
+        const int k_MaxConnectPayload = 1024;
 
         /// <summary>
         /// Keeps a list of what clients are in what scenes.
         /// </summary>
-        private Dictionary<ulong, int> m_ClientSceneMap = new Dictionary<ulong, int>();
+        Dictionary<ulong, int> m_ClientSceneMap = new Dictionary<ulong, int>();
 
         /// <summary>
         /// The active server scene index.
         /// </summary>
         public int ServerScene { get { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; } }
+
+        LobbyServiceFacade m_LobbyServiceFacade;
+
+        [Inject]
+        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
+        {
+            m_LobbyServiceFacade = lobbyServiceFacade;
+        }
 
         void Start()
         {
@@ -79,7 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Handles the case where NetworkManager has told us a client has disconnected. This includes ourselves, if we're the host,
         /// and the server is stopped."
         /// </summary>
-        private void OnClientDisconnect(ulong clientId)
+        void OnClientDisconnect(ulong clientId)
         {
             m_ClientSceneMap.Remove(clientId);
 
@@ -88,6 +98,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                }
+            }
+            else
+            {
+                var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+                if (playerId != null)
+                {
+                    if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                    {
+                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                    }
+                }
             }
         }
 
@@ -105,7 +130,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             Clear();
         }
 
-        private void Clear()
+        void Clear()
         {
             //resets all our runtime state.
             m_ClientSceneMap.Clear();
@@ -135,7 +160,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="connectionApprovedCallback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
+        void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
             if (connectionData.Length > k_MaxConnectPayload)
             {
@@ -210,7 +235,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private IEnumerator WaitToDisconnect(ulong clientId)
+        IEnumerator WaitToDisconnect(ulong clientId)
         {
             yield return new WaitForSeconds(0.5f);
             m_Portal.NetManager.DisconnectClient(clientId);
@@ -243,7 +268,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <summary>
         /// Called after the server is created-  This is primarily meant for the host server to clean up or handle/set state as its starting up
         /// </summary>
-        private void ServerStartedHandler()
+        void ServerStartedHandler()
         {
             // server spawns game state
             var gameState = Instantiate(m_GameState);
