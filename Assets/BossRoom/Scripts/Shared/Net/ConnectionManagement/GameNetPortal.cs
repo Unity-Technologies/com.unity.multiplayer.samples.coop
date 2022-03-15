@@ -106,7 +106,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             //we synthesize a "OnNetworkSpawn" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
-            NetManager.OnServerStarted += OnNetworkReady;
             NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
         }
 
@@ -122,7 +121,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (NetManager != null)
             {
-                NetManager.OnServerStarted -= OnNetworkReady;
                 NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
             }
 
