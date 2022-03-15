@@ -10,10 +10,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastruc
         readonly float m_CooldownTime;
         readonly UpdateRunner m_UpdateRunner;
         Queue<Action> m_PendingOperations = new Queue<Action>();
+        Queue<Action> m_NextPendingOperations = new Queue<Action>();
 
         public void EnqueuePendingOperation(Action action)
         {
-            m_PendingOperations.Enqueue(action);
+            m_NextPendingOperations.Enqueue(action);
         }
 
         public RateLimitCooldown(float cooldownTime, UpdateRunner updateRunner)
@@ -32,6 +33,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastruc
 
         void OnUpdate(float dt)
         {
+            while (m_NextPendingOperations.Count > 0)
+            {
+                m_PendingOperations.Enqueue(m_NextPendingOperations.Dequeue());
+            }
             m_TimeSinceLastCall += dt;
 
             if (CanCall)
