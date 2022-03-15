@@ -1,9 +1,8 @@
 using System.Collections.Generic;
+using TMPro;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UNET;
 using UnityEngine;
 using UnityEngine.Assertions;
-using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -47,8 +46,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         ExponentialMovingAverageCalculator m_UtpRTT = new ExponentialMovingAverageCalculator(0);
 
         float m_LastPingTime;
-        Text m_TextStat;
-        Text m_TextHostType;
+        TextMeshProUGUI m_TextStat;
+        TextMeshProUGUI m_TextHostType;
 
         // When receiving pong client RPCs, we need to know when the initiating ping sent it so we can calculate its individual RTT
         int m_CurrentRTTPingId;
@@ -85,16 +84,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
             InitializeTextLine("No Stat", out m_TextStat);
         }
 
-        void InitializeTextLine(string defaultText, out Text textComponent)
+        void InitializeTextLine(string defaultText, out TextMeshProUGUI textComponent)
         {
-            GameObject rootGO = new GameObject("UI Stat Text");
-            textComponent = rootGO.AddComponent<Text>();
+            var rootGO = new GameObject("UI Stat Text");
+            textComponent = rootGO.AddComponent<TextMeshProUGUI>();
+            textComponent.fontSize = 24;
             textComponent.text = defaultText;
-            textComponent.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
-            textComponent.horizontalOverflow = HorizontalWrapMode.Overflow;
-            textComponent.alignment = TextAnchor.MiddleLeft;
+            textComponent.horizontalAlignment = HorizontalAlignmentOptions.Left;
+            textComponent.verticalAlignment = VerticalAlignmentOptions.Middle;
             textComponent.raycastTarget = false;
-            textComponent.resizeTextForBestFit = true;
+            textComponent.autoSizeTextContainer = true;
 
             var rectTransform = rootGO.GetComponent<RectTransform>();
             Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
