@@ -54,8 +54,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             {
                 m_PendingHandlers.Enqueue(() =>
                 {
-                    m_Subscribers.Add(onUpdate);
-                    m_SubscriberData.Add(onUpdate, new SubscriberData(){Period = period, PeriodCurrent = 0});
+                    if (!m_Subscribers.Contains(onUpdate))
+                    {
+                        m_Subscribers.Add(onUpdate);
+                        m_SubscriberData.Add(onUpdate, new SubscriberData() {Period = period, PeriodCurrent = 0});
+                    }
                 });
             }
         }
