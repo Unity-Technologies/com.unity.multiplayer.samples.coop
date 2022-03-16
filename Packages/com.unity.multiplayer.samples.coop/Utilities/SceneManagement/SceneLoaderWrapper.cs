@@ -21,6 +21,8 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         public static SceneLoaderWrapper Instance { get; private set; }
 
+        public bool IsClosingClients { get; set; }
+
         public void Awake()
         {
             if (Instance != null && Instance != this)
@@ -69,15 +71,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
         public void LoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
-            if (m_NetworkManager != null && m_NetworkManager.IsListening && !m_NetworkManager.ShutdownInProgress && m_NetworkManager.NetworkConfig.EnableSceneManagement)
-            {
-                if (m_NetworkManager.IsServer)
-                {
-                    // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
-                    m_NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
-                }
-            }
-            else
+            if (IsOffline() || IsClosingClients)
             {
                 // If offline, load using SceneManager
                 var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
@@ -86,21 +80,31 @@ namespace Unity.Multiplayer.Samples.Utilities
                     m_ClientLoadingScreen.StartLoadingScreen(sceneName, loadOperation);
                 }
             }
+            else
+            {
+                if (m_NetworkManager.IsServer)
+                {
+                    // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
+                    m_NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+                }
+            }
         }
-
-        public bool IsClosingClients { get; set; }
 
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
             // we're letting networked scene loading handle our loading screen, since there's still some loading happening after unity scene loading is done.
             // in case we're offline, then we let unity's scene loader tell us when to turn off the loading screen.
-            var isOffline = m_NetworkManager == null || !m_NetworkManager.IsListening || m_NetworkManager.ShutdownInProgress || !m_NetworkManager.NetworkConfig.EnableSceneManagement;
             // TODO this can be called while we're still in the WaitForSeconds(0.5) while shutting down host side. which means we'll still be in theory connected. Waiting on fix
             // for this in MTT-2821
-            if (isOffline || IsClosingClients)
+            if (IsOffline() || IsClosingClients)
             {
                 m_ClientLoadingScreen.StopLoadingScreen();
             }
+        }
+
+        bool IsOffline()
+        {
+            return m_NetworkManager == null || !m_NetworkManager.IsListening || m_NetworkManager.ShutdownInProgress || !m_NetworkManager.NetworkConfig.EnableSceneManagement;
         }
 
         void OnSceneEvent(SceneEvent sceneEvent)
