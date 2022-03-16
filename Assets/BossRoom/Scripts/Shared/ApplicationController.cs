@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using Unity.Multiplayer.Samples.BossRoom.Client;
@@ -6,7 +7,6 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -88,7 +88,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         /// </summary>
         private IEnumerator LeaveBeforeQuit()
         {
-            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+            // We want to quit anyways, so if anything happens while trying to leave the Lobby, log the exception then carry on
+            try
+            {
+                m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+            }
             yield return null;
             Application.Quit();
         }
