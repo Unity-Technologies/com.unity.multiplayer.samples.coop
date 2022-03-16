@@ -117,7 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 }
 
                 // only do it here if we are not the host. The host will do it in ServerGameNetPortal
-                if (!m_Portal.NetManager.IsHost)
+                if (!m_Portal.NetManager.IsHost && m_Portal.NetManager.IsListening)
                 {
                     m_Portal.NetManager.Shutdown();
                 }
@@ -199,7 +199,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             int nbTries = 0;
             while (nbTries < k_NbReconnectAttempts)
             {
-                NetworkManager.Singleton.Shutdown();
+                if (NetworkManager.Singleton.IsListening)
+                {
+                    NetworkManager.Singleton.Shutdown();
+                }
+
                 yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
                 Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
                 if (!string.IsNullOrEmpty(lobbyCode))
@@ -227,7 +231,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
             if (NetworkManager.Singleton.IsListening)
             {
-            NetworkManager.Singleton.Shutdown();
+                NetworkManager.Singleton.Shutdown();
             }
 
             SceneLoaderWrapper.Instance.LoadScene("MainMenu");
