@@ -42,7 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         public static async
-            Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[]
+            Task<(string ipv4address, ushort port, Guid allocationId, byte[] allocationIdBytes, byte[] connectionData, byte[]
                 hostConnectionData, byte[] key)> JoinRelayServerFromJoinCode(string joinCode)
         {
             JoinAllocation allocation;
@@ -59,7 +59,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             Debug.Log($"host: {allocation.HostConnectionData[0]} {allocation.HostConnectionData[1]}");
             Debug.Log($"client: {allocation.AllocationId}");
 
-            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationIdBytes,
+            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationId, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.HostConnectionData, allocation.Key);
         }
     }
