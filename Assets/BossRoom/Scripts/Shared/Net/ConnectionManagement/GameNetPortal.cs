@@ -203,14 +203,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
                         // we now need to get the joinCode?
                         var GDCRegion = "us-west2";
                         // var GDCRegion = "us-east4";
-                        var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections, region: GDCRegion);
-                        await serverRelayUtilityTask;
-                        // we now have the info from the relay service
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
+                        var (ipv4Address, port, allocationId, allocationIdBytes, connectionData, key, joinCode) = await UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections, region: GDCRegion);
 
                         m_LocalLobby.RelayJoinCode = joinCode;
                         //next line enabled lobby and relay services integration
-                        m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                        m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationId.ToString(), joinCode, null, null);
 
                         // we now need to set the RelayCode somewhere :P
                         utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);

@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
 
         public static async
-            Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
+            Task<(string ipv4address, ushort port, Guid allocationId, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
                 joinCode)> AllocateRelayServerAndGetJoinCode(int maxConnections, string region = null)
         {
             Allocation allocation;
@@ -37,7 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 throw new Exception($"Creating join code request has failed: \n {exception.Message}");
             }
 
-            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationIdBytes,
+            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationId, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.Key, joinCode);
         }
 
