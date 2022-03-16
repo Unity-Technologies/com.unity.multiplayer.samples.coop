@@ -225,7 +225,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // If the coroutine has not been stopped before this, it means we failed to connect during all attempts
             Debug.Log("All tries failed, returning to main menu");
             m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+            if (NetworkManager.Singleton.IsListening)
+            {
             NetworkManager.Singleton.Shutdown();
+            }
+
             SceneLoaderWrapper.Instance.LoadScene("MainMenu");
             if (!DisconnectReason.HasTransitionReason)
             {
