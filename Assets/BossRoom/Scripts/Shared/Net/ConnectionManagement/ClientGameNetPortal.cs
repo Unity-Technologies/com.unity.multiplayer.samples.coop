@@ -1,6 +1,6 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -34,12 +34,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public event Action NetworkTimedOut;
 
-        private LobbyServiceFacade m_LobbyServiceFacade;
+        ApplicationController m_ApplicationController;
+        LobbyServiceFacade m_LobbyServiceFacade;
         IPublisher<ConnectStatus> m_ConnectStatusPub;
 
         [Inject]
-        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub)
+        private void InjectDependencies(ApplicationController applicationController, LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub)
         {
+            m_ApplicationController = applicationController;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_ConnectStatusPub = connectStatusPub;
         }
@@ -110,6 +112,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             else
             {
                 m_ConnectStatusPub.Publish(status);
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.BeginTracking();
+                }
             }
         }
 
@@ -124,23 +130,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
             if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientID)
             {
+                var lobbyCode = "";
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    lobbyCode = m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode;
+                }
+
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
                 {
                     // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
                     // Just shut down networking and switch back to main menu.
-                    NetworkManager.Singleton.Shutdown();
                     if (!DisconnectReason.HasTransitionReason)
                     {
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
-                    SceneManager.LoadScene("MainMenu");
+                    m_ApplicationController.LeaveSession();
                 }
-                else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
+                else
                 {
-                    // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
                 m_ConnectStatusPub.Publish(DisconnectReason.Reason);
@@ -155,7 +165,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
         /// yet initialized its client and server GameNetPortal objects yet (which it does in OnNetworkSpawn, based on the role that the current player is performing).
         /// </remarks>
-        /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
@@ -202,15 +211,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;//not re-throwing, but still not allowing to connect
             }
 
+
             ConnectClient();
         }
 
-        private void ConnectClient()
+        void ConnectClient()
         {
-            var clientGuid = ClientPrefs.GetGuid();
+
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
-                clientGUID = clientGuid,
+                playerId = m_Portal.GetPlayerId(),
                 clientScene = SceneManager.GetActiveScene().buildIndex,
                 playerName = m_Portal.PlayerName,
                 isDebug = Debug.isDebugBuild

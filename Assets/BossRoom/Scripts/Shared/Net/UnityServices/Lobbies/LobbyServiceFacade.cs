@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
@@ -72,13 +74,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_ServiceScope?.Dispose();
         }
 
-        public void BeginTracking(Lobby lobby)
+        public void SetRemoteLobby(Lobby lobby)
+        {
+            CurrentUnityLobby = lobby;
+            m_LocalLobby.ApplyRemoteData(lobby);
+        }
+
+        public void BeginTracking()
         {
             if(!m_IsTracking)
             {
                 m_IsTracking = true;
-                CurrentUnityLobby = lobby;
-                m_LocalLobby.ApplyRemoteData(lobby);
                 // 2s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
                 // the actual rate limits are tracked via the RateLimitCooldown objects defined above
                 m_UpdateRunner.Subscribe(UpdateLobby, 2f);
@@ -86,24 +92,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public void EndTracking()
+        public Task EndTracking()
         {
+            var task = Task.CompletedTask;
+            if (CurrentUnityLobby != null)
+            {
+                CurrentUnityLobby = null;
+
+                if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
+                {
+                    task = LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
+                }
+
+                m_LocalUser.ResetState();
+                m_LocalLobby?.Reset(m_LocalUser);
+            }
+
             if (m_IsTracking)
             {
                 m_UpdateRunner.Unsubscribe(UpdateLobby);
                 m_IsTracking = false;
                 m_HeartbeatTime = 0;
                 m_JoinedLobbyContentHeartbeat.EndTracking();
-                CurrentUnityLobby = null;
-
-                if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
-                {
-                    LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
-                }
-
-                m_LocalUser.ResetState();
-                m_LocalLobby?.Reset(m_LocalUser);
             }
+            return task;
         }
 
         void UpdateLobby(float unused)
@@ -157,24 +169,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to join an existing lobby. Will try to join via code, if code is null - will try to join via ID.
         /// </summary>
-        public void JoinLobbyAsync(string lobbyId, string lobbyCode, Action<Lobby> onSuccess, Action onFailure)
+        public Task JoinLobbyAsync(string lobbyId, string lobbyCode, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitJoin.CanCall ||
                 (lobbyId == null && lobbyCode == null))
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Join Lobby hit the rate limit.");
-                return;
+                return Task.CompletedTask;
             }
             m_RateLimitJoin.PutOnCooldown();
 
             if (!string.IsNullOrEmpty(lobbyCode))
             {
-                m_LobbyApiInterface.JoinLobbyAsync_ByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+                return m_LobbyApiInterface.JoinLobbyAsync_ByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
             }
             else
             {
-                m_LobbyApiInterface.JoinLobbyAsync_ById(AuthenticationService.Instance.PlayerId, lobbyId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+                return m_LobbyApiInterface.JoinLobbyAsync_ById(AuthenticationService.Instance.PlayerId, lobbyId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
             }
         }
 
@@ -231,10 +243,55 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to leave a lobby, and then delete it if no players remain.
         /// </summary>
-        public void LeaveLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
+        public Task LeaveLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
         {
             string uasId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+            return m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+        }
+
+        public void RemovePlayerFromLobbyAsync(string uasId, string lobbyId, Action onSuccess, Action onFailure)
+        {
+            if (m_LocalUser.IsHost)
+            {
+                RetrieveLobbyAsync(lobbyId, OnRetrieveSuccess, onFailure);
+
+
+                void OnRetrieveSuccess(Lobby lobby)
+                {
+                    bool playerFound = false;
+                    foreach (var player in lobby.Players)
+                    {
+                        if (player.Id == uasId)
+                        {
+                            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+                            playerFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!playerFound)
+                    {
+                        Debug.Log($"Player {uasId} has already left the lobby.");
+                    }
+                }
+
+            }
+            else
+            {
+                Debug.LogError("Only the host can remove other players from the lobby.");
+            }
+        }
+
+        public void DeleteLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
+        {
+            if (m_LocalUser.IsHost)
+            {
+                m_LobbyApiInterface.DeleteLobbyAsync(lobbyId, onSuccess, onFailure);
+            }
+            else
+            {
+                Debug.LogError("Only the host can delete a lobby.");
+            }
         }
 
         /// <summary>

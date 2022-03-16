@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
@@ -18,6 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         GameNetPortal m_Portal;
 
+        // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
         const int k_MaxConnectPayload = 1024;
 
         /// <summary>
@@ -29,6 +32,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// The active server scene index.
         /// </summary>
         static int ServerScene => SceneManager.GetActiveScene().buildIndex;
+
+        LobbyServiceFacade m_LobbyServiceFacade;
+
+        [Inject]
+        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
+        {
+            m_LobbyServiceFacade = lobbyServiceFacade;
+        }
 
         void Start()
         {
@@ -87,6 +98,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                }
+            }
+            else
+            {
+                var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+                if (playerId != null)
+                {
+                    if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                    {
+                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                    }
+                }
             }
         }
 
@@ -147,7 +173,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // Approval check happens for Host too, but obviously we want it to be approved
             if (clientId == NetworkManager.Singleton.LocalClientId)
             {
-                SessionManager<SessionPlayerData>.Instance.AddHostData(
+                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, m_Portal.GetPlayerId(),
                     new SessionPlayerData(clientId, m_Portal.PlayerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
 
                 connectionApprovedCallback(true, null, true, null, null);
@@ -160,7 +186,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             if (gameReturnStatus == ConnectStatus.Success)
             {
-                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.clientGUID,
+                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                     new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
                 SendServerToClientConnectResult(clientId, gameReturnStatus);
 
@@ -179,6 +205,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 SendServerToClientConnectResult(clientId, gameReturnStatus);
                 SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
                 StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                }
             }
         }
 
@@ -199,7 +229,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     gameReturnStatus = ConnectStatus.IncompatibleBuildType;
                 }
-                else if (SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.clientGUID))
+                else if (SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId))
                 {
                     gameReturnStatus = ConnectStatus.LoggedInAgain;
                 }
