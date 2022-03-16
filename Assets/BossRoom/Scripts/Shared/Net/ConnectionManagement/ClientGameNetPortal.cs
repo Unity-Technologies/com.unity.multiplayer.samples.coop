@@ -35,12 +35,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private const int k_TimeoutDuration = 10;
         const int k_NbReconnectAttempts = 1;
 
-        /// <summary>
-        /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
-        /// time from the host.
-        /// </summary>
-        public event Action NetworkTimedOut;
-
         ApplicationController m_ApplicationController;
         LobbyServiceFacade m_LobbyServiceFacade;
         IPublisher<ConnectStatus> m_ConnectStatusPub;
