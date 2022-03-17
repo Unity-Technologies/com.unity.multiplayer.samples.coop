@@ -128,7 +128,7 @@ Material:
     - _ColorMask: 15
     - _ColorMode: 3
     - _Cull: 2
-    - _Cutoff: 0.5
+    - _Cutoff: 0.123
     - _DetailNormalMapScale: 1
     - _DiffuseAmount: 0.2
     - _DistortionBlend: 0.5
