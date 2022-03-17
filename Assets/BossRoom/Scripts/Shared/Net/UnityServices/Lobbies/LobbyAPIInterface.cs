@@ -87,20 +87,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             RunTask(task, onComplete, onFailed);
         }
 
-        public Task JoinLobbyAsync_ByCode(string requesterUasId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public void JoinLobbyAsync_ByCode(string requesterUasId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
         {
             JoinLobbyByCodeOptions joinOptions = new JoinLobbyByCodeOptions { Player = new Player(id: requesterUasId, data: localUserData) };
             var task = Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions);
             RunTask(task, onComplete, onFailed);
-            return task;
         }
 
-        public Task JoinLobbyAsync_ById(string requesterUasId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public void JoinLobbyAsync_ById(string requesterUasId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
         {
             JoinLobbyByIdOptions joinOptions = new JoinLobbyByIdOptions { Player = new Player(id: requesterUasId, data: localUserData) };
             var task = Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, joinOptions);
             RunTask(task, onComplete, onFailed);
-            return task;
         }
 
         public void QuickJoinLobbyAsync(string requesterUasId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
@@ -115,11 +113,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             RunTask(task, onComplete, onFailed);
         }
 
-        public Task LeaveLobbyAsync(string requesterUasId, string lobbyId, Action onComplete, Action onFailed)
+        public void LeaveLobbyAsync(string requesterUasId, string lobbyId, Action onComplete, Action onFailed)
         {
             var task = Lobbies.Instance.RemovePlayerAsync(lobbyId, requesterUasId);
             RunTask(task, onComplete, onFailed);
-            return task;
         }
 
         public void QueryAllLobbiesAsync(Action<QueryResponse> onComplete, Action onFailed)
