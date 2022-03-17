@@ -15,6 +15,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] LobbyListItemUI m_LobbyListItemPrototype;
         [SerializeField] InputField m_JoinCodeField;
         [SerializeField] CanvasGroup m_CanvasGroup;
+        [SerializeField] Graphic m_EmptyLobbyListLabel;
+
         IInstanceResolver m_Container;
         LobbyUIMediator m_LobbyUIMediator;
         UpdateRunner m_UpdateRunner;
@@ -79,6 +81,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 var localLobby = message.LocalLobbies[i];
                 m_LobbyListItems[i].SetData(localLobby);
+            }
+
+            if (message.LocalLobbies.Count == 0)
+            {
+                m_EmptyLobbyListLabel.enabled = true;
+            }
+            else
+            {
+                m_EmptyLobbyListLabel.enabled = false;
             }
         }
 
