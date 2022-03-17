@@ -66,7 +66,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscriptions.Dispose();
+            m_Subscriptions?.Dispose();
         }
 
         //Lobby and Relay calls done from UI
