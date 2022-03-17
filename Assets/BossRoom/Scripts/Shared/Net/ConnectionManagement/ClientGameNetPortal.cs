@@ -87,14 +87,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        /// <summary>
-        /// Invoked when the user has requested a disconnect via the UI, e.g. when hitting "Return to Main Menu" in the post-game scene.
-        /// </summary>
-        public void OnUserDisconnectRequest()
+        public void OnDisconnectRequest(ConnectStatus withDisconnectReason = ConnectStatus.Undefined)
         {
             if (m_Portal.NetManager.IsClient)
             {
-                DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+                if (withDisconnectReason != ConnectStatus.Undefined)
+                {
+                    DisconnectReason.SetDisconnectReason(withDisconnectReason);
+                }
+
                 if (m_TryToReconnectCoroutine != null)
                 {
                     StopCoroutine(m_TryToReconnectCoroutine);

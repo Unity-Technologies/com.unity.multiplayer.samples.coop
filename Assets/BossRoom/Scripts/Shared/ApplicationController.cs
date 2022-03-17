@@ -100,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return canQuit;
         }
 
-        public void LeaveSession()
+        public void LeaveSession(ConnectStatus withReason = ConnectStatus.Undefined)
         {
             m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
 
@@ -108,7 +108,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             var gameNetPortal = GameNetPortal.Instance;
             if (gameNetPortal != null)
             {
-                gameNetPortal.RequestDisconnect();
+                gameNetPortal.RequestDisconnect(withReason);
             }
 
             SceneLoaderWrapper.Instance.LoadScene("MainMenu");

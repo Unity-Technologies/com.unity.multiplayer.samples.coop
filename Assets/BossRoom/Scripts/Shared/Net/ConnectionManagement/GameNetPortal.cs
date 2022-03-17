@@ -235,14 +235,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// This will disconnect (on the client) or shutdown the server (on the host).
         /// It's a local signal (not from the network), indicating that the user has requested a disconnect.
         /// </summary>
-        public void RequestDisconnect()
+        public void RequestDisconnect(ConnectStatus withDisconnectReason = ConnectStatus.Undefined)
         {
             if (NetManager.IsServer)
             {
                 NetManager.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
-            m_ClientPortal.OnUserDisconnectRequest();
-            m_ServerPortal.OnUserDisconnectRequest();
+            m_ClientPortal.OnDisconnectRequest(withDisconnectReason);
+            m_ServerPortal.OnDisconnectRequest();
         }
 
         public string GetPlayerId()

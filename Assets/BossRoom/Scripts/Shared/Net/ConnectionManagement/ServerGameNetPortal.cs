@@ -127,7 +127,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
         /// handled in server code).
         /// </summary>
-        public void OnUserDisconnectRequest()
+        public void OnDisconnectRequest()
         {
             Clear();
             if (m_Portal.NetManager.IsServer)
