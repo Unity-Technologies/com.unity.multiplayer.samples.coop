@@ -182,7 +182,7 @@ MonoBehaviour:
     m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 1313590801738418481, guid: c94325ee327b53c49939f904d073f197, type: 3}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 50}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
     m_SoundEffect: {fileID: 8300000, guid: b239f215d2645db40ad6183403eb26df, type: 3}
     m_SoundStartDelaySeconds: 0
