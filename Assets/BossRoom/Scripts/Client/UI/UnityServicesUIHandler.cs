@@ -60,6 +60,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                         {
                             PopupPanel.ShowPopupPanel("Lobby error", "Request timed out.");
                         }
+                        else if (exception.Reason == LobbyExceptionReason.BadRequest)
+                        {
+                            PopupPanel.ShowPopupPanel("Lobby error", "Received HTTP error 400 Bad Request from Lobby Service. Is the join code correctly formatted?");
+                        }
                     }
                     break;
                 }
