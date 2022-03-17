@@ -112,6 +112,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             else
             {
                 m_ConnectStatusPub.Publish(status);
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.BeginTracking();
+                }
             }
         }
 
@@ -145,9 +149,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     }
                     m_ApplicationController.LeaveSession();
                 }
-                else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
+                else
                 {
-                    // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
                 m_ConnectStatusPub.Publish(DisconnectReason.Reason);
