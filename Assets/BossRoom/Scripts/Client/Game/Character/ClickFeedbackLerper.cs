@@ -9,8 +9,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         Vector3 m_TargetPosition;
 
-        Vector3 m_LerpedPosition;
-
         // The amount of offset to keep the click feedback object from intersecting with the floor
         const float k_HoverHeight = 0.15f;
         const float k_LerpTime = 0.04f;
@@ -22,7 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void Update()
         {
-            transform.position = m_PositionLerper.LerpPosition(m_LerpedPosition, m_TargetPosition);
+            transform.position = m_PositionLerper.LerpPosition(transform.position, m_TargetPosition);
         }
 
         public void SetTarget(Vector3 clientInputPosition)
