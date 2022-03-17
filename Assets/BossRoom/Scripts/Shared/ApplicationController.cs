@@ -6,8 +6,6 @@ using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.Utilities;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -79,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private void OnDestroy()
         {
-            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+            m_LobbyServiceFacade.EndTracking();
             DIScope.RootScope.Dispose();
         }
 
@@ -92,7 +90,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             // We want to quit anyways, so if anything happens while trying to leave the Lobby, log the exception then carry on
             try
             {
-                m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+                m_LobbyServiceFacade.EndTracking();
             }
             catch (Exception e)
             {
@@ -105,13 +103,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         private bool OnWantToQuit()
         {
             var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
-            StartCoroutine(LeaveBeforeQuit());
+            if (canQuit)
+            {
+                StartCoroutine(LeaveBeforeQuit());
+            }
             return canQuit;
         }
 
         public void LeaveSession()
         {
-            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+            m_LobbyServiceFacade.EndTracking();
 
             // first disconnect then return to menu
             var gameNetPortal = GameNetPortal.Instance;
