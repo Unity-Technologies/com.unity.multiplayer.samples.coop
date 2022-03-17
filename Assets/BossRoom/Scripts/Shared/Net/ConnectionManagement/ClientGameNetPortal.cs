@@ -31,8 +31,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
-        private const int k_TimeoutDuration = 10;
-        const int k_NbReconnectAttempts = 1;
+        private const int k_TimeoutDuration = 5;
+        const int k_NbReconnectAttempts = 2;
 
         ApplicationController m_ApplicationController;
         LobbyServiceFacade m_LobbyServiceFacade;
