@@ -127,7 +127,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
         /// handled in server code).
         /// </summary>
-        public void OnUserDisconnectRequest()
+        public void OnDisconnectRequest()
         {
             Clear();
             if (m_Portal.NetManager.IsServer)
@@ -145,7 +145,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             yield return null; // todo still needed? wait for UTP's update for it to send it's batched messages
             yield return null;
             SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
-            m_Portal.NetManager.Shutdown();
+            if (m_Portal.NetManager.IsListening)
+            {
+                m_Portal.NetManager.Shutdown();
+            }
+
             SceneLoaderWrapper.Instance.IsClosingClients = false;
         }
 

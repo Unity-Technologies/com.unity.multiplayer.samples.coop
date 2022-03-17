@@ -35,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
             else
             {
-                m_ApplicationController.LeaveSession();
+                m_ApplicationController.LeaveSession(withReason: ConnectStatus.UserRequestedDisconnect);
             }
 
             gameObject.SetActive(false);
