@@ -658,7 +658,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: -26, y: -22}
-  m_SizeDelta: {x: 360, y: 370}
+  m_SizeDelta: {x: 360, y: 334.8134}
   m_Pivot: {x: 1, y: 1}
 --- !u!222 &5940892340808018830
 CanvasRenderer:
@@ -999,7 +999,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Room Name: '
+  m_text: 'Join Code: '
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9641ce046d2227445b9684161a165f68, type: 2}
   m_sharedMaterial: {fileID: -4106257185398102161, guid: 9641ce046d2227445b9684161a165f68, type: 2}
@@ -1833,7 +1833,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -110, y: -220}
+  m_AnchoredPosition: {x: -110, y: -201.2}
   m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5940892341571103607
@@ -2571,7 +2571,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 40, y: -220}
+  m_AnchoredPosition: {x: 40, y: -201.2}
   m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5940892342366699524
@@ -2662,7 +2662,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: -34.09987, y: -220}
+  m_AnchoredPosition: {x: -34.09987, y: -201.2}
   m_SizeDelta: {x: 70, y: 70}
   m_Pivot: {x: 0, y: 1}
 --- !u!222 &5940892342369331860
@@ -3141,7 +3141,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3757,14 +3757,14 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: bb7d37d2a40813048883c2696e975eac, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff848390065bf914fb60582f4d872815, type: 3}
---- !u!224 &4148434299776943719 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 7773346133266671123, guid: ff848390065bf914fb60582f4d872815, type: 3}
-  m_PrefabInstance: {fileID: 5940892340993679476}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &8367260898428394609 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 2768642224677944325, guid: ff848390065bf914fb60582f4d872815, type: 3}
+  m_PrefabInstance: {fileID: 5940892340993679476}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &4148434299776943719 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 7773346133266671123, guid: ff848390065bf914fb60582f4d872815, type: 3}
   m_PrefabInstance: {fileID: 5940892340993679476}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5940892341121358677
@@ -4829,14 +4829,14 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: 9781ab5273dea1c4e94c1ab8d4d18b31, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ff848390065bf914fb60582f4d872815, type: 3}
---- !u!224 &8367260899810866543 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 2768642224677944325, guid: ff848390065bf914fb60582f4d872815, type: 3}
-  m_PrefabInstance: {fileID: 5940892341839497578}
-  m_PrefabAsset: {fileID: 0}
 --- !u!224 &4148434300538892153 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7773346133266671123, guid: ff848390065bf914fb60582f4d872815, type: 3}
+  m_PrefabInstance: {fileID: 5940892341839497578}
+  m_PrefabAsset: {fileID: 0}
+--- !u!224 &8367260899810866543 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 2768642224677944325, guid: ff848390065bf914fb60582f4d872815, type: 3}
   m_PrefabInstance: {fileID: 5940892341839497578}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &5940892341869088767

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
@@ -101,6 +102,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             yield return new WaitForSeconds(m_DormantCooldown);
 
+            Restart();
+        }
+
+        void Restart()
+        {
             foreach (var state in m_BreakableElements)
             {
                 if (state)
@@ -110,10 +116,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     serverComponent.Unbreak();
                 }
             }
+
             m_State.IsBroken.Value = false;
             m_WaveSpawner.SetSpawnerEnabled(true);
             m_CoroDormant = null;
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public void ForceRestart()
+        {
+            if (m_CoroDormant != null)
+            {
+                StopCoroutine(m_CoroDormant);
+            }
+            Restart();
+        }
+
+        public void ForceDestroy()
+        {
+            foreach (var state in m_BreakableElements)
+            {
+                if (state)
+                {
+                    var serverComponent = state.GetComponent<ServerBreakableLogic>();
+                    Assert.IsNotNull(serverComponent);
+                    serverComponent.ReceiveHP(null, Int32.MinValue);
+                }
+            }
+        }
+#endif
     }
 
 

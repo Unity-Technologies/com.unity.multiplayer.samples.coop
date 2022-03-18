@@ -161,7 +161,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     damage = Description.SplashDamage;
                 }
-                victim.ReceiveHP(m_Parent, -damage);
+
+                if (victim.gameObject.TryGetComponent(out IDamageable damageable))
+                {
+                    damageable.ReceiveHP(m_Parent, -damage);
+                }
             }
 
             var victimMovement = victim.Movement;
