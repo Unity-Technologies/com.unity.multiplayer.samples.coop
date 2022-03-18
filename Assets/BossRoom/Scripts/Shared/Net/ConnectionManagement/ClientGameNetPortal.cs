@@ -1,6 +1,6 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,14 +22,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// If a disconnect occurred this will be populated with any contextual information that was available to explain why.
         /// </summary>
-        public DisconnectReason DisconnectReason { get; private set; } = new DisconnectReason();
+        public DisconnectReason DisconnectReason { get; } = new DisconnectReason();
 
         /// <summary>
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
         private const int k_TimeoutDuration = 10;
-
-        public event Action<ConnectStatus> ConnectFinished;
 
         /// <summary>
         /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
@@ -37,12 +35,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public event Action NetworkTimedOut;
 
-        private LobbyServiceFacade m_LobbyServiceFacade;
+        ApplicationController m_ApplicationController;
+        LobbyServiceFacade m_LobbyServiceFacade;
+        IPublisher<ConnectStatus> m_ConnectStatusPub;
 
         [Inject]
-        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
+        private void InjectDependencies(ApplicationController applicationController, LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub)
         {
+            m_ApplicationController = applicationController;
             m_LobbyServiceFacade = lobbyServiceFacade;
+            m_ConnectStatusPub = connectStatusPub;
         }
 
         private void Awake()
@@ -108,8 +110,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //this indicates a game level failure, rather than a network failure. See note in ServerGameNetPortal.
                 DisconnectReason.SetDisconnectReason(status);
             }
-
-            ConnectFinished?.Invoke(status);
+            else
+            {
+                m_ConnectStatusPub.Publish(status);
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.BeginTracking();
+                }
+            }
         }
 
         private void OnDisconnectReasonReceived(ConnectStatus status)
@@ -119,29 +127,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
-            // Only handle client disconnect
-            if (!NetworkManager.Singleton.IsHost)
+            // This is also called on the Host when a different client disconnects. To make sure we only handle our own disconnection, verify that we are either
+            // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
+            if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientID)
             {
+                var lobbyCode = "";
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    lobbyCode = m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode;
+                }
+
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
                 {
                     // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
                     // Just shut down networking and switch back to main menu.
-                    NetworkManager.Singleton.Shutdown();
                     if (!DisconnectReason.HasTransitionReason)
                     {
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
-
-                    SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+                    m_ApplicationController.LeaveSession();
                 }
-                else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
+                else
                 {
-                    // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
                     NetworkTimedOut?.Invoke();
                 }
+                m_ConnectStatusPub.Publish(DisconnectReason.Reason);
+                DisconnectReason.Clear();
             }
         }
 
@@ -150,9 +164,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         /// <remarks>
         /// This method must be static because, when it is invoked, the client still doesn't know it's a client yet, and in particular, GameNetPortal hasn't
-        /// yet initialized its client and server GNP-Logic objects yet (which it does in OnNetworkSpawn, based on the role that the current player is performing).
+        /// yet initialized its client and server GameNetPortal objects yet (which it does in OnNetworkSpawn, based on the role that the current player is performing).
         /// </remarks>
-        /// <param name="portal"> </param>
         /// <param name="ipaddress">the IP address of the host to connect to. (currently IPV4 only)</param>
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
@@ -191,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
 
                 m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
-                utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
+                utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)
             {
@@ -199,15 +212,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;//not re-throwing, but still not allowing to connect
             }
 
+
             ConnectClient();
         }
 
-        private void ConnectClient()
+        void ConnectClient()
         {
-            var clientGuid = ClientPrefs.GetGuid();
+
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
-                clientGUID = clientGuid,
+                playerId = m_Portal.GetPlayerId(),
                 clientScene = SceneManager.GetActiveScene().buildIndex,
                 playerName = m_Portal.PlayerName
             });
@@ -218,8 +232,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_Portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
 
             //and...we're off! Netcode will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an OnClientDisconnect callback for ourselves and get a message telling us the reason
-            //  If the socket connection succeeds, we'll get our RecvConnectFinished invoked. This is where game-layer failures will be reported.
+            //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
+            //  If the socket connection succeeds, we'll get our ReceiveServerToClientConnectResult_CustomMessage invoked. This is where game-layer failures will be reported.
             m_Portal.NetManager.StartClient();
             SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
 

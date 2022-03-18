@@ -1,10 +1,11 @@
+using System;
 using System.Collections;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,6 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         [SerializeField] UpdateRunner m_UpdateRunner;
         [SerializeField] GameNetPortal m_GameNetPortal;
         [SerializeField] ClientGameNetPortal m_ClientNetPortal;
+        [SerializeField] ServerGameNetPortal m_ServerGameNetPortal;
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -37,6 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindInstanceAsSingle(m_UpdateRunner);
             scope.BindInstanceAsSingle(m_GameNetPortal);
             scope.BindInstanceAsSingle(m_ClientNetPortal);
+            scope.BindInstanceAsSingle(m_ServerGameNetPortal);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
@@ -45,6 +48,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
             scope.BindMessageChannel<UnityServiceErrorMessage>();
+
+            //this message channel is essential and persists for the lifetime of the lobby and relay services
+            scope.BindMessageChannel<ConnectStatus>();
 
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
             scope.BindBufferedMessageChannel<LobbyListFetchedMessage>();
@@ -62,6 +68,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
             m_LocalLobby = scope.Resolve<LocalLobby>();
             m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
+
+            Application.targetFrameRate = 120;
         }
 
         private void Start()
@@ -71,7 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private void OnDestroy()
         {
-            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+            m_LobbyServiceFacade.EndTracking();
             DIScope.RootScope.Dispose();
         }
 
@@ -81,7 +89,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         /// </summary>
         private IEnumerator LeaveBeforeQuit()
         {
-            m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
+            // We want to quit anyways, so if anything happens while trying to leave the Lobby, log the exception then carry on
+            try
+            {
+                m_LobbyServiceFacade.EndTracking();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError(e.Message);
+            }
             yield return null;
             Application.Quit();
         }
@@ -89,28 +105,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         private bool OnWantToQuit()
         {
             var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
-            StartCoroutine(LeaveBeforeQuit());
+            if (canQuit)
+            {
+                StartCoroutine(LeaveBeforeQuit());
+            }
             return canQuit;
+        }
+
+        public void LeaveSession()
+        {
+            m_LobbyServiceFacade.EndTracking();
+
+            // first disconnect then return to menu
+            var gameNetPortal = GameNetPortal.Instance;
+            if (gameNetPortal != null)
+            {
+                gameNetPortal.RequestDisconnect();
+            }
+            SceneManager.LoadScene("MainMenu");
         }
 
         public void QuitGame()
         {
-            if (NetworkManager.Singleton.IsListening)
-            {
-                m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
-
-                // first disconnect then return to menu
-                var gameNetPortal = GameNetPortal.Instance;
-                if (gameNetPortal != null)
-                {
-                    gameNetPortal.RequestDisconnect();
-                }
-                SceneManager.LoadScene("MainMenu");
-            }
-            else
-            {
-                Application.Quit();
-            }
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
         }
     }
 }

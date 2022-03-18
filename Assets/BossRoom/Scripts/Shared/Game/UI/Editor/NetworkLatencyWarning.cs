@@ -20,7 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         void Update()
         {
-            if (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer)
+            if (NetworkManager.Singleton != null && (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer))
             {
                 var chosenTransport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
 
@@ -32,10 +32,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                     case UnityTransport unityTransport:
                         // adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                        SimulatorUtility.Parameters simulatorParameters = unityTransport.ClientSimulatorParameters;
-                        m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMs > 0 ||
-                            simulatorParameters.PacketJitterMs > 0 ||
-                            simulatorParameters.PacketDropPercentage > 0;
+                        var simulatorParameters = unityTransport.DebugSimulator;
+                        m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMS > 0 ||
+                            simulatorParameters.PacketJitterMS > 0 ||
+                            simulatorParameters.PacketDropRate > 0;
 #else
                         m_ArtificialLatencyEnabled = false;
 #endif

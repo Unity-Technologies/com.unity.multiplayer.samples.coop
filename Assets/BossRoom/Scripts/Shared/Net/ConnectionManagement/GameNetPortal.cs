@@ -1,11 +1,13 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.Utilities;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -32,7 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     [Serializable]
     public class ConnectionPayload
     {
-        public string clientGUID;
+        public string playerId;
         public int clientScene = -1;
         public string playerName;
     }
@@ -105,7 +107,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             //we synthesize a "OnNetworkSpawn" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
-            NetManager.OnServerStarted += OnNetworkReady;
             NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
         }
 
@@ -121,7 +122,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (NetManager != null)
             {
-                NetManager.OnServerStarted -= OnNetworkReady;
                 NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
             }
 
@@ -161,7 +161,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Initializes host mode on this client. Call this and then other clients should connect to us!
         /// </summary>
         /// <remarks>
-        /// See notes in GNH_Client.StartClient about why this must be static.
+        /// See notes in ClientGameNetPortal.StartClient about why this must be static.
         /// </remarks>
         /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
         /// <param name="port">The port to connect to. </param>
@@ -210,7 +210,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                         m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
 
                         // we now need to set the RelayCode somewhere :P
-                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);
+                        utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
                     }
                     catch (Exception e)
                     {
@@ -245,6 +245,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ServerPortal.OnUserDisconnectRequest();
             SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
             NetManager.Shutdown();
+        }
+
+        public string GetPlayerId()
+        {
+            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + ProfileManager.Profile;
         }
     }
 }
