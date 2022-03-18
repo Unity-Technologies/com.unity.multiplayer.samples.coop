@@ -31,14 +31,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Time in seconds before the client considers a lack of server response a timeout
         /// </summary>
-        private const int k_TimeoutDuration = 10;
-        const int k_NbReconnectAttempts = 1;
-
-        /// <summary>
-        /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
-        /// time from the host.
-        /// </summary>
-        public event Action NetworkTimedOut;
+        private const int k_TimeoutDuration = 5;
+        const int k_NbReconnectAttempts = 2;
 
         ApplicationController m_ApplicationController;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -93,14 +87,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        /// <summary>
-        /// Invoked when the user has requested a disconnect via the UI, e.g. when hitting "Return to Main Menu" in the post-game scene.
-        /// </summary>
-        public void OnUserDisconnectRequest()
+        public void OnDisconnectRequest(ConnectStatus withDisconnectReason = ConnectStatus.Undefined)
         {
             if (m_Portal.NetManager.IsClient)
             {
-                DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+                if (withDisconnectReason != ConnectStatus.Undefined)
+                {
+                    DisconnectReason.SetDisconnectReason(withDisconnectReason);
+                }
+
                 if (m_TryToReconnectCoroutine != null)
                 {
                     StopCoroutine(m_TryToReconnectCoroutine);
@@ -116,7 +111,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 }
 
                 // only do it here if we are not the host. The host will do it in ServerGameNetPortal
-                if (!m_Portal.NetManager.IsHost)
+                if (!m_Portal.NetManager.IsHost && m_Portal.NetManager.IsListening)
                 {
                     m_Portal.NetManager.Shutdown();
                 }
@@ -142,6 +137,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     m_TryToReconnectCoroutine = null;
                 }
                 m_ConnectStatusPub.Publish(status);
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.BeginTracking();
+                }
             }
         }
 
@@ -161,26 +160,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
-                if (SceneManager.GetActiveScene().name != "MainMenu")
+                switch (DisconnectReason.Reason)
                 {
-                    if (DisconnectReason.Reason == ConnectStatus.UserRequestedDisconnect || DisconnectReason.Reason == ConnectStatus.HostDisconnected || NetworkManager.Singleton.IsHost)
-                    {
-                        // simply shut down and go back to main menu
-                        m_ApplicationController.LeaveSession();
-                    }
-                    else
-                    {
+                    case ConnectStatus.UserRequestedDisconnect:
+                    case ConnectStatus.HostDisconnected:
+                    case ConnectStatus.LoggedInAgain:
+                    case ConnectStatus.ServerFull:
+                        m_ApplicationController.LeaveSession(); // go through the normal leave flow
+                        break;
+                    case ConnectStatus.GenericDisconnect:
+                    case ConnectStatus.Undefined:
                         DisconnectReason.SetDisconnectReason(ConnectStatus.Reconnecting);
+
                         // load new scene to workaround MTT-2684
                         SceneManager.LoadScene("Loading");
+
                         // try reconnecting
                         m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect(lobbyCode));
-                    }
-                }
-                else if (DisconnectReason.Reason == ConnectStatus.GenericDisconnect || DisconnectReason.Reason == ConnectStatus.Undefined)
-                {
-                    // only call this if generic disconnect. Else if there's a reason, there's already code handling that popup
-                    NetworkTimedOut?.Invoke();
+                        break;
+                    default:
+                        throw new NotImplementedException(DisconnectReason.Reason.ToString());
                 }
 
                 m_ConnectStatusPub.Publish(DisconnectReason.Reason);
@@ -194,7 +193,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             int nbTries = 0;
             while (nbTries < k_NbReconnectAttempts)
             {
-                NetworkManager.Singleton.Shutdown();
+                if (NetworkManager.Singleton.IsListening)
+                {
+                    NetworkManager.Singleton.Shutdown();
+                }
+
                 yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
                 Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
                 if (!string.IsNullOrEmpty(lobbyCode))
@@ -203,7 +206,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     yield return new WaitUntil(() => leavingLobby.IsCompleted);
                     var joiningLobby = m_LobbyServiceFacade.JoinLobbyAsync("", lobbyCode, onSuccess: lobby =>
                         {
-                            m_LobbyServiceFacade.BeginTracking(lobby);
+                            m_LobbyServiceFacade.SetRemoteLobby(lobby);
                             ConnectClient(null);
                         }
                         , null);
@@ -220,7 +223,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // If the coroutine has not been stopped before this, it means we failed to connect during all attempts
             Debug.Log("All tries failed, returning to main menu");
             m_LobbyServiceFacade.ForceLeaveLobbyAttempt();
-            NetworkManager.Singleton.Shutdown();
+            if (NetworkManager.Singleton.IsListening)
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
+
             SceneLoaderWrapper.Instance.LoadScene("MainMenu");
             if (!DisconnectReason.HasTransitionReason)
             {
@@ -280,11 +287,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 try
                 {
-                    var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(m_JoinCode);
-                    await clientRelayUtilityTask;
-                    var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+                    var (ipv4Address, port, allocationId, allocationIdBytes, connectionData, hostConnectionData, key) = await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_JoinCode);
 
-                    m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_JoinCode, null, null);
+                    m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationId.ToString(), m_JoinCode, null, null);
                     var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
                     utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData);
                 }

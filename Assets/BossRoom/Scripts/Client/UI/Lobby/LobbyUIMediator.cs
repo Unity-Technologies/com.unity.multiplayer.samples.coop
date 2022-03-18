@@ -29,6 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         NameGenerationData m_NameGenerationData;
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
+        IDisposable m_Subscriptions;
 
         const string k_DefaultLobbyName = "no-name";
 
@@ -39,6 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             LocalLobby localLobby,
             NameGenerationData nameGenerationData,
             GameNetPortal gameNetPortal,
+            ISubscriber<ConnectStatus> connectStatusSub,
             ClientGameNetPortal clientGameNetPortal
         )
         {
@@ -51,15 +53,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             RegenerateName();
 
-            m_ClientNetPortal.NetworkTimedOut += OnNetworkTimeout;
+            m_Subscriptions = connectStatusSub.Subscribe(OnConnectStatus);
+        }
+
+        void OnConnectStatus(ConnectStatus status)
+        {
+            if (status == ConnectStatus.GenericDisconnect)
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
         }
 
         void OnDestroy()
         {
-            if (m_ClientNetPortal != null)
-            {
-                m_ClientNetPortal.NetworkTimedOut -= OnNetworkTimeout;
-            }
+            m_Subscriptions?.Dispose();
         }
 
         //Lobby and Relay calls done from UI
@@ -130,7 +137,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void OnCreatedLobby(Lobby lobby)
         {
             m_LocalUser.IsHost = true;
-            m_LobbyServiceFacade.BeginTracking(lobby);
+            m_LobbyServiceFacade.SetRemoteLobby(lobby);
 
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
@@ -150,7 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnJoinedLobby(Lobby remoteLobby)
         {
-            m_LobbyServiceFacade.BeginTracking(remoteLobby);
+            m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             switch (m_LocalLobby.OnlineMode)
@@ -235,15 +242,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_CanvasGroup.interactable = true;
                 m_LoadingSpinner.SetActive(false);
             }
-        }
-
-        /// <summary>
-        /// Invoked when the client sent a connection request to the server and didn't hear back at all.
-        /// This should create a UI letting the player know that something went wrong and to try again
-        /// </summary>
-        void OnNetworkTimeout()
-        {
-            UnblockUIAfterLoadingIsComplete();
         }
     }
 }

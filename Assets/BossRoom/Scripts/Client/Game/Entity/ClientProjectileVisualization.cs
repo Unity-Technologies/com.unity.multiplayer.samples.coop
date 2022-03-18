@@ -7,7 +7,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     {
         [SerializeField]
         [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
-        private SpecialFXGraphic m_OnHitParticlePrefab;
+        SpecialFXGraphic m_OnHitParticlePrefab;
+
+        [SerializeField]
+        TrailRenderer m_TrailRenderer;
 
         NetworkProjectileState m_NetState;
 
@@ -25,6 +28,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
+            m_TrailRenderer.Clear();
+
             m_Parent = transform.parent;
             transform.parent = null;
             m_NetState = m_Parent.GetComponent<NetworkProjectileState>();
@@ -36,6 +41,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override void OnNetworkDespawn()
         {
+            m_TrailRenderer.Clear();
+
             if (m_NetState != null)
             {
                 transform.parent = m_Parent;
@@ -69,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        private void OnEnemyHit(ulong enemyId)
+        void OnEnemyHit(ulong enemyId)
         {
             //in the future we could do quite fancy things, like deparenting the Graphics Arrow and parenting it to the target.
             //For the moment we play some particles (optionally), and cause the target to animate a hit-react.
