@@ -69,6 +69,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
             m_LocalLobby = scope.Resolve<LocalLobby>();
             m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
+
+            Application.targetFrameRate = 120;
         }
 
         private void Start()
