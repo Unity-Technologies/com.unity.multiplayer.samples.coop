@@ -18,19 +18,17 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
-        void OnServiceException(AuthenticationException e)
+        void OnServiceException(Exception e)
         {
             Debug.LogWarning(e.Message);
-
-            var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
-
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason));
+            var reason = $"{e.Message} ({e.InnerException?.Message})";
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
         }
 
         public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)
         {
             var task = TrySignIn(initializationOptions);
-            UnityServiceCallsTaskWrapper.RunTask<AuthenticationException>(task, onSigninComplete, onFailed, OnServiceException);
+            UnityServiceCallsTaskWrapper.RunTask<Exception>(task, onSigninComplete, onFailed, OnServiceException);
         }
 
         async Task TrySignIn(InitializationOptions initializationOptions)

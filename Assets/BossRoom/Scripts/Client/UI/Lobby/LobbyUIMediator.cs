@@ -1,7 +1,7 @@
+using System;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
@@ -15,7 +15,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] LobbyJoiningUI m_LobbyJoiningUI;
         [SerializeField] LobbyCreationUI m_LobbyCreationUI;
         [SerializeField] UITinter m_JoinToggle;
+        [SerializeField] UITinter m_JoinToggleHighlight;
+        [SerializeField] UITinter m_JoinToggleTabBlocker;
         [SerializeField] UITinter m_CreateToggle;
+        [SerializeField] UITinter m_CreateToggleHighlight;
+        [SerializeField] UITinter m_CreateToggleTabBlocker;
         [SerializeField] TextMeshProUGUI m_PlayerNameLabel;
         [SerializeField] GameObject m_LoadingSpinner;
 
@@ -26,10 +30,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
 
+        const string k_DefaultLobbyName = "no-name";
+
         [Inject]
         void InjectDependenciesAndInitialize(
             LobbyServiceFacade lobbyServiceFacade,
-            IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher,
             LocalLobbyUser localUser,
             LocalLobby localLobby,
             NameGenerationData nameGenerationData,
@@ -61,6 +66,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
         {
+            // before sending request to lobby service, populate an empty lobby name, if necessary
+            if (string.IsNullOrEmpty(lobbyName))
+            {
+                lobbyName = k_DefaultLobbyName;
+            }
+
             m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
         }
@@ -119,7 +130,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void OnCreatedLobby(Lobby lobby)
         {
             m_LocalUser.IsHost = true;
-            m_LobbyServiceFacade.BeginTracking(lobby);
+            m_LobbyServiceFacade.SetRemoteLobby(lobby);
 
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
@@ -139,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnJoinedLobby(Lobby remoteLobby)
         {
-            m_LobbyServiceFacade.BeginTracking(remoteLobby);
+            m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             switch (m_LocalLobby.OnlineMode)
@@ -184,7 +195,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyJoiningUI.Show();
             m_LobbyCreationUI.Hide();
             m_JoinToggle.SetToColor(1);
+            m_JoinToggleHighlight.SetToColor(1);
+            m_JoinToggleTabBlocker.SetToColor(1);
             m_CreateToggle.SetToColor(0);
+            m_CreateToggleHighlight.SetToColor(0);
+            m_CreateToggleTabBlocker.SetToColor(0);
         }
 
         public void ToggleCreateLobbyUI()
@@ -192,7 +207,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyJoiningUI.Hide();
             m_LobbyCreationUI.Show();
             m_JoinToggle.SetToColor(0);
+            m_JoinToggleHighlight.SetToColor(0);
+            m_JoinToggleTabBlocker.SetToColor(0);
             m_CreateToggle.SetToColor(1);
+            m_CreateToggleHighlight.SetToColor(1);
+            m_CreateToggleTabBlocker.SetToColor(1);
         }
 
         public void RegenerateName()
@@ -224,6 +243,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         void OnNetworkTimeout()
         {
+            m_LobbyServiceFacade.EndTracking();
             UnblockUIAfterLoadingIsComplete();
         }
     }

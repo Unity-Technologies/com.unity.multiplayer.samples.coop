@@ -1,4 +1,5 @@
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
@@ -6,9 +7,6 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 
-#if UNITY_EDITOR
-using ParrelSync;
-#endif
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -28,6 +26,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         [SerializeField] NameGenerationData m_NameGenerationData;
         [SerializeField] LobbyUIMediator m_LobbyUIMediator;
+        [SerializeField] IPUIMediator m_IPUIMediator;
 
         [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
         [SerializeField] GameObject m_SignInSpinner;
@@ -46,35 +45,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             m_Scope.BindInstanceAsSingle(m_NameGenerationData);
             m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
+            m_Scope.BindInstanceAsSingle(m_IPUIMediator);
 
             var unityAuthenticationInitOptions = new InitializationOptions();
-
-#if UNITY_EDITOR
-            //The code below makes it possible for the clone instance to log in as a different user profile in Authentication service.
-            //This allows us to test services integration locally by utilising Parrelsync.
-            if (ClonesManager.IsClone())
+            var profile = ProfileManager.Profile;
+            if (profile.Length > 0)
             {
-                Debug.Log("This is a clone project.");
-                var customArguments = ClonesManager.GetArgument().Split(',');
-
-                //second argument is our custom ID, but if it's not set we would just use some default.
-
-                var hardcodedProfileID = customArguments.Length > 1 ? customArguments[1] : "defaultCloneID";
-
-                unityAuthenticationInitOptions.SetProfile(hardcodedProfileID);
+                unityAuthenticationInitOptions.SetProfile(profile);
             }
-#else
-            var arguments = System.Environment.GetCommandLineArgs();
-            for (int i = 0; i < arguments.Length; i++)
-            {
-                if (arguments[i] == "-AuthProfile")
-                {
-                    var profileId = arguments[i + 1];
-                    unityAuthenticationInitOptions.SetProfile(profileId);
-                    break;
-                }
-            }
-#endif
 
             authServiceFacade.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
 
@@ -93,7 +71,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
                 localUser.ID = AuthenticationService.Instance.PlayerId;
-                localUser.DisplayName = m_NameGenerationData.GenerateName();
                 // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
                 localLobby.AddUser(localUser);
             }
@@ -101,7 +78,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             void OnSignInFailed()
             {
                 m_SignInSpinner.SetActive(false);
-                PopupPanel.ShowPopupPanel("Authentication Error", "For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
             }
         }
 
@@ -114,6 +90,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             m_LobbyUIMediator.ToggleJoinLobbyUI();
             m_LobbyUIMediator.Show();
+        }
+
+        public void OnDirectIPClicked()
+        {
+            m_LobbyUIMediator.Hide();
+            m_IPUIMediator.Show();
         }
     }
 }

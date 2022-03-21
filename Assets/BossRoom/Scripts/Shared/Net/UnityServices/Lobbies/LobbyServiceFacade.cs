@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies.Models;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
@@ -72,13 +74,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_ServiceScope?.Dispose();
         }
 
-        public void BeginTracking(Lobby lobby)
+        public void SetRemoteLobby(Lobby lobby)
+        {
+            CurrentUnityLobby = lobby;
+            m_LocalLobby.ApplyRemoteData(lobby);
+        }
+
+        public void BeginTracking()
         {
             if(!m_IsTracking)
             {
                 m_IsTracking = true;
-                CurrentUnityLobby = lobby;
-                m_LocalLobby.ApplyRemoteData(lobby);
                 // 2s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
                 // the actual rate limits are tracked via the RateLimitCooldown objects defined above
                 m_UpdateRunner.Subscribe(UpdateLobby, 2f);
@@ -88,12 +94,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public void EndTracking()
         {
-            if (m_IsTracking)
+            if (CurrentUnityLobby != null)
             {
-                m_UpdateRunner.Unsubscribe(UpdateLobby);
-                m_IsTracking = false;
-                m_HeartbeatTime = 0;
-                m_JoinedLobbyContentHeartbeat.EndTracking();
                 CurrentUnityLobby = null;
 
                 if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
@@ -103,6 +105,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
                 m_LocalUser.ResetState();
                 m_LocalLobby?.Reset(m_LocalUser);
+            }
+
+            if (m_IsTracking)
+            {
+                m_UpdateRunner.Unsubscribe(UpdateLobby);
+                m_IsTracking = false;
+                m_HeartbeatTime = 0;
+                m_JoinedLobbyContentHeartbeat.EndTracking();
             }
         }
 
@@ -115,6 +125,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 CurrentUnityLobby = lobby;
                 m_LocalLobby.ApplyRemoteData(lobby);
 
+                // as client, check if host is still in lobby
                 if (!m_LocalUser.IsHost)
                 {
                     foreach (var lobbyUser in m_LocalLobby.LobbyUsers)
@@ -124,9 +135,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                             return;
                         }
                     }
-                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting."));
-                    ForceLeaveLobbyAttempt();
-                    m_ApplicationController.QuitGame();
+                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
+                    EndTracking();
+                    // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
                 }
             }
         }
@@ -234,6 +245,51 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         {
             string uasId = AuthenticationService.Instance.PlayerId;
             m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+        }
+
+        public void RemovePlayerFromLobbyAsync(string uasId, string lobbyId, Action onSuccess, Action onFailure)
+        {
+            if (m_LocalUser.IsHost)
+            {
+                RetrieveLobbyAsync(lobbyId, OnRetrieveSuccess, onFailure);
+
+
+                void OnRetrieveSuccess(Lobby lobby)
+                {
+                    bool playerFound = false;
+                    foreach (var player in lobby.Players)
+                    {
+                        if (player.Id == uasId)
+                        {
+                            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+                            playerFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!playerFound)
+                    {
+                        Debug.Log($"Player {uasId} has already left the lobby.");
+                    }
+                }
+
+            }
+            else
+            {
+                Debug.LogError("Only the host can remove other players from the lobby.");
+            }
+        }
+
+        public void DeleteLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
+        {
+            if (m_LocalUser.IsHost)
+            {
+                m_LobbyApiInterface.DeleteLobbyAsync(lobbyId, onSuccess, onFailure);
+            }
+            else
+            {
+                Debug.LogError("Only the host can delete a lobby.");
+            }
         }
 
         /// <summary>
@@ -347,11 +403,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 m_HeartbeatTime -= k_HeartbeatPeriod;
                 m_LobbyApiInterface.HeartbeatPlayerAsync(CurrentUnityLobby.Id);
             }
-        }
-
-        public void ForceLeaveLobbyAttempt()
-        {
-            EndTracking();
         }
     }
 }

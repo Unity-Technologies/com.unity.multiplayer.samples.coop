@@ -17,7 +17,7 @@ GameObject:
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
-  m_StaticEditorFlags: 4294967295
+  m_StaticEditorFlags: 0
   m_IsActive: 1
 --- !u!4 &3325143161705299546
 Transform:
@@ -96,6 +96,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_OnHitParticlePrefab: {fileID: -6745866273066112404, guid: ae64395b058ab5e4db24271fb6fadb93, type: 3}
+  m_TrailRenderer: {fileID: 4385405951379145903}
 --- !u!1001 &4981226344026716285
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -168,5 +169,10 @@ PrefabInstance:
 --- !u!4 &4275796242942192563 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9112595075296351182, guid: 660b64eb444497d41af2c727909eb671, type: 3}
+  m_PrefabInstance: {fileID: 4981226344026716285}
+  m_PrefabAsset: {fileID: 0}
+--- !u!96 &4385405951379145903 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 8790122182468517074, guid: 660b64eb444497d41af2c727909eb671, type: 3}
   m_PrefabInstance: {fileID: 4981226344026716285}
   m_PrefabAsset: {fileID: 0}
