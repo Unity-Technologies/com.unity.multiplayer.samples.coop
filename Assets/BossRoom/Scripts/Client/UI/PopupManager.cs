@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -55,29 +56,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         PopupPanel GetNextAvailablePopupPanel()
         {
-            PopupPanel popupPanel = null;
-            foreach (var popup in m_PopupPanels)
+            int nextAvailablePopupIndex = 0;
+            // Find the index of the first PopupPanel that is not displaying and has no popups after it that are currently displaying
+            for (int i = 0; i < m_PopupPanels.Count; i++)
             {
-                if (popupPanel == null && !popup.IsDisplaying)
+                if (m_PopupPanels[i].IsDisplaying)
                 {
-                    popupPanel = popup;
-                }
-                else if (popup.IsDisplaying)
-                {
-                    popupPanel = null;
+                    nextAvailablePopupIndex = i + 1;
                 }
             }
 
-            if (popupPanel == null)
+            if (nextAvailablePopupIndex < m_PopupPanels.Count)
             {
-                var popupGameObject = Instantiate(m_PopupPanelPrefab, gameObject.transform);
-                popupGameObject.transform.position += new Vector3(1, -1) * (k_Offset * m_PopupPanels.Count % k_MaxOffset);
-                popupPanel = popupGameObject.GetComponent<PopupPanel>();
-                if (popupPanel == null)
-                {
-                    Debug.LogError("PopupPanel prefab does not have a PopupPanel component!");
-                }
+                return m_PopupPanels[nextAvailablePopupIndex];
+            }
+
+            // None of the current PopupPanels are available, so instantiate a new one
+            var popupGameObject = Instantiate(m_PopupPanelPrefab, gameObject.transform);
+            popupGameObject.transform.position += new Vector3(1, -1) * (k_Offset * m_PopupPanels.Count % k_MaxOffset);
+            var popupPanel = popupGameObject.GetComponent<PopupPanel>();
+            if (popupPanel != null)
+            {
                 m_PopupPanels.Add(popupPanel);
+            }
+            else
+            {
+                Debug.LogError("PopupPanel prefab does not have a PopupPanel component!");
             }
 
             return popupPanel;
