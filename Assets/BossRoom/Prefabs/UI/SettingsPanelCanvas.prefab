@@ -1117,6 +1117,7 @@ GameObject:
   - component: {fileID: 6918681726633036010}
   - component: {fileID: 2602198259095850982}
   - component: {fileID: 7399699007816123072}
+  - component: {fileID: 1849608714128437920}
   m_Layer: 5
   m_Name: PopupPanel
   m_TagString: Untagged
@@ -1198,6 +1199,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TitleText: {fileID: 4728902606848342875}
   m_MainText: {fileID: 3801577438371952926}
+  m_CanvasGroup: {fileID: 1849608714128437920}
+--- !u!225 &1849608714128437920
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5680680656091823962}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6154749339973089473
 GameObject:
   m_ObjectHideFlags: 0

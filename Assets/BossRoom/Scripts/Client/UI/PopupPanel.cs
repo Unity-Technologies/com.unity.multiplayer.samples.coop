@@ -26,6 +26,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         TextMeshProUGUI m_TitleText;
         [SerializeField]
         TextMeshProUGUI m_MainText;
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
 
         Stack<PopupPanelData> m_PopupStack = new Stack<PopupPanelData>();
 
@@ -35,7 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
             s_Instance = this;
-            ResetState();
+            Hide();
         }
 
         void OnDestroy()
@@ -45,21 +47,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnConfirmClick()
         {
-            ResetState();
+            m_PopupStack.Pop();
             if (m_PopupStack.Count > 0)
             {
-                SetupPopupPanel(m_PopupStack.Pop());
+                SetupPopupPanel(m_PopupStack.Peek());
             }
-        }
-
-        /// <summary>
-        /// Helper method to help us reset all state for the popup.
-        /// </summary>
-        void ResetState()
-        {
-            m_TitleText.text = string.Empty;
-            m_MainText.text = string.Empty;
-            gameObject.SetActive(false);
+            else
+            {
+                Hide();
+            }
         }
 
         /// <summary>
@@ -87,12 +83,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void SetupPopupPanel(PopupPanelData data)
         {
-            ResetState();
-
             m_TitleText.text = data.TitleText;
             m_MainText.text = data.MainText;
 
-            gameObject.SetActive(true);
+            Show();
+        }
+
+
+
+        void Show()
+        {
+            m_CanvasGroup.alpha = 1f;
+            m_CanvasGroup.blocksRaycasts = true;
+        }
+
+        void Hide()
+        {
+            m_CanvasGroup.alpha = 0f;
+            m_CanvasGroup.blocksRaycasts = false;
         }
     }
 }
