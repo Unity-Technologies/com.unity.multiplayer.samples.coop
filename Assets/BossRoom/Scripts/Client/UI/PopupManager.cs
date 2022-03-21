@@ -19,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         static PopupManager s_Instance;
 
         const float k_Offset = 30;
-        const float k_MaxOffset = 300;
+        const float k_MaxOffset = 200;
 
         void Awake()
         {
