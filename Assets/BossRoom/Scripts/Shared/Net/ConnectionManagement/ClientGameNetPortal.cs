@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
@@ -28,11 +29,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         private const int k_TimeoutDuration = 10;
 
-        /// <summary>
-        /// This event fires when the client sent out a request to start the client, but failed to hear back after an allotted amount of
-        /// time from the host.
-        /// </summary>
-        public event Action NetworkTimedOut;
+        const int k_NbReconnectAttempts = 2;
+
+        Coroutine m_TryToReconnectCoroutine;
 
         ApplicationController m_ApplicationController;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -95,6 +94,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (m_Portal.NetManager.IsClient)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+
+                if (m_TryToReconnectCoroutine != null)
+                {
+                    StopCoroutine(m_TryToReconnectCoroutine);
+                    m_TryToReconnectCoroutine = null;
+                }
             }
         }
 
@@ -111,6 +116,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
             else
             {
+                if (m_TryToReconnectCoroutine != null)
+                {
+                    StopCoroutine(m_TryToReconnectCoroutine);
+                    m_TryToReconnectCoroutine = null;
+                }
                 m_ConnectStatusPub.Publish(status);
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
@@ -138,24 +148,78 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
-                if (SceneManager.GetActiveScene().name != "MainMenu")
+                switch (DisconnectReason.Reason)
                 {
-                    // we're not at the main menu, so we obviously had a connection before... thus, we aren't in a timeout scenario.
-                    // Just shut down networking and switch back to main menu.
-                    if (!DisconnectReason.HasTransitionReason)
-                    {
-                        //disconnect that happened for some other reason than user UI interaction--should display a message.
-                        DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
-                    }
-                    m_ApplicationController.LeaveSession();
+                    case ConnectStatus.UserRequestedDisconnect:
+                    case ConnectStatus.HostDisconnected:
+                    case ConnectStatus.LoggedInAgain:
+                    case ConnectStatus.ServerFull:
+                        m_ApplicationController.LeaveSession(); // go through the normal leave flow
+                        break;
+                    case ConnectStatus.GenericDisconnect:
+                    case ConnectStatus.Undefined:
+                        DisconnectReason.SetDisconnectReason(ConnectStatus.Reconnecting);
+
+                        // try reconnecting
+                        m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect(lobbyCode));
+                        break;
+                    default:
+                        throw new NotImplementedException(DisconnectReason.Reason.ToString());
                 }
-                else
-                {
-                    NetworkTimedOut?.Invoke();
-                }
+
                 m_ConnectStatusPub.Publish(DisconnectReason.Reason);
                 DisconnectReason.Clear();
             }
+        }
+
+        private IEnumerator TryToReconnect(string lobbyCode)
+        {
+            Debug.Log("Lost connection to host, trying to reconnect...");
+            int nbTries = 0;
+            while (nbTries < k_NbReconnectAttempts)
+            {
+                if (NetworkManager.Singleton.IsListening)
+                {
+                    NetworkManager.Singleton.Shutdown();
+                }
+
+                yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
+                Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
+                if (!string.IsNullOrEmpty(lobbyCode))
+                {
+                    var leavingLobby = m_LobbyServiceFacade.EndTracking();
+                    yield return new WaitUntil(() => leavingLobby.IsCompleted);
+                    var joiningLobby = m_LobbyServiceFacade.JoinLobbyAsync("", lobbyCode, onSuccess: lobby =>
+                        {
+                            m_LobbyServiceFacade.SetRemoteLobby(lobby);
+                            ConnectClient(null);
+                        }
+                        , null);
+                    yield return new WaitUntil(() => joiningLobby.IsCompleted);
+                }
+                else
+                {
+                    ConnectClient(null);
+                }
+                yield return new WaitForSeconds(1.1f * k_TimeoutDuration); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
+                nbTries++;
+            }
+
+            // If the coroutine has not been stopped before this, it means we failed to connect during all attempts
+            Debug.Log("All tries failed, returning to main menu");
+            m_LobbyServiceFacade.EndTracking();
+            if (NetworkManager.Singleton.IsListening)
+            {
+                NetworkManager.Singleton.Shutdown();
+            }
+
+            SceneManager.LoadScene("MainMenu");
+            if (!DisconnectReason.HasTransitionReason)
+            {
+                DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
+            }
+            m_TryToReconnectCoroutine = null;
+            m_ConnectStatusPub.Publish(DisconnectReason.Reason);
         }
 
         /// <summary>
