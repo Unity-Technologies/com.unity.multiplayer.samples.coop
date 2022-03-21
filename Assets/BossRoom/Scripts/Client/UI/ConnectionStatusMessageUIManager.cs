@@ -35,15 +35,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ConnectStatus.UserRequestedDisconnect:
                     break;
                 case ConnectStatus.ServerFull:
-                    PopupPanel.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
+                    PopupManager.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
                     break;
                 case ConnectStatus.Success:
                     break;
                 case ConnectStatus.LoggedInAgain:
-                    PopupPanel.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account.");
+                    PopupManager.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account.");
                     break;
                 case ConnectStatus.GenericDisconnect:
-                    PopupPanel.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost");
+                    PopupManager.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost");
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
