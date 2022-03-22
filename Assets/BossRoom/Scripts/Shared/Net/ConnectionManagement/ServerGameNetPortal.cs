@@ -75,12 +75,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
 
-                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-
-                //The "BossRoom" server always advances to CharSelect immediately on start. Different games
-                //may do this differently.
-                SceneLoaderWrapper.Instance.LoadScene("CharSelect");
-
                 if (m_Portal.NetManager.IsHost)
                 {
                     m_ClientSceneMap[m_Portal.NetManager.LocalClientId] = ServerScene;
@@ -269,6 +263,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var gameState = Instantiate(m_GameState);
 
             gameState.Spawn();
+
+            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+
+            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
+            //may do this differently.
+            SceneLoaderWrapper.Instance.LoadScene("CharSelect");
         }
 
     }
