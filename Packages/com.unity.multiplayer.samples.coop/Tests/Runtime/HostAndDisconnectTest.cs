@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
 using NUnit.Framework;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -24,6 +28,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         NetworkManager m_NetworkManager;
 
+        ClientMainMenuState m_ClientMainMenuState;
+
+        [Inject]
+        void Initialize(
+            ClientMainMenuState clientMainMenuState,
+            LobbyUIMediator lobbyUIMediator,
+            LobbyCreationUI lobbyCreationUI,
+            LobbyServiceFacade lobbyServiceFacade,
+            IPUIMediator ipUiMediator,
+            IPHostingUI ipHostingUI
+        )
+        {
+            m_ClientMainMenuState = clientMainMenuState;
+        }
+
+        [UnitySetUp]
+        IEnumerator AddToDI()
+        {
+            yield return null;
+        }
+
         /// <summary>
         /// Smoke test to validating hosting inside Boss Room. The test will load the project's bootstrap scene,
         /// Startup, and commence the game flow as a host, pick and confirm a parametrized character, and jump into the
@@ -31,7 +56,62 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         /// </summary>
         /// <returns></returns>
         [UnityTest]
-        public IEnumerator BossRoom_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
+        public IEnumerator Lobby_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
+        {
+            yield return GoToMainMenuScene();
+
+            // now inside MainMenu scene
+
+            // validate unity services login successful
+
+            // wait until authenticated?
+            var timer = 5f;
+            while (timer > 0f && !AuthenticationService.Instance.IsAuthorized)
+            {
+                timer -= Time.deltaTime;
+                yield return null;
+            }
+
+            // create a host
+
+            Assert.That(m_ClientMainMenuState != null, $"{nameof(m_ClientMainMenuState)} component not found!");
+
+            m_ClientMainMenuState.OnStartClicked();
+
+            yield return new WaitForEndOfFrame();
+
+            var lobbyUIMediator = GameObject.FindObjectOfType<LobbyUIMediator>();
+
+            Assert.That(lobbyUIMediator != null, $"{nameof(LobbyUIMediator)} component not found!");
+
+            lobbyUIMediator.ToggleCreateLobbyUI();
+
+            // a confirmation popup will appear; wait a frame for it to pop up
+            yield return new WaitForEndOfFrame();
+
+            var lobbyCreationUI = GameObject.FindObjectOfType<LobbyCreationUI>();
+
+            Assert.That(lobbyCreationUI != null, $"{nameof(LobbyCreationUI)} component not found!");
+
+            lobbyCreationUI.OnCreateClick();
+
+            // get LobbyServiceFacade through DI
+
+            // confirming hosting will initialize the hosting process; next frame the results will be ready
+            yield return null;
+
+            // verify hosting is successful
+            Assert.That(m_NetworkManager.IsListening);
+
+            // CharSelect is loaded as soon as hosting is successful, validate it is loaded
+            yield return GoToCharacterSelection(playerIndex);
+
+            yield return GoToBossRoomScene();
+
+            yield return Disconnect();
+        }
+
+        IEnumerator GoToMainMenuScene()
         {
             // load Bootstrap scene
             SceneManager.LoadSceneAsync(k_BootstrapSceneName);
@@ -48,32 +128,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return TestUtilities.AssertIsSceneLoaded(k_MainMenuSceneName);
 
             yield return new WaitForEndOfFrame();
+        }
 
-            // now inside MainMenu scene; create a host
-
-            var mainMenuUI = GameObject.FindObjectOfType<MainMenuUI>();
-
-            Assert.That(mainMenuUI != null, "MainMenuUI component not found!");
-
-            mainMenuUI.OnHostClicked();
-
-            // a confirmation popup will appear; wait a frame for it to pop up
-            yield return new WaitForEndOfFrame();
-
-            TestUtilities.ClickButtonByName("Confirmation Button");
-
-            // confirming hosting will initialize the hosting process; next frame the results will be ready
-            yield return null;
-
-            // verify hosting is successful
-            Assert.That(m_NetworkManager.IsListening);
-
-            // CharSelect is loaded as soon as hosting is successful, validate it is loaded
+        IEnumerator GoToCharacterSelection(int playerIndex)
+        {
             yield return TestUtilities.AssertIsSceneLoaded(k_CharSelectSceneName);
 
             yield return new WaitForEndOfFrame();
 
-            // select first Character
+            // select a Character
             var seatObjectName = $"PlayerSeat ({playerIndex})";
             var playerSeat = GameObject.Find(seatObjectName);
             Assert.That(playerSeat != null, $"{seatObjectName} not found!");
@@ -88,14 +151,34 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             // hit ready
             ClientCharSelectState.Instance.OnPlayerClickedReady();
+        }
 
+        /// <summary>
+        /// For now, just tests that the host has entered the BossRoom scene. Can become more complex in the future
+        /// (eg. testing networked abilities)
+        /// </summary>
+        /// <returns></returns>
+        IEnumerator GoToBossRoomScene()
+        {
             // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
             yield return TestUtilities.AssertIsNetworkSceneLoaded(k_BossRoomSceneName, m_NetworkManager.SceneManager);
+        }
 
+        IEnumerator Disconnect()
+        {
             // once loaded into BossRoom scene, disconnect
+            var uiSettingsCanvas = GameObject.FindObjectOfType<UISettingsCanvas>();
+            Assert.That(uiSettingsCanvas != null, $"{nameof(UISettingsCanvas)} component not found!");
+            uiSettingsCanvas.OnClickQuitButton();
+
+            yield return new WaitForFixedUpdate();
+
             var uiQuitPanel = GameObject.FindObjectOfType<UIQuitPanel>(true);
             Assert.That(uiQuitPanel != null, $"{nameof(UIQuitPanel)} component not found!");
             uiQuitPanel.Quit();
+
+            // TODO: validate with SDK why this is still needed
+            yield return new WaitForSeconds(1f);
 
             // wait until shutdown is complete
             yield return new WaitUntil(() => !m_NetworkManager.ShutdownInProgress);
@@ -104,6 +187,67 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             // MainMenu is loaded as soon as a shutdown is encountered; validate it is loaded
             yield return TestUtilities.AssertIsSceneLoaded(k_MainMenuSceneName);
+        }
+
+        [UnityTest]
+        public IEnumerator IP_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
+        {
+            yield return GoToMainMenuScene();
+
+            yield return new WaitForSeconds(2f);
+
+            DIScope.RootScope.InjectIn(this);
+
+            // by now, DI has been resolved
+            //DIScope.RootScope.InjectIn(this);
+
+            // now inside MainMenu scene
+
+            // wait until authenticated?
+            var timer = 5f;
+            while (timer > 0f && !AuthenticationService.Instance.IsAuthorized)
+            {
+                timer -= Time.deltaTime;
+                yield return null;
+            }
+
+            Assert.IsTrue(AuthenticationService.Instance.IsAuthorized);
+
+            var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
+
+            Assert.That(clientMainMenuState != null, $"{nameof(ClientMainMenuState)} component not found!");
+
+            clientMainMenuState.OnDirectIPClicked();
+
+            yield return new WaitForEndOfFrame();
+
+            var ipUIMediator = GameObject.FindObjectOfType<IPUIMediator>();
+
+            Assert.That(ipUIMediator != null, $"{nameof(IPUIMediator)} component not found!");
+
+            ipUIMediator.ToggleCreateIPUI();
+
+            // a confirmation popup will appear; wait a frame for it to pop up
+            yield return new WaitForEndOfFrame();
+
+            var ipHostingUI = GameObject.FindObjectOfType<IPHostingUI>();
+
+            Assert.That(ipHostingUI != null, $"{nameof(IPHostingUI)} component not found!");
+
+            ipHostingUI.OnCreateClick();
+
+            // confirming hosting will initialize the hosting process; next frame the results will be ready
+            yield return null;
+
+            // verify hosting is successful
+            Assert.That(m_NetworkManager.IsListening);
+
+            // CharSelect is loaded as soon as hosting is successful, validate it is loaded
+            yield return GoToCharacterSelection(playerIndex);
+
+            yield return GoToBossRoomScene();
+
+            yield return Disconnect();
         }
 
         [UnityTearDown]
