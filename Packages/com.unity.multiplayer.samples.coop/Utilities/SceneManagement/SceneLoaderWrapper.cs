@@ -16,13 +16,15 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         ClientLoadingScreen m_ClientLoadingScreen;
 
+        bool IsNetworkSceneManagementEnabled => NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement;
+
         public static SceneLoaderWrapper Instance { get; private set; }
 
         public void Awake()
         {
             if (Instance != null && Instance != this)
             {
-                Destroy(this.gameObject);
+                Destroy(gameObject);
             }
             else
             {
@@ -38,12 +40,16 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         public override void OnDestroy()
         {
+            SceneManager.sceneLoaded -= OnSceneLoaded;
+            base.OnDestroy();
+        }
+
+        public override void OnNetworkDespawn()
+        {
             if (NetworkManager != null && NetworkManager.SceneManager != null)
             {
                 NetworkManager.SceneManager.OnSceneEvent -= OnSceneEvent;
             }
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-            base.OnDestroy();
         }
 
         /// <summary>
@@ -52,7 +58,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// </summary>
         public void AddOnSceneEventCallback()
         {
-            if (NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement)
+            if (IsNetworkSceneManagementEnabled)
             {
                 NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
             }
@@ -67,7 +73,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
         public void LoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
-            if (NetworkManager != null && NetworkManager.IsListening && NetworkManager.NetworkConfig.EnableSceneManagement)
+            if (IsSpawned && IsNetworkSceneManagementEnabled && !NetworkManager.ShutdownInProgress)
             {
                 if (NetworkManager.IsServer)
                 {
@@ -88,7 +94,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
         {
-            if (NetworkManager == null || !NetworkManager.IsListening || !NetworkManager.NetworkConfig.EnableSceneManagement)
+            if (!IsSpawned || NetworkManager.ShutdownInProgress)
             {
                 m_ClientLoadingScreen.StopLoadingScreen();
             }
