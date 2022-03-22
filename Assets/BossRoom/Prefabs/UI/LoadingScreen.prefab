@@ -87,7 +87,7 @@ GameObject:
   - component: {fileID: 3174600465632536215}
   - component: {fileID: 5535057700358825828}
   - component: {fileID: 5841466599347033389}
-  - component: {fileID: 1345148053419680721}
+  - component: {fileID: 3533640974735902867}
   m_Layer: 5
   m_Name: LoadingScreen
   m_TagString: Untagged
@@ -172,7 +172,7 @@ CanvasGroup:
   m_Interactable: 0
   m_BlocksRaycasts: 0
   m_IgnoreParentGroups: 0
---- !u!114 &1345148053419680721
+--- !u!114 &3533640974735902867
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -185,7 +185,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_CanvasGroup: {fileID: 5841466599347033389}
-  m_FadeDuration: 1
+  m_DelayBeforeFadeOut: 0.5
+  m_FadeOutDuration: 0.1
   m_ProgressBar: {fileID: 9084798262095498542}
   m_SceneName: {fileID: 552738085472852216}
 --- !u!1 &1467556332204833860

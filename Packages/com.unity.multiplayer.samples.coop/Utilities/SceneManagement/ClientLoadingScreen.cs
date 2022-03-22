@@ -19,7 +19,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         float m_DelayBeforeFadeOut = 0.5f;
 
         [SerializeField]
-        float m_FadeOutDuration = 1;
+        float m_FadeOutDuration = 0.1f;
 
         [SerializeField]
         Slider m_ProgressBar;
