@@ -995,7 +995,6 @@ GameObject:
   - component: {fileID: 4996778416574021528}
   - component: {fileID: 1242736280487814429}
   - component: {fileID: 6028373986916100015}
-  - component: {fileID: 6915400021973830416}
   - component: {fileID: 60699266497995633}
   m_Layer: 5
   m_Name: JoinButton
@@ -1064,21 +1063,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1.5
---- !u!114 &6915400021973830416
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2280189352372853816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86fd4fbcc3fc84b228fc9c4cb612c32a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TintColors:
-  - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &60699266497995633
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1664,7 +1648,6 @@ GameObject:
   - component: {fileID: 282255004005152861}
   - component: {fileID: 5754057292363824191}
   - component: {fileID: 6125749772841147739}
-  - component: {fileID: 7081295359045549679}
   - component: {fileID: 1477683225176343646}
   m_Layer: 5
   m_Name: CreateButton
@@ -1733,21 +1716,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1.5
---- !u!114 &7081295359045549679
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3672577566589301672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86fd4fbcc3fc84b228fc9c4cb612c32a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TintColors:
-  - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &1477683225176343646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4077,10 +4045,8 @@ MonoBehaviour:
   m_CanvasGroup: {fileID: 6889764071769254414}
   m_LobbyJoiningUI: {fileID: 3432713757992463987}
   m_LobbyCreationUI: {fileID: 5370165130166260100}
-  m_JoinToggle: {fileID: 6915400021973830416}
   m_JoinToggleHighlight: {fileID: 6752777071945805011}
   m_JoinToggleTabBlocker: {fileID: 4806072236846957327}
-  m_CreateToggle: {fileID: 7081295359045549679}
   m_CreateToggleHighlight: {fileID: 4585101913867269799}
   m_CreateToggleTabBlocker: {fileID: 1276364547110863194}
   m_PlayerNameLabel: {fileID: 7676773602323508701}
