@@ -152,9 +152,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     case ConnectStatus.UserRequestedDisconnect:
                     case ConnectStatus.HostDisconnected:
-                    case ConnectStatus.LoggedInAgain:
                     case ConnectStatus.ServerFull:
                         m_ApplicationController.LeaveSession(); // go through the normal leave flow
+                        break;
+                    case ConnectStatus.LoggedInAgain:
+                        if (m_TryToReconnectCoroutine == null)
+                        {
+                            m_ApplicationController.LeaveSession(); // if not trying to reconnect, go through the normal leave flow
+                        }
                         break;
                     case ConnectStatus.GenericDisconnect:
                     case ConnectStatus.Undefined:
@@ -192,14 +197,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     var joiningLobby = m_LobbyServiceFacade.JoinLobbyAsync("", lobbyCode, onSuccess: lobby =>
                         {
                             m_LobbyServiceFacade.SetRemoteLobby(lobby);
-                            ConnectClient(null);
+                            ConnectClient();
                         }
                         , null);
                     yield return new WaitUntil(() => joiningLobby.IsCompleted);
                 }
                 else
                 {
-                    ConnectClient(null);
+                    ConnectClient();
                 }
                 yield return new WaitForSeconds(1.1f * k_TimeoutDuration); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
                 nbTries++;
