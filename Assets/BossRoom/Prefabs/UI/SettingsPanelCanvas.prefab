@@ -1568,7 +1568,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7464515512587493124
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1641,7 +1641,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063abc7eeacd3df4db23e185d26aab43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_QuitButtonText: {fileID: 1810020744250180940}
+  m_QuitMode: 0
 --- !u!1 &7139291127274050927
 GameObject:
   m_ObjectHideFlags: 0
@@ -2025,7 +2025,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Exit Game?
+  m_Text: 'Return to Menu?
 
 '
 --- !u!1 &8177924889016445002
