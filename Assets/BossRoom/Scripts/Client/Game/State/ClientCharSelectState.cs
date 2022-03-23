@@ -131,6 +131,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public override void OnDestroy()
         {
             m_Scope.Dispose();
+
+            if (Instance == this)
+            {
+                Instance = null;
+            }
         }
 
         protected override void Start()
@@ -151,11 +156,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
                 CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
-            }
-
-            if (Instance == this)
-            {
-                Instance = null;
             }
         }
 
