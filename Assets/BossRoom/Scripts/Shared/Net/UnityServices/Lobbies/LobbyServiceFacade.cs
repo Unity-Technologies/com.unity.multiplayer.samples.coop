@@ -92,15 +92,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public void EndTracking()
+        public Task EndTracking()
         {
+            var task = Task.CompletedTask;
             if (CurrentUnityLobby != null)
             {
                 CurrentUnityLobby = null;
 
                 if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
                 {
-                    LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
+                    task = LeaveLobbyAsync(m_LocalLobby?.LobbyID, null, null);
                 }
 
                 m_LocalUser.ResetState();
@@ -114,6 +115,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 m_HeartbeatTime = 0;
                 m_JoinedLobbyContentHeartbeat.EndTracking();
             }
+
+            return task;
         }
 
         void UpdateLobby(float unused)
@@ -167,25 +170,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to join an existing lobby. Will try to join via code, if code is null - will try to join via ID.
         /// </summary>
-        public void JoinLobbyAsync(string lobbyId, string lobbyCode, Action<Lobby> onSuccess, Action onFailure)
+        public Task JoinLobbyAsync(string lobbyId, string lobbyCode, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitJoin.CanCall ||
                 (lobbyId == null && lobbyCode == null))
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Join Lobby hit the rate limit.");
-                return;
+                return Task.CompletedTask;
             }
             m_RateLimitJoin.PutOnCooldown();
 
+            var task = Task.CompletedTask;
+
             if (!string.IsNullOrEmpty(lobbyCode))
             {
-                m_LobbyApiInterface.JoinLobbyAsync_ByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+                task = m_LobbyApiInterface.JoinLobbyAsync_ByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
             }
             else
             {
-                m_LobbyApiInterface.JoinLobbyAsync_ById(AuthenticationService.Instance.PlayerId, lobbyId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+                task = m_LobbyApiInterface.JoinLobbyAsync_ById(AuthenticationService.Instance.PlayerId, lobbyId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
             }
+
+            return task;
         }
 
         /// <summary>
@@ -241,10 +248,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to leave a lobby, and then delete it if no players remain.
         /// </summary>
-        public void LeaveLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
+        public Task LeaveLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
         {
             string uasId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+            return m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
         }
 
         public void RemovePlayerFromLobbyAsync(string uasId, string lobbyId, Action onSuccess, Action onFailure)
