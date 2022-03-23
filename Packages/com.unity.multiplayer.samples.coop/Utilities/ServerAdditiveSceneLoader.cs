@@ -33,6 +33,8 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// </summary>
         List<ulong> m_PlayersInTrigger;
 
+        bool m_IsActive;
+
         enum SceneState
         {
             Loaded,
@@ -56,15 +58,13 @@ namespace Unity.Multiplayer.Samples.Utilities
 
                 NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
                 m_PlayersInTrigger = new List<ulong>();
-            }
-            else
-            {
-                gameObject.SetActive(false);
+                m_IsActive = true;
             }
         }
 
         public override void OnNetworkDespawn()
         {
+            m_IsActive = false;
             if (IsServer)
             {
                 NetworkManager.OnClientDisconnectCallback -= RemovePlayer;
@@ -86,7 +86,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerEnter(Collider other)
         {
-            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
+            if (m_IsActive) // make sure that OnNetworkSpawn has been called before this
             {
                 if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
                 {
@@ -107,7 +107,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerExit(Collider other)
         {
-            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
+            if (m_IsActive) // make sure that OnNetworkSpawn has been called before this
             {
                 if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
                 {
@@ -118,7 +118,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void FixedUpdate()
         {
-            if (IsSpawned) // make sure that OnNetworkSpawn has been called before this
+            if (m_IsActive) // make sure that OnNetworkSpawn has been called before this
             {
                 if (m_SceneState == SceneState.Unloaded && m_PlayersInTrigger.Count > 0)
                 {
