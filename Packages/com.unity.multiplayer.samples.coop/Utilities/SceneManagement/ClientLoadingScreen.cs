@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -10,7 +12,7 @@ namespace Unity.Multiplayer.Samples.Utilities
     /// must be started and stopped from outside this script. It also allows updating the loading screen when a new
     /// loading operation starts before the loading screen is stopped.
     /// </summary>
-    public class ClientLoadingScreen : MonoBehaviour
+    public class ClientLoadingScreen : NetworkBehaviour
     {
         [SerializeField]
         CanvasGroup m_CanvasGroup;
@@ -26,6 +28,14 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         [SerializeField]
         Text m_SceneName;
+
+        [SerializeField]
+        List<Slider> m_OtherPlayersProgressBars;
+
+        [SerializeField]
+        LoadingProgressManager m_LoadingProgressManager;
+
+        Dictionary<ulong, int> m_ClientIdToProgressBarsIndex = new Dictionary<ulong, int>();
 
         bool m_LoadingScreenRunning;
 
@@ -47,7 +57,31 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (m_LoadingScreenRunning && m_LoadOperation != null)
             {
-                m_ProgressBar.value = m_LoadOperation.progress;
+                if (IsSpawned)
+                {
+                    m_LoadingProgressManager.ProgressTrackers[NetworkManager.LocalClientId].Progress = m_LoadOperation.progress;
+                    foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
+                    {
+                        var clientId = progressTracker.Key;
+                        var progress = progressTracker.Value.Progress;
+                        if (clientId == NetworkManager.LocalClientId)
+                        {
+                            m_ProgressBar.value = progress;
+                        }
+                        else
+                        {
+                            if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
+                            {
+                               m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
+                            }
+                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = progress;
+                        }
+                    }
+                }
+                else
+                {
+                    m_ProgressBar.value = m_LoadOperation.progress;
+                }
             }
         }
 
