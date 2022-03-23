@@ -176,10 +176,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
                     if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                     {
-                            m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
+                        m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
 
-                            //Send our client only click request
-                            ClientMoveEvent?.Invoke(k_CachedHit[0].point);
+                        //Send our client only click request
+                        ClientMoveEvent?.Invoke(k_CachedHit[0].point);
                     }
                 }
             }
