@@ -162,7 +162,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             try
             {
-                m_LobbyApiInterface.CreateLobbyAsync(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);
+                m_LobbyApiInterface.CreateLobby(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);
             }
             catch (LobbyServiceException e)
             {
@@ -189,11 +189,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             if (!string.IsNullOrEmpty(lobbyCode))
             {
-                m_LobbyApiInterface.JoinLobbyAsync_ByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+                m_LobbyApiInterface.JoinLobbyByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
             }
             else
             {
-                m_LobbyApiInterface.JoinLobbyAsync_ById(AuthenticationService.Instance.PlayerId, lobbyId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+                m_LobbyApiInterface.JoinLobbyById(AuthenticationService.Instance.PlayerId, lobbyId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
             }
         }
 
@@ -210,7 +210,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
 
             m_RateLimitQuickJoin.PutOnCooldown();
-            m_LobbyApiInterface.QuickJoinLobbyAsync(AuthenticationService.Instance.PlayerId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
+            m_LobbyApiInterface.QuickJoinLobby(AuthenticationService.Instance.PlayerId, m_LocalUser.GetDataForUnityServices(), onSuccess, onFailure);
         }
 
         /// <summary>
@@ -226,7 +226,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             try
             {
-                var response = await m_LobbyApiInterface.QueryAllLobbiesAsync();
+                var response = await m_LobbyApiInterface.QueryAllLobbies();
                 m_LobbyListFetchedPub.Publish(new LobbyListFetchedMessage(LocalLobby.CreateLocalLobbies(response)));
             }
             catch (LobbyServiceException e)
@@ -250,7 +250,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 return;
             }
             m_RateLimitQuery.PutOnCooldown();
-            m_LobbyApiInterface.GetLobbyAsync(lobbyId, onSuccess, onFailure);
+            m_LobbyApiInterface.GetLobby(lobbyId, onSuccess, onFailure);
         }
 
         /// <summary>
@@ -259,7 +259,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         public void LeaveLobbyAsync(string lobbyId, Action onSuccess, Action onFailure)
         {
             string uasId = AuthenticationService.Instance.PlayerId;
-            m_LobbyApiInterface.LeaveLobbyAsync(uasId, lobbyId, onSuccess, onFailure);
+            m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId, onSuccess, onFailure);
         }
 
         public void RemovePlayerFromLobbyAsync(string uasId, string lobbyId, Action onSuccess, Action onFailure)
@@ -317,7 +317,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 return;
             }
 
-            m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, data, OnComplete,  onFailure,null, null);
+            m_LobbyApiInterface.UpdatePlayer(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, data, OnComplete,  onFailure,null, null);
 
             void OnComplete(Lobby result)
             {
@@ -338,7 +338,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 return;
             }
 
-            m_LobbyApiInterface.UpdatePlayerAsync(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
+            m_LobbyApiInterface.UpdatePlayer(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, new Dictionary<string, PlayerDataObject>(), (_)=>onComplete?.Invoke(), onFailure, allocationId, connectionInfo);
         }
 
         /// <summary>
@@ -368,7 +368,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             //we would want to lock lobbies from appearing in queries if we're in relay mode and the relay isn't fully set up yet
             var shouldLock = m_LocalLobby.OnlineMode == OnlineMode.UnityRelay && string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
 
-            m_LobbyApiInterface.UpdateLobbyAsync(CurrentUnityLobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
+            m_LobbyApiInterface.UpdateLobby(CurrentUnityLobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
 
             void OnComplete(Lobby result)
             {
@@ -416,7 +416,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             if (m_HeartbeatTime > k_HeartbeatPeriod)
             {
                 m_HeartbeatTime -= k_HeartbeatPeriod;
-                m_LobbyApiInterface.HeartbeatPlayerAsync(CurrentUnityLobby.Id);
+                m_LobbyApiInterface.SendHeartbeatPing(CurrentUnityLobby.Id);
             }
         }
     }

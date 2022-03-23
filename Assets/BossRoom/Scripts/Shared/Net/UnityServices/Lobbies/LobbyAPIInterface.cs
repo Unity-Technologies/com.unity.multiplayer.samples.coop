@@ -45,32 +45,46 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             };
         }
 
-        void RunTask(Task task, Action onComplete, Action onFailed)
+        async Task<T> ExceptionHandling<T>(Task<T> task)
         {
-            UnityServiceCallsTaskWrapper.RunTaskAsync<LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
+            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
+
+            try
+            {
+                return await task;
+            }
+            catch (Exception e)
+            {
+                OnServiceException(e);
+                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n");
+                throw;
+            }
         }
 
-        void RunTask<T>(Task<T> task, Action<T> onComplete, Action onFailed)
+        async Task ExceptionHandling(Task task)
         {
-            UnityServiceCallsTaskWrapper.RunTaskAsync<T,LobbyServiceException>(task, onComplete, onFailed, OnServiceException);
+            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
+
+            try
+            {
+                await task;
+            }
+            catch (Exception e)
+            {
+                OnServiceException(e);
+                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n");
+                throw;
+            }
         }
 
-        void OnServiceException(LobbyServiceException e)
+        void OnServiceException(Exception e)
         {
             Debug.LogException(e);
-
-            if (e.Reason == LobbyExceptionReason.RateLimited) // We have other ways of preventing players from hitting the rate limit, so the developer-facing 429 error is sufficient here.
-            {
-                // todo trigger client side rate limit here
-                return;
-            }
-
             var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
-
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason));
         }
 
-        public void CreateLobbyAsync(string requesterUasId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData, Action<Lobby> onComplete, Action onFailed)
+        public async Task<Lobby> CreateLobby(string requesterUasId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData)
         {
             CreateLobbyOptions createOptions = new CreateLobbyOptions
             {
@@ -78,49 +92,43 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 Player = new Player(id: requesterUasId, data: hostUserData),
                 Data = lobbyData
             };
-            var task = Lobbies.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createOptions);
-            RunTask(task, onComplete, onFailed);
+
+            return await ExceptionHandling(Lobbies.Instance.CreateLobbyAsync(lobbyName, maxPlayers, createOptions));
         }
 
-        public void DeleteLobbyAsync(string lobbyId, Action onComplete, Action onFailed)
+        public async Task DeleteLobby(string lobbyId)
         {
-            var task = Lobbies.Instance.DeleteLobbyAsync(lobbyId);
-            RunTask(task, onComplete, onFailed);
+            await ExceptionHandling(Lobbies.Instance.DeleteLobbyAsync(lobbyId));
         }
 
-        public void JoinLobbyAsync_ByCode(string requesterUasId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public async Task<Lobby> JoinLobbyByCode(string requesterUasId, string lobbyCode, Dictionary<string, PlayerDataObject> localUserData)
         {
             JoinLobbyByCodeOptions joinOptions = new JoinLobbyByCodeOptions { Player = new Player(id: requesterUasId, data: localUserData) };
-            var task = Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions);
-            RunTask(task, onComplete, onFailed);
+            return await ExceptionHandling(Lobbies.Instance.JoinLobbyByCodeAsync(lobbyCode, joinOptions));
         }
 
-        public void JoinLobbyAsync_ById(string requesterUasId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public async Task<Lobby> JoinLobbyById(string requesterUasId, string lobbyId, Dictionary<string, PlayerDataObject> localUserData)
         {
             JoinLobbyByIdOptions joinOptions = new JoinLobbyByIdOptions { Player = new Player(id: requesterUasId, data: localUserData) };
-            var task = Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, joinOptions);
-            RunTask(task, onComplete, onFailed);
+            return await ExceptionHandling(Lobbies.Instance.JoinLobbyByIdAsync(lobbyId, joinOptions));
         }
 
-        public void QuickJoinLobbyAsync(string requesterUasId, Dictionary<string, PlayerDataObject> localUserData, Action<Lobby> onComplete, Action onFailed)
+        public async Task<Lobby> QuickJoinLobby(string requesterUasId, Dictionary<string, PlayerDataObject> localUserData)
         {
             var joinRequest = new QuickJoinLobbyOptions
             {
                 Filter = m_Filters,
                 Player = new Player(id: requesterUasId, data: localUserData)
             };
-
-            var task = Lobbies.Instance.QuickJoinLobbyAsync(joinRequest);
-            RunTask(task, onComplete, onFailed);
+            return await ExceptionHandling(Lobbies.Instance.QuickJoinLobbyAsync(joinRequest));
         }
 
-        public void LeaveLobbyAsync(string requesterUasId, string lobbyId, Action onComplete, Action onFailed)
+        public async Task RemovePlayerFromLobby(string requesterUasId, string lobbyId)
         {
-            var task = Lobbies.Instance.RemovePlayerAsync(lobbyId, requesterUasId);
-            RunTask(task, onComplete, onFailed);
+           await ExceptionHandling(Lobbies.Instance.RemovePlayerAsync(lobbyId, requesterUasId));
         }
 
-        public async Task<QueryResponse> QueryAllLobbiesAsync()
+        public async Task<QueryResponse> QueryAllLobbies()
         {
             QueryLobbiesOptions queryOptions = new QueryLobbiesOptions
             {
@@ -129,31 +137,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 Order = m_Order
             };
 
-            try
-            {
-                return await Lobbies.Instance.QueryLobbiesAsync(queryOptions);
-            }
-            catch (LobbyServiceException serviceE)
-            {
-                OnServiceException(serviceE);
-                throw;
-            }
+            return await ExceptionHandling(Lobbies.Instance.QueryLobbiesAsync(queryOptions));
         }
 
-        public void GetLobbyAsync(string lobbyId, Action<Lobby> onComplete, Action onFailed)
+        public async Task<Lobby> GetLobby(string lobbyId)
         {
-            var task = Lobbies.Instance.GetLobbyAsync(lobbyId);
-            RunTask(task, onComplete, onFailed);
+            return await ExceptionHandling(Lobbies.Instance.GetLobbyAsync(lobbyId));
         }
 
-        public void UpdateLobbyAsync(string lobbyId, Dictionary<string, DataObject> data, bool shouldLock, Action<Lobby> onComplete, Action onFailed)
+        public async Task<Lobby> UpdateLobby(string lobbyId, Dictionary<string, DataObject> data, bool shouldLock)
         {
             UpdateLobbyOptions updateOptions = new UpdateLobbyOptions { Data = data , IsLocked = shouldLock};
-            var task = Lobbies.Instance.UpdateLobbyAsync(lobbyId, updateOptions);
-            RunTask(task, onComplete, onFailed);
+            return await ExceptionHandling(Lobbies.Instance.UpdateLobbyAsync(lobbyId, updateOptions));
         }
 
-        public void UpdatePlayerAsync(string lobbyId, string playerId, Dictionary<string, PlayerDataObject> data, Action<Lobby> onComplete, Action onFailed, string allocationId, string connectionInfo)
+        public async Task<Lobby> UpdatePlayer(string lobbyId, string playerId, Dictionary<string, PlayerDataObject> data, string allocationId, string connectionInfo)
         {
             UpdatePlayerOptions updateOptions = new UpdatePlayerOptions
             {
@@ -161,14 +159,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 AllocationId = allocationId,
                 ConnectionInfo = connectionInfo
             };
-            var task = Lobbies.Instance.UpdatePlayerAsync(lobbyId, playerId, updateOptions);
-            RunTask(task, onComplete, onFailed);
+            return await ExceptionHandling(Lobbies.Instance.UpdatePlayerAsync(lobbyId, playerId, updateOptions));
         }
 
-        public void HeartbeatPlayerAsync(string lobbyId)
+        public async Task SendHeartbeatPing(string lobbyId)
         {
-            var task = Lobbies.Instance.SendHeartbeatPingAsync(lobbyId);
-            RunTask(task, null, null);
+            await ExceptionHandling(Lobbies.Instance.SendHeartbeatPingAsync(lobbyId));
         }
     }
 }
