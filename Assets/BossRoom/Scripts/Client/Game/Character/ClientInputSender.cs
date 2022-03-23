@@ -161,6 +161,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             m_ActionRequestCount = 0;
+            
+            if (EventSystem.current.IsPointerOverGameObject() || EventSystem.current.currentSelectedGameObject != null) 
+            {
+                return;
+            }
 
             if (m_MoveRequest)
             {
@@ -169,12 +174,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     m_LastSentMove = Time.time;
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
-                    if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
                     {
-                        m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
+                        if (Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, k_GroundLayerMask) > 0)
+                        {
+                            m_NetworkCharacter.SendCharacterInputServerRpc(k_CachedHit[0].point);
 
-                        //Send our client only click request
-                        ClientMoveEvent?.Invoke(k_CachedHit[0].point);
+                            //Send our client only click request
+                            ClientMoveEvent?.Invoke(k_CachedHit[0].point);
+                        }
                     }
                 }
             }
