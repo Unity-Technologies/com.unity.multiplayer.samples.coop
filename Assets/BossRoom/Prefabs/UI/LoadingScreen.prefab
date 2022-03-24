@@ -2163,7 +2163,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Legendary Halfling
+  m_Text: Player Name
 --- !u!1 &5535112914077863348
 GameObject:
   m_ObjectHideFlags: 0
