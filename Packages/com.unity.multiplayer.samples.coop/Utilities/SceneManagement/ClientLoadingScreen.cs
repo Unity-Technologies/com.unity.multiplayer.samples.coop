@@ -101,7 +101,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 {
                     if (m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                     {
-                        progress.OnValueChanged += (value, newValue) =>
+                        progress.OnValueChanged -= (value, newValue) =>
                             m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
                     }
                 }
@@ -132,12 +132,19 @@ namespace Unity.Multiplayer.Samples.Utilities
                 {
                     if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                     {
-                        m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
-                        // set progress bar to 0 if initializing, else set it to its last known value
-                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = isInitializing ? 0 : progress.Value;
-                        progress.OnValueChanged += (value, newValue) =>
-                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
-                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
+                        if (m_ClientIdToProgressBarsIndex.Count < m_OtherPlayersProgressBars.Count)
+                        {
+                            m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
+                            // set progress bar to 0 if initializing, else set it to its last known value
+                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = isInitializing ? 0 : progress.Value;
+                            progress.OnValueChanged += (value, newValue) =>
+                                m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
+                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
+                        }
+                        else
+                        {
+                            Debug.LogError("There are not enough progress bars to track the progress of all the players.");
+                        }
                     }
                 }
             }
@@ -171,11 +178,6 @@ namespace Unity.Multiplayer.Samples.Utilities
                 m_CanvasGroup.alpha = Mathf.Lerp(1, 0, currentTime/ m_FadeOutDuration);
                 yield return null;
                 currentTime += Time.deltaTime;
-            }
-
-            foreach (var progressBar in m_OtherPlayersProgressBars)
-            {
-                progressBar.value = 0;
             }
 
             m_CanvasGroup.alpha = 0;
