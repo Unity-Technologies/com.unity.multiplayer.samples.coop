@@ -18,17 +18,48 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
+        async Task<T> ExceptionHandling<T>(Task<T> task)
+        {
+            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
+
+            try
+            {
+                return await task;
+            }
+            catch (Exception e)
+            {
+                OnServiceException(e);
+                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n");
+                throw;
+            }
+        }
+
+        async Task ExceptionHandling(Task task)
+        {
+            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
+
+            try
+            {
+                await task;
+            }
+            catch (Exception e)
+            {
+                OnServiceException(e);
+                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n");
+                throw;
+            }
+        }
+
         void OnServiceException(Exception e)
         {
             Debug.LogException(e);
             var reason = $"{e.Message} ({e.InnerException?.Message})";
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason));
         }
 
-        public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)
+        public async Task DoSignInAsync(InitializationOptions initializationOptions)
         {
-            var task = TrySignIn(initializationOptions);
-            UnityServiceCallsTaskWrapper.RunTaskAsync<AuthenticationException>(task, onSigninComplete, onFailed, OnServiceException);
+            await ExceptionHandling(TrySignIn(initializationOptions));
         }
 
         async Task TrySignIn(InitializationOptions initializationOptions)

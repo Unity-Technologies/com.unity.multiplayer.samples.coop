@@ -241,16 +241,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        void RetrieveLobbyAsync(string lobbyId, Action<Lobby> onSuccess, Action onFailure)
+        async Task<Lobby> RetrieveLobbyAsync(string lobbyId)
         {
             if (!m_RateLimitQuery.CanCall)
             {
                 onFailure?.Invoke();
                 UnityEngine.Debug.LogWarning("Retrieve Lobby hit the rate limit.");
-                return;
+                return null;
             }
             m_RateLimitQuery.PutOnCooldown();
-            m_LobbyApiInterface.GetLobby(lobbyId, onSuccess, onFailure);
+
+            return await m_LobbyApiInterface.GetLobby(lobbyId);
         }
 
         /// <summary>

@@ -1,3 +1,4 @@
+using System;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -39,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         [Inject]
-        void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
+        async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
         {
             m_Scope = new DIScope(DIScope.RootScope);
 
@@ -61,6 +62,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
             {
                 m_Scope.InjectIn(autoInjectedGameObject);
+            }
+#endif
+
+            try
+            {
+                await authServiceFacade.DoSignInAsync(unityAuthenticationInitOptions);
+                OnAuthSignIn();
+            }
+            catch (Exception e)
+            {
+                OnSignInFailed();
             }
 
             void OnAuthSignIn()
