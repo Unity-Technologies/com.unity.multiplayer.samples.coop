@@ -131,7 +131,6 @@ namespace Unity.Multiplayer.Samples.Utilities
                     if (NetworkManager.IsClient)
                     {
                         m_ClientLoadingScreen.StopLoadingScreen();
-                        m_LoadingProgressManager.LocalLoadOperation = null;
                     }
                     break;
                 case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
@@ -149,7 +148,6 @@ namespace Unity.Multiplayer.Samples.Utilities
         void StopLoadingScreenClientRpc(ClientRpcParams clientRpcParams = default)
         {
             m_ClientLoadingScreen.StopLoadingScreen();
-            m_LoadingProgressManager.LocalLoadOperation = null;
         }
     }
 }

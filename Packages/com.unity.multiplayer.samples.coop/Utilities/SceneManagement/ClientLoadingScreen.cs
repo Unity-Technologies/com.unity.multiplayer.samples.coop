@@ -37,7 +37,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         protected Dictionary<ulong, int> m_ClientIdToProgressBarsIndex = new Dictionary<ulong, int>();
 
-        protected bool m_LoadingScreenRunning;
+        bool m_LoadingScreenRunning;
 
         Coroutine m_FadeOutCoroutine;
 
@@ -49,41 +49,25 @@ namespace Unity.Multiplayer.Samples.Utilities
         void Start()
         {
             m_CanvasGroup.alpha = 0;
+            m_LoadingProgressManager.onTrackersUpdated += OnProgressTrackersUpdated;
+        }
+
+        public override void OnDestroy()
+        {
+            m_LoadingProgressManager.onTrackersUpdated -= OnProgressTrackersUpdated;
         }
 
         void Update()
         {
             if (m_LoadingScreenRunning)
             {
-                UpdateLoadingProgress();
+                m_ProgressBar.value = m_LoadingProgressManager.LocalProgress;
             }
         }
 
-        protected virtual void UpdateLoadingProgress()
+        void OnProgressTrackersUpdated()
         {
-            m_ProgressBar.value = m_LoadingProgressManager.LocalProgress;
-
-            if (IsSpawned)
-            {
-                foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
-                {
-                    var clientId = progressTracker.Key;
-                    var progress = progressTracker.Value.Progress;
-                    if (clientId == NetworkManager.LocalClientId)
-                    {
-                        m_ProgressBar.value = progress;
-                    }
-                    else
-                    {
-                        if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
-                        {
-                            m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
-                        }
-
-                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = progress;
-                    }
-                }
-            }
+            UpdateProgressBars(false);
         }
 
         public void StopLoadingScreen()
@@ -103,6 +87,60 @@ namespace Unity.Multiplayer.Samples.Utilities
             m_CanvasGroup.alpha = 1;
             m_LoadingScreenRunning = true;
             UpdateLoadingScreen(sceneName);
+            ReinitializeProgressBars();
+        }
+
+        protected virtual void ReinitializeProgressBars()
+        {
+            // clear previous callbacks
+            foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
+            {
+                var clientId = progressTracker.Key;
+                var progress = progressTracker.Value.Progress;
+                if (clientId != NetworkManager.LocalClientId)
+                {
+                    if (m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
+                    {
+                        progress.OnValueChanged += (value, newValue) =>
+                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
+                    }
+                }
+            }
+            // clear map
+            m_ClientIdToProgressBarsIndex.Clear();
+
+            // deactivate all other players' progress bars
+            foreach (var progressBar in m_OtherPlayersProgressBars)
+            {
+                progressBar.gameObject.SetActive(false);
+            }
+
+            if (IsSpawned && !NetworkManager.ShutdownInProgress)
+            {
+                // initialize all other players' progress bars
+                UpdateProgressBars(true);
+            }
+        }
+
+        protected virtual void UpdateProgressBars(bool isInitializing)
+        {
+            foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
+            {
+                var clientId = progressTracker.Key;
+                var progress = progressTracker.Value.Progress;
+                if (clientId != NetworkManager.LocalClientId)
+                {
+                    if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
+                    {
+                        m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
+                        // set progress bar to 0 if initializing, else set it to its last known value
+                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = isInitializing ? 0 : progress.Value;
+                        progress.OnValueChanged += (value, newValue) =>
+                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
+                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
+                    }
+                }
+            }
         }
 
         public void UpdateLoadingScreen(string sceneName)
@@ -110,7 +148,10 @@ namespace Unity.Multiplayer.Samples.Utilities
             if (m_LoadingScreenRunning)
             {
                 m_SceneName.text = sceneName;
-                m_ProgressBar.value = 0;
+                if (m_FadeOutCoroutine != null)
+                {
+                    StopCoroutine(m_FadeOutCoroutine);
+                }
             }
         }
 
@@ -130,6 +171,11 @@ namespace Unity.Multiplayer.Samples.Utilities
                 m_CanvasGroup.alpha = Mathf.Lerp(1, 0, currentTime/ m_FadeOutDuration);
                 yield return null;
                 currentTime += Time.deltaTime;
+            }
+
+            foreach (var progressBar in m_OtherPlayersProgressBars)
+            {
+                progressBar.value = 0;
             }
 
             m_CanvasGroup.alpha = 0;

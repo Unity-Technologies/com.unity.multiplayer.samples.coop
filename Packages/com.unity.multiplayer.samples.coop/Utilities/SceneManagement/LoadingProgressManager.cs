@@ -10,23 +10,31 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         GameObject m_ProgressTrackerPrefab;
 
-        Dictionary<ulong, NetworkedLoadingProgressTracker> m_ProgressTrackers = new Dictionary<ulong, NetworkedLoadingProgressTracker>();
+        public Dictionary<ulong, NetworkedLoadingProgressTracker> ProgressTrackers { get; } = new Dictionary<ulong, NetworkedLoadingProgressTracker>();
 
-        public Dictionary<ulong, NetworkedLoadingProgressTracker> ProgressTrackers => m_ProgressTrackers;
+        public AsyncOperation LocalLoadOperation
+        {
+            set
+            {
+                LocalProgress = 0;
+                m_LocalLoadOperation = value;
+            }
+        }
 
-        public AsyncOperation LocalLoadOperation;
+        AsyncOperation m_LocalLoadOperation;
 
         float m_LocalProgress;
+        public event Action onTrackersUpdated;
 
         public float LocalProgress
         {
-            get => IsSpawned && m_ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ?
-                m_ProgressTrackers[NetworkManager.LocalClientId].Progress : m_LocalProgress;
+            get => m_LocalProgress;
             private set
             {
-                if (IsSpawned && m_ProgressTrackers.ContainsKey(NetworkManager.LocalClientId))
+                if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId))
                 {
-                    m_ProgressTrackers[NetworkManager.LocalClientId].Progress = value;
+                    ProgressTrackers[NetworkManager.LocalClientId].Progress.Value = value;
+                    m_LocalProgress = value;
                 }
                 else
                 {
@@ -51,44 +59,52 @@ namespace Unity.Multiplayer.Samples.Utilities
                 NetworkManager.OnClientConnectedCallback -= AddTracker;
                 NetworkManager.OnClientDisconnectCallback -= RemoveTracker;
             }
+            ProgressTrackers.Clear();
         }
 
         void Update()
         {
-            if (LocalLoadOperation != null)
+            if (m_LocalLoadOperation != null)
             {
-                LocalProgress = LocalLoadOperation.isDone ? 1 : LocalLoadOperation.progress;
-            }
-            else
-            {
-                LocalProgress = 0;
+                LocalProgress = m_LocalLoadOperation.isDone ? 1 : m_LocalLoadOperation.progress;
             }
         }
 
         [ClientRpc]
         void UpdateTrackersClientRpc()
         {
-            m_ProgressTrackers.Clear();
+            ProgressTrackers.Clear();
             foreach (var tracker in FindObjectsOfType<NetworkedLoadingProgressTracker>())
             {
-                m_ProgressTrackers[tracker.OwnerClientId] = tracker;
+                ProgressTrackers[tracker.OwnerClientId] = tracker;
+                if (tracker.OwnerClientId == NetworkManager.LocalClientId)
+                {
+                    LocalProgress = Mathf.Max(m_LocalProgress, LocalProgress);
+                }
             }
+            onTrackersUpdated?.Invoke();
         }
 
         void AddTracker(ulong clientId)
         {
-            var tracker = Instantiate(m_ProgressTrackerPrefab);
-            var networkObject = tracker.GetComponent<NetworkObject>();
-            networkObject.SpawnWithOwnership(clientId);
-            UpdateTrackersClientRpc();
+            if (IsServer)
+            {
+                var tracker = Instantiate(m_ProgressTrackerPrefab);
+                var networkObject = tracker.GetComponent<NetworkObject>();
+                networkObject.SpawnWithOwnership(clientId);
+                UpdateTrackersClientRpc();
+            }
         }
 
         void RemoveTracker(ulong clientId)
         {
-            var tracker = m_ProgressTrackers[clientId];
-            m_ProgressTrackers.Remove(clientId);
-            tracker.NetworkObject.Despawn();
-            UpdateTrackersClientRpc();
+            if (IsServer)
+            {
+                var tracker = ProgressTrackers[clientId];
+                ProgressTrackers.Remove(clientId);
+                tracker.NetworkObject.Despawn();
+                UpdateTrackersClientRpc();
+            }
         }
     }
 }

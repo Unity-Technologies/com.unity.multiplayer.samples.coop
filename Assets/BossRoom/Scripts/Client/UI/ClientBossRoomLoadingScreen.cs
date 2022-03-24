@@ -13,25 +13,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         PersistentPlayerRuntimeCollection m_PersistentPlayerRuntimeCollection;
 
-        protected override void UpdateLoadingProgress()
+        protected override void UpdateProgressBars(bool isInitializing)
         {
-            base.UpdateLoadingProgress();
-            if (IsSpawned)
+            base.UpdateProgressBars(isInitializing);
+            foreach (var player in m_PersistentPlayerRuntimeCollection.Items)
             {
-                foreach (var player in m_PersistentPlayerRuntimeCollection.Items)
+                var clientId = player.OwnerClientId;
+                if (clientId != NetworkManager.LocalClientId)
                 {
-                    var clientId = player.OwnerClientId;
-                    if (clientId != NetworkManager.LocalClientId)
+                    if (m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                     {
-                        if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
-                        {
-                            m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
-                        }
-
                         m_OtherPlayerNamesTexts[m_ClientIdToProgressBarsIndex[clientId]].text = player.NetworkNameState.Name.Value;
+                        m_OtherPlayerNamesTexts[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
                     }
                 }
             }
+        }
+
+        protected override void ReinitializeProgressBars()
+        {
+            // deactivate all other players' name text
+            foreach (var playerName in m_OtherPlayerNamesTexts)
+            {
+                playerName.gameObject.SetActive(false);
+            }
+            base.ReinitializeProgressBars();
         }
     }
 }

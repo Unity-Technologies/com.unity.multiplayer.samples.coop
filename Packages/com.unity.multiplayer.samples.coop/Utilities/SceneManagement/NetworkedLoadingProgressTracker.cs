@@ -6,10 +6,7 @@ namespace Unity.Multiplayer.Samples.Utilities
     {
         NetworkVariable<float> m_Progress = new NetworkVariable<float>(0, NetworkVariableReadPermission.Everyone, NetworkVariableWritePermission.Owner);
 
-        public float Progress
-        {
-            get => m_Progress.Value;
-            set => m_Progress.Value = value;
-        }
+        public NetworkVariable<float> Progress => m_Progress;
+
     }
 }
