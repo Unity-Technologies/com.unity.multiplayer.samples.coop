@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ClientLoadingScreen: {fileID: 0}
+  m_LoadingProgressManager: {fileID: 6240023712540756099}
 --- !u!114 &8734696198808489477
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -39,8 +39,6 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         bool m_LoadingScreenRunning;
 
-        AsyncOperation m_LoadOperation;
-
         Coroutine m_FadeOutCoroutine;
 
         void Awake()
@@ -55,11 +53,12 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void Update()
         {
-            if (m_LoadingScreenRunning && m_LoadOperation != null)
+            if (m_LoadingScreenRunning)
             {
+                m_ProgressBar.value = m_LoadingProgressManager.LocalProgress;
+
                 if (IsSpawned)
                 {
-                    m_LoadingProgressManager.ProgressTrackers[NetworkManager.LocalClientId].Progress = m_LoadOperation.progress;
                     foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
                     {
                         var clientId = progressTracker.Key;
@@ -78,10 +77,6 @@ namespace Unity.Multiplayer.Samples.Utilities
                         }
                     }
                 }
-                else
-                {
-                    m_ProgressBar.value = m_LoadOperation.progress;
-                }
             }
         }
 
@@ -97,26 +92,24 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        public void StartLoadingScreen(string sceneName, AsyncOperation loadOperation)
+        public void StartLoadingScreen(string sceneName)
         {
             m_CanvasGroup.alpha = 1;
             m_LoadingScreenRunning = true;
-            UpdateLoadingScreen(sceneName, loadOperation);
+            UpdateLoadingScreen(sceneName);
         }
 
-        public void UpdateLoadingScreen(string sceneName, AsyncOperation loadOperation)
+        public void UpdateLoadingScreen(string sceneName)
         {
             if (m_LoadingScreenRunning)
             {
                 m_SceneName.text = sceneName;
-                m_LoadOperation = loadOperation;
                 m_ProgressBar.value = 0;
             }
         }
 
         IEnumerator FadeOutCoroutine()
         {
-            m_ProgressBar.value = 1;
             float currentTime = 0;
             while (currentTime < m_DelayBeforeFadeOut)
             {

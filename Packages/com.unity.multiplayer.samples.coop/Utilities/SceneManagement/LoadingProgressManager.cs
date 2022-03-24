@@ -14,6 +14,27 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         public Dictionary<ulong, NetworkedLoadingProgressTracker> ProgressTrackers => m_ProgressTrackers;
 
+        public AsyncOperation LocalLoadOperation;
+
+        float m_LocalProgress;
+
+        public float LocalProgress
+        {
+            get => IsSpawned && m_ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ?
+                m_ProgressTrackers[NetworkManager.LocalClientId].Progress : m_LocalProgress;
+            private set
+            {
+                if (IsSpawned && m_ProgressTrackers.ContainsKey(NetworkManager.LocalClientId))
+                {
+                    m_ProgressTrackers[NetworkManager.LocalClientId].Progress = value;
+                }
+                else
+                {
+                    m_LocalProgress = value;
+                }
+            }
+        }
+
         public override void OnNetworkSpawn()
         {
             if (IsServer)
@@ -29,6 +50,14 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 NetworkManager.OnClientConnectedCallback -= AddTracker;
                 NetworkManager.OnClientDisconnectCallback -= RemoveTracker;
+            }
+        }
+
+        void Update()
+        {
+            if (LocalLoadOperation != null)
+            {
+                LocalProgress = LocalLoadOperation.isDone ? 1 : LocalLoadOperation.progress;
             }
         }
 
