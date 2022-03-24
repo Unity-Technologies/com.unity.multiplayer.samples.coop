@@ -5,6 +5,9 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
+    /// <summary>
+    /// Contains data on scene loading progress for the local instance and remote instances.
+    /// </summary>
     public class LoadingProgressManager : NetworkBehaviour
     {
         [SerializeField]
