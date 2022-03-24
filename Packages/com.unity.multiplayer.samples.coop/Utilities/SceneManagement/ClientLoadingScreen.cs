@@ -33,11 +33,11 @@ namespace Unity.Multiplayer.Samples.Utilities
         List<Slider> m_OtherPlayersProgressBars;
 
         [SerializeField]
-        LoadingProgressManager m_LoadingProgressManager;
+        protected LoadingProgressManager m_LoadingProgressManager;
 
-        Dictionary<ulong, int> m_ClientIdToProgressBarsIndex = new Dictionary<ulong, int>();
+        protected Dictionary<ulong, int> m_ClientIdToProgressBarsIndex = new Dictionary<ulong, int>();
 
-        bool m_LoadingScreenRunning;
+        protected bool m_LoadingScreenRunning;
 
         Coroutine m_FadeOutCoroutine;
 
@@ -55,26 +55,32 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (m_LoadingScreenRunning)
             {
-                m_ProgressBar.value = m_LoadingProgressManager.LocalProgress;
+                UpdateLoadingProgress();
+            }
+        }
 
-                if (IsSpawned)
+        protected virtual void UpdateLoadingProgress()
+        {
+            m_ProgressBar.value = m_LoadingProgressManager.LocalProgress;
+
+            if (IsSpawned)
+            {
+                foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
                 {
-                    foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
+                    var clientId = progressTracker.Key;
+                    var progress = progressTracker.Value.Progress;
+                    if (clientId == NetworkManager.LocalClientId)
                     {
-                        var clientId = progressTracker.Key;
-                        var progress = progressTracker.Value.Progress;
-                        if (clientId == NetworkManager.LocalClientId)
+                        m_ProgressBar.value = progress;
+                    }
+                    else
+                    {
+                        if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                         {
-                            m_ProgressBar.value = progress;
+                            m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
                         }
-                        else
-                        {
-                            if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
-                            {
-                               m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
-                            }
-                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = progress;
-                        }
+
+                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = progress;
                     }
                 }
             }

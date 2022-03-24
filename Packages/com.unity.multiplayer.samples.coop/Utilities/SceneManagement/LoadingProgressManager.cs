@@ -59,6 +59,10 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 LocalProgress = LocalLoadOperation.isDone ? 1 : LocalLoadOperation.progress;
             }
+            else
+            {
+                LocalProgress = 0;
+            }
         }
 
         [ClientRpc]
