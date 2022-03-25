@@ -44,18 +44,36 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         Dictionary<ulong, string> m_ClientIDToPlayerId;
 
+        bool m_HasSessionStarted;
+
         /// <summary>
-        /// Marks a client as being disconnected."
+        /// Handles client disconnect."
         /// </summary>
         public void DisconnectClient(ulong clientId)
         {
-            if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
+            if (m_HasSessionStarted)
             {
-                if (GetPlayerData(playerId)?.ClientID == clientId)
+                // Mark client as disconnected, but keep their data so they can reconnect.
+                if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
                 {
-                    var clientData = m_ClientData[playerId];
-                    clientData.IsConnected = false;
-                    m_ClientData[playerId] = clientData;
+                    if (GetPlayerData(playerId)?.ClientID == clientId)
+                    {
+                        var clientData = m_ClientData[playerId];
+                        clientData.IsConnected = false;
+                        m_ClientData[playerId] = clientData;
+                    }
+                }
+            }
+            else
+            {
+                // Session has not started, no need to keep their data
+                if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
+                {
+                    m_ClientIDToPlayerId.Remove(clientId);
+                    if (GetPlayerData(playerId)?.ClientID == clientId)
+                    {
+                        m_ClientData.Remove(playerId);
+                    }
                 }
             }
         }
@@ -176,11 +194,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
-        /// Clears session data from disconnected players so that if a player disconnects before the session starts, then reconnect after it has started, they will be treated as a new player
+        /// Marks the current session as started, so from now on we keep the data of disconnected players.
         /// </summary>
         public void OnSessionStarted()
         {
-            ClearDisconnectedPlayersData();
+            m_HasSessionStarted = true;
         }
 
         /// <summary>
@@ -190,6 +208,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             ClearDisconnectedPlayersData();
             ReinitializePlayersData();
+            m_HasSessionStarted = false;
         }
 
         void ReinitializePlayersData()
