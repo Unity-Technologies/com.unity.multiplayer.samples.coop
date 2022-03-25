@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
@@ -176,6 +175,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
+        /// <summary>
+        /// Clears session data from disconnected players so that if a player disconnects before the session starts, then reconnect after it has started, they will be treated as a new player
+        /// </summary>
         public void OnSessionStarted()
         {
             ClearDisconnectedPlayersData();
@@ -187,35 +189,29 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public void OnSessionEnded()
         {
             ClearDisconnectedPlayersData();
-            List<ulong> connectedClientIds = new List<ulong>(NetworkManager.Singleton.ConnectedClientsIds);
+            ReinitializePlayersData();
+        }
+
+        void ReinitializePlayersData()
+        {
             foreach (var id in m_ClientIDToPlayerId.Keys)
             {
-                if (connectedClientIds.Contains(id))
-                {
-                    string playerId = m_ClientIDToPlayerId[id];
-                    T sessionPlayerData = m_ClientData[playerId];
-                    sessionPlayerData.Reinitialize();
-                    m_ClientData[playerId] = sessionPlayerData;
-                }
+                string playerId = m_ClientIDToPlayerId[id];
+                T sessionPlayerData = m_ClientData[playerId];
+                sessionPlayerData.Reinitialize();
+                m_ClientData[playerId] = sessionPlayerData;
             }
         }
 
         void ClearDisconnectedPlayersData()
         {
             List<ulong> idsToClear = new List<ulong>();
-            List<ulong> connectedClientIds = new List<ulong>(NetworkManager.Singleton.ConnectedClientsIds);
             foreach (var id in m_ClientIDToPlayerId.Keys)
             {
-                if (!connectedClientIds.Contains(id))
+                var data = GetPlayerData(id);
+                if (data is {IsConnected: false})
                 {
                     idsToClear.Add(id);
-                }
-                else
-                {
-                    string playerId = m_ClientIDToPlayerId[id];
-                    T sessionPlayerData = m_ClientData[playerId];
-                    sessionPlayerData.Reinitialize();
-                    m_ClientData[playerId] = sessionPlayerData;
                 }
             }
 
