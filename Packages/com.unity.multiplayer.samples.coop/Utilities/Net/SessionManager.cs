@@ -13,38 +13,22 @@ namespace Unity.Multiplayer.Samples.BossRoom
     }
 
     /// <summary>
-    /// This class uses a GUID to bind a player to a session. Once that player connects to a host, the host associates
-    /// the current ClientID to the player's session GUID. If the player disconnects and reconnects to the same host,
-    /// the session is preserved.
+    /// This class uses a unique player ID to bind a player to a session. Once that player connects to a host, the host
+    /// associates the current ClientID to the player's unique ID. If the player disconnects and reconnects to the same
+    /// host, the session is preserved.
     /// </summary>
     /// <remarks>
-    /// Using a client-generated GUID and sending it directly could be problematic, as a malicious user could intercept
-    /// it and reuse it to impersonate the original user. We are currently investigating this to offer a solution that
-    /// handles security better.
+    /// Using a client-generated player ID and sending it directly could be problematic, as a malicious user could
+    /// intercept it and reuse it to impersonate the original user. We are currently investigating this to offer a
+    /// solution that handles security better.
     /// </remarks>
     /// <typeparam name="T"></typeparam>
     public class SessionManager<T> where T : struct, ISessionPlayerData
     {
-        NetworkManager m_NetworkManager;
-
         SessionManager()
         {
-            m_NetworkManager = NetworkManager.Singleton;
-            if (m_NetworkManager)
-            {
-                m_NetworkManager.OnServerStarted += ServerStartedHandler;
-            }
-
             m_ClientData = new Dictionary<string, T>();
             m_ClientIDToPlayerId = new Dictionary<ulong, string>();
-        }
-
-        ~SessionManager()
-        {
-            if (m_NetworkManager)
-            {
-                m_NetworkManager.OnServerStarted -= ServerStartedHandler;
-            }
         }
 
         public static SessionManager<T> Instance => s_Instance ??= new SessionManager<T>();
@@ -62,10 +46,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         Dictionary<ulong, string> m_ClientIDToPlayerId;
 
         /// <summary>
-        /// Handles the case where NetworkManager has told us a client has disconnected. This includes ourselves, if we're the host,
-        /// and the server is stopped."
+        /// Marks a client as being disconnected."
         /// </summary>
-        void OnClientDisconnect(ulong clientId)
+        public void DisconnectClient(ulong clientId)
         {
             if (m_ClientIDToPlayerId.TryGetValue(clientId, out var playerId))
             {
@@ -76,25 +59,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     m_ClientData[playerId] = clientData;
                 }
             }
-
-            if (clientId == m_NetworkManager.LocalClientId)
-            {
-                //the SessionManager may be initialized again, which will cause its OnNetworkSpawn to be called again.
-                //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
-                m_NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
-            }
         }
 
-        /// <summary>
-        /// Handles the flow when a user has requested a disconnect via UI (which can be invoked on the Host, and thus must be
-        /// handled in server code).
-        /// </summary>
-        public void OnUserDisconnectRequest()
-        {
-            Clear();
-        }
-
-        void Clear()
+        public void Clear()
         {
             //resets all our runtime state.
             m_ClientData.Clear();
@@ -209,18 +176,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        /// <summary>
-        /// Called after the server is created-  This is primarily meant for the host server to clean up or handle/set state as its starting up
-        /// </summary>
-        void ServerStartedHandler()
-        {
-            if (m_NetworkManager.IsServer)
-            {
-                //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
-                m_NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
-            }
-        }
-
         public void OnSessionStarted()
         {
             ClearDisconnectedPlayersData();
@@ -232,7 +187,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public void OnSessionEnded()
         {
             ClearDisconnectedPlayersData();
-            List<ulong> connectedClientIds = new List<ulong>(m_NetworkManager.ConnectedClientsIds);
+            List<ulong> connectedClientIds = new List<ulong>(NetworkManager.Singleton.ConnectedClientsIds);
             foreach (var id in m_ClientIDToPlayerId.Keys)
             {
                 if (connectedClientIds.Contains(id))
@@ -248,7 +203,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void ClearDisconnectedPlayersData()
         {
             List<ulong> idsToClear = new List<ulong>();
-            List<ulong> connectedClientIds = new List<ulong>(m_NetworkManager.ConnectedClientsIds);
+            List<ulong> connectedClientIds = new List<ulong>(NetworkManager.Singleton.ConnectedClientsIds);
             foreach (var id in m_ClientIDToPlayerId.Keys)
             {
                 if (!connectedClientIds.Contains(id))

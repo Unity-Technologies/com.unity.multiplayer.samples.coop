@@ -112,6 +112,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     {
                         m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
                     }
+                    SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
             }
         }
