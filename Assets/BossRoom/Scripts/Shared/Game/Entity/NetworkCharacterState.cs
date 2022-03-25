@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -113,21 +114,32 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnNetworkSpawn()
         {
             if (!IsServer) return;
-            HitPoints = GetInitialHitPoints();
+            SetInitialHitPoints();
         }
 
-        int GetInitialHitPoints()
+        void SetInitialHitPoints()
         {
+            HitPoints = CharacterClass.BaseHP.Value;
+
             if (!IsNpc)
             {
                 SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData is { HasCharacterSpawned: true })
                 {
-                    return sessionPlayerData.Value.CurrentHitPoints;
+                    StartCoroutine(SetReconnectingHitPointsCoroutine(sessionPlayerData.Value.CurrentHitPoints));
                 }
             }
+        }
 
-            return CharacterClass.BaseHP.Value;
+        IEnumerator SetReconnectingHitPointsCoroutine(int hitPoints)
+        {
+            // Wait until end of frame to make sure other NetworkBehaviors for this character had time to spawn.
+            yield return new WaitForEndOfFrame();
+            HitPoints = hitPoints;
+            if (HitPoints <= 0)
+            {
+                LifeState = IsNpc ? LifeState.Dead : LifeState.Fainted;
+            }
         }
 
         /// <summary>
