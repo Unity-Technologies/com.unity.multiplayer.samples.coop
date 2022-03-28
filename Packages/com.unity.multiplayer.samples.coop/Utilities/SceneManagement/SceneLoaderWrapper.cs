@@ -106,7 +106,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 case SceneEventType.Load: // Server told client to load a scene
                     // Only executes on client
-                    if (IsClient)
+                    if (NetworkManager.IsClient)
                     {
                         // Only start a new loading screen if scene loaded in Single mode, else simply update
                         if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
@@ -121,14 +121,14 @@ namespace Unity.Multiplayer.Samples.Utilities
                     break;
                 case SceneEventType.LoadEventCompleted: // Server told client that all clients finished loading a scene
                     // Only executes on client
-                    if (IsClient)
+                    if (NetworkManager.IsClient)
                     {
                         m_ClientLoadingScreen.StopLoadingScreen();
                     }
                     break;
                 case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
                     // Only executes on server
-                    if (IsServer)
+                    if (NetworkManager.IsServer)
                     {
                         // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing
                         StopLoadingScreenClientRpc(new ClientRpcParams {Send = new ClientRpcSendParams {TargetClientIds = new[] {sceneEvent.ClientId}}});
