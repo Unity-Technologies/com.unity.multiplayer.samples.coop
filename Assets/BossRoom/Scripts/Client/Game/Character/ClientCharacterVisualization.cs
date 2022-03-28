@@ -39,17 +39,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         public Material ReticuleFriendlyMat => m_VisualizationConfiguration.ReticuleFriendlyMat;
 
-        /// <summary>
-        /// Returns our pseudo-Parent, the object that owns the visualization.
-        /// (We don't have an actual transform parent because we're on a top-level GameObject.)
-        /// </summary>
-        public Transform Parent { get; private set; }
-
         PhysicsWrapper m_PhysicsWrapper;
 
         public bool CanPerformActions => m_NetState.CanPerformActions;
 
         NetworkCharacterState m_NetState;
+
+        public NetworkCharacterState NetState => m_NetState;
 
         ActionVisualization m_ActionViz;
 
@@ -82,8 +78,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             m_NetState = GetComponentInParent<NetworkCharacterState>();
 
-            Parent = m_NetState.transform;
-
             m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
 
             m_NetState.DoActionEventClient += PerformActionFX;
@@ -105,7 +99,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
 
-                if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                if (transform.parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
                 {
                     m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
                 }
@@ -121,7 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
 
-                    if (Parent.TryGetComponent(out ClientInputSender inputSender))
+                    if (transform.parent.TryGetComponent(out ClientInputSender inputSender))
                     {
                         // TODO: revisit; anticipated actions would play twice on the host
                         if (!IsServer)
@@ -144,7 +138,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
 
-                if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
+                if (m_NetState.TryGetComponent(out ClientInputSender sender))
                 {
                     sender.ActionInputEvent -= OnActionInput;
                     sender.ClientMoveEvent -= OnMoveInput;
@@ -245,13 +239,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void Update()
         {
-            if (Parent == null)
-            {
-                // since we aren't in the transform hierarchy, we have to explicitly die when our parent dies.
-                Destroy(gameObject);
-                return;
-            }
-
             // On the host, Characters are translated via ServerCharacterMovement's FixedUpdate method. To ensure that
             // the game camera tracks a GameObject moving in the Update loop and therefore eliminate any camera jitter,
             // this graphics GameObject's position is smoothed over time on the host. Clients do not need to perform any
