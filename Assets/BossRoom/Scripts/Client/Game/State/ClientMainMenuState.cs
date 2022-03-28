@@ -1,3 +1,13 @@
+using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using UnityEngine;
+
+
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
@@ -10,5 +20,82 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     public class ClientMainMenuState : GameStateBehaviour
     {
         public override GameState ActiveState { get { return GameState.MainMenu; } }
+
+        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
+        DIScope m_Scope;
+
+        [SerializeField] NameGenerationData m_NameGenerationData;
+        [SerializeField] LobbyUIMediator m_LobbyUIMediator;
+        [SerializeField] IPUIMediator m_IPUIMediator;
+
+        [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
+        [SerializeField] GameObject m_SignInSpinner;
+
+        void Awake()
+        {
+            m_MainMenuButtonsCanvasGroup.interactable = false;
+            m_LobbyUIMediator.Hide();
+            DIScope.RootScope.InjectIn(this);
+        }
+
+        [Inject]
+        void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
+        {
+            m_Scope = new DIScope(DIScope.RootScope);
+
+            m_Scope.BindInstanceAsSingle(m_NameGenerationData);
+            m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
+            m_Scope.BindInstanceAsSingle(m_IPUIMediator);
+
+            var unityAuthenticationInitOptions = new InitializationOptions();
+            var profile = ProfileManager.Profile;
+            if (profile.Length > 0)
+            {
+                unityAuthenticationInitOptions.SetProfile(profile);
+            }
+
+            authServiceFacade.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
+
+            m_Scope.FinalizeScopeConstruction();
+
+            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
+            {
+                m_Scope.InjectIn(autoInjectedGameObject);
+            }
+
+            void OnAuthSignIn()
+            {
+                m_MainMenuButtonsCanvasGroup.interactable = true;
+                m_SignInSpinner.SetActive(false);
+
+                Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
+
+                localUser.ID = AuthenticationService.Instance.PlayerId;
+                // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
+                localLobby.AddUser(localUser);
+            }
+
+            void OnSignInFailed()
+            {
+                m_SignInSpinner.SetActive(false);
+            }
+        }
+
+        public override void OnDestroy()
+        {
+            m_Scope?.Dispose();
+        }
+
+        public void OnStartClicked()
+        {
+            m_LobbyUIMediator.ToggleJoinLobbyUI();
+            m_LobbyUIMediator.Show();
+        }
+
+        public void OnDirectIPClicked()
+        {
+            m_LobbyUIMediator.Hide();
+            m_IPUIMediator.Show();
+        }
     }
 }

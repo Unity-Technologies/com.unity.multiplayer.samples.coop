@@ -1,14 +1,14 @@
 using System;
-using System.Threading;
-using Netcode.Transports.PhotonRealtime;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Services.Authentication;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -25,15 +25,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public enum OnlineMode
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.
-        Relay = 1, // The server is hosted over a relay server and clients join by entering a room name.
-        UnityRelay = 2, // The server is hosted over a Unity Relay server and clients join by entering a join code.
+        UnityRelay = 1, // The server is hosted over a Unity Relay server and clients join by entering a join code.
         Unset = -1, // The hosting mode is not set yet.
+
     }
 
     [Serializable]
     public class ConnectionPayload
     {
-        public string clientGUID;
+        public string playerId;
         public int clientScene = -1;
         public string playerName;
     }
@@ -86,21 +86,26 @@ namespace Unity.Multiplayer.Samples.BossRoom
         private ClientGameNetPortal m_ClientPortal;
         private ServerGameNetPortal m_ServerPortal;
 
+        private LocalLobby m_LocalLobby;
+        private LobbyServiceFacade m_LobbyServiceFacade;
+
+        [Inject]
+        private void InjectDependencies(LocalLobby localLobby, LobbyServiceFacade lobbyServiceFacade)
+        {
+            m_LocalLobby = localLobby;
+            m_LobbyServiceFacade = lobbyServiceFacade;
+        }
+
         private void Awake()
         {
             Debug.Assert(Instance == null);
             Instance = this;
             m_ClientPortal = GetComponent<ClientGameNetPortal>();
             m_ServerPortal = GetComponent<ServerGameNetPortal>();
-        }
-
-        void Start()
-        {
             DontDestroyOnLoad(gameObject);
 
             //we synthesize a "OnNetworkSpawn" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
-            NetManager.OnServerStarted += OnNetworkReady;
             NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
         }
 
@@ -116,7 +121,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (NetManager != null)
             {
-                NetManager.OnServerStarted -= OnNetworkReady;
                 NetManager.OnClientConnectedCallback -= ClientNetworkReadyWrapper;
             }
 
@@ -156,7 +160,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Initializes host mode on this client. Call this and then other clients should connect to us!
         /// </summary>
         /// <remarks>
-        /// See notes in GNH_Client.StartClient about why this must be static.
+        /// See notes in ClientGameNetPortal.StartClient about why this must be static.
         /// </remarks>
         /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
         /// <param name="port">The port to connect to. </param>
@@ -182,27 +186,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             StartHost();
         }
 
-        public void StartPhotonRelayHost(string roomName, CancellationToken cancellationToken)
-        {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().RelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            switch (chosenTransport)
-            {
-                case PhotonRealtimeTransport photonRealtimeTransport:
-                    photonRealtimeTransport.RoomName = roomName;
-                    break;
-                default:
-                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
-            }
-
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                StartHost();
-            }
-        }
-
-        public async void StartUnityRelayHost(CancellationToken cancellationToken)
+        public async void StartUnityRelayHost()
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -214,22 +198,18 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                     try
                     {
-                        await UnityServices.InitializeAsync();
-                        if (!AuthenticationService.Instance.IsSignedIn)
-                        {
-                            await AuthenticationService.Instance.SignInAnonymouslyAsync();
-                            var playerId = AuthenticationService.Instance.PlayerId;
-                            Debug.Log(playerId);
-                        }
-
                         // we now need to get the joinCode?
                         var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
                         await serverRelayUtilityTask;
                         // we now have the info from the relay service
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, _) = serverRelayUtilityTask.Result;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
+
+                        m_LocalLobby.RelayJoinCode = joinCode;
+                        //next line enabled lobby and relay services integration
+                        m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
 
                         // we now need to set the RelayCode somewhere :P
-                        utp.SetRelayServerData(ipv4Address, port, allocationIdBytes, key, connectionData);
+                        utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
                     }
                     catch (Exception e)
                     {
@@ -242,10 +222,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
             }
 
-            if (!cancellationToken.IsCancellationRequested)
-            {
-                StartHost();
-            }
+            StartHost();
         }
 
         void StartHost()
@@ -267,6 +244,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ServerPortal.OnUserDisconnectRequest();
             SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
             NetManager.Shutdown();
+        }
+
+        public string GetPlayerId()
+        {
+            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + ProfileManager.Profile;
         }
     }
 }

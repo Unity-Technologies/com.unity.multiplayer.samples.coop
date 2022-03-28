@@ -5,9 +5,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// NetworkBehaviour that represents a player connection and is the "Default Player Prefab" inside Netcode for
-    /// GameObjects' NetworkManager. This NetworkBehaviour will contain several other NetworkBehaviours that should
-    /// persist throughout the duration of this connection, meaning it will persist between scenes.
+    /// GameObjects' (Netcode) NetworkManager. This NetworkBehaviour will contain several other NetworkBehaviours that
+    /// should persist throughout the duration of this connection, meaning it will persist between scenes.
     /// </summary>
+    /// <remarks>
+    /// It is not necessary to explicitly mark this as a DontDestroyOnLoad object as Netcode will handle migrating this
+    /// Player object between scene loads.
+    /// </remarks>
     [RequireComponent(typeof(NetworkObject))]
     public class PersistentPlayer : NetworkBehaviour
     {
@@ -24,11 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public NetworkAvatarGuidState NetworkAvatarGuidState => m_NetworkAvatarGuidState;
 
-        void Awake()
-        {
-            DontDestroyOnLoad(this);
-        }
-
         public override void OnNetworkSpawn()
         {
             gameObject.name = "PersistentPlayer" + OwnerClientId;
@@ -39,7 +38,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_PersistentPlayerRuntimeCollection.Add(this);
             if (IsServer)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData.HasValue)
                 {
                     m_NetworkNameState.Name.Value = sessionPlayerData.Value.PlayerName;
@@ -64,7 +63,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_PersistentPlayerRuntimeCollection.Remove(this);
             if (IsServer)
             {
-                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData.HasValue)
                 {
                     var playerData = sessionPlayerData.Value;

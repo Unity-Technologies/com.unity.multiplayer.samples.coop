@@ -87,17 +87,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void FixedUpdate()
         {
-            if (!m_Started) { return; } //don't do anything before OnNetworkSpawn has run.
-
-            Vector3 displacement = transform.forward * (m_ProjectileInfo.Speed_m_s * Time.fixedDeltaTime);
-            transform.position += displacement;
+            if (!m_Started)
+            {
+                return; //don't do anything before OnNetworkSpawn has run.
+            }
 
             if (m_DestroyAtSec < Time.fixedTime)
             {
                 // Time to return to the pool from whence it came.
-                NetworkObject networkObject = gameObject.GetComponent<NetworkObject>();
+                var networkObject = gameObject.GetComponent<NetworkObject>();
                 networkObject.Despawn();
+                return;
             }
+
+            var displacement = transform.forward * (m_ProjectileInfo.Speed_m_s * Time.fixedDeltaTime);
+            transform.position += displacement;
 
             if (!m_IsDead)
             {
