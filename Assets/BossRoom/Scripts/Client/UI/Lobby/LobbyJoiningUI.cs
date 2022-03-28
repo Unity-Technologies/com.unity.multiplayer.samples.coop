@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
@@ -22,6 +23,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         UpdateRunner m_UpdateRunner;
         IDisposable m_Subscriptions;
         List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
+
+        // Adding this here until it is available in the Lobby package itself
+        const string k_LobbyJoinCodeAlphabet = "ACDEFGHJKMNPRTWXY3467";
 
         void Awake()
         {
@@ -57,9 +61,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_Subscriptions = localLobbiesRefreshedSub.Subscribe(UpdateUI);
         }
 
+        /// <summary>
+        /// Added to the InputField component's OnValueChanged callback for the join code text.
+        /// </summary>
+        public void SanitizeJoinCodeInputText()
+        {
+            m_JoinCodeField.text = SanitizeJoinCode(m_JoinCodeField.text);
+        }
+
+        string SanitizeJoinCode(string dirtyString)
+        {
+            return Regex.Replace(dirtyString.ToUpper(), $"[^{k_LobbyJoinCodeAlphabet}]", "");
+        }
+
         public void OnJoinButtonPressed()
         {
-            m_LobbyUIMediator.JoinLobbyWithCodeRequest(m_JoinCodeField.text.ToUpper());
+            m_LobbyUIMediator.JoinLobbyWithCodeRequest(SanitizeJoinCode(m_JoinCodeField.text));
         }
 
         void PeriodicRefresh(float _)
