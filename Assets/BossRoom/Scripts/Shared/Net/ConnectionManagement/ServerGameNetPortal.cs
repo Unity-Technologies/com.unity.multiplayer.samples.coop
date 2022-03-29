@@ -214,31 +214,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
-            ConnectStatus gameReturnStatus;
 
             // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap
             // and don't spend useless time server side on invalid users trying to connect
             // todo this is currently still spending too much time server side.
             if (m_Portal.NetManager.ConnectedClientsIds.Count >= CharSelectData.k_MaxLobbyPlayers)
             {
-                gameReturnStatus = ConnectStatus.ServerFull;
+                return ConnectStatus.ServerFull;
             }
-            else
+
+            if (connectionPayload.isDebug != Debug.isDebugBuild)
             {
-                if (connectionPayload.isDebug != Debug.isDebugBuild)
-                {
-                    gameReturnStatus = ConnectStatus.IncompatibleBuildType;
-                }
-                else if (SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId))
-                {
-                    gameReturnStatus = ConnectStatus.LoggedInAgain;
-                }
-                else
-                {
-                    gameReturnStatus = ConnectStatus.Success;
-                }
+                return ConnectStatus.IncompatibleBuildType;
             }
-            return gameReturnStatus;
+
+            return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
+                ConnectStatus.LoggedInAgain : ConnectStatus.Success;
         }
 
         static IEnumerator WaitToDenyApproval(NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
