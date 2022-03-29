@@ -19,21 +19,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         static string GetProfile()
         {
-#if UNITY_EDITOR
-
-            //The code below makes it possible for the clone instance to log in as a different user profile in Authentication service.
-            //This allows us to test services integration locally by utilising Parrelsync.
-            if (ClonesManager.IsClone())
+            var arguments = Environment.GetCommandLineArgs();
+            for (int i = 0; i < arguments.Length; i++)
             {
-                Debug.Log("This is a clone project.");
-                var customArguments = ClonesManager.GetArgument().Split(',');
-
-                //second argument is our custom ID, but if it's not set we would just use some default.
-
-                var hardcodedProfileID = customArguments.Length > 1 ? customArguments[1] : "defaultCloneID";
-
-                return hardcodedProfileID;
+                if (arguments[i] == AuthProfileCommandLineArg)
+                {
+                    var profileId = arguments[i + 1];
+                    return profileId;
+                }
             }
+
+#if UNITY_EDITOR
 
             // When running in the Editor and not a ParrelSync clone, make a unique ID
             // from the Application.dataPath. This will work for cloning projects
@@ -45,16 +41,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return new Guid(hashedBytes).ToString("N");
 
 #endif
-
-            var arguments = System.Environment.GetCommandLineArgs();
-            for (int i = 0; i < arguments.Length; i++)
-            {
-                if (arguments[i] == AuthProfileCommandLineArg)
-                {
-                    var profileId = arguments[i + 1];
-                    return profileId;
-                }
-            }
 
             return "";
         }
