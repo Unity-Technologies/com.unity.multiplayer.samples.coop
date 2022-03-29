@@ -101,50 +101,51 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ClientIDToPlayerId.Clear();
         }
 
+        public bool IsDuplicateConnection(string playerId)
+        {
+            return m_ClientData.ContainsKey(playerId) && m_ClientData[playerId].IsConnected;
+        }
+
         /// <summary>
-        /// Adds a connecting player's session data if it is a new connection, or updates their session data in case of a reconnection. If the connection is not valid, simply returns false.
+        /// Adds a connecting player's session data if it is a new connection, or updates their session data in case of a reconnection.
         /// </summary>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="playerId">This is the playerId that is unique to this client and persists across multiple logins from the same client</param>
         /// <param name="sessionPlayerData">The player's initial data</param>
-        /// <returns>True if the player connection is valid (i.e. not a duplicate connection)</returns>
-        public bool SetupConnectingPlayerSessionData(ulong clientId, string playerId, T sessionPlayerData)
+        public void SetupConnectingPlayerSessionData(ulong clientId, string playerId, T sessionPlayerData)
         {
-            bool success = true;
+            var isReconnecting = false;
 
-            //Test for Duplicate Login.
+            // Test for duplicate connection
+            if (IsDuplicateConnection(playerId))
+            {
+                Debug.LogError($"Player ID {playerId} already exists. This is a duplicate connection. Rejecting this session data.");
+                return;
+            }
+
+            // If another client exists with the same playerId
             if (m_ClientData.ContainsKey(playerId))
             {
-                bool isReconnecting = false;
-
-                // If another client is connected with the same playerId
-                if (m_ClientData[playerId].IsConnected)
+                if (!m_ClientData[playerId].IsConnected)
                 {
-                    success = false;
-                }
-                else
-                {
+                    // If this connecting client has the same player Id as a disconnected client, this is a reconnection.
                     isReconnecting = true;
                 }
 
-                // Reconnecting. Give data from old player to new player
-                if (isReconnecting)
-                {
-                    // Update player session data
-                    sessionPlayerData = m_ClientData[playerId];
-                    sessionPlayerData.ClientID = clientId;
-                    sessionPlayerData.IsConnected = true;
-                }
+            }
+
+            // Reconnecting. Give data from old player to new player
+            if (isReconnecting)
+            {
+                // Update player session data
+                sessionPlayerData = m_ClientData[playerId];
+                sessionPlayerData.ClientID = clientId;
+                sessionPlayerData.IsConnected = true;
             }
 
             //Populate our dictionaries with the SessionPlayerData
-            if (success)
-            {
-                m_ClientIDToPlayerId[clientId] = playerId;
-                m_ClientData[playerId] = sessionPlayerData;
-            }
-
-            return success;
+            m_ClientIDToPlayerId[clientId] = playerId;
+            m_ClientData[playerId] = sessionPlayerData;
         }
 
         public string GetPlayerId(ulong clientId)
