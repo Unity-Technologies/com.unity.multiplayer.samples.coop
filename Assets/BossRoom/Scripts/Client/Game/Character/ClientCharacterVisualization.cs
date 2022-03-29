@@ -99,7 +99,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
 
-                if (transform.parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                if (m_NetState.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
                 {
                     m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
                 }
@@ -115,7 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
 
-                    if (transform.parent.TryGetComponent(out ClientInputSender inputSender))
+                    if (m_NetState.TryGetComponent(out ClientInputSender inputSender))
                     {
                         // TODO: revisit; anticipated actions would play twice on the host
                         if (!IsServer)
