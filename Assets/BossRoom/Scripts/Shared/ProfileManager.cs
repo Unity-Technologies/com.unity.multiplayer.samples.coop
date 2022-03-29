@@ -4,7 +4,6 @@ using UnityEngine;
 using System;
 using System.Security.Cryptography;
 using System.Text;
-using ParrelSync;
 #endif
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared
