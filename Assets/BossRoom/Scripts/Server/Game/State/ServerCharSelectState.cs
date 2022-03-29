@@ -148,7 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     CharSelectData.LobbyPlayers[i] = new CharSelectData.LobbyPlayerState(
                         CharSelectData.LobbyPlayers[i].ClientId,
                         CharSelectData.LobbyPlayers[i].PlayerName,
-                        CharSelectData.LobbyPlayers[i].PlayerNum,
+                        CharSelectData.LobbyPlayers[i].PlayerNumber,
                         CharSelectData.SeatState.Active,
                         CharSelectData.LobbyPlayers[i].SeatIdx,
                         CharSelectData.LobbyPlayers[i].LastChangeTime);
