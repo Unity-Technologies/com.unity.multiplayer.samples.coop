@@ -214,10 +214,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
-
-            // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap
-            // and don't spend useless time server side on invalid users trying to connect
-            // todo this is currently still spending too much time server side.
             if (m_Portal.NetManager.ConnectedClientsIds.Count >= CharSelectData.k_MaxLobbyPlayers)
             {
                 return ConnectStatus.ServerFull;
