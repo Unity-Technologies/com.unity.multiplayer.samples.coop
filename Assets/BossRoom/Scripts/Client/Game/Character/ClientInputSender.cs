@@ -161,6 +161,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             m_ActionRequestCount = 0;
+            
+            if (EventSystem.current.currentSelectedGameObject != null) 
+            {
+                return;
+            }
 
             if (m_MoveRequest)
             {
