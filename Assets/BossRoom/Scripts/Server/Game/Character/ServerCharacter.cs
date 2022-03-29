@@ -72,6 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+                OnLifeStateChanged(LifeState.Alive, NetState.NetworkLifeState.LifeState.Value);
                 m_DamageReceiver.damageReceived += ReceiveHP;
                 m_DamageReceiver.collisionEntered += CollisionEntered;
 

@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -126,19 +125,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData is { HasCharacterSpawned: true })
                 {
-                    StartCoroutine(SetReconnectingHitPointsCoroutine(sessionPlayerData.Value.CurrentHitPoints));
+                    HitPoints = sessionPlayerData.Value.CurrentHitPoints;
+                    if (HitPoints <= 0)
+                    {
+                        LifeState = IsNpc ? LifeState.Dead : LifeState.Fainted;
+                    }
                 }
-            }
-        }
-
-        IEnumerator SetReconnectingHitPointsCoroutine(int hitPoints)
-        {
-            // Wait until end of frame to make sure other NetworkBehaviors for this character had time to spawn.
-            yield return new WaitForEndOfFrame();
-            HitPoints = hitPoints;
-            if (HitPoints <= 0)
-            {
-                LifeState = IsNpc ? LifeState.Dead : LifeState.Fainted;
             }
         }
 

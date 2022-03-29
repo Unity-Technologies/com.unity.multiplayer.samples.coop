@@ -23,6 +23,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (IsServer)
             {
                 m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+                if (m_NetworkLifeState.LifeState.Value != LifeState.Alive)
+                {
+                    // If the character is not alive at spawn, send the appropriate animation trigger.
+                    OnLifeStateChanged(LifeState.Alive, m_NetworkLifeState.LifeState.Value);
+                }
             }
         }
 
