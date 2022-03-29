@@ -30,10 +30,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
 #if UNITY_EDITOR
 
-            // When running in the Editor and not a ParrelSync clone, make a unique ID
-            // from the Application.dataPath. This will work for cloning projects
-            // manually, or with Virtual Projects. Since only a single instance of
-            // the Editor can be open for a specific dataPath, uniqueness is ensured.
+            // When running in the Editor make a unique ID from the Application.dataPath.
+            // This will work for cloning projects manually, or with Virtual Projects.
+            // Since only a single instance of the Editor can be open for a specific
+            // dataPath, uniqueness is ensured.
             var hashedBytes = new MD5CryptoServiceProvider()
                 .ComputeHash(Encoding.UTF8.GetBytes(Application.dataPath));
             Array.Resize(ref hashedBytes, 16);
