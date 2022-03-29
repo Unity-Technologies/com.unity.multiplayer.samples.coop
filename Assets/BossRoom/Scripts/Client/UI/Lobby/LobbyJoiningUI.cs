@@ -26,6 +26,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         // Adding this here until it is available in the Lobby package itself
         const string k_LobbyJoinCodeAlphabet = "ACDEFGHJKMNPRTWXY3467";
+        const string k_JoinCodeSanitizationRegexPattern = "[^" + k_LobbyJoinCodeAlphabet + "]";
 
         void Awake()
         {
@@ -71,7 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         string SanitizeJoinCode(string dirtyString)
         {
-            return Regex.Replace(dirtyString.ToUpper(), $"[^{k_LobbyJoinCodeAlphabet}]", "");
+            return Regex.Replace(dirtyString.ToUpper(), k_JoinCodeSanitizationRegexPattern, "");
         }
 
         public void OnJoinButtonPressed()
