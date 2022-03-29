@@ -55,6 +55,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 switch (exception.Reason)
                 {
                     // If the error is one of the following, the player needs to know about it, so show in a popup message. Otherwise, the log in the console is sufficient.
+                    case LobbyExceptionReason.ValidationError:
+                        PopupPanel.ShowPopupPanel("Validation Error", "Validation check failed on Lobby. Is the join code correctly formatted?");
+                        break;
                     case LobbyExceptionReason.LobbyNotFound:
                         PopupPanel.ShowPopupPanel("Lobby Not Found", "Requested lobby not found. The join code is incorrect or the lobby has ended.");
                         break;
