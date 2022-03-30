@@ -1,10 +1,11 @@
-using UnityEngine;
+using System;
 
 #if UNITY_EDITOR
-using System;
 using System.Security.Cryptography;
 using System.Text;
 #endif
+
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared
 {
@@ -38,10 +39,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                 .ComputeHash(Encoding.UTF8.GetBytes(Application.dataPath));
             Array.Resize(ref hashedBytes, 16);
             return new Guid(hashedBytes).ToString("N");
-
-#endif
-
+#else
             return "";
+#endif
         }
     }
 }
