@@ -177,13 +177,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     m_LastSentMove = Time.time;
                     var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
 
-                    // clear previous results
-                    for (int i = 0; i < k_CachedHit.Length; i++)
-                    {
-                        k_CachedHit[i] = default;
-                    }
+                    var groundHits = Physics.RaycastNonAlloc(ray,
+                        k_CachedHit,
+                        k_MouseInputRaycastDistance,
+                        m_GroundLayerMask);
 
-                    var groundHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_GroundLayerMask);
                     if (groundHits > 0)
                     {
                         if (groundHits > 1)
@@ -193,7 +191,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         }
 
                         // verify point is indeed on navmesh surface
-                        if (NavMesh.SamplePosition(k_CachedHit[0].point, out var hit, k_MaxNavMeshDistance, NavMesh.AllAreas))
+                        if (NavMesh.SamplePosition(k_CachedHit[0].point,
+                                out var hit,
+                                k_MaxNavMeshDistance,
+                                NavMesh.AllAreas))
                         {
                             m_NetworkCharacter.SendCharacterInputServerRpc(hit.position);
 
