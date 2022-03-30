@@ -22,6 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         GenericDisconnect,        //server disconnected, but no specific reason given.
         Reconnecting,             //client lost connection and is attempting to reconnect.
         HostDisconnected,         //Intentional Disconnect from the host.
+        IncompatibleBuildType,    //client build type is incompatible with server.
     }
 
     public enum OnlineMode
@@ -38,6 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public string playerId;
         public int clientScene = -1;
         public string playerName;
+        public bool isDebug;
     }
 
     /// <summary>

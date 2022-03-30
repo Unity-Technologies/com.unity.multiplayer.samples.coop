@@ -332,6 +332,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 ConfigureUIForLobbyMode(LobbyMode.LobbyEnding);
             }
+            else
+            {
+                if (m_LastSeatSelected == -1)
+                {
+                    ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
+                }
+                else
+                {
+                    ConfigureUIForLobbyMode(LobbyMode.SeatChosen);
+                    m_ClassInfoBox.ConfigureForClass(CharSelectData.AvatarConfiguration[m_LastSeatSelected].CharacterClass);
+                }
+            }
         }
 
         /// <summary>

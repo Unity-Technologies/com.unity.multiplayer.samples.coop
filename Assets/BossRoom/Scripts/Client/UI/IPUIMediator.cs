@@ -24,13 +24,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [SerializeField] IPHostingUI m_IPHostingUI;
 
-        [SerializeField] UITinter m_JoinTabButtonTinter;
-
         [SerializeField] UITinter m_JoinTabButtonHighlightTinter;
         
         [SerializeField] UITinter m_JoinTabButtonTabBlockerTinter;
-
-        [SerializeField] UITinter m_HostTabButtonTinter;
 
         [SerializeField] UITinter m_HostTabButtonHighlightTinter;
         
@@ -122,10 +118,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_IPJoiningUI.Show();
             m_IPHostingUI.Hide();
-            m_JoinTabButtonTinter.SetToColor(1);
             m_JoinTabButtonHighlightTinter.SetToColor(1);
             m_JoinTabButtonTabBlockerTinter.SetToColor(1);
-            m_HostTabButtonTinter.SetToColor(0);
             m_HostTabButtonHighlightTinter.SetToColor(0);
             m_HostTabButtonTabBlockerTinter.SetToColor(0);
         }
@@ -134,10 +128,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_IPJoiningUI.Hide();
             m_IPHostingUI.Show();
-            m_JoinTabButtonTinter.SetToColor(0);
             m_JoinTabButtonHighlightTinter.SetToColor(0);
             m_JoinTabButtonTabBlockerTinter.SetToColor(0);
-            m_HostTabButtonTinter.SetToColor(1);
             m_HostTabButtonHighlightTinter.SetToColor(1);
             m_HostTabButtonTabBlockerTinter.SetToColor(1);
         }
