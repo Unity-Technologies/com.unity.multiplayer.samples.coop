@@ -16,7 +16,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
-        public bool IsDisplaying => m_CanvasGroup.alpha > 0;
+        public bool IsDisplaying => m_IsDisplaying;
+
+        bool m_IsDisplaying;
 
         void Awake()
         {
@@ -39,12 +41,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_CanvasGroup.alpha = 1f;
             m_CanvasGroup.blocksRaycasts = true;
+            m_IsDisplaying = true;
         }
 
         void Hide()
         {
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
+            m_IsDisplaying = false;
         }
     }
 }
