@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 8184890942973508939}
   - component: {fileID: 4897062626467851486}
   - component: {fileID: 8778471712971589033}
-  m_Layer: 8
+  - component: {fileID: 8106763230213914577}
+  m_Layer: 10
   m_Name: env_Door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -109,3 +110,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 2.13, y: 6.8740873, z: 2.58}
   m_Center: {x: 0.86, y: 2.1874208, z: -0.0069583077}
+--- !u!114 &8106763230213914577
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1899106884463111546}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 1
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
