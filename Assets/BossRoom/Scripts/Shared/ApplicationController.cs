@@ -105,7 +105,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         private bool OnWantToQuit()
         {
             var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
-            if (canQuit)
+            if (!canQuit)
             {
                 StartCoroutine(LeaveBeforeQuit());
             }
