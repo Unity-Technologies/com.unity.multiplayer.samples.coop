@@ -78,13 +78,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        public void Clear()
-        {
-            //resets all our runtime state.
-            m_ClientData.Clear();
-            m_ClientIDToPlayerId.Clear();
-        }
-
         /// <summary>
         /// Adds a connecting player's session data if it is a new connection, or updates their session data in case of a reconnection. If the connection is not valid, simply returns false.
         /// </summary>
@@ -208,6 +201,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             ClearDisconnectedPlayersData();
             ReinitializePlayersData();
+            m_HasSessionStarted = false;
+        }
+
+        /// <summary>
+        /// Resets all our runtime state, so it is ready to be reinitialized when starting a new server
+        /// </summary>
+        public void OnServerEnded()
+        {
+            m_ClientData.Clear();
+            m_ClientIDToPlayerId.Clear();
             m_HasSessionStarted = false;
         }
 

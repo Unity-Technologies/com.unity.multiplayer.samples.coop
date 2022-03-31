@@ -239,10 +239,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (NetManager.IsServer)
             {
                 NetManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+                SessionManager<SessionPlayerData>.Instance.OnServerEnded();
             }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            SessionManager<SessionPlayerData>.Instance.Clear();
             NetManager.Shutdown();
         }
 

@@ -102,6 +102,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
                 }
+                SessionManager<SessionPlayerData>.Instance.OnServerEnded();
             }
             else
             {
