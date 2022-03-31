@@ -72,7 +72,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 NetState.ReceivedClientInput += OnClientMoveRequest;
                 NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
-                OnLifeStateChanged(LifeState.Alive, NetState.NetworkLifeState.LifeState.Value);
                 m_DamageReceiver.damageReceived += ReceiveHP;
                 m_DamageReceiver.collisionEntered += CollisionEntered;
 
@@ -86,6 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
                     PlayAction(ref startingAction);
                 }
+                InitializeHitPoints();
             }
         }
 
@@ -104,6 +104,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_DamageReceiver.damageReceived -= ReceiveHP;
                 m_DamageReceiver.collisionEntered -= CollisionEntered;
             }
+        }
+
+        void InitializeHitPoints()
+        {
+            NetState.HitPoints = NetState.CharacterClass.BaseHP.Value;
+
+            if (!IsNpc)
+            {
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData is {HasCharacterSpawned: true})
+                {
+                    NetState.HitPoints = sessionPlayerData.Value.CurrentHitPoints;
+                    if (NetState.HitPoints <= 0)
+                    {
+                        // Update LifeState on next frame to make sure everything listening on it has time to initialize
+                        StartCoroutine(WaitToUpdateLifeState(LifeState.Fainted));
+                    }
+                }
+            }
+        }
+
+        IEnumerator WaitToUpdateLifeState(LifeState lifeState)
+        {
+            yield return null;
+            NetState.LifeState = lifeState;
         }
 
         /// <summary>
