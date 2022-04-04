@@ -3,7 +3,6 @@ using System.Collections;
 using NUnit.Framework;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
@@ -30,23 +29,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         ClientMainMenuState m_ClientMainMenuState;
 
+        LobbyUIMediator m_LobbyUIMediator;
+
+        LobbyCreationUI m_LobbyCreationUI;
+
+        IPUIMediator m_IPUIMediator;
+
+        IPHostingUI m_IPHostingUI;
+
         [Inject]
         void Initialize(
             ClientMainMenuState clientMainMenuState,
             LobbyUIMediator lobbyUIMediator,
             LobbyCreationUI lobbyCreationUI,
-            LobbyServiceFacade lobbyServiceFacade,
             IPUIMediator ipUiMediator,
             IPHostingUI ipHostingUI
         )
         {
             m_ClientMainMenuState = clientMainMenuState;
-        }
-
-        [UnitySetUp]
-        IEnumerator AddToDI()
-        {
-            yield return null;
+            m_LobbyUIMediator = lobbyUIMediator;
+            m_LobbyCreationUI = lobbyCreationUI;
+            m_IPUIMediator = ipUiMediator;
+            m_IPHostingUI = ipHostingUI;
         }
 
         /// <summary>
@@ -196,10 +200,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             yield return new WaitForSeconds(2f);
 
-            DIScope.RootScope.InjectIn(this);
-
-            // by now, DI has been resolved
-            //DIScope.RootScope.InjectIn(this);
+            var scope = DIScope.RootScope;
+            scope.InjectIn(this);
 
             // now inside MainMenu scene
 
@@ -213,28 +215,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             Assert.IsTrue(AuthenticationService.Instance.IsAuthorized);
 
-            var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
+            Assert.That(m_ClientMainMenuState != null, $"{nameof(ClientMainMenuState)} component not found!");
 
-            Assert.That(clientMainMenuState != null, $"{nameof(ClientMainMenuState)} component not found!");
-
-            clientMainMenuState.OnDirectIPClicked();
+            m_ClientMainMenuState.OnDirectIPClicked();
 
             yield return new WaitForEndOfFrame();
 
-            var ipUIMediator = GameObject.FindObjectOfType<IPUIMediator>();
+            Assert.That(m_IPUIMediator != null, $"{nameof(IPUIMediator)} component not found!");
 
-            Assert.That(ipUIMediator != null, $"{nameof(IPUIMediator)} component not found!");
-
-            ipUIMediator.ToggleCreateIPUI();
+            m_IPUIMediator.ToggleCreateIPUI();
 
             // a confirmation popup will appear; wait a frame for it to pop up
             yield return new WaitForEndOfFrame();
 
-            var ipHostingUI = GameObject.FindObjectOfType<IPHostingUI>();
+            Assert.That(m_IPHostingUI != null, $"{nameof(IPHostingUI)} component not found!");
 
-            Assert.That(ipHostingUI != null, $"{nameof(IPHostingUI)} component not found!");
-
-            ipHostingUI.OnCreateClick();
+            m_IPHostingUI.OnCreateClick();
 
             // confirming hosting will initialize the hosting process; next frame the results will be ready
             yield return null;
