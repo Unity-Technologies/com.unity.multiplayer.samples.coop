@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using Unity.Services.Relay;
@@ -8,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     public static class UnityRelayUtilities
     {
-        public static string JoinCode { get; private set; } = string.Empty;
+        private const string kDtlsConnType = "dtls";
 
         public static async
             Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[] key, string
@@ -32,14 +33,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
             try
             {
                 joinCode = await Relay.Instance.GetJoinCodeAsync(allocation.AllocationId);
-                JoinCode = joinCode;
             }
             catch (Exception exception)
             {
                 throw new Exception($"Creating join code request has failed: \n {exception.Message}");
             }
 
-            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationIdBytes,
+            var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == kDtlsConnType);
+            return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.Key, joinCode);
         }
 
@@ -51,7 +52,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             try
             {
                 allocation = await Relay.Instance.JoinAllocationAsync(joinCode);
-                JoinCode = joinCode;
             }
             catch (Exception exception)
             {
@@ -62,7 +62,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             Debug.Log($"host: {allocation.HostConnectionData[0]} {allocation.HostConnectionData[1]}");
             Debug.Log($"client: {allocation.AllocationId}");
 
-            return (allocation.RelayServer.IpV4, (ushort)allocation.RelayServer.Port, allocation.AllocationIdBytes,
+            var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == kDtlsConnType);
+            return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes,
                 allocation.ConnectionData, allocation.HostConnectionData, allocation.Key);
         }
     }
