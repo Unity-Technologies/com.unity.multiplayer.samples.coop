@@ -62,13 +62,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         protected virtual void Awake()
         {
+            DIScope.RootScope.InjectIn(this);
+            m_Scope = new DIScope(DIScope.RootScope);
             InitializeScope();
             m_Scope.FinalizeScopeConstruction();
             foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
             {
                 m_Scope.InjectIn(autoInjectedGameObject);
             }
-            DIScope.RootScope.InjectIn(this);
         }
 
         // Start is called before the first frame update
@@ -107,7 +108,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         protected virtual void InitializeScope()
         {
-            m_Scope = new DIScope(DIScope.RootScope);
         }
 
         public override void OnDestroy()
