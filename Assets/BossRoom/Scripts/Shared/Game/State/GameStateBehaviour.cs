@@ -55,7 +55,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private static GameObject s_ActiveStateGO;
 
-        protected DIScope m_Scope;
+        public DIScope Scope
+        {
+            get => m_Scope;
+            private set => m_Scope = value;
+        }
+
+        DIScope m_Scope;
 
         [SerializeField]
         GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
@@ -63,12 +69,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         protected virtual void Awake()
         {
             DIScope.RootScope.InjectIn(this);
-            m_Scope = new DIScope(DIScope.RootScope);
+            Scope = new DIScope(DIScope.RootScope);
             InitializeScope();
-            m_Scope.FinalizeScopeConstruction();
+            Scope.FinalizeScopeConstruction();
             foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
             {
-                m_Scope.InjectIn(autoInjectedGameObject);
+                Scope.InjectIn(autoInjectedGameObject);
             }
         }
 
@@ -112,7 +118,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnDestroy()
         {
-            m_Scope?.Dispose();
+            Scope?.Dispose();
             base.OnDestroy();
             if (!Persists)
             {

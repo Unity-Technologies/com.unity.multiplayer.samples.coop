@@ -37,9 +37,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         protected override void InitializeScope()
         {
-            m_Scope.BindInstanceAsSingle(m_NameGenerationData);
-            m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
-            m_Scope.BindInstanceAsSingle(m_IPUIMediator);
+            Scope.BindInstanceAsSingle(m_NameGenerationData);
+            Scope.BindInstanceAsSingle(m_LobbyUIMediator);
+            Scope.BindInstanceAsSingle(m_IPUIMediator);
         }
 
         [Inject]
