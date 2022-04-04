@@ -49,6 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // warning: "No ConnectionApproval callback defined. Connection approval will timeout"
             m_Portal.NetManager.ConnectionApprovalCallback += ApprovalCheck;
             m_Portal.NetManager.OnServerStarted += ServerStartedHandler;
+            m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
         }
 
         void OnDestroy()
@@ -59,8 +60,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     m_Portal.NetManager.ConnectionApprovalCallback -= ApprovalCheck;
                     m_Portal.NetManager.OnServerStarted -= ServerStartedHandler;
+                    m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
                 }
             }
+            Clear();
         }
 
         public void OnNetworkReady()
@@ -71,9 +74,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             else
             {
-                //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
-                m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
-
                 //The "BossRoom" server always advances to CharSelect immediately on start. Different games
                 //may do this differently.
                 NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
@@ -91,17 +91,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         void OnClientDisconnect(ulong clientId)
         {
+            if (!m_Portal.NetManager.IsServer)
+            {
+                return;
+            }
+
             m_ClientSceneMap.Remove(clientId);
 
             if (clientId == m_Portal.NetManager.LocalClientId)
             {
-                //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
-                //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
-                m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
-                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                {
-                    m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
-                }
+                Clear();
             }
             else
             {
@@ -130,10 +129,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             Clear();
         }
 
+        /// <summary>
+        /// Resets all our runtime state and deletes the current lobby if it exists
+        /// </summary>
         void Clear()
         {
-            //resets all our runtime state.
             m_ClientSceneMap.Clear();
+
+            // delete the current lobby if it exists
+            if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+            {
+                m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+            }
         }
 
         public bool AreAllClientsInServerScene()
