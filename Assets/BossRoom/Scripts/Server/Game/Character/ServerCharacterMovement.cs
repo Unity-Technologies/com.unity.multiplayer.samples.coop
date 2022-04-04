@@ -34,6 +34,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private MovementState m_MovementState;
 
+        MovementStatus m_PreviousState;
+
         [SerializeField]
         private ServerCharacter m_CharLogic;
 
@@ -169,7 +171,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             PerformMovement();
 
-            m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
+            var currentState = GetMovementStatus(m_MovementState);
+            if (m_PreviousState != currentState)
+            {
+                m_NetworkCharacterState.MovementStatus.Value = currentState;
+                m_PreviousState = currentState;
+            }
         }
 
         public override void OnNetworkDespawn()
@@ -259,9 +266,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Determines the appropriate MovementStatus for the character. The
         /// MovementStatus is used by the client code when animating the character.
         /// </summary>
-        private MovementStatus GetMovementStatus()
+        private MovementStatus GetMovementStatus(MovementState movementState)
         {
-            switch (m_MovementState)
+            switch (movementState)
             {
                 case MovementState.Idle:
                     return MovementStatus.Idle;

@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -63,6 +64,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [Tooltip("If the speed variable is between WalkSpeedThreshold and this, we're running. (Higher than this means no sound)")]
         private float m_RunSpeedThreshold = 1.2f;
 
+        float m_LastSpeed;
+
         void Awake()
         {
             if (!m_Animator)
@@ -73,17 +76,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private void Update()
         {
-            if (!m_Animator || !m_AudioSource || !m_WalkFootstepAudioClip || !m_RunFootstepAudioClip || m_AnimatorVariableHash == 0)
+            if (!m_Animator)
             {
                 // we can't actually run since we don't have the stuff we need. So just stop updating
                 enabled = false;
                 return;
             }
 
+            var speed = m_Animator.GetFloat(m_AnimatorVariableHash);
+
+            if (Mathf.Approximately(speed, m_LastSpeed))
+            {
+                return;
+            }
+
             // choose which sound effect to use based on how fast we're walking
             AudioClip clipToUse = null;
             float volume = 0;
-            float speed = m_Animator.GetFloat(m_AnimatorVariableHash);
+
             if (speed <= m_TooSlowThreshold)
             {
                 // we could have a "VERY slow walk" sound... but we don't, so just play nothing
@@ -117,6 +127,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_AudioSource.loop = true;
                 m_AudioSource.Play();
             }
+
+            m_LastSpeed = speed;
         }
 
 #if UNITY_EDITOR
@@ -128,9 +140,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         private void OnValidate()
         {
             m_AnimatorVariableHash = Animator.StringToHash(m_AnimatorVariable);
+            Assert.IsTrue(m_AnimatorVariableHash != 0);
 
             if (m_AudioSource == null)
+            {
                 m_AudioSource = GetComponent<AudioSource>();
+            }
+            Assert.IsNotNull(m_AudioSource);
+
+            Assert.IsNotNull(m_WalkFootstepAudioClip);
+
+            Assert.IsNotNull(m_RunFootstepAudioClip);
         }
 #endif
     }
