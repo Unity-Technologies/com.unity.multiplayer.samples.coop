@@ -24,10 +24,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         IDisposable m_Subscriptions;
         List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
 
-        // Adding this here until it is available in the Lobby package itself
-        const string k_LobbyJoinCodeAlphabet = "ACDEFGHJKMNPRTWXY3467";
-        const string k_JoinCodeSanitizationRegexPattern = "[^" + k_LobbyJoinCodeAlphabet + "]";
-
         void Awake()
         {
             m_LobbyListItemPrototype.gameObject.SetActive(false);
@@ -72,7 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         string SanitizeJoinCode(string dirtyString)
         {
-            return Regex.Replace(dirtyString.ToUpper(), k_JoinCodeSanitizationRegexPattern, "");
+            return Regex.Replace(dirtyString.ToUpper(), "[^A-Z0-9]", "");
         }
 
         public void OnJoinButtonPressed()
