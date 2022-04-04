@@ -155,7 +155,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return playerId;
             }
 
-            Debug.LogError($"No client guid found mapped to the given client ID: {clientId}");
+            Debug.LogError($"No client player ID found mapped to the given client ID: {clientId}");
             return null;
         }
 
