@@ -25,12 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_ApplicationController = applicationController;
         }
 
-        void Awake()
-        {
-            var scope = DIScope.RootScope;
-            scope.InjectIn(gameObject);
-        }
-
         public void Quit()
         {
             switch (m_QuitMode)
