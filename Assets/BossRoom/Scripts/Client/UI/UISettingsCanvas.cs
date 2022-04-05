@@ -18,25 +18,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void Awake()
         {
-            // the settings canvas should exist in all scenes!
-            DontDestroyOnLoad(gameObject);
-
             // hide the settings window at startup (this is just to handle the common case where an artist forgets to disable the window in the prefab)
             DisablePanels();
-            SceneManager.sceneLoaded += OnSceneLoaded;
-        }
-
-        void OnDestroy()
-        {
-            SceneManager.sceneLoaded -= OnSceneLoaded;
-        }
-
-        void OnSceneLoaded(Scene scene, LoadSceneMode loadSceneMode)
-        {
-            if (loadSceneMode == LoadSceneMode.Single)
-            {
-                DisablePanels();
-            }
         }
 
         void DisablePanels()

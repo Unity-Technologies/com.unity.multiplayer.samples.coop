@@ -172,13 +172,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 m_Path.Add(corners[i]);
             }
-
-            // If the path is still empty here then the target position wasn't on the nav mesh.
-            if (m_Path.Count == 0)
-            {
-                // In that case we just create a linear path directly to the target.
-                m_Path.Add(TargetPosition);
-            }
         }
 
         public void Dispose()

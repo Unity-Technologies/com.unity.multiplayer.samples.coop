@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4437348436208465204}
   - component: {fileID: 3432985996055369824}
   - component: {fileID: 2212805465033422730}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: env_wall1_base_diagonal_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -92,7 +92,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5915529853195630635}
   - component: {fileID: 7898993292670171814}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: Diagonal_Collider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
