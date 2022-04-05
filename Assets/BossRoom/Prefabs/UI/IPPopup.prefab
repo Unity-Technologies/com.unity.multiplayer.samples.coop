@@ -351,7 +351,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1014,7 +1014,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.023529414, b: 0.04705883, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1105,7 +1105,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0, g: 0.023529414, b: 0.04705883, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -1226,7 +1226,6 @@ GameObject:
   - component: {fileID: 2057931095918228162}
   - component: {fileID: 3217480593287788585}
   - component: {fileID: 2242940246583725761}
-  - component: {fileID: 5835693888197301866}
   - component: {fileID: 4351232040011826679}
   m_Layer: 5
   m_Name: JoinButton
@@ -1295,21 +1294,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1.5
---- !u!114 &5835693888197301866
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3825292631697100053}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86fd4fbcc3fc84b228fc9c4cb612c32a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TintColors:
-  - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &4351232040011826679
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2086,7 +2070,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.17835717, g: 0.3161786, b: 0.45400003, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -2991,10 +2975,8 @@ MonoBehaviour:
   m_PlayerNameLabel: {fileID: 7328528642576607773}
   m_IPJoiningUI: {fileID: 4035387343632270047}
   m_IPHostingUI: {fileID: 6512829474060433337}
-  m_JoinTabButtonTinter: {fileID: 5835693888197301866}
   m_JoinTabButtonHighlightTinter: {fileID: 3300828701031786671}
   m_JoinTabButtonTabBlockerTinter: {fileID: 3953053990258396426}
-  m_HostTabButtonTinter: {fileID: 8675839305897455978}
   m_HostTabButtonHighlightTinter: {fileID: 1839781279224386958}
   m_HostTabButtonTabBlockerTinter: {fileID: 8260437346995034578}
   m_SignInSpinner: {fileID: 8543714399569277319}
@@ -3057,7 +3039,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3558,7 +3540,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -3633,7 +3615,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
@@ -4029,7 +4011,6 @@ GameObject:
   - component: {fileID: 4258862478995995494}
   - component: {fileID: 1519931548906777285}
   - component: {fileID: 4083683571038336106}
-  - component: {fileID: 8675839305897455978}
   - component: {fileID: 996135322976812024}
   m_Layer: 5
   m_Name: CreateButton
@@ -4098,21 +4079,6 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1.5
---- !u!114 &8675839305897455978
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8406754363237041140}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 86fd4fbcc3fc84b228fc9c4cb612c32a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TintColors:
-  - {r: 1, g: 1, b: 1, a: 1}
-  - {r: 1, g: 1, b: 1, a: 1}
 --- !u!114 &996135322976812024
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4513,7 +4479,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
   m_Color: {r: 0.17835717, g: 0.3161786, b: 0.45400003, a: 1}
-  m_RaycastTarget: 1
+  m_RaycastTarget: 0
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:

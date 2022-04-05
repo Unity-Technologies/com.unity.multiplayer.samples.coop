@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7664817387903770535}
   - component: {fileID: 4714923167043452582}
   m_Layer: 0
-  m_Name: FX_Boss_LeapTrail
+  m_Name: FX_Boss_Leap_Weapon_Trail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4940,6 +4940,6 @@ TrailRenderer:
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0.02
+  m_MinVertexDistance: 1
   m_Autodestruct: 0
   m_Emitting: 1
