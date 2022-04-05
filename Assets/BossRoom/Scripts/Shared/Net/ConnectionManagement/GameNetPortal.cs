@@ -21,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
         UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
+        IncompatibleBuildType,      //client build type is incompatible with server.
     }
 
     public enum OnlineMode
@@ -37,6 +38,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public string playerId;
         public int clientScene = -1;
         public string playerName;
+        public bool isDebug;
     }
 
     /// <summary>
