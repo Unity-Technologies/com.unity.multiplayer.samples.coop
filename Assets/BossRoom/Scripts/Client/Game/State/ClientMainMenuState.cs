@@ -48,25 +48,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
             m_Scope.BindInstanceAsSingle(m_IPUIMediator);
 
-            var unityAuthenticationInitOptions = new InitializationOptions();
-            var profile = ProfileManager.Profile;
-            if (profile.Length > 0)
-            {
-                unityAuthenticationInitOptions.SetProfile(profile);
-            }
-
-            authServiceFacade.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
-
             m_Scope.FinalizeScopeConstruction();
 
             foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
             {
                 m_Scope.InjectIn(autoInjectedGameObject);
             }
-#endif
 
             try
             {
+                var unityAuthenticationInitOptions = new InitializationOptions();
+                var profile = ProfileManager.Profile;
+                if (profile.Length > 0)
+                {
+                    unityAuthenticationInitOptions.SetProfile(profile);
+                }
+
                 await authServiceFacade.DoSignInAsync(unityAuthenticationInitOptions);
                 OnAuthSignIn();
             }
