@@ -18,8 +18,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         Coroutine m_WaitToEndLobbyCoroutine;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             CharSelectData = GetComponent<CharSelectData>();
         }
 

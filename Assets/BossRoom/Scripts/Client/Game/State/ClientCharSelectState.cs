@@ -103,16 +103,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
-        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-        DIScope m_Scope;
-
-        void Awake()
+        protected override void Awake()
         {
-            //creating a child scope just to have manual control over the lifetime of the things
-            //that shouldn't live past the current scene existence
-            m_Scope = new DIScope(DIScope.RootScope);
-
-            m_Scope.FinalizeScopeConstruction();
+            base.Awake();
 
             Instance = this;
             CharSelectData = GetComponent<CharSelectData>();
@@ -123,16 +116,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 { LobbyMode.LobbyEnding, m_UIElementsForLobbyEnding },
                 { LobbyMode.FatalError, m_UIElementsForFatalError },
             };
-
-            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
-            {
-                m_Scope.InjectIn(autoInjectedGameObject);
-            }
-        }
-
-        public override void OnDestroy()
-        {
-            m_Scope.Dispose();
         }
 
         protected override void Start()
