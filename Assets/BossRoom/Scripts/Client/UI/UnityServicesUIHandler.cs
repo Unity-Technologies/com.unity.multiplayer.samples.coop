@@ -49,7 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void HandleLobbyError(UnityServiceErrorMessage error)
         {
-            var exception = (LobbyServiceException) error.OriginalException;
+            var exception = error.OriginalException as LobbyServiceException;
             if (exception != null)
             {
                 switch (exception.Reason)
