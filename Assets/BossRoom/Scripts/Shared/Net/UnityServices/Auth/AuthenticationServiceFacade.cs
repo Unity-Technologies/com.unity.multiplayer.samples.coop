@@ -54,7 +54,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
         {
             Debug.LogException(e);
             var reason = $"{e.Message} ({e.InnerException?.Message})";
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason));
+            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
         }
 
         public async Task DoSignInAsync(InitializationOptions initializationOptions)
