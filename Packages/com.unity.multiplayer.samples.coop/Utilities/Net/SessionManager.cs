@@ -78,6 +78,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="playerId">This is the playerId that is unique to this client and persists across multiple logins from the same client</param>
+        /// <returns>True if a player with this ID is already connected.</returns>
         public bool IsDuplicateConnection(string playerId)
         {
             return m_ClientData.ContainsKey(playerId) && m_ClientData[playerId].IsConnected;
@@ -125,6 +130,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ClientData[playerId] = sessionPlayerData;
         }
 
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="clientId"> id of the client whose data is requested</param>
+        /// <returns>The Player ID matching the given client ID</returns>
         public string GetPlayerId(ulong clientId)
         {
             if (m_ClientIDToPlayerId.TryGetValue(clientId, out string playerId))
@@ -132,7 +142,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return playerId;
             }
 
-            Debug.LogError($"No client guid found mapped to the given client ID: {clientId}");
+            Debug.LogError($"No client player ID found mapped to the given client ID: {clientId}");
             return null;
         }
 
