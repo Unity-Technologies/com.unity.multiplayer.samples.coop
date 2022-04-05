@@ -42,8 +42,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ConnectStatus.LoggedInAgain:
                     PopupPanel.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account.");
                     break;
+                case ConnectStatus.IncompatibleBuildType:
+                    PopupPanel.ShowPopupPanel("Connection Failed", "Server and client builds are not compatible. You cannot connect a release build to a development build or an in-editor session.");
+                    break;
                 case ConnectStatus.GenericDisconnect:
-                    PopupPanel.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost");
+                    PopupPanel.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost.");
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
