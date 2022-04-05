@@ -15,8 +15,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         GameObject m_FeedbackObj;
 
         ClientInputSender m_ClientSender;
+        
+        ClickFeedbackLerper m_ClickFeedbackLerper;
 
-        const float k_HoverHeight = 0.15f;
 
         void Start()
         {
@@ -30,15 +31,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_ClientSender.ClientMoveEvent += OnClientMove;
             m_FeedbackObj = Instantiate(m_FeedbackPrefab);
             m_FeedbackObj.SetActive(false);
+            m_ClickFeedbackLerper = m_FeedbackObj.GetComponent<ClickFeedbackLerper>();
         }
 
         void OnClientMove(Vector3 position)
         {
-            position.y += k_HoverHeight;
-
-            m_FeedbackObj.transform.position = position;
             m_FeedbackObj.SetActive(true);
-
+            m_ClickFeedbackLerper.SetTarget(position);
         }
 
         public override void OnDestroy()

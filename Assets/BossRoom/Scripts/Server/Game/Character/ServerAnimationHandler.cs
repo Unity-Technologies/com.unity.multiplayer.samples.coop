@@ -11,23 +11,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         NetworkAnimator m_NetworkAnimator;
 
         [SerializeField]
-        private VisualizationConfiguration m_VisualizationConfiguration;
+        VisualizationConfiguration m_VisualizationConfiguration;
 
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
-        public NetworkAnimator NetworkAnimator
-        {
-            get => m_NetworkAnimator;
-            set => m_NetworkAnimator = value;
-        }
+        public NetworkAnimator NetworkAnimator => m_NetworkAnimator;
 
         public override void OnNetworkSpawn()
         {
-            m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+            if (IsServer)
+            {
+                m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+            }
         }
 
-        private void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+        void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
         {
             switch (newValue)
             {
@@ -47,7 +46,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkDespawn()
         {
-            m_NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
+            if (IsServer)
+            {
+                m_NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
+            }
         }
     }
 }

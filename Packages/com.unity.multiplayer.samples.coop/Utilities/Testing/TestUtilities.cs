@@ -44,7 +44,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
             yield return waitUntilSceneLoaded;
 
-            Assert.That(!waitUntilSceneLoaded.timedOut);
+            Assert.That(!waitUntilSceneLoaded.TimedOut);
         }
 
         /// <summary>
@@ -62,7 +62,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
             yield return waitForNetworkSceneLoad;
 
-            Assert.That(!waitForNetworkSceneLoad.timedOut);
+            Assert.That(!waitForNetworkSceneLoad.TimedOut);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
             float m_MaxLoadDuration;
 
-            public bool timedOut { get; private set; }
+            public bool TimedOut { get; private set; }
 
             public override bool keepWaiting
             {
@@ -89,10 +89,10 @@ namespace Unity.Multiplayer.Samples.Utilities
 
                     if (Time.time - m_LoadSceneStart >= m_MaxLoadDuration)
                     {
-                        timedOut = true;
+                        TimedOut = true;
                     }
 
-                    return !isSceneLoaded && !timedOut;
+                    return !isSceneLoaded && !TimedOut;
                 }
             }
 
@@ -120,7 +120,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
             NetworkSceneManager m_NetworkSceneManager;
 
-            public bool timedOut { get; private set; }
+            public bool TimedOut { get; private set; }
 
             public override bool keepWaiting
             {
@@ -128,12 +128,12 @@ namespace Unity.Multiplayer.Samples.Utilities
                 {
                     if (Time.time - m_LoadSceneStart >= m_MaxLoadDuration)
                     {
-                        timedOut = true;
+                        TimedOut = true;
 
                         m_NetworkSceneManager.OnSceneEvent -= ConfirmSceneLoad;
                     }
 
-                    return !m_IsNetworkSceneLoaded && !timedOut;
+                    return !m_IsNetworkSceneLoaded && !TimedOut;
                 }
             }
 
