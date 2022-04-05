@@ -118,17 +118,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     NetState.HitPoints = sessionPlayerData.Value.CurrentHitPoints;
                     if (NetState.HitPoints <= 0)
                     {
-                        // Update LifeState on next frame to make sure everything listening on it has time to initialize
-                        StartCoroutine(WaitToUpdateLifeState(LifeState.Fainted));
+                        NetState.LifeState = LifeState.Fainted;
                     }
                 }
             }
-        }
-
-        IEnumerator WaitToUpdateLifeState(LifeState lifeState)
-        {
-            yield return null;
-            NetState.LifeState = lifeState;
         }
 
         /// <summary>
