@@ -24,6 +24,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
         DIScope m_Scope;
 
+        public DIScope DIScope => m_Scope;
+
         [SerializeField] NameGenerationData m_NameGenerationData;
         [SerializeField] LobbyUIMediator m_LobbyUIMediator;
         [SerializeField] IPUIMediator m_IPUIMediator;

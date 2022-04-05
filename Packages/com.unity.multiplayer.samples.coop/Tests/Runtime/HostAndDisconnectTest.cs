@@ -27,32 +27,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         NetworkManager m_NetworkManager;
 
-        ClientMainMenuState m_ClientMainMenuState;
-
-        LobbyUIMediator m_LobbyUIMediator;
-
-        LobbyCreationUI m_LobbyCreationUI;
-
-        IPUIMediator m_IPUIMediator;
-
-        IPHostingUI m_IPHostingUI;
-
-        [Inject]
-        void Initialize(
-            ClientMainMenuState clientMainMenuState,
-            LobbyUIMediator lobbyUIMediator,
-            LobbyCreationUI lobbyCreationUI,
-            IPUIMediator ipUiMediator,
-            IPHostingUI ipHostingUI
-        )
-        {
-            m_ClientMainMenuState = clientMainMenuState;
-            m_LobbyUIMediator = lobbyUIMediator;
-            m_LobbyCreationUI = lobbyCreationUI;
-            m_IPUIMediator = ipUiMediator;
-            m_IPHostingUI = ipHostingUI;
-        }
-
         /// <summary>
         /// Smoke test to validating hosting inside Boss Room. The test will load the project's bootstrap scene,
         /// Startup, and commence the game flow as a host, pick and confirm a parametrized character, and jump into the
@@ -66,6 +40,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             // now inside MainMenu scene
 
+            yield return null;
+
+            var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
+
+            Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
+
+            var scope = clientMainMenuState.DIScope;
+
+            var lobbyUIMediator = scope.Resolve<LobbyUIMediator>();
+            Assert.That(lobbyUIMediator != null, $"{nameof(LobbyUIMediator)} component not found!");
+
+            var lobbyCreationUI = lobbyUIMediator.LobbyCreationUI;
+            Assert.That(lobbyCreationUI != null, $"{nameof(LobbyCreationUI)} component not found!");
+
             // validate unity services login successful
 
             // wait until authenticated?
@@ -76,26 +64,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 yield return null;
             }
 
-            // create a host
-
-            Assert.That(m_ClientMainMenuState != null, $"{nameof(m_ClientMainMenuState)} component not found!");
-
-            m_ClientMainMenuState.OnStartClicked();
+            clientMainMenuState.OnStartClicked();
 
             yield return new WaitForEndOfFrame();
-
-            var lobbyUIMediator = GameObject.FindObjectOfType<LobbyUIMediator>();
-
-            Assert.That(lobbyUIMediator != null, $"{nameof(LobbyUIMediator)} component not found!");
 
             lobbyUIMediator.ToggleCreateLobbyUI();
 
             // a confirmation popup will appear; wait a frame for it to pop up
             yield return new WaitForEndOfFrame();
-
-            var lobbyCreationUI = GameObject.FindObjectOfType<LobbyCreationUI>();
-
-            Assert.That(lobbyCreationUI != null, $"{nameof(LobbyCreationUI)} component not found!");
 
             lobbyCreationUI.OnCreateClick();
 
@@ -198,12 +174,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             yield return GoToMainMenuScene();
 
-            yield return new WaitForSeconds(2f);
-
-            var scope = DIScope.RootScope;
-            scope.InjectIn(this);
-
             // now inside MainMenu scene
+
+            yield return null;
+
+            var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
+
+            Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
+
+            var scope = clientMainMenuState.DIScope;
+
+            var ipUIMediator = scope.Resolve<IPUIMediator>();
+            Assert.That(ipUIMediator != null, $"{nameof(IPUIMediator)} component not found!");
+
+            var ipHostingUI = ipUIMediator.IPHostingUI;
+            Assert.That(ipHostingUI != null, $"{nameof(IPHostingUI)} component not found!");
 
             // wait until authenticated?
             var timer = 5f;
@@ -215,22 +200,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             Assert.IsTrue(AuthenticationService.Instance.IsAuthorized);
 
-            Assert.That(m_ClientMainMenuState != null, $"{nameof(ClientMainMenuState)} component not found!");
-
-            m_ClientMainMenuState.OnDirectIPClicked();
+            clientMainMenuState.OnDirectIPClicked();
 
             yield return new WaitForEndOfFrame();
 
-            Assert.That(m_IPUIMediator != null, $"{nameof(IPUIMediator)} component not found!");
-
-            m_IPUIMediator.ToggleCreateIPUI();
+            ipUIMediator.ToggleCreateIPUI();
 
             // a confirmation popup will appear; wait a frame for it to pop up
             yield return new WaitForEndOfFrame();
 
-            Assert.That(m_IPHostingUI != null, $"{nameof(IPHostingUI)} component not found!");
-
-            m_IPHostingUI.OnCreateClick();
+            ipHostingUI.OnCreateClick();
 
             // confirming hosting will initialize the hosting process; next frame the results will be ready
             yield return null;

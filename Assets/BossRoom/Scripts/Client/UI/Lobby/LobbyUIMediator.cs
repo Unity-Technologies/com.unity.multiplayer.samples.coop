@@ -30,6 +30,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         const string k_DefaultLobbyName = "no-name";
 
+        public LobbyCreationUI LobbyCreationUI => m_LobbyCreationUI;
+
         [Inject]
         void InjectDependenciesAndInitialize(
             LobbyServiceFacade lobbyServiceFacade,
