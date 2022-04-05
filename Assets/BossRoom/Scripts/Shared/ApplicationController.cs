@@ -24,6 +24,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
 
+        public LobbyServiceFacade LobbyServiceFacade => m_LobbyServiceFacade;
+
         [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
 
         private void Awake()

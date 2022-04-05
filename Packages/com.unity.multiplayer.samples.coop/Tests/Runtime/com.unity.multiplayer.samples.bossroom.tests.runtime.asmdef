@@ -8,7 +8,8 @@
         "Unity.Multiplayer.Samples.BossRoom.Client",
         "Unity.Multiplayer.Samples.BossRoom.Shared",
         "Unity.Netcode.Runtime",
-        "Unity.Services.Authentication"
+        "Unity.Services.Authentication",
+        "Unity.Services.Lobbies"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

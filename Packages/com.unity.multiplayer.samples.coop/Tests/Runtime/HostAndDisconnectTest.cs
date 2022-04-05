@@ -2,7 +2,8 @@ using System;
 using System.Collections;
 using NUnit.Framework;
 using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
@@ -27,6 +28,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         NetworkManager m_NetworkManager;
 
+        const float k_ServiceQueryTimeout = 10f;
+
         /// <summary>
         /// Smoke test to validating hosting inside Boss Room. The test will load the project's bootstrap scene,
         /// Startup, and commence the game flow as a host, pick and confirm a parametrized character, and jump into the
@@ -43,7 +46,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
 
             var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
-
             Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
 
             var scope = clientMainMenuState.DIScope;
@@ -56,8 +58,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             // validate unity services login successful
 
-            // wait until authenticated?
-            var timer = 5f;
+            // wait until authenticated
+            var timer = k_ServiceQueryTimeout;
             while (timer > 0f && !AuthenticationService.Instance.IsAuthorized)
             {
                 timer -= Time.deltaTime;
@@ -75,9 +77,34 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             lobbyCreationUI.OnCreateClick();
 
-            // get LobbyServiceFacade through DI
+            // get LobbyServiceFacade
+            var applicationController = GameObject.FindObjectOfType<ApplicationController>();
+            Assert.That(applicationController != null, $"{nameof(ApplicationController)} component not found!");
 
-            // confirming hosting will initialize the hosting process; next frame the results will be ready
+            var lobbyServiceFacade = applicationController.LobbyServiceFacade;
+            Assert.That(lobbyServiceFacade != null, $"{nameof(LobbyServiceFacade)} component not found!");
+
+            // wait until lobby has been created
+            timer = k_ServiceQueryTimeout;
+            while (timer > 0f && lobbyServiceFacade.CurrentUnityLobby == null)
+            {
+                timer -= Time.deltaTime;
+                yield return null;
+            }
+
+            Assert.NotNull(lobbyServiceFacade.CurrentUnityLobby);
+
+            // lobby has been created; now relay data will be allocated; wait until lobby relay data updated
+            timer = k_ServiceQueryTimeout;
+            while (timer > 0f && string.IsNullOrEmpty(lobbyUIMediator.LocalLobby.RelayJoinCode))
+            {
+                timer -= Time.deltaTime;
+                yield return null;
+            }
+
+            Assert.IsTrue(!string.IsNullOrEmpty(lobbyUIMediator.LocalLobby.RelayJoinCode));
+
+            // lobby creation will initialize the hosting process; next frame the results will be ready
             yield return null;
 
             // verify hosting is successful
