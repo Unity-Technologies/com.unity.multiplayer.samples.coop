@@ -220,7 +220,7 @@ TrailRenderer:
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0.1
+  m_MinVertexDistance: 2.5
   m_Autodestruct: 0
   m_Emitting: 1
 --- !u!1 &8790122182938586074
@@ -240,7 +240,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &8790122182938586075
 Transform:
   m_ObjectHideFlags: 0
@@ -5064,7 +5064,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8790122182988832536}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 9112595075296351182}
@@ -5141,8 +5141,8 @@ TrailRenderer:
       m_RotationOrder: 4
     colorGradient:
       serializedVersion: 2
-      key0: {r: 0.6556604, g: 1, b: 0.67861634, a: 1}
-      key1: {r: 0.18212414, g: 1, b: 0, a: 0}
+      key0: {r: 0.18212414, g: 1, b: 0, a: 0.7058824}
+      key1: {r: 0.6556604, g: 1, b: 0.67861634, a: 0}
       key2: {r: 0, g: 0, b: 0, a: 0}
       key3: {r: 0, g: 0, b: 0, a: 0}
       key4: {r: 0, g: 0, b: 0, a: 0}
@@ -5174,7 +5174,7 @@ TrailRenderer:
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0.1
+  m_MinVertexDistance: 2.5
   m_Autodestruct: 0
   m_Emitting: 1
 --- !u!1 &8790122183726792699
@@ -5312,6 +5312,6 @@ TrailRenderer:
     textureMode: 0
     shadowBias: 0.5
     generateLightingData: 0
-  m_MinVertexDistance: 0.1
+  m_MinVertexDistance: 2.5
   m_Autodestruct: 0
   m_Emitting: 1

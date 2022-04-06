@@ -14,10 +14,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] CanvasGroup m_CanvasGroup;
         [SerializeField] LobbyJoiningUI m_LobbyJoiningUI;
         [SerializeField] LobbyCreationUI m_LobbyCreationUI;
-        [SerializeField] UITinter m_JoinToggle;
         [SerializeField] UITinter m_JoinToggleHighlight;
         [SerializeField] UITinter m_JoinToggleTabBlocker;
-        [SerializeField] UITinter m_CreateToggle;
         [SerializeField] UITinter m_CreateToggleHighlight;
         [SerializeField] UITinter m_CreateToggleTabBlocker;
         [SerializeField] TextMeshProUGUI m_PlayerNameLabel;
@@ -168,7 +166,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             void OnRelayJoinFailed(string message)
             {
-                PopupPanel.ShowPopupPanel("Relay join failed", message);
+                PopupManager.ShowPopupPanel("Relay join failed", message);
                 Debug.Log($"Relay join failed: {message}");
                 //leave the lobby if relay failed for some reason
                 m_LobbyServiceFacade.EndTracking();
@@ -194,10 +192,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_LobbyJoiningUI.Show();
             m_LobbyCreationUI.Hide();
-            m_JoinToggle.SetToColor(1);
             m_JoinToggleHighlight.SetToColor(1);
             m_JoinToggleTabBlocker.SetToColor(1);
-            m_CreateToggle.SetToColor(0);
             m_CreateToggleHighlight.SetToColor(0);
             m_CreateToggleTabBlocker.SetToColor(0);
         }
@@ -206,10 +202,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_LobbyJoiningUI.Hide();
             m_LobbyCreationUI.Show();
-            m_JoinToggle.SetToColor(0);
             m_JoinToggleHighlight.SetToColor(0);
             m_JoinToggleTabBlocker.SetToColor(0);
-            m_CreateToggle.SetToColor(1);
             m_CreateToggleHighlight.SetToColor(1);
             m_CreateToggleTabBlocker.SetToColor(1);
         }
