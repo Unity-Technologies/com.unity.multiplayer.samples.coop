@@ -18,27 +18,25 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
-        void OnServiceException(Exception e)
+        public async Task SignInAsync(InitializationOptions initializationOptions)
         {
-            Debug.LogWarning(e.Message);
-            var reason = $"{e.Message} ({e.InnerException?.Message})";
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
-        }
-
-        public void DoSignInAsync(Action onSigninComplete, Action onFailed, InitializationOptions initializationOptions)
-        {
-            var task = TrySignIn(initializationOptions);
-            UnityServiceCallsTaskWrapper.RunTask<Exception>(task, onSigninComplete, onFailed, OnServiceException);
-        }
-
-        async Task TrySignIn(InitializationOptions initializationOptions)
-        {
-            await Unity.Services.Core.UnityServices.InitializeAsync(initializationOptions);
-
-            if (!AuthenticationService.Instance.IsSignedIn)
+            try
             {
-                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                await Unity.Services.Core.UnityServices.InitializeAsync(initializationOptions);
+
+                if (!AuthenticationService.Instance.IsSignedIn)
+                {
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                }
             }
+            catch (Exception e)
+            {
+                var reason = $"{e.Message} ({e.InnerException?.Message})";
+                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+                throw;
+            }
+
+
         }
     }
 }

@@ -61,6 +61,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
 
                 DoInitialSpawnIfPossible();
+
+                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             }
         }
 
