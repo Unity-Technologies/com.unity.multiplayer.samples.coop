@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
@@ -355,7 +356,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Lobby can be provided info about Relay (or any other remote allocation) so it can add automatic disconnect handling.
         /// </summary>
-        public async void UpdatePlayerRelayInfoAsync(string allocationId, string connectionInfo)
+        public async Task UpdatePlayerRelayInfoAsync(string allocationId, string connectionInfo)
         {
             if (!m_RateLimitQuery.CanCall)
             {
@@ -372,6 +373,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 {
                     m_RateLimitQuery.PutOnCooldown();
                 }
+
+                //todo - retry logic? SDK is supposed to handle this eventually
             }
         }
 
@@ -423,13 +426,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Lobby requires a periodic ping to detect rooms that are still active, in order to mitigate "zombie" lobbies.
         /// </summary>
-        public async void DoLobbyHeartbeat(float dt)
+        public void DoLobbyHeartbeat(float dt)
         {
             m_HeartbeatTime += dt;
             if (m_HeartbeatTime > k_HeartbeatPeriod)
             {
                 m_HeartbeatTime -= k_HeartbeatPeriod;
-                await m_LobbyApiInterface.SendHeartbeatPing(CurrentUnityLobby.Id);
+                m_LobbyApiInterface.SendHeartbeatPing(CurrentUnityLobby.Id);
             }
         }
     }

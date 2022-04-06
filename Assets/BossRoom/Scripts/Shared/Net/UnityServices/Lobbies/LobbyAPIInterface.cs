@@ -162,7 +162,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             return await ExceptionHandling(Lobbies.Instance.UpdatePlayerAsync(lobbyId, playerId, updateOptions));
         }
 
-        public async Task SendHeartbeatPing(string lobbyId)
+        public async void SendHeartbeatPing(string lobbyId)
         {
             await ExceptionHandling(Lobbies.Instance.SendHeartbeatPingAsync(lobbyId));
         }
