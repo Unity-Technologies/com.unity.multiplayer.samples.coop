@@ -56,7 +56,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
                 {
                     if (m_Subscribers.Add(onUpdate))
                     {
-                    	m_SubscriberData.Add(onUpdate, new SubscriberData() {Period = updatePeriod, NextCallTime = 0});                    }
+                        m_SubscriberData.Add(onUpdate, new SubscriberData() {Period = updatePeriod, NextCallTime = 0});
+                    }
                 });
             }
         }

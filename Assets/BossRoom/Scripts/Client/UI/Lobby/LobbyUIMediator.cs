@@ -74,7 +74,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             BlockUIWhileLoadingIsInProgress();
 
-            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode);
+            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, maxPlayers, isPrivate);
 
             if (lobbyCreationAttempt.Success)
             {
@@ -84,7 +84,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
  				Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                        m_GameNetPortal.StartUnityRelayHost();            
+                        m_GameNetPortal.StartUnityRelayHost();
 			}
             else
             {
