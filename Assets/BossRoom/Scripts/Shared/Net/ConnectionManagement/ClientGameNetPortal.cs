@@ -135,12 +135,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
             if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientID)
             {
-                var lobbyCode = "";
-                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                {
-                    lobbyCode = m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode;
-                }
-
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
