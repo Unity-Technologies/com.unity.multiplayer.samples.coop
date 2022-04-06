@@ -3,7 +3,7 @@ using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Services.Authentication;
+using Unity.Services.Core;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -62,7 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         //Lobby and Relay calls done from UI
 
-        public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers)
+        public async void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers)
         {
             // before sending request to lobby service, populate an empty lobby name, if necessary
             if (string.IsNullOrEmpty(lobbyName))
@@ -70,70 +70,88 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 lobbyName = k_DefaultLobbyName;
             }
 
-            m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
+
+            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, maxPlayers, isPrivate);
+
+            if (lobbyCreationAttempt.Success)
+            {
+                m_LocalUser.IsHost = true;
+                m_LobbyServiceFacade.SetRemoteLobby(lobbyCreationAttempt.Lobby);
+
+                m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
+
+                Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
+                m_GameNetPortal.StartUnityRelayHost();
+            }
+            else
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
         }
 
-        public void QueryLobbiesRequest(bool blockUI)
+        public async void QueryLobbiesRequest(bool blockUI)
         {
-            if (!AuthenticationService.Instance.IsAuthorized)
+            if (UnityServices.State != ServicesInitializationState.Initialized)
             {
                 return;
             }
-
-            m_LobbyServiceFacade.RetrieveLobbyListAsync(
-                OnSuccess,
-                OnFailure
-            );
 
             if (blockUI)
             {
                 BlockUIWhileLoadingIsInProgress();
             }
 
-            void OnSuccess(QueryResponse qr)
-            {
-                UnblockUIAfterLoadingIsComplete();
-            }
-
-            void OnFailure()
-            {
-                UnblockUIAfterLoadingIsComplete();
-            }
-        }
-
-        public void JoinLobbyWithCodeRequest(string lobbyCode)
-        {
-            m_LobbyServiceFacade.JoinLobbyAsync(null, lobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
-            BlockUIWhileLoadingIsInProgress();
-        }
-
-        public void JoinLobbyRequest(LocalLobby lobby)
-        {
-            m_LobbyServiceFacade.JoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
-            BlockUIWhileLoadingIsInProgress();
-        }
-
-        public void QuickJoinRequest()
-        {
-            m_LobbyServiceFacade.QuickJoinLobbyAsync(OnJoinedLobby, OnFailedLobbyCreateOrJoin);
-            BlockUIWhileLoadingIsInProgress();
-        }
-
-        void OnFailedLobbyCreateOrJoin()
-        {
+            await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
             UnblockUIAfterLoadingIsComplete();
         }
 
-        void OnCreatedLobby(Lobby lobby)
+        public async void JoinLobbyWithCodeRequest(string lobbyCode)
         {
-            m_LocalUser.IsHost = true;
-            m_LobbyServiceFacade.SetRemoteLobby(lobby);
+            BlockUIWhileLoadingIsInProgress();
 
-            m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
+            var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(null, lobbyCode);
 
-            Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            m_GameNetPortal.StartUnityRelayHost();
+            if (result.Success)
+            {
+                OnJoinedLobby(result.Lobby);
+            }
+            else
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
+        }
+
+        public async void JoinLobbyRequest(LocalLobby lobby)
+        {
+            BlockUIWhileLoadingIsInProgress();
+
+            var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode);
+
+            if (result.Success)
+            {
+                OnJoinedLobby(result.Lobby);
+            }
+            else
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
+        }
+
+        public async void QuickJoinRequest()
+        {
+            BlockUIWhileLoadingIsInProgress();
+
+            var result = await m_LobbyServiceFacade.TryQuickJoinLobbyAsync();
+
+            if (result.Success)
+            {
+                OnJoinedLobby(result.Lobby);
+            }
+            else
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
         }
 
         void OnJoinedLobby(Lobby remoteLobby)

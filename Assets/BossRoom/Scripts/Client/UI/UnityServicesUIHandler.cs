@@ -50,6 +50,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void HandleLobbyError(UnityServiceErrorMessage error)
         {
             var errorMessage = error.Message;
+
             switch (((LobbyServiceException)error.OriginalException).Reason)
             {
                 case LobbyExceptionReason.LobbyConflict:
@@ -72,7 +73,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscriptions.Dispose();
+            m_Subscriptions?.Dispose();
         }
     }
 }

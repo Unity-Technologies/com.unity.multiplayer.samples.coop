@@ -100,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
-                    m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                    m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id);
                 }
             }
             else
