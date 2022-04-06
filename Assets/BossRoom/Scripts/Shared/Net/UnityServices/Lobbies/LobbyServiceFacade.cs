@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Services.Authentication;
@@ -145,7 +144,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to create a new lobby and then join it.
         /// </summary>
-        public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, OnlineMode onlineMode, Action<Lobby> onSuccess, Action onFailure)
+        public void CreateLobbyAsync(string lobbyName, int maxPlayers, bool isPrivate, Action<Lobby> onSuccess, Action onFailure)
         {
             if (!m_RateLimitHost.CanCall)
             {
@@ -156,12 +155,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             m_RateLimitHost.PutOnCooldown();
 
-            var initialLobbyData = new Dictionary<string, DataObject>()
-            {
-                {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())}
-            };
-
-            m_LobbyApiInterface.CreateLobbyAsync(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData, onSuccess, onFailure);
+            m_LobbyApiInterface.CreateLobbyAsync(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), null, onSuccess, onFailure);
         }
 
         /// <summary>
@@ -351,7 +345,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
 
             //we would want to lock lobbies from appearing in queries if we're in relay mode and the relay isn't fully set up yet
-            var shouldLock = m_LocalLobby.OnlineMode == OnlineMode.UnityRelay && string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
+            var shouldLock = string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
 
             m_LobbyApiInterface.UpdateLobbyAsync(CurrentUnityLobby.Id, dataCurr, shouldLock, OnComplete, onFailure);
 

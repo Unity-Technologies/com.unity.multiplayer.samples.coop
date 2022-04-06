@@ -45,10 +45,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             public bool Private { get; set; }
             public int MaxPlayerCount { get; set; }
 
-            public OnlineMode OnlineMode { get; set; }
-            public string IP { get; set; }
-            public int Port { get; set; }
-
             public LobbyData(LobbyData existing)
             {
                 LobbyID = existing.LobbyID;
@@ -57,9 +53,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 LobbyName = existing.LobbyName;
                 Private = existing.Private;
                 MaxPlayerCount = existing.MaxPlayerCount;
-                OnlineMode = existing.OnlineMode;
-                IP = existing.IP;
-                Port = existing.Port;
             }
 
             public LobbyData(string lobbyCode)
@@ -70,9 +63,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 LobbyName = null;
                 Private = false;
                 MaxPlayerCount = -1;
-                OnlineMode = OnlineMode.Unset;
-                IP = string.Empty;
-                Port = 0;
             }
         }
 
@@ -184,18 +174,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public OnlineMode OnlineMode
-        {
-            get => m_Data.OnlineMode;
-            set
-            {
-                if (m_Data.OnlineMode != value)
-                {   m_Data.OnlineMode = value;
-                    OnChanged();
-                }
-            }
-        }
-
         public void CopyDataFrom(LobbyData data, Dictionary<string, LocalLobbyUser> currUsers)
         {
             m_Data = data;
@@ -239,10 +217,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         public Dictionary<string, DataObject> GetDataForUnityServices() =>
             new Dictionary<string, DataObject>()
             {
-                {"RelayJoinCode", new DataObject(DataObject.VisibilityOptions.Public,  RelayJoinCode)},
-                {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)Data.OnlineMode).ToString())},
-                {"IP", new DataObject(DataObject.VisibilityOptions.Public, Data.IP)},
-                {"Port", new DataObject(DataObject.VisibilityOptions.Public,  Data.Port.ToString())},
+                {"RelayJoinCode", new DataObject(DataObject.VisibilityOptions.Public,  RelayJoinCode)}
             };
 
         public void ApplyRemoteData(Lobby lobby)
@@ -257,16 +232,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             if (lobby.Data != null)
             {
                 info.RelayJoinCode = lobby.Data.ContainsKey("RelayJoinCode") ? lobby.Data["RelayJoinCode"].Value : null; // By providing RelayCode through the lobby data with Member visibility, we ensure a client is connected to the lobby before they could attempt a relay connection, preventing timing issues between them.
-                info.OnlineMode = lobby.Data.ContainsKey("OnlineMode") ? (OnlineMode) int.Parse(lobby.Data["OnlineMode"].Value) : OnlineMode.Unset;
-                info.IP = lobby.Data.ContainsKey("IP") ? lobby.Data["IP"].Value : string.Empty;
-                info.Port =  lobby.Data.ContainsKey("Port") ? int.Parse(lobby.Data["Port"].Value) : 0;
             }
             else
             {
                 info.RelayJoinCode = null;
-                info.OnlineMode = OnlineMode.Unset;
-                info.IP = string.Empty;
-                info.Port = 0;
             }
 
             var lobbyUsers = new Dictionary<string, LocalLobbyUser>();
