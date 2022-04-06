@@ -95,6 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (m_Portal.NetManager.IsClient)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+                m_Portal.NetManager.Shutdown();
             }
         }
 
@@ -147,7 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
-                    m_ApplicationController.LeaveSession();
+                    m_ApplicationController.LeaveSession(false);
                 }
                 else
                 {
