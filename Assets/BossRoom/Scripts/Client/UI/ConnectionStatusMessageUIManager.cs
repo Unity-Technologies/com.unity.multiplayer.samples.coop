@@ -49,7 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     PopupManager.ShowPopupPanel("Disconnected From Host", "The connection to the host was lost.");
                     break;
                 case ConnectStatus.HostEndedSession:
-                    PopupPanel.ShowPopupPanel("Disconnected From Host", "The host has ended the game session.");
+                    PopupManager.ShowPopupPanel("Disconnected From Host", "The host has ended the game session.");
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
