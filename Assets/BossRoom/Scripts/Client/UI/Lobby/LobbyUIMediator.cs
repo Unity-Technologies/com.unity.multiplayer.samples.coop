@@ -99,21 +99,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            try
+            if (blockUI)
             {
-                if (blockUI)
-                {
-                    BlockUIWhileLoadingIsInProgress();
-                }
+                BlockUIWhileLoadingIsInProgress();
+            }
 
-                await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
-                UnblockUIAfterLoadingIsComplete();
-            }
-            catch (Exception)
-            {
-                UnblockUIAfterLoadingIsComplete();
-                throw;
-            }
+            await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
+            UnblockUIAfterLoadingIsComplete();
         }
 
         public async void JoinLobbyWithCodeRequest(string lobbyCode)

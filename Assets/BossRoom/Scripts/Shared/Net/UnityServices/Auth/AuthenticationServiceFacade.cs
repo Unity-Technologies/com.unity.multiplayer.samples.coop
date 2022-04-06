@@ -20,8 +20,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 
         public async Task SignInAsync(InitializationOptions initializationOptions)
         {
-            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
-
             try
             {
                 await Unity.Services.Core.UnityServices.InitializeAsync(initializationOptions);
@@ -33,8 +31,6 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             }
             catch (Exception e)
             {
-                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n");
-                Debug.LogException(e);
                 var reason = $"{e.Message} ({e.InnerException?.Message})";
                 m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
                 throw;
