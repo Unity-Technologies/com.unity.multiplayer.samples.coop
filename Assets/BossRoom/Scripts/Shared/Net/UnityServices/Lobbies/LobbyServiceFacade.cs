@@ -282,27 +282,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
         }
 
-        public async void RemovePlayerFromLobbyAsync(string uasId, string lobbyId, Action onSuccess, Action onFailure)
+        public async void RemovePlayerFromLobbyAsync(string uasId, string lobbyId)
         {
             if (m_LocalUser.IsHost)
             {
-                var lobby = await m_LobbyApiInterface.GetLobby(lobbyId);
-
-                bool playerFound = false;
-                foreach (var player in lobby.Players)
-                {
-                    if (player.Id == uasId)
-                    {
-                        await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
-                        playerFound = true;
-                        break;
-                    }
-                }
-
-                if (!playerFound)
-                {
-                    Debug.Log($"Player {uasId} has already left the lobby.");
-                }
+                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
             }
             else
             {

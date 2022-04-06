@@ -111,7 +111,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                     {
-                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
                     }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
@@ -209,7 +209,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
-                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id, null, null);
+                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
                 }
             }
         }
