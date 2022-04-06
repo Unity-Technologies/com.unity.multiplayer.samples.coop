@@ -14,6 +14,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         GameObject m_PopupPanelPrefab;
 
+        [SerializeField]
+        GameObject m_Canvas;
+
         List<PopupPanel> m_PopupPanels = new List<PopupPanel>();
 
         static PopupManager s_Instance;
@@ -25,6 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
             s_Instance = this;
+            DontDestroyOnLoad(m_Canvas);
         }
 
         void OnDestroy()
