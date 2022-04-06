@@ -63,7 +63,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         //Lobby and Relay calls done from UI
 
-        public void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
+        public async void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
         {
             // before sending request to lobby service, populate an empty lobby name, if necessary
             if (string.IsNullOrEmpty(lobbyName))
@@ -71,8 +71,34 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 lobbyName = k_DefaultLobbyName;
             }
 
-            m_LobbyServiceFacade.CreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode, OnCreatedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
+
+            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, maxPlayers, isPrivate, onlineMode);
+
+            if (lobbyCreationAttempt.Success)
+            {
+                m_LocalUser.IsHost = true;
+                m_LobbyServiceFacade.SetRemoteLobby(lobbyCreationAttempt.Lobby);
+
+                m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
+
+                switch (m_LocalLobby.OnlineMode)
+                {
+                    case OnlineMode.IpHost:
+                        Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
+                        m_GameNetPortal.StartHost(m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
+                        break;
+
+                    case OnlineMode.UnityRelay:
+                        Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
+                        m_GameNetPortal.StartUnityRelayHost();
+                        break;
+                }
+            }
+            else
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
         }
 
         public async void QueryLobbiesRequest(bool blockUI)
@@ -87,6 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
                 UnblockUIAfterLoadingIsComplete();
             }
+            //todo: do we actually want to unlock the UI after any exception?
             catch (LobbyServiceException e)
             {
                 if (e.Reason != LobbyExceptionReason.RateLimited)
@@ -102,47 +129,51 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        public void JoinLobbyWithCodeRequest(string lobbyCode)
+        public async void JoinLobbyWithCodeRequest(string lobbyCode)
         {
-            m_LobbyServiceFacade.JoinLobbyAsync(null, lobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
             BlockUIWhileLoadingIsInProgress();
-        }
 
-        public void JoinLobbyRequest(LocalLobby lobby)
-        {
-            m_LobbyServiceFacade.JoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode, OnJoinedLobby, OnFailedLobbyCreateOrJoin);
-            BlockUIWhileLoadingIsInProgress();
-        }
+            var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(null, lobbyCode);
 
-        public void QuickJoinRequest()
-        {
-            m_LobbyServiceFacade.QuickJoinLobbyAsync(OnJoinedLobby, OnFailedLobbyCreateOrJoin);
-            BlockUIWhileLoadingIsInProgress();
-        }
-
-        void OnFailedLobbyCreateOrJoin()
-        {
-            UnblockUIAfterLoadingIsComplete();
-        }
-
-        void OnCreatedLobby(Lobby lobby)
-        {
-            m_LocalUser.IsHost = true;
-            m_LobbyServiceFacade.SetRemoteLobby(lobby);
-
-            m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
-
-            switch (m_LocalLobby.OnlineMode)
+            if (result.Success)
             {
-                case OnlineMode.IpHost:
-                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
-                    m_GameNetPortal.StartHost(m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
-                    break;
+                OnJoinedLobby(result.Lobby);
+            }
+            else
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
+        }
 
-                case OnlineMode.UnityRelay:
-                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                    m_GameNetPortal.StartUnityRelayHost();
-                    break;
+        public async void JoinLobbyRequest(LocalLobby lobby)
+        {
+            BlockUIWhileLoadingIsInProgress();
+
+            var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode);
+
+            if (result.Success)
+            {
+                OnJoinedLobby(result.Lobby);
+            }
+            else
+            {
+                UnblockUIAfterLoadingIsComplete();
+            }
+        }
+
+        public async void QuickJoinRequest()
+        {
+            BlockUIWhileLoadingIsInProgress();
+
+            var result = await m_LobbyServiceFacade.TryQuickJoinLobbyAsync();
+
+            if (result.Success)
+            {
+                OnJoinedLobby(result.Lobby);
+            }
+            else
+            {
+                UnblockUIAfterLoadingIsComplete();
             }
         }
 

@@ -208,7 +208,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                         m_LocalLobby.RelayJoinCode = joinCode;
                         //next line enabled lobby and relay services integration
-                        m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                        m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
 
                         // we now need to set the RelayCode somewhere :P
                         utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
