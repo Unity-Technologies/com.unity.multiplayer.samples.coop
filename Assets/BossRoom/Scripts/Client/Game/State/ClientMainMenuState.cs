@@ -22,9 +22,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         public override GameState ActiveState { get { return GameState.MainMenu; } }
 
-        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-        DIScope m_Scope;
-
         [SerializeField] NameGenerationData m_NameGenerationData;
         [SerializeField] LobbyUIMediator m_LobbyUIMediator;
         [SerializeField] IPUIMediator m_IPUIMediator;
@@ -32,29 +29,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
         [SerializeField] GameObject m_SignInSpinner;
 
-        void Awake()
+        protected override void Awake()
         {
             m_MainMenuButtonsCanvasGroup.interactable = false;
             m_LobbyUIMediator.Hide();
-            DIScope.RootScope.InjectIn(this);
+            base.Awake();
+        }
+
+        protected override void InitializeScope()
+        {
+            Scope.BindInstanceAsSingle(m_NameGenerationData);
+            Scope.BindInstanceAsSingle(m_LobbyUIMediator);
+            Scope.BindInstanceAsSingle(m_IPUIMediator);
         }
 
         [Inject]
         async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
         {
-            m_Scope = new DIScope(DIScope.RootScope);
-
-            m_Scope.BindInstanceAsSingle(m_NameGenerationData);
-            m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
-            m_Scope.BindInstanceAsSingle(m_IPUIMediator);
-
-            m_Scope.FinalizeScopeConstruction();
-
-            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
-            {
-                m_Scope.InjectIn(autoInjectedGameObject);
-            }
-
             try
             {
                 var unityAuthenticationInitOptions = new InitializationOptions();
@@ -88,11 +79,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 m_SignInSpinner.SetActive(false);
             }
-        }
-
-        public override void OnDestroy()
-        {
-            m_Scope?.Dispose();
         }
 
         public void OnStartClicked()
