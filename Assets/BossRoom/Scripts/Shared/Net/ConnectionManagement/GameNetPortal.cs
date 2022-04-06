@@ -245,7 +245,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
         }
 
         public string GetPlayerId()
