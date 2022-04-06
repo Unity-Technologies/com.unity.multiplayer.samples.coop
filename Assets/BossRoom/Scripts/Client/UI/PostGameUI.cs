@@ -1,6 +1,4 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using TMPro;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
