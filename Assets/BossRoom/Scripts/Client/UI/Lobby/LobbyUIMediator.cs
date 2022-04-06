@@ -166,7 +166,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             void OnRelayJoinFailed(string message)
             {
-                PopupPanel.ShowPopupPanel("Relay join failed", message);
+                PopupManager.ShowPopupPanel("Relay join failed", message);
                 Debug.Log($"Relay join failed: {message}");
                 //leave the lobby if relay failed for some reason
                 m_LobbyServiceFacade.EndTracking();

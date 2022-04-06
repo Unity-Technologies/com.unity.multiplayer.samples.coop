@@ -2,14 +2,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     public static class MessageChannelDIExtensions
     {
-        public static void BindMessageChannel<TMessage>(this DIScope scope)
+        public static void BindMessageChannelInstance<TMessage>(this DIScope scope)
         {
-            scope.BindAsSingle< MessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>();
+            scope.BindInstanceAsSingle<MessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new MessageChannel<TMessage>());
         }
 
-        public static void BindBufferedMessageChannel<TMessage>(this DIScope scope)
+        public static void BindBufferedMessageChannelInstance<TMessage>(this DIScope scope)
         {
-            scope.BindAsSingle< BufferedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IBufferedMessageChannel<TMessage>>();
+            scope.BindInstanceAsSingle<BufferedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IBufferedMessageChannel<TMessage>>(new BufferedMessageChannel<TMessage>());
         }
     }
 }
