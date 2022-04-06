@@ -104,6 +104,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public async void QueryLobbiesRequest(bool blockUI)
         {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+            {
+                return;
+            }
+
             try
             {
                 if (blockUI)

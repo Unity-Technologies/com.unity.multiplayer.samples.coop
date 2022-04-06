@@ -64,10 +64,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     unityAuthenticationInitOptions.SetProfile(profile);
                 }
 
-                await authServiceFacade.DoSignInAsync(unityAuthenticationInitOptions);
+                await authServiceFacade.SignInAsync(unityAuthenticationInitOptions);
                 OnAuthSignIn();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 OnSignInFailed();
             }
