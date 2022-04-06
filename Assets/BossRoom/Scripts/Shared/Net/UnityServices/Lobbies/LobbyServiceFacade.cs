@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
@@ -404,6 +405,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
             //we would want to lock lobbies from appearing in queries if we're in relay mode and the relay isn't fully set up yet
             var shouldLock = m_LocalLobby.OnlineMode == OnlineMode.UnityRelay && string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
+            //todo: why is this locked?
 
             try
             {

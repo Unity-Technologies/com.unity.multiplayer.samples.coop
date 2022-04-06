@@ -119,14 +119,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
                 UnblockUIAfterLoadingIsComplete();
             }
-            catch (LobbyServiceException e)
-            {
-                if (e.Reason != LobbyExceptionReason.RateLimited)
-                {
-                    // let rate limiting handle this in above code
-                    UnblockUIAfterLoadingIsComplete();
-                }
-            }
             catch (Exception)
             {
                 UnblockUIAfterLoadingIsComplete();

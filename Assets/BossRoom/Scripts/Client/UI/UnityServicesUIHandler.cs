@@ -50,6 +50,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void HandleLobbyError(UnityServiceErrorMessage error)
         {
             var errorMessage = error.Message;
+
             switch (((LobbyServiceException)error.OriginalException).Reason)
             {
                 case LobbyExceptionReason.LobbyConflict:

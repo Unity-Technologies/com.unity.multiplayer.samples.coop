@@ -47,41 +47,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         async Task<T> ExceptionHandling<T>(Task<T> task)
         {
-            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
-
             try
             {
                 return await task;
             }
             catch (Exception e)
             {
-                OnServiceException(e);
-                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n");
+                var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
+                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
                 throw;
             }
         }
 
         async Task ExceptionHandling(Task task)
         {
-            string currentTrace = Environment.StackTrace; // For debugging. If we don't get the calling context here, it's lost once the async operation begins.
-
             try
             {
                 await task;
             }
             catch (Exception e)
             {
-                OnServiceException(e);
-                Debug.LogError($"AsyncRequest threw an exception. Call stack before async call:\n{currentTrace}\n");
+                var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
+                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
                 throw;
             }
-        }
-
-        void OnServiceException(Exception e)
-        {
-            Debug.LogException(e);
-            var reason = $"{e.Message} ({e.InnerException?.Message})"; // Lobby error type, then HTTP error type.
-            m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Lobby Error", reason, UnityServiceErrorMessage.Service.Lobby, e));
         }
 
         public async Task<Lobby> CreateLobby(string requesterUasId, string lobbyName, int maxPlayers, bool isPrivate, Dictionary<string, PlayerDataObject> hostUserData, Dictionary<string, DataObject> lobbyData)
@@ -120,6 +109,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 Filter = m_Filters,
                 Player = new Player(id: requesterUasId, data: localUserData)
             };
+
             return await ExceptionHandling(Lobbies.Instance.QuickJoinLobbyAsync(joinRequest));
         }
 
