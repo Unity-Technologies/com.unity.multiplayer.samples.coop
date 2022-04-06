@@ -12,7 +12,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     {
         [SerializeField] TextMeshProUGUI m_lobbyNameText;
         [SerializeField] TextMeshProUGUI m_lobbyCountText;
-        [SerializeField] TextMeshProUGUI m_OnlineModeText;
 
         LobbyUIMediator m_LobbyUIMediator;
         LocalLobby m_Data;
@@ -28,7 +27,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_Data = data;
             m_lobbyNameText.SetText(data.LobbyName);
             m_lobbyCountText.SetText($"{data.PlayerCount}/{data.MaxPlayerCount}");
-            m_OnlineModeText.SetText(data.OnlineMode.ToString());
         }
 
         public void OnClick()
