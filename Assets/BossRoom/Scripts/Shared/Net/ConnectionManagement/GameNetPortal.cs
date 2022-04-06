@@ -200,14 +200,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                     try
                     {
-                        // we now need to get the joinCode?
-                        var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
-                        await serverRelayUtilityTask;
-                        // we now have the info from the relay service
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
+                            await UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
 
                         m_LocalLobby.RelayJoinCode = joinCode;
                         //next line enabled lobby and relay services integration
+                        await m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices());
                         await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
 
                         // we now need to set the RelayCode somewhere :P
