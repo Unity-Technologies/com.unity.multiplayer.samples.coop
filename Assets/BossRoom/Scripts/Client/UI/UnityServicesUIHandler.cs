@@ -72,7 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscriptions.Dispose();
+            m_Subscriptions?.Dispose();
         }
     }
 }

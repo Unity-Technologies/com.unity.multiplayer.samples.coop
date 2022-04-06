@@ -79,7 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private void OnDestroy()
         {
-            m_LobbyServiceFacade.EndTracking();
+            m_LobbyServiceFacade?.EndTracking();
             DIScope.RootScope.Dispose();
         }
 

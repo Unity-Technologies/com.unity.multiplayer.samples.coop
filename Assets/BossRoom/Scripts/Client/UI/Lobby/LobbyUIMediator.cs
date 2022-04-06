@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Services.Lobbies;
 using Unity.Services.Authentication;
+using Unity.Services.Core;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
 
@@ -113,7 +114,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
                 UnblockUIAfterLoadingIsComplete();
             }
-            //todo: do we actually want to unlock the UI after any exception?
             catch (LobbyServiceException e)
             {
                 if (e.Reason != LobbyExceptionReason.RateLimited)
