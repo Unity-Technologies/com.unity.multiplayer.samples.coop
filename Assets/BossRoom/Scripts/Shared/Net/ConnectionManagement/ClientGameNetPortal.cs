@@ -95,7 +95,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (m_Portal.NetManager.IsClient)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
-                m_Portal.NetManager.Shutdown();
+                // If we are the server, shutdown will be handled by ServerGameNetPortal
+                if (!m_Portal.NetManager.IsServer)
+                {
+                    m_Portal.NetManager.Shutdown();
+                }
             }
         }
 
