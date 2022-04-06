@@ -64,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         //Lobby and Relay calls done from UI
 
-        public async void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers, OnlineMode onlineMode)
+        public async void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers)
         {
             // before sending request to lobby service, populate an empty lobby name, if necessary
             if (string.IsNullOrEmpty(lobbyName))
@@ -83,19 +83,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                 m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
-                switch (m_LocalLobby.OnlineMode)
-                {
-                    case OnlineMode.IpHost:
-                        Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
-                        m_GameNetPortal.StartHost(m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
-                        break;
-
-                    case OnlineMode.UnityRelay:
-                        Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                        m_GameNetPortal.StartUnityRelayHost();
-                        break;
-                }
-            }
+ 				Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
+                        m_GameNetPortal.StartUnityRelayHost();            
+			}
             else
             {
                 UnblockUIAfterLoadingIsComplete();
@@ -179,22 +169,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
-            switch (m_LocalLobby.OnlineMode)
-            {
-                case OnlineMode.IpHost:
-                    Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, at IP:Port {m_LocalLobby.Data.IP}:{m_LocalLobby.Data.Port}");
-                    m_ClientNetPortal.StartClient(m_LocalLobby.Data.IP, m_LocalLobby.Data.Port);
-                    break;
-
-                case OnlineMode.UnityRelay:
-                    Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                    m_ClientNetPortal.StartClientUnityRelayModeAsync(m_LocalLobby.RelayJoinCode, OnRelayJoinFailed);
-                    break;
-            }
+            Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
+            m_ClientNetPortal.StartClientUnityRelayModeAsync(m_LocalLobby.RelayJoinCode, OnRelayJoinFailed);
 
             void OnRelayJoinFailed(string message)
             {
-                PopupPanel.ShowPopupPanel("Relay join failed", message);
+                PopupManager.ShowPopupPanel("Relay join failed", message);
                 Debug.Log($"Relay join failed: {message}");
                 //leave the lobby if relay failed for some reason
                 m_LobbyServiceFacade.EndTracking();

@@ -34,14 +34,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
                 case UnityServiceErrorMessage.Service.Authentication:
                 {
-                    PopupPanel.ShowPopupPanel(
+                    PopupManager.ShowPopupPanel(
                         "Authentication Error",
                         $"{error.OriginalException.Message} \n tip: You can still use the Direct IP connection option.");
                     break;
                 }
                 default:
                 {
-                    PopupPanel.ShowPopupPanel("Service error: " + error.Title, errorMessage);
+                    PopupManager.ShowPopupPanel("Service error: " + error.Title, errorMessage);
                     break;
                 }
             }
@@ -62,13 +62,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 }
                 case LobbyExceptionReason.LobbyFull:
                 {
-                    PopupPanel.ShowPopupPanel("Failed to join lobby", "Lobby is full and can't accept more players");
+                    PopupManager.ShowPopupPanel("Failed to join lobby", "Lobby is full and can't accept more players");
                     // Returning out of the function because we replace default popup panel with this.
                     return;
                 }
             }
 
-            PopupPanel.ShowPopupPanel("Service error: " + error.Title, errorMessage);
+            PopupManager.ShowPopupPanel("Service error: " + error.Title, errorMessage);
         }
 
         void OnDestroy()

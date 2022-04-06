@@ -169,15 +169,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 return (false, null);
             }
 
-            var initialLobbyData = new Dictionary<string, DataObject>()
-            {
-                {"OnlineMode", new DataObject(DataObject.VisibilityOptions.Public, ((int)onlineMode).ToString())}
-            };
-
             try
             {
-                var lobby = await m_LobbyApiInterface.CreateLobby(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), initialLobbyData);
-                return (true, lobby);
+                var lobby = await m_LobbyApiInterface.CreateLobby(AuthenticationService.Instance.PlayerId, lobbyName, maxPlayers, isPrivate, m_LocalUser.GetDataForUnityServices(), null);                return (true, lobby);
             }
             catch (LobbyServiceException e)
             {
@@ -404,7 +398,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
 
             //we would want to lock lobbies from appearing in queries if we're in relay mode and the relay isn't fully set up yet
-            var shouldLock = m_LocalLobby.OnlineMode == OnlineMode.UnityRelay && string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
+            var shouldLock = string.IsNullOrEmpty(m_LocalLobby.RelayJoinCode);
 
             try
             {
