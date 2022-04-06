@@ -141,7 +141,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public void CancelMove()
         {
-            m_NavPath.Clear();
+            m_NavPath?.Clear();
             m_MovementState = MovementState.Idle;
         }
 
