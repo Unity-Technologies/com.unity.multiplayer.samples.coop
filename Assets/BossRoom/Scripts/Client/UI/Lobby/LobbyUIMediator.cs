@@ -3,8 +3,6 @@ using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Services.Lobbies;
-using Unity.Services.Authentication;
 using Unity.Services.Core;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -83,9 +81,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                 m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
- 				Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                        m_GameNetPortal.StartUnityRelayHost();
-			}
+                Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
+                m_GameNetPortal.StartUnityRelayHost();
+            }
             else
             {
                 UnblockUIAfterLoadingIsComplete();
