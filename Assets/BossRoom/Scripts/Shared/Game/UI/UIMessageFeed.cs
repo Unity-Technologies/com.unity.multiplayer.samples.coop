@@ -16,14 +16,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         List<TMPro.TextMeshProUGUI> m_TextLabels;
 
         [SerializeField]
-        GameObject m_FeedPanel;
-
-        [SerializeField]
         float m_HideDelay = 3;
 
         LinkedList<string> m_Messages = new LinkedList<string>();
 
         Coroutine m_HideFeedCoroutine;
+
+        bool m_IsDisplaying;
 
         static UIMessageFeed s_Instance;
 
@@ -36,7 +35,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void Show()
         {
-            m_FeedPanel.SetActive(true);
+            if (!m_IsDisplaying)
+            {
+                DisplayMessages();
+                m_IsDisplaying = true;
+            }
             if (m_HideFeedCoroutine != null)
             {
                 StopCoroutine(m_HideFeedCoroutine);
@@ -78,7 +81,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_Messages.RemoveLast();
             }
             m_Messages.AddFirst(message);
-            DisplayMessages();
             Show();
         }
 
@@ -93,7 +95,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void Hide()
         {
-            m_FeedPanel.SetActive(false);
+            foreach (var label in m_TextLabels)
+            {
+                label.text = "";
+            }
+
+            m_IsDisplaying = false;
         }
     }
 }
