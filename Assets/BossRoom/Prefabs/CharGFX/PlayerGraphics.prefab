@@ -66,7 +66,6 @@ MonoBehaviour:
   m_Animator: {fileID: 0}
   m_StealthySelfMaterial: {fileID: 2100000, guid: 3a999e4944c72a84c830c337bdb6348b, type: 2}
   m_StealthyOtherMaterial: {fileID: 2100000, guid: f3b8028a3fb2d3a42b5a0c73fc01b6f0, type: 2}
-  m_ClientCharacterVisualization: {fileID: 0}
 --- !u!82 &-674663276945163795
 AudioSource:
   m_ObjectHideFlags: 0
@@ -336,7 +335,6 @@ MonoBehaviour:
   m_TooSlowThreshold: 0.3
   m_WalkSpeedThreshold: 0.6
   m_RunSpeedThreshold: 1.2
-  m_ClientCharacterVisualization: {fileID: 0}
 --- !u!82 &3410014739571049847
 AudioSource:
   m_ObjectHideFlags: 0
@@ -486,14 +484,6 @@ PrefabInstance:
     - target: {fileID: 6303958631329717848, guid: afc37a73c7656b0468625175ce12d137, type: 3}
       propertyPath: m_LocalPosition.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6303958631329717848, guid: afc37a73c7656b0468625175ce12d137, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6303958631329717848, guid: afc37a73c7656b0468625175ce12d137, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 6303958631329717848, guid: afc37a73c7656b0468625175ce12d137, type: 3}
       propertyPath: m_LocalRotation.y
