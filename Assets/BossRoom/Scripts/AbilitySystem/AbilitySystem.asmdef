@@ -1,0 +1,19 @@
+{
+    "name": "AbilitySystem",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Netcode.Runtime",
+        "Textus.SerializeReferenceUI",
+        "Unity.Multiplayer.Samples.BossRoom.Server",
+        "Unity.Multiplayer.Samples.BossRoom.Shared"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
