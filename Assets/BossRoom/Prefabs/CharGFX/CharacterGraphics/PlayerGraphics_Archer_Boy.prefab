@@ -31,7 +31,7 @@ Transform:
   - {fileID: 5529373844149382345}
   - {fileID: 2438803882990361179}
   m_Father: {fileID: 3037349535683109858}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &696200811602614023
 GameObject:
@@ -1338,14 +1338,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 69509828680128766, guid: d27be51c72c4bf94aa40b5d1abc3448a, type: 3}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 69509828680128766, guid: d27be51c72c4bf94aa40b5d1abc3448a, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 90
-      objectReference: {fileID: 0}
     - target: {fileID: 5731114431212902383, guid: d27be51c72c4bf94aa40b5d1abc3448a, type: 3}
       propertyPath: m_CharacterModel.ears
       value: 
@@ -1397,10 +1389,6 @@ PrefabInstance:
     - target: {fileID: 8385572559299522089, guid: d27be51c72c4bf94aa40b5d1abc3448a, type: 3}
       propertyPath: m_Name
       value: PlayerGraphics_Archer_Boy
-      objectReference: {fileID: 0}
-    - target: {fileID: 9058362439756106939, guid: d27be51c72c4bf94aa40b5d1abc3448a, type: 3}
-      propertyPath: m_RootOrder
-      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 9157042335656178835, guid: d27be51c72c4bf94aa40b5d1abc3448a, type: 3}
       propertyPath: m_RootOrder
