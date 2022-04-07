@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
@@ -113,6 +114,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     {
                         m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
                     }
+
+                    var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
+                    if (sessionData.HasValue)
+                    {
+                        UIMessageFeed.ShowMessage($"Player {sessionData.Value.PlayerName} has left the game!");
+                    }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
             }
@@ -197,6 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
                 // connection approval will create a player object for you
+                UIMessageFeed.ShowMessage($"Player {connectionPayload.playerName} has joined the game!");
             }
             else
             {
