@@ -119,8 +119,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             {
                 await ExceptionHandling(Lobbies.Instance.RemovePlayerAsync(lobbyId, requesterUasId));
             }
-            catch (Exception e)
-                when (e is LobbyServiceException {Reason: LobbyExceptionReason.PlayerNotFound})
+            catch (LobbyServiceException e)
+                when (e is {Reason: LobbyExceptionReason.PlayerNotFound})
             {
                 // If Player is not found, they have already left the lobby or have been kicked out. No need to throw here
             }
