@@ -286,15 +286,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         {
             if (m_LocalUser.IsHost)
             {
-                try
-                {
-                    await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
-                }
-                catch (Exception e)
-                    when (e is LobbyServiceException {Reason: LobbyExceptionReason.PlayerNotFound})
-                {
-                }
-
+                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
             }
             else
             {
