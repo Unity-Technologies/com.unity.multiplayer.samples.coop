@@ -82,6 +82,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_NpcLayer = LayerMask.NameToLayer("NPCs");
         }
 
+        public override void OnNetworkDespawn()
+        {
+            m_Started = false;
+        }
+
         void FixedUpdate()
         {
             if (!m_Started)

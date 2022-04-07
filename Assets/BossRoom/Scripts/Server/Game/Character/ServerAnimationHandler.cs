@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
@@ -22,7 +23,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (IsServer)
             {
-                m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+                // Wait until next frame before registering on OnValueChanged to make sure NetworkAnimator has spawned before.
+                StartCoroutine(WaitToRegisterOnLifeStateChanged());
+            }
+        }
+
+        IEnumerator WaitToRegisterOnLifeStateChanged()
+        {
+            yield return new WaitForEndOfFrame();
+            m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+            if (m_NetworkLifeState.LifeState.Value != LifeState.Alive)
+            {
+                OnLifeStateChanged(LifeState.Alive, m_NetworkLifeState.LifeState.Value);
             }
         }
 

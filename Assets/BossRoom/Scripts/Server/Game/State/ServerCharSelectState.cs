@@ -204,8 +204,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
-
-                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             }
         }
 
