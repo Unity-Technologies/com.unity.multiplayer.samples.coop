@@ -199,11 +199,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             try
             {
-                var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
-                await clientRelayUtilityTask;
-                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) =
+                    await UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
 
-                m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)
@@ -223,7 +222,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 playerId = m_Portal.GetPlayerId(),
                 clientScene = SceneManager.GetActiveScene().buildIndex,
-                playerName = m_Portal.PlayerName
+                playerName = m_Portal.PlayerName,
+                isDebug = Debug.isDebugBuild
             });
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);

@@ -164,15 +164,10 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         IEnumerator FadeOutCoroutine()
         {
-            float currentTime = 0;
-            while (currentTime < m_DelayBeforeFadeOut)
-            {
-                yield return null;
-                currentTime += Time.deltaTime;
-            }
-
+            yield return new WaitForSeconds(m_DelayBeforeFadeOut);
             m_LoadingScreenRunning = false;
-            currentTime = 0;
+
+            float currentTime = 0;
             while (currentTime < m_FadeOutDuration)
             {
                 m_CanvasGroup.alpha = Mathf.Lerp(1, 0, currentTime/ m_FadeOutDuration);

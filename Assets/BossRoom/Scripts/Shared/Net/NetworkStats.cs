@@ -56,8 +56,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         ClientRpcParams m_PongClientParams;
 
+        bool m_IsServer;
+
+        string m_TextToDisplay;
+
         public override void OnNetworkSpawn()
         {
+            m_IsServer = IsServer;
+
             bool isClientOnly = IsClient && !IsServer;
             if (!IsOwner && isClientOnly) // we don't want to track player ghost stats, only our own
             {
@@ -101,8 +107,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void FixedUpdate()
         {
-            var textToDisplay = string.Empty;
-            if (!IsServer)
+            if (!m_IsServer)
             {
                 if (Time.realtimeSinceStartup - m_LastPingTime > k_PingIntervalSeconds)
                 {
@@ -118,18 +123,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                 if (m_TextStat != null)
                 {
-                    textToDisplay = $"{textToDisplay}RTT: {(m_BossRoomRTT.Average * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.Average.ToString("0")} ms";
+                    m_TextToDisplay = $"RTT: {(m_BossRoomRTT.Average * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.Average.ToString("0")} ms";
                 }
             }
-
-            if (IsServer)
+            else
             {
-                textToDisplay = $"{textToDisplay}Connected players: {NetworkManager.Singleton.ConnectedClients.Count.ToString()} ";
+                m_TextToDisplay = $"Connected players: {NetworkManager.Singleton.ConnectedClients.Count.ToString()}";
             }
 
             if (m_TextStat)
             {
-                m_TextStat.text = textToDisplay;
+                m_TextStat.text = m_TextToDisplay;
             }
         }
 

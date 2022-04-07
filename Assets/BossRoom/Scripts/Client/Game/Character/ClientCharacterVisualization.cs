@@ -1,7 +1,6 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
@@ -39,17 +38,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         public Material ReticuleFriendlyMat => m_VisualizationConfiguration.ReticuleFriendlyMat;
 
-        /// <summary>
-        /// Returns our pseudo-Parent, the object that owns the visualization.
-        /// (We don't have an actual transform parent because we're on a top-level GameObject.)
-        /// </summary>
-        public Transform Parent { get; private set; }
-
         PhysicsWrapper m_PhysicsWrapper;
 
         public bool CanPerformActions => m_NetState.CanPerformActions;
 
         NetworkCharacterState m_NetState;
+
+        public NetworkCharacterState NetState => m_NetState;
 
         ActionVisualization m_ActionViz;
 
@@ -64,19 +59,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         Quaternion m_LerpedRotation;
 
+        bool m_IsHost;
+
+        float m_CurrentSpeed;
+
+        void Awake()
+        {
+            enabled = false;
+        }
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient || transform.parent == null)
             {
-                enabled = false;
                 return;
             }
+
+            enabled = true;
+
+            m_IsHost = IsHost;
 
             m_ActionViz = new ActionVisualization(this);
 
             m_NetState = GetComponentInParent<NetworkCharacterState>();
-
-            Parent = m_NetState.transform;
 
             m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
 
@@ -85,6 +90,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
+            m_NetState.MovementStatus.OnValueChanged += OnMovementStatusChanged;
+            OnMovementStatusChanged(MovementStatus.Normal,m_NetState.MovementStatus.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
@@ -99,7 +106,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
 
-                if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                if (m_NetState.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
                 {
                     m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
                 }
@@ -115,7 +122,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
 
-                    if (Parent.TryGetComponent(out ClientInputSender inputSender))
+                    if (m_NetState.TryGetComponent(out ClientInputSender inputSender))
                     {
                         // TODO: revisit; anticipated actions would play twice on the host
                         if (!IsServer)
@@ -128,6 +135,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
+        public override void OnNetworkDespawn()
+        {
+            if (m_NetState)
+            {
+                m_NetState.DoActionEventClient -= PerformActionFX;
+                m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
+                m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
+                m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
+                m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+
+                if (m_NetState.TryGetComponent(out ClientInputSender sender))
+                {
+                    sender.ActionInputEvent -= OnActionInput;
+                    sender.ClientMoveEvent -= OnMoveInput;
+                }
+            }
+
+            enabled = false;
+        }
+
         void OnActionInput(ActionRequestData data)
         {
             m_ActionViz.AnticipateAction(ref data);
@@ -138,25 +165,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (!IsAnimating())
             {
                 OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
-            }
-        }
-
-        public override void OnDestroy()
-        {
-            base.OnDestroy();
-            if (m_NetState)
-            {
-                m_NetState.DoActionEventClient -= PerformActionFX;
-                m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
-                m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
-                m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
-                m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
-
-                if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
-                {
-                    sender.ActionInputEvent -= OnActionInput;
-                    sender.ClientMoveEvent -= OnMoveInput;
-                }
             }
         }
 
@@ -209,15 +217,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Returns the value we should set the Animator's "Speed" variable, given current gameplay conditions.
         /// </summary>
-        float GetVisualMovementSpeed()
+        float GetVisualMovementSpeed(MovementStatus movementStatus)
         {
-            Assert.IsNotNull(m_VisualizationConfiguration);
             if (m_NetState.NetworkLifeState.LifeState.Value != LifeState.Alive)
             {
                 return m_VisualizationConfiguration.SpeedDead;
             }
 
-            switch (m_NetState.MovementStatus.Value)
+            switch (movementStatus)
             {
                 case MovementStatus.Idle:
                     return m_VisualizationConfiguration.SpeedIdle;
@@ -232,24 +239,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case MovementStatus.Walking:
                     return m_VisualizationConfiguration.SpeedWalking;
                 default:
-                    throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
+                    throw new Exception($"Unknown MovementStatus {movementStatus}");
             }
+        }
+
+        void OnMovementStatusChanged(MovementStatus previousValue, MovementStatus newValue)
+        {
+            m_CurrentSpeed = GetVisualMovementSpeed(newValue);
         }
 
         void Update()
         {
-            if (Parent == null)
-            {
-                // since we aren't in the transform hierarchy, we have to explicitly die when our parent dies.
-                Destroy(gameObject);
-                return;
-            }
-
             // On the host, Characters are translated via ServerCharacterMovement's FixedUpdate method. To ensure that
             // the game camera tracks a GameObject moving in the Update loop and therefore eliminate any camera jitter,
             // this graphics GameObject's position is smoothed over time on the host. Clients do not need to perform any
             // positional smoothing since NetworkTransform will interpolate position updates on the root GameObject.
-            if (IsHost)
+            if (m_IsHost)
             {
                 // Note: a cached position (m_LerpedPosition) and rotation (m_LerpedRotation) are created and used as
                 // the starting point for each interpolation since the root's position and rotation are modified in
@@ -264,7 +269,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
+                OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, m_CurrentSpeed);
             }
 
             m_ActionViz.Update();

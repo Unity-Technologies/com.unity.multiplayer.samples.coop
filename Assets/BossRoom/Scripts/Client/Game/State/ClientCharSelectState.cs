@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using TMPro;
-using Unity.Multiplayer.Samples.Utilities;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -103,16 +100,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
-        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-        DIScope m_Scope;
-
-        void Awake()
+        protected override void Awake()
         {
-            //creating a child scope just to have manual control over the lifetime of the things
-            //that shouldn't live past the current scene existence
-            m_Scope = new DIScope(DIScope.RootScope);
-
-            m_Scope.FinalizeScopeConstruction();
+            base.Awake();
 
             Instance = this;
             CharSelectData = GetComponent<CharSelectData>();
@@ -123,16 +113,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 { LobbyMode.LobbyEnding, m_UIElementsForLobbyEnding },
                 { LobbyMode.FatalError, m_UIElementsForFatalError },
             };
-
-            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
-            {
-                m_Scope.InjectIn(autoInjectedGameObject);
-            }
-        }
-
-        public override void OnDestroy()
-        {
-            m_Scope.Dispose();
         }
 
         protected override void Start()
@@ -333,6 +313,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (isLobbyClosed)
             {
                 ConfigureUIForLobbyMode(LobbyMode.LobbyEnding);
+            }
+            else
+            {
+                if (m_LastSeatSelected == -1)
+                {
+                    ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
+                }
+                else
+                {
+                    ConfigureUIForLobbyMode(LobbyMode.SeatChosen);
+                    m_ClassInfoBox.ConfigureForClass(CharSelectData.AvatarConfiguration[m_LastSeatSelected].CharacterClass);
+                }
             }
         }
 
