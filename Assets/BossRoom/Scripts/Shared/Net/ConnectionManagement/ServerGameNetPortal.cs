@@ -246,7 +246,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             yield return null;
             m_Portal.NetManager.Shutdown();
-            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
+            SessionManager<SessionPlayerData>.Instance.OnServerEnded();
         }
 
         /// <summary>
