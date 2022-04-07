@@ -1,5 +1,4 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom;
 using UnityEngine;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -24,6 +23,11 @@ public class RoomNameBox : MonoBehaviour
         UpdateUI(localLobby);
     }
 
+    void Awake()
+    {
+        gameObject.SetActive(false);
+    }
+
     private void OnDestroy()
     {
         m_LocalLobby.changed -= UpdateUI;
@@ -31,22 +35,12 @@ public class RoomNameBox : MonoBehaviour
 
     private void UpdateUI(LocalLobby localLobby)
     {
-        switch (localLobby.OnlineMode)
+        if (!string.IsNullOrEmpty(localLobby.LobbyCode))
         {
-            case OnlineMode.IpHost:
-            case OnlineMode.UnityRelay:
-                m_LobbyCode = localLobby.LobbyCode;
-                m_RoomNameText.text = $"Lobby Code: {m_LobbyCode}";
-                m_CopyToClipboardButton.gameObject.SetActive(true);
-                break;
-            case OnlineMode.Unset:
-                //this can happen if we launch the game while circumventing lobby logic
-                m_LobbyCode = "";
-                m_RoomNameText.text = $"-----------";
-                m_CopyToClipboardButton.gameObject.SetActive(false);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException();
+            m_LobbyCode = localLobby.LobbyCode;
+            m_RoomNameText.text = $"Lobby Code: {m_LobbyCode}";
+            gameObject.SetActive(true);
+            m_CopyToClipboardButton.gameObject.SetActive(true);
         }
     }
 

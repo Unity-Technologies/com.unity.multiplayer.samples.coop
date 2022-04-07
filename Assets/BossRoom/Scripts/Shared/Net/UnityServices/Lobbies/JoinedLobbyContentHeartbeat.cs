@@ -56,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// If there have been any data changes since the last update, push them to Lobby.
         /// (Unless we're already awaiting a query, in which case continue waiting.)
         /// </summary>
-        void OnUpdate(float dt)
+        async void OnUpdate(float dt)
         {
             if (m_AwaitingQueryCount > 0)
             {
@@ -75,14 +75,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 if (m_LocalUser.IsHost)
                 {
                     m_AwaitingQueryCount++; // todo this should disapear once we use await correctly. This causes issues at the moment if OnSuccess isn't called properly
-                    m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices(), OnSuccess, () => m_AwaitingQueryCount--);
+                    await m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices());
+                    m_AwaitingQueryCount--;
                 }
                 m_AwaitingQueryCount++;
-                m_LobbyServiceFacade.UpdatePlayerDataAsync(m_LocalUser.GetDataForUnityServices(), OnSuccess, () => m_AwaitingQueryCount--);
-            }
-
-            void OnSuccess()
-            {
+                await m_LobbyServiceFacade.UpdatePlayerDataAsync(m_LocalUser.GetDataForUnityServices());
                 m_AwaitingQueryCount--;
             }
         }
