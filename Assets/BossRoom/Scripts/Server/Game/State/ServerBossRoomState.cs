@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -240,6 +241,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             // Boss is dead - set game won to true
             StartCoroutine(CoroGameOver(k_WinDelay, true));
+            MessageFeedHandler.PublishMessage("The Boss has been defeated!");
         }
 
         void SetWinState(WinState winState)
