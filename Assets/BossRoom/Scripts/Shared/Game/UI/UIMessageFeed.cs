@@ -72,10 +72,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void DisplayMessages(MessageFeedHandler.MessageFeed messageFeed)
         {
             var message = messageFeed.messages.First;
-            for (var i = 0; i < m_TextLabels.Count && message != null; i++)
+            for (var i = 0; i < m_TextLabels.Count; i++)
             {
-                m_TextLabels[i].text = message.Value;
-                message = message.Next;
+                if (message != null)
+                {
+                    m_TextLabels[i].text = message.Value;
+                    message = message.Next;
+                }
+                else
+                {
+                    m_TextLabels[i].text = "";
+                }
             }
             Show();
         }
