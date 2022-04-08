@@ -1,6 +1,6 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -11,29 +11,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// </summary>
     public class MessageFeedHandler : NetworkBehaviour
     {
-        UIMessageFeed m_MessageFeed;
+        public readonly struct MessageFeed
+        {
+            public readonly LinkedList<string> messages;
 
-        LinkedList<string> m_Messages = new LinkedList<string>();
+            public MessageFeed(LinkedList<string> messages)
+            {
+                this.messages = messages;
+            }
+        }
+
+        MessageFeed m_Feed = new MessageFeed(new LinkedList<string>());
 
         static MessageFeedHandler s_Instance;
+
+        IPublisher<MessageFeed> m_Publisher;
+
+        [Inject]
+        void InjectDependencies(IPublisher<MessageFeed> publisher)
+        {
+            m_Publisher = publisher;
+        }
 
         void Awake()
         {
             if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
             s_Instance = this;
             DontDestroyOnLoad(this);
-        }
-
-        public static void SetMessageFeed(UIMessageFeed messageFeed)
-        {
-            if (s_Instance != null)
-            {
-                s_Instance.m_MessageFeed = messageFeed;
-            }
-            else
-            {
-                Debug.LogError($"No MessageFeedHandler instance found.");
-            }
         }
 
         public static void ShowMessage(string message)
@@ -58,15 +62,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [ClientRpc]
         void ShowInGameFeedMessageClientRpc(string message)
         {
-            if (m_MessageFeed != null)
-            {
-                m_Messages.AddFirst(message);
-                m_MessageFeed.Show(m_Messages);
-            }
-            else
-            {
-                Debug.LogError($"No UIMessageFeed set. Cannot display message: {message}");
-            }
+            m_Feed.messages.AddFirst(message);
+            m_Publisher.Publish(m_Feed);
         }
     }
 }

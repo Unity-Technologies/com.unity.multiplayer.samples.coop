@@ -3176,7 +3176,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &6119209957296121311
 RectTransform:
   m_ObjectHideFlags: 0
@@ -5040,7 +5040,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 240
+      value: 180
       objectReference: {fileID: 0}
     - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_LocalPosition.x
@@ -5076,7 +5076,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -350
+      value: -380
       objectReference: {fileID: 0}
     - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -5116,7 +5116,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5737522607207632715, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 20
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5737522607793216260, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_SizeDelta.y
@@ -5124,7 +5124,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5737522607793216260, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 140
+      value: 130
       objectReference: {fileID: 0}
     - target: {fileID: 5737522607793216507, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_fontSize
@@ -5148,7 +5148,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5737522607861479608, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 60
+      value: 50
       objectReference: {fileID: 0}
     - target: {fileID: 5737522607861479615, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_fontSize
@@ -5188,7 +5188,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5737522608504804457, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 100
+      value: 90
       objectReference: {fileID: 0}
     - target: {fileID: 8374405915199091398, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_fontSize

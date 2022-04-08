@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
@@ -24,17 +24,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         bool m_IsDisplaying;
 
+        IDisposable m_Subscription;
+
+        [Inject]
+        void InjectDependencies(ISubscriber<MessageFeedHandler.MessageFeed> subscriber)
+        {
+            m_Subscription = subscriber.Subscribe(Show);
+        }
+
         void Start()
         {
-            MessageFeedHandler.SetMessageFeed(this);
             Hide();
         }
 
-        public void Show(LinkedList<string> messages)
+        void OnDestroy()
+        {
+            m_Subscription?.Dispose();
+        }
+
+        public void Show(MessageFeedHandler.MessageFeed messageFeed)
         {
             if (!m_IsDisplaying)
             {
-                DisplayMessages(messages);
+                DisplayMessages(messageFeed);
                 m_IsDisplaying = true;
                 m_CanvasGroup.alpha = 1;
             }
@@ -52,9 +64,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             Hide();
         }
 
-        void DisplayMessages(LinkedList<string> messages)
+        void DisplayMessages(MessageFeedHandler.MessageFeed messageFeed)
         {
-            var message = messages.First;
+            var message = messageFeed.messages.First;
             for (var i = 0; i < m_TextLabels.Count && message != null; i++)
             {
                 m_TextLabels[i].text = message.Value;
