@@ -46,10 +46,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (!m_IsDisplaying)
             {
-                DisplayMessages(messageFeed);
                 m_IsDisplaying = true;
                 m_CanvasGroup.alpha = 1;
             }
+            DisplayMessages(messageFeed);
             if (m_HideFeedCoroutine != null)
             {
                 StopCoroutine(m_HideFeedCoroutine);
