@@ -79,11 +79,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;
             }
 
-            m_Camera = Camera.main;
+            m_Camera = GameObject.FindWithTag("MainCamera").GetComponent<Camera>();
+            Assert.IsNotNull(m_Camera);
+
             var canvasGameObject = GameObject.FindWithTag("GameCanvas");
             if (canvasGameObject)
             {
                 m_CanvasTransform = canvasGameObject.transform;
+                Assert.IsNotNull(m_CanvasTransform);
             }
 
             Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
@@ -91,7 +94,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 Assert.IsNotNull(m_NetworkHealthState, "A NetworkHealthState component needs to be attached!");
             }
-            Assert.IsTrue(m_Camera != null && m_CanvasTransform != null);
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 
