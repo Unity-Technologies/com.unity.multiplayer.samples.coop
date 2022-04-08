@@ -17,26 +17,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         float m_HideDelay = 3;
 
-        LinkedList<string> m_Messages = new LinkedList<string>();
-
         Coroutine m_HideFeedCoroutine;
 
         bool m_IsDisplaying;
 
-        static UIMessageFeed s_Instance;
-
-        void Awake()
+        void Start()
         {
-            if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
-            s_Instance = this;
+            MessageFeedHandler.SetMessageFeed(this);
             Hide();
         }
 
-        public void Show()
+        public void Show(LinkedList<string> messages)
         {
             if (!m_IsDisplaying)
             {
-                DisplayMessages();
+                DisplayMessages(messages);
                 m_IsDisplaying = true;
             }
             if (m_HideFeedCoroutine != null)
@@ -47,48 +42,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_HideFeedCoroutine = StartCoroutine(HideFeedCoroutine());
         }
 
-        public static void ShowMessage(string message)
-        {
-            if (s_Instance != null)
-            {
-                if (s_Instance.IsServer)
-                {
-                    s_Instance.ShowInGameFeedMessageClientRpc(message);
-                }
-                else
-                {
-                    Debug.LogError("Only the server can display messages in the in-game feed.");
-                }
-            }
-            else
-            {
-                Debug.LogError($"No UIMessageFeed instance found. Cannot display message: {message}");
-            }
-        }
-
         IEnumerator HideFeedCoroutine()
         {
             yield return new WaitForSeconds(m_HideDelay);
             Hide();
         }
 
-        [ClientRpc]
-        void ShowInGameFeedMessageClientRpc(string message)
+        void DisplayMessages(LinkedList<string> messages)
         {
-            if (m_Messages.Count == m_TextLabels.Count)
+            var message = messages.First;
+            for (var i = 0; i < m_TextLabels.Count && message != null; i++)
             {
-                m_Messages.RemoveLast();
-            }
-            m_Messages.AddFirst(message);
-            Show();
-        }
-
-        void DisplayMessages()
-        {
-            var i = 0;
-            foreach (var message in m_Messages)
-            {
-                m_TextLabels[i++].text = message;
+                m_TextLabels[i].text = message.Value;
+                message = message.Next;
             }
         }
 
