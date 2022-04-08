@@ -118,7 +118,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
                     if (sessionData.HasValue)
                     {
-                        MessageFeedHandler.ShowMessage($"{sessionData.Value.PlayerName} has left the game!");
+                        MessageFeedHandler.PublishMessage($"{sessionData.Value.PlayerName} has left the game!");
                     }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
@@ -204,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
                 // connection approval will create a player object for you
-                MessageFeedHandler.ShowMessage($"{SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName} has joined the game!");
+                MessageFeedHandler.PublishMessage($"{SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName} has joined the game!");
             }
             else
             {

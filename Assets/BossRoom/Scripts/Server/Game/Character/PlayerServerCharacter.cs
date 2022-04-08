@@ -62,7 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                         throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
                 }
 
-                MessageFeedHandler.ShowMessage($"{m_NameState.Name.Value} {statusMessage}");
+                MessageFeedHandler.PublishMessage($"{m_NameState.Name.Value} {statusMessage}");
             }
         }
 

@@ -7,7 +7,8 @@ using UnityEngine;
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
-    /// Handles the display of in-game messages in a message feed
+    /// Handles the publishing of messages for an in-game feed. When the server creates a message through it, it sends
+    /// it to all clients, who then publish the feed history for all subscribers.
     /// </summary>
     public class MessageFeedHandler : NetworkBehaviour
     {
@@ -40,13 +41,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             DontDestroyOnLoad(this);
         }
 
-        public static void ShowMessage(string message)
+        /// <summary>
+        /// Adds a new message to the in-game feed for all clients to publish. Must be called on the server.
+        /// </summary>
+        /// <param name="message">The message to publish</param>
+        public static void PublishMessage(string message)
         {
             if (s_Instance != null)
             {
                 if (s_Instance.IsServer)
                 {
-                    s_Instance.ShowInGameFeedMessageClientRpc(message);
+                    s_Instance.PublishInGameFeedMessageClientRpc(message);
                 }
                 else
                 {
@@ -60,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
 
         [ClientRpc]
-        void ShowInGameFeedMessageClientRpc(string message)
+        void PublishInGameFeedMessageClientRpc(string message)
         {
             m_Feed.messages.AddFirst(message);
             m_Publisher.Publish(m_Feed);

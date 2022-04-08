@@ -29,7 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [Inject]
         void InjectDependencies(ISubscriber<MessageFeedHandler.MessageFeed> subscriber)
         {
-            m_Subscription = subscriber.Subscribe(Show);
+            m_Subscription = subscriber.Subscribe(DisplayMessages);
         }
 
         void Start()
@@ -42,20 +42,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_Subscription?.Dispose();
         }
 
-        public void Show(MessageFeedHandler.MessageFeed messageFeed)
+        void Show()
         {
             if (!m_IsDisplaying)
             {
                 m_IsDisplaying = true;
                 m_CanvasGroup.alpha = 1;
             }
-            DisplayMessages(messageFeed);
             if (m_HideFeedCoroutine != null)
             {
                 StopCoroutine(m_HideFeedCoroutine);
             }
 
             m_HideFeedCoroutine = StartCoroutine(HideFeedCoroutine());
+        }
+
+        void Hide()
+        {
+            m_IsDisplaying = false;
+            m_CanvasGroup.alpha = 0;
         }
 
         IEnumerator HideFeedCoroutine()
@@ -72,17 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_TextLabels[i].text = message.Value;
                 message = message.Next;
             }
-        }
-
-        void Hide()
-        {
-            foreach (var label in m_TextLabels)
-            {
-                label.text = "";
-            }
-
-            m_IsDisplaying = false;
-            m_CanvasGroup.alpha = 0;
+            Show();
         }
     }
 }
