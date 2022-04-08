@@ -9,13 +9,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// <summary>
     /// Handles the display of in-game messages in a message feed
     /// </summary>
-    public class UIMessageFeed : NetworkBehaviour
+    public class UIMessageFeed : MonoBehaviour
     {
         [SerializeField]
         List<TMPro.TextMeshProUGUI> m_TextLabels;
 
         [SerializeField]
-        float m_HideDelay = 3;
+        float m_HideDelay = 5;
+
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
 
         Coroutine m_HideFeedCoroutine;
 
@@ -33,6 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 DisplayMessages(messages);
                 m_IsDisplaying = true;
+                m_CanvasGroup.alpha = 1;
             }
             if (m_HideFeedCoroutine != null)
             {
@@ -66,6 +70,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             m_IsDisplaying = false;
+            m_CanvasGroup.alpha = 0;
         }
     }
 }

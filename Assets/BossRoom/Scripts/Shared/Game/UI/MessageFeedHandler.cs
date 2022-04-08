@@ -21,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
             s_Instance = this;
+            DontDestroyOnLoad(this);
         }
 
         public static void SetMessageFeed(UIMessageFeed messageFeed)
@@ -57,8 +58,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [ClientRpc]
         void ShowInGameFeedMessageClientRpc(string message)
         {
-            m_Messages.AddFirst(message);
-            m_MessageFeed.Show(m_Messages);
+            if (m_MessageFeed != null)
+            {
+                m_Messages.AddFirst(message);
+                m_MessageFeed.Show(m_Messages);
+            }
+            else
+            {
+                Debug.LogError($"No UIMessageFeed set. Cannot display message: {message}");
+            }
         }
     }
 }
