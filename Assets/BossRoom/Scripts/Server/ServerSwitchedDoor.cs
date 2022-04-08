@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -70,6 +71,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         void DoorStateChanged(bool previousValue, bool newValue)
         {
             m_Animator.SetBool(m_AnimatorDoorOpenBoolID, newValue);
+            if (newValue)
+            {
+                MessageFeedHandler.PublishMessage("The Door has been opened!");
+            }
+            else
+            {
+                MessageFeedHandler.PublishMessage("The Door is closing.");
+            }
         }
 
         void OnValidate()
