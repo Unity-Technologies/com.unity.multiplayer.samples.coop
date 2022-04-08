@@ -204,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
                 // connection approval will create a player object for you
-                MessageFeedHandler.ShowMessage($"{connectionPayload.playerName} has joined the game!");
+                MessageFeedHandler.ShowMessage($"{SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName} has joined the game!");
             }
             else
             {
