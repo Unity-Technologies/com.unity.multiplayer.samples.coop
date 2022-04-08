@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -22,17 +24,46 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         ServerCharacter m_CachedServerCharacter;
 
+        NetworkNameState m_NameState;
+
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
                 s_ActivePlayers.Add(m_CachedServerCharacter);
+                m_NameState = GetComponent<NetworkNameState>();
+                m_CachedServerCharacter.NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
             }
             else
             {
                 enabled = false;
             }
 
+        }
+
+        void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
+        {
+            if (m_NameState != null)
+            {
+                string statusMessage;
+
+                switch (newValue)
+                {
+                    case LifeState.Alive:
+                        statusMessage = "has been reanimated!";
+                        break;
+                    case LifeState.Fainted:
+                        statusMessage = "has fainted!";
+                        break;
+                    case LifeState.Dead:
+                        statusMessage = "has died!";
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
+                }
+
+                MessageFeedHandler.ShowMessage($"{m_NameState.Name.Value} {statusMessage}");
+            }
         }
 
         void OnDisable()
