@@ -34,6 +34,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_Publisher = publisher;
         }
 
+        public override void OnNetworkDespawn()
+        {
+            m_Feed.messages.Clear();
+        }
+
         void Awake()
         {
             if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
