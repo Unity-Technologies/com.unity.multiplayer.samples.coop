@@ -5,6 +5,12 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
+    /// <summary>
+    /// This type of message channel allows the server to publish a message that will be sent to clients as well as
+    /// being published locally. Clients and the server both can subscribe to it, but it needs to be done after
+    /// the NetworkManager is initialized.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     public class NetworkedMessageChannel<T> : MessageChannel<T> where T : unmanaged
     {
         string m_Name;
