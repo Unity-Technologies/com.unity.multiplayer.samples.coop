@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -43,6 +46,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         //these Ids are recorded for event unregistration at destruction time and are not maintained (the objects they point to may be destroyed during
         //the lifetime of the ServerBossRoomState).
         private List<ulong> m_HeroIds = new List<ulong>();
+
+        [Inject]
+        void InjectDependencies(IPublisher<ApplicationController.test> pub, ISubscriber<ApplicationController.test> sub)
+        {
+            m_Publisher = pub;
+            m_sub = sub.Subscribe(Test);
+        }
+
+        void Test(ApplicationController.test test)
+        {
+            Debug.Log(test.a);
+            Debug.Log(test.b);
+        }
+
+        IPublisher<ApplicationController.test> m_Publisher;
+
+        IDisposable m_sub;
+
+        public override void OnDestroy()
+        {
+            m_sub.Dispose();
+        }
 
         public override void OnNetworkSpawn()
         {
@@ -204,6 +229,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             // spawn players characters with destroyWithScene = true
             newPlayer.SpawnWithOwnership(clientId, true);
+            m_Publisher.Publish(new ApplicationController.test());
         }
 
         static IEnumerator WaitToReposition(Transform moveTransform, Vector3 newPosition, Quaternion newRotation)
