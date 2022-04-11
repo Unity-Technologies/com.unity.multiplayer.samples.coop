@@ -195,13 +195,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     var leavingLobby = m_LobbyServiceFacade.EndTracking();
                     yield return new WaitUntil(() => leavingLobby.IsCompleted);
-                    var joiningLobby = m_LobbyServiceFacade.JoinLobbyAsync("", lobbyCode, onSuccess: lobby =>
-                        {
-                            m_LobbyServiceFacade.SetRemoteLobby(lobby);
-                            ConnectClient();
-                        }
-                        , null);
+                    var joiningLobby = m_LobbyServiceFacade.TryJoinLobbyAsync("", lobbyCode);
                     yield return new WaitUntil(() => joiningLobby.IsCompleted);
+                    if (joiningLobby.Result.Success)
+                    {
+                        m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
+                        ConnectClient();
+                    }
                 }
                 else
                 {
