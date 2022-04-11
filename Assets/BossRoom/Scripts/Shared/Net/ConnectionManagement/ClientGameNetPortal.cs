@@ -211,13 +211,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;//not re-throwing, but still not allowing to connect
             }
 
-
             ConnectClient();
         }
 
         void ConnectClient()
         {
-
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
                 playerId = m_Portal.GetPlayerId(),
@@ -234,7 +232,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //and...we're off! Netcode will establish a socket connection to the host.
             //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our ReceiveServerToClientConnectResult_CustomMessage invoked. This is where game-layer failures will be reported.
-            m_Portal.NetManager.StartClient();
+            var result = m_Portal.NetManager.StartClient();
+
+            if (!result)
+            {
+                return;
+            }
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
             NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult_CustomMessage), ReceiveServerToClientConnectResult_CustomMessage);

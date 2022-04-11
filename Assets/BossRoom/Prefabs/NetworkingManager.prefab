@@ -49,12 +49,16 @@ MonoBehaviour:
   m_MaxSendQueueSize: 50000000
   m_HeartbeatTimeoutMS: 500
   m_ConnectTimeoutMS: 1000
-  m_MaxConnectAttempts: 60
+  m_MaxConnectAttempts: 15
   m_DisconnectTimeoutMS: 10000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1 &503411707
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,6 +114,10 @@ MonoBehaviour:
     Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1 &5436007408952557947
 GameObject:
   m_ObjectHideFlags: 0

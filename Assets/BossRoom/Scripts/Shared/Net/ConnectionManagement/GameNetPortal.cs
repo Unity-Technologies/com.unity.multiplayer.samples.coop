@@ -167,7 +167,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </remarks>
         /// <param name="ipaddress">The IP address to connect to (currently IPV4 only).</param>
         /// <param name="port">The port to connect to. </param>
-        public void StartHost(string ipaddress, int port)
+        public bool StartHost(string ipaddress, int port)
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
@@ -186,7 +186,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 default:
                     throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
             }
-            StartHost();
+
+            return StartHost();
         }
 
         public async void StartUnityRelayHost()
@@ -226,9 +227,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             StartHost();
         }
 
-        void StartHost()
+        bool StartHost()
         {
-            NetManager.StartHost();
+            return NetManager.StartHost();
         }
 
         /// <summary>
