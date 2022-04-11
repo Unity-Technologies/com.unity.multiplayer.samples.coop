@@ -399,7 +399,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
         {
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
+            if (IsSpawned)
+            {
+                CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
+            }
         }
 
         /// <summary>
@@ -407,8 +410,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            // request to lock in or unlock if already locked in
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
+            if (IsSpawned)
+            {
+                // request to lock in or unlock if already locked in
+                CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
+            }
         }
 
         GameObject GetCharacterGraphics(Avatar avatar)
