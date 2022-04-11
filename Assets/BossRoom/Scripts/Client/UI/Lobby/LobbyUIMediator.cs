@@ -167,7 +167,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            m_ClientNetPortal.StartClientUnityRelayModeAsync(m_LocalLobby.RelayJoinCode, OnRelayJoinFailed);
+            m_ClientNetPortal.StartClientUnityRelayModeAsync(OnRelayJoinFailed);
 
             void OnRelayJoinFailed(string message)
             {

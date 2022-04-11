@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
@@ -36,13 +37,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         ApplicationController m_ApplicationController;
         LobbyServiceFacade m_LobbyServiceFacade;
+        LocalLobby m_LocalLobby;
         IPublisher<ConnectStatus> m_ConnectStatusPub;
 
         [Inject]
-        private void InjectDependencies(ApplicationController applicationController, LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectStatus> connectStatusPub)
+        private void InjectDependencies(ApplicationController applicationController, LobbyServiceFacade lobbyServiceFacade,
+            LocalLobby localLobby, IPublisher<ConnectStatus> connectStatusPub)
         {
             m_ApplicationController = applicationController;
             m_LobbyServiceFacade = lobbyServiceFacade;
+            m_LocalLobby = localLobby;
             m_ConnectStatusPub = connectStatusPub;
         }
 
@@ -151,7 +155,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 switch (DisconnectReason.Reason)
                 {
                     case ConnectStatus.UserRequestedDisconnect:
-                    case ConnectStatus.HostDisconnected:
+                    case ConnectStatus.HostEndedSession:
                     case ConnectStatus.ServerFull:
                         m_ApplicationController.LeaveSession(false); // go through the normal leave flow
                         break;
@@ -164,7 +168,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     case ConnectStatus.GenericDisconnect:
                     case ConnectStatus.Undefined:
                         DisconnectReason.SetDisconnectReason(ConnectStatus.Reconnecting);
-
+                        var lobbyCode = "";
+                        if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                        {
+                            lobbyCode = m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode;
+                        }
                         // try reconnecting
                         m_TryToReconnectCoroutine ??= StartCoroutine(TryToReconnect(lobbyCode));
                         break;
@@ -199,7 +207,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     if (joiningLobby.Result.Success)
                     {
                         m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
-                        ConnectClient();
+                        var joiningRelay = JoinRelayAsync();
+                        yield return new WaitUntil(() => joiningRelay.IsCompleted);
+                    }
+                    else
+                    {
+                        Debug.Log("Failed joining lobby.");
                     }
                 }
                 else
@@ -258,19 +271,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             ConnectClient();
         }
 
-        public async void StartClientUnityRelayModeAsync(string joinCode, Action<string> onFailure)
+        public async void StartClientUnityRelayModeAsync(Action<string> onFailure)
         {
             var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
 
-            Debug.Log($"Setting Unity Relay client with join code {joinCode}");
+            await JoinRelayAsync(onFailure);
+        }
+
+        async Task JoinRelayAsync(Action<string> onFailure = null)
+        {
+            Debug.Log($"Setting Unity Relay client with join code {m_LocalLobby.RelayJoinCode}");
 
             try
             {
                 var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) =
-                    await UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
+                    await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
 
-                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
+                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
+                var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)
@@ -278,7 +297,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 onFailure?.Invoke(e.Message);
                 return;//not re-throwing, but still not allowing to connect
             }
-
 
             ConnectClient();
         }
