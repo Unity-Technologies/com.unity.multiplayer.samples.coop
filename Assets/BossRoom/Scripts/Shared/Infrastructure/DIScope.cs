@@ -179,6 +179,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             BindInstanceAsSingle(instance);
         }
 
+        public void BindInstanceAsSingle<TImplementation, TInterface, TInterface2, TInterface3>(TImplementation instance)
+            where TImplementation : class, TInterface, TInterface2, TInterface3
+            where TInterface : class
+            where TInterface2 : class
+            where TInterface3 : class
+        {
+            BindInstanceAsSingle<TInterface>(instance);
+            BindInstanceAsSingle<TInterface2>(instance);
+            BindInstanceAsSingle<TInterface3>(instance);
+            BindInstanceAsSingle(instance);
+        }
+
         void BindInstanceToType(object instance, Type type)
         {
             m_TypesToInstances[type] = instance;

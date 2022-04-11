@@ -12,7 +12,8 @@ GameObject:
   - component: {fileID: 445632146649864073}
   - component: {fileID: 7463718357983197496}
   - component: {fileID: 3577683239110096990}
-  m_Layer: 8
+  - component: {fileID: 4533873789762061175}
+  m_Layer: 10
   m_Name: env_treasure_chest_ani
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,3 +96,19 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.641676, y: 3.8060122, z: 4.927659}
   m_Center: {x: -0.013105154, y: 1.8930116, z: 0.00000023841858}
+--- !u!114 &4533873789762061175
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4371491365999748502}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 1
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff

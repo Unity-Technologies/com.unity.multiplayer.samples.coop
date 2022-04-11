@@ -17,8 +17,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         Coroutine m_WaitToEndLobbyCoroutine;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             CharSelectData = GetComponent<CharSelectData>();
         }
 
@@ -203,8 +204,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
-
-                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             }
         }
 

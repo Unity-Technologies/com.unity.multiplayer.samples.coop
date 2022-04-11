@@ -11,7 +11,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] Toggle m_IsPrivate;
         [SerializeField] CanvasGroup m_CanvasGroup;
         LobbyUIMediator m_LobbyUIMediator;
-        OnlineMode m_OnlineMode;
 
         void Awake()
         {
@@ -26,14 +25,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void EnableUnityRelayUI()
         {
-            m_OnlineMode = OnlineMode.UnityRelay;
-
             m_LoadingIndicatorObject.SetActive(false);
         }
 
         public void OnCreateClick()
         {
-            m_LobbyUIMediator.CreateLobbyRequest(m_LobbyNameInputField.text, m_IsPrivate.isOn, 8, m_OnlineMode);
+            m_LobbyUIMediator.CreateLobbyRequest(m_LobbyNameInputField.text, m_IsPrivate.isOn, 8);
         }
 
         public void Show()

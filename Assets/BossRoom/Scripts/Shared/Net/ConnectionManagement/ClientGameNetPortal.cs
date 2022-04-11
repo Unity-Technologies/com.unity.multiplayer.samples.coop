@@ -7,6 +7,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Netcode.Transports.UTP;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -267,11 +268,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             try
             {
-                var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
-                await clientRelayUtilityTask;
-                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) =
+                    await UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
 
-                m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)

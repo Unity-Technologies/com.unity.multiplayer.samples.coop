@@ -47,13 +47,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindAsSingle<LocalLobby>();
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
-            scope.BindMessageChannel<UnityServiceErrorMessage>();
+            scope.BindMessageChannelInstance<UnityServiceErrorMessage>();
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
-            scope.BindMessageChannel<ConnectStatus>();
+            scope.BindMessageChannelInstance<ConnectStatus>();
 
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
-            scope.BindBufferedMessageChannel<LobbyListFetchedMessage>();
+            scope.BindBufferedMessageChannelInstance<LobbyListFetchedMessage>();
 
             //all the lobby service stuff, bound here so that it persists through scene loads
             scope.BindAsSingle<AuthenticationServiceFacade>(); //a manager entity that allows us to do anonymous authentication with unity services
@@ -79,7 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private void OnDestroy()
         {
-            m_LobbyServiceFacade.EndTracking();
+            m_LobbyServiceFacade?.EndTracking();
             DIScope.RootScope.Dispose();
         }
 
@@ -105,7 +105,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         private bool OnWantToQuit()
         {
             var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
-            if (canQuit)
+            if (!canQuit)
             {
                 StartCoroutine(LeaveBeforeQuit());
             }
