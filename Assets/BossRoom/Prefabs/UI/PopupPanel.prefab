@@ -94,6 +94,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TitleText: {fileID: 6159350069594583415}
   m_MainText: {fileID: 2313703509841146674}
+  m_ConfirmButton: {fileID: 5754218640231573415}
   m_CanvasGroup: {fileID: 968598069136128140}
 --- !u!225 &968598069136128140
 CanvasGroup:
@@ -506,6 +507,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: addf3685293c35d48a673397c748f116, type: 3}
+--- !u!1 &5754218640231573415 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 7721113380319664578, guid: addf3685293c35d48a673397c748f116, type: 3}
+  m_PrefabInstance: {fileID: 2665551449443221093}
+  m_PrefabAsset: {fileID: 0}
 --- !u!224 &5754218640231573416 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 7721113380319664589, guid: addf3685293c35d48a673397c748f116, type: 3}

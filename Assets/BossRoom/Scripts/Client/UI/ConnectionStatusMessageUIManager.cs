@@ -11,6 +11,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     {
         IDisposable m_Subscriptions;
 
+        PopupPanel m_CurrentPopup;
+
         [Inject]
         void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSub)
         {
@@ -29,6 +31,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnConnectStatus(ConnectStatus status)
         {
+            if (m_CurrentPopup != null)
+            {
+                m_CurrentPopup.Hide();
+            }
             switch (status)
             {
                 case ConnectStatus.Undefined:
@@ -50,6 +56,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     break;
                 case ConnectStatus.HostEndedSession:
                     PopupManager.ShowPopupPanel("Disconnected From Host", "The host has ended the game session.");
+                    break;
+                case ConnectStatus.Reconnecting:
+                    m_CurrentPopup = PopupManager.ShowPopupPanel("Connection lost", "Attempting to reconnect...", closeableByUser: false);
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
