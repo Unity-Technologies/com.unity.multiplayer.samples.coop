@@ -101,6 +101,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     StopCoroutine(m_TryToReconnectCoroutine);
                     m_TryToReconnectCoroutine = null;
                 }
+                // If we are the server, shutdown will be handled by ServerGameNetPortal
+                if (!m_Portal.NetManager.IsServer)
+                {
+                    m_Portal.NetManager.Shutdown();
+                }
             }
         }
 
@@ -141,12 +146,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
             if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientID)
             {
-                var lobbyCode = "";
-                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                {
-                    lobbyCode = m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode;
-                }
-
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 switch (DisconnectReason.Reason)
@@ -154,12 +153,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     case ConnectStatus.UserRequestedDisconnect:
                     case ConnectStatus.HostDisconnected:
                     case ConnectStatus.ServerFull:
-                        m_ApplicationController.LeaveSession(); // go through the normal leave flow
+                        m_ApplicationController.LeaveSession(false); // go through the normal leave flow
                         break;
                     case ConnectStatus.LoggedInAgain:
                         if (m_TryToReconnectCoroutine == null)
                         {
-                            m_ApplicationController.LeaveSession(); // if not trying to reconnect, go through the normal leave flow
+                            m_ApplicationController.LeaveSession(false); // if not trying to reconnect, go through the normal leave flow
                         }
                         break;
                     case ConnectStatus.GenericDisconnect:

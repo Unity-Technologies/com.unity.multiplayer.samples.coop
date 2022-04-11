@@ -112,15 +112,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return canQuit;
         }
 
-        public void LeaveSession()
+        public void LeaveSession(bool UserRequested)
         {
             m_LobbyServiceFacade.EndTracking();
 
-            // first disconnect then return to menu
-            var gameNetPortal = GameNetPortal.Instance;
-            if (gameNetPortal != null)
+            if (UserRequested)
             {
-                gameNetPortal.RequestDisconnect();
+                // first disconnect then return to menu
+                var gameNetPortal = GameNetPortal.Instance;
+                if (gameNetPortal != null)
+                {
+                    gameNetPortal.RequestDisconnect();
+                }
             }
             SceneManager.LoadScene("MainMenu");
         }

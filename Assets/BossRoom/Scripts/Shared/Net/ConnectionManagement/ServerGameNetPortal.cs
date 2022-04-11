@@ -129,6 +129,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public void OnUserDisconnectRequest()
         {
+            if (m_Portal.NetManager.IsHost)
+            {
+                SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
+                // Wait before shutting down to make sure clients receive that message before they are disconnected
+                StartCoroutine(WaitToShutdown());
+            }
             Clear();
         }
 
@@ -234,6 +240,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             yield return new WaitForSeconds(0.5f);
             connectionApprovedCallback(false, 0, false, null, null);
+        }
+
+        IEnumerator WaitToShutdown()
+        {
+            yield return null;
+            m_Portal.NetManager.Shutdown();
+            SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+        }
+
+        /// <summary>
+        /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the client.
+        /// </summary>
+        /// <param name="status"> The reason for the upcoming disconnect.</param>
+        static void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)
+        {
+            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            writer.WriteValueSafe(status);
+            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessageToAll(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
         }
 
         /// <summary>

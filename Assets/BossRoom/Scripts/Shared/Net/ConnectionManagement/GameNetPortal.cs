@@ -22,8 +22,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
         Reconnecting,             //client lost connection and is attempting to reconnect.
-        HostDisconnected,         //Intentional Disconnect from the host.
         IncompatibleBuildType,    //client build type is incompatible with server.
+        HostEndedSession,         //host intentionally ended the session.
     }
 
     public enum OnlineMode
@@ -246,7 +246,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            NetManager.Shutdown();
         }
 
         public string GetPlayerId()
