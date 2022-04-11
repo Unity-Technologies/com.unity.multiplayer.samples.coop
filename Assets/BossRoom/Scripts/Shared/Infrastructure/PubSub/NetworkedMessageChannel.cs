@@ -35,18 +35,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public override IDisposable Subscribe(Action<T> handler)
         {
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
             {
-                if (!m_HasRegisteredHandler)
+                if (!m_HasRegisteredHandler && NetworkManager.Singleton.IsClient)
                 {
                     NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(m_Name, ReceiveMessageThroughNetwork);
                     m_HasRegisteredHandler = true;
+                    NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
                 }
 
                 return base.Subscribe(handler);
             }
 
+            Debug.LogError("Cannot subscribe to NetworkedMessageChannel. NetworkManager is not initialized.");
             return null;
+        }
+
+        void OnClientDisconnect(ulong clientId)
+        {
+            m_HasRegisteredHandler = false;
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientDisconnect;
+            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
         }
 
         public override void Publish(T message)
