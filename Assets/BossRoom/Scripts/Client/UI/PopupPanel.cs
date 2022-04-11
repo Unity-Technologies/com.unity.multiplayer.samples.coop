@@ -16,6 +16,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         GameObject m_ConfirmButton;
         [SerializeField]
+        GameObject m_LoadingSpinner;
+        [SerializeField]
         CanvasGroup m_CanvasGroup;
 
         public bool IsDisplaying => m_IsDisplaying;
@@ -42,7 +44,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_TitleText.text = titleText;
             m_MainText.text = mainText;
             m_ClosableByUser = closeableByUser;
-            m_ConfirmButton.SetActive(closeableByUser);
+            m_ConfirmButton.SetActive(m_ClosableByUser);
+            m_LoadingSpinner.SetActive(!m_ClosableByUser);
             Show();
         }
 
