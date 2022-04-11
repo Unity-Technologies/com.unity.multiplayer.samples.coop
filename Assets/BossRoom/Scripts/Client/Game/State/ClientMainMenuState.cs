@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     unityAuthenticationInitOptions.SetProfile(profile);
                 }
 
-                await authServiceFacade.SignInAsync(unityAuthenticationInitOptions);
+                await authServiceFacade.InitializeAndSignInAsync(unityAuthenticationInitOptions);
                 OnAuthSignIn();
             }
             catch (Exception)

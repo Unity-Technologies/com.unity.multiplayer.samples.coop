@@ -18,7 +18,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
         }
 
-        public async Task SignInAsync(InitializationOptions initializationOptions)
+        public async Task InitializeAndSignInAsync(InitializationOptions initializationOptions)
         {
             try
             {
@@ -35,8 +35,24 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
                 m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
                 throw;
             }
-
-
         }
+
+        public async Task ReloginIfNecessary()
+        {
+            try
+            {
+                if (!AuthenticationService.Instance.IsAuthorized)
+                {
+                    await AuthenticationService.Instance.SignInAnonymouslyAsync();
+                }
+            }
+            catch (Exception e)
+            {
+                var reason = $"{e.Message} ({e.InnerException?.Message})";
+                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+                throw;
+            }
+        }
+
     }
 }

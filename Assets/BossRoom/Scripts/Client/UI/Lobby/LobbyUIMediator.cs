@@ -1,4 +1,5 @@
 using System;
+using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -21,6 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] TextMeshProUGUI m_PlayerNameLabel;
         [SerializeField] GameObject m_LoadingSpinner;
 
+        AuthenticationServiceFacade m_AuthenticationServiceFacade;
         LobbyServiceFacade m_LobbyServiceFacade;
         LocalLobbyUser m_LocalUser;
         LocalLobby m_LocalLobby;
@@ -32,6 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [Inject]
         void InjectDependenciesAndInitialize(
+            AuthenticationServiceFacade authenticationServiceFacade,
             LobbyServiceFacade lobbyServiceFacade,
             LocalLobbyUser localUser,
             LocalLobby localLobby,
@@ -40,6 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             ClientGameNetPortal clientGameNetPortal
         )
         {
+            m_AuthenticationServiceFacade = authenticationServiceFacade;
             m_NameGenerationData = nameGenerationData;
             m_LocalUser = localUser;
             m_LobbyServiceFacade = lobbyServiceFacade;
@@ -72,6 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             BlockUIWhileLoadingIsInProgress();
 
+            await m_AuthenticationServiceFacade.ReloginIfNecessary();
             var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, maxPlayers, isPrivate);
 
             if (lobbyCreationAttempt.Success)
@@ -102,6 +107,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 BlockUIWhileLoadingIsInProgress();
             }
 
+
+            await m_AuthenticationServiceFacade.ReloginIfNecessary();
             await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
             UnblockUIAfterLoadingIsComplete();
         }
@@ -110,6 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             BlockUIWhileLoadingIsInProgress();
 
+            await m_AuthenticationServiceFacade.ReloginIfNecessary();
             var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(null, lobbyCode);
 
             if (result.Success)
@@ -126,6 +134,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             BlockUIWhileLoadingIsInProgress();
 
+            await m_AuthenticationServiceFacade.ReloginIfNecessary();
             var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode);
 
             if (result.Success)
@@ -142,6 +151,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             BlockUIWhileLoadingIsInProgress();
 
+            await m_AuthenticationServiceFacade.ReloginIfNecessary();
             var result = await m_LobbyServiceFacade.TryQuickJoinLobbyAsync();
 
             if (result.Success)
