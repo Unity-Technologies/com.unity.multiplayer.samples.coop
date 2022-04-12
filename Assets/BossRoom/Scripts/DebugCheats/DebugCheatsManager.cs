@@ -283,7 +283,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         [ServerRpc(RequireOwnership = false)]
         void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            SceneLoaderWrapper.Instance.LoadScene("PostGame", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
         }
 
