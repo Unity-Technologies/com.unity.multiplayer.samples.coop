@@ -6,6 +6,7 @@ using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -122,7 +123,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             {
                 gameNetPortal.RequestDisconnect();
             }
-            SceneManager.LoadScene("MainMenu");
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
         }
 
         public void QuitGame()
