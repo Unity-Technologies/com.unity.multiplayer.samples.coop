@@ -54,9 +54,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public bool SpeedCheatActivated { get; set; }
 #endif
 
-        private void Awake()
+        void Awake()
         {
-            m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
             // disable this NetworkBehavior until it is spawned
             enabled = false;
         }
@@ -70,6 +69,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 // On the server enable navMeshAgent and initialize
                 m_NavMeshAgent.enabled = true;
+                m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
                 m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
             }
         }
