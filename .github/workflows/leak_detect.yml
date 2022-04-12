@@ -35,6 +35,6 @@ jobs:
             # See also: https://api.slack.com/methods/chat.postMessage#channels
             channel-id: 'G01H7JP4AP2' # private channel
             # For posting a simple plain text message
-            slack-message: "Project ID LEAK DETECTED: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
+            slack-message: "@here Project ID LEAK DETECTED: ${{ job.status }}\n${{ github.event.pull_request.html_url || github.event.head_commit.url }}"
         env:
             SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }} # can be found in https://api.slack.com/apps/
