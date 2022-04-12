@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -258,7 +259,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             SetWinState(gameWon ? WinState.Win : WinState.Loss);
 
-            NetworkManager.Singleton.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("PostGame");
         }
     }
 }

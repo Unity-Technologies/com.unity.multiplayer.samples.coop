@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using TMPro;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
@@ -76,7 +75,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void OnPlayAgainClicked()
         {
             // this should only ever be called by the Host - so just go ahead and switch scenes
-            NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("CharSelect");
 
             // FUTURE: could be improved to better support a dedicated server architecture
         }
@@ -87,7 +86,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
             gameNetPortal.RequestDisconnect();
 
-            SceneManager.LoadScene("MainMenu");
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
         }
     }
 }
