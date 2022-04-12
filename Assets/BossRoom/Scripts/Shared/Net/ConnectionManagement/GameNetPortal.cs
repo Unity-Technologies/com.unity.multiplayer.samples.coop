@@ -26,6 +26,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         HostEndedSession,         //host intentionally ended the session.
     }
 
+    public struct ReconnectMessage
+    {
+        public int CurrentAttempt;
+        public int MaxAttempt;
+    }
+
     public enum OnlineMode
     {
         IpHost = 0, // The server is hosted directly and clients can join by ip address.

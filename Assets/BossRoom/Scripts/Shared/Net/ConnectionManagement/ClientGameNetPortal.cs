@@ -40,15 +40,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         LobbyServiceFacade m_LobbyServiceFacade;
         LocalLobby m_LocalLobby;
         IPublisher<ConnectStatus> m_ConnectStatusPub;
+        IPublisher<ReconnectMessage> m_ReconnectMessagePub;
 
         [Inject]
         private void InjectDependencies(ApplicationController applicationController, LobbyServiceFacade lobbyServiceFacade,
-            LocalLobby localLobby, IPublisher<ConnectStatus> connectStatusPub)
+            LocalLobby localLobby, IPublisher<ConnectStatus> connectStatusPub, IPublisher<ReconnectMessage> reconnectMessagePub)
         {
             m_ApplicationController = applicationController;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
             m_ConnectStatusPub = connectStatusPub;
+            m_ReconnectMessagePub = reconnectMessagePub;
         }
 
         private void Awake()

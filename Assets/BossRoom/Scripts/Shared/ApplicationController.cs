@@ -53,6 +53,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             //this message channel is essential and persists for the lifetime of the lobby and relay services
             scope.BindMessageChannelInstance<ConnectStatus>();
 
+            //this message channel is essential and persists for the lifetime of the lobby and relay services
+            scope.BindMessageChannelInstance<ReconnectMessage>();
+
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
             scope.BindBufferedMessageChannelInstance<LobbyListFetchedMessage>();
 
