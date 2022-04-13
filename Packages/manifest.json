@@ -16,6 +16,7 @@
     "com.unity.services.authentication": "1.0.0-pre.4",
     "com.unity.services.lobby": "1.0.0-pre.6",
     "com.unity.services.relay": "1.0.1-pre.5",
+    "com.unity.ucg.qos": "0.3.1-preview.2",
     "com.unity.test-framework": "1.1.31",
     "com.unity.textmeshpro": "3.0.6",
     "com.unity.timeline": "1.4.8",
