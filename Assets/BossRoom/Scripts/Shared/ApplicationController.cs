@@ -55,8 +55,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
             scope.BindBufferedMessageChannelInstance<LobbyListFetchedMessage>();
 
-            scope.BindNetworkedMessageChannelInstance<test>("test", sizeof(int) + sizeof(float));
-
             //all the lobby service stuff, bound here so that it persists through scene loads
             scope.BindAsSingle<AuthenticationServiceFacade>(); //a manager entity that allows us to do anonymous authentication with unity services
             scope.BindAsSingle<LobbyServiceFacade>();
@@ -72,12 +70,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
 
             Application.targetFrameRate = 120;
-        }
-
-        public struct test
-        {
-            public int a;
-            public float b;
         }
 
         private void Start()
