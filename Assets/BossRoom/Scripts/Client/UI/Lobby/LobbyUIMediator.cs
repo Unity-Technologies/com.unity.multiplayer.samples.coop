@@ -76,7 +76,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             BlockUIWhileLoadingIsInProgress();
 
-            await m_AuthenticationServiceFacade.ReloginIfNecessary();
+            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+
+            if (!playerIsAuthorized)
+            {
+                UnblockUIAfterLoadingIsComplete();
+                return;
+            }
+
             var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, maxPlayers, isPrivate);
 
             if (lobbyCreationAttempt.Success)
@@ -107,8 +114,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 BlockUIWhileLoadingIsInProgress();
             }
 
+            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
 
-            await m_AuthenticationServiceFacade.ReloginIfNecessary();
+            if (!playerIsAuthorized)
+            {
+                UnblockUIAfterLoadingIsComplete();
+                return;
+            }
+
             await m_LobbyServiceFacade.RetrieveAndPublishLobbyListAsync();
             UnblockUIAfterLoadingIsComplete();
         }
@@ -117,7 +130,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             BlockUIWhileLoadingIsInProgress();
 
-            await m_AuthenticationServiceFacade.ReloginIfNecessary();
+            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+
+            if (!playerIsAuthorized)
+            {
+                UnblockUIAfterLoadingIsComplete();
+                return;
+            }
+
             var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(null, lobbyCode);
 
             if (result.Success)
@@ -134,7 +154,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             BlockUIWhileLoadingIsInProgress();
 
-            await m_AuthenticationServiceFacade.ReloginIfNecessary();
+            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+
+            if (!playerIsAuthorized)
+            {
+                UnblockUIAfterLoadingIsComplete();
+                return;
+            }
+
             var result = await m_LobbyServiceFacade.TryJoinLobbyAsync(lobby.LobbyID, lobby.LobbyCode);
 
             if (result.Success)
@@ -151,7 +178,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             BlockUIWhileLoadingIsInProgress();
 
-            await m_AuthenticationServiceFacade.ReloginIfNecessary();
+            bool playerIsAuthorized = await m_AuthenticationServiceFacade.EnsurePlayerIsAuthorized();
+
+            if (!playerIsAuthorized)
+            {
+                UnblockUIAfterLoadingIsComplete();
+                return;
+            }
+
             var result = await m_LobbyServiceFacade.TryQuickJoinLobbyAsync();
 
             if (result.Success)
