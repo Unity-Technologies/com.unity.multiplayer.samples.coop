@@ -26,12 +26,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] LobbyUIMediator m_LobbyUIMediator;
         [SerializeField] IPUIMediator m_IPUIMediator;
         [SerializeField] Button m_LobbyButton;
+        [SerializeField] Button m_IPButton;
         [SerializeField] GameObject m_SignInSpinner;
 
         protected override void Awake()
         {
             m_LobbyButton.interactable = false;
+            m_IPButton.interactable = false;
             m_LobbyUIMediator.Hide();
+            m_IPUIMediator.Hide();
             base.Awake();
         }
 
@@ -74,6 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             void OnAuthSignIn()
             {
                 m_LobbyButton.interactable = true;
+                m_IPButton.interactable = true;
                 m_SignInSpinner.SetActive(false);
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
@@ -86,6 +90,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             void OnSignInFailed()
             {
                 m_LobbyButton.interactable = false;
+                m_IPButton.interactable = false;
                 m_SignInSpinner.SetActive(false);
             }
         }
@@ -94,6 +99,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             m_LobbyUIMediator.ToggleJoinLobbyUI();
             m_LobbyUIMediator.Show();
+            m_IPUIMediator.Hide();
         }
 
         public void OnDirectIPClicked()
