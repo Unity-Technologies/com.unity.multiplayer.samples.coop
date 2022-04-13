@@ -1,5 +1,4 @@
 using System;
-using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
@@ -105,17 +104,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_IPConnectionWindow.ShowConnectingWindow();
         }
 
-        void CancelConnectingWindow()
+        public void JoiningWindowCancelled()
         {
-            m_IPConnectionWindow.Cancel();
+            DisableSignInSpinner();
+            RequestShutdown();
         }
 
-        public void ConnectingFinished()
+        public void DisableSignInSpinner()
         {
             m_SignInSpinner.SetActive(false);
         }
 
-        public void RequestShutdown()
+        void RequestShutdown()
         {
             if (m_GameNetPortal && m_GameNetPortal.NetManager && m_GameNetPortal.NetManager.IsListening)
             {
@@ -154,7 +154,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CanvasGroup.interactable = true;
             m_CanvasGroup.blocksRaycasts = true;
 
-            m_SignInSpinner.SetActive(false);
+            DisableSignInSpinner();
         }
 
         public void Hide()
@@ -162,9 +162,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.interactable = false;
             m_CanvasGroup.blocksRaycasts = false;
+        }
 
-            CancelConnectingWindow();
+        // To be called from the Cancel (X) UI button
+        public void CancelConnectingWindow()
+        {
             RequestShutdown();
+            m_IPConnectionWindow.Cancel();
         }
 
         /// <summary>

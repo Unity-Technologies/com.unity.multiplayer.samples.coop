@@ -46,7 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 PopupManager.ShowPopupPanel("Connection Failed",
                     "Failed to connect to server and/or invalid network endpoint");
                 Hide();
-                m_IPUIMediator.ConnectingFinished();
+                m_IPUIMediator.DisableSignInSpinner();
             }
 
             switch (chosenTransport)
@@ -102,8 +102,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         // invoked by UI cancel button
         public void OnCancelJoinButtonPressed()
         {
-            m_IPUIMediator.RequestShutdown();
-            m_IPUIMediator.ConnectingFinished();
+            m_IPUIMediator.JoiningWindowCancelled();
             End();
         }
     }
