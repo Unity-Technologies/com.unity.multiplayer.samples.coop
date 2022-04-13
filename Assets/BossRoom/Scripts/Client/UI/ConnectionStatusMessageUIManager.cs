@@ -42,11 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     PopupManager.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
                     break;
                 case ConnectStatus.Success:
-                    if (m_CurrentReconnectPopup != null)
-                    {
-                        m_CurrentReconnectPopup.Hide();
-                        m_CurrentReconnectPopup = null;
-                    }
+                    CloseReconnectPopup();
                     break;
                 case ConnectStatus.LoggedInAgain:
                     PopupManager.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account.");
@@ -72,8 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             if (message.CurrentAttempt == message.MaxAttempt)
             {
-                m_CurrentReconnectPopup.Hide();
-                m_CurrentReconnectPopup = null;
+                CloseReconnectPopup();
             }
             else if (m_CurrentReconnectPopup != null)
             {
@@ -83,7 +78,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 m_CurrentReconnectPopup = PopupManager.ShowPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt+1}/{message.MaxAttempt}", closeableByUser: false);
             }
+        }
 
+        void CloseReconnectPopup()
+        {
+            if (m_CurrentReconnectPopup != null)
+            {
+                m_CurrentReconnectPopup.Hide();
+                m_CurrentReconnectPopup = null;
+            }
         }
     }
 }
