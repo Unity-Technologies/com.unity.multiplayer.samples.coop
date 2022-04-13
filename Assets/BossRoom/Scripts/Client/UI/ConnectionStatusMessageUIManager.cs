@@ -9,14 +9,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// </summary>
     public class ConnectionStatusMessageUIManager : MonoBehaviour
     {
-        IDisposable m_Subscriptions;
+        DisposableGroup m_Subscriptions;
 
-        PopupPanel m_CurrentPopup;
+        PopupPanel m_CurrentReconnectPopup;
 
         [Inject]
-        void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSub)
+        void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSub, ISubscriber<ReconnectMessage> reconnectMessageSub)
         {
-            m_Subscriptions = connectStatusSub.Subscribe(OnConnectStatus);
+            m_Subscriptions = new DisposableGroup();
+            m_Subscriptions.Add(connectStatusSub.Subscribe(OnConnectStatus));
+            m_Subscriptions.Add(reconnectMessageSub.Subscribe(OnReconnectMessage));
         }
 
         void Awake()
@@ -31,10 +33,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnConnectStatus(ConnectStatus status)
         {
-            if (m_CurrentPopup != null)
-            {
-                m_CurrentPopup.Hide();
-            }
             switch (status)
             {
                 case ConnectStatus.Undefined:
@@ -44,6 +42,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     PopupManager.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
                     break;
                 case ConnectStatus.Success:
+                    if (m_CurrentReconnectPopup != null)
+                    {
+                        m_CurrentReconnectPopup.Hide();
+                        m_CurrentReconnectPopup = null;
+                    }
                     break;
                 case ConnectStatus.LoggedInAgain:
                     PopupManager.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account.");
@@ -58,12 +61,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     PopupManager.ShowPopupPanel("Disconnected From Host", "The host has ended the game session.");
                     break;
                 case ConnectStatus.Reconnecting:
-                    m_CurrentPopup = PopupManager.ShowPopupPanel("Connection lost", "Attempting to reconnect...", closeableByUser: false);
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
                     break;
             }
+        }
+
+        void OnReconnectMessage(ReconnectMessage message)
+        {
+            if (message.CurrentAttempt == message.MaxAttempt)
+            {
+                m_CurrentReconnectPopup.Hide();
+                m_CurrentReconnectPopup = null;
+            }
+            else if (m_CurrentReconnectPopup != null)
+            {
+                m_CurrentReconnectPopup.SetupPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt+1}/{message.MaxAttempt}", closeableByUser: false);
+            }
+            else
+            {
+                m_CurrentReconnectPopup = PopupManager.ShowPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt+1}/{message.MaxAttempt}", closeableByUser: false);
+            }
+
         }
     }
 }

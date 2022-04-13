@@ -201,6 +201,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
                 Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
+                m_ReconnectMessagePub.Publish(new ReconnectMessage(nbTries, k_NbReconnectAttempts));
                 if (!string.IsNullOrEmpty(lobbyCode))
                 {
                     var leavingLobby = m_LobbyServiceFacade.EndTracking();
@@ -234,12 +235,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 NetworkManager.Singleton.Shutdown();
             }
 
-            SceneManager.LoadScene("MainMenu");
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
             if (!DisconnectReason.HasTransitionReason)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
             }
             m_TryToReconnectCoroutine = null;
+            m_ReconnectMessagePub.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
             m_ConnectStatusPub.Publish(DisconnectReason.Reason);
         }
 
