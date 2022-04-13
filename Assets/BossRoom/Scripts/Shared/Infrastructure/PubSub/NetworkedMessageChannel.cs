@@ -19,9 +19,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         bool m_HasRegisteredHandler;
 
-        public NetworkedMessageChannel(string name, int bufferSize)
+        public NetworkedMessageChannel(int bufferSize)
         {
-            m_Name = name;
+            m_Name = $"{nameof(T)}NetworkMessageChannel";
             m_BufferSize = bufferSize;
         }
 
