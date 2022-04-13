@@ -8,6 +8,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -250,6 +251,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public string GetPlayerId()
         {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+            {
+                return ClientPrefs.GetGuid() + ProfileManager.Profile;
+            }
+
             return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + ProfileManager.Profile;
         }
     }
