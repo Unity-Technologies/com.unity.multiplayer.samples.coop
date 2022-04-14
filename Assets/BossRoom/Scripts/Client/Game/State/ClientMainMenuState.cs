@@ -45,14 +45,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [Inject]
         async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
         {
-            #if UNITY_EDITOR
-            if (string.IsNullOrEmpty(UnityEditor.CloudProjectSettings.projectId))
+            if (string.IsNullOrEmpty(Application.cloudProjectId))
             {
-                PopupManager.ShowPopupPanel("Unity Game Services ProjectID not set up" ,"Please follow the steps outlined in Readme to set up your project id - it is required for the services to function.");
+                PopupManager.ShowPopupPanel("Unity Game Services ProjectID not set up" ,"Click the Readme file in the Project window in-editor to follow \"Setting Up Unity Game Services\"");
                 OnSignInFailed();
                 return;
             }
-            #endif
 
             try
             {
