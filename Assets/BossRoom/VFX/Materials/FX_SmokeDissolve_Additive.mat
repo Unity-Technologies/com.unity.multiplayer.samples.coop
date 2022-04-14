@@ -9,9 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_SmokeDissolve_Additive
   m_Shader: {fileID: -6465566751694194690, guid: 5d29e5b8a08dd994aae83e406b3ffb62, type: 3}
-  m_ShaderKeywords: ENUM_77760446580F4017ADC8BE0606DB8FC3_DISSOLVETEXRED ENUM_EA0A9A53583345159A94335DDBDA8082_CUSTOM
-    _DISSOLVETYPE_CUSTOM _DISSOLVETYPE_UV _DISSOLVE_UV _DISTYPE_DISSOLVETEXRED _DIS_TYPE_DISSOLVETEXRED
-    _INVERTDISSOLVE_ON _KEYWORD0_ON
+  m_ShaderKeywords: _DISSOLVE_TYPE_CUSTOM _DIS_TYPE_DISSOLVETEXRED
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -121,6 +119,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
