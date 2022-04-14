@@ -29,6 +29,10 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 
 This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. 
 
+## Registering the project with Unity Gaming Services (UGS)
+
+This project leverages several services from UGS to facilitate connectivity between players. In order to use these services inside your project, one must first [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside Unity Dashboard, and enable both the [Relay](https://docs.unity.com/relay/get-started.html) and [Lobby](https://docs.unity.com/lobby/game-lobby-sample.html) services.
+
 ## Opening the project for the first time
 
 Once you have downloaded the project, the steps below should get you up and running:

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
@@ -31,8 +32,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             get
             {
-                var found = GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out var result);
-                Debug.AssertFormat(found, "Tried to find ActionType %s but it was missing from GameDataSource!", Data.ActionTypeEnum);
+                if (!GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out var result))
+                {
+                    throw new KeyNotFoundException($"Tried to find ActionType {Data.ActionTypeEnum} but it was missing from GameDataSource!");
+                }
 
                 return result;
             }

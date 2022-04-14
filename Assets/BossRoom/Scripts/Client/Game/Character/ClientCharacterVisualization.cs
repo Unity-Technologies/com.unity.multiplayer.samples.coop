@@ -1,7 +1,6 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
@@ -60,6 +59,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         Quaternion m_LerpedRotation;
 
+        bool m_IsHost;
+
+        float m_CurrentSpeed;
+
         void Awake()
         {
             enabled = false;
@@ -74,6 +77,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             enabled = true;
 
+            m_IsHost = IsHost;
+
             m_ActionViz = new ActionVisualization(this);
 
             m_NetState = GetComponentInParent<NetworkCharacterState>();
@@ -85,6 +90,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
+            m_NetState.MovementStatus.OnValueChanged += OnMovementStatusChanged;
+            OnMovementStatusChanged(MovementStatus.Normal,m_NetState.MovementStatus.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
@@ -210,15 +217,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Returns the value we should set the Animator's "Speed" variable, given current gameplay conditions.
         /// </summary>
-        float GetVisualMovementSpeed()
+        float GetVisualMovementSpeed(MovementStatus movementStatus)
         {
-            Assert.IsNotNull(m_VisualizationConfiguration);
             if (m_NetState.NetworkLifeState.LifeState.Value != LifeState.Alive)
             {
                 return m_VisualizationConfiguration.SpeedDead;
             }
 
-            switch (m_NetState.MovementStatus.Value)
+            switch (movementStatus)
             {
                 case MovementStatus.Idle:
                     return m_VisualizationConfiguration.SpeedIdle;
@@ -233,8 +239,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case MovementStatus.Walking:
                     return m_VisualizationConfiguration.SpeedWalking;
                 default:
-                    throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
+                    throw new Exception($"Unknown MovementStatus {movementStatus}");
             }
+        }
+
+        void OnMovementStatusChanged(MovementStatus previousValue, MovementStatus newValue)
+        {
+            m_CurrentSpeed = GetVisualMovementSpeed(newValue);
         }
 
         void Update()
@@ -243,7 +254,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             // the game camera tracks a GameObject moving in the Update loop and therefore eliminate any camera jitter,
             // this graphics GameObject's position is smoothed over time on the host. Clients do not need to perform any
             // positional smoothing since NetworkTransform will interpolate position updates on the root GameObject.
-            if (IsHost)
+            if (m_IsHost)
             {
                 // Note: a cached position (m_LerpedPosition) and rotation (m_LerpedRotation) are created and used as
                 // the starting point for each interpolation since the root's position and rotation are modified in
@@ -258,7 +269,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
+                OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, m_CurrentSpeed);
             }
 
             m_ActionViz.Update();

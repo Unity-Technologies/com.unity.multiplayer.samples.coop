@@ -4,8 +4,10 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Netcode.Transports.UTP;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -95,6 +97,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (m_Portal.NetManager.IsClient)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+                // If we are the server, shutdown will be handled by ServerGameNetPortal
+                if (!m_Portal.NetManager.IsServer)
+                {
+                    m_Portal.NetManager.Shutdown();
+                }
             }
         }
 
@@ -130,12 +137,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
             if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientID)
             {
-                var lobbyCode = "";
-                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                {
-                    lobbyCode = m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode;
-                }
-
                 //On a client disconnect we want to take them back to the main menu.
                 //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
                 if (SceneManager.GetActiveScene().name != "MainMenu")
@@ -147,7 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                         //disconnect that happened for some other reason than user UI interaction--should display a message.
                         DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
                     }
-                    m_ApplicationController.LeaveSession();
+                    m_ApplicationController.LeaveSession(false);
                 }
                 else
                 {
@@ -198,11 +199,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             try
             {
-                var clientRelayUtilityTask =  UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
-                await clientRelayUtilityTask;
-                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) = clientRelayUtilityTask.Result;
+                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) =
+                    await UnityRelayUtilities.JoinRelayServerFromJoinCode(joinCode);
 
-                m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)
@@ -235,6 +235,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our ReceiveServerToClientConnectResult_CustomMessage invoked. This is where game-layer failures will be reported.
             m_Portal.NetManager.StartClient();
+            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
             NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult_CustomMessage), ReceiveServerToClientConnectResult_CustomMessage);
