@@ -969,10 +969,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall2 (130)
       objectReference: {fileID: 0}
-    - target: {fileID: 2036526519701997008, guid: 6f45b98cfe724004e84597dc148d6a3f, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
     - target: {fileID: 2698721903467665021, guid: 6f45b98cfe724004e84597dc148d6a3f, type: 3}
       propertyPath: m_RootOrder
       value: 191
@@ -1915,10 +1911,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1143081499798261330}
     m_Modifications:
-    - target: {fileID: 1148747288013210730, guid: 18746b4a20a009b4cae4eed4fc4c6ce7, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
     - target: {fileID: 2232979037069254041, guid: 18746b4a20a009b4cae4eed4fc4c6ce7, type: 3}
       propertyPath: m_RootOrder
       value: 113
@@ -2187,10 +2179,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall2 (60)
       objectReference: {fileID: 0}
-    - target: {fileID: 2036526519701997008, guid: 6f45b98cfe724004e84597dc148d6a3f, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
     - target: {fileID: 2698721903467665021, guid: 6f45b98cfe724004e84597dc148d6a3f, type: 3}
       propertyPath: m_RootOrder
       value: 188
@@ -2327,10 +2315,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall2_top_straight (11)
       objectReference: {fileID: 0}
-    - target: {fileID: 2036526519701997008, guid: 9ea4099dde2e45f4f80b1f58171a6b9b, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
     - target: {fileID: 2698721903467665021, guid: 9ea4099dde2e45f4f80b1f58171a6b9b, type: 3}
       propertyPath: m_RootOrder
       value: 198
@@ -2393,10 +2377,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall2 (129)
       objectReference: {fileID: 0}
-    - target: {fileID: 2036526519701997008, guid: 6f45b98cfe724004e84597dc148d6a3f, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
     - target: {fileID: 2698721903467665021, guid: 6f45b98cfe724004e84597dc148d6a3f, type: 3}
       propertyPath: m_RootOrder
       value: 189
@@ -2517,10 +2497,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1143081499798261330}
     m_Modifications:
-    - target: {fileID: 1148747288013210730, guid: 18746b4a20a009b4cae4eed4fc4c6ce7, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
     - target: {fileID: 2232979037069254041, guid: 18746b4a20a009b4cae4eed4fc4c6ce7, type: 3}
       propertyPath: m_RootOrder
       value: 112
@@ -4985,10 +4961,6 @@ PrefabInstance:
       propertyPath: m_Name
       value: wall2 (71)
       objectReference: {fileID: 0}
-    - target: {fileID: 2036526519701997008, guid: 6f45b98cfe724004e84597dc148d6a3f, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
     - target: {fileID: 2698721903467665021, guid: 6f45b98cfe724004e84597dc148d6a3f, type: 3}
       propertyPath: m_RootOrder
       value: 190
@@ -14085,10 +14057,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1143081499798261330}
     m_Modifications:
-    - target: {fileID: 1148747288013210730, guid: 18746b4a20a009b4cae4eed4fc4c6ce7, type: 3}
-      propertyPath: m_Materials.Array.data[0]
-      value: 
-      objectReference: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
     - target: {fileID: 2232979037069254041, guid: 18746b4a20a009b4cae4eed4fc4c6ce7, type: 3}
       propertyPath: m_RootOrder
       value: 114

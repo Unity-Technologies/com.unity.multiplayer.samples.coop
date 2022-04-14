@@ -11,9 +11,9 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: env_floor
-    second: {fileID: 2100000, guid: d7e12472d6eacf244baa7a38f15ffc04, type: 2}
+    second: {fileID: 2100000, guid: 08a6ed3e19879c844a1bb6d8f07e2653, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1

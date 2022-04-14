@@ -7,7 +7,7 @@ using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
-
+using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -25,13 +25,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] NameGenerationData m_NameGenerationData;
         [SerializeField] LobbyUIMediator m_LobbyUIMediator;
         [SerializeField] IPUIMediator m_IPUIMediator;
-
-        [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
+        [SerializeField] Button m_LobbyButton;
         [SerializeField] GameObject m_SignInSpinner;
 
         protected override void Awake()
         {
-            m_MainMenuButtonsCanvasGroup.interactable = false;
+            m_LobbyButton.interactable = false;
             m_LobbyUIMediator.Hide();
             base.Awake();
         }
@@ -46,6 +45,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [Inject]
         async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
         {
+            if (string.IsNullOrEmpty(Application.cloudProjectId))
+            {
+                PopupManager.ShowPopupPanel("Unity Gaming Services ProjectID not set up" ,"Click the Readme file in the Assets Folder within the Project window in-editor to follow \"How to set up Unity Gaming Services\"");
+                OnSignInFailed();
+                return;
+            }
+
             try
             {
                 var unityAuthenticationInitOptions = new InitializationOptions();
@@ -55,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     unityAuthenticationInitOptions.SetProfile(profile);
                 }
 
-                await authServiceFacade.SignInAsync(unityAuthenticationInitOptions);
+                await authServiceFacade.InitializeAndSignInAsync(unityAuthenticationInitOptions);
                 OnAuthSignIn();
             }
             catch (Exception)
@@ -65,7 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             void OnAuthSignIn()
             {
-                m_MainMenuButtonsCanvasGroup.interactable = true;
+                m_LobbyButton.interactable = true;
                 m_SignInSpinner.SetActive(false);
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
@@ -77,6 +83,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             void OnSignInFailed()
             {
+                m_LobbyButton.interactable = false;
                 m_SignInSpinner.SetActive(false);
             }
         }
