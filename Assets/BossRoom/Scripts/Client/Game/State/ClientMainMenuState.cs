@@ -47,7 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             if (string.IsNullOrEmpty(Application.cloudProjectId))
             {
-                PopupManager.ShowPopupPanel("Unity Game Services ProjectID not set up" ,"Click the Readme file in the Assets Folder within the Project window in-editor to follow \"Setting Up Unity Game Services\"");
+                PopupManager.ShowPopupPanel("Unity Game Services ProjectID not set up" ,"Click the Readme file in the Assets Folder within the Project window in-editor to follow \"How to set up Unity Game Services\"");
                 OnSignInFailed();
                 return;
             }
