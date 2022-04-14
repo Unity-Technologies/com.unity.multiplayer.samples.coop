@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 2698721903467665021}
   - component: {fileID: 3792955485091636975}
   - component: {fileID: 2036526519701997008}
-  m_Layer: 8
+  m_Layer: 10
   m_Name: env_wall1_top_straight_3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -59,7 +59,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: de7d8b0cdceac8140b98a459d9533db4, type: 2}
+  - {fileID: 2100000, guid: 08a6ed3e19879c844a1bb6d8f07e2653, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

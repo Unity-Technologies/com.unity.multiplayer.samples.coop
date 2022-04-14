@@ -34,6 +34,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private MovementState m_MovementState;
 
+        MovementStatus m_PreviousState;
+
         [SerializeField]
         private ServerCharacter m_CharLogic;
 
@@ -44,23 +46,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         // this one is specific to knockback mode
         private Vector3 m_KnockbackVector;
 
-        private void Awake()
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        public bool TeleportModeActivated { get; set; }
+
+        const float k_CheatSpeed = 20;
+
+        public bool SpeedCheatActivated { get; set; }
+#endif
+
+        void Awake()
         {
-            m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
+            // disable this NetworkBehavior until it is spawned
+            enabled = false;
         }
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
             {
-                // Disable server component on clients
-                enabled = false;
-                return;
-            }
+                // Only enable server component on servers
+                enabled = true;
 
-            // On the server enable navMeshAgent and initialize
-            m_NavMeshAgent.enabled = true;
-            m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
+                // On the server enable navMeshAgent and initialize
+                m_NavMeshAgent.enabled = true;
+                m_NavigationSystem = GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag).GetComponent<NavigationSystem>();
+                m_NavPath = new DynamicNavPath(m_NavMeshAgent, m_NavigationSystem);
+            }
         }
 
         /// <summary>
@@ -69,6 +80,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <param name="position">Position in world space to path to. </param>
         public void SetMovementTarget(Vector3 position)
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (TeleportModeActivated)
+            {
+                Teleport(position);
+                return;
+            }
+#endif
             m_MovementState = MovementState.PathFollowing;
             m_NavPath.SetTargetPosition(position);
         }
@@ -123,7 +141,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public void CancelMove()
         {
-            m_NavPath.Clear();
+            m_NavPath?.Clear();
             m_MovementState = MovementState.Idle;
         }
 
@@ -153,17 +171,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             PerformMovement();
 
-            m_NetworkCharacterState.MovementStatus.Value = GetMovementStatus();
-        }
-
-        private void OnValidate()
-        {
-            if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
+            var currentState = GetMovementStatus(m_MovementState);
+            if (m_PreviousState != currentState)
             {
-                Assert.IsNotNull(
-                    GameObject.FindGameObjectWithTag(NavigationSystem.NavigationSystemTag)?.GetComponent<NavigationSystem>(),
-                    $"NavigationSystem not found. Is there a NavigationSystem Behaviour in the Scene and does its GameObject have the {NavigationSystem.NavigationSystemTag} tag? {gameObject.scene.name}"
-                );
+                m_NetworkCharacterState.MovementStatus.Value = currentState;
+                m_PreviousState = currentState;
             }
         }
 
@@ -172,6 +184,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_NavPath != null)
             {
                 m_NavPath.Dispose();
+            }
+            if (IsServer)
+            {
+                // Disable server components when despawning
+                enabled = false;
+                m_NavMeshAgent.enabled = false;
             }
         }
 
@@ -233,6 +251,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private float GetBaseMovementSpeed()
         {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            if (SpeedCheatActivated)
+            {
+                return k_CheatSpeed;
+            }
+#endif
             CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.NetState.CharacterType];
             Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.NetState.CharacterType}");
             return characterClass.Speed;
@@ -242,9 +266,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Determines the appropriate MovementStatus for the character. The
         /// MovementStatus is used by the client code when animating the character.
         /// </summary>
-        private MovementStatus GetMovementStatus()
+        private MovementStatus GetMovementStatus(MovementState movementState)
         {
-            switch (m_MovementState)
+            switch (movementState)
             {
                 case MovementState.Idle:
                     return MovementStatus.Idle;

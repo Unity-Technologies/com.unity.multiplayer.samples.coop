@@ -1,6 +1,6 @@
-using Netcode.Transports.PhotonRealtime;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -13,9 +13,6 @@ public class TransportPicker : MonoBehaviour
     NetworkTransport m_IpHostTransport;
 
     [SerializeField]
-    NetworkTransport m_RelayTransport;
-
-    [SerializeField]
     NetworkTransport m_UnityRelayTransport;
 
     /// <summary>
@@ -23,10 +20,6 @@ public class TransportPicker : MonoBehaviour
     /// </summary>
     public NetworkTransport IpHostTransport => m_IpHostTransport;
 
-    /// <summary>
-    /// The transport used when hosting the game over a relay server.
-    /// </summary>
-    public NetworkTransport RelayTransport => m_RelayTransport;
 
     /// <summary>
     /// The transport used when hosting the game over a unity relay server.
@@ -37,8 +30,5 @@ public class TransportPicker : MonoBehaviour
     {
         Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UNetTransport || m_IpHostTransport as UnityTransport),
             "IpHost transport must be either Unet transport or UTP.");
-
-        Assert.IsTrue(m_RelayTransport == null || (m_RelayTransport as PhotonRealtimeTransport), "" +
-            "Relay transport must be PhotonRealtimeTransport");
     }
 }

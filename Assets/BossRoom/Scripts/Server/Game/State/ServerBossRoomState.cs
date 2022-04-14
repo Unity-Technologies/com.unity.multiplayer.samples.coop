@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -13,9 +14,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// </summary>
     public class ServerBossRoomState : GameStateBehaviour
     {
-        [SerializeField]
-        AvatarRegistry m_AvatarRegistry;
-
         [SerializeField]
         TransformVariable m_NetworkGameStateTransform;
 
@@ -64,6 +62,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
 
                 DoInitialSpawnIfPossible();
+
+                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             }
         }
 
@@ -159,7 +159,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             var newPlayer = Instantiate(m_PlayerPrefab, Vector3.zero, Quaternion.identity);
 
-            var physicsTransform = newPlayer.GetComponent<ServerCharacter>().physicsWrapper.Transform;
+            var newPlayerCharacter = newPlayer.GetComponent<ServerCharacter>();
+
+            var physicsTransform = newPlayerCharacter.physicsWrapper.Transform;
 
             if (spawnPoint != null)
             {
@@ -177,11 +179,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             Assert.IsTrue(networkAvatarGuidStateExists,
                 $"NetworkCharacterGuidState not found on player avatar!");
 
-            // if joining late, assign a random character to the persistent player
+            // if reconnecting, set the player's position and rotation to its previous state
             if (lateJoin)
             {
-                persistentPlayer.NetworkAvatarGuidState.AvatarGuid.Value =
-                    m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+                if (sessionPlayerData is { HasCharacterSpawned: true })
+                {
+                    physicsTransform.SetPositionAndRotation(sessionPlayerData.Value.PlayerPosition, sessionPlayerData.Value.PlayerRotation);
+                }
             }
 
             networkAvatarGuidState.AvatarGuid.Value =
@@ -254,7 +259,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             SetWinState(gameWon ? WinState.Win : WinState.Loss);
 
-            NetworkManager.Singleton.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
         }
     }
 }

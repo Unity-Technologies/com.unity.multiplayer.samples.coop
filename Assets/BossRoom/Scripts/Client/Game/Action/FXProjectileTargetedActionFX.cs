@@ -82,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null )
+            if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null)
             {
                 var hitReact = !string.IsNullOrEmpty(Description.ReactAnim) ? Description.ReactAnim : k_DefaultHitReact;
                 clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
@@ -120,8 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private bool IsParentAnNPC()
         {
-            var targetable = m_Parent.Parent.GetComponent<ITargetable>();
-            return targetable.IsNpc;
+            return m_Parent.NetState.IsNpc;
         }
 
 

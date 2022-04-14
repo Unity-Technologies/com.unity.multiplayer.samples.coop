@@ -1,120 +1,62 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-8411568917342813065
-MonoBehaviour:
+--- !u!1001 &1850993466660335658
+PrefabInstance:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8385572559299522089}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9b8618b4d6eb31448810545c6299def3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  DevNotes: This is for the MAGE class
-  m_EventsOnNodeEntry:
-  - m_AnimatorNodeName: Attack1
-    m_AnimatorNodeNameHash: -47317214
-    m_Prefab: {fileID: 0}
-    m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 4cba5ff1440416e4e8fa9f375ffa8291, type: 3}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
-  - m_AnimatorNodeName: SkillHeal
-    m_AnimatorNodeNameHash: 903055143
-    m_Prefab: {fileID: 1122710142364620141, guid: 5a1288153c8fbb44f863dc56af13b1de, type: 3}
-    m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 1313590801738418481, guid: c94325ee327b53c49939f904d073f197, type: 3}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 50}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: b239f215d2645db40ad6183403eb26df, type: 3}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
-  - m_AnimatorNodeName: SkillHeal
-    m_AnimatorNodeNameHash: 903055143
-    m_Prefab: {fileID: -8503384853690052432, guid: 4d05cda5d1dbccc458454625df6b2eed, type: 3}
-    m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 0}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
-  - m_AnimatorNodeName: Fall Down
-    m_AnimatorNodeNameHash: 950593707
-    m_Prefab: {fileID: -288210933268752174, guid: 98f11693945a93b4abd1cebb803338cc, type: 3}
-    m_PrefabSpawnDelaySeconds: 1.4
-    m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 7fbc6b32425f98840b339a705b4a28cb, type: 3}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
-  - m_AnimatorNodeName: WalkRun
-    m_AnimatorNodeNameHash: -1624701500
-    m_Prefab: {fileID: -8608552164340512473, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
-    m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 99999
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 0}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
-  - m_AnimatorNodeName: Stand Up
-    m_AnimatorNodeNameHash: 1489384510
-    m_Prefab: {fileID: 5012378715484584769, guid: 8b58298c2bb9f0d4f8cb8243450adeda, type: 3}
-    m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: c6c3998cfe5b6b94ab3b60a57f1c1598, type: 3}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
-  - m_AnimatorNodeName: Stunned
-    m_AnimatorNodeNameHash: -449490811
-    m_Prefab: {fileID: -7841978760598146115, guid: 1fab07feb34d8c94c96944f0124d92e3, type: 3}
-    m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 3d6f2e33acb1e8f4b9d829e245c62e16, type: 3}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
-  - m_AnimatorNodeName: HitReact1
-    m_AnimatorNodeNameHash: -1747783153
-    m_Prefab: {fileID: -2843690008440830094, guid: de5b665e7f32274419072e7bf4c3eff8, type: 3}
-    m_PrefabSpawnDelaySeconds: 0
-    m_PrefabCanBeAbortedUntilSecs: 0
-    m_PrefabParent: {fileID: 0}
-    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
-    m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 5ef809d665d13b245b559cd6170f5794, type: 3}
-    m_SoundStartDelaySeconds: 0
-    m_VolumeMultiplier: 1
-    m_LoopSound: 0
-  m_AudioSources:
-  - {fileID: 3541643525863551320}
-  - {fileID: 3908673605568263024}
-  m_Animator: {fileID: 0}
-  m_ClientCharacterVisualization: {fileID: 3008097873019216356}
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 9157042335656178835}
+    m_Modifications:
+    - target: {fileID: 7170051953345250386, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_Name
+      value: FX_run_smoke
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_RootOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -0.4
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: -0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: -90
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7170051953345250389, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9336eb30e2a836544bfd5b5985fd0573, type: 3}
 --- !u!1001 &5153647769164318901
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -193,17 +135,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3736552308919084700, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
   m_PrefabInstance: {fileID: 5153647769164318901}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3008097873019216356 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 7943089997373843793, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
+--- !u!4 &9157042335656178835 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4076098699203836966, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
   m_PrefabInstance: {fileID: 5153647769164318901}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8385572559299522089}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9520a47fc61d5ab4ca99cdac2d574909, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!82 &3541643525863551320 stripped
 AudioSource:
   m_CorrespondingSourceObject: {fileID: -674663276945163795, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
@@ -214,3 +150,106 @@ AudioSource:
   m_CorrespondingSourceObject: {fileID: 8195155732997438405, guid: d396ab139e993ee43b2eb29978bba8ff, type: 3}
   m_PrefabInstance: {fileID: 5153647769164318901}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &-8411568917342813065
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8385572559299522089}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b8618b4d6eb31448810545c6299def3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DevNotes: This is for the MAGE class
+  m_EventsOnNodeEntry:
+  - m_AnimatorNodeName: Attack1
+    m_AnimatorNodeNameHash: -47317214
+    m_Prefab: {fileID: 0}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: 4cba5ff1440416e4e8fa9f375ffa8291, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: SkillHeal
+    m_AnimatorNodeNameHash: 903055143
+    m_Prefab: {fileID: 1122710142364620141, guid: 5a1288153c8fbb44f863dc56af13b1de, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 1313590801738418481, guid: c94325ee327b53c49939f904d073f197, type: 3}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: b239f215d2645db40ad6183403eb26df, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: SkillHeal
+    m_AnimatorNodeNameHash: 903055143
+    m_Prefab: {fileID: -8503384853690052432, guid: 4d05cda5d1dbccc458454625df6b2eed, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 0}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Fall Down
+    m_AnimatorNodeNameHash: 950593707
+    m_Prefab: {fileID: -288210933268752174, guid: 98f11693945a93b4abd1cebb803338cc, type: 3}
+    m_PrefabSpawnDelaySeconds: 1.4
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: 7fbc6b32425f98840b339a705b4a28cb, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Stand Up
+    m_AnimatorNodeNameHash: 1489384510
+    m_Prefab: {fileID: 5012378715484584769, guid: 8b58298c2bb9f0d4f8cb8243450adeda, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: c6c3998cfe5b6b94ab3b60a57f1c1598, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: Stunned
+    m_AnimatorNodeNameHash: -449490811
+    m_Prefab: {fileID: -7841978760598146115, guid: 1fab07feb34d8c94c96944f0124d92e3, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: 3d6f2e33acb1e8f4b9d829e245c62e16, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  - m_AnimatorNodeName: HitReact1
+    m_AnimatorNodeNameHash: -1747783153
+    m_Prefab: {fileID: -2843690008440830094, guid: de5b665e7f32274419072e7bf4c3eff8, type: 3}
+    m_PrefabSpawnDelaySeconds: 0
+    m_PrefabCanBeAbortedUntilSecs: 0
+    m_PrefabParent: {fileID: 0}
+    m_PrefabParentOffset: {x: 0, y: 0, z: 0}
+    m_DeParentPrefab: 0
+    m_SoundEffect: {fileID: 8300000, guid: 5ef809d665d13b245b559cd6170f5794, type: 3}
+    m_SoundStartDelaySeconds: 0
+    m_VolumeMultiplier: 1
+    m_LoopSound: 0
+  m_AudioSources:
+  - {fileID: 3541643525863551320}
+  - {fileID: 3908673605568263024}
+  m_Animator: {fileID: 0}
+  m_ClientCharacterVisualization: {fileID: 0}

@@ -24,17 +24,38 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
+            {
+                s_ActivePlayers.Add(m_CachedServerCharacter);
+            }
+            else
             {
                 enabled = false;
             }
 
-            s_ActivePlayers.Add(m_CachedServerCharacter);
         }
 
         void OnDisable()
         {
             s_ActivePlayers.Remove(m_CachedServerCharacter);
+        }
+
+        public override void OnNetworkDespawn()
+        {
+            if (IsServer)
+            {
+                var movementTransform = m_CachedServerCharacter.Movement.transform;
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData.HasValue)
+                {
+                    var playerData = sessionPlayerData.Value;
+                    playerData.PlayerPosition = movementTransform.position;
+                    playerData.PlayerRotation = movementTransform.rotation;
+                    playerData.CurrentHitPoints = m_CachedServerCharacter.NetState.HitPoints;
+                    playerData.HasCharacterSpawned = true;
+                    SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
+                }
+            }
         }
 
         /// <summary>
@@ -44,6 +65,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public static List<ServerCharacter> GetPlayerServerCharacters()
         {
             return s_ActivePlayers;
+        }
+
+        /// <summary>
+        /// Returns the ServerCharacter owned by a specific client. Always returns null on the client.
+        /// </summary>
+        /// <param name="ownerClientId"></param>
+        /// <returns>The ServerCharacter owned by the client, or null if no ServerCharacter is found</returns>
+        public static ServerCharacter GetPlayerServerCharacter(ulong ownerClientId)
+        {
+            foreach (var playerServerCharacter in s_ActivePlayers)
+            {
+                if (playerServerCharacter.OwnerClientId == ownerClientId)
+                {
+                    return playerServerCharacter;
+                }
+            }
+            Debug.LogError($"PlayerServerCharacter owned by client {ownerClientId} not found");
+            return null;
         }
     }
 }

@@ -23,7 +23,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
         /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
         /// </summary>
-        public ActionPlayer RunningActions {  get { return m_ActionPlayer;  } }
+        public ActionPlayer RunningActions { get { return m_ActionPlayer; } }
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
@@ -85,8 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
                     PlayAction(ref startingAction);
                 }
-
-                NetState.HitPoints = NetState.CharacterClass.BaseHP.Value;
+                InitializeHitPoints();
             }
         }
 
@@ -104,6 +103,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 m_DamageReceiver.damageReceived -= ReceiveHP;
                 m_DamageReceiver.collisionEntered -= CollisionEntered;
+            }
+        }
+
+        void InitializeHitPoints()
+        {
+            NetState.HitPoints = NetState.CharacterClass.BaseHP.Value;
+
+            if (!IsNpc)
+            {
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData is {HasCharacterSpawned: true})
+                {
+                    NetState.HitPoints = sessionPlayerData.Value.CurrentHitPoints;
+                    if (NetState.HitPoints <= 0)
+                    {
+                        NetState.LifeState = LifeState.Fainted;
+                    }
+                }
             }
         }
 
@@ -180,7 +197,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         /// <param name="inflicter">Person dishing out this damage/healing. Can be null. </param>
         /// <param name="HP">The HP to receive. Positive value is healing. Negative is damage.  </param>
-        public void ReceiveHP(ServerCharacter inflicter, int HP)
+        void ReceiveHP(ServerCharacter inflicter, int HP)
         {
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
             if (HP > 0)
@@ -191,6 +208,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             else
             {
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+                // Don't apply damage if god mode is on
+                if (NetState.NetworkLifeState.IsGodMode.Value)
+                {
+                    return;
+                }
+#endif
+
                 m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
                 float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
@@ -198,9 +223,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 serverAnimationHandler.NetworkAnimator.SetTrigger("HitReact1");
             }
 
-            NetState.HitPoints = Mathf.Min(NetState.CharacterClass.BaseHP.Value, NetState.HitPoints+HP);
+            NetState.HitPoints = Mathf.Clamp(NetState.HitPoints + HP, 0, NetState.CharacterClass.BaseHP.Value);
 
-            if( m_AIBrain != null )
+            if (m_AIBrain != null)
             {
                 //let the brain know about the modified amount of damage we received.
                 m_AIBrain.ReceiveHP(inflicter, HP);

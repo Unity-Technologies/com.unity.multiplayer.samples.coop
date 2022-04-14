@@ -197,6 +197,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             // If we have another player selected, see if their aliveness state has changed,
             // and if so, update the interactiveness of the basic-action button
 
+            if (Input.GetKeyUp(KeyCode.Alpha4))
+            {
+                m_ButtonInfo[ActionButtonType.EmoteBar].Button.OnPointerUpEvent.Invoke();
+            }
+
             if (!m_SelectedPlayerNetState) { return; }
 
             bool isAliveNow = m_SelectedPlayerNetState.NetworkLifeState.LifeState.Value == LifeState.Alive;

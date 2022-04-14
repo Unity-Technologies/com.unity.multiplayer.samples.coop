@@ -1,7 +1,6 @@
 using System;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.Assertions;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
@@ -9,71 +8,80 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    public class ClientCharacterVisualization : MonoBehaviour
+    public class ClientCharacterVisualization : NetworkBehaviour
     {
         [SerializeField]
-        private Animator m_ClientVisualsAnimator;
+        Animator m_ClientVisualsAnimator;
 
-        private CharacterSwap m_CharacterSwapper;
+        CharacterSwap m_CharacterSwapper;
 
         [SerializeField]
-        private VisualizationConfiguration m_VisualizationConfiguration;
+        VisualizationConfiguration m_VisualizationConfiguration;
 
         /// <summary>
         /// Returns a reference to the active Animator for this visualization
         /// </summary>
-        public Animator OurAnimator { get { return m_ClientVisualsAnimator; } }
+        public Animator OurAnimator => m_ClientVisualsAnimator;
 
         /// <summary>
         /// Returns the targeting-reticule prefab for this character visualization
         /// </summary>
-        public GameObject TargetReticulePrefab { get { return m_VisualizationConfiguration.TargetReticule; } }
+        public GameObject TargetReticulePrefab => m_VisualizationConfiguration.TargetReticule;
 
         /// <summary>
         /// Returns the Material to plug into the reticule when the selected entity is hostile
         /// </summary>
-        public Material ReticuleHostileMat { get { return m_VisualizationConfiguration.ReticuleHostileMat; } }
+        public Material ReticuleHostileMat => m_VisualizationConfiguration.ReticuleHostileMat;
 
         /// <summary>
         /// Returns the Material to plug into the reticule when the selected entity is friendly
         /// </summary>
-        public Material ReticuleFriendlyMat { get { return m_VisualizationConfiguration.ReticuleFriendlyMat; } }
-
-        /// <summary>
-        /// Returns our pseudo-Parent, the object that owns the visualization.
-        /// (We don't have an actual transform parent because we're on a top-level GameObject.)
-        /// </summary>
-        public Transform Parent { get; private set; }
+        public Material ReticuleFriendlyMat => m_VisualizationConfiguration.ReticuleFriendlyMat;
 
         PhysicsWrapper m_PhysicsWrapper;
 
-        public bool CanPerformActions { get { return m_NetState.CanPerformActions; } }
+        public bool CanPerformActions => m_NetState.CanPerformActions;
 
-        private NetworkCharacterState m_NetState;
+        NetworkCharacterState m_NetState;
 
-        private ActionVisualization m_ActionViz;
+        public NetworkCharacterState NetState => m_NetState;
 
-        private const float k_MaxRotSpeed = 280;  //max angular speed at which we will rotate, in degrees/second.
+        ActionVisualization m_ActionViz;
 
-        float m_SmoothedSpeed;
+        PositionLerper m_PositionLerper;
 
-        public bool IsOwner => m_NetState.IsOwner;
+        RotationLerper m_RotationLerper;
 
-        public ulong NetworkObjectId => m_NetState.NetworkObjectId;
+        // this value suffices for both positional and rotational interpolations; one may have a constant value for each
+        const float k_LerpTime = 0.08f;
 
-        public void Start()
+        Vector3 m_LerpedPosition;
+
+        Quaternion m_LerpedRotation;
+
+        bool m_IsHost;
+
+        float m_CurrentSpeed;
+
+        void Awake()
         {
-            if (!NetworkManager.Singleton.IsClient || transform.parent == null)
+            enabled = false;
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            if (!IsClient || transform.parent == null)
             {
-                enabled = false;
                 return;
             }
+
+            enabled = true;
+
+            m_IsHost = IsHost;
 
             m_ActionViz = new ActionVisualization(this);
 
             m_NetState = GetComponentInParent<NetworkCharacterState>();
-
-            Parent = m_NetState.transform;
 
             m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
 
@@ -82,15 +90,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
+            m_NetState.MovementStatus.OnValueChanged += OnMovementStatusChanged;
+            OnMovementStatusChanged(MovementStatus.Normal,m_NetState.MovementStatus.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
+            m_LerpedPosition = transform.position;
+            m_LerpedRotation = transform.rotation;
+
+            // similarly, initialize start position and rotation for smooth lerping purposes
+            m_PositionLerper = new PositionLerper(m_PhysicsWrapper.Transform.position, k_LerpTime);
+            m_RotationLerper = new RotationLerper(m_PhysicsWrapper.Transform.rotation, k_LerpTime);
 
             if (!m_NetState.IsNpc)
             {
                 name = "AvatarGraphics" + m_NetState.OwnerClientId;
 
-                if (Parent.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                if (m_NetState.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
                 {
                     m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
                 }
@@ -106,10 +122,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     m_ActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
 
-                    if (Parent.TryGetComponent(out ClientInputSender inputSender))
+                    if (m_NetState.TryGetComponent(out ClientInputSender inputSender))
                     {
                         // TODO: revisit; anticipated actions would play twice on the host
-                        if (!NetworkManager.Singleton.IsServer)
+                        if (!IsServer)
                         {
                             inputSender.ActionInputEvent += OnActionInput;
                         }
@@ -119,20 +135,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        private void OnActionInput(ActionRequestData data)
-        {
-            m_ActionViz.AnticipateAction(ref data);
-        }
-
-        private void OnMoveInput(Vector3 position)
-        {
-            if (!IsAnimating())
-            {
-                OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
-            }
-        }
-
-        private void OnDestroy()
+        public override void OnNetworkDespawn()
         {
             if (m_NetState)
             {
@@ -142,40 +145,55 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
 
-                if (Parent != null && Parent.TryGetComponent(out ClientInputSender sender))
+                if (m_NetState.TryGetComponent(out ClientInputSender sender))
                 {
                     sender.ActionInputEvent -= OnActionInput;
                     sender.ClientMoveEvent -= OnMoveInput;
                 }
             }
+
+            enabled = false;
         }
 
-        private void PerformActionFX(ActionRequestData data)
+        void OnActionInput(ActionRequestData data)
+        {
+            m_ActionViz.AnticipateAction(ref data);
+        }
+
+        void OnMoveInput(Vector3 position)
+        {
+            if (!IsAnimating())
+            {
+                OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
+            }
+        }
+
+        void PerformActionFX(ActionRequestData data)
         {
             m_ActionViz.PlayAction(ref data);
         }
 
-        private void CancelAllActionFXs()
+        void CancelAllActionFXs()
         {
             m_ActionViz.CancelAllActions();
         }
 
-        private void CancelActionFXByType(ActionType actionType)
+        void CancelActionFXByType(ActionType actionType)
         {
             m_ActionViz.CancelAllActionsOfType(actionType);
         }
 
-        private void OnStoppedChargingUp(float finalChargeUpPercentage)
+        void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
             m_ActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
         }
 
-        private void OnStealthyChanged(bool oldValue, bool newValue)
+        void OnStealthyChanged(bool oldValue, bool newValue)
         {
             SetAppearanceSwap();
         }
 
-        private void SetAppearanceSwap()
+        void SetAppearanceSwap()
         {
             if (m_CharacterSwapper)
             {
@@ -199,15 +217,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Returns the value we should set the Animator's "Speed" variable, given current gameplay conditions.
         /// </summary>
-        private float GetVisualMovementSpeed()
+        float GetVisualMovementSpeed(MovementStatus movementStatus)
         {
-            Assert.IsNotNull(m_VisualizationConfiguration);
             if (m_NetState.NetworkLifeState.LifeState.Value != LifeState.Alive)
             {
                 return m_VisualizationConfiguration.SpeedDead;
             }
 
-            switch (m_NetState.MovementStatus.Value)
+            switch (movementStatus)
             {
                 case MovementStatus.Idle:
                     return m_VisualizationConfiguration.SpeedIdle;
@@ -222,28 +239,37 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case MovementStatus.Walking:
                     return m_VisualizationConfiguration.SpeedWalking;
                 default:
-                    throw new Exception($"Unknown MovementStatus {m_NetState.MovementStatus.Value}");
+                    throw new Exception($"Unknown MovementStatus {movementStatus}");
             }
         }
 
+        void OnMovementStatusChanged(MovementStatus previousValue, MovementStatus newValue)
+        {
+            m_CurrentSpeed = GetVisualMovementSpeed(newValue);
+        }
 
         void Update()
         {
-            if (Parent == null)
+            // On the host, Characters are translated via ServerCharacterMovement's FixedUpdate method. To ensure that
+            // the game camera tracks a GameObject moving in the Update loop and therefore eliminate any camera jitter,
+            // this graphics GameObject's position is smoothed over time on the host. Clients do not need to perform any
+            // positional smoothing since NetworkTransform will interpolate position updates on the root GameObject.
+            if (m_IsHost)
             {
-                // since we aren't in the transform hierarchy, we have to explicitly die when our parent dies.
-                Destroy(gameObject);
-                return;
+                // Note: a cached position (m_LerpedPosition) and rotation (m_LerpedRotation) are created and used as
+                // the starting point for each interpolation since the root's position and rotation are modified in
+                // FixedUpdate, thus altering this transform (being a child) in the process.
+                m_LerpedPosition = m_PositionLerper.LerpPosition(m_LerpedPosition,
+                    m_PhysicsWrapper.Transform.position);
+                m_LerpedRotation = m_RotationLerper.LerpRotation(m_LerpedRotation,
+                    m_PhysicsWrapper.Transform.rotation);
+                transform.SetPositionAndRotation(m_LerpedPosition, m_LerpedRotation);
             }
-
-            // NetworkTransform is interpolated - we can just apply it's position value to our visual object
-            transform.position = m_PhysicsWrapper.Transform.position;
-            transform.rotation = m_PhysicsWrapper.Transform.rotation;
 
             if (m_ClientVisualsAnimator)
             {
                 // set Animator variables here
-                OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, GetVisualMovementSpeed());
+                OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, m_CurrentSpeed);
             }
 
             m_ActionViz.Update();

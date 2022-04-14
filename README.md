@@ -8,6 +8,8 @@ Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. I
 
 You can use everything in this project as a starting point or as bits and pieces in your own Unity games. The project is licensed under the Unity Companion License. See [LICENSE.md](LICENSE.md) for more legal information.
 
+See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art of Boss Room.
+
 > __IMPORTANT__:
 > - Boss Room has been developed and tested on these Platforms (Windows, Mac, iOS, and Android).
 >     - Tested on iPhone 6 and Pixel 3.
@@ -27,6 +29,10 @@ You can use everything in this project as a starting point or as bits and pieces
 
 This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. 
 
+## Registering the project with Unity Gaming Services (UGS)
+
+This project leverages several services from UGS to facilitate connectivity between players. In order to use these services inside your project, one must first [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside Unity Dashboard, and enable both the [Relay](https://docs.unity.com/relay/get-started.html) and [Lobby](https://docs.unity.com/lobby/game-lobby-sample.html) services.
+
 ## Opening the project for the first time
 
 Once you have downloaded the project, the steps below should get you up and running:
@@ -43,7 +49,7 @@ Once you have downloaded the project, the steps below should get you up and runn
 In order to see the multiplayer functionality in action we can either run multiple instances of the game locally on your computer, using either ParrelSync or builds or choose to connect to a friend over the internet. See [how to test](https://docs-multiplayer.unity3d.com/docs/develop/tutorials/testing/testing_locally) for more info.
 
 ---------------
-** Local multiplayer setup**
+**Local multiplayer setup**
 
 First we need to build an executable.
 
@@ -62,10 +68,9 @@ To play over internet, we need to build an executable that is shared between all
 
 It is possible to connect between multiple instances of the same executable OR between executables and the editor that produced said executable.
 
-Running the game over internet currently requires setting up a relay. Boss Room provides integrations with [Unity Relay](https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html) and [Photon Transport for Netcode](https://github.com/Unity-Technologies/multiplayer-community-contributions).
+Running the game over internet currently requires setting up a relay. Boss Room provides an integration with [Unity Relay](https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html).
 
 > Checkout our Unity Relay setup guide [here](https://docs-multiplayer.unity3d.com/docs/develop/relay/relay/index.html)
-> Checkout our Photon-Realtime setup guide [here](Documentation/Photon-Realtime/Readme.md)
 
 Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. Make sure your host's address listens on 0.0.0.0 (127.0.0.1 is for local development only).
 

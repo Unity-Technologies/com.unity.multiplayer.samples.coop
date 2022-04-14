@@ -77,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
             if (!string.IsNullOrEmpty(Description.Anim2))
-            { 
+            {
                 m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
             }
             // start the animation sequence!
@@ -144,7 +144,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 // first see if this victim has the special ability to stun us!
                 float chanceToStun = victim.GetBuffedValue(BuffableValue.ChanceToStunTramplers);
-                if (chanceToStun > 0 && Random.Range(0,1) < chanceToStun)
+                if (chanceToStun > 0 && Random.Range(0, 1) < chanceToStun)
                 {
                     // we're stunned! No collision behavior for the victim. Stun ourselves and abort.
                     StunSelf();
@@ -161,7 +161,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     damage = Description.SplashDamage;
                 }
-                victim.ReceiveHP(m_Parent, -damage);
+
+                if (victim.gameObject.TryGetComponent(out IDamageable damageable))
+                {
+                    damageable.ReceiveHP(m_Parent, -damage);
+                }
             }
 
             var victimMovement = victim.Movement;

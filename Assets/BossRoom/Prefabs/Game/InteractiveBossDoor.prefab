@@ -70,7 +70,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3784045606710551546}
   - component: {fileID: 2576950312805496058}
-  m_Layer: 8
+  - component: {fileID: 6571099866620377078}
+  m_Layer: 10
   m_Name: DoorframePhysicsR
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,6 +105,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 1, z: 4}
   m_Center: {x: -0.4, y: 0, z: 0}
+--- !u!114 &6571099866620377078
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592032498234627691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 1
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1 &7209195486721713045
 GameObject:
   m_ObjectHideFlags: 0
@@ -114,7 +131,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1067615519027872932}
   - component: {fileID: 3990117462104163279}
-  m_Layer: 8
+  - component: {fileID: 5235978757855661292}
+  m_Layer: 10
   m_Name: DoorframePhysicsL
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -148,6 +166,22 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.3, y: 1, z: 4}
   m_Center: {x: 0.4, y: 0, z: 0}
+--- !u!114 &5235978757855661292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7209195486721713045}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1e3fdca004f2d45fe8abbed571a8abd5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OverrideArea: 1
+  m_Area: 1
+  m_IgnoreFromBuild: 0
+  m_AffectedAgents: ffffffff
 --- !u!1 &7526482618397390991
 GameObject:
   m_ObjectHideFlags: 0
@@ -319,7 +353,7 @@ GameObject:
   - component: {fileID: 5694566148258285863}
   - component: {fileID: 4326426413896260864}
   - component: {fileID: 3339807916336369384}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DoorPhysics
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -423,7 +457,7 @@ PrefabInstance:
     - target: {fileID: -5081471947432912153, guid: 5aaa823f44d09b9499e0b010951524aa, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: de7d8b0cdceac8140b98a459d9533db4, type: 2}
+      objectReference: {fileID: 2100000, guid: 08a6ed3e19879c844a1bb6d8f07e2653, type: 2}
     - target: {fileID: 919132149155446097, guid: 5aaa823f44d09b9499e0b010951524aa, type: 3}
       propertyPath: m_Name
       value: door_boss_ani
@@ -476,5 +510,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 9017285538409940355}
-  m_ParameterSendBits: 0
-  m_SendRate: 0.1

@@ -1,73 +1,51 @@
-using Unity.Multiplayer.Samples.BossRoom;
-using Netcode.Transports.PhotonRealtime;
+using System;
 using UnityEngine;
-using UnityEngine.Assertions;
 using TMPro;
-using Unity.Netcode;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using UnityEngine.UI;
 
 public class RoomNameBox : MonoBehaviour
 {
-    [SerializeField] TextMeshProUGUI m_RoomNameText;
+    [SerializeField]
+    TextMeshProUGUI m_RoomNameText;
+    [SerializeField]
+    Button m_CopyToClipboardButton;
 
-    bool m_ConnectionFinished = false;
+    LocalLobby m_LocalLobby;
+    string m_LobbyCode;
+
+    [Inject]
+    private void InjectDependencies(LocalLobby localLobby)
+    {
+        m_LocalLobby = localLobby;
+        m_LocalLobby.changed += UpdateUI;
+        UpdateUI(localLobby);
+    }
 
     void Awake()
     {
-        Assert.IsNotNull(m_RoomNameText, $"{nameof(m_RoomNameText)} not assigned!");
+        gameObject.SetActive(false);
+    }
 
-        var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-        bool isUsingRelay = true;
-        switch (transport)
-        {
-            case PhotonRealtimeTransport realtimeTransport:
-                m_RoomNameText.text = $"Loading room key...";
-                break;
-            case UnityTransport utp:
-                if (utp.Protocol == UnityTransport.ProtocolType.RelayUnityTransport)
-                {
-                    m_RoomNameText.text = $"Loading join code...";
-                }
-                else
-                {
-                    isUsingRelay = false;
-                }
-                break;
-            default:
-                isUsingRelay = false;
-                break;
-        }
+    private void OnDestroy()
+    {
+        m_LocalLobby.changed -= UpdateUI;
+    }
 
-        if (!isUsingRelay)
+    private void UpdateUI(LocalLobby localLobby)
+    {
+        if (!string.IsNullOrEmpty(localLobby.LobbyCode))
         {
-            // RoomName should only be displayed when using relay.
-            Destroy(gameObject);
+            m_LobbyCode = localLobby.LobbyCode;
+            m_RoomNameText.text = $"Lobby Code: {m_LobbyCode}";
+            gameObject.SetActive(true);
+            m_CopyToClipboardButton.gameObject.SetActive(true);
         }
     }
 
-    // This update loop exists because there is currently a bug in Netcode for GameObjects which runs client connected callbacks before the transport has
-    // fully finished the asynchronous connection. That's why are loading the character select screen too early and need this update loop to
-    // update the room key once we are fully connected to the Photon cloud.
-    void Update()
+    public void CopyToClipboard()
     {
-        if (m_ConnectionFinished == false)
-        {
-            var transport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-
-            if (transport != null &&
-                transport is PhotonRealtimeTransport realtimeTransport &&
-                realtimeTransport.Client != null &&
-                string.IsNullOrEmpty(realtimeTransport.Client.CloudRegion) == false)
-            {
-                string roomName = $"{realtimeTransport.Client.CloudRegion.ToUpper()}_{realtimeTransport.RoomName}";
-                m_RoomNameText.text = $"Room Name: {roomName}";
-                m_ConnectionFinished = true;
-            }
-            else if (transport != null && transport is UnityTransport utp &&
-                     !string.IsNullOrEmpty(RelayJoinCode.Code))
-            {
-                m_RoomNameText.text = RelayJoinCode.Code;
-                m_ConnectionFinished = true;
-            }
-        }
+        GUIUtility.systemCopyBuffer = m_LobbyCode;
     }
 }

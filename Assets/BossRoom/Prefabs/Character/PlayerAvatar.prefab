@@ -65,8 +65,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 1829276847453002016}
-  m_ParameterSendBits: 0
-  m_SendRate: 0.1
 --- !u!114 &7209204667172237188
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,7 +78,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ClientVisualsAnimator: {fileID: 1829276847453002016}
-  m_CharacterSwapper: {fileID: 0}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
 --- !u!1001 &7831782662127126385
 PrefabInstance:
@@ -293,7 +290,7 @@ MonoBehaviour:
   m_NetworkHealthState: {fileID: 7751377510591478590}
   m_ClientCharacter: {fileID: 2292431908892550450}
   m_BaseHP: {fileID: 0}
-  m_TransformToTrack: {fileID: 0}
+  m_TransformToTrack: {fileID: 7902288483105483375}
   m_VerticalWorldOffset: 2.2
   m_VerticalScreenOffset: 20
 --- !u!114 &3481187672596608374
@@ -308,7 +305,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e363085af981a41fd816ab952a0a07c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PingIntervalSeconds: 0.1
 --- !u!114 &4354133789489545025
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -334,6 +330,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 331c67f15523ad7419792662b9768f44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  moveRate: 0.05
   m_CharacterClassContainer: {fileID: 5230418375993597025}
   m_PhysicsWrapper: {fileID: 6116655102486013040}
 --- !u!114 &5043718152237111612
@@ -361,7 +358,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bb02fcdd8d85034794f2a32382009e3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ClientCharacter: {fileID: 2292431908892550450}
   m_GraphicsAnimator: {fileID: 1829276847453002016}
   m_NetworkAvatarGuidState: {fileID: 2466014342928185240}
 --- !u!114 &7232939173259361562

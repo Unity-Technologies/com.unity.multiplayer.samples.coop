@@ -1,3 +1,5 @@
+using System;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -53,6 +55,29 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private static GameObject s_ActiveStateGO;
 
+        public DIScope Scope
+        {
+            get => m_Scope;
+            private set => m_Scope = value;
+        }
+
+        DIScope m_Scope;
+
+        [SerializeField]
+        GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
+
+        protected virtual void Awake()
+        {
+            DIScope.RootScope.InjectIn(this);
+            Scope = new DIScope(DIScope.RootScope);
+            InitializeScope();
+            Scope.FinalizeScopeConstruction();
+            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
+            {
+                Scope.InjectIn(autoInjectedGameObject);
+            }
+        }
+
         // Start is called before the first frame update
         protected virtual void Start()
         {
@@ -87,8 +112,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
+        protected virtual void InitializeScope()
+        {
+        }
+
         public override void OnDestroy()
         {
+            Scope?.Dispose();
             base.OnDestroy();
             if (!Persists)
             {

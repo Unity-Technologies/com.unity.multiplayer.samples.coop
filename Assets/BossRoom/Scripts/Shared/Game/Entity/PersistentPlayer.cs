@@ -5,9 +5,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// NetworkBehaviour that represents a player connection and is the "Default Player Prefab" inside Netcode for
-    /// GameObjects' NetworkManager. This NetworkBehaviour will contain several other NetworkBehaviours that should
-    /// persist throughout the duration of this connection, meaning it will persist between scenes.
+    /// GameObjects' (Netcode) NetworkManager. This NetworkBehaviour will contain several other NetworkBehaviours that
+    /// should persist throughout the duration of this connection, meaning it will persist between scenes.
     /// </summary>
+    /// <remarks>
+    /// It is not necessary to explicitly mark this as a DontDestroyOnLoad object as Netcode will handle migrating this
+    /// Player object between scene loads.
+    /// </remarks>
     [RequireComponent(typeof(NetworkObject))]
     public class PersistentPlayer : NetworkBehaviour
     {
@@ -24,11 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public NetworkAvatarGuidState NetworkAvatarGuidState => m_NetworkAvatarGuidState;
 
-        void Awake()
-        {
-            DontDestroyOnLoad(this);
-        }
-
         public override void OnNetworkSpawn()
         {
             gameObject.name = "PersistentPlayer" + OwnerClientId;
@@ -37,6 +36,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
             // when this element is added to the runtime collection. If this was done in OnEnable() there is a chance
             // that OwnerClientID could be its default value (0).
             m_PersistentPlayerRuntimeCollection.Add(this);
+            if (IsServer)
+            {
+                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData.HasValue)
+                {
+                    m_NetworkNameState.Name.Value = sessionPlayerData.Value.PlayerName;
+                    m_NetworkAvatarGuidState.AvatarGuid.Value = sessionPlayerData.Value.AvatarNetworkGuid;
+                }
+            }
         }
 
         public override void OnDestroy()
@@ -53,6 +61,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void RemovePersistentPlayer()
         {
             m_PersistentPlayerRuntimeCollection.Remove(this);
+            if (IsServer)
+            {
+                var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData.HasValue)
+                {
+                    var playerData = sessionPlayerData.Value;
+                    playerData.PlayerName = m_NetworkNameState.Name.Value;
+                    playerData.AvatarNetworkGuid = m_NetworkAvatarGuidState.AvatarGuid.Value;
+                    SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
+                }
+            }
         }
     }
 }

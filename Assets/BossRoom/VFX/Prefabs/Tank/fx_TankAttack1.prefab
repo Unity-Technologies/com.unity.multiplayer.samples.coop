@@ -1378,11 +1378,11 @@ ParticleSystem:
         ctime5: 0
         ctime6: 0
         ctime7: 0
-        atime0: 0
-        atime1: 13107
-        atime2: 52428
-        atime3: 65535
-        atime4: 0
+        atime0: 14071
+        atime1: 19853
+        atime2: 44718
+        atime3: 60909
+        atime4: 65535
         atime5: 0
         atime6: 0
         atime7: 0
@@ -4878,4 +4878,3 @@ MonoBehaviour:
   m_ParticleSystemsToTurnOffOnShutdown: []
   m_AutoShutdownTime: 1
   m_PostShutdownSelfDestructTime: -1
-  m_SoundsToTurnOffOnShutdown: []

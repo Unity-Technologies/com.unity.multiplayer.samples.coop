@@ -57,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             navigationSystem.OnNavigationMeshChanged += OnNavMeshChanged;
         }
 
-        Vector3 TargetPosition => m_TransformTarget != null  ? m_TransformTarget.position : m_PositionTarget;
+        Vector3 TargetPosition => m_TransformTarget != null ? m_TransformTarget.position : m_PositionTarget;
 
         /// <summary>
         /// Set the target of this path to follow a moving transform.
@@ -171,13 +171,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             for (int i = 1; i < corners.Length; i++) // Skip the first corner because it is the starting point.
             {
                 m_Path.Add(corners[i]);
-            }
-
-            // If the path is still empty here then the target position wasn't on the nav mesh.
-            if (m_Path.Count == 0)
-            {
-                // In that case we just create a linear path directly to the target.
-                m_Path.Add(TargetPosition);
             }
         }
 

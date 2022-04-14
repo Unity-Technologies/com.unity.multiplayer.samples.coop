@@ -110,12 +110,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         public event Action<Vector3> ReceivedClientInput;
 
-        public override void OnNetworkSpawn()
-        {
-            if (!IsServer) return;
-            HitPoints = CharacterClass.BaseHP.Value;
-        }
-
         /// <summary>
         /// RPC to send inputs for this character from a client to a server.
         /// </summary>
