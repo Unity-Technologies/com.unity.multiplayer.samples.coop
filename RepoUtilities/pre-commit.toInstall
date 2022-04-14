@@ -1,3 +1,1 @@
 python3 RepoUtilities/pre-commit.py
-#git diff --cached -z HEAD -- Packages/test.json
-#echo doooooooooooooooooooooone
