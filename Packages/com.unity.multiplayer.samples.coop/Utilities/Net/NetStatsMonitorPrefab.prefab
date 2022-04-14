@@ -1,0 +1,209 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2974514019541307269
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2974514019541307267}
+  - component: {fileID: 2974514019541307268}
+  - component: {fileID: 2974514019541307266}
+  - component: {fileID: 2974514019541307265}
+  m_Layer: 0
+  m_Name: NetStatsMonitorPrefab
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2974514019541307267
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974514019541307269}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -1.1227615, y: 44.504204, z: 81.16283}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2974514019541307268
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974514019541307269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17737e0516da2445b9b0077ae2bd9b4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Visible: 1
+  <MaxRefreshRate>k__BackingField: 30
+  <CustomStyleSheet>k__BackingField: {fileID: 0}
+  <PanelSettingsOverride>k__BackingField: {fileID: 0}
+  <Position>k__BackingField:
+    <OverridePosition>k__BackingField: 1
+    <PositionLeftToRight>k__BackingField: 0
+    <PositionTopToBottom>k__BackingField: 0
+  <Configuration>k__BackingField:
+    <DisplayElements>k__BackingField:
+    - <FieldsInitialized>k__BackingField: 1
+      <Type>k__BackingField: 0
+      <Label>k__BackingField: RTT To Server
+      <Stats>k__BackingField:
+      - <TypeIndex>k__BackingField: 0
+        <EnumValue>k__BackingField: 55
+      <CounterConfiguration>k__BackingField:
+        <SmoothingMethod>k__BackingField: 0
+        <AggregationMethod>k__BackingField: 0
+        <SignificantDigits>k__BackingField: 3
+        <HighlightLowerBound>k__BackingField: 0
+        <HighlightUpperBound>k__BackingField: 200
+        <ExponentialMovingAverageParams>k__BackingField:
+          <HalfLife>k__BackingField: 1
+        <SimpleMovingAverageParams>k__BackingField:
+          <SampleCount>k__BackingField: 64
+      <GraphConfiguration>k__BackingField:
+        <SampleCount>k__BackingField: 256
+        <VariableColors>k__BackingField: []
+        <XAxisType>k__BackingField: 0
+        <LineGraphConfiguration>k__BackingField:
+          <LineThickness>k__BackingField: 1
+      <SerializedStats>k__BackingField:
+      - <TypeName>k__BackingField: Unity.Multiplayer.Tools.MetricTypes.DirectedMetricType,
+          Unity.Multiplayer.Tools.MetricTypes, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        <ValueName>k__BackingField: RttToServer
+    - <FieldsInitialized>k__BackingField: 1
+      <Type>k__BackingField: 1
+      <Label>k__BackingField: Bytes Sent and Received
+      <Stats>k__BackingField:
+      - <TypeIndex>k__BackingField: 0
+        <EnumValue>k__BackingField: 6
+      - <TypeIndex>k__BackingField: 0
+        <EnumValue>k__BackingField: 5
+      <CounterConfiguration>k__BackingField:
+        <SmoothingMethod>k__BackingField: 0
+        <AggregationMethod>k__BackingField: 0
+        <SignificantDigits>k__BackingField: 3
+        <HighlightLowerBound>k__BackingField: -3.4028235e+38
+        <HighlightUpperBound>k__BackingField: 3.4028235e+38
+        <ExponentialMovingAverageParams>k__BackingField:
+          <HalfLife>k__BackingField: 1
+        <SimpleMovingAverageParams>k__BackingField:
+          <SampleCount>k__BackingField: 64
+      <GraphConfiguration>k__BackingField:
+        <SampleCount>k__BackingField: 256
+        <VariableColors>k__BackingField: []
+        <XAxisType>k__BackingField: 0
+        <LineGraphConfiguration>k__BackingField:
+          <LineThickness>k__BackingField: 1
+      <SerializedStats>k__BackingField:
+      - <TypeName>k__BackingField: Unity.Multiplayer.Tools.MetricTypes.DirectedMetricType,
+          Unity.Multiplayer.Tools.MetricTypes, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        <ValueName>k__BackingField: TotalBytesSent
+      - <TypeName>k__BackingField: Unity.Multiplayer.Tools.MetricTypes.DirectedMetricType,
+          Unity.Multiplayer.Tools.MetricTypes, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        <ValueName>k__BackingField: TotalBytesReceived
+    - <FieldsInitialized>k__BackingField: 1
+      <Type>k__BackingField: 2
+      <Label>k__BackingField: Packets Sent and Received
+      <Stats>k__BackingField:
+      - <TypeIndex>k__BackingField: 0
+        <EnumValue>k__BackingField: 50
+      - <TypeIndex>k__BackingField: 0
+        <EnumValue>k__BackingField: 49
+      <CounterConfiguration>k__BackingField:
+        <SmoothingMethod>k__BackingField: 0
+        <AggregationMethod>k__BackingField: 0
+        <SignificantDigits>k__BackingField: 3
+        <HighlightLowerBound>k__BackingField: -3.4028235e+38
+        <HighlightUpperBound>k__BackingField: 3.4028235e+38
+        <ExponentialMovingAverageParams>k__BackingField:
+          <HalfLife>k__BackingField: 1
+        <SimpleMovingAverageParams>k__BackingField:
+          <SampleCount>k__BackingField: 64
+      <GraphConfiguration>k__BackingField:
+        <SampleCount>k__BackingField: 256
+        <VariableColors>k__BackingField: []
+        <XAxisType>k__BackingField: 0
+        <LineGraphConfiguration>k__BackingField:
+          <LineThickness>k__BackingField: 1
+      <SerializedStats>k__BackingField:
+      - <TypeName>k__BackingField: Unity.Multiplayer.Tools.MetricTypes.DirectedMetricType,
+          Unity.Multiplayer.Tools.MetricTypes, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        <ValueName>k__BackingField: PacketsSent
+      - <TypeName>k__BackingField: Unity.Multiplayer.Tools.MetricTypes.DirectedMetricType,
+          Unity.Multiplayer.Tools.MetricTypes, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        <ValueName>k__BackingField: PacketsReceived
+    - <FieldsInitialized>k__BackingField: 1
+      <Type>k__BackingField: 2
+      <Label>k__BackingField: RPCs Sent and Received
+      <Stats>k__BackingField:
+      - <TypeIndex>k__BackingField: 0
+        <EnumValue>k__BackingField: 10
+      - <TypeIndex>k__BackingField: 0
+        <EnumValue>k__BackingField: 9
+      <CounterConfiguration>k__BackingField:
+        <SmoothingMethod>k__BackingField: 0
+        <AggregationMethod>k__BackingField: 0
+        <SignificantDigits>k__BackingField: 3
+        <HighlightLowerBound>k__BackingField: -3.4028235e+38
+        <HighlightUpperBound>k__BackingField: 3.4028235e+38
+        <ExponentialMovingAverageParams>k__BackingField:
+          <HalfLife>k__BackingField: 1
+        <SimpleMovingAverageParams>k__BackingField:
+          <SampleCount>k__BackingField: 64
+      <GraphConfiguration>k__BackingField:
+        <SampleCount>k__BackingField: 256
+        <VariableColors>k__BackingField: []
+        <XAxisType>k__BackingField: 0
+        <LineGraphConfiguration>k__BackingField:
+          <LineThickness>k__BackingField: 1
+      <SerializedStats>k__BackingField:
+      - <TypeName>k__BackingField: Unity.Multiplayer.Tools.MetricTypes.DirectedMetricType,
+          Unity.Multiplayer.Tools.MetricTypes, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        <ValueName>k__BackingField: RpcSent
+      - <TypeName>k__BackingField: Unity.Multiplayer.Tools.MetricTypes.DirectedMetricType,
+          Unity.Multiplayer.Tools.MetricTypes, Version=0.0.0.0, Culture=neutral,
+          PublicKeyToken=null
+        <ValueName>k__BackingField: RpcReceived
+--- !u!114 &2974514019541307266
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974514019541307269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7b3d0487e64364742ac3debcbf073199, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &2974514019541307265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2974514019541307269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1b0bdcc636ff495c8459c8f813a7b1e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Monitor: {fileID: 2974514019541307268}
