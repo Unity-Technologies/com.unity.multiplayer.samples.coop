@@ -23,21 +23,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_Animator.SetTrigger("Display");
                 StartCoroutine(HideCoroutine());
                 m_TextLabel.text = text;
+                transform.parent.SetAsLastSibling();
             }
         }
 
         IEnumerator HideCoroutine()
         {
             yield return new WaitForSeconds(m_HideDelay);
-            Hide();
+            m_Animator.SetTrigger("Hide");
         }
 
-        void Hide()
+        public void Hide()
         {
+            Debug.Log("hide");
             if (IsDisplaying)
             {
                 IsDisplaying = false;
-                m_Animator.SetTrigger("Hide");
             }
         }
     }

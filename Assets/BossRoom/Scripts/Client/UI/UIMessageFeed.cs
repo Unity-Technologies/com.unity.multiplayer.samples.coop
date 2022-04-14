@@ -16,12 +16,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         List<UIMessageSlot> m_MessageSlots;
 
         [SerializeField]
-        float m_HideDelay = 5;
-
-        [SerializeField]
-        CanvasGroup m_CanvasGroup;
-
-        [SerializeField]
         GameObject m_MessageSlotPrefab;
 
         [SerializeField]
@@ -40,7 +34,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void Start()
         {
-            //Hide();
             StartCoroutine(test());
         }
 
@@ -50,11 +43,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             var i = 1;
             while (true)
             {
-                yield return new WaitForSeconds(1);
-                var messageSlot = GetAvailableSlot();
-                messageSlot.transform.SetAsLastSibling();
-                messageSlot.Display($"{i}{i}{i}{i}{i}{i}{i}{i++}");
+                yield return new WaitForSeconds(2.8f);
+                DisplayMessage($"{i}{i}{i}{i}{i}{i}{i}{i++}");
             }
+        }
+
+        void DisplayMessage(string text)
+        {
+            var messageSlot = GetAvailableSlot();
+            messageSlot.Display(text);
         }
 
         UIMessageSlot GetAvailableSlot()
