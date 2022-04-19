@@ -86,22 +86,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void Start()
-        {
-            StartCoroutine(test());
-        }
-
-        // Leaving this here temporarily for testing purposes
-        IEnumerator test()
-        {
-            var i = 1;
-            while (true)
-            {
-                yield return new WaitForSeconds(2.8f);
-                DisplayMessage($"{i}{i}{i}{i}{i}{i}{i}{i++}");
-            }
-        }
-
         void DisplayMessage(string text)
         {
             var messageSlot = GetAvailableSlot();
