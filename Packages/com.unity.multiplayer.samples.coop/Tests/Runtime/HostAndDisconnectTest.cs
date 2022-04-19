@@ -48,7 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
             Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
 
-            var scope = clientMainMenuState.DIScope;
+            var scope = clientMainMenuState.Scope;
 
             var lobbyUIMediator = scope.Resolve<LobbyUIMediator>();
             Assert.That(lobbyUIMediator != null, $"{nameof(LobbyUIMediator)} component not found!");
@@ -113,6 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             // CharSelect is loaded as soon as hosting is successful, validate it is loaded
             yield return GoToCharacterSelection(playerIndex);
 
+            // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
             yield return GoToBossRoomScene();
 
             yield return Disconnect();
@@ -167,7 +168,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         /// <returns></returns>
         IEnumerator GoToBossRoomScene()
         {
-            // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
             yield return TestUtilities.AssertIsNetworkSceneLoaded(k_BossRoomSceneName, m_NetworkManager.SceneManager);
         }
 
@@ -209,23 +209,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
 
-            var scope = clientMainMenuState.DIScope;
+            var scope = clientMainMenuState.Scope;
 
             var ipUIMediator = scope.Resolve<IPUIMediator>();
             Assert.That(ipUIMediator != null, $"{nameof(IPUIMediator)} component not found!");
 
             var ipHostingUI = ipUIMediator.IPHostingUI;
             Assert.That(ipHostingUI != null, $"{nameof(IPHostingUI)} component not found!");
-
-            // wait until authenticated?
-            var timer = 5f;
-            while (timer > 0f && !AuthenticationService.Instance.IsAuthorized)
-            {
-                timer -= Time.deltaTime;
-                yield return null;
-            }
-
-            Assert.IsTrue(AuthenticationService.Instance.IsAuthorized);
 
             clientMainMenuState.OnDirectIPClicked();
 
@@ -239,15 +229,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             ipHostingUI.OnCreateClick();
 
             // confirming hosting will initialize the hosting process; next frame the results will be ready
-            yield return null;
+            yield return new WaitForEndOfFrame();
 
             // verify hosting is successful
-            Assert.That(m_NetworkManager.IsListening);
+            Assert.That(m_NetworkManager.IsListening && m_NetworkManager.IsHost);
 
             // CharSelect is loaded as soon as hosting is successful, validate it is loaded
             yield return GoToCharacterSelection(playerIndex);
 
+            // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
             yield return GoToBossRoomScene();
+
+            // Netcode TODO: the line below prevents a NullReferenceException on NetworkSceneManager.OnSceneLoaded
+            yield return new WaitForSeconds(2f);
 
             yield return Disconnect();
         }
