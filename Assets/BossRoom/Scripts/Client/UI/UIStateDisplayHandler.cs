@@ -79,19 +79,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 return;
             }
 
-            m_Camera = Camera.main;
+            var cameraGameObject = GameObject.FindWithTag("MainCamera");
+            if (cameraGameObject)
+            {
+                m_Camera = cameraGameObject.GetComponent<Camera>();
+            }
+            Assert.IsNotNull(m_Camera);
+
             var canvasGameObject = GameObject.FindWithTag("GameCanvas");
             if (canvasGameObject)
             {
                 m_CanvasTransform = canvasGameObject.transform;
             }
+            Assert.IsNotNull(m_CanvasTransform);
 
             Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
             if (m_DisplayHealth)
             {
                 Assert.IsNotNull(m_NetworkHealthState, "A NetworkHealthState component needs to be attached!");
             }
-            Assert.IsTrue(m_Camera != null && m_CanvasTransform != null);
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
 

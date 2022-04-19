@@ -1,5 +1,6 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -282,7 +283,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         [ServerRpc(RequireOwnership = false)]
         void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            NetworkManager.SceneManager.LoadScene("PostGame", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
             LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
         }
 

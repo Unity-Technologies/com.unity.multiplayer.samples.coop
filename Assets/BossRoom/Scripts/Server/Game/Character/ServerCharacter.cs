@@ -85,6 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
                     PlayAction(ref startingAction);
                 }
+                InitializeHitPoints();
             }
         }
 
@@ -102,6 +103,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 m_DamageReceiver.damageReceived -= ReceiveHP;
                 m_DamageReceiver.collisionEntered -= CollisionEntered;
+            }
+        }
+
+        void InitializeHitPoints()
+        {
+            NetState.HitPoints = NetState.CharacterClass.BaseHP.Value;
+
+            if (!IsNpc)
+            {
+                SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
+                if (sessionPlayerData is {HasCharacterSpawned: true})
+                {
+                    NetState.HitPoints = sessionPlayerData.Value.CurrentHitPoints;
+                    if (NetState.HitPoints <= 0)
+                    {
+                        NetState.LifeState = LifeState.Fainted;
+                    }
+                }
             }
         }
 

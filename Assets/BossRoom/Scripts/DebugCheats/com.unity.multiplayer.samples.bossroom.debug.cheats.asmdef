@@ -4,7 +4,8 @@
     "references": [
         "Unity.Netcode.Runtime",
         "Unity.Multiplayer.Samples.BossRoom.Server",
-        "Unity.Multiplayer.Samples.BossRoom.Shared"
+        "Unity.Multiplayer.Samples.BossRoom.Shared",
+        "Unity.Multiplayer.Samples.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

@@ -13,72 +13,42 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         TextMeshProUGUI m_TitleText;
         [SerializeField]
         TextMeshProUGUI m_MainText;
+        [SerializeField]
+        CanvasGroup m_CanvasGroup;
 
-        bool m_IsPopupShown;
+        public bool IsDisplaying => m_IsDisplaying;
 
-        static PopupPanel s_Instance;
+        bool m_IsDisplaying;
 
         void Awake()
         {
-            if (s_Instance != null) throw new Exception("Invalid state, instance is not null");
-            s_Instance = this;
-            ResetState();
-        }
-
-        void OnDestroy()
-        {
-            s_Instance = null;
+            Hide();
         }
 
         public void OnConfirmClick()
         {
-            ResetState();
+            Hide();
         }
 
-        /// <summary>
-        /// Helper method to help us reset all state for the popup.
-        /// </summary>
-        void ResetState()
+        public void SetupPopupPanel(string titleText, string mainText)
         {
-            m_TitleText.text = string.Empty;
-            m_MainText.text = string.Empty;
-            gameObject.SetActive(false);
-            m_IsPopupShown = false;
+            m_TitleText.text = titleText;
+            m_MainText.text = mainText;
+            Show();
         }
 
-        /// <summary>
-        /// Sets the panel to match the given specifications to notify the player.  If display image is set to true, it will display
-        /// </summary>
-        /// <param name="titleText">The title text at the top of the panel</param>
-        /// <param name="mainText"> The text just under the title- the main body of text</param>
-        public static void ShowPopupPanel(string titleText, string mainText)
+        void Show()
         {
-            if (s_Instance != null)
-            {
-                s_Instance.SetupPopupPanel(titleText, mainText);
-            }
-            else
-            {
-                Debug.LogError($"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}");
-            }
+            m_CanvasGroup.alpha = 1f;
+            m_CanvasGroup.blocksRaycasts = true;
+            m_IsDisplaying = true;
         }
 
-        void SetupPopupPanel(string titleText, string mainText)
+        void Hide()
         {
-            if (m_IsPopupShown)
-            {
-                Debug.LogWarning($"Trying to show popup, but another popup is already being shown. Popup: {titleText}. {mainText}");
-            }
-            else
-            {
-                ResetState();
-
-                m_TitleText.text = titleText;
-                m_MainText.text = mainText;
-
-                gameObject.SetActive(true);
-                m_IsPopupShown = true;
-            }
+            m_CanvasGroup.alpha = 0f;
+            m_CanvasGroup.blocksRaycasts = false;
+            m_IsDisplaying = false;
         }
     }
 }

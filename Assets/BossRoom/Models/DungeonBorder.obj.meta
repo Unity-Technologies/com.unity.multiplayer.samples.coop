@@ -10,7 +10,7 @@ ModelImporter:
       name: DungeonBorderMat
     second: {fileID: 2100000, guid: 57c5b67eccd84914db7e502bfcbd6976, type: 2}
   materials:
-    materialImportMode: 2
+    materialImportMode: 0
     materialName: 0
     materialSearch: 1
     materialLocation: 1
