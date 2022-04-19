@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5463581246674753222}
   - component: {fileID: 319436528246345476}
-  - component: {fileID: 4643209074648254827}
   - component: {fileID: 8915905512060696686}
   - component: {fileID: 5077284528683952312}
   m_Layer: 5
@@ -47,18 +46,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5252246175656526375}
   m_CullTransparentMesh: 1
---- !u!225 &4643209074648254827
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5252246175656526375}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!114 &8915905512060696686
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -110,7 +97,6 @@ GameObject:
   - component: {fileID: 5737522606979005657}
   - component: {fileID: 5737522606979005662}
   - component: {fileID: 5291941401002571263}
-  - component: {fileID: 5892326784554325312}
   - component: {fileID: 8201977270292563076}
   m_Layer: 5
   m_Name: MessageWindow
@@ -159,27 +145,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 439f41d0689b4c41af9789f153e40dee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_TextLabels:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  m_HideDelay: 5
-  m_CanvasGroup: {fileID: 5892326784554325312}
+  m_MessageSlots: []
   m_MessageSlotPrefab: {fileID: 816992443548890870, guid: c3ae102ccf8999a41bbaddeff4442d31, type: 3}
   m_VerticalLayoutGroup: {fileID: 8915905512060696686}
---- !u!225 &5892326784554325312
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5737522606979005658}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!114 &8201977270292563076
 MonoBehaviour:
   m_ObjectHideFlags: 0
