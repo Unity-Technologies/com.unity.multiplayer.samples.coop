@@ -25,11 +25,65 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         bool m_IsDisplaying;
 
-        IDisposable m_Subscription;
+        DisposableGroup m_Subscriptions;
 
         [Inject]
-        void InjectDependencies(ISubscriber<MessageFeedHandler.MessageFeed> subscriber)
+        void InjectDependencies(ISubscriber<DoorStateChangedEventMessage> doorStateChangedSubscriber,
+            ISubscriber<ConnectionEventMessage> connectionEventSubscriber,
+            ISubscriber<LifeStateChangedEventMessage> lifeStateChangedEventSubscriber)
         {
+            m_Subscriptions = new DisposableGroup();
+            m_Subscriptions.Add(doorStateChangedSubscriber.Subscribe(OnDoorStateChangedEvent));
+            m_Subscriptions.Add(connectionEventSubscriber.Subscribe(OnConnectionEvent));
+            m_Subscriptions.Add(lifeStateChangedEventSubscriber.Subscribe(OnLifeStateChangedEvent));
+        }
+
+        void OnDoorStateChangedEvent(DoorStateChangedEventMessage eventMessage)
+        {
+            DisplayMessage(eventMessage.IsDoorOpen ? "The Door has been opened!" : "The Door is closing.");
+        }
+
+        void OnConnectionEvent(ConnectionEventMessage eventMessage)
+        {
+            switch (eventMessage.ConnectStatus)
+            {
+                case ConnectStatus.Success:
+                    DisplayMessage($"{eventMessage.PlayerName} has joined the game!");
+                    break;
+                case ConnectStatus.ServerFull:
+                case ConnectStatus.LoggedInAgain:
+                case ConnectStatus.UserRequestedDisconnect:
+                case ConnectStatus.GenericDisconnect:
+                case ConnectStatus.IncompatibleBuildType:
+                case ConnectStatus.HostEndedSession:
+                    DisplayMessage($"{eventMessage.PlayerName} has left the game!");
+                    break;
+            }
+        }
+
+        void OnLifeStateChangedEvent(LifeStateChangedEventMessage eventMessage)
+        {
+            switch (eventMessage.CharacterType)
+            {
+                case CharacterTypeEnum.Tank:
+                case CharacterTypeEnum.Archer:
+                case CharacterTypeEnum.Mage:
+                case CharacterTypeEnum.Rogue:
+                case CharacterTypeEnum.ImpBoss:
+                    switch (eventMessage.NewLifeState)
+                    {
+                        case LifeState.Alive:
+                            DisplayMessage($"{eventMessage.CharacterName} has been reanimated!");
+                            break;
+                        case LifeState.Fainted:
+                        case LifeState.Dead:
+                            DisplayMessage($"{eventMessage.CharacterName} has been defeated!");
+                            break;
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
+                    break;
+            }
         }
 
         void Start()
@@ -71,7 +125,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscription?.Dispose();
+            m_Subscriptions?.Dispose();
         }
 
     }

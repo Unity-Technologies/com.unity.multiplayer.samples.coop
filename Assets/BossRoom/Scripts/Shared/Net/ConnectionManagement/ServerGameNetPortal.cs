@@ -4,7 +4,6 @@ using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using Unity.Netcode;
@@ -37,10 +36,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         LobbyServiceFacade m_LobbyServiceFacade;
 
+        IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
+
         [Inject]
-        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
+        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectionEventMessage> connectionEventPublisher)
         {
             m_LobbyServiceFacade = lobbyServiceFacade;
+            m_ConnectionEventPublisher = connectionEventPublisher;
         }
 
         void Start()
@@ -115,7 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
                     if (sessionData.HasValue)
                     {
-                        MessageFeedHandler.PublishMessage($"{sessionData.Value.PlayerName} has left the game!");
+                        m_ConnectionEventPublisher.Publish(new ConnectionEventMessage(){ ConnectStatus = ConnectStatus.GenericDisconnect, PlayerName = sessionData.Value.PlayerName});
                     }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
@@ -205,9 +207,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //Populate our client scene map
                 m_ClientSceneMap[clientId] = connectionPayload.clientScene;
 
-                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
                 // connection approval will create a player object for you
-                MessageFeedHandler.PublishMessage($"{SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName} has joined the game!");
+                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
+
+                m_ConnectionEventPublisher.Publish(new ConnectionEventMessage(){ ConnectStatus = ConnectStatus.Success, PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName});
             }
             else
             {
