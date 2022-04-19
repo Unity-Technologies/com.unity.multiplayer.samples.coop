@@ -39,7 +39,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 m_DoorState.IsOpen.OnValueChanged += OnDoorStateChanged;
 
                 // initialize visuals based on current server state (or else we default to "closed")
-                OnDoorStateChanged(false, m_DoorState.IsOpen.Value);
+                m_PhysicsObject.SetActive(!m_DoorState.IsOpen.Value);
+
+                var gameState = FindObjectOfType<ClientBossRoomState>();
+                if (gameState != null)
+                {
+                    gameState.Scope.InjectIn(this);
+                }
             }
         }
 
@@ -54,7 +60,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
         {
             m_PhysicsObject.SetActive(!isDoorOpen);
-            m_Publisher.Publish(new DoorStateChangedEventMessage() { IsDoorOpen = isDoorOpen });
+            m_Publisher?.Publish(new DoorStateChangedEventMessage() { IsDoorOpen = isDoorOpen });
         }
     }
 }

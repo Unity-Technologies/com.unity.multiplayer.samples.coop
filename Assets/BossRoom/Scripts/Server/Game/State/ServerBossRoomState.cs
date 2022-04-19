@@ -205,7 +205,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             // spawn players characters with destroyWithScene = true
             newPlayer.SpawnWithOwnership(clientId, true);
-            m_Scope.InjectIn(newPlayer.gameObject);
+            Scope.InjectIn(newPlayer.gameObject);
         }
 
         static IEnumerator WaitToReposition(Transform moveTransform, Vector3 newPosition, Quaternion newRotation)
