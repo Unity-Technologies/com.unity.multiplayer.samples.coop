@@ -43,12 +43,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public bool InitialSpawnDone { get; private set; }
 
+        /// <summary>
+        /// Keeping the subscriber during this GameState's lifetime to allow disposing of subscription and re-subscribing
+        /// when despawning and spawning again.
+        /// </summary>
+        ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
+
         IDisposable m_Subscription;
 
         [Inject]
         void InjectDependencies(ISubscriber<LifeStateChangedEventMessage> subscriber)
         {
-            m_Subscription = subscriber.Subscribe(OnLifeStateChangedEventMessage);
+            m_LifeStateChangedEventMessageSubscriber = subscriber;
         }
 
         public override void OnNetworkSpawn()
@@ -70,6 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 DoInitialSpawnIfPossible();
 
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
+                m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
             }
         }
 
@@ -125,6 +132,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
             }
+            m_Subscription?.Dispose();
         }
 
         /// <summary>
