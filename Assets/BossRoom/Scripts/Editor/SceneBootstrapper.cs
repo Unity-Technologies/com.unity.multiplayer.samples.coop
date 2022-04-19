@@ -34,7 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
         const string k_LoadBootstrapSceneOnPlay = "Boss Room/Load Bootstrap Scene On Play";
         const string k_DoNotLoadBootstrapSceneOnPlay = "Boss Room/Don't Load Bootstrap Scene On Play";
 
-        const string k_TestRunnerObjectName = "Code-based tests runner";
+        const string k_TestRunnerSceneName = "InitTestScene";
 
         static bool s_StoppingAndStarting;
 
@@ -167,7 +167,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         static bool IsTestRunnerActive()
         {
-            return GameObject.Find(k_TestRunnerObjectName);
+            return EditorSceneManager.GetActiveScene().name.StartsWith(k_TestRunnerSceneName);
         }
     }
 }
