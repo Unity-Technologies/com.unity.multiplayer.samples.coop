@@ -24,42 +24,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         ServerCharacter m_CachedServerCharacter;
 
-        NetworkNameState m_NameState;
-
-        IPublisher<LifeStateChangedEventMessage> m_Publisher;
-
-        [Inject]
-        void InjectDependencies(IPublisher<LifeStateChangedEventMessage> publisher)
-        {
-            m_Publisher = publisher;
-        }
-
         public override void OnNetworkSpawn()
         {
             if (IsServer)
             {
                 s_ActivePlayers.Add(m_CachedServerCharacter);
-                m_NameState = GetComponent<NetworkNameState>();
-                m_CachedServerCharacter.NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
             }
             else
             {
                 enabled = false;
             }
 
-        }
-
-        void OnLifeStateChanged(LifeState previousValue, LifeState newValue)
-        {
-            if (m_NameState != null)
-            {
-                m_Publisher.Publish(new LifeStateChangedEventMessage()
-                {
-                    CharacterName = m_NameState.Name.Value,
-                    CharacterType = m_CachedServerCharacter.NetState.CharacterClass.CharacterType,
-                    NewLifeState = newValue
-                });
-            }
         }
 
         void OnDisable()

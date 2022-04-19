@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -41,9 +43,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public bool InitialSpawnDone { get; private set; }
 
-        //these Ids are recorded for event unregistration at destruction time and are not maintained (the objects they point to may be destroyed during
-        //the lifetime of the ServerBossRoomState).
-        private List<ulong> m_HeroIds = new List<ulong>();
+        IDisposable m_Subscription;
+
+        [Inject]
+        void InjectDependencies(ISubscriber<LifeStateChangedEventMessage> subscriber)
+        {
+            m_Subscription = subscriber.Subscribe(OnLifeStateChangedEventMessage);
+        }
 
         public override void OnNetworkSpawn()
         {
@@ -65,6 +71,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             }
+        }
+
+        public override void OnDestroy()
+        {
+            m_Subscription?.Dispose();
         }
 
         private bool DoInitialSpawnIfPossible()
@@ -110,15 +121,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkDespawn()
         {
-            foreach (ulong id in m_HeroIds)
-            {
-                var heroLife = GetLifeStateEvent(id);
-                if (heroLife != null)
-                {
-                    heroLife -= OnHeroLifeStateChanged;
-                }
-            }
-
             if (m_NetPortal != null)
             {
                 NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
@@ -198,14 +200,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 networkNameState.Name.Value = persistentPlayer.NetworkNameState.Name.Value;
             }
 
-            var netState = newPlayer.GetComponent<NetworkCharacterState>();
-
-            netState.NetworkLifeState.LifeState.OnValueChanged += OnHeroLifeStateChanged;
-            m_HeroIds.Add(netState.NetworkObjectId);
-
             // spawn players characters with destroyWithScene = true
             newPlayer.SpawnWithOwnership(clientId, true);
-            Scope.InjectIn(newPlayer.gameObject);
         }
 
         static IEnumerator WaitToReposition(Transform moveTransform, Vector3 newPosition, Quaternion newRotation)
@@ -214,8 +210,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             moveTransform.SetPositionAndRotation(newPosition, newRotation);
         }
 
-        // Every time a player's life state changes we check to see if game is over
-        private void OnHeroLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        void OnLifeStateChangedEventMessage(LifeStateChangedEventMessage message)
+        {
+            switch (message.CharacterType)
+            {
+                case CharacterTypeEnum.Tank:
+                case CharacterTypeEnum.Archer:
+                case CharacterTypeEnum.Mage:
+                case CharacterTypeEnum.Rogue:
+                    // Every time a player's life state changes we check to see if game is over
+                    OnHeroLifeStateChanged(message.NewLifeState);
+                    break;
+                case CharacterTypeEnum.ImpBoss:
+                    if (message.NewLifeState == LifeState.Dead)
+                    {
+                        BossDefeated();
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        private void OnHeroLifeStateChanged(LifeState lifeState)
         {
             // If this Hero is down, check the rest of the party also
             if (lifeState == LifeState.Fainted)
@@ -235,10 +252,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        /// <summary>
-        /// Hooked up to GameListener UI event for the event when the boss is defeated.
-        /// </summary>
-        public void BossDefeated()
+        void BossDefeated()
         {
             // Boss is dead - set game won to true
             StartCoroutine(CoroGameOver(k_WinDelay, true));
