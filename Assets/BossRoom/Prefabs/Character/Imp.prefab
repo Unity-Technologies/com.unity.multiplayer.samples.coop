@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 22100000, guid: 0406729e6e1c12e4d99fd34970073cd0, type: 2}
+    - target: {fileID: 3687104631385136546, guid: 1ffde884792e9a44a9fbe049ebb79c9f, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 90
+      objectReference: {fileID: 0}
     - target: {fileID: 6170428688339538316, guid: 1ffde884792e9a44a9fbe049ebb79c9f, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -104,8 +108,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 929086692793228630}
-  m_ParameterSendBits: 0
-  m_SendRate: 0.1
 --- !u!1001 &2173896227866280545
 PrefabInstance:
   m_ObjectHideFlags: 0

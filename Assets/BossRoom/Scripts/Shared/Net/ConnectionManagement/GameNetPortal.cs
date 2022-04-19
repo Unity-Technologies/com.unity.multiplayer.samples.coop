@@ -8,6 +8,7 @@ using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -21,7 +22,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
         UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
-        IncompatibleBuildType,      //client build type is incompatible with server.
+        IncompatibleBuildType,    //client build type is incompatible with server.
+        HostEndedSession,         //host intentionally ended the session.
     }
 
     public enum OnlineMode
@@ -244,11 +246,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            NetManager.Shutdown();
         }
 
         public string GetPlayerId()
         {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+            {
+                return ClientPrefs.GetGuid() + ProfileManager.Profile;
+            }
+
             return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + ProfileManager.Profile;
         }
     }
