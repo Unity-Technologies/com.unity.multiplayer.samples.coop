@@ -39,11 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator Lobby_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
         {
-            yield return GoToMainMenuScene();
-
-            // now inside MainMenu scene
-
-            yield return null;
+            yield return WaitUntilMainMenuSceneIsLoaded();
 
             var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
             Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
@@ -111,15 +107,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.That(m_NetworkManager.IsListening);
 
             // CharSelect is loaded as soon as hosting is successful, validate it is loaded
-            yield return GoToCharacterSelection(playerIndex);
+            yield return WaitUntilCharacterIsSelectedAndReady(playerIndex);
 
             // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
-            yield return GoToBossRoomScene();
+            yield return WaitUntilBossRoomSceneIsLoaded();
 
-            yield return Disconnect();
+            yield return WaitUntilDisconnectedAndMainMenuSceneIsLoaded();
         }
 
-        IEnumerator GoToMainMenuScene()
+        IEnumerator WaitUntilMainMenuSceneIsLoaded()
         {
             // load Bootstrap scene
             SceneManager.LoadSceneAsync(k_BootstrapSceneName);
@@ -138,7 +134,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return new WaitForEndOfFrame();
         }
 
-        IEnumerator GoToCharacterSelection(int playerIndex)
+        IEnumerator WaitUntilCharacterIsSelectedAndReady(int playerIndex)
         {
             yield return TestUtilities.AssertIsSceneLoaded(k_CharSelectSceneName);
 
@@ -166,12 +162,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         /// (eg. testing networked abilities)
         /// </summary>
         /// <returns></returns>
-        IEnumerator GoToBossRoomScene()
+        IEnumerator WaitUntilBossRoomSceneIsLoaded()
         {
             yield return TestUtilities.AssertIsNetworkSceneLoaded(k_BossRoomSceneName, m_NetworkManager.SceneManager);
         }
 
-        IEnumerator Disconnect()
+        IEnumerator WaitUntilDisconnectedAndMainMenuSceneIsLoaded()
         {
             // once loaded into BossRoom scene, disconnect
             var uiSettingsCanvas = GameObject.FindObjectOfType<UISettingsCanvas>();
@@ -199,11 +195,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator IP_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
         {
-            yield return GoToMainMenuScene();
-
-            // now inside MainMenu scene
-
-            yield return null;
+            yield return WaitUntilMainMenuSceneIsLoaded();
 
             var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
 
@@ -217,15 +209,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             var ipHostingUI = ipUIMediator.IPHostingUI;
             Assert.That(ipHostingUI != null, $"{nameof(IPHostingUI)} component not found!");
 
+            // select "DIRECT IP" button
             clientMainMenuState.OnDirectIPClicked();
 
             yield return new WaitForEndOfFrame();
 
-            ipUIMediator.ToggleCreateIPUI();
-
-            // a confirmation popup will appear; wait a frame for it to pop up
-            yield return new WaitForEndOfFrame();
-
+            // select the "HOST" button
             ipHostingUI.OnCreateClick();
 
             // confirming hosting will initialize the hosting process; next frame the results will be ready
@@ -235,15 +224,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.That(m_NetworkManager.IsListening && m_NetworkManager.IsHost);
 
             // CharSelect is loaded as soon as hosting is successful, validate it is loaded
-            yield return GoToCharacterSelection(playerIndex);
+            yield return WaitUntilCharacterIsSelectedAndReady(playerIndex);
 
             // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
-            yield return GoToBossRoomScene();
+            yield return WaitUntilBossRoomSceneIsLoaded();
 
             // Netcode TODO: the line below prevents a NullReferenceException on NetworkSceneManager.OnSceneLoaded
             yield return new WaitForSeconds(2f);
 
-            yield return Disconnect();
+            yield return WaitUntilDisconnectedAndMainMenuSceneIsLoaded();
         }
 
         [UnityTearDown]
