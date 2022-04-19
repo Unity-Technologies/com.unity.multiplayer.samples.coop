@@ -35,7 +35,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void Hide()
         {
-            Debug.Log("hide");
             if (IsDisplaying)
             {
                 IsDisplaying = false;
