@@ -61,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             private set => m_Scope = value;
         }
 
-        DIScope m_Scope;
+        protected DIScope m_Scope;
 
         [SerializeField]
         GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;

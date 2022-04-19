@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
@@ -26,6 +27,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         NetworkNameState m_NameState;
 
+        IPublisher<LifeStateChangedEventMessage> m_Publisher;
+
+        [Inject]
+        void InjectDependencies(IPublisher<LifeStateChangedEventMessage> publisher)
+        {
+            m_Publisher = publisher;
+        }
+
         public override void OnNetworkSpawn()
         {
             if (IsServer)
@@ -45,24 +54,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (m_NameState != null)
             {
-                string statusMessage;
-
-                switch (newValue)
+                m_Publisher.Publish(new LifeStateChangedEventMessage()
                 {
-                    case LifeState.Alive:
-                        statusMessage = "has been reanimated!";
-                        break;
-                    case LifeState.Fainted:
-                        statusMessage = "has fainted!";
-                        break;
-                    case LifeState.Dead:
-                        statusMessage = "has died!";
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException(nameof(newValue), newValue, null);
-                }
-
-                MessageFeedHandler.PublishMessage($"{m_NameState.Name.Value} {statusMessage}");
+                    CharacterName = m_NameState.Name.Value,
+                    CharacterType = m_CachedServerCharacter.NetState.CharacterClass.CharacterType,
+                    NewLifeState = newValue
+                });
             }
         }
 
