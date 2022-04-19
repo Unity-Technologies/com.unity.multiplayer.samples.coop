@@ -1,8 +1,8 @@
 using System;
 using System.Collections;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -17,8 +17,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         Coroutine m_WaitToEndLobbyCoroutine;
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             CharSelectData = GetComponent<CharSelectData>();
         }
 
@@ -175,7 +176,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
-            NetworkManager.SceneManager.LoadScene("BossRoom", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
         }
 
         public override void OnNetworkDespawn()
@@ -203,8 +204,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
-
-                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             }
         }
 

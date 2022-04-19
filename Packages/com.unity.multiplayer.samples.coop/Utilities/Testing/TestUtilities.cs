@@ -2,35 +2,13 @@ using System.Collections;
 using UnityEngine;
 using NUnit.Framework;
 using Unity.Netcode;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
     public abstract class TestUtilities
     {
         const float k_MaxSceneLoadDuration = 10f;
-
-        /// <summary>
-        /// Finds an active Button GameObject by name. If Button component is present on GameObject, it will be clicked.
-        /// </summary>
-        /// <param name="name"> Name of Button GameObject </param>
-        public static void ClickButtonByName(string name)
-        {
-            var buttonGameObject = GameObject.Find(name);
-
-            Assert.IsNotNull(buttonGameObject,
-                $"Button GameObject with name {name} not found in scene!");
-
-            EventSystem.current.SetSelectedGameObject(buttonGameObject);
-
-            var buttonComponent = buttonGameObject.GetComponent<Button>();
-
-            Assert.IsNotNull(buttonComponent, $"Button component not found on {buttonGameObject.name}!");
-
-            buttonComponent.onClick.Invoke();
-        }
 
         /// <summary>
         /// Helper wrapper method for asserting the completion of a scene load to be used inside Playmode tests. A scene

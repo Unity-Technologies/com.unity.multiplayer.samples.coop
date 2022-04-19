@@ -6,7 +6,9 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
+using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,7 +22,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         LoggedInAgain,            //logged in on a separate client, causing this one to be kicked out.
         UserRequestedDisconnect,  //Intentional Disconnect triggered by the user.
         GenericDisconnect,        //server disconnected, but no specific reason given.
-        IncompatibleBuildType,      //client build type is incompatible with server.
+        IncompatibleBuildType,    //client build type is incompatible with server.
+        HostEndedSession,         //host intentionally ended the session.
     }
 
     public enum OnlineMode
@@ -200,15 +203,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                     try
                     {
-                        // we now need to get the joinCode?
-                        var serverRelayUtilityTask = UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
-                        await serverRelayUtilityTask;
-                        // we now have the info from the relay service
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) = serverRelayUtilityTask.Result;
+                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
+                            await UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
 
                         m_LocalLobby.RelayJoinCode = joinCode;
                         //next line enabled lobby and relay services integration
-                        m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode, null, null);
+                        await m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices());
+                        await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
 
                         // we now need to set the RelayCode somewhere :P
                         utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
@@ -241,15 +242,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (NetManager.IsServer)
             {
                 NetManager.SceneManager.OnSceneEvent -= OnSceneEvent;
+                SessionManager<SessionPlayerData>.Instance.OnServerEnded();
             }
             m_ClientPortal.OnUserDisconnectRequest();
             m_ServerPortal.OnUserDisconnectRequest();
-            SessionManager<SessionPlayerData>.Instance.OnUserDisconnectRequest();
-            NetManager.Shutdown();
         }
 
         public string GetPlayerId()
         {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+            {
+                return ClientPrefs.GetGuid() + ProfileManager.Profile;
+            }
+
             return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + ProfileManager.Profile;
         }
     }
