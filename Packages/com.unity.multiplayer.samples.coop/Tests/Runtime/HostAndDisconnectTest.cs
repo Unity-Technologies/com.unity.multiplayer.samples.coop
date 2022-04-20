@@ -90,7 +90,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.That(uiQuitPanel != null, $"{nameof(UIQuitPanel)} component not found!");
             uiQuitPanel.Quit();
 
-            // TODO: validate with SDK why this is still needed
+            // Netcode TODO: OnNetworkDespawn() errors pop up here
+            // Line below should not be necessary, logged here: https://jira.unity3d.com/browse/MTT-3376
             yield return new WaitForSeconds(1f);
 
             // wait until shutdown is complete
@@ -145,6 +146,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return WaitUntilBossRoomSceneIsLoaded();
 
             // Netcode TODO: the line below prevents a NullReferenceException on NetworkSceneManager.OnSceneLoaded
+            // Line below should not be necessary, logged here: https://jira.unity3d.com/browse/MTT-3376
             yield return new WaitForSeconds(2f);
 
             yield return WaitUntilDisconnectedAndMainMenuSceneIsLoaded();
