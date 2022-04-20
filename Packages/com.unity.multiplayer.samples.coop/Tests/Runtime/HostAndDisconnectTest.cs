@@ -28,93 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         NetworkManager m_NetworkManager;
 
-        const float k_ServiceQueryTimeout = 10f;
-
-        /// <summary>
-        /// Smoke test to validating hosting inside Boss Room. The test will load the project's bootstrap scene,
-        /// Startup, and commence the game flow as a host, pick and confirm a parametrized character, and jump into the
-        /// BossRoom scene, where the test will disconnect the host.
-        /// </summary>
-        /// <returns></returns>
-        [UnityTest]
-        public IEnumerator Lobby_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
-        {
-            yield return WaitUntilMainMenuSceneIsLoaded();
-
-            var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
-            Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
-
-            var scope = clientMainMenuState.Scope;
-
-            var lobbyUIMediator = scope.Resolve<LobbyUIMediator>();
-            Assert.That(lobbyUIMediator != null, $"{nameof(LobbyUIMediator)} component not found!");
-
-            var lobbyCreationUI = lobbyUIMediator.LobbyCreationUI;
-            Assert.That(lobbyCreationUI != null, $"{nameof(LobbyCreationUI)} component not found!");
-
-            // validate unity services login successful
-
-            // wait until authenticated
-            var timer = k_ServiceQueryTimeout;
-            while (timer > 0f && !AuthenticationService.Instance.IsAuthorized)
-            {
-                timer -= Time.deltaTime;
-                yield return null;
-            }
-
-            clientMainMenuState.OnStartClicked();
-
-            yield return new WaitForEndOfFrame();
-
-            lobbyUIMediator.ToggleCreateLobbyUI();
-
-            // a confirmation popup will appear; wait a frame for it to pop up
-            yield return new WaitForEndOfFrame();
-
-            lobbyCreationUI.OnCreateClick();
-
-            // get LobbyServiceFacade
-            var applicationController = GameObject.FindObjectOfType<ApplicationController>();
-            Assert.That(applicationController != null, $"{nameof(ApplicationController)} component not found!");
-
-            var lobbyServiceFacade = applicationController.LobbyServiceFacade;
-            Assert.That(lobbyServiceFacade != null, $"{nameof(LobbyServiceFacade)} component not found!");
-
-            // wait until lobby has been created
-            timer = k_ServiceQueryTimeout;
-            while (timer > 0f && lobbyServiceFacade.CurrentUnityLobby == null)
-            {
-                timer -= Time.deltaTime;
-                yield return null;
-            }
-
-            Assert.NotNull(lobbyServiceFacade.CurrentUnityLobby);
-
-            // lobby has been created; now relay data will be allocated; wait until lobby relay data updated
-            timer = k_ServiceQueryTimeout;
-            while (timer > 0f && string.IsNullOrEmpty(lobbyUIMediator.LocalLobby.RelayJoinCode))
-            {
-                timer -= Time.deltaTime;
-                yield return null;
-            }
-
-            Assert.IsTrue(!string.IsNullOrEmpty(lobbyUIMediator.LocalLobby.RelayJoinCode));
-
-            // lobby creation will initialize the hosting process; next frame the results will be ready
-            yield return null;
-
-            // verify hosting is successful
-            Assert.That(m_NetworkManager.IsListening);
-
-            // CharSelect is loaded as soon as hosting is successful, validate it is loaded
-            yield return WaitUntilCharacterIsSelectedAndReady(playerIndex);
-
-            // selecting ready as host with no other party members will load BossRoom scene; validate it is loaded
-            yield return WaitUntilBossRoomSceneIsLoaded();
-
-            yield return WaitUntilDisconnectedAndMainMenuSceneIsLoaded();
-        }
-
         IEnumerator WaitUntilMainMenuSceneIsLoaded()
         {
             // load Bootstrap scene
@@ -192,6 +105,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return TestUtilities.AssertIsSceneLoaded(k_MainMenuSceneName);
         }
 
+        /// <summary>
+        /// Smoke test to validating hosting inside Boss Room. The test will load the project's bootstrap scene,
+        /// Startup, and commence the game IP flow as a host, pick and confirm a parametrized character, and jump into
+        /// the BossRoom scene, where the test will disconnect the host.
+        /// </summary>
         [UnityTest]
         public IEnumerator IP_HostAndDisconnect_Valid([ValueSource(nameof(s_PlayerIndices))] int playerIndex)
         {
