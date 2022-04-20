@@ -176,7 +176,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
-            SceneLoaderWrapper.Instance.LoadScene("BossRoom");
+            SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
         }
 
         public override void OnNetworkDespawn()

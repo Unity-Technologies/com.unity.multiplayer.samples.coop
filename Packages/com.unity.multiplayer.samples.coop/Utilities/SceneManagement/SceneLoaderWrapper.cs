@@ -74,20 +74,24 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// method also triggers the start of the loading screen.
         /// </summary>
         /// <param name="sceneName">Name or path of the Scene to load.</param>
+        /// <param name="useNetworkSceneManager">If true, uses NetworkSceneManager, else uses SceneManager</param>
         /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
-        public void LoadScene(string sceneName, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
-            if (IsSpawned && IsNetworkSceneManagementEnabled && !NetworkManager.ShutdownInProgress)
+            if (useNetworkSceneManager)
             {
-                if (NetworkManager.IsServer)
+                if (IsSpawned && IsNetworkSceneManagementEnabled && !NetworkManager.ShutdownInProgress)
                 {
-                    // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
-                    NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+                    if (NetworkManager.IsServer)
+                    {
+                        // If is active server and NetworkManager uses scene management, load scene using NetworkManager's SceneManager
+                        NetworkManager.SceneManager.LoadScene(sceneName, loadSceneMode);
+                    }
                 }
             }
             else
             {
-                // If offline, load using SceneManager
+                // Load using SceneManager
                 var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
                 if (loadSceneMode == LoadSceneMode.Single)
                 {
