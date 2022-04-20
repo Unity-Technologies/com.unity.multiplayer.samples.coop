@@ -34,11 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public LobbyCreationUI LobbyCreationUI => m_LobbyCreationUI;
 
-        public LocalLobby LocalLobby
-        {
-            get => m_LocalLobby;
-            private set => m_LocalLobby = value;
-        }
+        public LocalLobby LocalLobby => m_LocalLobby;
 
         [Inject]
         void InjectDependenciesAndInitialize(
