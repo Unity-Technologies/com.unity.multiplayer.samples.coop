@@ -7,9 +7,7 @@
         "Unity.Multiplayer.Samples.Utilities.Testing",
         "Unity.Multiplayer.Samples.BossRoom.Client",
         "Unity.Multiplayer.Samples.BossRoom.Shared",
-        "Unity.Netcode.Runtime",
-        "Unity.Services.Authentication",
-        "Unity.Services.Lobbies"
+        "Unity.Netcode.Runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
