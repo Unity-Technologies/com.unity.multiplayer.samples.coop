@@ -3431,10 +3431,6 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
       value: 0
       objectReference: {fileID: 0}

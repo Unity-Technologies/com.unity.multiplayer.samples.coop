@@ -301,7 +301,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 61.45
+  m_fontSize: 70
   m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2222,11 +2222,23 @@ PrefabInstance:
       value: 60
       objectReference: {fileID: 0}
     - target: {fileID: 5463581246674753222, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463581246674753222, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463581246674753222, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_SizeDelta.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5463581246674753222, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5463581246674753222, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
+      propertyPath: m_AnchoredPosition.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
@@ -2295,7 +2307,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -512
+      value: -680
       objectReference: {fileID: 0}
     - target: {fileID: 5737522606979005657, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_AnchoredPosition.y
