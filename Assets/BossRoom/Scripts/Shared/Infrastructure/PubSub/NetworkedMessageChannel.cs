@@ -16,14 +16,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
     {
         string m_Name;
 
-        int m_BufferSize;
-
         bool m_HasRegisteredHandler;
 
-        public NetworkedMessageChannel(int bufferSize)
+        public NetworkedMessageChannel()
         {
             m_Name = $"{nameof(T)}NetworkMessageChannel";
-            m_BufferSize = bufferSize;
         }
 
         ~NetworkedMessageChannel()
@@ -76,7 +73,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         void SendMessageThroughNetwork(T message)
         {
-            var writer = new FastBufferWriter(m_BufferSize, Allocator.Temp);
+            var writer = new FastBufferWriter(FastBufferWriter.GetWriteSize<T>(), Allocator.Temp);
             writer.WriteValueSafe(message);
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessageToAll(m_Name, writer);
         }
