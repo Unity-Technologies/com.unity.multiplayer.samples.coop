@@ -301,7 +301,7 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 70
+  m_fontSize: 61.45
   m_fontSizeBase: 32
   m_fontWeight: 400
   m_enableAutoSizing: 1
@@ -2193,6 +2193,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5291941401002571263, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
+      propertyPath: m_MessageSlotPrefab
+      value: 
+      objectReference: {fileID: 8170129470303581296, guid: 5aa7a7877b757d44aa8e046b8759e77d, type: 3}
     - target: {fileID: 5291941401002571263, guid: df0d6828f44fdd64bb311a3f19236959, type: 3}
       propertyPath: m_TextLabels.Array.size
       value: 7
