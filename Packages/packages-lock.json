@@ -16,7 +16,7 @@
       "hash": "0fc6f532e4f47d66d173314efcb906bc7cf0d00f"
     },
     "com.unity.burst": {
-      "version": "1.6.4",
+      "version": "1.6.5",
       "depth": 1,
       "source": "registry",
       "dependencies": {
@@ -65,7 +65,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.ide.rider": {
-      "version": "3.0.12",
+      "version": "3.0.13",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -158,14 +158,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "2.0.2",
+      "version": "2.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.postprocessing": {
-      "version": "3.2.0",
+      "version": "3.2.1",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -174,14 +174,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.profiling.core": {
-      "version": "1.0.0",
+      "version": "1.0.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
     "com.unity.render-pipelines.core": {
-      "version": "12.1.5",
+      "version": "12.1.6",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
@@ -191,14 +191,14 @@
       }
     },
     "com.unity.render-pipelines.universal": {
-      "version": "12.1.5",
+      "version": "12.1.6",
       "depth": 0,
       "source": "builtin",
       "dependencies": {
         "com.unity.mathematics": "1.2.1",
         "com.unity.burst": "1.5.0",
-        "com.unity.render-pipelines.core": "12.1.5",
-        "com.unity.shadergraph": "12.1.5"
+        "com.unity.render-pipelines.core": "12.1.6",
+        "com.unity.shadergraph": "12.1.6"
       }
     },
     "com.unity.searcher": {
@@ -270,11 +270,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.shadergraph": {
-      "version": "12.1.5",
+      "version": "12.1.6",
       "depth": 1,
       "source": "builtin",
       "dependencies": {
-        "com.unity.render-pipelines.core": "12.1.5",
+        "com.unity.render-pipelines.core": "12.1.6",
         "com.unity.searcher": "4.9.1"
       }
     },
@@ -362,22 +362,6 @@
       "source": "git",
       "dependencies": {},
       "hash": "bb3d5067e49e403d8b8ba15c036d313b4dd2c696"
-    },
-    "nuget.castle-core": {
-      "version": "1.0.1",
-      "depth": 2,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "nuget.moq": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "nuget.castle-core": "1.0.1"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
