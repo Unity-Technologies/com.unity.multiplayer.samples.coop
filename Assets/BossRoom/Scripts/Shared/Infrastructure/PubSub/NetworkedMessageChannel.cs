@@ -27,7 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             if (!IsDisposed)
             {
-                if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null)
+                if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null && m_HasRegisteredHandler)
                 {
                     NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
                 }
