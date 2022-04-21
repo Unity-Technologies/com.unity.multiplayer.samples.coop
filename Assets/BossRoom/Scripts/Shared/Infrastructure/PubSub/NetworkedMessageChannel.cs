@@ -20,7 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public NetworkedMessageChannel()
         {
-            m_Name = $"{nameof(T)}NetworkMessageChannel";
+            m_Name = $"{typeof(T).FullName}NetworkMessageChannel";
         }
 
         ~NetworkedMessageChannel()
