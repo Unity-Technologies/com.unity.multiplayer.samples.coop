@@ -23,12 +23,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             m_Name = $"{typeof(T).FullName}NetworkMessageChannel";
         }
 
-        ~NetworkedMessageChannel()
+        public override void Dispose()
         {
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null)
+            if (!IsDisposed)
             {
-                NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
+                if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null && m_HasRegisteredHandler)
+                {
+                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
+                }
+
+                m_HasRegisteredHandler = false;
             }
+            base.Dispose();
         }
 
         public override IDisposable Subscribe(Action<T> handler)
