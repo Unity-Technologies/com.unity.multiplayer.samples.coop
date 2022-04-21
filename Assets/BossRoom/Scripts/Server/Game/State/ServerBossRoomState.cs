@@ -71,6 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_NetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
                 m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
 
+                NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
                 NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
 
                 DoInitialSpawnIfPossible();
@@ -97,6 +98,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return true;
             }
             return false;
+        }
+
+        void OnClientDisconnect(ulong clientId)
+        {
+            if (clientId != NetworkManager.LocalClientId)
+            {
+                // If a client disconnects, check for game over in case all other players are already down
+                CheckForGameOver();
+            }
         }
 
         public void OnClientSceneChanged(SceneEvent sceneEvent)
@@ -226,8 +236,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 case CharacterTypeEnum.Archer:
                 case CharacterTypeEnum.Mage:
                 case CharacterTypeEnum.Rogue:
-                    // Every time a player's life state changes we check to see if game is over
-                    OnHeroLifeStateChanged(message.NewLifeState);
+                    // Every time a player's life state changes to fainted we check to see if game is over
+                    if (message.NewLifeState == LifeState.Fainted)
+                    {
+                        CheckForGameOver();
+                    }
+
                     break;
                 case CharacterTypeEnum.ImpBoss:
                     if (message.NewLifeState == LifeState.Dead)
@@ -240,24 +254,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private void OnHeroLifeStateChanged(LifeState lifeState)
+        void CheckForGameOver()
         {
-            // If this Hero is down, check the rest of the party also
-            if (lifeState == LifeState.Fainted)
+            // Check the life state of all players in the scene
+            foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                // Check the life state of all players in the scene
-                foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+                // if any player is alive just retun
+                if (serverCharacter.NetState && serverCharacter.NetState.LifeState == LifeState.Alive)
                 {
-                    // if any player is alive just retun
-                    if (serverCharacter.NetState && serverCharacter.NetState.LifeState == LifeState.Alive)
-                    {
-                        return;
-                    }
+                    return;
                 }
-
-                // If we made it this far, all players are down! switch to post game
-                StartCoroutine(CoroGameOver(k_LoseDelay, false));
             }
+
+            // If we made it this far, all players are down! switch to post game
+            StartCoroutine(CoroGameOver(k_LoseDelay, false));
         }
 
         void BossDefeated()
