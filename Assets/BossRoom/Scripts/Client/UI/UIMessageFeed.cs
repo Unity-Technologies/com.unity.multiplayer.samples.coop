@@ -101,7 +101,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     return slot;
                 }
             }
-            var go = Instantiate(m_MessageSlotPrefab, m_VerticalLayoutGroup.transform, true);
+            var go = Instantiate(m_MessageSlotPrefab, m_VerticalLayoutGroup.transform);
             var messageSlot = go.GetComponentInChildren<UIMessageSlot>();
             m_MessageSlots.Add(messageSlot);
             return messageSlot;
