@@ -77,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 DoInitialSpawnIfPossible();
 
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
-                m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
+                m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
             }
         }
 
@@ -105,8 +105,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (clientId != NetworkManager.LocalClientId)
             {
                 // If a client disconnects, check for game over in case all other players are already down
-                CheckForGameOver();
+                StartCoroutine(WaitToCheckForGameOver());
             }
+        }
+
+        IEnumerator WaitToCheckForGameOver()
+        {
+            // Wait until next frame so that the client's player character has despawned
+            yield return null;
+            CheckForGameOver();
         }
 
         public void OnClientSceneChanged(SceneEvent sceneEvent)
@@ -140,23 +147,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (m_NetPortal != null)
             {
+                NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
                 NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
             }
             m_Subscription?.Dispose();
-        }
-
-        /// <summary>
-        /// Helper method for OnDestroy that gets the NetworkLifeState.OnValueChanged event for a NetworkObjectId, or null if it doesn't exist.
-        /// </summary>
-        private NetworkVariable<LifeState>.OnValueChangedDelegate GetLifeStateEvent(ulong id)
-        {
-            //this is all a little paranoid, because during shutdown it's not always obvious what state is still valid.
-            if (NetworkManager != null && NetworkManager.SpawnManager != null && NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject netObj) && netObj != null)
-            {
-                var netState = netObj.GetComponent<NetworkCharacterState>();
-                return netState != null ? netState.NetworkLifeState.LifeState.OnValueChanged : null;
-            }
-            return null;
         }
 
         private void SpawnPlayer(ulong clientId, bool lateJoin)
@@ -259,7 +253,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // Check the life state of all players in the scene
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                // if any player is alive just retun
+                // if any player is alive just return
                 if (serverCharacter.NetState && serverCharacter.NetState.LifeState == LifeState.Alive)
                 {
                     return;
