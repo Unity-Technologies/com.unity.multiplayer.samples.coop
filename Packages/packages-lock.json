@@ -128,9 +128,9 @@
       }
     },
     "com.unity.multiplayer.tools": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#develop",
+      "version": "1.0.0-pre.6",
       "depth": 0,
-      "source": "git",
+      "source": "registry",
       "dependencies": {
         "com.unity.profiling.core": "1.0.0-pre.1",
         "com.unity.nuget.newtonsoft-json": "2.0.0",
@@ -138,17 +138,7 @@
         "com.unity.collections": "1.1.0",
         "com.unity.modules.uielements": "1.0.0"
       },
-      "hash": "9d2465af38d4ae2cd2d49adb5cf7877746740774"
-    },
-    "com.unity.multiplayer.virtualprojects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.virtualprojects.git#develop",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "nuget.moq": "1.0.0",
-        "com.unity.nuget.newtonsoft-json": "2.0.2"
-      },
-      "hash": "e83b441e9da0b0b767d4db707aea013667172fbb"
+      "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
       "version": "1.0.0-pre.7",
@@ -168,7 +158,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "2.0.2",
+      "version": "2.0.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -372,22 +362,6 @@
       "source": "git",
       "dependencies": {},
       "hash": "bb3d5067e49e403d8b8ba15c036d313b4dd2c696"
-    },
-    "nuget.castle-core": {
-      "version": "1.0.1",
-      "depth": 2,
-      "source": "registry",
-      "dependencies": {},
-      "url": "https://packages.unity.com"
-    },
-    "nuget.moq": {
-      "version": "1.0.0",
-      "depth": 1,
-      "source": "registry",
-      "dependencies": {
-        "nuget.castle-core": "1.0.1"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.modules.ai": {
       "version": "1.0.0",
