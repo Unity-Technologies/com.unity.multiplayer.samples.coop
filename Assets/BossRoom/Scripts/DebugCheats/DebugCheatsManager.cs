@@ -1,5 +1,6 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -45,6 +46,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         const int k_NbTouchesToOpenWindow = 4;
 
         bool m_DestroyPortalsOnNextToggle = true;
+
+        IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
+
+        [Inject]
+        void InjectDependencies(IPublisher<CheatUsedMessage> publisher)
+        {
+            m_CheatUsedMessagePublisher = publisher;
+        }
 
         void Update()
         {
@@ -127,7 +136,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         {
             var newEnemy = Instantiate(m_EnemyPrefab);
             newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "SpawnEnemy");
+            PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "SpawnEnemy");
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -135,7 +144,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
         {
             var newEnemy = Instantiate(m_BossPrefab);
             newEnemy.SpawnWithOwnership(NetworkManager.Singleton.LocalClientId, true);
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "SpawnBoss");
+            PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "SpawnBoss");
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -152,7 +161,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                     if (damageable != null && damageable.IsDamageable())
                     {
                         damageable.ReceiveHP(playerServerCharacter, int.MinValue);
-                        LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillTarget");
+                        PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "KillTarget");
                     }
                     else
                     {
@@ -176,7 +185,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                     }
                 }
             }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "KillAllEnemies");
+            PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "KillAllEnemies");
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -187,7 +196,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             if (playerServerCharacter != null)
             {
                 playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
-                LogCheatUsedClientRPC(clientId, "ToggleGodMode");
+                PublishCheatUsedMessage(clientId, "ToggleGodMode");
             }
         }
 
@@ -210,7 +219,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                         damageable.ReceiveHP(null, baseHp);
                     }
                 }
-                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "HealPlayer");
+                PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "HealPlayer");
             }
         }
 
@@ -226,7 +235,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                     break;
                 }
             }
-            LogCheatUsedClientRPC(clientId, "ToggleSuperSpeed");
+            PublishCheatUsedMessage(clientId, "ToggleSuperSpeed");
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -241,7 +250,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
                     break;
                 }
             }
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleTeleportMode");
+            PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "ToggleTeleportMode");
         }
 
         [ServerRpc(RequireOwnership = false)]
@@ -250,7 +259,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             if (ServerSwitchedDoor != null)
             {
                 ServerSwitchedDoor.ForceOpen = !ServerSwitchedDoor.ForceOpen;
-                LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "ToggleDoor");
+                PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "ToggleDoor");
             }
             else
             {
@@ -277,20 +286,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Debug
             }
 
             m_DestroyPortalsOnNextToggle = !m_DestroyPortalsOnNextToggle;
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "TogglePortals");
+            PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "TogglePortals");
         }
 
         [ServerRpc(RequireOwnership = false)]
         void GoToPostGameServerRpc(ServerRpcParams serverRpcParams = default)
         {
             SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
-            LogCheatUsedClientRPC(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
+            PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "GoToPostGame");
         }
 
-        [ClientRpc]
-        void LogCheatUsedClientRPC(ulong clientId, string cheatUsed)
+        void PublishCheatUsedMessage(ulong clientId, string cheatUsed)
         {
-            UnityEngine.Debug.Log($"Cheat {cheatUsed} used by client {clientId}");
+            var playerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId);
+            if (playerData.HasValue)
+            {
+                m_CheatUsedMessagePublisher.Publish(new CheatUsedMessage(cheatUsed, playerData.Value.PlayerName));
+            }
         }
 
         static void LogCheatNotImplemented(string cheat)

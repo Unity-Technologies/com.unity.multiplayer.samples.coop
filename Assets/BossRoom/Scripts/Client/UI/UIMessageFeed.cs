@@ -1,5 +1,4 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
@@ -28,15 +27,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         DisposableGroup m_Subscriptions;
 
         [Inject]
-        void InjectDependencies(ISubscriber<DoorStateChangedEventMessage> doorStateChangedSubscriber,
+        void InjectDependencies(
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            ISubscriber<CheatUsedMessage> cheatUsedMessageSubscriber,
+#endif
+            ISubscriber<DoorStateChangedEventMessage> doorStateChangedSubscriber,
             ISubscriber<ConnectionEventMessage> connectionEventSubscriber,
-            ISubscriber<LifeStateChangedEventMessage> lifeStateChangedEventSubscriber)
+            ISubscriber<LifeStateChangedEventMessage> lifeStateChangedEventSubscriber
+        )
         {
             m_Subscriptions = new DisposableGroup();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            m_Subscriptions.Add(cheatUsedMessageSubscriber.Subscribe(OnCheatUsedEvent));
+#endif
             m_Subscriptions.Add(doorStateChangedSubscriber.Subscribe(OnDoorStateChangedEvent));
             m_Subscriptions.Add(connectionEventSubscriber.Subscribe(OnConnectionEvent));
             m_Subscriptions.Add(lifeStateChangedEventSubscriber.Subscribe(OnLifeStateChangedEvent));
         }
+
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+        void OnCheatUsedEvent(CheatUsedMessage eventMessage)
+        {
+            DisplayMessage($"Cheat {eventMessage.CheatUsed} used by {eventMessage.CheaterName}");
+        }
+#endif
 
         void OnDoorStateChangedEvent(DoorStateChangedEventMessage eventMessage)
         {
