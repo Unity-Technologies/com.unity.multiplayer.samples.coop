@@ -20,10 +20,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         VerticalLayoutGroup m_VerticalLayoutGroup;
 
-        Coroutine m_HideFeedCoroutine;
-
-        bool m_IsDisplaying;
-
         DisposableGroup m_Subscriptions;
 
         [Inject]
