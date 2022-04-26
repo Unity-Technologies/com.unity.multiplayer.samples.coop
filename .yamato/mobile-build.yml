@@ -1,0 +1,46 @@
+Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
+    name: Build iOS players
+    agent:
+        type: Unity::VM::osx
+        image: mobile/macos-10.13-testing:stable
+        flavor: b1.large
+
+    commands:
+        - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
+        - unity-downloader-cli -c Editor -c iOS -u {{ editor }} --fast --wait
+        - curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output utr
+        - chmod +x ./utr
+        - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.name }} --player-save-path=build/players --artifacts_path=build/logs --build-only
+
+    artifacts:
+        players:
+            paths:
+                - "build/players/**"
+        logs:
+            paths:
+                - "build/logs/**"
+
+Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
+    name: Build Players with tests Android
+    agent:
+        type: Unity::VM
+        # Any generic image can be used, no need to have Android tools in the image for building
+        # All Android tools will be downloaded by unity-downloader-cli
+        image: package-ci/win10:stable
+        flavor: b1.xlarge
+
+    commands:
+        # Download unity-downloader-cli
+        - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
+        - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
+        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
+        # Build player(s)
+        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.name }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only
+
+    artifacts:
+        players:
+            paths:
+                - "build/players/**"
+        logs:
+            paths:
+                - "build/logs/**"

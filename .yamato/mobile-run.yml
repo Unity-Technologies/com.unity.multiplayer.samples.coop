@@ -1,0 +1,67 @@
+# For every editor version, run iOS project tests without
+# running package tests too since they are handled on their respective jobs
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
+mobile_test_{{ project.name }}_{{ editor }}_ios:
+    name: Run Tests with built player iOS
+    agent:
+        type: Unity::mobile::iPhone
+        image: mobile/macos-10.15-testing:latest
+        flavor: b1.medium
+
+    # Skip repository cloning
+    skip_checkout: true
+
+    # Set a dependency on the build job
+    dependencies:
+        - .yamato/build.yml#Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}
+
+    commands:
+        # Download standalone UnityTestRunner
+        - curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output utr
+        # Give UTR execution permissions
+        - chmod +x ./utr
+        # Run the test build on the device
+        - ./utr --suite=playmode --platform=iOS --player-load-path=build/players --artifacts_path=build/test-results
+
+    artifacts:
+        logs:
+            paths:
+                - "build/test-results/**"
+{% endfor -%}
+{% endfor -%}
+
+  # For every editor version, run Android project tests without
+  # running package tests too since they are handled on their respective jobs
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
+mobile_test_{{ project.name }}_{{ editor }}_android:
+    name: Run Tests with built player Android
+    agent:
+        type: Unity::mobile::shield
+        image: mobile/android-execution-base:stable
+        flavor: b1.medium
+
+    # Skip repository cloning
+    skip_checkout: true
+    # Set a dependency on the build job
+    dependencies:
+        - .yamato/build.yml#Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}
+    commands:
+        -
+            # Download standalone UnityTestRunner
+            curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
+            # Set the IP of the device. In case device gets lost, UTR will try to recconect to ANDROID_DEVICE_CONNECTION
+            set ANDROID_DEVICE_CONNECTION=%BOKKEN_DEVICE_IP%
+            # Establish an ADB connection with the device
+            start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
+            # List the connected devices
+            start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
+            ./utr --suite=playmode --platform=android --player-load-path=build/players --artifacts_path=build/test-results
+    # Set uploadable artifact paths
+    artifacts:
+        logs:
+            paths:
+                - "build/test-results/**"
+{% endfor -%}
+{% endfor -%}
