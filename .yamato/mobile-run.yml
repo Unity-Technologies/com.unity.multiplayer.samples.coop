@@ -5,7 +5,7 @@
 # running package tests too since they are handled on their respective jobs
 {% for project in projects -%}
 {% for editor in project.test_editors -%}
-mobile_test_{{ project.name }}_{{ editor }}_ios:
+mobile_test_ios_{{ project.name }}_{{ editor }}:
     name: Run Tests with built player iOS
     agent:
         type: Unity::mobile::iPhone
@@ -38,7 +38,7 @@ mobile_test_{{ project.name }}_{{ editor }}_ios:
   # running package tests too since they are handled on their respective jobs
 {% for project in projects -%}
 {% for editor in project.test_editors -%}
-mobile_test_{{ project.name }}_{{ editor }}_android:
+mobile_test_android_{{ project.name }}_{{ editor }}:
     name: Run Tests with built player Android
     agent:
         type: Unity::mobile::shield
