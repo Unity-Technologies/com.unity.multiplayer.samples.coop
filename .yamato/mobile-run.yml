@@ -1,3 +1,6 @@
+{% metadata_file .yamato/project.metafile %}
+---
+
 # For every editor version, run iOS project tests without
 # running package tests too since they are handled on their respective jobs
 {% for project in projects -%}
