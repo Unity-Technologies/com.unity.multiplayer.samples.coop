@@ -1,3 +1,5 @@
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
 Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
     name: build {{ project.name }} - {{ editor }} on iOS
     agent:
@@ -19,7 +21,11 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
         logs:
             paths:
                 - "build/logs/**"
+{% endfor -%}
+{% endfor -%}
 
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
 Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
     name: build {{ project.name }} - {{ editor }} on Android
     agent:
@@ -44,3 +50,5 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         logs:
             paths:
                 - "build/logs/**"
+{% endfor -%}
+{% endfor -%}
