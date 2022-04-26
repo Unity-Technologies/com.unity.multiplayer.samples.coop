@@ -1,3 +1,6 @@
+{% metadata_file .yamato/project.metafile %}
+---
+
 {% for project in projects -%}
 {% for editor in project.test_editors -%}
 Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
