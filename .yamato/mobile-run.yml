@@ -6,7 +6,7 @@
 {% for project in projects -%}
 {% for editor in project.test_editors -%}
 mobile_test_ios_{{ project.name }}_{{ editor }}:
-    name: Run Tests with built player iOS
+    name: {{ project.name }} mobile project tests - {{ editor }} on iOS
     agent:
         type: Unity::mobile::iPhone
         image: mobile/macos-10.15-testing:latest
@@ -39,7 +39,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
 {% for project in projects -%}
 {% for editor in project.test_editors -%}
 mobile_test_android_{{ project.name }}_{{ editor }}:
-    name: Run Tests with built player Android
+    name: {{ project.name }} mobile project tests - {{ editor }} on Android
     agent:
         type: Unity::mobile::shield
         image: mobile/android-execution-base:stable
