@@ -17,7 +17,7 @@ mobile_test_{{ project.name }}_{{ editor }}_ios:
 
     # Set a dependency on the build job
     dependencies:
-        - .yamato/build.yml#Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}
+        - .yamato/mobile-build.yml#Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}
 
     commands:
         # Download standalone UnityTestRunner
@@ -49,7 +49,7 @@ mobile_test_{{ project.name }}_{{ editor }}_android:
     skip_checkout: true
     # Set a dependency on the build job
     dependencies:
-        - .yamato/build.yml#Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}
+        - .yamato/mobile-build.yml#Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}
     commands:
         -
             # Download standalone UnityTestRunner
