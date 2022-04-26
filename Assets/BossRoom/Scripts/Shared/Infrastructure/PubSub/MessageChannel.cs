@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public bool IsDisposed { get; private set; } = false;
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             if (!IsDisposed)
             {

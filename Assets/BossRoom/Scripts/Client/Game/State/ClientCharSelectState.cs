@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -101,16 +100,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
-        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-        DIScope m_Scope;
-
-        void Awake()
+        protected override void Awake()
         {
-            //creating a child scope just to have manual control over the lifetime of the things
-            //that shouldn't live past the current scene existence
-            m_Scope = new DIScope(DIScope.RootScope);
-
-            m_Scope.FinalizeScopeConstruction();
+            base.Awake();
 
             Instance = this;
             CharSelectData = GetComponent<CharSelectData>();
@@ -121,16 +113,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 { LobbyMode.LobbyEnding, m_UIElementsForLobbyEnding },
                 { LobbyMode.FatalError, m_UIElementsForFatalError },
             };
-
-            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
-            {
-                m_Scope.InjectIn(autoInjectedGameObject);
-            }
-        }
-
-        public override void OnDestroy()
-        {
-            m_Scope.Dispose();
         }
 
         protected override void Start()
@@ -218,7 +200,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 // we haven't chosen a seat yet (or were kicked out of our seat by someone else)
                 UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
                 // make sure our player num is properly set in Lobby UI
-                OnAssignedPlayerNumber(CharSelectData.LobbyPlayers[localPlayerIdx].PlayerNum);
+                OnAssignedPlayerNumber(CharSelectData.LobbyPlayers[localPlayerIdx].PlayerNumber);
             }
             else
             {
@@ -319,7 +301,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // now actually update the seats in the UI
             for (int i = 0; i < m_PlayerSeats.Count; ++i)
             {
-                m_PlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNum, curSeats[i].PlayerName);
+                m_PlayerSeats[i].SetState(curSeats[i].SeatState, curSeats[i].PlayerNumber, curSeats[i].PlayerName);
             }
         }
 
@@ -331,6 +313,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (isLobbyClosed)
             {
                 ConfigureUIForLobbyMode(LobbyMode.LobbyEnding);
+            }
+            else
+            {
+                if (m_LastSeatSelected == -1)
+                {
+                    ConfigureUIForLobbyMode(LobbyMode.ChooseSeat);
+                }
+                else
+                {
+                    ConfigureUIForLobbyMode(LobbyMode.SeatChosen);
+                    m_ClassInfoBox.ConfigureForClass(CharSelectData.AvatarConfiguration[m_LastSeatSelected].CharacterClass);
+                }
             }
         }
 

@@ -2,6 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
@@ -16,20 +19,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         NetworkObject m_GameState;
 
-        private GameNetPortal m_Portal;
+        GameNetPortal m_Portal;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
-        private const int k_MaxConnectPayload = 1024;
+        const int k_MaxConnectPayload = 1024;
 
         /// <summary>
         /// Keeps a list of what clients are in what scenes.
         /// </summary>
-        private Dictionary<ulong, int> m_ClientSceneMap = new Dictionary<ulong, int>();
+        Dictionary<ulong, int> m_ClientSceneMap = new Dictionary<ulong, int>();
 
         /// <summary>
         /// The active server scene index.
         /// </summary>
-        public int ServerScene { get { return UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex; } }
+        static int ServerScene => SceneManager.GetActiveScene().buildIndex;
+
+        LobbyServiceFacade m_LobbyServiceFacade;
+
+        [Inject]
+        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
+        {
+            m_LobbyServiceFacade = lobbyServiceFacade;
+        }
 
         void Start()
         {
@@ -64,10 +75,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //O__O if adding any event registrations here, please add an unregistration in OnClientDisconnect.
                 m_Portal.NetManager.OnClientDisconnectCallback += OnClientDisconnect;
 
-                //The "BossRoom" server always advances to CharSelect immediately on start. Different games
-                //may do this differently.
-                NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
-
                 if (m_Portal.NetManager.IsHost)
                 {
                     m_ClientSceneMap[m_Portal.NetManager.LocalClientId] = ServerScene;
@@ -79,7 +86,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Handles the case where NetworkManager has told us a client has disconnected. This includes ourselves, if we're the host,
         /// and the server is stopped."
         /// </summary>
-        private void OnClientDisconnect(ulong clientId)
+        void OnClientDisconnect(ulong clientId)
         {
             m_ClientSceneMap.Remove(clientId);
 
@@ -88,6 +95,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //the ServerGameNetPortal may be initialized again, which will cause its OnNetworkSpawn to be called again.
                 //Consequently we need to unregister anything we registered, when the NetworkManager is shutting down.
                 m_Portal.NetManager.OnClientDisconnectCallback -= OnClientDisconnect;
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id);
+                }
+                SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+            }
+            else
+            {
+                var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+                if (playerId != null)
+                {
+                    if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                    {
+                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
+                    }
+                    SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
+                }
             }
         }
 
@@ -102,10 +126,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public void OnUserDisconnectRequest()
         {
+            if (m_Portal.NetManager.IsHost)
+            {
+                SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
+                // Wait before shutting down to make sure clients receive that message before they are disconnected
+                StartCoroutine(WaitToShutdown());
+            }
             Clear();
         }
 
-        private void Clear()
+        void Clear()
         {
             //resets all our runtime state.
             m_ClientSceneMap.Clear();
@@ -135,10 +165,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="connectionApprovedCallback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        private void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
+        void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
             if (connectionData.Length > k_MaxConnectPayload)
             {
+                // If connectionData too high, deny immediately to avoid wasting time on the server. This is intended as
+                // a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
                 connectionApprovedCallback(false, 0, false, null, null);
                 return;
             }
@@ -146,74 +178,83 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // Approval check happens for Host too, but obviously we want it to be approved
             if (clientId == NetworkManager.Singleton.LocalClientId)
             {
-                SessionManager<SessionPlayerData>.Instance.AddHostData(
+                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, m_Portal.GetPlayerId(),
                     new SessionPlayerData(clientId, m_Portal.PlayerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
 
                 connectionApprovedCallback(true, null, true, null, null);
                 return;
             }
 
-            ConnectStatus gameReturnStatus;
-
-            // Test for over-capacity connection. This needs to be done asap, to make sure we refuse connections asap and don't spend useless time server side
-            // on invalid users trying to connect
-            // todo this is currently still spending too much time server side.
-            if (m_Portal.NetManager.ConnectedClientsIds.Count >= CharSelectData.k_MaxLobbyPlayers)
-            {
-                gameReturnStatus = ConnectStatus.ServerFull;
-                //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
-                //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of
-                //the approval callback, so that we can provide more context on a reject. In the meantime we must provide the extra information ourselves,
-                //and then manually close down the connection.
-                SendServerToClientConnectResult(clientId, gameReturnStatus);
-                SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                StartCoroutine(WaitToDisconnect(clientId));
-                return;
-            }
-
-            string payload = System.Text.Encoding.UTF8.GetString(connectionData);
+            var payload = System.Text.Encoding.UTF8.GetString(connectionData);
             var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
-
-            int clientScene = connectionPayload.clientScene;
-
-            Debug.Log("Host ApprovalCheck: connecting client GUID: " + connectionPayload.clientGUID);
-
-            gameReturnStatus = SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.clientGUID,
-                new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true))
-                ? ConnectStatus.Success
-                : ConnectStatus.LoggedInAgain;
-
-            //Test for Duplicate Login.
-            if (gameReturnStatus == ConnectStatus.LoggedInAgain)
-            {
-                SessionPlayerData? sessionPlayerData =
-                    SessionManager<SessionPlayerData>.Instance.GetPlayerData(connectionPayload.clientGUID);
-
-                ulong oldClientId = sessionPlayerData?.ClientID ?? 0;
-                // kicking old client to leave only current
-                SendServerToClientSetDisconnectReason(oldClientId, ConnectStatus.LoggedInAgain);
-
-                StartCoroutine(WaitToDisconnect(clientId));
-                return;
-            }
+            var gameReturnStatus = GetConnectStatus(connectionPayload);
 
             if (gameReturnStatus == ConnectStatus.Success)
             {
+                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
+                    new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
                 SendServerToClientConnectResult(clientId, gameReturnStatus);
 
-                //Populate our dictionaries with the playerData
-                m_ClientSceneMap[clientId] = clientScene;
+                //Populate our client scene map
+                m_ClientSceneMap[clientId] = connectionPayload.clientScene;
 
                 connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
-
                 // connection approval will create a player object for you
+            }
+            else
+            {
+                //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
+                //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of the
+                //approval callback, so that we can provide more context on a reject. In the meantime we must provide
+                //the extra information ourselves, and then wait a short time before manually close down the connection.
+                SendServerToClientConnectResult(clientId, gameReturnStatus);
+                SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+                StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+                {
+                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
+                }
             }
         }
 
-        private IEnumerator WaitToDisconnect(ulong clientId)
+        ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
+        {
+            if (m_Portal.NetManager.ConnectedClientsIds.Count >= CharSelectData.k_MaxLobbyPlayers)
+            {
+                return ConnectStatus.ServerFull;
+            }
+
+            if (connectionPayload.isDebug != Debug.isDebugBuild)
+            {
+                return ConnectStatus.IncompatibleBuildType;
+            }
+
+            return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
+                ConnectStatus.LoggedInAgain : ConnectStatus.Success;
+        }
+
+        static IEnumerator WaitToDenyApproval(NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
             yield return new WaitForSeconds(0.5f);
-            m_Portal.NetManager.DisconnectClient(clientId);
+            connectionApprovedCallback(false, 0, false, null, null);
+        }
+
+        IEnumerator WaitToShutdown()
+        {
+            yield return null;
+            m_Portal.NetManager.Shutdown();
+            SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+        }
+
+        /// <summary>
+        /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the client.
+        /// </summary>
+        /// <param name="status"> The reason for the upcoming disconnect.</param>
+        static void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)
+        {
+            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            writer.WriteValueSafe(status);
+            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessageToAll(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
         }
 
         /// <summary>
@@ -221,7 +262,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         /// <param name="clientID"> id of the client to send to </param>
         /// <param name="status"> The reason for the upcoming disconnect.</param>
-        public void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
+        static void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
         {
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
@@ -233,7 +274,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         /// <param name="clientID"> id of the client to send to </param>
         /// <param name="status"> the status to pass to the client</param>
-        public void SendServerToClientConnectResult(ulong clientID, ConnectStatus status)
+        static void SendServerToClientConnectResult(ulong clientID, ConnectStatus status)
         {
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
@@ -243,12 +284,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <summary>
         /// Called after the server is created-  This is primarily meant for the host server to clean up or handle/set state as its starting up
         /// </summary>
-        private void ServerStartedHandler()
+        void ServerStartedHandler()
         {
             // server spawns game state
             var gameState = Instantiate(m_GameState);
 
             gameState.Spawn();
+
+            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+
+            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
+            //may do this differently.
+            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
         }
 
     }

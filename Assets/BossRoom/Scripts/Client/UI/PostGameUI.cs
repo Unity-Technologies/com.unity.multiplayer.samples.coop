@@ -1,7 +1,8 @@
 using UnityEngine;
-using UnityEngine.SceneManagement;
-using UnityEngine.UI;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
@@ -34,6 +35,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [SerializeField]
         private Color m_LoseLightColor;
+
+        ApplicationController m_ApplicationController;
+
+        [Inject]
+        void InjectDependencies(ApplicationController applicationController)
+        {
+            m_ApplicationController = applicationController;
+        }
 
         void Start()
         {
@@ -76,18 +85,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void OnPlayAgainClicked()
         {
             // this should only ever be called by the Host - so just go ahead and switch scenes
-            NetworkManager.Singleton.SceneManager.LoadScene("CharSelect", LoadSceneMode.Single);
+            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
 
             // FUTURE: could be improved to better support a dedicated server architecture
         }
 
         public void OnMainMenuClicked()
         {
-            // Player is leaving this group - leave current network connection first
-            var gameNetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
-            gameNetPortal.RequestDisconnect();
-
-            SceneManager.LoadScene("MainMenu");
+            m_ApplicationController.LeaveSession(true);
         }
     }
 }
