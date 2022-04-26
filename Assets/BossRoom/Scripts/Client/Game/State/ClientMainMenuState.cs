@@ -1,14 +1,13 @@
+using System;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
-
-#if UNITY_EDITOR
-using ParrelSync;
-#endif
+using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -23,96 +22,82 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         public override GameState ActiveState { get { return GameState.MainMenu; } }
 
-        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-        DIScope m_Scope;
-
         [SerializeField] NameGenerationData m_NameGenerationData;
         [SerializeField] LobbyUIMediator m_LobbyUIMediator;
-
-        [SerializeField] CanvasGroup m_MainMenuButtonsCanvasGroup;
+        [SerializeField] IPUIMediator m_IPUIMediator;
+        [SerializeField] Button m_LobbyButton;
         [SerializeField] GameObject m_SignInSpinner;
 
-        void Awake()
+        protected override void Awake()
         {
-            m_MainMenuButtonsCanvasGroup.interactable = false;
+            m_LobbyButton.interactable = false;
             m_LobbyUIMediator.Hide();
-            DIScope.RootScope.InjectIn(this);
+            base.Awake();
+        }
+
+        protected override void InitializeScope()
+        {
+            Scope.BindInstanceAsSingle(m_NameGenerationData);
+            Scope.BindInstanceAsSingle(m_LobbyUIMediator);
+            Scope.BindInstanceAsSingle(m_IPUIMediator);
         }
 
         [Inject]
-        void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
+        async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
         {
-            m_Scope = new DIScope(DIScope.RootScope);
-
-            m_Scope.BindInstanceAsSingle(m_NameGenerationData);
-            m_Scope.BindInstanceAsSingle(m_LobbyUIMediator);
-
-            var unityAuthenticationInitOptions = new InitializationOptions();
-
-#if UNITY_EDITOR
-            //The code below makes it possible for the clone instance to log in as a different user profile in Authentication service.
-            //This allows us to test services integration locally by utilising Parrelsync.
-            if (ClonesManager.IsClone())
+            if (string.IsNullOrEmpty(Application.cloudProjectId))
             {
-                Debug.Log("This is a clone project.");
-                var customArguments = ClonesManager.GetArgument().Split(',');
-
-                //second argument is our custom ID, but if it's not set we would just use some default.
-
-                var hardcodedProfileID = customArguments.Length > 1 ? customArguments[1] : "defaultCloneID";
-
-                unityAuthenticationInitOptions.SetProfile(hardcodedProfileID);
+                PopupManager.ShowPopupPanel("Unity Gaming Services ProjectID not set up" ,"Click the Readme file in the Assets Folder within the Project window in-editor to follow \"How to set up Unity Gaming Services\"");
+                OnSignInFailed();
+                return;
             }
-#else
-            var arguments = System.Environment.GetCommandLineArgs();
-            for (int i = 0; i < arguments.Length; i++)
+
+            try
             {
-                if (arguments[i] == "-AuthProfile")
+                var unityAuthenticationInitOptions = new InitializationOptions();
+                var profile = ProfileManager.Profile;
+                if (profile.Length > 0)
                 {
-                    var profileId = arguments[i + 1];
-                    unityAuthenticationInitOptions.SetProfile(profileId);
-                    break;
+                    unityAuthenticationInitOptions.SetProfile(profile);
                 }
-            }
-#endif
 
-            authServiceFacade.DoSignInAsync(OnAuthSignIn,  OnSignInFailed, unityAuthenticationInitOptions);
+                await authServiceFacade.InitializeAndSignInAsync(unityAuthenticationInitOptions);
+                OnAuthSignIn();
+            }
+            catch (Exception)
+            {
+                OnSignInFailed();
+            }
 
             void OnAuthSignIn()
             {
-                m_Scope.FinalizeScopeConstruction();
-
-                foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
-                {
-                    m_Scope.InjectIn(autoInjectedGameObject);
-                }
-
-                m_MainMenuButtonsCanvasGroup.interactable = true;
+                m_LobbyButton.interactable = true;
                 m_SignInSpinner.SetActive(false);
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
                 localUser.ID = AuthenticationService.Instance.PlayerId;
-                localUser.DisplayName = m_NameGenerationData.GenerateName();
                 // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
                 localLobby.AddUser(localUser);
             }
 
             void OnSignInFailed()
             {
-                Debug.LogError("For some reason we can't authenticate the user anonymously - that typically means that project is not properly set up with Unity services.");
+                m_LobbyButton.interactable = false;
+                m_SignInSpinner.SetActive(false);
             }
-        }
-
-        public override void OnDestroy()
-        {
-            m_Scope?.Dispose();
         }
 
         public void OnStartClicked()
         {
             m_LobbyUIMediator.ToggleJoinLobbyUI();
             m_LobbyUIMediator.Show();
+        }
+
+        public void OnDirectIPClicked()
+        {
+            m_LobbyUIMediator.Hide();
+            m_IPUIMediator.Show();
         }
     }
 }

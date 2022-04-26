@@ -1474,7 +1474,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &7464515512587493124
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1547,7 +1547,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 063abc7eeacd3df4db23e185d26aab43, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_QuitButtonText: {fileID: 1810020744250180940}
+  m_QuitMode: 0
 --- !u!1 &7379689433403748103
 GameObject:
   m_ObjectHideFlags: 0
@@ -1795,7 +1795,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'Exit Game?
+  m_Text: 'Return to Menu?
 
 '
 --- !u!1001 &2966618817979551825
@@ -2205,6 +2205,17 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 7721113380319664589, guid: addf3685293c35d48a673397c748f116, type: 3}
   m_PrefabInstance: {fileID: 6650909944053036704}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &3993040222486159765 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7721113380232533813, guid: addf3685293c35d48a673397c748f116, type: 3}
+  m_PrefabInstance: {fileID: 6650909944053036704}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4688fdb7df04437aeb418b961361dc5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &811129276045199873
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2217,4 +2228,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1106bff381881f94187fe4be82e21554, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_QualityBtnText: {fileID: 0}
+  m_QualityBtnText: {fileID: 3993040222486159765}
