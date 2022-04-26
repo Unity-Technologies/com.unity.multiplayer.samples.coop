@@ -1,5 +1,5 @@
 Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
-    name: Build iOS players
+    name: build {{ project.name }} - {{ editor }} on iOS
     agent:
         type: Unity::VM::osx
         image: mobile/macos-10.13-testing:stable
@@ -21,7 +21,7 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
                 - "build/logs/**"
 
 Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
-    name: Build Players with tests Android
+    name: build {{ project.name }} - {{ editor }} on Android
     agent:
         type: Unity::VM
         # Any generic image can be used, no need to have Android tools in the image for building
