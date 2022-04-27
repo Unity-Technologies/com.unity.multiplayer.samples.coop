@@ -42,12 +42,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
         const float k_PingIntervalSeconds = 0.1f;
         const float k_MaxWindowSize = k_MaxWindowSizeSeconds / k_PingIntervalSeconds;
 
+        const float k_BadNetworkConditionsRTTThreshold = 200;
+
         ExponentialMovingAverageCalculator m_BossRoomRTT = new ExponentialMovingAverageCalculator(0);
         ExponentialMovingAverageCalculator m_UtpRTT = new ExponentialMovingAverageCalculator(0);
 
         float m_LastPingTime;
         TextMeshProUGUI m_TextStat;
         TextMeshProUGUI m_TextHostType;
+        TextMeshProUGUI m_TextBadNetworkConditions;
 
         // When receiving pong client RPCs, we need to know when the initiating ping sent it so we can calculate its individual RTT
         int m_CurrentRTTPingId;
@@ -88,6 +91,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             string hostType = IsHost ? "Host" : IsClient ? "Client" : "Unknown";
             InitializeTextLine($"Type: {hostType}", out m_TextHostType);
             InitializeTextLine("No Stat", out m_TextStat);
+            InitializeTextLine("", out m_TextBadNetworkConditions);
+            m_TextBadNetworkConditions.color = Color.red;
+            m_TextBadNetworkConditions.fontSize *= 1.5f;
         }
 
         void InitializeTextLine(string defaultText, out TextMeshProUGUI textComponent)
@@ -124,6 +130,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (m_TextStat != null)
                 {
                     m_TextToDisplay = $"RTT: {(m_BossRoomRTT.Average * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.Average.ToString("0")} ms";
+                }
+
+                if (m_TextBadNetworkConditions != null)
+                {
+                    m_TextBadNetworkConditions.text = m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold ? "Bad Network Conditions!": "";
                 }
             }
             else
