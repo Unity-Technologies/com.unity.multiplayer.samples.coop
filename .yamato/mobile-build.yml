@@ -53,5 +53,8 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         logs:
             paths:
                 - "build/logs/**"
+    variables:
+        CI: true
+        ENABLE_BURST_COMPILATION: False
 {% endfor -%}
 {% endfor -%}

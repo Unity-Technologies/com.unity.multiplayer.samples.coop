@@ -21,7 +21,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
 
     commands:
         # Download standalone UnityTestRunner
-        - curl -s https://artifactory.internal.unity3d.com/core-automation/tools/utr-standalone/utr --output utr
+        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
         # Give UTR execution permissions
         - chmod +x ./utr
         # Run the test build on the device
