@@ -1,6 +1,6 @@
 {
-  "name": "com.unity.com.unity.multiplayer.samples.utilities",
-  "displayName": "Samples Utilities",
+  "name": "com.unity.multiplayer.samples.utilities",
+  "displayName": "Multiplayer Samples Utilities",
   "version": "1.2.0-pre",
   "type": "template",
   "host": "hub",
