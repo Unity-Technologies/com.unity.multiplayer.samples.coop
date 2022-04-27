@@ -135,26 +135,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 StopCoroutine(m_WaitToEndLobbyCoroutine);
             }
             CharSelectData.IsLobbyClosed.Value = false;
-            // Set all players unready so they can react to this cancellation
-            SetAllUnready();
-        }
-
-        void SetAllUnready()
-        {
-            for (int i = 0; i < CharSelectData.LobbyPlayers.Count; ++i)
-            {
-                // Set all locked players to active so that they have to confirm their choice again
-                if (CharSelectData.LobbyPlayers[i].SeatState == CharSelectData.SeatState.LockedIn)
-                {
-                    CharSelectData.LobbyPlayers[i] = new CharSelectData.LobbyPlayerState(
-                        CharSelectData.LobbyPlayers[i].ClientId,
-                        CharSelectData.LobbyPlayers[i].PlayerName,
-                        CharSelectData.LobbyPlayers[i].PlayerNumber,
-                        CharSelectData.SeatState.Active,
-                        CharSelectData.LobbyPlayers[i].SeatIdx,
-                        CharSelectData.LobbyPlayers[i].LastChangeTime);
-                }
-            }
         }
 
         void SaveLobbyResults()
@@ -176,7 +156,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
-            SceneLoaderWrapper.Instance.LoadScene("BossRoom");
+            SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
         }
 
         public override void OnNetworkDespawn()
@@ -283,17 +263,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 }
             }
 
-
-            if (CharSelectData.IsLobbyClosed.Value)
+            if (!CharSelectData.IsLobbyClosed.Value)
             {
-                // If lobby is closing and waiting to start the game, cancel so that other players can react to it, and
-                // wait for the player coming back if they want to.
-                CancelCloseLobby();
-            }
-            else
-            {
-                // If it is not closing, set everyone as unready for the same reason
-                SetAllUnready();
+                // If the lobby is not already closing, close if the remaining players are all ready
+                CloseLobbyIfReady();
             }
         }
     }

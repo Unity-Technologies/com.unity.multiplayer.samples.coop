@@ -129,7 +129,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                     gameNetPortal.RequestDisconnect();
                 }
             }
-            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+            SceneLoaderWrapper.Instance.LoadScene("MainMenu", useNetworkSceneManager: false);
         }
 
         public void QuitGame()
