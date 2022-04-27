@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.Utilities
     /// must be started and stopped from outside this script. It also allows updating the loading screen when a new
     /// loading operation starts before the loading screen is stopped.
     /// </summary>
-    public class ClientLoadingScreen : NetworkBehaviour
+    public class ClientLoadingScreen : MonoBehaviour
     {
         [SerializeField]
         CanvasGroup m_CanvasGroup;
@@ -52,7 +52,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             m_LoadingProgressManager.onTrackersUpdated += OnProgressTrackersUpdated;
         }
 
-        public override void OnDestroy()
+        void OnDestroy()
         {
             m_LoadingProgressManager.onTrackersUpdated -= OnProgressTrackersUpdated;
         }
@@ -97,7 +97,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 var clientId = progressTracker.Key;
                 var progress = progressTracker.Value.Progress;
-                if (clientId != NetworkManager.LocalClientId)
+                if (clientId != NetworkManager.Singleton.LocalClientId)
                 {
                     if (m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                     {
@@ -115,7 +115,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 progressBar.gameObject.SetActive(false);
             }
 
-            if (IsSpawned && !NetworkManager.ShutdownInProgress)
+            if (m_LoadingProgressManager.IsSpawned && !NetworkManager.Singleton.ShutdownInProgress)
             {
                 // initialize all other players' progress bars
                 UpdateProgressBars(true);
@@ -128,7 +128,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 var clientId = progressTracker.Key;
                 var progress = progressTracker.Value.Progress;
-                if (clientId != NetworkManager.LocalClientId)
+                if (clientId != NetworkManager.Singleton.LocalClientId)
                 {
                     if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                     {
@@ -143,7 +143,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                         }
                         else
                         {
-                            Debug.LogError("There are not enough progress bars to track the progress of all the players.");
+                            throw new Exception("There are not enough progress bars to track the progress of all the players.");
                         }
                     }
                 }

@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.Utilities;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -19,7 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             foreach (var player in m_PersistentPlayerRuntimeCollection.Items)
             {
                 var clientId = player.OwnerClientId;
-                if (clientId != NetworkManager.LocalClientId)
+                if (clientId != NetworkManager.Singleton.LocalClientId)
                 {
                     if (m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                     {
