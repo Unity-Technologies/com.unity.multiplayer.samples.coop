@@ -107,6 +107,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     StopCoroutine(m_TryToReconnectCoroutine);
                     m_TryToReconnectCoroutine = null;
+                    m_ReconnectMessagePub.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
                 }
                 // If we are the server, shutdown will be handled by ServerGameNetPortal
                 if (!m_Portal.NetManager.IsServer)
@@ -133,6 +134,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     StopCoroutine(m_TryToReconnectCoroutine);
                     m_TryToReconnectCoroutine = null;
+                    m_ReconnectMessagePub.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
                 }
                 m_ConnectStatusPub.Publish(status);
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
@@ -229,13 +231,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             // If the coroutine has not been stopped before this, it means we failed to connect during all attempts
             Debug.Log("All tries failed, returning to main menu");
-            m_LobbyServiceFacade.EndTracking();
-            if (NetworkManager.Singleton.IsListening)
-            {
-                NetworkManager.Singleton.Shutdown();
-            }
-
-            SceneLoaderWrapper.Instance.LoadScene("MainMenu");
+            m_ApplicationController.LeaveSession(false);
             if (!DisconnectReason.HasTransitionReason)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);

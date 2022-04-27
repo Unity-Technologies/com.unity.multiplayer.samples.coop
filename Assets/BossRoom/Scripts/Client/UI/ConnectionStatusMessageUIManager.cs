@@ -42,7 +42,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     PopupManager.ShowPopupPanel("Connection Failed", "The Host is full and cannot accept any additional connections.");
                     break;
                 case ConnectStatus.Success:
-                    CloseReconnectPopup();
                     break;
                 case ConnectStatus.LoggedInAgain:
                     PopupManager.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account.");
