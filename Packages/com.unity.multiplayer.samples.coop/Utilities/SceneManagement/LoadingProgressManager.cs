@@ -31,13 +31,13 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         public float LocalProgress
         {
-            get => m_LocalProgress;
+            get => IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ?
+                ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
             private set
             {
                 if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId))
                 {
                     ProgressTrackers[NetworkManager.LocalClientId].Progress.Value = value;
-                    m_LocalProgress = value;
                 }
                 else
                 {
