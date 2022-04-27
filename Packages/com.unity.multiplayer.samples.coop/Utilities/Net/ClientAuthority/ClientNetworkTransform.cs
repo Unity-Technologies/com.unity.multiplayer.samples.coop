@@ -1,7 +1,8 @@
 using Unity.Netcode.Components;
+using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Netcode.Samples
+namespace Unity.Multiplayer.Samples.Utilities.ClientAuthority
 {
     // TODO change to owner netvar instead of RPC based
     /// <summary>

@@ -1,5 +1,5 @@
 {
-    "name": "ClientAuthority",
+    "name": "Unity.Multiplayer.Samples.Utilities.ClientAuthority",
     "rootNamespace": "",
     "references": [
         "Unity.Netcode.Components",
