@@ -37,5 +37,10 @@ namespace Unity.Netcode.Samples
                 }
             }
         }
+
+        protected override bool OnIsServerAuthoritatitive()
+        {
+            return false;
+        }
     }
 }
