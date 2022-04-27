@@ -1,5 +1,5 @@
 {
-    "name": "Unity.Multiplayer.Samples.BossRoom.Tests.Runtime",
+    "name": "Unity.Multiplayer.Samples.Utilities.Tests.Runtime",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",

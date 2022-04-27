@@ -1,5 +1,5 @@
 {
-    "name": "Unity.Multiplayer.Samples.BossRoom.Tests.Editor",
+    "name": "Unity.Multiplayer.Samples.Utilities.Tests.Editor",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",

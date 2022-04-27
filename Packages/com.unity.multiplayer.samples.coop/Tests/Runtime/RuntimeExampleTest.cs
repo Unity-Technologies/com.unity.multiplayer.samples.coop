@@ -3,7 +3,7 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+namespace Unity.Multiplayer.Samples.Utilities.Tests.Runtime
 {
     public class RuntimeExampleTest
     {
