@@ -3,16 +3,19 @@
     "rootNamespace": "",
     "references": [
         "Unity.Netcode.Runtime",
+        "Unity.Netcode.Components",
         "Cinemachine",
+        "Unity.Collections",
         "Unity.TextMeshPro",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
         "Unity.Services.Relay",
-        "Unity.Multiplayer.Samples.Utilities",
         "Unity.Services.Lobbies",
+        "Unity.Multiplayer.Samples.Utilities",
+        "Unity.Networking.Transport",
         "com.unity.multiplayer.bossroom.infrastructure",
-        "Unity.Collections",
-        "Unity.Netcode.Components"
+        "com.unity.multiplayer.bossroom.unityservices",
+        "com.unity.multiplayer.bossroom.navigation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
