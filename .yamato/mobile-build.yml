@@ -43,6 +43,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
         - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
         - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
+        - python .yamato/disable-burst-if-requested.py --project-path {{ project.path }} --platform Android
         # Build player(s)
         - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only
 
