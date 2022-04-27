@@ -4,6 +4,7 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.Utilities.ClientAuthority
 {
+    // TODO inherit from `NetworkBehaviour` instead of `NetworkTransform` to cut direct relationship between two
     // TODO change to owner netvar instead of RPC based
     /// <summary>
     /// Used for syncing a transform with client side changes. This includes host. Pure server as owner isn't supported by this. Please use NetworkTransform
