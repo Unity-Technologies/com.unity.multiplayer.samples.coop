@@ -1,3 +1,5 @@
+using System;
+
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     public static class MessageChannelDIExtensions
@@ -6,7 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             scope.BindInstanceAsSingle<MessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new MessageChannel<TMessage>());
         }
-        public static void BindNetworkedMessageChannelInstance<TMessage>(this DIScope scope) where TMessage : unmanaged
+        public static void BindNetworkedMessageChannelInstance<TMessage>(this DIScope scope) where TMessage : unmanaged, IComparable, IConvertible, IComparable<TMessage>, IEquatable<TMessage>
         {
             scope.BindInstanceAsSingle<NetworkedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new NetworkedMessageChannel<TMessage>());
         }
