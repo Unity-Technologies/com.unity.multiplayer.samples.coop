@@ -11,10 +11,19 @@ namespace Unity.Multiplayer.Samples.Utilities
     /// </summary>
     public class LoadingProgressManager : NetworkBehaviour
     {
-        [SerializeField]
-        GameObject m_ProgressTrackerPrefab;
+        public struct LoadingProgressTracker : IEquatable<LoadingProgressTracker>
+        {
+            public ulong ClientId;
+            public float Progress;
+            public bool Equals(LoadingProgressTracker other)
+            {
+                return ClientId == other.ClientId && Math.Abs(Progress - other.Progress) < k_ProgressDifferenceTolerance;
+            }
 
-        public Dictionary<ulong, NetworkedLoadingProgressTracker> ProgressTrackers { get; } = new Dictionary<ulong, NetworkedLoadingProgressTracker>();
+            const float k_ProgressDifferenceTolerance = 0.1f;
+        }
+
+        public NetworkList<LoadingProgressTracker> ProgressTrackers;
 
         public AsyncOperation LocalLoadOperation
         {
@@ -22,29 +31,34 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 LocalProgress = 0;
                 m_LocalLoadOperation = value;
+                StartCoroutine(UpdateLocalProgress());
+                if (IsServer)
+                {
+                    ReinitializeProgressTrackers();
+                }
             }
         }
 
         AsyncOperation m_LocalLoadOperation;
 
         float m_LocalProgress;
-        public event Action onTrackersUpdated;
 
         public float LocalProgress
         {
-            get => IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ?
-                ProgressTrackers[NetworkManager.LocalClientId].Progress.Value : m_LocalProgress;
+            get => m_LocalProgress;
             private set
             {
-                if (IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId))
+                if (IsSpawned)
                 {
-                    ProgressTrackers[NetworkManager.LocalClientId].Progress.Value = value;
+                    UpdateClientProgressServerRpc(NetworkManager.LocalClientId, value);
                 }
-                else
-                {
-                    m_LocalProgress = value;
-                }
+                m_LocalProgress = value;
             }
+        }
+
+        void Awake()
+        {
+            ProgressTrackers = new NetworkList<LoadingProgressTracker>();
         }
 
         public override void OnNetworkSpawn()
@@ -66,41 +80,50 @@ namespace Unity.Multiplayer.Samples.Utilities
             ProgressTrackers.Clear();
         }
 
-        void Update()
+        IEnumerator UpdateLocalProgress()
         {
             if (m_LocalLoadOperation != null)
             {
-                LocalProgress = m_LocalLoadOperation.isDone ? 1 : m_LocalLoadOperation.progress;
+                while (!m_LocalLoadOperation.isDone)
+                {
+                    LocalProgress = m_LocalLoadOperation.progress;
+                    yield return new WaitForSeconds(0.2f);
+                }
+
+                LocalProgress = 1;
             }
         }
 
-        [ClientRpc]
-        void UpdateTrackersClientRpc()
+        void ReinitializeProgressTrackers()
         {
-            if (!IsHost)
+            for (var i = 0; i < ProgressTrackers.Count; i++)
             {
-                ProgressTrackers.Clear();
-                foreach (var tracker in FindObjectsOfType<NetworkedLoadingProgressTracker>())
-                {
-                    ProgressTrackers[tracker.OwnerClientId] = tracker;
-                    if (tracker.OwnerClientId == NetworkManager.LocalClientId)
-                    {
-                        LocalProgress = Mathf.Max(m_LocalProgress, LocalProgress);
-                    }
-                }
+                var loadingProgressTracker = ProgressTrackers[i];
+                loadingProgressTracker.Progress = 0;
+                ProgressTrackers[i] = loadingProgressTracker;
             }
-            onTrackersUpdated?.Invoke();
+        }
+
+        [ServerRpc(RequireOwnership = false)]
+        void UpdateClientProgressServerRpc(ulong clientId, float progress)
+        {
+            for (var i = 0; i < ProgressTrackers.Count; i++)
+            {
+                var loadingProgressTracker = ProgressTrackers[i];
+                if (loadingProgressTracker.ClientId == clientId)
+                {
+                    loadingProgressTracker.Progress = progress;
+                }
+
+                ProgressTrackers[i] = loadingProgressTracker;
+            }
         }
 
         void AddTracker(ulong clientId)
         {
             if (IsServer)
             {
-                var tracker = Instantiate(m_ProgressTrackerPrefab);
-                var networkObject = tracker.GetComponent<NetworkObject>();
-                networkObject.SpawnWithOwnership(clientId);
-                ProgressTrackers[clientId] = tracker.GetComponent<NetworkedLoadingProgressTracker>();
-                UpdateTrackersClientRpc();
+                ProgressTrackers.Add(new LoadingProgressTracker() { ClientId = clientId, Progress = 0 });
             }
         }
 
@@ -108,18 +131,15 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsServer)
             {
-                var tracker = ProgressTrackers[clientId];
-                ProgressTrackers.Remove(clientId);
-                tracker.NetworkObject.Despawn();
-                // This makes sure that clients received the Despawn message before the RPC.
-                StartCoroutine(WaitBeforeSendingRPC());
+                for (var i = 0; i < ProgressTrackers.Count; i++)
+                {
+                    var loadingProgressTracker = ProgressTrackers[i];
+                    if (loadingProgressTracker.ClientId == clientId)
+                    {
+                        ProgressTrackers.RemoveAt(i);
+                    }
+                }
             }
-        }
-
-        IEnumerator WaitBeforeSendingRPC()
-        {
-            yield return null;
-            UpdateTrackersClientRpc();
         }
     }
 }
