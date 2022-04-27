@@ -1,11 +1,11 @@
 {
-    "name": "Unity.Multiplayer.Samples.BossRoom.Debug.Cheats",
+    "name": "com.unity.multiplayer.bossroom",
     "rootNamespace": "",
     "references": [
-        "Unity.Netcode.Runtime",
-        "Unity.Multiplayer.Samples.BossRoom.Server",
-        "Unity.Multiplayer.Samples.BossRoom.Shared",
-        "Unity.Multiplayer.Samples.Utilities"
+        "GUID:ec2e12d3de28e40839f9a0b685184f49",
+        "GUID:ed77cc04b29ffca42860b1220217e140",
+        "GUID:1df222559045047c59a7e1dbd5726f62",
+        "GUID:e3abc1ceb6eae4836a8ff106702e66e5"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

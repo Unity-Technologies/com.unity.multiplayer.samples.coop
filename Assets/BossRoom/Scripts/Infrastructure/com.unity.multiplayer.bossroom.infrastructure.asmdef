@@ -1,13 +1,11 @@
 {
-    "name": "Unity.Multiplayer.Samples.BossRoom.Editor",
+    "name": "com.unity.multiplayer.bossroom.infrastructure",
     "rootNamespace": "",
     "references": [
-        "Unity.Netcode.Runtime",
-        "Unity.Multiplayer.Samples.BossRoom.Gameplay"
+        "GUID:1491147abca9d7d4bb7105af628b223e",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

@@ -1,15 +1,18 @@
 {
-    "name": "Unity.Multiplayer.Samples.BossRoom.Server",
+    "name": "Unity.Multiplayer.Samples.BossRoom.Gameplay",
     "rootNamespace": "",
     "references": [
         "Unity.Netcode.Runtime",
-        "Unity.Multiplayer.Samples.BossRoom.Shared",
+        "Cinemachine",
+        "Unity.TextMeshPro",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
         "Unity.Services.Relay",
-        "Unity.Netcode.Adapter.UTP",
-        "Unity.Netcode.Components",
-        "Unity.Multiplayer.Samples.Utilities"
+        "Unity.Multiplayer.Samples.Utilities",
+        "Unity.Services.Lobbies",
+        "com.unity.multiplayer.bossroom.infrastructure",
+        "Unity.Collections",
+        "Unity.Netcode.Components"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
