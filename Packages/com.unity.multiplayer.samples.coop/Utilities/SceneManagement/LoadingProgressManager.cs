@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -76,13 +77,16 @@ namespace Unity.Multiplayer.Samples.Utilities
         [ClientRpc]
         void UpdateTrackersClientRpc()
         {
-            ProgressTrackers.Clear();
-            foreach (var tracker in FindObjectsOfType<NetworkedLoadingProgressTracker>())
+            if (!IsHost)
             {
-                ProgressTrackers[tracker.OwnerClientId] = tracker;
-                if (tracker.OwnerClientId == NetworkManager.LocalClientId)
+                ProgressTrackers.Clear();
+                foreach (var tracker in FindObjectsOfType<NetworkedLoadingProgressTracker>())
                 {
-                    LocalProgress = Mathf.Max(m_LocalProgress, LocalProgress);
+                    ProgressTrackers[tracker.OwnerClientId] = tracker;
+                    if (tracker.OwnerClientId == NetworkManager.LocalClientId)
+                    {
+                        LocalProgress = Mathf.Max(m_LocalProgress, LocalProgress);
+                    }
                 }
             }
             onTrackersUpdated?.Invoke();
@@ -95,6 +99,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 var tracker = Instantiate(m_ProgressTrackerPrefab);
                 var networkObject = tracker.GetComponent<NetworkObject>();
                 networkObject.SpawnWithOwnership(clientId);
+                ProgressTrackers[clientId] = tracker.GetComponent<NetworkedLoadingProgressTracker>();
                 UpdateTrackersClientRpc();
             }
         }
@@ -106,8 +111,15 @@ namespace Unity.Multiplayer.Samples.Utilities
                 var tracker = ProgressTrackers[clientId];
                 ProgressTrackers.Remove(clientId);
                 tracker.NetworkObject.Despawn();
-                UpdateTrackersClientRpc();
+                // This makes sure that clients received the Despawn message before the RPC.
+                StartCoroutine(WaitBeforeSendingRPC());
             }
+        }
+
+        IEnumerator WaitBeforeSendingRPC()
+        {
+            yield return null;
+            UpdateTrackersClientRpc();
         }
     }
 }
