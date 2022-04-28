@@ -1,20 +1,22 @@
+using System;
 using Unity.Collections;
+using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
-    public struct LifeStateChangedEventMessage
+    public struct LifeStateChangedEventMessage : INetworkSerializeByMemcpy
     {
         public LifeState NewLifeState;
-        public FixedPlayerName CharacterName;
         public CharacterTypeEnum CharacterType;
+        public FixedPlayerName CharacterName;
     }
 
-    public struct DoorStateChangedEventMessage
+    public struct DoorStateChangedEventMessage : INetworkSerializeByMemcpy
     {
         public bool IsDoorOpen;
     }
 
-    public struct ConnectionEventMessage
+    public struct ConnectionEventMessage : INetworkSerializeByMemcpy
     {
         public ConnectStatus ConnectStatus;
         public FixedPlayerName PlayerName;
@@ -22,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-    public struct CheatUsedMessage
+    public struct CheatUsedMessage : INetworkSerializeByMemcpy
     {
         FixedString32Bytes m_CheatUsed;
         FixedPlayerName m_CheaterName;

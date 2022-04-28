@@ -27,7 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override string ToString()
         {
-            return m_Name.ToString();
+            return m_Name.Value.ToString();
         }
 
         public static implicit operator string(FixedPlayerName s) => s.ToString();
