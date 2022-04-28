@@ -42,6 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         const float k_PingIntervalSeconds = 0.1f;
         const float k_MaxWindowSize = k_MaxWindowSizeSeconds / k_PingIntervalSeconds;
 
+        const float k_StrugglingNetworkConditionsRTTThreshold = 130;
         const float k_BadNetworkConditionsRTTThreshold = 200;
 
         ExponentialMovingAverageCalculator m_BossRoomRTT = new ExponentialMovingAverageCalculator(0);
@@ -129,6 +130,18 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (m_TextStat != null)
                 {
                     m_TextToDisplay = $"RTT: {(m_BossRoomRTT.Average * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.Average.ToString("0")} ms";
+                    if (m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold)
+                    {
+                        m_TextStat.color = Color.red;
+                    }
+                    else if (m_UtpRTT.Average > k_StrugglingNetworkConditionsRTTThreshold)
+                    {
+                        m_TextStat.color = Color.yellow;
+                    }
+                    else
+                    {
+                        m_TextStat.color = Color.white;
+                    }
                 }
 
                 if (m_TextBadNetworkConditions != null)
