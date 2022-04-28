@@ -36,10 +36,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         LobbyServiceFacade m_LobbyServiceFacade;
 
+        IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
+
         [Inject]
-        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade)
+        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectionEventMessage> connectionEventPublisher)
         {
             m_LobbyServiceFacade = lobbyServiceFacade;
+            m_ConnectionEventPublisher = connectionEventPublisher;
         }
 
         void Start()
@@ -109,6 +112,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                     {
                         m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
+                    }
+
+                    var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
+                    if (sessionData.HasValue)
+                    {
+                        m_ConnectionEventPublisher.Publish(new ConnectionEventMessage(){ ConnectStatus = ConnectStatus.GenericDisconnect, PlayerName = sessionData.Value.PlayerName});
                     }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
@@ -198,8 +207,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //Populate our client scene map
                 m_ClientSceneMap[clientId] = connectionPayload.clientScene;
 
-                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
                 // connection approval will create a player object for you
+                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
+
+                m_ConnectionEventPublisher.Publish(new ConnectionEventMessage(){ ConnectStatus = ConnectStatus.Success, PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName});
             }
             else
             {
