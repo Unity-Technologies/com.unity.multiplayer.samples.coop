@@ -99,6 +99,14 @@ PrefabInstance:
       propertyPath: m_RuntimeNetworkObjectsSeparator
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 5762482089640033414, guid: 8b9c63e7d70c5ff48a03aad51e17103c, type: 3}
+      propertyPath: m_GameObjectsThatWillBeInjectedAutomatically.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5762482089640033414, guid: 8b9c63e7d70c5ff48a03aad51e17103c, type: 3}
+      propertyPath: m_GameObjectsThatWillBeInjectedAutomatically.Array.data[0]
+      value: 
+      objectReference: {fileID: 8528489606206953337}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 8b9c63e7d70c5ff48a03aad51e17103c, type: 3}
 --- !u!4 &6803673045227533488 stripped
@@ -167,6 +175,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d026428052f506a4a99ce1b7c94c4d45, type: 3}
+--- !u!1 &8528489606206953337 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 776943915682426285, guid: d026428052f506a4a99ce1b7c94c4d45, type: 3}
+  m_PrefabInstance: {fileID: 8976529767578041044}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6432827414648884918 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 2726635115303138402, guid: d026428052f506a4a99ce1b7c94c4d45, type: 3}

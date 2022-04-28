@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -19,6 +20,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         NetworkDoorState m_DoorState;
 
+        IPublisher<DoorStateChangedEventMessage> m_Publisher;
+
+        [Inject]
+        void InjectDependencies(IPublisher<DoorStateChangedEventMessage> publisher)
+        {
+            m_Publisher = publisher;
+        }
+
         public override void OnNetworkSpawn()
         {
             if (!IsClient)
@@ -30,7 +39,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 m_DoorState.IsOpen.OnValueChanged += OnDoorStateChanged;
 
                 // initialize visuals based on current server state (or else we default to "closed")
-                OnDoorStateChanged(false, m_DoorState.IsOpen.Value);
+                m_PhysicsObject.SetActive(!m_DoorState.IsOpen.Value);
+
+                var gameState = FindObjectOfType<ClientBossRoomState>();
+                if (gameState != null)
+                {
+                    gameState.Scope.InjectIn(this);
+                }
             }
         }
 
@@ -45,6 +60,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)
         {
             m_PhysicsObject.SetActive(!isDoorOpen);
+            m_Publisher?.Publish(new DoorStateChangedEventMessage() { IsDoorOpen = isDoorOpen });
         }
     }
 }
