@@ -3,12 +3,12 @@ using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
 
-namespace Unity.Multiplayer.Samples.Utilities.Tests.Editor
+namespace Unity.Multiplayer.Samples.Utilities.Tests.Runtime
 {
-    class EditorExampleTest
+    public class RuntimeExampleTest
     {
         [Test]
-        public void EditorSampleTestSimplePasses()
+        public void RuntimeExampleTestSimplePasses()
         {
             // Use the Assert class to test conditions.
         }
@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.Utilities.Tests.Editor
         // A UnityTest behaves like a coroutine in PlayMode
         // and allows you to yield null to skip a frame in EditMode
         [UnityTest]
-        public IEnumerator EditorSampleTestWithEnumeratorPasses()
+        public IEnumerator RuntimeExampleTestWithEnumeratorPasses()
         {
             // Use the Assert class to test conditions.
             // yield to skip a frame

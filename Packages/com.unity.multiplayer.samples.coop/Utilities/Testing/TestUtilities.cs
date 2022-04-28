@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using NUnit.Framework;
@@ -12,7 +13,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         /// <summary>
         /// Helper wrapper method for asserting the completion of a scene load to be used inside Playmode tests. A scene
-        /// is either loaded successfully, or the loading process has timed out.
+        /// is either loaded successfully, or the loading process has timed out and will throw an exception.
         /// </summary>
         /// <param name="sceneName"> Name of scene </param>
         /// <returns> IEnumerator to track scene load process </returns>
@@ -26,8 +27,8 @@ namespace Unity.Multiplayer.Samples.Utilities
         }
 
         /// <summary>
-        /// Helper wrapper method for asserting the completion of a scene load to be used inside Playmode tests. A scene
-        /// is either loaded successfully, or the loading process has timed out.
+        /// Helper wrapper method for asserting the completion of a network scene load to be used inside Playmode tests.
+        /// A scene is either loaded successfully, or the loading process has timed out and will throw an exception.
         /// </summary>
         /// <param name="sceneName"> Name of scene </param>
         /// <param name="networkSceneManager"> NetworkSceneManager instance </param>
@@ -68,6 +69,8 @@ namespace Unity.Multiplayer.Samples.Utilities
                     if (Time.time - m_LoadSceneStart >= m_MaxLoadDuration)
                     {
                         TimedOut = true;
+
+                        throw new Exception($"Timeout for scene load for scene name {m_SceneName}");
                     }
 
                     return !isSceneLoaded && !TimedOut;
@@ -83,8 +86,8 @@ namespace Unity.Multiplayer.Samples.Utilities
         }
 
         /// <summary>
-        /// Custom IEnumerator class to validate the loading of a Scene by name. If a scene load lasts longer than
-        /// k_MaxSceneLoadDuration it is considered a timeout.
+        /// Custom IEnumerator class to validate the loading of a Scene through Netcode for GameObjects by name.
+        /// If a scene load lasts longer than k_MaxSceneLoadDuration it is considered a timeout.
         /// </summary>
         class WaitForNetworkSceneLoad : CustomYieldInstruction
         {
@@ -109,6 +112,8 @@ namespace Unity.Multiplayer.Samples.Utilities
                         TimedOut = true;
 
                         m_NetworkSceneManager.OnSceneEvent -= ConfirmSceneLoad;
+
+                        throw new Exception($"Timeout for network scene load for scene name {m_SceneName}");
                     }
 
                     return !m_IsNetworkSceneLoaded && !TimedOut;
