@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
@@ -14,10 +15,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         CanvasGroup m_CanvasGroup;
 
         [SerializeField]
+        TextMeshProUGUI m_TitleText;
+
         IPUIMediator m_IPUIMediator;
 
-        [SerializeField]
-        TextMeshProUGUI m_TitleText;
+        [Inject]
+        void InjectDependencies(IPUIMediator ipUIMediator)
+        {
+            m_IPUIMediator = ipUIMediator;
+        }
 
         void Awake()
         {
