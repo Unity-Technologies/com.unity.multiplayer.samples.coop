@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using NUnit.Framework;
 using Unity.Netcode;
@@ -12,21 +13,6 @@ namespace Unity.Multiplayer.Samples.Utilities
         const float k_MaxSceneLoadDuration = 10f;
 
         /// <summary>
-        /// Helper wrapper method for asserting the completion of a scene load to be used inside Playmode tests. A scene
-        /// is either loaded successfully, or the loading process has timed out and will throw an exception.
-        /// </summary>
-        /// <param name="sceneName"> Name of scene </param>
-        /// <returns> IEnumerator to track scene load process </returns>
-        public static IEnumerator AssertIsSceneLoaded(string sceneName)
-        {
-            var waitUntilSceneLoaded = new WaitForSceneLoad(sceneName);
-
-            yield return waitUntilSceneLoaded;
-
-            Assert.That(!waitUntilSceneLoaded.TimedOut);
-        }
-
-        /// <summary>
         /// Helper wrapper method for asserting the completion of a network scene load to be used inside Playmode tests.
         /// A scene is either loaded successfully, or the loading process has timed out and will throw an exception.
         /// </summary>
@@ -37,26 +23,20 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             Assert.That(networkSceneManager != null, "NetworkSceneManager instance is null!");
 
-            var waitForNetworkSceneLoad = new WaitForNetworkSceneLoad(sceneName, networkSceneManager);
-
-            yield return waitForNetworkSceneLoad;
-
-            Assert.That(!waitForNetworkSceneLoad.TimedOut);
+            yield return new WaitForNetworkSceneLoad(sceneName, networkSceneManager);
         }
 
         /// <summary>
         /// Custom IEnumerator class to validate the loading of a Scene by name. If a scene load lasts longer than
         /// k_MaxSceneLoadDuration it is considered a timeout.
         /// </summary>
-        class WaitForSceneLoad : CustomYieldInstruction
+        public class WaitForSceneLoad : CustomYieldInstruction
         {
             string m_SceneName;
 
             float m_LoadSceneStart;
 
             float m_MaxLoadDuration;
-
-            public bool TimedOut { get; private set; }
 
             public override bool keepWaiting
             {
@@ -68,12 +48,10 @@ namespace Unity.Multiplayer.Samples.Utilities
 
                     if (Time.time - m_LoadSceneStart >= m_MaxLoadDuration)
                     {
-                        TimedOut = true;
-
                         throw new Exception($"Timeout for scene load for scene name {m_SceneName}");
                     }
 
-                    return !isSceneLoaded && !TimedOut;
+                    return !isSceneLoaded;
                 }
             }
 
@@ -101,22 +79,18 @@ namespace Unity.Multiplayer.Samples.Utilities
 
             NetworkSceneManager m_NetworkSceneManager;
 
-            public bool TimedOut { get; private set; }
-
             public override bool keepWaiting
             {
                 get
                 {
                     if (Time.time - m_LoadSceneStart >= m_MaxLoadDuration)
                     {
-                        TimedOut = true;
-
-                        m_NetworkSceneManager.OnSceneEvent -= ConfirmSceneLoad;
+                        m_NetworkSceneManager.OnLoadEventCompleted -= ConfirmSceneLoad;
 
                         throw new Exception($"Timeout for network scene load for scene name {m_SceneName}");
                     }
 
-                    return !m_IsNetworkSceneLoaded && !TimedOut;
+                    return !m_IsNetworkSceneLoaded;
                 }
             }
 
@@ -128,17 +102,16 @@ namespace Unity.Multiplayer.Samples.Utilities
 
                 m_NetworkSceneManager = networkSceneManager;
 
-                m_NetworkSceneManager.OnSceneEvent += ConfirmSceneLoad;
+                m_NetworkSceneManager.OnLoadEventCompleted += ConfirmSceneLoad;
             }
 
-            void ConfirmSceneLoad(SceneEvent sceneEvent)
+            void ConfirmSceneLoad(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
             {
-                if (sceneEvent.SceneName == m_SceneName &&
-                    sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
+                if (sceneName == m_SceneName)
                 {
                     m_IsNetworkSceneLoaded = true;
 
-                    m_NetworkSceneManager.OnSceneEvent -= ConfirmSceneLoad;
+                    m_NetworkSceneManager.OnLoadEventCompleted -= ConfirmSceneLoad;
                 }
             }
         }
