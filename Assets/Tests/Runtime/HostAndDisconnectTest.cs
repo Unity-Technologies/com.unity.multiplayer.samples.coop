@@ -31,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             SceneManager.LoadSceneAsync(k_BootstrapSceneName);
 
             // validate the loading of project's Bootstrap scene
-            yield return TestUtilities.AssertIsSceneLoaded(k_BootstrapSceneName);
+            yield return new TestUtilities.WaitForSceneLoad(k_BootstrapSceneName);
 
             // Bootstrap scene is loaded, containing NetworkManager instance; cache it
             m_NetworkManager = NetworkManager.Singleton;
@@ -39,14 +39,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.That(m_NetworkManager != null);
 
             // MainMenu is loaded as soon as Startup scene is launched, validate it is loaded
-            yield return TestUtilities.AssertIsSceneLoaded(k_MainMenuSceneName);
+            yield return new TestUtilities.WaitForSceneLoad(k_MainMenuSceneName);
 
             yield return new WaitForEndOfFrame();
         }
 
         IEnumerator WaitUntilCharacterIsSelectedAndReady(int playerIndex)
         {
-            yield return TestUtilities.AssertIsSceneLoaded(k_CharSelectSceneName);
+            yield return new TestUtilities.WaitForSceneLoad(k_CharSelectSceneName);
 
             yield return new WaitForEndOfFrame();
 
@@ -100,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.That(!NetworkManager.Singleton.IsListening, "NetworkManager not fully shut down!");
 
             // MainMenu is loaded as soon as a shutdown is encountered; validate it is loaded
-            yield return TestUtilities.AssertIsSceneLoaded(k_MainMenuSceneName);
+            yield return new TestUtilities.WaitForSceneLoad(k_MainMenuSceneName);
         }
 
         /// <summary>
