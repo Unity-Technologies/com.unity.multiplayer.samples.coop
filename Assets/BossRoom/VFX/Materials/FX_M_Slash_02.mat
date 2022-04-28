@@ -80,6 +80,8 @@ Material:
     - _MainTexturePower: 1
     - _Mask: 4
     - _MaskPower: 2
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _Scale: 1
     - __dirty: 0
     m_Colors:

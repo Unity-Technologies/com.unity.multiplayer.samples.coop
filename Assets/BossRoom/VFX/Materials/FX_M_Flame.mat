@@ -122,6 +122,8 @@ Material:
     - _OutsideAmount: 0.199
     - _Power: 0.5
     - _PushForward: 0
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _ShadingAmount: 0
     - _SideAmount: 0.15
     - _Speed: 1

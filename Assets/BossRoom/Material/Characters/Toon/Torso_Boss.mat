@@ -95,6 +95,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _RimAmount: 0.208
     - _RimThreshold: 0.595
     - _SmoothnessTextureChannel: 0

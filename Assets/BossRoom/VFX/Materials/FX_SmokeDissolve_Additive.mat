@@ -23,6 +23,7 @@ Material:
   m_Name: FX_SmokeDissolve_Additive
   m_Shader: {fileID: -6465566751694194690, guid: 5d29e5b8a08dd994aae83e406b3ffb62, type: 3}
   m_ValidKeywords:
+  - _DISSOLVE_TYPE_CUSTOM
   - _DIS_TYPE_DISSOLVETEXRED
   m_InvalidKeywords:
   - ENUM_77760446580F4017ADC8BE0606DB8FC3_DISSOLVETEXRED
@@ -142,6 +143,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
