@@ -15,14 +15,18 @@ MonoBehaviour:
   version: 5
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_GroundCrack
   m_Shader: {fileID: -6465566751694194690, guid: 98d049a5b372986479d42cfc7e88f269, type: 3}
-  m_ShaderKeywords: _HASTEXTUREDISSOLVE_ON _STEPSUBTRACT_ON _VERTEXAOPACITY_ON
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _HASTEXTUREDISSOLVE_ON
+  - _STEPSUBTRACT_ON
+  - _VERTEXAOPACITY_ON
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -163,3 +167,16 @@ Material:
     - _TileSpeedDissolveTexture: {r: 0.5, g: 0.5, b: 0, a: 0.2}
     - _TileSpeedMainTexture: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
+--- !u!114 &6825680316176090831
+MonoBehaviour:
+  m_ObjectHideFlags: 11
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  version: 5

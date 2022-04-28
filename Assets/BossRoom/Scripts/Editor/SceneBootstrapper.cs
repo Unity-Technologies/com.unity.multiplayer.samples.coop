@@ -34,6 +34,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
         const string k_LoadBootstrapSceneOnPlay = "Boss Room/Load Bootstrap Scene On Play";
         const string k_DoNotLoadBootstrapSceneOnPlay = "Boss Room/Don't Load Bootstrap Scene On Play";
 
+        const string k_TestRunnerSceneName = "InitTestScene";
+
         static bool s_StoppingAndStarting;
 
         static string BootstrapScene
@@ -99,6 +101,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         static void EditorApplicationOnplayModeStateChanged(PlayModeStateChange obj)
         {
+            if (IsTestRunnerActive())
+            {
+                return;
+            }
+
             if (!LoadBootstrapScene)
             {
                 return;
@@ -156,6 +163,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                     EditorSceneManager.OpenScene(PreviousScene);
                 }
             }
+        }
+
+        static bool IsTestRunnerActive()
+        {
+            return EditorSceneManager.GetActiveScene().name.StartsWith(k_TestRunnerSceneName);
         }
     }
 }

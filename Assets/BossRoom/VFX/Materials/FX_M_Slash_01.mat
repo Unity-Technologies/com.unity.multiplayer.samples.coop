@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-1349988442238494545
+--- !u!114 &-2863455670122996325
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15,14 +15,15 @@ MonoBehaviour:
   version: 5
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_Slash_01
   m_Shader: {fileID: -6465566751694194690, guid: 5c90e4042929e434ea65849264330573, type: 3}
-  m_ShaderKeywords: 
+  m_ValidKeywords: []
+  m_InvalidKeywords: []
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -79,8 +80,6 @@ Material:
     - _MainTexturePower: 1
     - _Mask: 4
     - _MaskPower: 1
-    - _QueueControl: 0
-    - _QueueOffset: 0
     - _Scale: 1
     - __dirty: 0
     m_Colors:

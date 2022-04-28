@@ -2,14 +2,16 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_256_sheet_1
   m_Shader: {fileID: -6465566751694194690, guid: 92805c84615a06441a1dbd0c9d0ac1d8, type: 3}
-  m_ShaderKeywords: _USE_ALPHA_ON
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _USE_ALPHA_ON
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0

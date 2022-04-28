@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -41,9 +43,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         public bool InitialSpawnDone { get; private set; }
 
-        //these Ids are recorded for event unregistration at destruction time and are not maintained (the objects they point to may be destroyed during
-        //the lifetime of the ServerBossRoomState).
-        private List<ulong> m_HeroIds = new List<ulong>();
+        /// <summary>
+        /// Keeping the subscriber during this GameState's lifetime to allow disposing of subscription and re-subscribing
+        /// when despawning and spawning again.
+        /// </summary>
+        ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
+
+        IDisposable m_Subscription;
+
+        [Inject]
+        void InjectDependencies(ISubscriber<LifeStateChangedEventMessage> subscriber)
+        {
+            m_LifeStateChangedEventMessageSubscriber = subscriber;
+        }
 
         public override void OnNetworkSpawn()
         {
@@ -59,12 +71,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_NetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
                 m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
 
+                NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
                 NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
 
                 DoInitialSpawnIfPossible();
 
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
+                m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
             }
+        }
+
+        public override void OnDestroy()
+        {
+            m_Subscription?.Dispose();
         }
 
         private bool DoInitialSpawnIfPossible()
@@ -79,6 +98,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return true;
             }
             return false;
+        }
+
+        void OnClientDisconnect(ulong clientId)
+        {
+            if (clientId != NetworkManager.LocalClientId)
+            {
+                // If a client disconnects, check for game over in case all other players are already down
+                StartCoroutine(WaitToCheckForGameOver());
+            }
+        }
+
+        IEnumerator WaitToCheckForGameOver()
+        {
+            // Wait until next frame so that the client's player character has despawned
+            yield return null;
+            CheckForGameOver();
         }
 
         public void OnClientSceneChanged(SceneEvent sceneEvent)
@@ -110,33 +145,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkDespawn()
         {
-            foreach (ulong id in m_HeroIds)
-            {
-                var heroLife = GetLifeStateEvent(id);
-                if (heroLife != null)
-                {
-                    heroLife -= OnHeroLifeStateChanged;
-                }
-            }
-
             if (m_NetPortal != null)
             {
+                NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
                 NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
             }
-        }
-
-        /// <summary>
-        /// Helper method for OnDestroy that gets the NetworkLifeState.OnValueChanged event for a NetworkObjectId, or null if it doesn't exist.
-        /// </summary>
-        private NetworkVariable<LifeState>.OnValueChangedDelegate GetLifeStateEvent(ulong id)
-        {
-            //this is all a little paranoid, because during shutdown it's not always obvious what state is still valid.
-            if (NetworkManager != null && NetworkManager.SpawnManager != null && NetworkManager.SpawnManager.SpawnedObjects.TryGetValue(id, out NetworkObject netObj) && netObj != null)
-            {
-                var netState = netObj.GetComponent<NetworkCharacterState>();
-                return netState != null ? netState.NetworkLifeState.LifeState.OnValueChanged : null;
-            }
-            return null;
+            m_Subscription?.Dispose();
         }
 
         private void SpawnPlayer(ulong clientId, bool lateJoin)
@@ -198,11 +212,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 networkNameState.Name.Value = persistentPlayer.NetworkNameState.Name.Value;
             }
 
-            var netState = newPlayer.GetComponent<NetworkCharacterState>();
-
-            netState.NetworkLifeState.LifeState.OnValueChanged += OnHeroLifeStateChanged;
-            m_HeroIds.Add(netState.NetworkObjectId);
-
             // spawn players characters with destroyWithScene = true
             newPlayer.SpawnWithOwnership(clientId, true);
         }
@@ -213,31 +222,49 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             moveTransform.SetPositionAndRotation(newPosition, newRotation);
         }
 
-        // Every time a player's life state changes we check to see if game is over
-        private void OnHeroLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        void OnLifeStateChangedEventMessage(LifeStateChangedEventMessage message)
         {
-            // If this Hero is down, check the rest of the party also
-            if (lifeState == LifeState.Fainted)
+            switch (message.CharacterType)
             {
-                // Check the life state of all players in the scene
-                foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
-                {
-                    // if any player is alive just retun
-                    if (serverCharacter.NetState && serverCharacter.NetState.LifeState == LifeState.Alive)
+                case CharacterTypeEnum.Tank:
+                case CharacterTypeEnum.Archer:
+                case CharacterTypeEnum.Mage:
+                case CharacterTypeEnum.Rogue:
+                    // Every time a player's life state changes to fainted we check to see if game is over
+                    if (message.NewLifeState == LifeState.Fainted)
                     {
-                        return;
+                        CheckForGameOver();
                     }
-                }
 
-                // If we made it this far, all players are down! switch to post game
-                StartCoroutine(CoroGameOver(k_LoseDelay, false));
+                    break;
+                case CharacterTypeEnum.ImpBoss:
+                    if (message.NewLifeState == LifeState.Dead)
+                    {
+                        BossDefeated();
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
-        /// <summary>
-        /// Hooked up to GameListener UI event for the event when the boss is defeated.
-        /// </summary>
-        public void BossDefeated()
+        void CheckForGameOver()
+        {
+            // Check the life state of all players in the scene
+            foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
+            {
+                // if any player is alive just return
+                if (serverCharacter.NetState && serverCharacter.NetState.LifeState == LifeState.Alive)
+                {
+                    return;
+                }
+            }
+
+            // If we made it this far, all players are down! switch to post game
+            StartCoroutine(CoroGameOver(k_LoseDelay, false));
+        }
+
+        void BossDefeated()
         {
             // Boss is dead - set game won to true
             StartCoroutine(CoroGameOver(k_WinDelay, true));
