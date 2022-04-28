@@ -92,7 +92,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             InitializeTextLine($"Type: {hostType}", out m_TextHostType);
             InitializeTextLine("No Stat", out m_TextStat);
             InitializeTextLine("", out m_TextBadNetworkConditions);
-            m_TextBadNetworkConditions.color = Color.red;
             m_TextBadNetworkConditions.fontSize *= 1.5f;
         }
 
@@ -134,7 +133,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                 if (m_TextBadNetworkConditions != null)
                 {
-                    m_TextBadNetworkConditions.text = m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold ? "Bad Network Conditions!": "";
+                    m_TextBadNetworkConditions.text = m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold ? "Bad Network Conditions Detected!": "";
+                    var color = Color.red;
+                    color.a = Mathf.PingPong(Time.time, 1f);
+                    m_TextBadNetworkConditions.color = color;
                 }
             }
             else
