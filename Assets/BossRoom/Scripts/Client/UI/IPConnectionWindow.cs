@@ -63,7 +63,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case UnityTransport unityTransport:
                     var maxConnectAttempts= unityTransport.MaxConnectAttempts;
                     var connectTimeoutMS= unityTransport.ConnectTimeoutMS;
-                    StartCoroutine(DisplayUTPReconnectAttempts(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed));
+                    StartCoroutine(DisplayUTPConnectionDuration(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException(nameof(chosenTransport));
@@ -90,15 +90,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             endAction();
         }
 
-        IEnumerator DisplayUTPReconnectAttempts(int maxReconnectAttempts, int connectTimeoutMS, Action endAction)
+        IEnumerator DisplayUTPConnectionDuration(int maxReconnectAttempts, int connectTimeoutMS, Action endAction)
         {
-            var attempt = 0;
+            var connectionDuration = maxReconnectAttempts * connectTimeoutMS / 1000f;
 
-            while (attempt < maxReconnectAttempts)
+            while (connectionDuration > 0f)
             {
-                attempt++;
-                m_TitleText.text = $"Connecting...{attempt}/{maxReconnectAttempts}.";
-                yield return new WaitForSeconds(connectTimeoutMS / 1000f);
+                m_TitleText.text = $"Connecting...\n{Mathf.Round(connectionDuration)}";
+                connectionDuration -= Time.deltaTime;
+                yield return null;
             }
             m_TitleText.text = "Connecting...";
 
