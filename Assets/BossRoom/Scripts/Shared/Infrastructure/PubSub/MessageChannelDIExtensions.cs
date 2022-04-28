@@ -1,4 +1,5 @@
 using System;
+using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
@@ -8,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             scope.BindInstanceAsSingle<MessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new MessageChannel<TMessage>());
         }
-        public static void BindNetworkedMessageChannelInstance<TMessage>(this DIScope scope) where TMessage : unmanaged, IComparable, IConvertible, IComparable<TMessage>, IEquatable<TMessage>
+        public static void BindNetworkedMessageChannelInstance<TMessage>(this DIScope scope) where TMessage : unmanaged, INetworkSerializeByMemcpy
         {
             scope.BindInstanceAsSingle<NetworkedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new NetworkedMessageChannel<TMessage>());
         }
