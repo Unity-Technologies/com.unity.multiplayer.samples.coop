@@ -1,3 +1,4 @@
+using System;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
@@ -18,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public struct FixedPlayerName : INetworkSerializable
     {
-        private FixedString32Bytes m_Name;
+        ForceNetworkSerializeByMemcpy<FixedString32Bytes> m_Name; // using ForceNetworkSerializeByMemcpy to force compatibility between FixedString and NetworkSerializable
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref m_Name);
@@ -26,7 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override string ToString()
         {
-            return m_Name.ToString();
+            return m_Name.Value.ToString();
         }
 
         public static implicit operator string(FixedPlayerName s) => s.ToString();

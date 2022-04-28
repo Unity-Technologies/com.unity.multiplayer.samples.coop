@@ -1,0 +1,17 @@
+{
+    "name": "Unity.Multiplayer.Samples.Utilities.ClientAuthority",
+    "rootNamespace": "",
+    "references": [
+        "Unity.Netcode.Components",
+        "Unity.Netcode.Runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
