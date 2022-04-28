@@ -133,6 +133,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
                 if (m_TextBadNetworkConditions != null)
                 {
+                    // Right now, we only base this warning on UTP's RTT metric, but in the future we could watch for packet loss as well, or other metrics.
                     m_TextBadNetworkConditions.text = m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold ? "Bad Network Conditions Detected!": "";
                     var color = Color.red;
                     color.a = Mathf.PingPong(Time.time, 1f);
