@@ -2,14 +2,16 @@
 %TAG !u! tag:unity3d.com,2011:
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Torso_Mage_Boy
   m_Shader: {fileID: -6465566751694194690, guid: 317f1cf71d2fc30458456d44f39763d2, type: 3}
-  m_ShaderKeywords: _NORMALMAP
+  m_ValidKeywords: []
+  m_InvalidKeywords:
+  - _NORMALMAP
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -80,6 +82,8 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _RimAmount: 0.366
     - _RimThreshold: 0
     - _SmoothnessTextureChannel: 0
@@ -94,7 +98,7 @@ Material:
     - _RimColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
     - _SpecularColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &2133072829566954563
+--- !u!114 &4394423527595315002
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-2141254376188619434
+--- !u!114 &-6616853229409593232
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -15,15 +15,21 @@ MonoBehaviour:
   version: 5
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_Star
   m_Shader: {fileID: -6465566751694194690, guid: d54feb6741d5a364f918677061708544, type: 3}
-  m_ShaderKeywords: _DISSOLVETYPE_SLIDER _DISSOLVETYPE_UV _DISSOLVE_TYPE_SLIDER _DISSOLVE_UV
-    _DISTYPE_UV _DIS_TYPE_UV
+  m_ValidKeywords:
+  - _DISSOLVE_TYPE_SLIDER
+  - _DIS_TYPE_UV
+  m_InvalidKeywords:
+  - _DISSOLVETYPE_SLIDER
+  - _DISSOLVETYPE_UV
+  - _DISSOLVE_UV
+  - _DISTYPE_UV
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
