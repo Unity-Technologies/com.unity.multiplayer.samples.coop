@@ -25,11 +25,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] IPHostingUI m_IPHostingUI;
 
         [SerializeField] UITinter m_JoinTabButtonHighlightTinter;
-        
+
         [SerializeField] UITinter m_JoinTabButtonTabBlockerTinter;
 
         [SerializeField] UITinter m_HostTabButtonHighlightTinter;
-        
+
         [SerializeField] UITinter m_HostTabButtonTabBlockerTinter;
 
         [SerializeField] GameObject m_SignInSpinner;
@@ -37,6 +37,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         NameGenerationData m_NameGenerationData;
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
+
+        public IPHostingUI IPHostingUI => m_IPHostingUI;
 
         [Inject]
         void InjectDependenciesAndInitialize(

@@ -89,6 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         {
             m_LobbyServiceFacade?.EndTracking();
             DIScope.RootScope.Dispose();
+            DIScope.RootScope = null;
         }
 
         /// <summary>
