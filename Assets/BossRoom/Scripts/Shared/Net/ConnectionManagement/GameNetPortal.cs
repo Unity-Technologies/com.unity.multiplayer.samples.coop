@@ -24,14 +24,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         GenericDisconnect,        //server disconnected, but no specific reason given.
         IncompatibleBuildType,    //client build type is incompatible with server.
         HostEndedSession,         //host intentionally ended the session.
-    }
-
-    public enum OnlineMode
-    {
-        IpHost = 0, // The server is hosted directly and clients can join by ip address.
-        UnityRelay = 1, // The server is hosted over a Unity Relay server and clients join by entering a join code.
-        Unset = -1, // The hosting mode is not set yet.
-
+        StartHostFailed,          // server failed to bind
+        StartClientFailed         // failed to connect to server and/or invalid network endpoint
     }
 
     [Serializable]

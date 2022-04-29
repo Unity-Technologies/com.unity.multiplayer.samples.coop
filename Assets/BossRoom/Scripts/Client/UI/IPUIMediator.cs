@@ -37,17 +37,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         NameGenerationData m_NameGenerationData;
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         [Inject]
         void InjectDependenciesAndInitialize(
             NameGenerationData nameGenerationData,
             GameNetPortal gameNetPortal,
-            ClientGameNetPortal clientGameNetPortal
+            ClientGameNetPortal clientGameNetPortal,
+            IPublisher<ConnectStatus> connectStatusPublisher
         )
         {
             m_NameGenerationData = nameGenerationData;
             m_GameNetPortal = gameNetPortal;
             m_ClientNetPortal = clientGameNetPortal;
+            m_ConnectStatusPublisher = connectStatusPublisher;
 
             RegenerateName();
         }
@@ -81,7 +84,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else
             {
-                PopupManager.ShowPopupPanel("Connection Failed", "Server failed to bind.");
+                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
             }
         }
 

@@ -19,10 +19,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         IPUIMediator m_IPUIMediator;
 
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+
         [Inject]
-        void InjectDependencies(IPUIMediator ipUIMediator)
+        void InjectDependencies(IPUIMediator ipUIMediator, IPublisher<ConnectStatus> connectStatusPublisher)
         {
             m_IPUIMediator = ipUIMediator;
+            m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
         void Awake()
@@ -49,8 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             void OnTimeElapsed()
             {
-                PopupManager.ShowPopupPanel("Connection Failed",
-                    "Failed to connect to server and/or invalid network endpoint");
+                m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
                 Hide();
                 m_IPUIMediator.DisableSignInSpinner();
             }
