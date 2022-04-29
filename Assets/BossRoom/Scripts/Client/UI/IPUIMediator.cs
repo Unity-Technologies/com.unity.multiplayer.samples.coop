@@ -168,7 +168,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void CancelConnectingWindow()
         {
             RequestShutdown();
-            m_IPConnectionWindow.Cancel();
+            m_IPConnectionWindow.CancelConnectionWindow();
         }
 
         /// <summary>

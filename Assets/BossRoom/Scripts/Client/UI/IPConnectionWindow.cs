@@ -72,12 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             Show();
         }
 
-        public void Cancel()
-        {
-            End();
-        }
-
-        void End()
+        public void CancelConnectionWindow()
         {
             Hide();
             StopAllCoroutines();
@@ -96,7 +91,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             while (connectionDuration > 0f)
             {
-                m_TitleText.text = $"Connecting...\n{Mathf.Round(connectionDuration)}";
+                m_TitleText.text = $"Connecting...\n{Mathf.CeilToInt(connectionDuration)}";
                 connectionDuration -= Time.deltaTime;
                 yield return null;
             }
@@ -108,8 +103,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         // invoked by UI cancel button
         public void OnCancelJoinButtonPressed()
         {
+            CancelConnectionWindow();
             m_IPUIMediator.JoiningWindowCancelled();
-            End();
         }
     }
 }
