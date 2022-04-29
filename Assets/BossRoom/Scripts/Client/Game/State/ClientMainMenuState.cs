@@ -43,7 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         [Inject]
-        async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
+        async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby, ProfileManager profileManager)
         {
             if (string.IsNullOrEmpty(Application.cloudProjectId))
             {
@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             try
             {
                 var unityAuthenticationInitOptions = new InitializationOptions();
-                var profile = ProfileManager.Profile;
+                var profile = profileManager.Profile;
                 if (profile.Length > 0)
                 {
                     unityAuthenticationInitOptions.SetProfile(profile);

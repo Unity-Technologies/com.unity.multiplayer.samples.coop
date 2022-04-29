@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 #if UNITY_EDITOR
 using System.Security.Cryptography;
@@ -9,13 +12,46 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared
 {
-    public static class ProfileManager
+    public class ProfileManager
     {
         public const string AuthProfileCommandLineArg = "-AuthProfile";
 
-        static string s_Profile;
+        static readonly string k_SavePath = Application.persistentDataPath + "/profiles.save";
 
-        public static string Profile => s_Profile ??= GetProfile();
+        string m_Profile;
+
+        public string Profile
+        {
+            get
+            {
+                return m_Profile ??= GetProfile();
+            }
+            set
+            {
+                if (!m_AvailableProfiles.Contains(value))
+                {
+                    m_AvailableProfiles.Add(value);
+                    SaveProfiles();
+                }
+
+                m_Profile = value;
+            }
+        }
+
+        List<String> m_AvailableProfiles;
+
+        public List<String> AvailableProfiles
+        {
+            get
+            {
+                if (m_AvailableProfiles == null)
+                {
+                    LoadProfiles();
+                }
+
+                return m_AvailableProfiles;
+            }
+        }
 
         static string GetProfile()
         {
@@ -43,5 +79,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return "";
 #endif
         }
+
+        void LoadProfiles()
+        {
+            if (File.Exists(k_SavePath))
+            {
+                BinaryFormatter bf = new BinaryFormatter();
+                FileStream file = File.Open(k_SavePath, FileMode.Open);
+                m_AvailableProfiles = (List<string>)bf.Deserialize(file);
+                file.Close();
+            }
+            else
+            {
+                m_AvailableProfiles = new List<string>();
+            }
+        }
+
+        void SaveProfiles()
+        {
+            BinaryFormatter bf = new BinaryFormatter();
+            FileStream file = File.Create(k_SavePath);
+            bf.Serialize(file, m_AvailableProfiles);
+            file.Close();
+        }
+
     }
 }

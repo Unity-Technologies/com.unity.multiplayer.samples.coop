@@ -47,6 +47,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindAsSingle<LocalLobbyUser>();
             scope.BindAsSingle<LocalLobby>();
 
+            scope.BindAsSingle<ProfileManager>();
+
             //these message channels are essential and persist for the lifetime of the lobby and relay services
             scope.BindMessageChannelInstance<UnityServiceErrorMessage>();
             scope.BindMessageChannelInstance<ConnectStatus>();

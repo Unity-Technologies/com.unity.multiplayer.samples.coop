@@ -93,12 +93,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         private LocalLobby m_LocalLobby;
         private LobbyServiceFacade m_LobbyServiceFacade;
+        private ProfileManager m_ProfileManager;
 
         [Inject]
-        private void InjectDependencies(LocalLobby localLobby, LobbyServiceFacade lobbyServiceFacade)
+        private void InjectDependencies(LocalLobby localLobby, LobbyServiceFacade lobbyServiceFacade, ProfileManager profileManager)
         {
             m_LocalLobby = localLobby;
             m_LobbyServiceFacade = lobbyServiceFacade;
+            m_ProfileManager = profileManager;
         }
 
         private void Awake()
@@ -252,10 +254,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (UnityServices.State != ServicesInitializationState.Initialized)
             {
-                return ClientPrefs.GetGuid() + ProfileManager.Profile;
+                return ClientPrefs.GetGuid() + m_ProfileManager.Profile;
             }
 
-            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + ProfileManager.Profile;
+            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + m_ProfileManager.Profile;
         }
     }
 }
