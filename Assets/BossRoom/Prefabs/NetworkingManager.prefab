@@ -55,6 +55,10 @@ MonoBehaviour:
     Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1 &503411707
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,6 +114,10 @@ MonoBehaviour:
     Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1 &5436007408952557947
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,8 +238,8 @@ MonoBehaviour:
     RecycleNetworkIds: 1
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
-    LoadSceneTimeOut: 120
-    MessageBufferTimeout: 20
+    LoadSceneTimeOut: 20
+    SpawnTimeout: 1
     EnableNetworkLogs: 1
 --- !u!1 &7311172147761373013
 GameObject:
