@@ -51,12 +51,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         string SanitizeProfileName(string dirtyString)
         {
-            return Regex.Replace(dirtyString, "[^A-Z0-9]", "");
+            return Regex.Replace(dirtyString, "[^a-zA-Z0-9]", "");
         }
 
         public void OnNewProfileButtonPressed()
         {
-            m_ProfileManager.Profile = m_NewProfileField.text;
+            if (!m_ProfileManager.AvailableProfiles.Contains(m_NewProfileField.text))
+            {
+                m_ProfileManager.Profile = m_NewProfileField.text;
+            }
+            else
+            {
+                PopupManager.ShowPopupPanel("Could not create new Profile", "A profile already exists with this same. Select one of the already existing profiles or create a new one.");
+            }
         }
 
         void InitializeUI()
