@@ -551,7 +551,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Load a profile or create a new one
+  m_text: Select a profile or create a new one
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 9641ce046d2227445b9684161a165f68, type: 2}
   m_sharedMaterial: {fileID: -4106257185398102161, guid: 9641ce046d2227445b9684161a165f68, type: 2}
