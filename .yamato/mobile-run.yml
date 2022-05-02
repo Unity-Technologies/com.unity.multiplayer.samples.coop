@@ -59,7 +59,7 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
       - start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
       # List the connected devices
       - start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
-      - ./utr --suite=playmode --platform=android --player-load-path=build/players --artifacts_path=build/test-results --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+      - ./utr --suite=playmode --platform=android --player-connection-ip=%BOKKEN_HOST_IP% --player-load-path=build/players --artifacts_path=build/test-results --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
     # Set uploadable artifact paths
     artifacts:
         logs:
