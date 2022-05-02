@@ -45,7 +45,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         - python .yamato/disable-burst-if-requested.py --project-path {{ project.path }} --platform Android
         - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
         # Build player(s)
-        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only
+        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
     artifacts:
         players:
             paths:
