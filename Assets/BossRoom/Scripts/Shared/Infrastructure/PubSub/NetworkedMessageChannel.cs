@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
     /// subscribing will be required each time a new session starts.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class NetworkedMessageChannel<T> : MessageChannel<T> where T : unmanaged
+    public class NetworkedMessageChannel<T> : MessageChannel<T> where T : unmanaged, INetworkSerializeByMemcpy
     {
         string m_Name;
 

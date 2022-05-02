@@ -47,11 +47,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindAsSingle<LocalLobbyUser>();
             scope.BindAsSingle<LocalLobby>();
 
-            //this message channel is essential and persists for the lifetime of the lobby and relay services
+            //these message channels are essential and persist for the lifetime of the lobby and relay services
             scope.BindMessageChannelInstance<UnityServiceErrorMessage>();
-
-            //this message channel is essential and persists for the lifetime of the lobby and relay services
             scope.BindMessageChannelInstance<ConnectStatus>();
+            scope.BindMessageChannelInstance<DoorStateChangedEventMessage>();
+
+            //these message channels are essential and persist for the lifetime of the lobby and relay services
+            //they are networked so that the clients can subscribe to those messages that are published by the server
+            scope.BindNetworkedMessageChannelInstance<LifeStateChangedEventMessage>();
+            scope.BindNetworkedMessageChannelInstance<ConnectionEventMessage>();
+#if UNITY_EDITOR || DEVELOPMENT_BUILD
+            scope.BindNetworkedMessageChannelInstance<CheatUsedMessage>();
+#endif
 
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
             scope.BindBufferedMessageChannelInstance<LobbyListFetchedMessage>();
@@ -82,6 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         {
             m_LobbyServiceFacade?.EndTracking();
             DIScope.RootScope.Dispose();
+            DIScope.RootScope = null;
         }
 
         /// <summary>

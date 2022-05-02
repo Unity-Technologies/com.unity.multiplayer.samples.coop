@@ -83,8 +83,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             void OnSignInFailed()
             {
-                m_LobbyButton.interactable = false;
-                m_SignInSpinner.SetActive(false);
+                if (m_LobbyButton)
+                {
+                    m_LobbyButton.interactable = false;
+                }
+                if (m_SignInSpinner)
+                {
+                    m_SignInSpinner.SetActive(false);
+                }
             }
         }
 

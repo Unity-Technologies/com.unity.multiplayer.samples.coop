@@ -60,6 +60,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
                 return m_rootScope;
             }
+            set => m_rootScope = value;
         }
 
         readonly DisposableGroup m_DisposableGroup = new DisposableGroup();
