@@ -37,6 +37,26 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
             }
         }
 
+        public async Task SwitchProfileAndReSignInAsync(string profile)
+        {
+            if (AuthenticationService.Instance.IsSignedIn)
+            {
+                AuthenticationService.Instance.SignOut();
+            }
+            AuthenticationService.Instance.SwitchProfile(profile);
+
+            try
+            {
+                await AuthenticationService.Instance.SignInAnonymouslyAsync();
+            }
+            catch (Exception e)
+            {
+                var reason = $"{e.Message} ({e.InnerException?.Message})";
+                m_UnityServiceErrorMessagePublisher.Publish(new UnityServiceErrorMessage("Authentication Error", reason, UnityServiceErrorMessage.Service.Authentication, e));
+                throw;
+            }
+        }
+
         public async Task<bool> EnsurePlayerIsAuthorized()
         {
             if (AuthenticationService.Instance.IsAuthorized)

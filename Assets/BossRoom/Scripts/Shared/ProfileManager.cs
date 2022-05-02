@@ -35,8 +35,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                 }
 
                 m_Profile = value;
+                onProfileChanged?.Invoke();
             }
         }
+
+        public event Action onProfileChanged;
 
         List<String> m_AvailableProfiles;
 
