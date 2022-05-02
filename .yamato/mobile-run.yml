@@ -42,7 +42,7 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
     name: {{ project.name }} mobile project tests - {{ editor }} on Android
     agent:
         type: Unity::mobile::shield
-        image: mobile/android-execution-base:stable
+        image: mobile/android-execution-r19:stable
         flavor: b1.medium
 
     # Skip repository cloning
