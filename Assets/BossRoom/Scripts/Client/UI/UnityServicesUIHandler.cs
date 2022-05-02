@@ -64,8 +64,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     case LobbyExceptionReason.LobbyConflict:
                         // LobbyConflict can have multiple causes. Let's add other solutions here if there's other situations that arise for this.
                         Debug.LogError($"Got service error {error.Message} with LobbyConflict. Possible conflict cause: Trying to play with two builds on the " +
-                            $"same machine. Please use command line arg '{ProfileManager.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
-                        PopupManager.ShowPopupPanel("Failed to join Lobby", "Failed to join Lobby due to a conflict. See logs for more details.");
+                            $"same machine. Please change profile in-game or use command line arg '{ProfileManager.AuthProfileCommandLineArg} someName' to set a different auth profile.\n");
+                        PopupManager.ShowPopupPanel("Failed to join Lobby", "Failed to join Lobby due to a conflict. If trying to connect two local builds to the same lobby, they need to have different profiles. See logs for more details.");
                         break;
                     case LobbyExceptionReason.NoOpenLobbies:
                         PopupManager.ShowPopupPanel("Failed to join Lobby", "No accessible lobbies are currently available for quick-join.");
