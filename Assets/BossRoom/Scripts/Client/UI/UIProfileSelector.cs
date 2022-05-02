@@ -15,6 +15,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         InputField m_NewProfileField;
         [SerializeField]
+        Button m_CreateProfileButton;
+        [SerializeField]
         CanvasGroup m_CanvasGroup;
         [SerializeField]
         Graphic m_EmptyProfileListLabel;
@@ -35,6 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_ProfileListItemPrototype.gameObject.SetActive(false);
             Hide();
+            m_CreateProfileButton.interactable = false;
         }
 
         /// <summary>
@@ -43,6 +46,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void SanitizeProfileNameInputText()
         {
             m_NewProfileField.text = SanitizeProfileName(m_NewProfileField.text);
+            if (m_NewProfileField.text.Length > 0 && !m_ProfileManager.AvailableProfiles.Contains(m_NewProfileField.text))
+            {
+                m_CreateProfileButton.interactable = true;
+            }
+            else
+            {
+                m_CreateProfileButton.interactable = false;
+            }
         }
 
         string SanitizeProfileName(string dirtyString)

@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 732064395824008953}
   - component: {fileID: 1726281931965234913}
   m_Layer: 5
-  m_Name: Confirm Profile Button
+  m_Name: Create Profile Button
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -693,7 +693,7 @@ GameObject:
   - component: {fileID: 9215646436028164210}
   - component: {fileID: 8477078941156091232}
   m_Layer: 0
-  m_Name: Confirm Text (TMP)
+  m_Name: Create Profile Text (TMP)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1264,6 +1264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ProfileListItemPrototype: {fileID: 4597599027935448392}
   m_NewProfileField: {fileID: 5453187212714608374}
+  m_CreateProfileButton: {fileID: 1726281931965234913}
   m_CanvasGroup: {fileID: 4479523378324572277}
   m_EmptyProfileListLabel: {fileID: 2632516940462403808}
 --- !u!1 &6100932926930489121
