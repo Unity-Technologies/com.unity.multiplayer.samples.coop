@@ -15,7 +15,7 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
         - unity-downloader-cli -c Editor -c iOS -u {{ editor }} --fast --wait
         - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
         - chmod +x ./utr
-        - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only
+        - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
     artifacts:
         players:

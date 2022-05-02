@@ -25,7 +25,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
         # Give UTR execution permissions
         - chmod +x ./utr
         # Run the test build on the device
-        - ./utr --suite=playmode --platform=iOS --player-load-path=build/players --artifacts_path=build/test-results
+        - ./utr --suite=playmode --platform=iOS --player-load-path=build/players --artifacts_path=build/test-results --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
     artifacts:
         logs:
@@ -59,7 +59,7 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
       - start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
       # List the connected devices
       - start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
-      - ./utr --suite=playmode --platform=android --player-load-path=build/players --artifacts_path=build/test-results
+      - ./utr --suite=playmode --platform=android --player-load-path=build/players --artifacts_path=build/test-results --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
     # Set uploadable artifact paths
     artifacts:
         logs:
