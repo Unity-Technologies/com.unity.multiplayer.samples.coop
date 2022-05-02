@@ -46,14 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void SanitizeProfileNameInputText()
         {
             m_NewProfileField.text = SanitizeProfileName(m_NewProfileField.text);
-            if (m_NewProfileField.text.Length > 0 && !m_ProfileManager.AvailableProfiles.Contains(m_NewProfileField.text))
-            {
-                m_CreateProfileButton.interactable = true;
-            }
-            else
-            {
-                m_CreateProfileButton.interactable = false;
-            }
+            m_CreateProfileButton.interactable = m_NewProfileField.text.Length > 0 && !m_ProfileManager.AvailableProfiles.Contains(m_NewProfileField.text);
         }
 
         string SanitizeProfileName(string dirtyString)
@@ -63,9 +56,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnNewProfileButtonPressed()
         {
-            if (!m_ProfileManager.AvailableProfiles.Contains(m_NewProfileField.text))
+            var profile = m_NewProfileField.text;
+            if (!m_ProfileManager.AvailableProfiles.Contains(profile))
             {
-                m_ProfileManager.Profile = m_NewProfileField.text;
+                m_ProfileManager.CreateProfile(profile);
+                m_ProfileManager.Profile = profile;
             }
             else
             {
@@ -73,7 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void InitializeUI()
+        public void InitializeUI()
         {
             EnsureNumberOfActiveUISlots(m_ProfileManager.AvailableProfiles.Count);
             for (var i = 0; i < m_ProfileManager.AvailableProfiles.Count; i++)

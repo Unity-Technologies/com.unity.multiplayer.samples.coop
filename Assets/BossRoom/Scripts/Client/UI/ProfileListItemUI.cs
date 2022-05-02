@@ -23,9 +23,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ProfileNameText.text = profileName;
         }
 
-        public void OnClick()
+        public void OnSelectClick()
         {
             m_ProfileManager.Profile = m_ProfileNameText.text;
+        }
+
+        public void OnDeleteClick()
+        {
+            m_ProfileManager.DeleteProfile(m_ProfileNameText.text);
         }
     }
 }

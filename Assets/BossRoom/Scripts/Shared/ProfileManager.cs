@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -28,12 +29,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             }
             set
             {
-                if (!m_AvailableProfiles.Contains(value))
-                {
-                    m_AvailableProfiles.Add(value);
-                    SaveProfiles();
-                }
-
                 m_Profile = value;
                 onProfileChanged?.Invoke();
             }
@@ -41,9 +36,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         public event Action onProfileChanged;
 
-        List<String> m_AvailableProfiles;
+        List<string> m_AvailableProfiles;
 
-        public List<String> AvailableProfiles
+        public ReadOnlyCollection<string> AvailableProfiles
         {
             get
             {
@@ -52,8 +47,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                     LoadProfiles();
                 }
 
-                return m_AvailableProfiles;
+                return m_AvailableProfiles.AsReadOnly();
             }
+        }
+
+        public void CreateProfile(string profile)
+        {
+            m_AvailableProfiles.Add(profile);
+            SaveProfiles();
+        }
+
+        public void DeleteProfile(string profile)
+        {
+            m_AvailableProfiles.Remove(profile);
+            SaveProfiles();
         }
 
         static string GetProfile()
