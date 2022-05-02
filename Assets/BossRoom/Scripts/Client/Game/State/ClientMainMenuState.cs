@@ -27,6 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] IPUIMediator m_IPUIMediator;
         [SerializeField] Button m_LobbyButton;
         [SerializeField] GameObject m_SignInSpinner;
+        [SerializeField] UIProfileSelector m_UIProfileSelector;
 
         AuthenticationServiceFacade m_AuthServiceFacade;
         LocalLobbyUser m_LocalUser;
@@ -133,6 +134,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             m_LobbyUIMediator.Hide();
             m_IPUIMediator.Show();
+        }
+
+        public void OnChangeProfileClicked()
+        {
+            m_UIProfileSelector.Show();
         }
     }
 }

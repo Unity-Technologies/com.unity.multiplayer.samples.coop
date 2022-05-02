@@ -34,11 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         void Awake()
         {
             m_ProfileListItemPrototype.gameObject.SetActive(false);
-        }
-
-        void Start()
-        {
-            Show();
+            Hide();
         }
 
         /// <summary>
