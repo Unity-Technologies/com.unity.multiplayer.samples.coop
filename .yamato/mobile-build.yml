@@ -45,8 +45,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         - python .yamato/disable-burst-if-requested.py --project-path {{ project.path }} --platform Android
         - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
         # Build player(s)
-        - set UTR_VERSION=0.12.0
-        - utr.bat --artifacts_path=artifacts --timeout=1800 --testproject={{ project.path }} --editor-location=.Editor --suite=playmode --platform=android --build-only --player-save-path=build/players --extra-editor-arg=-batchmode --extra-editor-arg=-nographics
+        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only
     artifacts:
         players:
             paths:

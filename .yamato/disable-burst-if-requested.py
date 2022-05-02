@@ -24,9 +24,9 @@ def create_config(settings_path, platform):
         'm_EditorHideFlags': 0,
         'm_Name': "",
         'm_EditorClassIdentifier': 'Unity.Burst.Editor:Unity.Burst.Editor:BurstPlatformAotSettings',
-        'DisableOptimisations': False,
-        'DisableSafetyChecks': True,
-        'DisableBurstCompilation': False
+        'EnableOptimisations': True,
+        'EnableSafetyChecks': False,
+        'EnableBurstCompilation': True
     }
 
     data = {'MonoBehaviour': monobehaviour}
@@ -48,13 +48,13 @@ def get_or_create_AOT_config(project_path, platform):
 def disable_AOT(project_path, platform):
     config_names = get_or_create_AOT_config(project_path, platform)
     for config_name in config_names:
-        set_AOT(config_name, True)
+        set_AOT(config_name, False)
 
 
 def enable_AOT(project_path, platform):
     config_names = get_or_create_AOT_config(project_path, platform)
     for config_name in config_names:
-        set_AOT(config_name, False)
+        set_AOT(config_name, True)
 
 
 def set_AOT(config_file, status):
@@ -64,7 +64,7 @@ def set_AOT(config_file, status):
 
     assert config is not None, 'AOT settings not found; did the burst-enabled build finish successfully?'
 
-    config['MonoBehaviour']['DisableBurstCompilation'] = status
+    config['MonoBehaviour']['EnableBurstCompilation'] = status
     with open(config_file, 'w') as f:
         json.dump(config, f)
 

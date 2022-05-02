@@ -53,7 +53,7 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
     commands:
       # Download standalone UnityTestRunner
       - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
-      # Set the IP of the device. In case device gets lost, UTR will try to recconect to ANDROID_DEVICE_CONNECTION
+      # Set the IP of the device. In case device gets lost, UTR will try to reconnect to ANDROID_DEVICE_CONNECTION
       - set ANDROID_DEVICE_CONNECTION=%BOKKEN_DEVICE_IP%
       # Establish an ADB connection with the device
       - start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
