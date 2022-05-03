@@ -52,11 +52,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     PopupManager.ShowPopupPanel("Disconnected From Host", "The host has ended the game session.");
                     break;
                 case ConnectStatus.StartHostFailed:
-                    PopupManager.ShowPopupPanel("Connection Failed", "Server failed to bind.");
+                    PopupManager.ShowPopupPanel("Connection Failed", "Starting host failed.");
                     break;
                 case ConnectStatus.StartClientFailed:
-                    PopupManager.ShowPopupPanel("Connection Failed",
-                        "Failed to connect to server and/or invalid network endpoint.");
+                    PopupManager.ShowPopupPanel("Connection Failed", "Starting client failed.");
                     break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
