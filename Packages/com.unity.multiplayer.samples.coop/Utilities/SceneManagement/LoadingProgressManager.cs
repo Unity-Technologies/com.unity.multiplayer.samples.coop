@@ -98,10 +98,14 @@ namespace Unity.Multiplayer.Samples.Utilities
                 ProgressTrackers.Clear();
                 foreach (var tracker in FindObjectsOfType<NetworkedLoadingProgressTracker>())
                 {
-                    ProgressTrackers[tracker.OwnerClientId] = tracker;
-                    if (tracker.OwnerClientId == NetworkManager.LocalClientId)
+                    // If a tracker is despawned but not destroyed yet, don't add it
+                    if (tracker.IsSpawned)
                     {
-                        LocalProgress = Mathf.Max(m_LocalProgress, LocalProgress);
+                        ProgressTrackers[tracker.OwnerClientId] = tracker;
+                        if (tracker.OwnerClientId == NetworkManager.LocalClientId)
+                        {
+                            LocalProgress = Mathf.Max(m_LocalProgress, LocalProgress);
+                        }
                     }
                 }
             }
@@ -127,15 +131,8 @@ namespace Unity.Multiplayer.Samples.Utilities
                 var tracker = ProgressTrackers[clientId];
                 ProgressTrackers.Remove(clientId);
                 tracker.NetworkObject.Despawn();
-                // This makes sure that clients received the Despawn message before the RPC.
-                StartCoroutine(WaitBeforeSendingRPC());
+                UpdateTrackersClientRpc();
             }
-        }
-
-        IEnumerator WaitBeforeSendingRPC()
-        {
-            yield return null;
-            UpdateTrackersClientRpc();
         }
     }
 }
