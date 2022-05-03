@@ -14,8 +14,16 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         GameObject m_ProgressTrackerPrefab;
 
+        /// <summary>
+        /// Dictionary containing references to the NetworkedLoadingProgessTrackers that contain the loading progress of
+        /// each client. Keys are ClientIds.
+        /// </summary>
         public Dictionary<ulong, NetworkedLoadingProgressTracker> ProgressTrackers { get; } = new Dictionary<ulong, NetworkedLoadingProgressTracker>();
 
+        /// <summary>
+        /// This is the AsyncOperation of the current load operation. This property should be set each time a new
+        /// loading operation begins.
+        /// </summary>
         public AsyncOperation LocalLoadOperation
         {
             set
@@ -28,8 +36,16 @@ namespace Unity.Multiplayer.Samples.Utilities
         AsyncOperation m_LocalLoadOperation;
 
         float m_LocalProgress;
+
+        /// <summary>
+        /// This event is invoked each time the dictionary of progress trackers is updated (if one is removed or added, for example.)
+        /// </summary>
         public event Action onTrackersUpdated;
 
+        /// <summary>
+        /// The current loading progress for the local client. Handled by a local field if not in a networked session,
+        /// or by a progress tracker from the dictionary.
+        /// </summary>
         public float LocalProgress
         {
             get => IsSpawned && ProgressTrackers.ContainsKey(NetworkManager.LocalClientId) ?
