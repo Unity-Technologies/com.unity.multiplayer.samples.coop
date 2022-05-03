@@ -307,7 +307,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
             m_Portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
-            m_Portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = ((UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport).DisconnectTimeoutMS;
 
             //and...we're off! Netcode will establish a socket connection to the host.
             //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
