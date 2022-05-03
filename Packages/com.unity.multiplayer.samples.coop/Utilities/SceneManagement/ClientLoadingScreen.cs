@@ -97,14 +97,12 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 var clientId = progressTracker.Key;
                 var progress = progressTracker.Value.Progress;
-                if (clientId != NetworkManager.Singleton.LocalClientId)
+                if (clientId != NetworkManager.Singleton.LocalClientId && m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                 {
-                    if (m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
-                    {
-                        progress.OnValueChanged -= (value, newValue) =>
-                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
-                    }
+                    progress.OnValueChanged -= (value, newValue) =>
+                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
                 }
+
             }
             // clear map
             m_ClientIdToProgressBarsIndex.Clear();
@@ -128,23 +126,21 @@ namespace Unity.Multiplayer.Samples.Utilities
             {
                 var clientId = progressTracker.Key;
                 var progress = progressTracker.Value.Progress;
-                if (clientId != NetworkManager.Singleton.LocalClientId)
+                if (clientId != NetworkManager.Singleton.LocalClientId && !m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                 {
-                    if (!m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
+                    if (m_ClientIdToProgressBarsIndex.Count < m_OtherPlayersProgressBars.Count)
                     {
-                        if (m_ClientIdToProgressBarsIndex.Count < m_OtherPlayersProgressBars.Count)
-                        {
-                            m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
-                            // set progress bar to 0 if initializing, else set it to its last known value
-                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = isInitializing ? 0 : progress.Value;
-                            progress.OnValueChanged += (value, newValue) =>
-                                m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
-                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
-                        }
-                        else
-                        {
-                            throw new Exception("There are not enough progress bars to track the progress of all the players.");
-                        }
+                        m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
+
+                        // set progress bar to 0 if initializing, else set it to its last known value
+                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = isInitializing ? 0 : progress.Value;
+                        progress.OnValueChanged += (value, newValue) =>
+                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
+                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
+                    }
+                    else
+                    {
+                        throw new Exception("There are not enough progress bars to track the progress of all the players.");
                     }
                 }
             }
