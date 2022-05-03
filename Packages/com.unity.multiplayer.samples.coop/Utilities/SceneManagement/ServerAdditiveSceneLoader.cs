@@ -33,7 +33,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// </summary>
         List<ulong> m_PlayersInTrigger;
 
-        bool m_IsActive;
+        bool IsActive => IsServer && IsSpawned;
 
         enum SceneState
         {
@@ -58,13 +58,11 @@ namespace Unity.Multiplayer.Samples.Utilities
 
                 NetworkManager.SceneManager.OnSceneEvent += OnSceneEvent;
                 m_PlayersInTrigger = new List<ulong>();
-                m_IsActive = true;
             }
         }
 
         public override void OnNetworkDespawn()
         {
-            m_IsActive = false;
             if (IsServer)
             {
                 NetworkManager.OnClientDisconnectCallback -= RemovePlayer;
@@ -86,7 +84,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerEnter(Collider other)
         {
-            if (m_IsActive) // make sure that OnNetworkSpawn has been called before this
+            if (IsActive) // make sure that OnNetworkSpawn has been called before this
             {
                 if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
                 {
@@ -107,7 +105,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnTriggerExit(Collider other)
         {
-            if (m_IsActive) // make sure that OnNetworkSpawn has been called before this
+            if (IsActive) // make sure that OnNetworkSpawn has been called before this
             {
                 if (other.CompareTag(m_PlayerTag) && other.TryGetComponent(out NetworkObject networkObject))
                 {
@@ -118,7 +116,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void FixedUpdate()
         {
-            if (m_IsActive) // make sure that OnNetworkSpawn has been called before this
+            if (IsActive) // make sure that OnNetworkSpawn has been called before this
             {
                 if (m_SceneState == SceneState.Unloaded && m_PlayersInTrigger.Count > 0)
                 {

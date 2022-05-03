@@ -196,10 +196,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             int nbTries = 0;
             while (nbTries < k_NbReconnectAttempts)
             {
-                if (NetworkManager.Singleton.IsListening)
-                {
-                    NetworkManager.Singleton.Shutdown();
-                }
+                NetworkManager.Singleton.Shutdown();
 
                 yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
                 Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
