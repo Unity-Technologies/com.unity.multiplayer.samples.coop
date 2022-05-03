@@ -91,11 +91,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             var connectionDuration = maxReconnectAttempts * connectTimeoutMS / 1000f;
 
-            while (connectionDuration > 0f)
+            var seconds = Mathf.CeilToInt(connectionDuration);
+
+            while (seconds > 0)
             {
-                m_TitleText.text = $"Connecting...\n{Mathf.CeilToInt(connectionDuration)}";
-                connectionDuration -= Time.deltaTime;
-                yield return null;
+                m_TitleText.text = $"Connecting...\n{seconds}";
+                yield return new WaitForSeconds(1f);
+                seconds--;
             }
             m_TitleText.text = "Connecting...";
 
