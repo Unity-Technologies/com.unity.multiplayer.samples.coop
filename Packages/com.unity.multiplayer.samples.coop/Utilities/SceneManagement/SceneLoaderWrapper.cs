@@ -131,6 +131,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                     break;
                 case SceneEventType.Synchronize: // Server told client to start synchronizing scenes
                 {
+                    // todo: this is a workaround that could be removed once MTT-3363 is done
                     // Only executes on client that is not the host
                     if (NetworkManager.IsClient && !NetworkManager.IsHost)
                     {
