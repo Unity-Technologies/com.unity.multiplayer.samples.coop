@@ -57,6 +57,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     break;
                 case ConnectStatus.Reconnecting:
                     break;
+                case ConnectStatus.StartHostFailed:
+                    PopupManager.ShowPopupPanel("Connection Failed", "Starting host failed.");
+                    break;
+                case ConnectStatus.StartClientFailed:
+                    PopupManager.ShowPopupPanel("Connection Failed", "Starting client failed.");
+                    break;
                 default:
                     Debug.LogWarning($"New ConnectStatus {status} has been added, but no connect message defined for it.");
                     break;

@@ -49,12 +49,16 @@ MonoBehaviour:
   m_MaxSendQueueSize: 50000000
   m_HeartbeatTimeoutMS: 500
   m_ConnectTimeoutMS: 1000
-  m_MaxConnectAttempts: 60
+  m_MaxConnectAttempts: 10
   m_DisconnectTimeoutMS: 10000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1 &503411707
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,6 +114,10 @@ MonoBehaviour:
     Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1 &5436007408952557947
 GameObject:
   m_ObjectHideFlags: 0
@@ -218,6 +226,11 @@ MonoBehaviour:
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3597354879354517420, guid: c8513d3df780cb34a9576da3772d512b, type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
     TickRate: 30
     ClientConnectionBufferTimeout: 10
     ConnectionApproval: 1
@@ -231,7 +244,7 @@ MonoBehaviour:
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
-    MessageBufferTimeout: 20
+    SpawnTimeout: 1
     EnableNetworkLogs: 1
 --- !u!1 &7311172147761373013
 GameObject:
