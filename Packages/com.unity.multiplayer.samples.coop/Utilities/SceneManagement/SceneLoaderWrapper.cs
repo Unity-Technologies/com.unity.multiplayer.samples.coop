@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -15,6 +16,9 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         [SerializeField]
         ClientLoadingScreen m_ClientLoadingScreen;
+
+        [SerializeField]
+        LoadingProgressManager m_LoadingProgressManager;
 
         bool IsNetworkSceneManagementEnabled => NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement;
 
@@ -91,7 +95,8 @@ namespace Unity.Multiplayer.Samples.Utilities
                 var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
                 if (loadSceneMode == LoadSceneMode.Single)
                 {
-                    m_ClientLoadingScreen.StartLoadingScreen(sceneName, loadOperation);
+                    m_ClientLoadingScreen.StartLoadingScreen(sceneName);
+                    m_LoadingProgressManager.LocalLoadOperation = loadOperation;
                 }
             }
         }
@@ -115,11 +120,13 @@ namespace Unity.Multiplayer.Samples.Utilities
                         // Only start a new loading screen if scene loaded in Single mode, else simply update
                         if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
                         {
-                            m_ClientLoadingScreen.StartLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
+                            m_ClientLoadingScreen.StartLoadingScreen(sceneEvent.SceneName);
+                            m_LoadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
                         }
                         else
                         {
-                            m_ClientLoadingScreen.UpdateLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
+                            m_ClientLoadingScreen.UpdateLoadingScreen(sceneEvent.SceneName);
+                            m_LoadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
                         }
                     }
                     break;
