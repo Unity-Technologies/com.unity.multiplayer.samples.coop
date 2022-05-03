@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &-220009485958254671
+--- !u!114 &-1703883763400205623
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
@@ -95,8 +95,6 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _QueueControl: 0
-    - _QueueOffset: 0
     - _RimAmount: 0.264
     - _RimThreshold: 0.058
     - _SmoothnessTextureChannel: 0

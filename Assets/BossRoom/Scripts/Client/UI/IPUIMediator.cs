@@ -12,9 +12,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public const string k_DefaultIP = "127.0.0.1";
         public const int k_DefaultPort = 9998;
 
-        const int k_NbTouchesToOpenWindow = 4;
-        const KeyCode m_OpenIPWindowKeyCode = KeyCode.Slash;
-
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
@@ -25,29 +22,37 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] IPHostingUI m_IPHostingUI;
 
         [SerializeField] UITinter m_JoinTabButtonHighlightTinter;
-        
+
         [SerializeField] UITinter m_JoinTabButtonTabBlockerTinter;
 
         [SerializeField] UITinter m_HostTabButtonHighlightTinter;
-        
+
         [SerializeField] UITinter m_HostTabButtonTabBlockerTinter;
 
         [SerializeField] GameObject m_SignInSpinner;
 
+        [SerializeField]
+        IPConnectionWindow m_IPConnectionWindow;
+
         NameGenerationData m_NameGenerationData;
         GameNetPortal m_GameNetPortal;
         ClientGameNetPortal m_ClientNetPortal;
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+
+        public IPHostingUI IPHostingUI => m_IPHostingUI;
 
         [Inject]
         void InjectDependenciesAndInitialize(
             NameGenerationData nameGenerationData,
             GameNetPortal gameNetPortal,
-            ClientGameNetPortal clientGameNetPortal
+            ClientGameNetPortal clientGameNetPortal,
+            IPublisher<ConnectStatus> connectStatusPublisher
         )
         {
             m_NameGenerationData = nameGenerationData;
             m_GameNetPortal = gameNetPortal;
             m_ClientNetPortal = clientGameNetPortal;
+            m_ConnectStatusPublisher = connectStatusPublisher;
 
             RegenerateName();
         }
@@ -63,18 +68,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             ToggleCreateIPUI();
         }
 
-        static bool AnyTouchDown()
-        {
-            foreach (var touch in Input.touches)
-            {
-                if (touch.phase == TouchPhase.Began)
-                {
-                    return true;
-                }
-            }
-            return false;
-        }
-
         public void HostIPRequest(string ip, string port)
         {
             int.TryParse(port, out var portNum);
@@ -87,9 +80,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             m_GameNetPortal.PlayerName = m_PlayerNameLabel.text;
 
-            m_GameNetPortal.StartHost(ip, portNum);
-
-            m_SignInSpinner.SetActive(true);
+            if (m_GameNetPortal.StartHost(ip, portNum))
+            {
+                m_SignInSpinner.SetActive(true);
+            }
+            else
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
+            }
         }
 
         public void JoinWithIP(string ip, string port)
@@ -104,9 +102,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             m_GameNetPortal.PlayerName = m_PlayerNameLabel.text;
 
+            m_SignInSpinner.SetActive(true);
+
             m_ClientNetPortal.StartClient(ip, portNum);
 
-            m_SignInSpinner.SetActive(true);
+            m_IPConnectionWindow.ShowConnectingWindow();
+        }
+
+        public void JoiningWindowCancelled()
+        {
+            DisableSignInSpinner();
+            RequestShutdown();
+        }
+
+        public void DisableSignInSpinner()
+        {
+            m_SignInSpinner.SetActive(false);
+        }
+
+        void RequestShutdown()
+        {
+            if (m_GameNetPortal && m_GameNetPortal.NetManager)
+            {
+                m_GameNetPortal.NetManager.Shutdown();
+            }
         }
 
         public void RegenerateName()
@@ -140,7 +159,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CanvasGroup.interactable = true;
             m_CanvasGroup.blocksRaycasts = true;
 
-            m_SignInSpinner.SetActive(false);
+            DisableSignInSpinner();
         }
 
         public void Hide()
@@ -148,6 +167,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.interactable = false;
             m_CanvasGroup.blocksRaycasts = false;
+        }
+
+        // To be called from the Cancel (X) UI button
+        public void CancelConnectingWindow()
+        {
+            RequestShutdown();
+            m_IPConnectionWindow.CancelConnectionWindow();
         }
 
         /// <summary>
