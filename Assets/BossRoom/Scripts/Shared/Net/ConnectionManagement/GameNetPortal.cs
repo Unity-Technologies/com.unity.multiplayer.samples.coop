@@ -41,14 +41,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
     }
 
-    public enum OnlineMode
-    {
-        IpHost = 0, // The server is hosted directly and clients can join by ip address.
-        UnityRelay = 1, // The server is hosted over a Unity Relay server and clients join by entering a join code.
-        Unset = -1, // The hosting mode is not set yet.
-
-    }
-
     [Serializable]
     public class ConnectionPayload
     {
