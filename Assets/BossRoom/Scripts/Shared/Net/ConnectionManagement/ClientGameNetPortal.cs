@@ -217,7 +217,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     ConnectClient();
                 }
-                yield return new WaitForSeconds(1.1f * NetworkManager.Singleton.NetworkConfig.ClientConnectionBufferTimeout); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
+                yield return new WaitForSeconds(1.1f * NetworkManager.Singleton.NetworkConfig.ClientConnectionBufferTimeout + ((UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport).DisconnectTimeoutMS/1000.0f); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
                 nbTries++;
             }
 
