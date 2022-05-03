@@ -27,11 +27,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public DisconnectReason DisconnectReason { get; } = new DisconnectReason();
 
-        /// <summary>
-        /// Time in seconds before the client considers a lack of server response a timeout
-        /// </summary>
-        private const int k_TimeoutDuration = 10;
-
         const int k_NbReconnectAttempts = 2;
 
         Coroutine m_TryToReconnectCoroutine;
@@ -222,7 +217,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     ConnectClient();
                 }
-                yield return new WaitForSeconds(1.1f * k_TimeoutDuration); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
+                yield return new WaitForSeconds(1.1f * NetworkManager.Singleton.NetworkConfig.ClientConnectionBufferTimeout); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
                 nbTries++;
             }
 
@@ -301,7 +296,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void ConnectClient()
         {
-
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
                 playerId = m_Portal.GetPlayerId(),
@@ -313,7 +307,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
             m_Portal.NetManager.NetworkConfig.ConnectionData = payloadBytes;
-            m_Portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = k_TimeoutDuration;
+            m_Portal.NetManager.NetworkConfig.ClientConnectionBufferTimeout = ((UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport).DisconnectTimeoutMS;
 
             //and...we're off! Netcode will establish a socket connection to the host.
             //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
