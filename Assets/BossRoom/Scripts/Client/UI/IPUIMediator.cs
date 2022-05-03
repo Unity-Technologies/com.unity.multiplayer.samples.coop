@@ -120,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void RequestShutdown()
         {
-            if (m_GameNetPortal && m_GameNetPortal.NetManager && m_GameNetPortal.NetManager.IsListening)
+            if (m_GameNetPortal && m_GameNetPortal.NetManager)
             {
                 m_GameNetPortal.NetManager.Shutdown();
             }
