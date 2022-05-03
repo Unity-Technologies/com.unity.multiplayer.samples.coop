@@ -2,9 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
-using Unity.Networking.Transport.Utilities;
 using UnityEngine.Assertions;
 
 
@@ -27,9 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
                 switch (chosenTransport)
                 {
-                    case UNetTransport unetTransport:
-                        m_ArtificialLatencyEnabled = false;
-                        break;
                     case UnityTransport unityTransport:
                         // adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
 #if UNITY_EDITOR || DEVELOPMENT_BUILD

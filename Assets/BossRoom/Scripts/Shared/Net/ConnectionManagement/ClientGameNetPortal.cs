@@ -6,7 +6,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -175,10 +174,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             switch (chosenTransport)
             {
-                case UNetTransport unetTransport:
-                    unetTransport.ConnectAddress = ipaddress;
-                    unetTransport.ConnectPort = port;
-                    break;
                 case UnityTransport unityTransport:
                     // TODO: once this is exposed in the adapter we will be able to change it
                     unityTransport.SetConnectionData(ipaddress, (ushort)port);

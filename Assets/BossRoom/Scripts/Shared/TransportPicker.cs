@@ -1,5 +1,4 @@
 using Unity.Netcode;
-using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -28,7 +27,7 @@ public class TransportPicker : MonoBehaviour
 
     void OnValidate()
     {
-        Assert.IsTrue(m_IpHostTransport == null || (m_IpHostTransport as UNetTransport || m_IpHostTransport as UnityTransport),
-            "IpHost transport must be either Unet transport or UTP.");
+        Assert.IsTrue(m_IpHostTransport == null || m_IpHostTransport as UnityTransport,
+            "IpHost transport must be UTP.");
     }
 }

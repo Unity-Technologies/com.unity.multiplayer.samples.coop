@@ -5,7 +5,6 @@ using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -178,10 +177,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             // sample does, since current Transport API doesn't expose these fields.
             switch (chosenTransport)
             {
-                case UNetTransport unetTransport:
-                    unetTransport.ConnectAddress = ipaddress;
-                    unetTransport.ServerListenPort = port;
-                    break;
                 case UnityTransport unityTransport:
                     unityTransport.SetConnectionData(ipaddress, (ushort)port);
                     break;
