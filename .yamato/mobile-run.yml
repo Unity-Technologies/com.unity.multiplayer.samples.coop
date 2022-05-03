@@ -53,14 +53,12 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
     commands:
       # Download standalone UnityTestRunner
       - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
-      # Set the IP of the device. In case device gets lost, UTR will try to reconnect to ANDROID_DEVICE_CONNECTION
-      - set ANDROID_DEVICE_CONNECTION=%BOKKEN_DEVICE_IP%
-      # Establish an ADB connection with the device
-      - start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
-      # List the connected devices
-      - start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
-      - set UTR_VERSION=0.12.0
-      - ./utr --testproject={{ project.path }} --editor-location=.Editor --suite=playmode --platform=android --player-connection-ip=%BOKKEN_HOST_IP% --player-load-path=build/players --artifacts_path=build/test-results --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+      - |
+          set ANDROID_DEVICE_CONNECTION=%BOKKEN_DEVICE_IP%
+          start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
+          start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
+          set UTR_VERSION=0.12.0
+          ./utr --artifacts_path=build/test-results --testproject={{ project.path }} --editor-location=.Editor --reruncount=2 --suite=playmode --platform=android --player-connection-ip=%BOKKEN_HOST_IP% --player-load-path=build/players --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
     # Set uploadable artifact paths
     artifacts:
         logs:
