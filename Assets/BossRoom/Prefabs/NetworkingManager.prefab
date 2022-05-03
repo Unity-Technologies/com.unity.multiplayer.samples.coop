@@ -248,7 +248,7 @@ MonoBehaviour:
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     TickRate: 30
-    ClientConnectionBufferTimeout: 10
+    ClientConnectionBufferTimeout: 1
     ConnectionApproval: 1
     ConnectionData: 
     EnableTimeResync: 0

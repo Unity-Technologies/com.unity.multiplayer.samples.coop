@@ -115,6 +115,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             };
         }
 
+        public override void OnDestroy()
+        {
+            if (Instance == this)
+            {
+                Instance = null;
+            }
+            base.OnDestroy();
+        }
+
         protected override void Start()
         {
             base.Start();
@@ -133,11 +142,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 CharSelectData.IsLobbyClosed.OnValueChanged -= OnLobbyClosedChanged;
                 CharSelectData.LobbyPlayers.OnListChanged -= OnLobbyPlayerStateChanged;
-            }
-
-            if (Instance == this)
-            {
-                Instance = null;
             }
         }
 
@@ -394,7 +398,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
         {
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
+            if (IsSpawned)
+            {
+                CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
+            }
         }
 
         /// <summary>
@@ -402,8 +409,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            // request to lock in or unlock if already locked in
-            CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
+            if (IsSpawned)
+            {
+                // request to lock in or unlock if already locked in
+                CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
+            }
         }
 
         GameObject GetCharacterGraphics(Avatar avatar)
