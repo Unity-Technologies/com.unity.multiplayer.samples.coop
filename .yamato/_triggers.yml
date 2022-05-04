@@ -13,9 +13,9 @@ pull_request_trigger:
     - .yamato/project-tests.yml#test_{{ project.name }}_{{ project.test_editors.first }}_{{ platform.name }}
 {% endfor -%}
     # iOS
-    - .yamato/mobile-run.yml#mobile_test_ios_{{ project.name }}_{{ project.test_editors.first }}
+    - .yamato/mobile-build-and-run.yml#mobile_test_ios_{{ project.name }}_{{ project.test_editors.first }}
     # Android
-    - .yamato/mobile-run.yml#mobile_test_android_{{ project.name }}_{{ project.test_editors.first }}
+    - .yamato/mobile-build-and-run.yml#mobile_test_android_{{ project.name }}_{{ project.test_editors.first }}
 {% endfor -%}
   triggers:
     cancel_old_ci: true
