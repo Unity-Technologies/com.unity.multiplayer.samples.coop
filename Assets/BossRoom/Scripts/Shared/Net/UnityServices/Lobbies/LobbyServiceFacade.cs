@@ -96,15 +96,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
-        public void EndTracking()
+        public Task EndTracking()
         {
+            var task = Task.CompletedTask;
             if (CurrentUnityLobby != null)
             {
                 CurrentUnityLobby = null;
 
                 if (!string.IsNullOrEmpty(m_LocalLobby?.LobbyID))
                 {
-                    LeaveLobbyAsync(m_LocalLobby?.LobbyID);
+                    task = LeaveLobbyAsync(m_LocalLobby?.LobbyID);
                 }
 
                 m_LocalUser.ResetState();
@@ -118,6 +119,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 m_HeartbeatTime = 0;
                 m_JoinedLobbyContentHeartbeat.EndTracking();
             }
+
+            return task;
         }
 
         async void UpdateLobby(float unused)
@@ -145,7 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                         }
                     }
                     m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
-                    EndTracking();
+                    await EndTracking();
                     // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
                 }
             }
@@ -276,7 +279,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         /// <summary>
         /// Attempt to leave a lobby
         /// </summary>
-        public async void LeaveLobbyAsync(string lobbyId)
+        public async Task LeaveLobbyAsync(string lobbyId)
         {
             string uasId = AuthenticationService.Instance.PlayerId;
             await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
