@@ -14,11 +14,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         TextMeshProUGUI m_MainText;
         [SerializeField]
+        GameObject m_ConfirmButton;
+        [SerializeField]
+        GameObject m_LoadingSpinner;
+        [SerializeField]
         CanvasGroup m_CanvasGroup;
 
         public bool IsDisplaying => m_IsDisplaying;
 
         bool m_IsDisplaying;
+
+        bool m_ClosableByUser;
 
         void Awake()
         {
@@ -27,13 +33,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnConfirmClick()
         {
-            Hide();
+            if (m_ClosableByUser)
+            {
+                Hide();
+            }
         }
 
-        public void SetupPopupPanel(string titleText, string mainText)
+        public void SetupPopupPanel(string titleText, string mainText, bool closeableByUser = true)
         {
             m_TitleText.text = titleText;
             m_MainText.text = mainText;
+            m_ClosableByUser = closeableByUser;
+            m_ConfirmButton.SetActive(m_ClosableByUser);
+            m_LoadingSpinner.SetActive(!m_ClosableByUser);
             Show();
         }
 
@@ -44,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_IsDisplaying = true;
         }
 
-        void Hide()
+        public void Hide()
         {
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;

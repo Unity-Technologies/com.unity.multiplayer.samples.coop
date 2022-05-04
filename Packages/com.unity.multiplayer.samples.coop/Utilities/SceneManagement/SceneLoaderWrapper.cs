@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -15,6 +16,9 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         [SerializeField]
         ClientLoadingScreen m_ClientLoadingScreen;
+
+        [SerializeField]
+        LoadingProgressManager m_LoadingProgressManager;
 
         bool IsNetworkSceneManagementEnabled => NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement;
 
@@ -91,7 +95,8 @@ namespace Unity.Multiplayer.Samples.Utilities
                 var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
                 if (loadSceneMode == LoadSceneMode.Single)
                 {
-                    m_ClientLoadingScreen.StartLoadingScreen(sceneName, loadOperation);
+                    m_ClientLoadingScreen.StartLoadingScreen(sceneName);
+                    m_LoadingProgressManager.LocalLoadOperation = loadOperation;
                 }
             }
         }
@@ -115,11 +120,13 @@ namespace Unity.Multiplayer.Samples.Utilities
                         // Only start a new loading screen if scene loaded in Single mode, else simply update
                         if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
                         {
-                            m_ClientLoadingScreen.StartLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
+                            m_ClientLoadingScreen.StartLoadingScreen(sceneEvent.SceneName);
+                            m_LoadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
                         }
                         else
                         {
-                            m_ClientLoadingScreen.UpdateLoadingScreen(sceneEvent.SceneName, sceneEvent.AsyncOperation);
+                            m_ClientLoadingScreen.UpdateLoadingScreen(sceneEvent.SceneName);
+                            m_LoadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
                         }
                     }
                     break;
@@ -130,6 +137,19 @@ namespace Unity.Multiplayer.Samples.Utilities
                         m_ClientLoadingScreen.StopLoadingScreen();
                     }
                     break;
+                case SceneEventType.Synchronize: // Server told client to start synchronizing scenes
+                {
+                    // todo: this is a workaround that could be removed once MTT-3363 is done
+                    // Only executes on client that is not the host
+                    if (NetworkManager.IsClient && !NetworkManager.IsHost)
+                    {
+                        // unload all currently loaded additive scenes so that if we connect to a server with the same
+                        // main scene we properly load and synchronize all appropriate scenes without loading a scene
+                        // that is already loaded.
+                        UnloadAdditiveScenes();
+                    }
+                    break;
+                }
                 case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
                     // Only executes on server
                     if (NetworkManager.IsServer)
@@ -138,6 +158,19 @@ namespace Unity.Multiplayer.Samples.Utilities
                         StopLoadingScreenClientRpc(new ClientRpcParams {Send = new ClientRpcSendParams {TargetClientIds = new[] {sceneEvent.ClientId}}});
                     }
                     break;
+            }
+        }
+
+        void UnloadAdditiveScenes()
+        {
+            var activeScene = SceneManager.GetActiveScene();
+            for (var i = 0; i < SceneManager.sceneCount; i++)
+            {
+                var scene = SceneManager.GetSceneAt(i);
+                if (scene.isLoaded && scene != activeScene)
+                {
+                    SceneManager.UnloadSceneAsync(scene);
+                }
             }
         }
 
