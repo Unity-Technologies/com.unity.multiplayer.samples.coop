@@ -13,9 +13,9 @@
         "Unity.Services.Lobbies",
         "Unity.Multiplayer.Samples.Utilities",
         "Unity.Networking.Transport",
-        "com.unity.multiplayer.bossroom.infrastructure",
-        "com.unity.multiplayer.bossroom.unityservices",
-        "com.unity.multiplayer.bossroom.navigation"
+        "Unity.Multiplayer.Samples.BossRoom.Infrastructure",
+        "Unity.Multiplayer.Samples.BossRoom.UnityServices",
+        "Unity.Multiplayer.Samples.BossRoom.Navigation"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

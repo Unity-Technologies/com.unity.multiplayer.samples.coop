@@ -1,5 +1,5 @@
 {
-    "name": "com.unity.multiplayer.bossroom.unityservices",
+    "name": "Unity.Multiplayer.Samples.BossRoom.UnityServices",
     "rootNamespace": "",
     "references": [
         "GUID:fe25561d224ed4743af4c60938a59d0b",

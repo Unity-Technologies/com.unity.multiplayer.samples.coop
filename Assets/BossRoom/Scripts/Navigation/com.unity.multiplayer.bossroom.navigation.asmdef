@@ -1,3 +1,14 @@
 {
-	"name": "com.unity.multiplayer.bossroom.navigation"
+    "name": "Unity.Multiplayer.Samples.BossRoom.Navigation",
+    "rootNamespace": "",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
