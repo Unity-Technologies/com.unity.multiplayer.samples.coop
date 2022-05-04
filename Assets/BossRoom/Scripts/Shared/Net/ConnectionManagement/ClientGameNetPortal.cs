@@ -246,22 +246,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
-            switch (chosenTransport)
-            {
-                case UnityTransport unityTransport:
-                    // TODO: once this is exposed in the adapter we will be able to change it
-                    unityTransport.SetConnectionData(ipaddress, (ushort)port);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(chosenTransport));
-            }
+            // TODO: once this is exposed in the adapter we will be able to change it
+            chosenTransport.SetConnectionData(ipaddress, (ushort)port);
 
             ConnectClient();
         }
 
         public async void StartClientUnityRelayModeAsync(Action<string> onFailure)
         {
-            var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
+            var utp = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
 
             await JoinRelayAsync(onFailure);

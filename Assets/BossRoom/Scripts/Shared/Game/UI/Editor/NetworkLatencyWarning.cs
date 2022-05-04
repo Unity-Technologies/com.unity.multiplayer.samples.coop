@@ -21,24 +21,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
         {
             if (NetworkManager.Singleton != null && (NetworkManager.Singleton.IsClient || NetworkManager.Singleton.IsServer))
             {
-                var chosenTransport = NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+                var unityTransport = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
 
-                switch (chosenTransport)
-                {
-                    case UnityTransport unityTransport:
-                        // adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
+                // adding this preprocessor directive check since UnityTransport's simulator tools only inject latency in #UNITY_EDITOR or in #DEVELOPMENT_BUILD
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-                        var simulatorParameters = unityTransport.DebugSimulator;
-                        m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMS > 0 ||
-                            simulatorParameters.PacketJitterMS > 0 ||
-                            simulatorParameters.PacketDropRate > 0;
+                var simulatorParameters = unityTransport.DebugSimulator;
+                m_ArtificialLatencyEnabled = simulatorParameters.PacketDelayMS > 0 ||
+                    simulatorParameters.PacketJitterMS > 0 ||
+                    simulatorParameters.PacketDropRate > 0;
 #else
-                        m_ArtificialLatencyEnabled = false;
+                m_ArtificialLatencyEnabled = false;
 #endif
-                        break;
-                    default:
-                        throw new Exception($"unhandled transport {chosenTransport.GetType()}");
-                }
 
                 if (m_ArtificialLatencyEnabled)
                 {

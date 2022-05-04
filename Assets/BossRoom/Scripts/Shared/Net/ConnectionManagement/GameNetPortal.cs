@@ -5,7 +5,6 @@ using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
@@ -179,17 +178,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            // Note: In most cases, this switch case shouldn't be necessary. It becomes necessary when having to deal with multiple transports like this
-            // sample does, since current Transport API doesn't expose these fields.
-            switch (chosenTransport)
-            {
-                case UnityTransport unityTransport:
-                    unityTransport.SetConnectionData(ipaddress, (ushort)port);
-                    break;
-                default:
-                    throw new Exception($"unhandled IpHost transport {chosenTransport.GetType()}");
-            }
+            chosenTransport.SetConnectionData(ipaddress, (ushort)port);
 
             return StartHost();
         }
@@ -199,33 +188,25 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
             NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
 
-            switch (chosenTransport)
+            Debug.Log("Setting up Unity Relay host");
+
+            try
             {
-                case UnityTransport utp:
-                    Debug.Log("Setting up Unity Relay host");
+                var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
+                    await UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
 
-                    try
-                    {
-                        var (ipv4Address, port, allocationIdBytes, connectionData, key, joinCode) =
-                            await UnityRelayUtilities.AllocateRelayServerAndGetJoinCode(k_MaxUnityRelayConnections);
+                m_LocalLobby.RelayJoinCode = joinCode;
+                //next line enabled lobby and relay services integration
+                await m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices());
+                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
 
-                        m_LocalLobby.RelayJoinCode = joinCode;
-                        //next line enabled lobby and relay services integration
-                        await m_LobbyServiceFacade.UpdateLobbyDataAsync(m_LocalLobby.GetDataForUnityServices());
-                        await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
-
-                        // we now need to set the RelayCode somewhere :P
-                        utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
-                    }
-                    catch (Exception e)
-                    {
-                        Debug.LogErrorFormat($"{e.Message}");
-                        throw;
-                    }
-
-                    break;
-                default:
-                    throw new Exception($"unhandled relay transport {chosenTransport.GetType()}");
+                // we now need to set the RelayCode somewhere :P
+                chosenTransport.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
+            }
+            catch (Exception e)
+            {
+                Debug.LogErrorFormat($"{e.Message}");
+                throw;
             }
 
             StartHost();
