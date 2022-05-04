@@ -2,7 +2,7 @@
 ---
 
 {% for project in projects -%}
-  {% for editor in project.test_editors -%}
+{% for editor in project.test_editors -%}
 Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
     name: build {{ project.name }} - {{ editor }} on iOS
     agent:
@@ -24,11 +24,11 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
         logs:
             paths:
                 - "build/logs/**"
-  {% endfor -%}
-  {% endfor -%}
+{% endfor -%}
+{% endfor -%}
 
-  {% for project in projects -%}
-  {% for editor in project.test_editors -%}
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
 Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
     name: build {{ project.name }} - {{ editor }} on Android
     agent:
@@ -57,8 +57,8 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
     variables:
         CI: true
         ENABLE_BURST_COMPILATION: False
-  {% endfor -%}
-  {% endfor -%}
+{% endfor -%}
+{% endfor -%}
 
 # For every editor version, run iOS project tests without
 # running package tests too since they are handled on their respective jobs
