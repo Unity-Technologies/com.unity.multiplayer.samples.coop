@@ -49,12 +49,16 @@ MonoBehaviour:
   m_MaxSendQueueSize: 50000000
   m_HeartbeatTimeoutMS: 500
   m_ConnectTimeoutMS: 1000
-  m_MaxConnectAttempts: 60
+  m_MaxConnectAttempts: 10
   m_DisconnectTimeoutMS: 10000
   ConnectionData:
     Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1 &503411707
 GameObject:
   m_ObjectHideFlags: 0
@@ -110,6 +114,10 @@ MonoBehaviour:
     Address: 127.0.0.1
     Port: 7777
     ServerListenAddress: 
+  DebugSimulator:
+    PacketDelayMS: 0
+    PacketJitterMS: 0
+    PacketDropRate: 0
 --- !u!1 &5436007408952557947
 GameObject:
   m_ObjectHideFlags: 0
@@ -176,50 +184,71 @@ MonoBehaviour:
   NetworkConfig:
     ProtocolVersion: 0
     NetworkTransport: {fileID: 5486862276979889515}
-    PlayerPrefab: {fileID: 4927145850774787080, guid: 1d3f5528d25661949890bcd7f47fe81a, type: 3}
+    PlayerPrefab: {fileID: 4927145850774787080, guid: 1d3f5528d25661949890bcd7f47fe81a,
+      type: 3}
     NetworkPrefabs:
     - Override: 0
-      Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef, type: 3}
+      Prefab: {fileID: 6009713983291384756, guid: 8237adf32a9b6de4892e6febe6b4bdef,
+        type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded, type: 3}
+      Prefab: {fileID: 3713729372785093424, guid: 6cdd52f1fa2ed34469a487ae6477eded,
+        type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7, type: 3}
+      Prefab: {fileID: 3688950541947916333, guid: 365e94337fd10fe4ebde1906df413ac7,
+        type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a, type: 3}
+      Prefab: {fileID: 2842198241268549130, guid: 30c420f004b8f6445ad2bdb2addb234a,
+        type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c, type: 3}
+      Prefab: {fileID: 2842198241268549130, guid: 7e3b8103f5622f64fa677352730f295c,
+        type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb, type: 3}
+      Prefab: {fileID: 2842198241268549130, guid: 411974b75a8b43d4e9b3c9069a5067fb,
+        type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2, type: 3}
+      Prefab: {fileID: 2842198241268549130, guid: 0251e08eeed89e844a8527b3a7874cc2,
+        type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     - Override: 0
-      Prefab: {fileID: 576565557002701866, guid: 3af96a32a84bcf74d9538fa7af973c97, type: 3}
+      Prefab: {fileID: 576565557002701866, guid: 3af96a32a84bcf74d9538fa7af973c97,
+        type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3597354879354517420, guid: c8513d3df780cb34a9576da3772d512b,
+        type: 3}
+      SourcePrefabToOverride: {fileID: 0}
+      SourceHashToOverride: 0
+      OverridingTargetPrefab: {fileID: 0}
+    - Override: 0
+      Prefab: {fileID: 3106828016798330210, guid: 5c107a985e30aa2469a62ecf015d43a8,
+        type: 3}
       SourcePrefabToOverride: {fileID: 0}
       SourceHashToOverride: 0
       OverridingTargetPrefab: {fileID: 0}
     TickRate: 30
-    ClientConnectionBufferTimeout: 10
+    ClientConnectionBufferTimeout: 1
     ConnectionApproval: 1
     ConnectionData: 
     EnableTimeResync: 0
@@ -231,7 +260,7 @@ MonoBehaviour:
     NetworkIdRecycleDelay: 120
     RpcHashSize: 0
     LoadSceneTimeOut: 120
-    MessageBufferTimeout: 20
+    SpawnTimeout: 1
     EnableNetworkLogs: 1
 --- !u!1 &7311172147761373013
 GameObject:

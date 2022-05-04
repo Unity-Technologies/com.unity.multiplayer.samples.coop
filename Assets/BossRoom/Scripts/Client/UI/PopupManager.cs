@@ -41,21 +41,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         /// <param name="titleText">The title text at the top of the panel</param>
         /// <param name="mainText"> The text just under the title- the main body of text</param>
-        public static void ShowPopupPanel(string titleText, string mainText)
+        /// <param name="closeableByUser"></param>
+        public static PopupPanel ShowPopupPanel(string titleText, string mainText, bool closeableByUser = true)
         {
             if (s_Instance != null)
             {
-                s_Instance.DisplayPopupPanel(titleText, mainText);
+                return s_Instance.DisplayPopupPanel(titleText, mainText, closeableByUser);
             }
-            else
-            {
-                Debug.LogError($"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}");
-            }
+
+            Debug.LogError($"No PopupPanel instance found. Cannot display message: {titleText}: {mainText}");
+            return null;
         }
 
-        void DisplayPopupPanel(string titleText, string mainText)
+        PopupPanel DisplayPopupPanel(string titleText, string mainText, bool closeableByUser)
         {
-            GetNextAvailablePopupPanel()?.SetupPopupPanel(titleText, mainText);
+            var popup = GetNextAvailablePopupPanel();
+            if (popup != null)
+            {
+                popup.SetupPopupPanel(titleText, mainText, closeableByUser);
+            }
+
+            return popup;
         }
 
         PopupPanel GetNextAvailablePopupPanel()
