@@ -9,7 +9,7 @@ pack_{{ project.name }}:
     flavor: b1.small
   commands:
     - npm install upm-ci-utils@stable -g --registry https://artifactory.prd.cds.internal.unity3d.com/artifactory/api/npm/upm-npm
-    - upm-ci project pack --project-path {{ project.path }}
+    - upm-ci project pack --project-path {{ project.path }} --extra-utr-arg=--testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
   artifacts:
     packages:
       paths:
