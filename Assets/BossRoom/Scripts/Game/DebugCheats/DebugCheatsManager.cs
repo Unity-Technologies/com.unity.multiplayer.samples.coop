@@ -6,7 +6,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Debug
+namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
 {
     /// <summary>
     /// Handles debug cheat events, applies them on the server and logs them on all clients. This class is only
