@@ -243,12 +243,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
-            //var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
-            //NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
-
-            // TODO: once this is exposed in the adapter we will be able to change it
+            var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
 
             ConnectClient();
@@ -264,7 +259,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
 
                 await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
-                var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+                var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)
