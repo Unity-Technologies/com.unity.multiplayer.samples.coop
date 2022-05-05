@@ -50,5 +50,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             return guidString;
         }
 
+        public static string GetAvailableProfiles()
+        {
+            return PlayerPrefs.GetString("available_profiles", "");
+        }
+
+        public static void SetAvailableProfiles(string availableProfiles)
+        {
+            PlayerPrefs.SetString("available_profiles", availableProfiles);
+        }
+
     }
 }

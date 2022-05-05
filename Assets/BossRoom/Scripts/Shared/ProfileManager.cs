@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
-using System.Runtime.Serialization.Formatters.Binary;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 
 #if UNITY_EDITOR
 using System.Security.Cryptography;
@@ -16,8 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
     public class ProfileManager
     {
         public const string AuthProfileCommandLineArg = "-AuthProfile";
-
-        static readonly string k_SavePath = Application.persistentDataPath + "/profiles.save";
 
         string m_Profile;
 
@@ -92,25 +89,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         void LoadProfiles()
         {
-            if (File.Exists(k_SavePath))
+            m_AvailableProfiles = new List<string>();
+            var loadedProfiles = ClientPrefs.GetAvailableProfiles();
+            Debug.Log("loading profiles");
+            Debug.Log(loadedProfiles);
+            foreach (var profile in loadedProfiles.Split(','))
             {
-                BinaryFormatter bf = new BinaryFormatter();
-                FileStream file = File.Open(k_SavePath, FileMode.Open);
-                m_AvailableProfiles = (List<string>)bf.Deserialize(file);
-                file.Close();
-            }
-            else
-            {
-                m_AvailableProfiles = new List<string>();
+                if (profile.Length > 0)
+                {
+                    Debug.Log("loading profile");
+                    Debug.Log(profile);
+                    m_AvailableProfiles.Add(profile);
+                }
             }
         }
 
         void SaveProfiles()
         {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Create(k_SavePath);
-            bf.Serialize(file, m_AvailableProfiles);
-            file.Close();
+            var profilesToSave = "";
+            foreach (var profile in m_AvailableProfiles)
+            {
+                profilesToSave += profile + ",";
+            }
+            Debug.Log("saving profiles");
+            Debug.Log(profilesToSave);
+            ClientPrefs.SetAvailableProfiles(profilesToSave);
         }
 
     }
