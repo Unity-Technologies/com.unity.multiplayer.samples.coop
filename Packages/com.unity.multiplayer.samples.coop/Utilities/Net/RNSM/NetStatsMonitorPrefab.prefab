@@ -55,7 +55,7 @@ MonoBehaviour:
     <OverridePosition>k__BackingField: 1
     <PositionLeftToRight>k__BackingField: 0
     <PositionTopToBottom>k__BackingField: 0
-  <Configuration>k__BackingField: {fileID: 0}
+  <Configuration>k__BackingField: {fileID: 11400000, guid: 8f1b4e3792d8446399527749cfb591a2, type: 2}
 --- !u!114 &2974514019541307266
 MonoBehaviour:
   m_ObjectHideFlags: 0
