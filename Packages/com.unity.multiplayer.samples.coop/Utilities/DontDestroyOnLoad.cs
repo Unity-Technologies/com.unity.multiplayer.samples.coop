@@ -1,10 +1,13 @@
 using System;
 using UnityEngine;
 
-public class DontDestroyOnLoad : MonoBehaviour
+namespace Unity.Multiplayer.Samples.Utilities
 {
-    void Awake()
+    public class DontDestroyOnLoad : MonoBehaviour
     {
-        DontDestroyOnLoad(gameObject);
+        void Awake()
+        {
+            DontDestroyOnLoad(gameObject);
+        }
     }
 }

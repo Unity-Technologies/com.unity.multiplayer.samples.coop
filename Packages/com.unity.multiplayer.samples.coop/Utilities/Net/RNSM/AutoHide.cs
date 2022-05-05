@@ -1,20 +1,23 @@
 using System.Collections;
 using UnityEngine;
 
-public class AutoHide : MonoBehaviour
+namespace Unity.Multiplayer.Samples.Utilities
 {
-    [SerializeField]
-    float m_TimeToHideSeconds = 5f;
-
-    // Start is called before the first frame update
-    void Start()
+    public class AutoHide : MonoBehaviour
     {
-        StartCoroutine(HideAfterSeconds());
-    }
+        [SerializeField]
+        float m_TimeToHideSeconds = 5f;
 
-    IEnumerator HideAfterSeconds()
-    {
-        yield return new WaitForSeconds(m_TimeToHideSeconds);
-        gameObject.SetActive(false);
+        // Start is called before the first frame update
+        void Start()
+        {
+            StartCoroutine(HideAfterSeconds());
+        }
+
+        IEnumerator HideAfterSeconds()
+        {
+            yield return new WaitForSeconds(m_TimeToHideSeconds);
+            gameObject.SetActive(false);
+        }
     }
 }
