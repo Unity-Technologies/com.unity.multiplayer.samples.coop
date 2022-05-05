@@ -2,8 +2,8 @@
     "name": "Unity.Multiplayer.Samples.BossRoom.Editor",
     "rootNamespace": "",
     "references": [
-        "Unity.Multiplayer.Samples.BossRoom.Shared",
-        "Unity.Netcode.Runtime"
+        "Unity.Netcode.Runtime",
+        "Unity.Multiplayer.Samples.BossRoom.Gameplay"
     ],
     "includePlatforms": [
         "Editor"
