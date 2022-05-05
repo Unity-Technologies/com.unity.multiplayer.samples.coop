@@ -1,7 +1,7 @@
 using Unity.Multiplayer.Tools.NetStatsMonitor;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.Utilities.ClientAuthority
+namespace Unity.Multiplayer.Samples.Utilities
 {
     public class NetStatsMonitorCustomization : MonoBehaviour
     {
