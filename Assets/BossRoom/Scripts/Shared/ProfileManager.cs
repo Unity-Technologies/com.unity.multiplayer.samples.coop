@@ -91,14 +91,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         {
             m_AvailableProfiles = new List<string>();
             var loadedProfiles = ClientPrefs.GetAvailableProfiles();
-            Debug.Log("loading profiles");
-            Debug.Log(loadedProfiles);
             foreach (var profile in loadedProfiles.Split(','))
             {
                 if (profile.Length > 0)
                 {
-                    Debug.Log("loading profile");
-                    Debug.Log(profile);
                     m_AvailableProfiles.Add(profile);
                 }
             }
@@ -111,8 +107,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             {
                 profilesToSave += profile + ",";
             }
-            Debug.Log("saving profiles");
-            Debug.Log(profilesToSave);
             ClientPrefs.SetAvailableProfiles(profilesToSave);
         }
 
