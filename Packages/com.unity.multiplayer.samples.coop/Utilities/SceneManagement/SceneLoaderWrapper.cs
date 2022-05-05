@@ -138,24 +138,24 @@ namespace Unity.Multiplayer.Samples.Utilities
                     }
                     break;
                 case SceneEventType.Synchronize: // Server told client to start synchronizing scenes
-                {
-                    // todo: this is a workaround that could be removed once MTT-3363 is done
-                    // Only executes on client that is not the host
-                    if (NetworkManager.IsClient && !NetworkManager.IsHost)
                     {
-                        // unload all currently loaded additive scenes so that if we connect to a server with the same
-                        // main scene we properly load and synchronize all appropriate scenes without loading a scene
-                        // that is already loaded.
-                        UnloadAdditiveScenes();
+                        // todo: this is a workaround that could be removed once MTT-3363 is done
+                        // Only executes on client that is not the host
+                        if (NetworkManager.IsClient && !NetworkManager.IsHost)
+                        {
+                            // unload all currently loaded additive scenes so that if we connect to a server with the same
+                            // main scene we properly load and synchronize all appropriate scenes without loading a scene
+                            // that is already loaded.
+                            UnloadAdditiveScenes();
+                        }
+                        break;
                     }
-                    break;
-                }
                 case SceneEventType.SynchronizeComplete: // Client told server that they finished synchronizing
                     // Only executes on server
                     if (NetworkManager.IsServer)
                     {
                         // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing, for example character spawning done server side should still be hidden by loading screen.
-                        StopLoadingScreenClientRpc(new ClientRpcParams {Send = new ClientRpcSendParams {TargetClientIds = new[] {sceneEvent.ClientId}}});
+                        StopLoadingScreenClientRpc(new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { sceneEvent.ClientId } } });
                     }
                     break;
             }
