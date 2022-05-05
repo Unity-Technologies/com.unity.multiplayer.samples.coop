@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
@@ -176,18 +177,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="port">The port to connect to. </param>
         public bool StartHost(string ipaddress, int port)
         {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-            chosenTransport.SetConnectionData(ipaddress, (ushort)port);
+            var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            utp.SetConnectionData(ipaddress, (ushort)port);
 
             return StartHost();
         }
 
         public async void StartUnityRelayHost()
         {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
             Debug.Log("Setting up Unity Relay host");
 
             try
@@ -201,7 +198,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
 
                 // we now need to set the RelayCode somewhere :P
-                chosenTransport.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
+                var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+                utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
             }
             catch (Exception e)
             {

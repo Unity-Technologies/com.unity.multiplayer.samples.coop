@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
+using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
@@ -45,19 +46,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void ShowConnectingWindow()
         {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
             void OnTimeElapsed()
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
                 Hide();
                 m_IPUIMediator.DisableSignInSpinner();
             }
-
-
-            var maxConnectAttempts= chosenTransport.MaxConnectAttempts;
-            var connectTimeoutMS= chosenTransport.ConnectTimeoutMS;
+            
+            var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            var maxConnectAttempts= utp.MaxConnectAttempts;
+            var connectTimeoutMS= utp.ConnectTimeoutMS;
             StartCoroutine(DisplayUTPConnectionDuration(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed));
 
             Show();

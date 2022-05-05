@@ -204,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     if (joiningLobby.Result.Success)
                     {
                         m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
-                        var joiningRelay = JoinRelayAsync();
+                        var joiningRelay = StartClientUnityRelayModeAsync(null);
                         yield return new WaitUntil(() => joiningRelay.IsCompleted);
                     }
                     else
@@ -243,24 +243,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+            //var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
+            //NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
+
+            var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
 
             // TODO: once this is exposed in the adapter we will be able to change it
-            chosenTransport.SetConnectionData(ipaddress, (ushort)port);
+            utp.SetConnectionData(ipaddress, (ushort)port);
 
             ConnectClient();
         }
 
-        public async void StartClientUnityRelayModeAsync(Action<string> onFailure)
-        {
-            var utp = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
-
-            await JoinRelayAsync(onFailure);
-        }
-
-        async Task JoinRelayAsync(Action<string> onFailure = null)
+        public async Task StartClientUnityRelayModeAsync(Action<string> onFailure)
         {
             Debug.Log($"Setting Unity Relay client with join code {m_LocalLobby.RelayJoinCode}");
 
