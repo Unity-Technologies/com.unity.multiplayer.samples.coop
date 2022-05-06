@@ -1,3 +1,6 @@
+# Custom python script to enable/disable burst compilations. Disabling burst is currently required for Android tests.
+# Source: https://github.com/Unity-Technologies/com.unity.netcode.gameobjects/blob/develop/.yamato/disable-burst-if-requested.py
+
 import argparse
 import json
 import os

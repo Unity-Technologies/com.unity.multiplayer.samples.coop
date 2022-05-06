@@ -1,3 +1,5 @@
+# Modeled after Yamato mobile automation example: https://github.cds.internal.unity3d.com/unity/mobile-yamato-example
+
 {% metadata_file .yamato/project.metafile %}
 ---
 
