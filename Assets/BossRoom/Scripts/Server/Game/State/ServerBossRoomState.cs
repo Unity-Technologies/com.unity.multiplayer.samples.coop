@@ -57,9 +57,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_LifeStateChangedEventMessageSubscriber = subscriber;
         }
 
-        public override void OnNetworkSpawn()
+        void Awake()
         {
-            if (!IsServer)
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerLoadComplete;
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerUnloadComplete;
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnClientSceneChanged;
+        }
+
+        public void OnServerLoadComplete(SceneEvent sceneEvent)
+        {
+            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete && sceneEvent.ClientId != NetworkManager.ServerClientId) return;
+            if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
             }
@@ -71,8 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_NetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
                 m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
 
-                NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
-                NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
+                NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
 
                 DoInitialSpawnIfPossible();
 
@@ -84,6 +91,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override void OnDestroy()
         {
             m_Subscription?.Dispose();
+            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerLoadComplete;
+            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerUnloadComplete;
         }
 
         private bool DoInitialSpawnIfPossible()
@@ -91,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_ServerNetPortal.AreAllClientsInServerScene() && !InitialSpawnDone)
             {
                 InitialSpawnDone = true;
-                foreach (var kvp in NetworkManager.ConnectedClients)
+                foreach (var kvp in NetworkManager.Singleton.ConnectedClients)
                 {
                     SpawnPlayer(kvp.Key, false);
                 }
@@ -102,7 +111,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void OnClientDisconnect(ulong clientId)
         {
-            if (clientId != NetworkManager.LocalClientId)
+            if (clientId != NetworkManager.Singleton.LocalClientId)
             {
                 // If a client disconnects, check for game over in case all other players are already down
                 StartCoroutine(WaitToCheckForGameOver());
@@ -139,16 +148,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     //ServerBossRoomState.
                     SpawnPlayer(clientId, true);
                 }
-
             }
         }
 
-        public override void OnNetworkDespawn()
+        public void OnServerUnloadComplete(SceneEvent sceneEvent)
         {
+            if (sceneEvent.SceneEventType != SceneEventType.UnloadComplete && sceneEvent.ClientId != NetworkManager.ServerClientId) return;
             if (m_NetPortal != null)
             {
-                NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
-                NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
+                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnClientSceneChanged;
             }
             m_Subscription?.Dispose();
         }

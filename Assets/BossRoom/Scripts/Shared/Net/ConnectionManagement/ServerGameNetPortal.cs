@@ -45,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_ConnectionEventPublisher = connectionEventPublisher;
         }
 
-        void Start()
+        void Awake()
         {
             m_Portal = GetComponent<GameNetPortal>();
 

@@ -80,7 +80,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             m_GameNetPortal.PlayerName = m_PlayerNameLabel.text;
 
-            if (m_GameNetPortal.StartHost(ip, portNum))
+            if (m_GameNetPortal.StartIPServer(ip, portNum, isHost: true))
             {
                 m_SignInSpinner.SetActive(true);
             }

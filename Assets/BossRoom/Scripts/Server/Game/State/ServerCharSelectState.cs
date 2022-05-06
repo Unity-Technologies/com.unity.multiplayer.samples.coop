@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -21,6 +22,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             base.Awake();
             CharSelectData = GetComponent<CharSelectData>();
+
+            CharSelectData.OnNetworkSpawnCallback += OnNetworkSpawn;
+            CharSelectData.OnNetworkDespawnCallback += OnNetworkDespawn;
         }
 
         void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
@@ -159,7 +163,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
         }
 
-        public override void OnNetworkDespawn()
+        public void OnNetworkDespawn()
         {
             if (NetworkManager.Singleton)
             {
@@ -172,9 +176,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public override void OnNetworkSpawn()
+        public void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
             }
@@ -185,6 +189,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
             }
+            if (NetworkManager.Singleton.IsClient)
+            {
+                SceneManager.LoadScene("CharSelectClient", LoadSceneMode.Additive);
+            }
         }
 
         void OnSceneEvent(SceneEvent sceneEvent)
@@ -192,7 +200,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // We need to filter out the event that are not a client has finished loading the scene
             if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
             // When the client finishes loading the Lobby Map, we will need to Seat it
-            SeatNewPlayer(sceneEvent.ClientId);
+            if (NetworkManager.Singleton.IsServer && NetworkManager.Singleton.ConnectedClients.ContainsKey(sceneEvent.ClientId)) // if the client is DGS, don't do this
+            {
+                SeatNewPlayer(sceneEvent.ClientId);
+            }
         }
 
         int GetAvailablePlayerNumber()

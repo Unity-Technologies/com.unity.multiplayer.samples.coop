@@ -163,7 +163,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
             foreach (var component in components)
             {
-                InjectIn(component);
+                if (component != null)
+                {
+                    InjectIn(component);
+                }
+                else
+                {
+                    Debug.LogWarning("trying to inject null component, not injecting it. Check if you have missing script warnings on your GameObject", go);
+                }
             }
         }
 

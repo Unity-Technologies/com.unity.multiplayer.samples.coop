@@ -35,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Important Note: We assume that every Scene has a GameState object. If not, then it's possible that a Persisting game state
     /// will outlast its lifetime (as there is no successor state to clean it up).
     /// </remarks>
-    public abstract class GameStateBehaviour : NetworkBehaviour
+    public abstract class GameStateBehaviour : MonoBehaviour
     {
         /// <summary>
         /// Does this GameState persist across multiple scenes?
@@ -116,10 +116,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
         }
 
-        public override void OnDestroy()
+        public virtual void OnDestroy()
         {
             Scope?.Dispose();
-            base.OnDestroy();
             if (!Persists)
             {
                 s_ActiveStateGO = null;

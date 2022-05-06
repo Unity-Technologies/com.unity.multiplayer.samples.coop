@@ -85,7 +85,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private void Start()
         {
-            SceneManager.LoadScene("MainMenu");
+#if UNITY_SERVER
+            bool isPureServer = true;
+#else
+            bool isPureServer = false;
+#endif
+            if (isPureServer)
+            {
+                // skip main menu and start IP server directly
+                // todo have game state flow for this for starting new lobbies and finishing games
+                m_GameNetPortal.StartIPServer("0.0.0.0", 9998, isHost: false);
+            }
+            else
+            {
+                SceneManager.LoadScene("StartupClient", LoadSceneMode.Additive);
+                SceneManager.LoadScene("MainMenu");
+            }
         }
 
         private void OnDestroy()

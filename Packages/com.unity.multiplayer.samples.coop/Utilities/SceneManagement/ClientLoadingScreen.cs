@@ -32,7 +32,6 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         List<Slider> m_OtherPlayersProgressBars;
 
-        [SerializeField]
         protected LoadingProgressManager m_LoadingProgressManager;
 
         protected Dictionary<ulong, int> m_ClientIdToProgressBarsIndex = new Dictionary<ulong, int>();
@@ -44,6 +43,11 @@ namespace Unity.Multiplayer.Samples.Utilities
         void Awake()
         {
             DontDestroyOnLoad(this);
+            SceneLoaderWrapper.Instance.LoadingStarted += StartLoadingScreen;
+            SceneLoaderWrapper.Instance.LoadingStopped += StopLoadingScreen;
+            SceneLoaderWrapper.Instance.LoadingUpdated += UpdateLoadingScreen;
+            // todo have client DI scope
+            m_LoadingProgressManager = FindObjectOfType<LoadingProgressManager>();
         }
 
         void Start()
