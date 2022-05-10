@@ -135,5 +135,10 @@ namespace Unity.Multiplayer.Samples.Utilities
                 UpdateTrackersClientRpc();
             }
         }
+
+        public void ResetLocalProgress()
+        {
+            LocalProgress = 0;
+        }
     }
 }
