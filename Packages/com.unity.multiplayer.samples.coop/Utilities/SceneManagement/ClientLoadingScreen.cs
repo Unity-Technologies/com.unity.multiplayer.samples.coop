@@ -67,6 +67,21 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void OnProgressTrackersUpdated()
         {
+            // deactivate progress bars of clients that are no longer tracked
+            var clientIdsToRemove = new List<ulong>();
+            foreach (var clientId in m_ClientIdToProgressBarsIndex.Keys)
+            {
+                if (!m_LoadingProgressManager.ProgressTrackers.ContainsKey(clientId))
+                {
+                    clientIdsToRemove.Add(clientId);
+                }
+            }
+
+            foreach (var clientId in clientIdsToRemove)
+            {
+                m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(false);
+                m_ClientIdToProgressBarsIndex.Remove(clientId);
+            }
             UpdateProgressBars(false);
         }
 
