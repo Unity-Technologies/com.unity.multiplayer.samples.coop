@@ -5,9 +5,9 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.Multiplayer.Samples.Utilities.Testing",
-        "Unity.Multiplayer.Samples.BossRoom.Client",
-        "Unity.Multiplayer.Samples.BossRoom.Shared",
-        "Unity.Netcode.Runtime"
+        "Unity.Netcode.Runtime",
+        "Unity.Multiplayer.Samples.BossRoom.Gameplay",
+        "Unity.Multiplayer.Samples.BossRoom.Infrastructure"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

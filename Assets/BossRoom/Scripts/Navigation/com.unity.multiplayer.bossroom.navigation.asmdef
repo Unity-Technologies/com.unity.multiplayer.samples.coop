@@ -1,13 +1,8 @@
 {
-    "name": "Unity.Multiplayer.Samples.BossRoom.Editor",
+    "name": "Unity.Multiplayer.Samples.BossRoom.Navigation",
     "rootNamespace": "",
-    "references": [
-        "Unity.Netcode.Runtime",
-        "Unity.Multiplayer.Samples.BossRoom.Gameplay"
-    ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "references": [],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
