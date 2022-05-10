@@ -64,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else
             {
-                PopupManager.ShowPopupPanel("Could not create new Profile", "A profile already exists with this same. Select one of the already existing profiles or create a new one.");
+                PopupManager.ShowPopupPanel("Could not create new Profile", "A profile already exists with this same name. Select one of the already existing profiles or create a new one.");
             }
         }
 
