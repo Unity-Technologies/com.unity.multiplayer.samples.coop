@@ -91,7 +91,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         {
             m_AvailableProfiles = new List<string>();
             var loadedProfiles = ClientPrefs.GetAvailableProfiles();
-            foreach (var profile in loadedProfiles.Split(','))
+            foreach (var profile in loadedProfiles.Split(',')) // this works since we're sanitizing our input strings
             {
                 if (profile.Length > 0)
                 {
