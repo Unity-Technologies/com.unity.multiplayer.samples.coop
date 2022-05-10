@@ -129,10 +129,13 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsServer)
             {
-                var tracker = ProgressTrackers[clientId];
-                ProgressTrackers.Remove(clientId);
-                tracker.NetworkObject.Despawn();
-                UpdateTrackersClientRpc();
+                if (ProgressTrackers.ContainsKey(clientId))
+                {
+                    var tracker = ProgressTrackers[clientId];
+                    ProgressTrackers.Remove(clientId);
+                    tracker.NetworkObject.Despawn();
+                    UpdateTrackersClientRpc();
+                }
             }
         }
 
