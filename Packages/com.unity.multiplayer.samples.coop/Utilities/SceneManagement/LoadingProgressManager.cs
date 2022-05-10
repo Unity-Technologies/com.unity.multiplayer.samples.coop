@@ -80,6 +80,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 NetworkManager.OnClientDisconnectCallback -= RemoveTracker;
             }
             ProgressTrackers.Clear();
+            onTrackersUpdated?.Invoke();
         }
 
         void Update()

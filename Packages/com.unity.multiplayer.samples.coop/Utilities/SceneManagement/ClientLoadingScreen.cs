@@ -62,11 +62,18 @@ namespace Unity.Multiplayer.Samples.Utilities
             if (m_LoadingScreenRunning)
             {
                 m_ProgressBar.value = m_LoadingProgressManager.LocalProgress;
+                UpdateOtherPlayersProgressBars();
             }
         }
 
         void OnProgressTrackersUpdated()
         {
+            if (!m_LoadingScreenRunning)
+            {
+                // no need to handle it here, since it will be reinitialized when the next loading screen starts anyway
+                return;
+            }
+
             // deactivate progress bars of clients that are no longer tracked
             var clientIdsToRemove = new List<ulong>();
             foreach (var clientId in m_ClientIdToProgressBarsIndex.Keys)
@@ -79,10 +86,17 @@ namespace Unity.Multiplayer.Samples.Utilities
 
             foreach (var clientId in clientIdsToRemove)
             {
-                m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(false);
-                m_ClientIdToProgressBarsIndex.Remove(clientId);
+                RemoveOtherPlayerProgressBar(clientId);
             }
-            UpdateProgressBars(false);
+
+            foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
+            {
+                var clientId = progressTracker.Key;
+                if (clientId != NetworkManager.Singleton.LocalClientId && !m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
+                {
+                    AddOtherPlayerProgressBar(clientId);
+                }
+            }
         }
 
         public void StopLoadingScreen()
@@ -107,18 +121,6 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         protected virtual void ReinitializeProgressBars()
         {
-            // clear previous callbacks
-            foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
-            {
-                var clientId = progressTracker.Key;
-                var progress = progressTracker.Value.Progress;
-                if (clientId != NetworkManager.Singleton.LocalClientId && m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
-                {
-                    progress.OnValueChanged -= (value, newValue) =>
-                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
-                }
-
-            }
             // clear map
             m_ClientIdToProgressBarsIndex.Clear();
 
@@ -128,35 +130,45 @@ namespace Unity.Multiplayer.Samples.Utilities
                 progressBar.gameObject.SetActive(false);
             }
 
-            if (m_LoadingProgressManager.IsSpawned && !NetworkManager.Singleton.ShutdownInProgress)
+            foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
             {
-                // initialize all other players' progress bars
-                UpdateProgressBars(true);
+                var clientId = progressTracker.Key;
+                if (clientId != NetworkManager.Singleton.LocalClientId)
+                {
+                    AddOtherPlayerProgressBar(clientId);
+                }
             }
         }
 
-        protected virtual void UpdateProgressBars(bool isInitializing)
+        protected virtual void AddOtherPlayerProgressBar(ulong clientId)
+        {
+            if (m_ClientIdToProgressBarsIndex.Count < m_OtherPlayersProgressBars.Count)
+            {
+                m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
+                m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = 0;
+                m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
+            }
+            else
+            {
+                throw new Exception("There are not enough progress bars to track the progress of all the players.");
+            }
+        }
+
+        protected virtual void RemoveOtherPlayerProgressBar(ulong clientId)
+        {
+            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(false);
+            m_ClientIdToProgressBarsIndex.Remove(clientId);
+        }
+
+        protected virtual void UpdateOtherPlayersProgressBars()
         {
             foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
             {
                 var clientId = progressTracker.Key;
                 var progress = progressTracker.Value.Progress;
-                if (clientId != NetworkManager.Singleton.LocalClientId && !m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
+                if (clientId != NetworkManager.Singleton.LocalClientId && m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
                 {
-                    if (m_ClientIdToProgressBarsIndex.Count < m_OtherPlayersProgressBars.Count)
-                    {
-                        m_ClientIdToProgressBarsIndex[clientId] = m_ClientIdToProgressBarsIndex.Count;
-
-                        // set progress bar to 0 if initializing, else set it to its last known value
-                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = isInitializing ? 0 : progress.Value;
-                        progress.OnValueChanged += (value, newValue) =>
-                            m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = newValue;
-                        m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
-                    }
-                    else
-                    {
-                        throw new Exception("There are not enough progress bars to track the progress of all the players.");
-                    }
+                    m_OtherPlayersProgressBars[m_ClientIdToProgressBarsIndex[clientId]].value = progress.Value;
                 }
             }
         }
