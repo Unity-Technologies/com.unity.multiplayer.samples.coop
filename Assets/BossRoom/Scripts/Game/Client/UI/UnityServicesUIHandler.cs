@@ -28,22 +28,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             switch (error.AffectedService)
             {
                 case UnityServiceErrorMessage.Service.Lobby:
-                    {
-                        HandleLobbyError(error);
-                        break;
-                    }
+                {
+                    HandleLobbyError(error);
+                    break;
+                }
                 case UnityServiceErrorMessage.Service.Authentication:
-                    {
-                        PopupManager.ShowPopupPanel(
-                            "Authentication Error",
-                            $"{error.OriginalException.Message} \n tip: You can still use the Direct IP connection option.");
-                        break;
-                    }
+                {
+                    PopupManager.ShowPopupPanel(
+                        "Authentication Error",
+                        $"{error.OriginalException.Message} \n tip: You can still use the Direct IP connection option.");
+                    break;
+                }
                 default:
-                    {
-                        PopupManager.ShowPopupPanel("Service error: " + error.Title, errorMessage);
-                        break;
-                    }
+                {
+                    PopupManager.ShowPopupPanel("Service error: " + error.Title, errorMessage);
+                    break;
+                }
             }
         }
 
