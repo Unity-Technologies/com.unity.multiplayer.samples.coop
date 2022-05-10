@@ -15,7 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         GameObject m_FeedbackObj;
 
         ClientInputSender m_ClientSender;
-        
+
         ClickFeedbackLerper m_ClickFeedbackLerper;
 
 

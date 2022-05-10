@@ -166,7 +166,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             float currentTime = 0;
             while (currentTime < m_FadeOutDuration)
             {
-                m_CanvasGroup.alpha = Mathf.Lerp(1, 0, currentTime/ m_FadeOutDuration);
+                m_CanvasGroup.alpha = Mathf.Lerp(1, 0, currentTime / m_FadeOutDuration);
                 yield return null;
                 currentTime += Time.deltaTime;
             }

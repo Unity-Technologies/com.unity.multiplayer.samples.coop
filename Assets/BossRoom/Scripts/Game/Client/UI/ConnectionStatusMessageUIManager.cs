@@ -77,11 +77,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
             else if (m_CurrentReconnectPopup != null)
             {
-                m_CurrentReconnectPopup.SetupPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt+1}/{message.MaxAttempt}", closeableByUser: false);
+                m_CurrentReconnectPopup.SetupPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt + 1}/{message.MaxAttempt}", closeableByUser: false);
             }
             else
             {
-                m_CurrentReconnectPopup = PopupManager.ShowPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt+1}/{message.MaxAttempt}", closeableByUser: false);
+                m_CurrentReconnectPopup = PopupManager.ShowPopupPanel("Connection lost", $"Attempting to reconnect...\nAttempt {message.CurrentAttempt + 1}/{message.MaxAttempt}", closeableByUser: false);
             }
         }
 

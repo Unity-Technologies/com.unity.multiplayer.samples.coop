@@ -113,7 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (!IsNpc)
             {
                 SessionPlayerData? sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
-                if (sessionPlayerData is {HasCharacterSpawned: true})
+                if (sessionPlayerData is { HasCharacterSpawned: true })
                 {
                     NetState.HitPoints = sessionPlayerData.Value.CurrentHitPoints;
                     if (NetState.HitPoints <= 0)
