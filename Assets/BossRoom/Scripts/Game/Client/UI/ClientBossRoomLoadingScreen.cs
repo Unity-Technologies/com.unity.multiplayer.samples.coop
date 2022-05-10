@@ -9,27 +9,39 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     public class ClientBossRoomLoadingScreen : ClientLoadingScreen
     {
+        protected class BossRoomLoadingProgressBar : LoadingProgressBar
+        {
+            public Text NameText { get; set; }
+
+            public BossRoomLoadingProgressBar(Slider otherPlayerProgressBar, Text otherPlayerNameText)
+                : base(otherPlayerProgressBar)
+            {
+                NameText = otherPlayerNameText;
+            }
+        }
+
         [SerializeField]
         List<Text> m_OtherPlayerNamesTexts;
 
         [SerializeField]
         PersistentPlayerRuntimeCollection m_PersistentPlayerRuntimeCollection;
 
-        protected override void AddOtherPlayerProgressBar(ulong clientId)
+        protected override void AddOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker)
         {
-            base.AddOtherPlayerProgressBar(clientId);
             foreach (var player in m_PersistentPlayerRuntimeCollection.Items)
             {
                 if (clientId == player.OwnerClientId)
                 {
-                    if (m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
+                    if (m_LoadingProgressBars.Count < m_OtherPlayersProgressBars.Count)
                     {
-                        m_OtherPlayerNamesTexts[m_ClientIdToProgressBarsIndex[clientId]].text = player.NetworkNameState.Name.Value;
-                        m_OtherPlayerNamesTexts[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
+                        var index = m_LoadingProgressBars.Count;
+                        m_LoadingProgressBars[clientId] = new BossRoomLoadingProgressBar(m_OtherPlayersProgressBars[index], m_OtherPlayerNamesTexts[index]);
+                        progressTracker.Progress.OnValueChanged += m_LoadingProgressBars[clientId].UpdateProgress;
+                        m_LoadingProgressBars[clientId].ProgressBar.gameObject.SetActive(true);
                     }
                     else
                     {
-                        throw new Exception("No progress bar is mapped to this player.");
+                        throw new Exception("There are not enough progress bars to track the progress of all the players.");
                     }
 
                     return;
@@ -37,20 +49,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        protected override void RemoveOtherPlayerProgressBar(ulong clientId)
+        protected override void RemoveOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker = null)
         {
-            m_OtherPlayerNamesTexts[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(false);
-            base.RemoveOtherPlayerProgressBar(clientId);
+            ((BossRoomLoadingProgressBar) m_LoadingProgressBars[clientId]).NameText.gameObject.SetActive(false);
+            base.RemoveOtherPlayerProgressBar(clientId, progressTracker);
         }
 
-        protected override void ReinitializeProgressBars()
+        protected override void UpdateOtherPlayerProgressBar(ulong clientId, int progressBarIndex)
         {
-            // deactivate all other players' name text
-            foreach (var playerName in m_OtherPlayerNamesTexts)
-            {
-                playerName.gameObject.SetActive(false);
-            }
-            base.ReinitializeProgressBars();
+            ((BossRoomLoadingProgressBar) m_LoadingProgressBars[clientId]).NameText = m_OtherPlayerNamesTexts[progressBarIndex];
+            base.UpdateOtherPlayerProgressBar(clientId, progressBarIndex);
         }
     }
 }
