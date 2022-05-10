@@ -1,14 +1,24 @@
 {
     "name": "Unity.Multiplayer.Samples.BossRoom.Tests.Runtime.HostTests",
     "rootNamespace": "",
-    "references": [],
+    "references": [
+        "UnityEngine.TestRunner",
+        "UnityEditor.TestRunner",
+        "Unity.Multiplayer.Samples.Utilities.Testing",
+        "Unity.Multiplayer.Samples.BossRoom.Client",
+        "Unity.Multiplayer.Samples.BossRoom.Shared",
+        "Unity.Netcode.Runtime"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
-    "overrideReferences": false,
-    "precompiledReferences": [],
-    "autoReferenced": true,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": false,
     "defineConstraints": [
+        "UNITY_INCLUDE_TESTS",
         "!UNITY_SERVER"
     ],
     "versionDefines": [],

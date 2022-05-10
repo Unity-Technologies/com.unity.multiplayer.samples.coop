@@ -57,11 +57,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_LifeStateChangedEventMessageSubscriber = subscriber;
         }
 
-        void Awake()
+        protected override void Awake()
         {
+            base.Awake();
             NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerUnloadComplete;
-            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnClientSceneChanged;
         }
 
         public void OnServerLoadComplete(SceneEvent sceneEvent)
@@ -80,6 +80,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
 
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent += OnClientSceneChanged;
+
 
                 DoInitialSpawnIfPossible();
 
