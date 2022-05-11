@@ -53,7 +53,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_IPUIMediator.DisableSignInSpinner();
             }
 
-            var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             var maxConnectAttempts = utp.MaxConnectAttempts;
             var connectTimeoutMS = utp.ConnectTimeoutMS;
             StartCoroutine(DisplayUTPConnectionDuration(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed));

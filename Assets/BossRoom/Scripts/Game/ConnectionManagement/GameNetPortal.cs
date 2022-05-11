@@ -179,7 +179,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="port">The port to connect to. </param>
         public bool StartHost(string ipaddress, int port)
         {
-            var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
 
             return StartHost();
@@ -200,7 +200,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
 
                 // we now need to set the RelayCode somewhere :P
-                var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+                var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
                 utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
             }
             catch (Exception e)
