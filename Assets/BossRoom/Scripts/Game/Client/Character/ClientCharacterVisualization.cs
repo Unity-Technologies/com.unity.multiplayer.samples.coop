@@ -91,7 +91,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
             m_NetState.MovementStatus.OnValueChanged += OnMovementStatusChanged;
-            OnMovementStatusChanged(MovementStatus.Normal,m_NetState.MovementStatus.Value);
+            OnMovementStatusChanged(MovementStatus.Normal, m_NetState.MovementStatus.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);

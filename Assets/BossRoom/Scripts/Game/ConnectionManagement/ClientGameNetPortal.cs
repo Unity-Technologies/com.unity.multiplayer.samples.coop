@@ -217,7 +217,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     ConnectClient();
                 }
-                yield return new WaitForSeconds(1.1f * NetworkManager.Singleton.NetworkConfig.ClientConnectionBufferTimeout + ((UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport).DisconnectTimeoutMS/1000.0f); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
+                yield return new WaitForSeconds(1.1f * NetworkManager.Singleton.NetworkConfig.ClientConnectionBufferTimeout + ((UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport).DisconnectTimeoutMS / 1000.0f); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
                 nbTries++;
             }
 
@@ -282,7 +282,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
 
                 await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
-                var utp = (UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+                var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)
