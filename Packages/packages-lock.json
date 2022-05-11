@@ -128,7 +128,7 @@
       }
     },
     "com.unity.multiplayer.tools": {
-      "version": "1.0.0-pre.6",
+      "version": "1.0.0-pre.7",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -141,7 +141,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.0.0-pre.8",
+      "version": "1.0.0-pre.9",
       "depth": 0,
       "source": "registry",
       "dependencies": {

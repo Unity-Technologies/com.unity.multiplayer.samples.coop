@@ -118,7 +118,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             for (int i = 0; i < m_LobbyListItems.Count; i++)
             {
-                m_LobbyListItems[i].gameObject.SetActive( i < requiredNumber );
+                m_LobbyListItems[i].gameObject.SetActive(i < requiredNumber);
             }
         }
 

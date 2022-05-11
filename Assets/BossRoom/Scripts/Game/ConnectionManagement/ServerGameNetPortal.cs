@@ -117,7 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
                     if (sessionData.HasValue)
                     {
-                        m_ConnectionEventPublisher.Publish(new ConnectionEventMessage(){ ConnectStatus = ConnectStatus.GenericDisconnect, PlayerName = sessionData.Value.PlayerName});
+                        m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.GenericDisconnect, PlayerName = sessionData.Value.PlayerName });
                     }
                     SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
                 }
@@ -210,7 +210,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 // connection approval will create a player object for you
                 connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
-                m_ConnectionEventPublisher.Publish(new ConnectionEventMessage(){ ConnectStatus = ConnectStatus.Success, PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName});
+                m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.Success, PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName });
             }
             else
             {

@@ -48,7 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             m_Publisher.Publish(new LifeStateChangedEventMessage()
             {
-                CharacterName = m_NameState != null ? m_NameState.Name.Value : (FixedPlayerName) m_CharacterName,
+                CharacterName = m_NameState != null ? m_NameState.Name.Value : (FixedPlayerName)m_CharacterName,
                 CharacterType = m_CharacterClass.CharacterClass.CharacterType,
                 NewLifeState = newState
             });

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -120,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 await ExceptionHandling(Lobbies.Instance.RemovePlayerAsync(lobbyId, requesterUasId));
             }
             catch (LobbyServiceException e)
-                when (e is {Reason: LobbyExceptionReason.PlayerNotFound})
+                when (e is { Reason: LobbyExceptionReason.PlayerNotFound })
             {
                 // If Player is not found, they have already left the lobby or have been kicked out. No need to throw here
             }
@@ -145,7 +145,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public async Task<Lobby> UpdateLobby(string lobbyId, Dictionary<string, DataObject> data, bool shouldLock)
         {
-            UpdateLobbyOptions updateOptions = new UpdateLobbyOptions { Data = data , IsLocked = shouldLock};
+            UpdateLobbyOptions updateOptions = new UpdateLobbyOptions { Data = data, IsLocked = shouldLock };
             return await ExceptionHandling(Lobbies.Instance.UpdateLobbyAsync(lobbyId, updateOptions));
         }
 
