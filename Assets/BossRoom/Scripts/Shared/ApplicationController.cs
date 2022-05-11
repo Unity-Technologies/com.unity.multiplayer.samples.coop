@@ -85,12 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private void Start()
         {
-#if UNITY_SERVER
-            bool isPureServer = true;
-#else
-            bool isPureServer = false;
-#endif
-            if (isPureServer)
+            if (DedicatedServerUtilities.IsServerBuildTarget)
             {
                 // skip main menu and start IP server directly
                 // todo have game state flow for this for starting new lobbies and finishing games
