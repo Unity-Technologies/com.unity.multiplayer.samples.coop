@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Runtime.CompilerServices;
@@ -83,7 +83,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         public void BeginTracking()
         {
-            if(!m_IsTracking)
+            if (!m_IsTracking)
             {
                 m_IsTracking = true;
                 // 2s update cadence is arbitrary and is here to demonstrate the fact that this update can be rather infrequent
@@ -144,7 +144,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                             return;
                         }
                     }
-                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby","Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
+                    m_UnityServiceErrorMessagePub.Publish(new UnityServiceErrorMessage("Host left the lobby", "Disconnecting.", UnityServiceErrorMessage.Service.Lobby));
                     await EndTracking();
                     // no need to disconnect Netcode, it should already be handled by Netcode's callback to disconnect
                 }
@@ -201,8 +201,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             {
                 if (!string.IsNullOrEmpty(lobbyCode))
                 {
-                   var lobby = await  m_LobbyApiInterface.JoinLobbyByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices());
-                   return (true, lobby);
+                    var lobby = await m_LobbyApiInterface.JoinLobbyByCode(AuthenticationService.Instance.PlayerId, lobbyCode, m_LocalUser.GetDataForUnityServices());
+                    return (true, lobby);
                 }
                 else
                 {
@@ -320,7 +320,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             {
                 var result = await m_LobbyApiInterface.UpdatePlayer(CurrentUnityLobby.Id, AuthenticationService.Instance.PlayerId, data, null, null);
 
-                if (result != null) {
+                if (result != null)
+                {
                     CurrentUnityLobby = result; // Store the most up-to-date lobby now since we have it, instead of waiting for the next heartbeat.
                 }
             }
