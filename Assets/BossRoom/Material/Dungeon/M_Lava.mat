@@ -128,7 +128,7 @@ Material:
     - _SrcBlend: 1
     - _Surface: 0
     - _UVSec: 0
-    - _UseAlpha: 1
+    - _UseAlpha: 0
     - _UseSoftParticles: 0
     - _WorkflowMode: 1
     - _ZTest: 4
