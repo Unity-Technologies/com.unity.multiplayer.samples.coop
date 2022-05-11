@@ -98,9 +98,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         {
             var data = lobby.m_UserData;
             int lastChanged = // Set flags just for the members that will be changed.
-                (m_UserData.IsHost == data.IsHost ? 0 : (int) UserMembers.IsHost) |
-                (m_UserData.DisplayName == data.DisplayName ? 0 : (int) UserMembers.DisplayName) |
-                (m_UserData.ID == data.ID ? 0 : (int) UserMembers.ID);
+                (m_UserData.IsHost == data.IsHost ? 0 : (int)UserMembers.IsHost) |
+                (m_UserData.DisplayName == data.DisplayName ? 0 : (int)UserMembers.DisplayName) |
+                (m_UserData.ID == data.ID ? 0 : (int)UserMembers.ID);
 
             if (lastChanged == 0) // Ensure something actually changed.
             {

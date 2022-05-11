@@ -156,7 +156,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                     if (NetworkManager.IsServer)
                     {
                         // Send client RPC to make sure the client stops the loading screen after the server handles what it needs to after the client finished synchronizing, for example character spawning done server side should still be hidden by loading screen.
-                        StopLoadingScreenClientRpc(new ClientRpcParams {Send = new ClientRpcSendParams {TargetClientIds = new[] {sceneEvent.ClientId}}});
+                        StopLoadingScreenClientRpc(new ClientRpcParams { Send = new ClientRpcSendParams { TargetClientIds = new[] { sceneEvent.ClientId } } });
                     }
                     break;
             }

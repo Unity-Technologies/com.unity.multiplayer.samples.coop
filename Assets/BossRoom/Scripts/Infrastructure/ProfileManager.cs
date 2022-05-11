@@ -1,4 +1,7 @@
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 
 #if UNITY_EDITOR
 using System.Security.Cryptography;
@@ -9,13 +12,53 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared
 {
-    public static class ProfileManager
+    public class ProfileManager
     {
         public const string AuthProfileCommandLineArg = "-AuthProfile";
 
-        static string s_Profile;
+        string m_Profile;
 
-        public static string Profile => s_Profile ??= GetProfile();
+        public string Profile
+        {
+            get
+            {
+                return m_Profile ??= GetProfile();
+            }
+            set
+            {
+                m_Profile = value;
+                onProfileChanged?.Invoke();
+            }
+        }
+
+        public event Action onProfileChanged;
+
+        List<string> m_AvailableProfiles;
+
+        public ReadOnlyCollection<string> AvailableProfiles
+        {
+            get
+            {
+                if (m_AvailableProfiles == null)
+                {
+                    LoadProfiles();
+                }
+
+                return m_AvailableProfiles.AsReadOnly();
+            }
+        }
+
+        public void CreateProfile(string profile)
+        {
+            m_AvailableProfiles.Add(profile);
+            SaveProfiles();
+        }
+
+        public void DeleteProfile(string profile)
+        {
+            m_AvailableProfiles.Remove(profile);
+            SaveProfiles();
+        }
 
         static string GetProfile()
         {
@@ -43,5 +86,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return "";
 #endif
         }
+
+        void LoadProfiles()
+        {
+            m_AvailableProfiles = new List<string>();
+            var loadedProfiles = ClientPrefs.GetAvailableProfiles();
+            foreach (var profile in loadedProfiles.Split(',')) // this works since we're sanitizing our input strings
+            {
+                if (profile.Length > 0)
+                {
+                    m_AvailableProfiles.Add(profile);
+                }
+            }
+        }
+
+        void SaveProfiles()
+        {
+            var profilesToSave = "";
+            foreach (var profile in m_AvailableProfiles)
+            {
+                profilesToSave += profile + ",";
+            }
+            ClientPrefs.SetAvailableProfiles(profilesToSave);
+        }
+
     }
 }

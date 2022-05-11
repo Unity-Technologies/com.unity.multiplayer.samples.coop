@@ -12,7 +12,10 @@
 -->
 
 ### Contribution checklist
+ - [ ] Tests have been added for boss room and/or utilities pack
+ - [ ] Release notes have been added to the [project changelog](../CHANGELOG.md) file and/or [package changelog](../Packages/com.unity.multiplayer.samples.coop/CHANGELOG.md) file
  - [ ] Pull request has a meaningful description of its purpose
  - [ ] All commits are accompanied by meaningful commit messages
  - [ ] JIRA ticket ID is in the PR title or at least one commit message
  - [ ] Include the ticket ID number within the body message of the PR to create a hyperlink
+

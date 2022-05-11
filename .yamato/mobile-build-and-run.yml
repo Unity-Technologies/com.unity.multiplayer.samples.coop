@@ -1,0 +1,129 @@
+# Modeled after Yamato mobile automation example: https://github.cds.internal.unity3d.com/unity/mobile-yamato-example
+
+{% metadata_file .yamato/project.metafile %}
+---
+
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
+Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
+    name: build {{ project.name }} - {{ editor }} on iOS
+    agent:
+        type: Unity::VM::osx
+        image: mobile/macos-10.15-testing:stable
+        flavor: b1.large
+
+    commands:
+        - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
+        - unity-downloader-cli -c Editor -c iOS -u {{ editor }} --fast --wait
+        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
+        - chmod +x ./utr
+        - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+
+    artifacts:
+        players:
+            paths:
+                - "build/players/**"
+        logs:
+            paths:
+                - "build/logs/**"
+{% endfor -%}
+{% endfor -%}
+
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
+Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
+    name: build {{ project.name }} - {{ editor }} on Android
+    agent:
+        type: Unity::VM
+        # Any generic image can be used, no need to have Android tools in the image for building
+        # All Android tools will be downloaded by unity-downloader-cli
+        image: desktop/android-execution-r19:v0.1.1-860408
+        flavor: b1.xlarge
+
+    commands:
+        # Download unity-downloader-cli
+        - pip install unity-downloader-cli --index-url https://artifactory.prd.it.unity3d.com/artifactory/api/pypi/pypi/simple --upgrade
+        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
+        - python .yamato/disable-burst-if-requested.py --project-path {{ project.path }} --platform Android
+        - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
+        # Build player(s)
+        - set UTR_VERSION=0.12.0
+        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+    artifacts:
+        players:
+            paths:
+                - "build/players/**"
+        logs:
+            paths:
+                - "build/logs/**"
+    variables:
+        CI: true
+        ENABLE_BURST_COMPILATION: False
+{% endfor -%}
+{% endfor -%}
+
+# For every editor version, run iOS project tests without
+# running package tests too since they are handled on their respective jobs
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
+mobile_test_ios_{{ project.name }}_{{ editor }}:
+    name: {{ project.name }} mobile project tests - {{ editor }} on iOS
+    agent:
+        type: Unity::mobile::iPhone
+        image: mobile/macos-10.15-testing:latest
+        flavor: b1.medium
+
+    # Skip repository cloning
+    skip_checkout: true
+
+    # Set a dependency on the build job
+    dependencies:
+        - .yamato/mobile-build-and-run.yml#Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}
+
+    commands:
+        # Download standalone UnityTestRunner
+        - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
+        # Give UTR execution permissions
+        - chmod +x ./utr
+        # Run the test build on the device
+        - ./utr --suite=playmode --platform=iOS --player-load-path=build/players --artifacts_path=build/test-results --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+
+    artifacts:
+        logs:
+            paths:
+                - "build/test-results/**"
+{% endfor -%}
+{% endfor -%}
+
+  # For every editor version, run Android project tests without
+  # running package tests too since they are handled on their respective jobs
+{% for project in projects -%}
+{% for editor in project.test_editors -%}
+mobile_test_android_{{ project.name }}_{{ editor }}:
+    name: {{ project.name }} mobile project tests - {{ editor }} on Android
+    agent:
+        type: Unity::mobile::shield
+        image: mobile/android-execution-r19:stable
+        flavor: b1.medium
+
+    # Skip repository cloning
+    skip_checkout: true
+    # Set a dependency on the build job
+    dependencies:
+        - .yamato/mobile-build-and-run.yml#Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}
+    commands:
+      # Download standalone UnityTestRunner
+      - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools/utr-standalone/utr.bat --output utr.bat
+      - |
+          set ANDROID_DEVICE_CONNECTION=%BOKKEN_DEVICE_IP%
+          start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
+          start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
+          set UTR_VERSION=0.12.0
+          ./utr --artifacts_path=build/test-results --testproject={{ project.path }} --editor-location=.Editor --reruncount=2 --suite=playmode --platform=android --player-connection-ip=%BOKKEN_HOST_IP% --player-load-path=build/players --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+    # Set uploadable artifact paths
+    artifacts:
+        logs:
+            paths:
+                - "build/test-results/**"
+{% endfor -%}
+{% endfor -%}

@@ -27,6 +27,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] IPUIMediator m_IPUIMediator;
         [SerializeField] Button m_LobbyButton;
         [SerializeField] GameObject m_SignInSpinner;
+        [SerializeField] UIProfileSelector m_UIProfileSelector;
+
+        AuthenticationServiceFacade m_AuthServiceFacade;
+        LocalLobbyUser m_LocalUser;
+        LocalLobby m_LocalLobby;
+        ProfileManager m_ProfileManager;
 
         protected override void Awake()
         {
@@ -43,11 +49,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         [Inject]
-        async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby)
+        async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby, ProfileManager profileManager)
         {
+            m_AuthServiceFacade = authServiceFacade;
+            m_LocalUser = localUser;
+            m_LocalLobby = localLobby;
+            m_ProfileManager = profileManager;
+
+
             if (string.IsNullOrEmpty(Application.cloudProjectId))
             {
-                PopupManager.ShowPopupPanel("Unity Gaming Services ProjectID not set up" ,"Click the Readme file in the Assets Folder within the Project window in-editor to follow \"How to set up Unity Gaming Services\"");
+                PopupManager.ShowPopupPanel("Unity Gaming Services ProjectID not set up", "Click the Readme file in the Assets Folder within the Project window in-editor to follow \"How to set up Unity Gaming Services\"");
                 OnSignInFailed();
                 return;
             }
@@ -55,14 +67,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             try
             {
                 var unityAuthenticationInitOptions = new InitializationOptions();
-                var profile = ProfileManager.Profile;
+                var profile = m_ProfileManager.Profile;
                 if (profile.Length > 0)
                 {
                     unityAuthenticationInitOptions.SetProfile(profile);
                 }
 
-                await authServiceFacade.InitializeAndSignInAsync(unityAuthenticationInitOptions);
+                await m_AuthServiceFacade.InitializeAndSignInAsync(unityAuthenticationInitOptions);
                 OnAuthSignIn();
+                m_ProfileManager.onProfileChanged += OnProfileChanged;
             }
             catch (Exception)
             {
@@ -76,9 +89,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
 
-                localUser.ID = AuthenticationService.Instance.PlayerId;
+                m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
                 // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
-                localLobby.AddUser(localUser);
+                m_LocalLobby.AddUser(m_LocalUser);
             }
 
             void OnSignInFailed()
@@ -94,6 +107,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
+        async void OnProfileChanged()
+        {
+            m_LobbyButton.interactable = false;
+            m_SignInSpinner.SetActive(true);
+            await m_AuthServiceFacade.SwitchProfileAndReSignInAsync(m_ProfileManager.Profile);
+
+            m_LobbyButton.interactable = true;
+            m_SignInSpinner.SetActive(false);
+
+            Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
+
+            // Updating LocalUser and LocalLobby
+            m_LocalLobby.RemoveUser(m_LocalUser);
+            m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
+            m_LocalLobby.AddUser(m_LocalUser);
+        }
+
         public void OnStartClicked()
         {
             m_LobbyUIMediator.ToggleJoinLobbyUI();
@@ -104,6 +134,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             m_LobbyUIMediator.Hide();
             m_IPUIMediator.Show();
+        }
+
+        public void OnChangeProfileClicked()
+        {
+            m_UIProfileSelector.Show();
         }
     }
 }

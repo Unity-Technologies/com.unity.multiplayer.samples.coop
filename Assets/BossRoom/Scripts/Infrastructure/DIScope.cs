@@ -108,7 +108,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             //if we have this type as lazy-bound instance - we are going to instantiate it now
             if (m_LazyBindDescriptors.TryGetValue(type, out var lazyBindDescriptor))
             {
-                var instance = (T) InstantiateLazyBoundObject(lazyBindDescriptor);
+                var instance = (T)InstantiateLazyBoundObject(lazyBindDescriptor);
                 m_LazyBindDescriptors.Remove(type);
                 foreach (var interfaceType in lazyBindDescriptor.InterfaceTypes)
                 {
@@ -127,7 +127,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
                 throw new NoInstanceToInjectException($"Injection of type {type} failed.");
             }
 
-            return (T) value;
+            return (T)value;
         }
 
         public void InjectIn(object obj)
@@ -159,7 +159,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public void InjectIn(GameObject go)
         {
-            var components = go.GetComponentsInChildren<Component>(includeInactive:true);
+            var components = go.GetComponentsInChildren<Component>(includeInactive: true);
 
             foreach (var component in components)
             {
