@@ -41,14 +41,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             // MainMenu is loaded as soon as Startup scene is launched, validate it is loaded
             yield return new TestUtilities.WaitForSceneLoad(k_MainMenuSceneName);
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
         }
 
         IEnumerator WaitUntilCharacterIsSelectedAndReady(int playerIndex)
         {
             yield return new TestUtilities.WaitForSceneLoad(k_CharSelectSceneName);
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
 
             // select a Character
             var seatObjectName = $"PlayerSeat ({playerIndex})";
@@ -61,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             uiCharSelectPlayerSeat.OnClicked();
 
             // selecting a class will enable the "Ready" button, next frame it is selectable
-            yield return new WaitForEndOfFrame();
+            yield return null;
 
             // hit ready
             ClientCharSelectState.Instance.OnPlayerClickedReady();
@@ -128,13 +128,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             // select "DIRECT IP" button
             clientMainMenuState.OnDirectIPClicked();
 
-            yield return new WaitForEndOfFrame();
+            yield return null;
 
             // select the "HOST" button
             ipHostingUI.OnCreateClick();
 
             // confirming hosting will initialize the hosting process; next frame the results will be ready
-            yield return new WaitForEndOfFrame();
+            yield return null;
 
             // verify hosting is successful
             Assert.That(m_NetworkManager.IsListening && m_NetworkManager.IsHost);
