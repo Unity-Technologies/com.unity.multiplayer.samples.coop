@@ -7,7 +7,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// Server-side logic for a door. This particular type of door
     /// is opened when a player stands on a floor switch.
     /// (Assign the floor switches for this door in the editor.)
-    /// </summary>
+    /// </summary> // TEST
     [RequireComponent(typeof(NetworkDoorState))]
     public class ServerSwitchedDoor : NetworkBehaviour
     {
