@@ -7,7 +7,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// <summary>
     /// Server-side logic for a floor switch (a/k/a "pressure plate").
     /// This script should be attached to a physics trigger.
-    /// </summary>
+    /// </summary> // TEST
     [RequireComponent(typeof(Collider)), RequireComponent(typeof(NetworkFloorSwitchState))]
     public class ServerFloorSwitch : NetworkBehaviour
     {
