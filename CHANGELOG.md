@@ -9,8 +9,17 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+feat: adding RNSM (Runtime Network Stats Monitor) to boss room [MTT-3267] (#621)
+Added basic automated testing and CI (#484)	(#487) (#639)	
+feat: connection feedback + IP connection window [MTT-2315] [MTT-3234] (#613)	
+First import of all the vandal imp artwork (#637)
+feat: other players loading progress in loading screen [MTT-2239] (#580)
+feat: auto reconnect [MTT-2617] (#611)
 
 ### Changed
+chore: bump NGO to pre.9 (#643)
+chore: bump boss room to 2021 [MTT-3022] (#620)	
+fix: folders and assemblies refactor MTT-2623, MTT-2615 (#628)
 
 ### Removed
 

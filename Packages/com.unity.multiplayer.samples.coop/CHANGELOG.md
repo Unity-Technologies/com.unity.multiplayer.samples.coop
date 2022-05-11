@@ -3,6 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+feat: other players loading progress in loading screen [MTT-2239] (#580)
 
 ### Changed
 
