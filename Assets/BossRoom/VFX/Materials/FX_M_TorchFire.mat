@@ -24,6 +24,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_0b5d110ddc9e4bc8b32a41de9af27498:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - Texture2D_0d51a7f662f34825885706c5f9f5b378:
         m_Texture: {fileID: 2800000, guid: 09ff3236ed6851c44b22b13107c206f5, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -61,6 +65,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
+        m_Texture: {fileID: 2800000, guid: aa447e6306f20834f883975e91c5f282, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTexture:
         m_Texture: {fileID: 2800000, guid: aa447e6306f20834f883975e91c5f282, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -102,15 +110,15 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Boolean_3d21c72f19314834bd7b68bd1945e5ed: 1
+    - Boolean_3d21c72f19314834bd7b68bd1945e5ed: 0
     - Boolean_3f723681939f4ad0be5abc28767056a0: 0
     - Boolean_b14a61a83cf04832bfc5e28ac9dc002f: 1
     - Boolean_b2d3c01bbc4040b69679a702e03700d7: 0
-    - Boolean_e207d7c3c7c54fe9a2fedb5c72933240: 1
+    - Boolean_e207d7c3c7c54fe9a2fedb5c72933240: 0
     - Boolean_e207d7c3c7c54fe9a2fedb5c72933240_1: 0
     - Boolean_ebca1713bc2a4fcea5fa60c01ccce53f: 0
     - Vector1_1: 0.15
-    - Vector1_49a02738d71c4444862d3f695e709242: 1
+    - Vector1_49a02738d71c4444862d3f695e709242: 0.804
     - Vector1_ffa04a928dac4de2b4be502e4caee4d3: 1
     - Vector1_ffa04a928dac4de2b4be502e4caee4d3_1: 1
     - _AlphaClip: 0
@@ -118,10 +126,13 @@ Material:
     - _BumpScale: 1
     - _CastShadows: 0
     - _ChangeMasktoX: 0
-    - _Cull: 0
+    - _Cull: 2
     - _CullMode: 0
     - _Cutoff: 0.5
+    - _DIS: 0
+    - _DISSOLVE_TYPE: 0
     - _DetailNormalMapScale: 1
+    - _Dissolve: 1
     - _DstBlend: 10
     - _Flowintencity: 0.15
     - _GlossMapScale: 1
@@ -132,6 +143,7 @@ Material:
     - _HasFlowEffect: 0
     - _HasMask: 0
     - _HasTextureDissolve: 1
+    - _InvertDissolve: 0
     - _InvertMask: 0
     - _MaskIntenicty: 1
     - _MaskPower: 1
@@ -157,14 +169,16 @@ Material:
     m_Colors:
     - Color_1808cb51d9804f419fb05b86068c676a: {r: 2.1185474, g: 2.1185474, b: 2.1185474, a: 1}
     - Vector4_1: {r: 1, g: 1, b: 0, a: 0}
-    - Vector4_1d8f01040b1f48af90ee158d67035434: {r: 1, g: 1, b: 0, a: 0}
+    - Vector4_1d8f01040b1f48af90ee158d67035434: {r: 0.5, g: 0.5, b: 0, a: 0}
     - Vector4_2: {r: 1, g: 1, b: 0, a: 0}
     - _Color: {r: 2.1185474, g: 2.1185474, b: 2.1185474, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Panner: {r: 0, g: 0.01, b: 0, a: 0}
     - _TileSpeedDissolveTexture: {r: 1, g: 1, b: 0, a: 0}
     - _TileSpeedMainTexture: {r: 1, g: 1, b: 0, a: 0}
+    - _Tint: {r: 2.1185474, g: 2.1185474, b: 2.1185474, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &2476739046284026689
+--- !u!114 &1675669253379797283
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
