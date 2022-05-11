@@ -63,8 +63,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     StartCoroutine(WaitUntilUNETDisconnected(OnTimeElapsed));
                     break;
                 case UnityTransport unityTransport:
-                    var maxConnectAttempts= unityTransport.MaxConnectAttempts;
-                    var connectTimeoutMS= unityTransport.ConnectTimeoutMS;
+                    var maxConnectAttempts = unityTransport.MaxConnectAttempts;
+                    var connectTimeoutMS = unityTransport.ConnectTimeoutMS;
                     StartCoroutine(DisplayUTPConnectionDuration(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed));
                     break;
                 default:

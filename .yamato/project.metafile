@@ -33,7 +33,4 @@ projects:
       - name: com.unity.multiplayer.samples.coop
         path: Packages/com.unity.multiplayer.samples.coop
     test_editors:
-      - 2021.1
-      - 2021.2
-      - 2020.3
-      - trunk
+      - 2021.3

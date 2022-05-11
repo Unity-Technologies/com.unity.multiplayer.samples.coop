@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -56,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
                 {
                     if (m_Subscribers.Add(onUpdate))
                     {
-                        m_SubscriberData.Add(onUpdate, new SubscriberData() {Period = updatePeriod, NextCallTime = 0});
+                        m_SubscriberData.Add(onUpdate, new SubscriberData() { Period = updatePeriod, NextCallTime = 0 });
                     }
                 });
             }
@@ -71,7 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             {
                 m_Subscribers.Remove(onUpdate);
                 m_SubscriberData.Remove(onUpdate);
-            } );
+            });
         }
 
         /// <summary>
