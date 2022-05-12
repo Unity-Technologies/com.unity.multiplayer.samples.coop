@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_SmokeDissolve_Additive
-  m_Shader: {fileID: -6465566751694194690, guid: a3e81e7fd4270c34082df8fbadb8d9dc, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 500cf73690d12844cb03f790a7b81174, type: 3}
   m_ValidKeywords:
   - _DISSOLVE_TYPE_CUSTOM
   - _DIS_DISSOLVETEXRED
@@ -30,12 +30,24 @@ Material:
         m_Texture: {fileID: 2800000, guid: 8a5b3af15db0b3d4e9b5fd91fe2e7c30, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - Texture2D_0d51a7f662f34825885706c5f9f5b378:
+        m_Texture: {fileID: 2800000, guid: 8a5b3af15db0b3d4e9b5fd91fe2e7c30, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_a49f118ec4654c468718c10acb0d11fb:
+        m_Texture: {fileID: 2800000, guid: 1ee97322756ea2c489f9311bd5c9f72d, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - Texture2D_acbb633d51b34b1d923df02e2b891250:
         m_Texture: {fileID: 2800000, guid: 78f5b23dbc61d1042b153173e9609b8e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_e49412bf7d88470393e9db2f62564878:
         m_Texture: {fileID: 2800000, guid: 8a5b3af15db0b3d4e9b5fd91fe2e7c30, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - Texture2D_ebc59c3a4789414dbc640714ca8cd838:
+        m_Texture: {fileID: 2800000, guid: 60781adef564aeb439a036d89cc5545e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -104,13 +116,24 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - Boolean_3d21c72f19314834bd7b68bd1945e5ed: 0
+    - Boolean_3f723681939f4ad0be5abc28767056a0: 0
+    - Boolean_b14a61a83cf04832bfc5e28ac9dc002f: 0
+    - Boolean_b2d3c01bbc4040b69679a702e03700d7: 0
     - Boolean_c63568d48ae14828ba2825120562da02: 1
+    - Boolean_e207d7c3c7c54fe9a2fedb5c72933240: 0
+    - Boolean_e207d7c3c7c54fe9a2fedb5c72933240_1: 0
+    - Boolean_ebca1713bc2a4fcea5fa60c01ccce53f: 0
     - ENUM_77760446580F4017ADC8BE0606DB8FC3: 3
     - ENUM_EA0A9A53583345159A94335DDBDA8082: 0
+    - Vector1_1: 0.15
+    - Vector1_49a02738d71c4444862d3f695e709242: 1
     - Vector1_50d1dbd18d5f409db3b6c7b61bf44f23: 0.5
     - Vector1_7a324857f6494e70b740863c2815a3d3: 0
+    - Vector1_ffa04a928dac4de2b4be502e4caee4d3: 1
+    - Vector1_ffa04a928dac4de2b4be502e4caee4d3_1: 1
     - _AlphaClip: 0
-    - _Blend: 0
+    - _Blend: 2
     - _BumpScale: 1
     - _CastShadows: 0
     - _Cull: 2
@@ -123,7 +146,7 @@ Material:
     - _DisType: 3
     - _Dissolve: 0
     - _DissolveType: 0
-    - _DstBlend: 10
+    - _DstBlend: 1
     - _Float0: 0
     - _Float2: 0
     - _GlossMapScale: 1
@@ -149,7 +172,11 @@ Material:
     - _ZWriteControl: 0
     - __dirty: 0
     m_Colors:
+    - Color_1808cb51d9804f419fb05b86068c676a: {r: 1, g: 1, b: 1, a: 0}
     - Color_9deac74e07fb4c59b3d8d172099ad17f: {r: 0.7254902, g: 0.7254902, b: 0.7254902, a: 1}
+    - Vector4_1: {r: 1, g: 1, b: 0, a: 0}
+    - Vector4_1d8f01040b1f48af90ee158d67035434: {r: 1, g: 1, b: 0, a: 0}
+    - Vector4_2: {r: 1, g: 1, b: 0, a: 0}
     - Vector4_2eab5e386ffd4454b7fca12e522c0b49: {r: 1, g: 1, b: 0.5, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DissolveTileSpeed: {r: 1, g: 1, b: 0.5, a: 0}

@@ -92,6 +92,7 @@ Material:
     - _CastShadows: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _Depth_Blend: 0
     - _DstBlend: 1
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
@@ -109,6 +110,7 @@ Material:
     - _Surface: 1
     - _Switch_Alpha: 1
     - _UseAlpha: 1
+    - _UseSoftParticles: 0
     - _Use_alpha: 1
     - _WorkflowMode: 1
     - _ZTest: 4

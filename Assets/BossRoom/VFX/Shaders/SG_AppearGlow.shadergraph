@@ -3639,7 +3639,7 @@
 }
 
 {
-    "m_SGVersion": 0,
+    "m_SGVersion": 1,
     "m_Type": "UnityEditor.ShaderGraph.ViewDirectionNode",
     "m_ObjectId": "7182f524107842d6b0b2721780fc5db9",
     "m_Group": {

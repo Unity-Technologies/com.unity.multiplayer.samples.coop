@@ -21,15 +21,10 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_MotionFlash
-  m_Shader: {fileID: -6465566751694194690, guid: 98d049a5b372986479d42cfc7e88f269, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 42787e4b9b9ce6049827a84217a0075e, type: 3}
   m_ValidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords:
-  - _HASFLOWEFFECT_ON
-  - _HASMASK_ON
-  - _HASTEXTUREDISSOLVE_ON
-  - _STEPSUBTRACT_ON
-  - _VERTEXAOPACITY_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
@@ -42,6 +37,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - Texture2D_0b5d110ddc9e4bc8b32a41de9af27498:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - Texture2D_0d51a7f662f34825885706c5f9f5b378:
         m_Texture: {fileID: 2800000, guid: 8a5b3af15db0b3d4e9b5fd91fe2e7c30, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -80,6 +79,10 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 037eea83bb383c34ebc2ee292c903057, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTexture:
@@ -151,7 +154,10 @@ Material:
     - _Cull: 2
     - _CullMode: 0
     - _Cutoff: 0.5
+    - _DIS: 0
+    - _DISSOLVE_TYPE: 0
     - _DetailNormalMapScale: 1
+    - _Dissolve: 1
     - _DstBlend: 10
     - _Float2: 1
     - _Float3: 2
@@ -164,6 +170,7 @@ Material:
     - _HasFlowEffect: 1
     - _HasMask: 1
     - _HasTextureDissolve: 1
+    - _InvertDissolve: 0
     - _InvertMask: 0
     - _MaskIntenicty: 1
     - _MaskIntenicty2: 1
@@ -190,13 +197,15 @@ Material:
     - _ZWriteControl: 0
     - __dirty: 0
     m_Colors:
-    - Color_1808cb51d9804f419fb05b86068c676a: {r: 5.2011423, g: 5.2011423, b: 5.2011423, a: 1}
+    - Color_1808cb51d9804f419fb05b86068c676a: {r: 1, g: 1, b: 1, a: 1}
     - Vector4_1: {r: 1, g: 1, b: 0, a: 2.5}
     - Vector4_1d8f01040b1f48af90ee158d67035434: {r: 2, g: 0.5, b: 0, a: 1.5}
     - Vector4_2: {r: 1, g: 1, b: 0, a: 0}
     - _Color: {r: 5.2011423, g: 5.2011423, b: 5.2011423, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Maintextilespeed: {r: 1, g: 1, b: 0, a: 0}
+    - _Panner: {r: 0, g: 0.01, b: 0, a: 0}
     - _TileSpeedDissolveTexture: {r: 2, g: 0.5, b: 0, a: 1.5}
     - _TileSpeedMainTexture: {r: 1, g: 1, b: 0, a: 2.5}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []

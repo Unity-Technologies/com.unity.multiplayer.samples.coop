@@ -100,13 +100,14 @@ Material:
     m_Ints: []
     m_Floats:
     - _AlphaClip: 0
-    - _Blend: 2
+    - _Blend: 0
     - _BumpScale: 1
     - _CastShadows: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _Depth_Blend: 0
     - _DetailNormalMapScale: 1
-    - _DstBlend: 1
+    - _DstBlend: 10
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -122,6 +123,7 @@ Material:
     - _Surface: 1
     - _UVSec: 0
     - _UseAlpha: 1
+    - _UseSoftParticles: 0
     - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0

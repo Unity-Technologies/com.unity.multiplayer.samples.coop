@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_StylizeSmoke_01
-  m_Shader: {fileID: -6465566751694194690, guid: 98d049a5b372986479d42cfc7e88f269, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 42787e4b9b9ce6049827a84217a0075e, type: 3}
   m_ValidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
@@ -33,7 +33,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - Texture2D_ebc59c3a4789414dbc640714ca8cd838:
-        m_Texture: {fileID: 2800000, guid: 60781adef564aeb439a036d89cc5545e, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:

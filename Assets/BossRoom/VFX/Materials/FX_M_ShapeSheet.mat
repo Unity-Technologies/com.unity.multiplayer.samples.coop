@@ -20,6 +20,7 @@ Material:
     RenderType: Transparent
   disabledShaderPasses:
   - DepthOnly
+  - SHADOWCASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -40,7 +41,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: abba64d998675624ab33387385516427, type: 3}
+        m_Texture: {fileID: 2800000, guid: 53d09b25edfa59f46bc906c64549fee2, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
@@ -86,9 +87,10 @@ Material:
     - _AlphaCutoff: 0.5
     - _Blend: 0
     - _BumpScale: 1
-    - _CastShadows: 1
+    - _CastShadows: 0
     - _Cull: 2
     - _Cutoff: 0.5
+    - _Depth_Blend: 0
     - _DstBlend: 10
     - _EnvironmentReflections: 1
     - _GlossMapScale: 0
@@ -107,6 +109,7 @@ Material:
     - _Surface: 1
     - _Switch_Alpha: 0
     - _UseAlpha: 1
+    - _UseSoftParticles: 0
     - _Use_alpha: 1
     - _WorkflowMode: 1
     - _ZTest: 8
