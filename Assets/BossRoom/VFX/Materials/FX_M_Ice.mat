@@ -69,6 +69,8 @@ Material:
     - _Opacity: 1
     - _Power: 2.38
     - _PowerIceTexture: 3
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _Smoothness: 0.708
     - _Specular: 0.426
     - _Tile: 6.02

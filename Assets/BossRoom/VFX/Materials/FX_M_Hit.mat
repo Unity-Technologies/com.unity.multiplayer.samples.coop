@@ -22,15 +22,19 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_Hit
   m_Shader: {fileID: -6465566751694194690, guid: a9ba79dc821093a4c9041bcede85096b, type: 3}
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords:
   - _SWITCH_ALPHA_ON
   m_LightmapFlags: 2
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
-  stringTagMap: {}
-  disabledShaderPasses: []
+  stringTagMap:
+    RenderType: Transparent
+  disabledShaderPasses:
+  - DepthOnly
+  - SHADOWCASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -59,7 +63,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 8759a71ed333d8846ad7c1ed9e113350, type: 3}
+        m_Texture: {fileID: 2800000, guid: ae36a75c7e2cbf14c829154d5bc49e5d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
@@ -102,10 +106,15 @@ Material:
     m_Floats:
     - Boolean_236a513c11c34f97b3d22cc5b0fdd0bd: 1
     - _ASEOutlineWidth: 0
+    - _AlphaClip: 0
+    - _Blend: 2
     - _BumpScale: 1
+    - _CastShadows: 0
+    - _Cull: 2
     - _Cutoff: 0.5
+    - _Depth_Blend: 0
     - _DetailNormalMapScale: 1
-    - _DstBlend: 0
+    - _DstBlend: 1
     - _Float0: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
@@ -114,9 +123,12 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _QueueControl: 0
+    - _QueueOffset: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SrcBlend: 1
+    - _SrcBlend: 5
+    - _Surface: 1
     - _Switch_Alpha: 1
     - _TransAmbient: 0.2
     - _TransDirect: 1
@@ -126,7 +138,10 @@ Material:
     - _Translucency: 1
     - _UVSec: 0
     - _UseAlpha: 1
-    - _ZWrite: 1
+    - _UseSoftParticles: 0
+    - _ZTest: 4
+    - _ZWrite: 0
+    - _ZWriteControl: 0
     - __dirty: 0
     m_Colors:
     - Color_acca830da4044b5fa948c859784be316: {r: 2.6082377, g: 2.6082377, b: 2.6082377, a: 1}
