@@ -93,7 +93,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             InitializeTextLine($"Type: {hostType}", out m_TextHostType);
             InitializeTextLine("No Stat", out m_TextStat);
             InitializeTextLine("", out m_TextBadNetworkConditions);
-            m_TextBadNetworkConditions.fontSize *= 1.2f;
         }
 
         void InitializeTextLine(string defaultText, out TextMeshProUGUI textComponent)
