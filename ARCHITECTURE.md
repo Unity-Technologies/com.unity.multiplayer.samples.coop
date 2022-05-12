@@ -43,7 +43,6 @@ For Unity Relay based multiplayer sessions, some setup is required. Please see o
 Please see [Multiplayer over internet](README.md) section of our Readme for more information on using either one.
 
 To allow for any of these options to be chosen at runtime we created `TransportPicker`. It allows one to choose between an IP-based and a Relay-based transport and will hook up the game UI to use those transports. The transport field in the `NetworkManager` will be ignored. Currently we support the following transports:
-- **UNET(IP):** UNET is the default Netcode transport. However, it is not the default IP transport for Boss Room.
 - **UTP (IP):** Unity Transport Package is a network transport layer, packaged with network simulation tools which are useful for spotting networking issues early during development. This IP based protocol is the default IP transport for Boss Room. See the documentation on [Unity Transport Package](https://docs-multiplayer.unity3d.com/docs/transport-utp/about-transport-utp/#unity-transport-package-utp).
 - **Unity (Relay):** Unity Relay is a relay service provided by Unity services, supported by Unity Transport. Read more about [Unity Relay](https://docs-multiplayer.unity3d.com/docs/relay/relay).
 
