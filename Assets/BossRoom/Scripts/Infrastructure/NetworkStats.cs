@@ -42,6 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         const float k_PingIntervalSeconds = 0.1f;
         const float k_MaxWindowSize = k_MaxWindowSizeSeconds / k_PingIntervalSeconds;
 
+        // Some games are less sensitive to latency than others. For fast-paced games, latency above 100ms becomes a challenge for players while for others 500ms is fine. It's up to you to establish those thresholds.
         const float k_StrugglingNetworkConditionsRTTThreshold = 130;
         const float k_BadNetworkConditionsRTTThreshold = 200;
 
@@ -146,6 +147,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (m_TextBadNetworkConditions != null)
                 {
                     // Right now, we only base this warning on UTP's RTT metric, but in the future we could watch for packet loss as well, or other metrics.
+                    // This could be a simple icon instead of doing heavy string manipulations.
                     m_TextBadNetworkConditions.text = m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold ? "Bad Network Conditions Detected!": "";
                     var color = Color.red;
                     color.a = Mathf.PingPong(Time.time, 1f);
