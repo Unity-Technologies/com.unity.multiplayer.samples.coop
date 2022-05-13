@@ -135,6 +135,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                     if (NetworkManager.IsClient)
                     {
                         m_ClientLoadingScreen.StopLoadingScreen();
+                        m_LoadingProgressManager.ResetLocalProgress();
                     }
                     break;
                 case SceneEventType.Synchronize: // Server told client to start synchronizing scenes
