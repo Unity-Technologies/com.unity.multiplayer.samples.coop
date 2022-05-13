@@ -28,6 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] Button m_LobbyButton;
         [SerializeField] GameObject m_SignInSpinner;
         [SerializeField] UIProfileSelector m_UIProfileSelector;
+        [SerializeField] UITooltipDetector m_UGSSetupTooltipDetector;
 
         AuthenticationServiceFacade m_AuthServiceFacade;
         LocalLobbyUser m_LocalUser;
@@ -84,6 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             void OnAuthSignIn()
             {
                 m_LobbyButton.interactable = true;
+                m_UGSSetupTooltipDetector.enabled = false;
                 m_SignInSpinner.SetActive(false);
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
@@ -98,6 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 if (m_LobbyButton)
                 {
                     m_LobbyButton.interactable = false;
+                    m_UGSSetupTooltipDetector.enabled = true;
                 }
                 if (m_SignInSpinner)
                 {
