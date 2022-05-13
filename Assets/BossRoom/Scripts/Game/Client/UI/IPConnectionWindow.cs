@@ -3,7 +3,6 @@ using System.Collections;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
@@ -47,9 +46,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void ShowConnectingWindow()
         {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
             void OnTimeElapsed()
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
@@ -57,19 +53,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_IPUIMediator.DisableSignInSpinner();
             }
 
-            switch (chosenTransport)
-            {
-                case UNetTransport unetTransport:
-                    StartCoroutine(WaitUntilUNETDisconnected(OnTimeElapsed));
-                    break;
-                case UnityTransport unityTransport:
-                    var maxConnectAttempts = unityTransport.MaxConnectAttempts;
-                    var connectTimeoutMS = unityTransport.ConnectTimeoutMS;
-                    StartCoroutine(DisplayUTPConnectionDuration(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed));
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(chosenTransport));
-            }
+            var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            var maxConnectAttempts = utp.MaxConnectAttempts;
+            var connectTimeoutMS = utp.ConnectTimeoutMS;
+            StartCoroutine(DisplayUTPConnectionDuration(maxConnectAttempts, connectTimeoutMS, OnTimeElapsed));
 
             Show();
         }
@@ -78,13 +65,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             Hide();
             StopAllCoroutines();
-        }
-
-        IEnumerator WaitUntilUNETDisconnected(Action endAction)
-        {
-            yield return new WaitUntil(() => !NetworkManager.Singleton.IsListening);
-
-            endAction();
         }
 
         IEnumerator DisplayUTPConnectionDuration(int maxReconnectAttempts, int connectTimeoutMS, Action endAction)
