@@ -28,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         private bool m_ActivateOnClick = true;
 
         [SerializeField]
-        [Tooltip("The lenght of time the mouse needs to hover over this element before the tooltip appears (in seconds)")]
+        [Tooltip("The length of time the mouse needs to hover over this element before the tooltip appears (in seconds)")]
         private float m_TooltipDelay = 0.5f;
 
         private float m_PointerEnterTime = 0;
