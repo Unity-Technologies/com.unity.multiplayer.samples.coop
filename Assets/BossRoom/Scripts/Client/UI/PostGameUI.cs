@@ -85,7 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void OnPlayAgainClicked()
         {
             // this should only ever be called by the Host - so just go ahead and switch scenes
-            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
+            SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
 
             // FUTURE: could be improved to better support a dedicated server architecture
         }

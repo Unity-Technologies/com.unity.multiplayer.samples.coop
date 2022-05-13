@@ -313,6 +313,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             //  If the socket connection succeeds, we'll get our ReceiveServerToClientConnectResult_CustomMessage invoked. This is where game-layer failures will be reported.
             m_Portal.NetManager.StartClient();
             SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+            SceneEventsUtilities.Initialize();
 
             // should only do this once StartClient has been called (start client will initialize CustomMessagingManager
             NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientConnectResult_CustomMessage), ReceiveServerToClientConnectResult_CustomMessage);

@@ -97,7 +97,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 var loadOperation = SceneManager.LoadSceneAsync(sceneName, loadSceneMode);
                 if (loadSceneMode == LoadSceneMode.Single)
                 {
-                    LoadingStarted(sceneName);
+                    LoadingStarted?.Invoke(sceneName);
                     m_LoadingProgressManager.LocalLoadOperation = loadOperation;
                 }
             }
@@ -107,7 +107,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (!IsSpawned || NetworkManager.ShutdownInProgress)
             {
-                LoadingStopped();
+                LoadingStopped?.Invoke();
             }
         }
 
@@ -120,14 +120,14 @@ namespace Unity.Multiplayer.Samples.Utilities
                     if (NetworkManager.IsClient)
                     {
                         // Only start a new loading screen if scene loaded in Single mode, else simply update
-                        if (sceneEvent.LoadSceneMode == LoadSceneMode.Single)
+                        if (sceneEvent.LoadSceneMode == LoadSceneMode.Single) // asdf
                         {
-                            LoadingStarted(sceneEvent.SceneName);
+                            LoadingStarted?.Invoke(sceneEvent.SceneName);
                             m_LoadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
                         }
                         else
                         {
-                            LoadingUpdated(sceneEvent.SceneName);
+                            LoadingUpdated?.Invoke(sceneEvent.SceneName);
                             m_LoadingProgressManager.LocalLoadOperation = sceneEvent.AsyncOperation;
                         }
                     }
@@ -136,7 +136,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                     // Only executes on client
                     if (NetworkManager.IsClient)
                     {
-                        LoadingStopped();
+                        LoadingStopped?.Invoke();
                     }
                     break;
                 case SceneEventType.Synchronize: // Server told client to start synchronizing scenes
@@ -179,7 +179,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         [ClientRpc]
         void StopLoadingScreenClientRpc(ClientRpcParams clientRpcParams = default)
         {
-            LoadingStopped();
+            LoadingStopped?.Invoke();
         }
     }
 }

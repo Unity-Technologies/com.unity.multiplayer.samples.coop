@@ -60,13 +60,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void Awake()
         {
             base.Awake();
-            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerUnloadComplete;
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerSceneLoadComplete;
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerSceneUnloadComplete;
         }
 
-        public void OnServerLoadComplete(SceneEvent sceneEvent)
+        public void OnServerSceneLoadComplete(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete && sceneEvent.ClientId != NetworkManager.ServerClientId) return;
+            if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted || gameObject.scene.name != sceneEvent.SceneName) return; // TODO scene hash isn't available, only name from that event :(
             if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
@@ -81,6 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnClientSceneChanged;
+                OnClientSceneChanged(sceneEvent);
 
 
                 DoInitialSpawnIfPossible();
@@ -93,8 +94,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override void OnDestroy()
         {
             m_Subscription?.Dispose();
-            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerUnloadComplete;
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
+            {
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerSceneLoadComplete;
+            }
         }
 
         private bool DoInitialSpawnIfPossible()
@@ -153,13 +156,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public void OnServerUnloadComplete(SceneEvent sceneEvent)
+        public void OnServerSceneUnloadComplete(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType != SceneEventType.UnloadComplete && sceneEvent.ClientId != NetworkManager.ServerClientId) return;
-            if (m_NetPortal != null)
+            if (sceneEvent.SceneEventType != SceneEventType.Unload || gameObject.scene.name != sceneEvent.SceneName) return;
+            // if (m_NetPortal != null)
             {
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
                 NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnClientSceneChanged;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerSceneUnloadComplete;
             }
             m_Subscription?.Dispose();
         }
@@ -251,7 +255,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 case CharacterTypeEnum.ImpBoss:
                     if (message.NewLifeState == LifeState.Dead)
                     {
-                        BossDefeated();
+                        // Boss is dead - set game won to true
+                        StartCoroutine(CoroGameOver(k_WinDelay, true));
                     }
                     break;
                 default:
@@ -275,12 +280,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             StartCoroutine(CoroGameOver(k_LoseDelay, false));
         }
 
-        void BossDefeated()
-        {
-            // Boss is dead - set game won to true
-            StartCoroutine(CoroGameOver(k_WinDelay, true));
-        }
-
         void SetWinState(WinState winState)
         {
             if (m_NetworkGameStateTransform && m_NetworkGameStateTransform.Value &&
@@ -297,7 +296,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             SetWinState(gameWon ? WinState.Win : WinState.Loss);
 
-            SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
+            SceneLoaderWrapper.Instance.LoadScene(SceneNames.PostGame, useNetworkSceneManager: true);
         }
     }
 }

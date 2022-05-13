@@ -7,6 +7,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -85,16 +86,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private void Start()
         {
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientStarted;
+            NetworkManager.Singleton.OnServerStarted += OnServerStarted;
             if (DedicatedServerUtilities.IsServerBuildTarget)
             {
                 // skip main menu and start IP server directly
-                // todo have game state flow for this for starting new lobbies and finishing games
-                m_GameNetPortal.StartIPServer("0.0.0.0", 9998, isHost: false);
+                SceneManager.LoadScene(SceneNames.DedicatedServerLobbyManagement);
             }
             else
             {
-                SceneManager.LoadScene("StartupClient", LoadSceneMode.Additive);
-                SceneManager.LoadScene("MainMenu");
+                SceneManager.LoadScene(SceneNames.StartupClient, LoadSceneMode.Additive);
+                SceneManager.LoadScene(SceneNames.MainMenu);
             }
         }
 
@@ -103,6 +105,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             m_LobbyServiceFacade?.EndTracking();
             DIScope.RootScope.Dispose();
             DIScope.RootScope = null;
+            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientStarted;
+            NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
+        }
+
+        private static void OnClientStarted(ulong clientID)
+        {
+            if (clientID == NetworkManager.Singleton.LocalClientId)
+            {
+                SceneEventsUtilities.Initialize();
+            }
+        }
+
+        private static void OnServerStarted()
+        {
+            SceneEventsUtilities.Initialize();
         }
 
         /// <summary>
@@ -147,7 +164,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                     gameNetPortal.RequestDisconnect();
                 }
             }
-            SceneLoaderWrapper.Instance.LoadScene("MainMenu", useNetworkSceneManager: false);
+            SceneLoaderWrapper.Instance.LoadScene(SceneNames.MainMenu, useNetworkSceneManager: false);
         }
 
         public void QuitGame()

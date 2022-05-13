@@ -160,7 +160,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         IEnumerator WaitToEndLobby()
         {
             yield return new WaitForSeconds(3);
-            SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
+            SceneLoaderWrapper.Instance.LoadScene(SceneNames.BossRoom, useNetworkSceneManager: true);
         }
 
         public void OnNetworkDespawn()
@@ -191,7 +191,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             if (NetworkManager.Singleton.IsClient)
             {
-                SceneManager.LoadScene("CharSelectClient", LoadSceneMode.Additive);
+                SceneManager.LoadScene(SceneNames.CharSelectClient, LoadSceneMode.Additive);
             }
         }
 

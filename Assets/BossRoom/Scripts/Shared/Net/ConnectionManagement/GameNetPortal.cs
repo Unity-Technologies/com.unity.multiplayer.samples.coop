@@ -120,6 +120,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             //we synthesize a "OnNetworkSpawn" event for the NetworkManager out of existing events. At some point
             //we expect NetworkManager will expose an event like this itself.
             NetManager.OnClientConnectedCallback += ClientNetworkReadyWrapper;
+            if (DedicatedServerUtilities.IsServerBuildTarget)
+            {
+                // The above won't be called for server starting, only for clients. This works for host, but not for DGS. We need the below for DGS
+                NetManager.OnServerStarted += ClientNetworkReadyWrapperServer;
+                // todo sam, use scene events for this?
+            }
         }
 
         private void OnSceneEvent(SceneEvent sceneEvent)
@@ -140,6 +146,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             Instance = null;
         }
 
+        void ClientNetworkReadyWrapperServer()
+        {
+            ClientNetworkReadyWrapper(NetworkManager.ServerClientId);
+        }
         private void ClientNetworkReadyWrapper(ulong clientId)
         {
             if (clientId == NetManager.LocalClientId)

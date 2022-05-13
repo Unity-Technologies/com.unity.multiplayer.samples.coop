@@ -20,9 +20,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnAllClientsFinishedLoading;
         }
 
-        static void OnAllClientsFinishedLoading(SceneEvent sceneEvent)
+        void OnAllClientsFinishedLoading(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete && sceneEvent.ClientId != NetworkManager.ServerClientId) return;
+            if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted || gameObject.scene.name != sceneEvent.SceneName) return;
             if (NetworkManager.Singleton.IsServer)
             {
                 SessionManager<SessionPlayerData>.Instance.OnSessionEnded();

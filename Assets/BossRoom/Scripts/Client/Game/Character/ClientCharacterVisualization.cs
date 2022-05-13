@@ -281,7 +281,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one
             //example of where this is configured.
 
-            m_ActionViz.OnAnimEvent(id);
+            if (enabled) // since this gets triggered by Animator, but this component could be disabled server side, we need to check if that's really the case
+            {
+                m_ActionViz.OnAnimEvent(id);
+            }
         }
 
         public bool IsAnimating()
