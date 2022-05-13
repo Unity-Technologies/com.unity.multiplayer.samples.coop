@@ -17,6 +17,7 @@ feat: other players loading progress in loading screen [MTT-2239] (#580)
 feat: auto reconnect [MTT-2617] (#611)
 
 ### Changed
+fix: remove initial ugs popup [MTT-3563] (#650)
 chore: bump NGO to pre.9 (#643)
 chore: bump boss room to 2021 [MTT-3022] (#620)	
 fix: folders and assemblies refactor MTT-2623, MTT-2615 (#628)
