@@ -80,7 +80,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_Parent.NetState.TargetId.Value = 0;
 
             // snap to face the right direction
-            if( Data.Direction != Vector3.zero )
+            if (Data.Direction != Vector3.zero)
             {
                 m_Parent.transform.forward = Data.Direction;
             }
