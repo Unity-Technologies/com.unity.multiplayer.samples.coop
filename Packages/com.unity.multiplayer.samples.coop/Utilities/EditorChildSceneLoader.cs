@@ -8,7 +8,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 
 /// <summary>
-/// Should be placed inside root scene and setup with child scenes to load. ChildSceneLoader will take care of the rest
+/// Allows setting a scene as a root scene and setting its child scenes. To use this, drag this component on any object in a scene to make that scene a root scene. In the background, ChildSceneLoader will automatically manage this.
 /// </summary>
 public class EditorChildSceneLoader : MonoBehaviour
 {
