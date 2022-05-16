@@ -1,5 +1,7 @@
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -58,6 +60,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return false;
             }
 
+            // found a suitable collider; make sure it is not already held by another player
+            if (heavyNetworkObject.transform.parent != null &&
+                heavyNetworkObject.transform.parent.TryGetComponent(out NetworkObject parentNetworkObject))
+            {
+                // pot already parented; return for now
+                return false;
+            }
+
             // found a suitable collider; try to child this NetworkObject
             if (!heavyNetworkObject.TrySetParent(m_Parent.transform))
             {
@@ -84,6 +94,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (!string.IsNullOrEmpty(Description.Anim))
             {
                 m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            }
+
+            // try to set the heavy object follow the hand bone transform, through PositionConstraint component
+            var positionConstraint = heavyNetworkObject.GetComponent<PositionConstraint>();
+            if (positionConstraint)
+            {
+                if (m_Parent.TryGetComponent(out ClientCharacter clientCharacter))
+                {
+                    var constraintSource = new ConstraintSource()
+                    {
+                        sourceTransform = clientCharacter.ChildVizObject.CharacterSwap.CharacterModel.handRight.transform,
+                        weight = 1
+                    };
+                    positionConstraint.AddSource(constraintSource);
+                    positionConstraint.constraintActive = true;
+                }
             }
 
             return true;

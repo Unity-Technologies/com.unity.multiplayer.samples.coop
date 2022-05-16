@@ -78,6 +78,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         CharacterModelSet m_CharacterModel;
 
+        public CharacterModelSet CharacterModel => m_CharacterModel;
+
         /// <summary>
         /// Reference to our shared-characters' animator.
         /// Can be null, but if so, animator overrides are not supported!

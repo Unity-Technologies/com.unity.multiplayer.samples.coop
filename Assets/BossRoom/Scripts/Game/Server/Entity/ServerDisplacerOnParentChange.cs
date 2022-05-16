@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
+using UnityEngine.Animations;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -14,12 +16,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// </remarks>
     public class ServerDisplacerOnParentChange : NetworkBehaviour
     {
-        const float k_PickUpAnimationLength = 1f;
+        [SerializeField]
+        NetworkTransform m_NetworkTransform;
+
+        [SerializeField]
+        PositionConstraint m_PositionConstraint;
 
         const float k_DropAnimationLength = 0.7f;
 
-        [SerializeField]
-        NetworkTransform m_NetworkTransform;
+        void Awake()
+        {
+            m_PositionConstraint.enabled = false;
+            enabled = false;
+        }
+
+        public override void OnNetworkSpawn()
+        {
+            m_PositionConstraint.enabled = IsServer;
+            enabled = IsServer;
+        }
 
         public override void OnNetworkObjectParentChanged(NetworkObject parentNetworkObject)
         {
@@ -28,18 +43,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
+            RemoveParentConstraintSources();
+
             if (parentNetworkObject)
             {
                 StopAllCoroutines();
-                StartCoroutine(SmoothPositionLerpY(k_PickUpAnimationLength, 1f, true));
             }
             else
             {
                 StopAllCoroutines();
 
+                // when Netcode detects that a NetworkObject's parent has been destroyed, it assigns no parent for that
+                // object
+                // when this happens, NetworkTransform and PositionConstraint are disabled; here they are re-enabled
                 m_NetworkTransform.enabled = true;
+                m_PositionConstraint.enabled = true;
 
+                // this NetworkObject has been dropped, move it slowly back to the ground
                 StartCoroutine(SmoothPositionLerpY(k_DropAnimationLength, 0));
+            }
+        }
+
+        void RemoveParentConstraintSources()
+        {
+            if (m_PositionConstraint)
+            {
+                for (int i = m_PositionConstraint.sourceCount - 1; i >= 0; i--)
+                {
+                    m_PositionConstraint.RemoveSource(i);
+                }
             }
         }
 

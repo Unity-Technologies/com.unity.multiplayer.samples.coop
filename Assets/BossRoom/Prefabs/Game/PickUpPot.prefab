@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 557076851198928999}
   - component: {fileID: -6910049848596396308}
   - component: {fileID: 7749064398440206079}
+  - component: {fileID: 172480899766740213}
   m_Layer: 6
   m_Name: PickUpPot
   m_TagString: Heavy
@@ -31,6 +32,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4313507589357787107}
   m_Father: {fileID: 0}
@@ -103,7 +105,6 @@ MonoBehaviour:
   ScaleThreshold: 0
   InLocalSpace: 0
   Interpolate: 1
-  CanCommitToTransform: 0
 --- !u!114 &7749064398440206079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -116,7 +117,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d305a23aab66843ab49f61511c8662, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_PositionConstraint: {fileID: 172480899766740213}
   m_NetworkTransform: {fileID: -6910049848596396308}
+--- !u!1818360608 &172480899766740213
+PositionConstraint:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583543423304314434}
+  m_Enabled: 1
+  m_Weight: 1
+  m_TranslationAtRest: {x: 0, y: 0, z: 0}
+  m_TranslationOffset: {x: 0, y: 0, z: 0}
+  m_AffectTranslationX: 1
+  m_AffectTranslationY: 1
+  m_AffectTranslationZ: 1
+  m_IsContraintActive: 0
+  m_IsLocked: 0
+  m_Sources: []
 --- !u!1001 &1583543425366239673
 PrefabInstance:
   m_ObjectHideFlags: 0
