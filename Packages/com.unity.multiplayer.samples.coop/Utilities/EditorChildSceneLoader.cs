@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -22,7 +21,7 @@ public class EditorChildSceneLoader : MonoBehaviour
 
     public void SaveSceneSetup()
     {
-        ChildScenesToLoadConfig.Clear();
+        ChildScenesToLoadConfig?.Clear();
         foreach (var sceneSetup in EditorSceneManager.GetSceneManagerSetup())
         {
             ChildScenesToLoadConfig.Add(AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneSetup.path));
