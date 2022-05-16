@@ -21,7 +21,8 @@ public class EditorChildSceneLoader : MonoBehaviour
 
     public void SaveSceneSetup()
     {
-        ChildScenesToLoadConfig?.Clear();
+        ChildScenesToLoadConfig ??= new();
+        ChildScenesToLoadConfig.Clear();
         foreach (var sceneSetup in EditorSceneManager.GetSceneManagerSetup())
         {
             ChildScenesToLoadConfig.Add(AssetDatabase.LoadAssetAtPath<SceneAsset>(sceneSetup.path));
@@ -56,12 +57,12 @@ public class GameEventEditor : Editor
 
         var currentInspectorObject = (EditorChildSceneLoader)target;
 
-        if (GUILayout.Button("Save scene setup"))
+        if (GUILayout.Button("Save scene setup to config"))
         {
             currentInspectorObject.SaveSceneSetup();
         }
 
-        if (GUILayout.Button("Reset from config..."))
+        if (GUILayout.Button("Reset scene setup from config..."))
         {
             currentInspectorObject.ResetSceneSetupToConfig();
         }
