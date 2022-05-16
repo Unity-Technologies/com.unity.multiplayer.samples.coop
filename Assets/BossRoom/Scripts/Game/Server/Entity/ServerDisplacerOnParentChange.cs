@@ -8,12 +8,8 @@ using UnityEngine.Animations;
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
-    /// Component to simply play a raising/descending animation when this NetworkObject's parent NetworkObject changes.
+    /// Component to simply play a descending animation when this NetworkObject's parent NetworkObject changes.
     /// </summary>
-    /// <remarks>
-    /// Currently, Netcode for GameObjects' (Netcode) NetworkAnimator component does not support animations that apply
-    /// Root Motion. This script is a workaround and will be refactored when Root Motion-based animations are supported.
-    /// </remarks>
     public class ServerDisplacerOnParentChange : NetworkBehaviour
     {
         [SerializeField]
@@ -45,11 +41,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             RemoveParentConstraintSources();
 
-            if (parentNetworkObject)
-            {
-                StopAllCoroutines();
-            }
-            else
+            if (parentNetworkObject == null)
             {
                 StopAllCoroutines();
 
@@ -75,9 +67,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        IEnumerator SmoothPositionLerpY(float length, float targetHeight, bool local = false)
+        IEnumerator SmoothPositionLerpY(float length, float targetHeight)
         {
-            var start = local ? transform.localPosition.y : transform.position.y;
+            var start = transform.position.y;
 
             var progress = 0f;
             var duration = 0f;
@@ -88,16 +80,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 progress = Mathf.Clamp(duration / length, 0f, 1f);
                 var progressY = Mathf.Lerp(start, targetHeight, progress);
 
-                if (local)
-                {
-                    transform.localPosition = new Vector3(transform.localPosition.x,
-                        progressY,
-                        transform.localPosition.z);
-                }
-                else
-                {
-                    transform.position = new Vector3(transform.position.x, progressY, transform.position.z);
-                }
+                transform.position = new Vector3(transform.position.x, progressY, transform.position.z);
 
                 yield return null;
             }
