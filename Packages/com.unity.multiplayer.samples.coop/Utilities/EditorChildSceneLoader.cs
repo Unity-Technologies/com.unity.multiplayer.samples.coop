@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
+#endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,13 +12,13 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class EditorChildSceneLoader : MonoBehaviour
 {
+#if UNITY_EDITOR
     [SerializeField]
     public List<SceneAsset> ChildScenesToLoadConfig;
 
-#if UNITY_EDITOR
     void Update()
     {
-        // keep this so we can enable/disable this script... (used in ChildSceneLoader)
+        // DO NOT DELETE keep this so we can enable/disable this script... (used in ChildSceneLoader)
     }
 
     public void SaveSceneSetup()
@@ -49,7 +51,7 @@ public class EditorChildSceneLoader : MonoBehaviour
 #if UNITY_EDITOR
 
 [CustomEditor(typeof(EditorChildSceneLoader))]
-public class GameEventEditor : Editor
+public class ChildSceneLoaderInspectorGUI : Editor
 {
     public override void OnInspectorGUI()
     {
