@@ -49,7 +49,6 @@ public class EditorChildSceneLoader : MonoBehaviour
 }
 
 #if UNITY_EDITOR
-
 [CustomEditor(typeof(EditorChildSceneLoader))]
 public class ChildSceneLoaderInspectorGUI : Editor
 {
@@ -81,7 +80,7 @@ public class ChildSceneLoader
 
     static void OnSceneLoaded(Scene _, OpenSceneMode mode)
     {
-        if (mode != OpenSceneMode.Single) return; // only for root scenes loading asd
+        if (mode != OpenSceneMode.Single || BuildPipeline.isBuildingPlayer) return; // try to load child scenes only for root scenes or if not building
 
         var scenesToLoadObjects = GameObject.FindObjectsOfType<EditorChildSceneLoader>();
         if (scenesToLoadObjects.Length > 1)
