@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Game
 {
@@ -15,23 +17,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game
                 return;
             }
 
-            NetworkManager.SceneManager.OnSceneEvent += SpawnNetworkPrefab;
+            NetworkManager.SceneManager.OnLoadEventCompleted += SpawnNetworkPrefab;
         }
 
         public override void OnNetworkDespawn()
         {
-            NetworkManager.SceneManager.OnSceneEvent -= SpawnNetworkPrefab;
+            NetworkManager.SceneManager.OnLoadEventCompleted -= SpawnNetworkPrefab;
         }
 
-        void SpawnNetworkPrefab(SceneEvent sceneEvent)
+        void SpawnNetworkPrefab(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
         {
-            if (sceneEvent.SceneEventType == SceneEventType.LoadEventCompleted)
-            {
-                // spawn NetworkObject prefab at this transform's position & with this transform's rotation
-                var clone = Instantiate(m_NetworkObjectPrefab, transform.position, transform.rotation);
-                var cloneNetworkObject = clone.GetComponent<NetworkObject>();
-                cloneNetworkObject.Spawn();
-            }
+            // spawn NetworkObject prefab at this transform's position & with this transform's rotation
+            var clone = Instantiate(m_NetworkObjectPrefab, transform.position, transform.rotation);
+            var cloneNetworkObject = clone.GetComponent<NetworkObject>();
+            cloneNetworkObject.Spawn();
         }
     }
 }
