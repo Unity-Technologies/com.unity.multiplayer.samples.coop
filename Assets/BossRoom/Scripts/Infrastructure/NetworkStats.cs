@@ -100,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             var rootGO = new GameObject("UI Stat Text");
             textComponent = rootGO.AddComponent<TextMeshProUGUI>();
-            textComponent.fontSize = 24;
+            textComponent.fontSize = 32;
             textComponent.text = defaultText;
             textComponent.horizontalAlignment = HorizontalAlignmentOptions.Left;
             textComponent.verticalAlignment = VerticalAlignmentOptions.Middle;

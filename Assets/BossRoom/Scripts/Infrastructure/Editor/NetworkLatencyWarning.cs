@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
@@ -10,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 {
     public class NetworkLatencyWarning : MonoBehaviour
     {
-        Text m_LatencyText;
+        TextMeshProUGUI m_LatencyText;
         bool m_LatencyTextCreated;
 
         Color m_TextColor = Color.red;
@@ -68,12 +69,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
             var statUI = new GameObject("UI Latency Warning Text");
 
-            m_LatencyText = statUI.AddComponent<Text>();
-            m_LatencyText.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
-            m_LatencyText.horizontalOverflow = HorizontalWrapMode.Overflow;
-            m_LatencyText.alignment = TextAnchor.MiddleLeft;
+            m_LatencyText = statUI.AddComponent<TextMeshProUGUI>();
+            m_LatencyText.fontSize = 32;
+            m_LatencyText.horizontalAlignment = HorizontalAlignmentOptions.Left;
+            m_LatencyText.verticalAlignment = VerticalAlignmentOptions.Middle;
             m_LatencyText.raycastTarget = false;
-            m_LatencyText.resizeTextForBestFit = true;
+            m_LatencyText.autoSizeTextContainer = true;
 
             m_LatencyText.text = "Network Latency Enabled";
 
