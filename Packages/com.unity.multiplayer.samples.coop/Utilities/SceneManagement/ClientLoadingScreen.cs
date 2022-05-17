@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -12,6 +14,24 @@ namespace Unity.Multiplayer.Samples.Utilities
     /// </summary>
     public class ClientLoadingScreen : MonoBehaviour
     {
+        protected class LoadingProgressBar
+        {
+            public Slider ProgressBar { get; set; }
+
+            public Text NameText { get; set; }
+
+            public LoadingProgressBar(Slider otherPlayerProgressBar, Text otherPlayerNameText)
+            {
+                ProgressBar = otherPlayerProgressBar;
+                NameText = otherPlayerNameText;
+            }
+
+            public void UpdateProgress(float value, float newValue)
+            {
+                ProgressBar.value = newValue;
+            }
+        }
+
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
@@ -27,9 +47,18 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         Text m_SceneName;
 
-        bool m_LoadingScreenRunning;
+        [SerializeField]
+        List<Slider> m_OtherPlayersProgressBars;
 
-        AsyncOperation m_LoadOperation;
+        [SerializeField]
+        List<Text> m_OtherPlayerNamesTexts;
+
+        [SerializeField]
+        protected LoadingProgressManager m_LoadingProgressManager;
+
+        protected Dictionary<ulong, LoadingProgressBar> m_LoadingProgressBars = new Dictionary<ulong, LoadingProgressBar>();
+
+        bool m_LoadingScreenRunning;
 
         Coroutine m_FadeOutCoroutine;
 
@@ -41,13 +70,47 @@ namespace Unity.Multiplayer.Samples.Utilities
         void Start()
         {
             m_CanvasGroup.alpha = 0;
+            m_LoadingProgressManager.onTrackersUpdated += OnProgressTrackersUpdated;
+        }
+
+        void OnDestroy()
+        {
+            m_LoadingProgressManager.onTrackersUpdated -= OnProgressTrackersUpdated;
         }
 
         void Update()
         {
-            if (m_LoadingScreenRunning && m_LoadOperation != null)
+            if (m_LoadingScreenRunning)
             {
-                m_ProgressBar.value = m_LoadOperation.progress;
+                m_ProgressBar.value = m_LoadingProgressManager.LocalProgress;
+            }
+        }
+
+        void OnProgressTrackersUpdated()
+        {
+            // deactivate progress bars of clients that are no longer tracked
+            var clientIdsToRemove = new List<ulong>();
+            foreach (var clientId in m_LoadingProgressBars.Keys)
+            {
+                if (!m_LoadingProgressManager.ProgressTrackers.ContainsKey(clientId))
+                {
+                    clientIdsToRemove.Add(clientId);
+                }
+            }
+
+            foreach (var clientId in clientIdsToRemove)
+            {
+                RemoveOtherPlayerProgressBar(clientId);
+            }
+
+            // Add progress bars for clients that are now tracked
+            foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
+            {
+                var clientId = progressTracker.Key;
+                if (clientId != NetworkManager.Singleton.LocalClientId && !m_LoadingProgressBars.ContainsKey(clientId))
+                {
+                    AddOtherPlayerProgressBar(clientId, progressTracker.Value);
+                }
             }
         }
 
@@ -63,33 +126,99 @@ namespace Unity.Multiplayer.Samples.Utilities
             }
         }
 
-        public void StartLoadingScreen(string sceneName, AsyncOperation loadOperation)
+        public void StartLoadingScreen(string sceneName)
         {
             m_CanvasGroup.alpha = 1;
             m_LoadingScreenRunning = true;
-            UpdateLoadingScreen(sceneName, loadOperation);
+            UpdateLoadingScreen(sceneName);
+            ReinitializeProgressBars();
         }
 
-        public void UpdateLoadingScreen(string sceneName, AsyncOperation loadOperation)
+        void ReinitializeProgressBars()
+        {
+            // deactivate progress bars of clients that are no longer tracked
+            var clientIdsToRemove = new List<ulong>();
+            foreach (var clientId in m_LoadingProgressBars.Keys)
+            {
+                if (!m_LoadingProgressManager.ProgressTrackers.ContainsKey(clientId))
+                {
+                    clientIdsToRemove.Add(clientId);
+                }
+            }
+
+            foreach (var clientId in clientIdsToRemove)
+            {
+                RemoveOtherPlayerProgressBar(clientId);
+            }
+
+            var index = 0;
+
+            foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
+            {
+                var clientId = progressTracker.Key;
+                if (clientId != NetworkManager.Singleton.LocalClientId)
+                {
+                    UpdateOtherPlayerProgressBar(clientId, index++);
+                }
+            }
+        }
+
+        protected virtual void UpdateOtherPlayerProgressBar(ulong clientId, int progressBarIndex)
+        {
+            m_LoadingProgressBars[clientId].ProgressBar = m_OtherPlayersProgressBars[progressBarIndex];
+            m_LoadingProgressBars[clientId].NameText = m_OtherPlayerNamesTexts[progressBarIndex];
+        }
+
+        protected virtual void AddOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker)
+        {
+            if (m_LoadingProgressBars.Count < m_OtherPlayersProgressBars.Count)
+            {
+                var index = m_LoadingProgressBars.Count;
+                m_LoadingProgressBars[clientId] = new LoadingProgressBar(m_OtherPlayersProgressBars[index], m_OtherPlayerNamesTexts[index]);
+                progressTracker.Progress.OnValueChanged += m_LoadingProgressBars[clientId].UpdateProgress;
+                m_LoadingProgressBars[clientId].ProgressBar.value = progressTracker.Progress.Value;
+                m_LoadingProgressBars[clientId].ProgressBar.gameObject.SetActive(true);
+                m_LoadingProgressBars[clientId].NameText.gameObject.SetActive(true);
+                m_LoadingProgressBars[clientId].NameText.text = $"Client {clientId}";
+            }
+            else
+            {
+                throw new Exception("There are not enough progress bars to track the progress of all the players.");
+            }
+        }
+
+        void RemoveOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker = null)
+        {
+            if (progressTracker is not null)
+            {
+                progressTracker.Progress.OnValueChanged -= m_LoadingProgressBars[clientId].UpdateProgress;
+            }
+            m_LoadingProgressBars[clientId].ProgressBar.gameObject.SetActive(false);
+            m_LoadingProgressBars[clientId].NameText.gameObject.SetActive(false);
+            m_LoadingProgressBars.Remove(clientId);
+        }
+
+        public void UpdateLoadingScreen(string sceneName)
         {
             if (m_LoadingScreenRunning)
             {
                 m_SceneName.text = sceneName;
-                m_LoadOperation = loadOperation;
-                m_ProgressBar.value = 0;
+                if (m_FadeOutCoroutine != null)
+                {
+                    StopCoroutine(m_FadeOutCoroutine);
+                }
             }
         }
 
         IEnumerator FadeOutCoroutine()
         {
-            m_ProgressBar.value = 1;
             yield return new WaitForSeconds(m_DelayBeforeFadeOut);
             m_LoadingScreenRunning = false;
 
             float currentTime = 0;
             while (currentTime < m_FadeOutDuration)
             {
-                m_CanvasGroup.alpha = Mathf.Lerp(1, 0, currentTime/ m_FadeOutDuration);
+                m_CanvasGroup.alpha = Mathf.Lerp(1, 0, currentTime / m_FadeOutDuration);
                 yield return null;
                 currentTime += Time.deltaTime;
             }

@@ -12,25 +12,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d0353a89b1f911e48b9e16bdc9f2e058, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  version: 4
+  version: 5
 --- !u!21 &2100000
 Material:
-  serializedVersion: 6
+  serializedVersion: 8
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_TargetingSphere_OutOfRange
-  m_Shader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
-  m_ShaderKeywords: 
+  m_Shader: {fileID: -6465566751694194690, guid: a9ba79dc821093a4c9041bcede85096b, type: 3}
+  m_ValidKeywords:
+  - _SURFACE_TYPE_TRANSPARENT
+  m_InvalidKeywords: []
   m_LightmapFlags: 6
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:
   - SHADOWCASTER
+  - DepthOnly
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
@@ -50,6 +53,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: ca44e2b77d588a642a07152b421f21de, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _MainTexture:
+        m_Texture: {fileID: 2800000, guid: ca44e2b77d588a642a07152b421f21de, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _NoiseFresnel:
         m_Texture: {fileID: 2800000, guid: a225a619c91968049ba2bdbc44c812fb, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -66,6 +73,19 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - unity_Lightmaps:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_LightmapsInd:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - unity_ShadowMasks:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
     m_Floats:
     - _AlphaClip: 0
     - _Blend: 2
@@ -74,6 +94,7 @@ Material:
     - _CameraFadingEnabled: 0
     - _CameraFarFadeDistance: 2
     - _CameraNearFadeDistance: 1
+    - _CastShadows: 0
     - _ColorMode: 0
     - _Cull: 2
     - _Cutoff: 0.5
@@ -92,6 +113,7 @@ Material:
     - _LightingEnabled: 0
     - _Mode: 4
     - _NoiseIntencity: 0.467
+    - _QueueControl: 0
     - _QueueOffset: 0
     - _Sneak: 1
     - _SoftParticlesEnabled: 0
@@ -101,16 +123,20 @@ Material:
     - _Surface: 1
     - _TileNormalTexture: 0.05
     - _TileNormalTexture1: 0.01
+    - _UseAlpha: 1
+    - _ZTest: 4
     - _ZWrite: 0
+    - _ZWriteControl: 0
     - __dirty: 0
     m_Colors:
     - _BaseColor: {r: 1, g: 0, b: 0, a: 1}
     - _BaseColorAddSubDiff: {r: 1, g: 0, b: 0, a: 0}
     - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
-    - _Color: {r: 1, g: 0, b: 0, a: 1}
+    - _Color: {r: 2, g: 0, b: 0, a: 1}
     - _ColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _FresnelColor: {r: 1.4142135, g: 0.042409997, b: 0, a: 0}
+    - _MainTextureTilingOffset: {r: 1, g: 1, b: 0, a: 0}
     - _NoiseTileSpeed: {r: 0.05, g: 0.01, b: 0, a: 0.5}
     - _NotmalTileSpeed: {r: 0.05, g: 0.02, b: 0, a: 0.5}
     - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
