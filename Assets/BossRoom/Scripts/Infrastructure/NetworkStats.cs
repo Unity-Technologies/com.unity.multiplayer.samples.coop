@@ -91,24 +91,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
             string hostType = IsHost ? "Host" : IsClient ? "Client" : "Unknown";
-            InitializeTextLine($"Type: {hostType}", out m_TextHostType);
-            InitializeTextLine("No Stat", out m_TextStat);
-            InitializeTextLine("", out m_TextBadNetworkConditions);
-        }
-
-        void InitializeTextLine(string defaultText, out TextMeshProUGUI textComponent)
-        {
-            var rootGO = new GameObject("UI Stat Text");
-            textComponent = rootGO.AddComponent<TextMeshProUGUI>();
-            textComponent.fontSize = 32;
-            textComponent.text = defaultText;
-            textComponent.horizontalAlignment = HorizontalAlignmentOptions.Left;
-            textComponent.verticalAlignment = VerticalAlignmentOptions.Middle;
-            textComponent.raycastTarget = false;
-            textComponent.autoSizeTextContainer = true;
-
-            var rectTransform = rootGO.GetComponent<RectTransform>();
-            Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
+            Editor.NetworkOverlay.Instance.AddTextToUI("UI Host Type Text", $"Type: {hostType}", out m_TextHostType);
+            Editor.NetworkOverlay.Instance.AddTextToUI("UI Stat Text", "No Stat", out m_TextStat);
+            Editor.NetworkOverlay.Instance.AddTextToUI("UI Bad Conditions Text", "", out m_TextBadNetworkConditions);
         }
 
         void FixedUpdate()

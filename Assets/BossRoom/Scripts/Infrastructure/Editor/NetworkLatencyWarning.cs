@@ -67,19 +67,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
             Assert.IsNotNull(NetworkOverlay.Instance,
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
-            var statUI = new GameObject("UI Latency Warning Text");
-
-            m_LatencyText = statUI.AddComponent<TextMeshProUGUI>();
-            m_LatencyText.fontSize = 32;
-            m_LatencyText.horizontalAlignment = HorizontalAlignmentOptions.Left;
-            m_LatencyText.verticalAlignment = VerticalAlignmentOptions.Middle;
-            m_LatencyText.raycastTarget = false;
-            m_LatencyText.autoSizeTextContainer = true;
-
-            m_LatencyText.text = "Network Latency Enabled";
-
-            var statUIRectTransform = statUI.GetComponent<RectTransform>();
-            NetworkOverlay.Instance.AddToUI(statUIRectTransform);
+            NetworkOverlay.Instance.AddTextToUI("UI Latency Warning Text", "Network Latency Enabled", out m_LatencyText);
         }
     }
 }
