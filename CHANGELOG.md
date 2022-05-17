@@ -23,6 +23,7 @@ chore: bump boss room to 2021 [MTT-3022] (#620)
 fix: folders and assemblies refactor MTT-2623, MTT-2615 (#628)
 
 ### Removed
+chore: remove UNET [MTT-3435] (#638) --> removed deprecated UNET transport from Boss Room
 
 ### Fixed
 
