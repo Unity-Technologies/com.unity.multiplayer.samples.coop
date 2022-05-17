@@ -28,6 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
             displayTransform.sizeDelta = new Vector2(100f, 24f);
             displayTransform.SetParent(m_VerticalLayoutTransform);
             displayTransform.SetAsFirstSibling();
+            displayTransform.localScale = Vector3.one;
         }
 
         void CreateDebugCanvas()

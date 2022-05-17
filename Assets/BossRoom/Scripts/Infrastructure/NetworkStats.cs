@@ -109,7 +109,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             var rectTransform = rootGO.GetComponent<RectTransform>();
             Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
-            rectTransform.localScale = Vector3.one;
         }
 
         void FixedUpdate()
