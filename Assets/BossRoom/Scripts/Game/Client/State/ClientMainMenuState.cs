@@ -28,6 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] Button m_LobbyButton;
         [SerializeField] GameObject m_SignInSpinner;
         [SerializeField] UIProfileSelector m_UIProfileSelector;
+        [SerializeField] UITooltipDetector m_UGSSetupTooltipDetector;
 
         AuthenticationServiceFacade m_AuthServiceFacade;
         LocalLobbyUser m_LocalUser;
@@ -59,7 +60,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             if (string.IsNullOrEmpty(Application.cloudProjectId))
             {
-                PopupManager.ShowPopupPanel("Unity Gaming Services ProjectID not set up", "Click the Readme file in the Assets Folder within the Project window in-editor to follow \"How to set up Unity Gaming Services\"");
                 OnSignInFailed();
                 return;
             }
@@ -85,6 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             void OnAuthSignIn()
             {
                 m_LobbyButton.interactable = true;
+                m_UGSSetupTooltipDetector.enabled = false;
                 m_SignInSpinner.SetActive(false);
 
                 Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
@@ -99,6 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 if (m_LobbyButton)
                 {
                     m_LobbyButton.interactable = false;
+                    m_UGSSetupTooltipDetector.enabled = true;
                 }
                 if (m_SignInSpinner)
                 {

@@ -205,13 +205,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void OnJoinedLobby(Lobby remoteLobby)
+        async void OnJoinedLobby(Lobby remoteLobby)
         {
             m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
             m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            m_ClientNetPortal.StartClientUnityRelayModeAsync(OnRelayJoinFailed);
+            await m_ClientNetPortal.StartClientUnityRelayModeAsync(OnRelayJoinFailed);
 
             void OnRelayJoinFailed(string message)
             {

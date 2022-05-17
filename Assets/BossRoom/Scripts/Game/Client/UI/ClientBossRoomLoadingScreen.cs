@@ -1,44 +1,36 @@
-using System.Collections.Generic;
+using System;
 using Unity.Multiplayer.Samples.Utilities;
-using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     public class ClientBossRoomLoadingScreen : ClientLoadingScreen
     {
         [SerializeField]
-        List<Text> m_OtherPlayerNamesTexts;
-
-        [SerializeField]
         PersistentPlayerRuntimeCollection m_PersistentPlayerRuntimeCollection;
 
-        protected override void UpdateProgressBars(bool isInitializing)
+        protected override void AddOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker)
         {
-            base.UpdateProgressBars(isInitializing);
-            foreach (var player in m_PersistentPlayerRuntimeCollection.Items)
-            {
-                var clientId = player.OwnerClientId;
-                if (clientId != NetworkManager.Singleton.LocalClientId)
-                {
-                    if (m_ClientIdToProgressBarsIndex.ContainsKey(clientId))
-                    {
-                        m_OtherPlayerNamesTexts[m_ClientIdToProgressBarsIndex[clientId]].text = player.NetworkNameState.Name.Value;
-                        m_OtherPlayerNamesTexts[m_ClientIdToProgressBarsIndex[clientId]].gameObject.SetActive(true);
-                    }
-                }
-            }
+            base.AddOtherPlayerProgressBar(clientId, progressTracker);
+            m_LoadingProgressBars[clientId].NameText.text = GetPlayerName(clientId);
         }
 
-        protected override void ReinitializeProgressBars()
+        protected override void UpdateOtherPlayerProgressBar(ulong clientId, int progressBarIndex)
         {
-            // deactivate all other players' name text
-            foreach (var playerName in m_OtherPlayerNamesTexts)
+            base.UpdateOtherPlayerProgressBar(clientId, progressBarIndex);
+            m_LoadingProgressBars[clientId].NameText.text = GetPlayerName(clientId);
+        }
+
+        string GetPlayerName(ulong clientId)
+        {
+            foreach (var player in m_PersistentPlayerRuntimeCollection.Items)
             {
-                playerName.gameObject.SetActive(false);
+                if (clientId == player.OwnerClientId)
+                {
+                    return player.NetworkNameState.Name.Value;
+                }
             }
-            base.ReinitializeProgressBars();
+            return "";
         }
     }
 }

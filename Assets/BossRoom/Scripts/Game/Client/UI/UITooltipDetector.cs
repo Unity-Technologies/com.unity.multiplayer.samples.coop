@@ -27,9 +27,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [Tooltip("Should the tooltip appear instantly if the player clicks this UI element?")]
         private bool m_ActivateOnClick = true;
 
-        // This delay-time could be a member variable, but it's annoying to have to change it on
-        // every tooltip spot everywhere! So for now we just hard-code it.
-        private const float k_TooltipDelay = 0.5f;
+        [SerializeField]
+        [Tooltip("The length of time the mouse needs to hover over this element before the tooltip appears (in seconds)")]
+        private float m_TooltipDelay = 0.5f;
 
         private float m_PointerEnterTime = 0;
         private bool m_IsShowingTooltip;
@@ -67,7 +67,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void Update()
         {
-            if (m_PointerEnterTime != 0 && (Time.time - m_PointerEnterTime) > k_TooltipDelay)
+            if (m_PointerEnterTime != 0 && (Time.time - m_PointerEnterTime) > m_TooltipDelay)
             {
                 ShowTooltip();
             }

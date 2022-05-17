@@ -8,7 +8,6 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UNET;
 using Unity.Netcode.Transports.UTP;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -205,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     if (joiningLobby.Result.Success)
                     {
                         m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
-                        var joiningRelay = JoinRelayAsync();
+                        var joiningRelay = StartClientUnityRelayModeAsync(null);
                         yield return new WaitUntil(() => joiningRelay.IsCompleted);
                     }
                     else
@@ -244,35 +243,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="port">The port of the host to connect to. </param>
         public void StartClient(string ipaddress, int port)
         {
-            var chosenTransport = NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().IpHostTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = chosenTransport;
-
-            switch (chosenTransport)
-            {
-                case UNetTransport unetTransport:
-                    unetTransport.ConnectAddress = ipaddress;
-                    unetTransport.ConnectPort = port;
-                    break;
-                case UnityTransport unityTransport:
-                    // TODO: once this is exposed in the adapter we will be able to change it
-                    unityTransport.SetConnectionData(ipaddress, (ushort)port);
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(chosenTransport));
-            }
+            var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            utp.SetConnectionData(ipaddress, (ushort)port);
 
             ConnectClient();
         }
 
-        public async void StartClientUnityRelayModeAsync(Action<string> onFailure)
-        {
-            var utp = (UnityTransport)NetworkManager.Singleton.gameObject.GetComponent<TransportPicker>().UnityRelayTransport;
-            NetworkManager.Singleton.NetworkConfig.NetworkTransport = utp;
-
-            await JoinRelayAsync(onFailure);
-        }
-
-        async Task JoinRelayAsync(Action<string> onFailure = null)
+        public async Task StartClientUnityRelayModeAsync(Action<string> onFailure)
         {
             Debug.Log($"Setting Unity Relay client with join code {m_LocalLobby.RelayJoinCode}");
 
