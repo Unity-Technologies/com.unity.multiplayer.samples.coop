@@ -119,7 +119,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private static void OnServerStarted()
         {
-            SceneEventsUtilities.Initialize();
+            SceneEventsUtilities.Initialize(); // todo find a place to teardown those
         }
 
         /// <summary>

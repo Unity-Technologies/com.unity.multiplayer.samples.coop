@@ -60,13 +60,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void Awake()
         {
             base.Awake();
-            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerSceneLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerSceneUnloadComplete;
+            SceneEventsUtilities.RegisterGameObjectSpawn(gameObject, OnServerSceneLoadComplete, SceneEventType.LoadEventCompleted);
+            SceneEventsUtilities.RegisterGameObjectSpawn(gameObject, OnServerSceneUnloadStarted, SceneEventType.Load, SceneNames.PostGame);
+            // SceneEventsUtilities.RegisterGameObjectSpawn(gameObject, OnServerSceneUnloadComplete, SceneEventType.Unload); // TODO this doesn't called. bug created with Noel MTT-3580
         }
 
         public void OnServerSceneLoadComplete(SceneEvent sceneEvent)
         {
-            if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted || gameObject.scene.name != sceneEvent.SceneName) return; // TODO scene hash isn't available, only name from that event :(
             if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
@@ -83,7 +83,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnClientSceneChanged;
                 OnClientSceneChanged(sceneEvent);
 
-
                 DoInitialSpawnIfPossible();
 
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
@@ -96,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_Subscription?.Dispose();
             if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
             {
-                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerSceneLoadComplete;
+                SceneEventsUtilities.UnregisterGameObjectSpawn(gameObject, OnServerSceneLoadComplete, SceneEventType.LoadEventCompleted);
             }
         }
 
@@ -147,24 +146,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     !PlayerServerCharacter.GetPlayerServerCharacters().Find(
                         player => player.OwnerClientId == clientId))
                 {
-                    //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
-                    //(either because multiple people are late-joining at once, or because some dynamic entities are
-                    //getting spawned while joining. But that's not something we can fully address by changes in
-                    //ServerBossRoomState.
+                    // somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
+                    // (either because multiple people are late-joining at once, or because some dynamic entities are
+                    // getting spawned while joining. But that's not something we can fully address by changes in
+                    // ServerBossRoomState.
                     SpawnPlayer(clientId, true);
                 }
             }
         }
 
-        public void OnServerSceneUnloadComplete(SceneEvent sceneEvent)
+        public void OnServerSceneUnloadStarted(SceneEvent _)
         {
-            if (sceneEvent.SceneEventType != SceneEventType.Unload || gameObject.scene.name != sceneEvent.SceneName) return;
-            // if (m_NetPortal != null)
-            {
-                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
-                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnClientSceneChanged;
-                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerSceneUnloadComplete;
-            }
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnClientSceneChanged;
+            SceneEventsUtilities.UnregisterGameObjectSpawn(gameObject, OnServerSceneUnloadStarted, SceneEventType.Unload);
             m_Subscription?.Dispose();
         }
 
