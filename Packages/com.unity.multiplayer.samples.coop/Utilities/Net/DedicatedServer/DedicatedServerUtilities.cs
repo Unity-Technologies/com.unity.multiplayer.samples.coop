@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples
@@ -11,10 +9,9 @@ namespace Unity.Multiplayer.Samples
             get
             {
 #if UNITY_SERVER
-
                 return true;
 #else
-            return false;
+                return false;
 #endif
             }
         }
