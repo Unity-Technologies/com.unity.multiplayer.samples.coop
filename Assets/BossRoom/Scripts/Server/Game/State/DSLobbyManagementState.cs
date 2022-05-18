@@ -1,5 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 
@@ -18,8 +17,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public void Start()
         {
-            // todo start new lobbies and manage finishing games that return here
-            m_GameNetPortal.StartIPServer("0.0.0.0", 9998, isHost: false);
+            // TODO create DGS lobby here, register to matchmaking, etc. This state bypasses the main menu setup users would normally do get in a game
+            // and does its own game setup
+            var address = "0.0.0.0";
+            var port = 9998;
+            DedicatedServerUtilities.Log($"Starting Headless Server, listening on address {address}:{port}");
+            m_GameNetPortal.StartIPServer(address, port, isHost: false);
         }
     }
 }

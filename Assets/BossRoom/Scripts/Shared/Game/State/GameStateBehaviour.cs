@@ -77,6 +77,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 Scope.InjectIn(autoInjectedGameObject);
             }
+            if (DedicatedServerUtilities.IsServerBuildTarget)
+            {
+                DedicatedServerUtilities.Log($"Entering game state:[{GetType().Name}], waiting for player joining and making their selection");
+            }
         }
 
         // Start is called before the first frame update
