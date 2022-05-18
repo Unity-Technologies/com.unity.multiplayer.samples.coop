@@ -8,7 +8,6 @@
         "Unity.TextMeshPro",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
-        "Unity.Netcode.Adapter.UTP",
         "Unity.Services.Relay",
         "Unity.Multiplayer.Samples.Utilities",
         "Unity.Services.Lobbies"
@@ -19,9 +18,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [
-        "!UNITY_SERVER"
-    ],
+    "defineConstraints": [],
     "versionDefines": [],
     "noEngineReferences": false
 }
