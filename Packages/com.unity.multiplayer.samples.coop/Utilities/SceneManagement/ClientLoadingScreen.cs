@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 using UnityEngine.UI;
 
 namespace Unity.Multiplayer.Samples.Utilities
@@ -65,6 +66,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         void Awake()
         {
             DontDestroyOnLoad(this);
+            Assert.AreEqual(m_OtherPlayersProgressBars.Count, m_OtherPlayerNamesTexts.Count, "There should be the same number of progress bars and name labels");
         }
 
         void Start()
@@ -151,6 +153,12 @@ namespace Unity.Multiplayer.Samples.Utilities
                 RemoveOtherPlayerProgressBar(clientId);
             }
 
+            for (var i = 0; i < m_OtherPlayersProgressBars.Count; i++)
+            {
+                m_OtherPlayersProgressBars[i].gameObject.SetActive(false);
+                m_OtherPlayerNamesTexts[i].gameObject.SetActive(false);
+            }
+
             var index = 0;
 
             foreach (var progressTracker in m_LoadingProgressManager.ProgressTrackers)
@@ -166,12 +174,14 @@ namespace Unity.Multiplayer.Samples.Utilities
         protected virtual void UpdateOtherPlayerProgressBar(ulong clientId, int progressBarIndex)
         {
             m_LoadingProgressBars[clientId].ProgressBar = m_OtherPlayersProgressBars[progressBarIndex];
+            m_LoadingProgressBars[clientId].ProgressBar.gameObject.SetActive(true);
             m_LoadingProgressBars[clientId].NameText = m_OtherPlayerNamesTexts[progressBarIndex];
+            m_LoadingProgressBars[clientId].NameText.gameObject.SetActive(true);
         }
 
         protected virtual void AddOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker)
         {
-            if (m_LoadingProgressBars.Count < m_OtherPlayersProgressBars.Count)
+            if (m_LoadingProgressBars.Count < m_OtherPlayersProgressBars.Count && m_LoadingProgressBars.Count < m_OtherPlayerNamesTexts.Count)
             {
                 var index = m_LoadingProgressBars.Count;
                 m_LoadingProgressBars[clientId] = new LoadingProgressBar(m_OtherPlayersProgressBars[index], m_OtherPlayerNamesTexts[index]);
