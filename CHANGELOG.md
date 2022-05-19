@@ -15,7 +15,7 @@ feat: connection feedback + IP connection window [MTT-2315] [MTT-3234] (#613)
 First import of all the vandal imp artwork (#637)
 feat: other players loading progress in loading screen [MTT-2239] (#580)
 feat: auto reconnect [MTT-2617] (#611)
-feat: bumping relay version so now have auto region selection. This allows selecting the right relay region instead of the default us-central and should reduce latency for non-central folks. (#657)
+feat: bumping relay version so we now have auto region selection (with the QoS package). This allows selecting the right relay region instead of the default us-central and should reduce latency for non-central folks. (#657)
 
 ### Changed
 fix: remove initial ugs popup [MTT-3563] (#650) --> Users who do not use UGS will no longer receive a popup when starting the application telling them how to set it up. It is replaced with a tooltip that appears when hovering on the "Start with Lobby" button with the cursor.
