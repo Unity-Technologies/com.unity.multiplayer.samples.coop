@@ -4,7 +4,6 @@
     "references": [
         "Unity.Netcode.Runtime",
         "Unity.Netcode.Components",
-        "Cinemachine",
         "Unity.Collections",
         "Unity.TextMeshPro",
         "Unity.Services.Core",
@@ -15,7 +14,10 @@
         "Unity.Networking.Transport",
         "Unity.Multiplayer.Samples.BossRoom.Infrastructure",
         "Unity.Multiplayer.Samples.BossRoom.UnityServices",
-        "Unity.Multiplayer.Samples.BossRoom.Navigation"
+        "Unity.Multiplayer.Samples.BossRoom.Navigation",
+        "BossRoom.CameraController",
+        "BossRoom.ApplicationLifecycle.Messages",
+        "BossRoom.Audio"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

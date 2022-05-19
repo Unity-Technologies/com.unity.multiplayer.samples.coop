@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
@@ -16,13 +17,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         QuitMode m_QuitMode = QuitMode.ReturnToMenu;
 
-        ApplicationController m_ApplicationController;
-
+        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
+        IPublisher<QuitApplicationMessage> m_QuitApplicationPub;
 
         [Inject]
-        void InjectDependencies(ApplicationController applicationController)
+        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPub, IPublisher<QuitApplicationMessage> quitApplicationPub)
         {
-            m_ApplicationController = applicationController;
+            m_QuitGameSessionPub = quitGameSessionPub;
+            m_QuitApplicationPub = quitApplicationPub;
         }
 
         public void Quit()
@@ -30,10 +32,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             switch (m_QuitMode)
             {
                 case QuitMode.ReturnToMenu:
-                    m_ApplicationController.LeaveSession(true);
+                    m_QuitGameSessionPub.Publish(new QuitGameSessionMessage(){UserRequested = true});
                     break;
                 case QuitMode.QuitApplication:
-                    m_ApplicationController.QuitGame();
+                    m_QuitApplicationPub.Publish(new QuitApplicationMessage());
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();

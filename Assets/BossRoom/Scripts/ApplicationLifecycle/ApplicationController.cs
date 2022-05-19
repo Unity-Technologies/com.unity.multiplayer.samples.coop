@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -24,6 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
+        IDisposable m_Subscriptions;
 
         [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
 
@@ -50,6 +52,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindAsSingle<ProfileManager>();
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
+            scope.BindMessageChannelInstance<QuitGameSessionMessage>();
+            scope.BindMessageChannelInstance<QuitApplicationMessage>();
             scope.BindMessageChannelInstance<UnityServiceErrorMessage>();
             scope.BindMessageChannelInstance<ConnectStatus>();
             scope.BindMessageChannelInstance<DoorStateChangedEventMessage>();
@@ -82,6 +86,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             m_LocalLobby = scope.Resolve<LocalLobby>();
             m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
 
+            var quitGameSessionSub = scope.Resolve<ISubscriber<QuitGameSessionMessage>>();
+            var quitApplicationSub = scope.Resolve<ISubscriber<QuitApplicationMessage>>();
+
+            var subHandles = new DisposableGroup();
+            subHandles.Add(quitGameSessionSub.Subscribe(LeaveSession));
+            subHandles.Add(quitApplicationSub.Subscribe(QuitGame));
+            m_Subscriptions = subHandles;
+
             Application.targetFrameRate = 120;
         }
 
@@ -92,6 +104,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private void OnDestroy()
         {
+            m_Subscriptions?.Dispose();
             m_LobbyServiceFacade?.EndTracking();
             DIScope.RootScope.Dispose();
             DIScope.RootScope = null;
@@ -126,11 +139,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return canQuit;
         }
 
-        public void LeaveSession(bool UserRequested)
+        private void LeaveSession(QuitGameSessionMessage msg)
         {
             m_LobbyServiceFacade.EndTracking();
 
-            if (UserRequested)
+            if (msg.UserRequested)
             {
                 // first disconnect then return to menu
                 var gameNetPortal = GameNetPortal.Instance;
@@ -142,7 +155,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             SceneLoaderWrapper.Instance.LoadScene("MainMenu", useNetworkSceneManager: false);
         }
 
-        public void QuitGame()
+        private void QuitGame(QuitApplicationMessage msg)
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;

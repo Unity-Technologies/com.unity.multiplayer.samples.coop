@@ -1,5 +1,6 @@
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
@@ -36,12 +37,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Color m_LoseLightColor;
 
-        ApplicationController m_ApplicationController;
+        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
 
         [Inject]
-        void InjectDependencies(ApplicationController applicationController)
+        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPub)
         {
-            m_ApplicationController = applicationController;
+            m_QuitGameSessionPub = quitGameSessionPub;
         }
 
         void Start()
@@ -92,7 +93,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnMainMenuClicked()
         {
-            m_ApplicationController.LeaveSession(true);
+            m_QuitGameSessionPub.Publish(new QuitGameSessionMessage(){UserRequested = true});
         }
     }
 }
