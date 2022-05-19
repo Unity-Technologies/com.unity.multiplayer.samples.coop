@@ -109,6 +109,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
+        public override void OnDestroy()
+        {
+            m_ProfileManager.onProfileChanged -= OnProfileChanged;
+            base.OnDestroy();
+        }
+
         async void OnProfileChanged()
         {
             m_LobbyButton.interactable = false;
