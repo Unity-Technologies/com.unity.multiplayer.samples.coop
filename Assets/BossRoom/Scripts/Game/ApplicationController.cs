@@ -9,13 +9,15 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
+using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared
 {
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
     /// </summary>
-    public class ApplicationController : MonoBehaviour
+    public class ApplicationController : LifetimeScope
     {
         [SerializeField] UpdateRunner m_UpdateRunner;
         [SerializeField] GameNetPortal m_GameNetPortal;
@@ -27,6 +29,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
 
+        protected override void Configure(IContainerBuilder builder)
+        {
+            +            builder.Register<HelloWorldService>(Lifetime.Singleton);
+        }
+        
         private void Awake()
         {
             Application.wantsToQuit += OnWantToQuit;

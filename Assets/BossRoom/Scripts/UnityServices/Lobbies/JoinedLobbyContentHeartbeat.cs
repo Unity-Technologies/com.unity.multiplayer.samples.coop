@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {

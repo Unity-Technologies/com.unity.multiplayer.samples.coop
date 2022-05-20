@@ -1,6 +1,7 @@
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -44,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 var gameState = FindObjectOfType<ClientBossRoomState>();
                 if (gameState != null)
                 {
-                    gameState.Scope.InjectIn(this);
+                    gameState.Scope.Container.Inject(this);
                 }
             }
         }

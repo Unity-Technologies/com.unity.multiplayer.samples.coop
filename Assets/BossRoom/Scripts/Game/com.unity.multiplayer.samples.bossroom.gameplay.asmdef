@@ -15,7 +15,8 @@
         "Unity.Networking.Transport",
         "Unity.Multiplayer.Samples.BossRoom.Infrastructure",
         "Unity.Multiplayer.Samples.BossRoom.UnityServices",
-        "Unity.Multiplayer.Samples.BossRoom.Navigation"
+        "Unity.Multiplayer.Samples.BossRoom.Navigation",
+        "VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

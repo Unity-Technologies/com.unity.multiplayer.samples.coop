@@ -4,6 +4,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {

@@ -1,22 +1,23 @@
-using System;
 using Unity.Netcode;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     public static class MessageChannelDIExtensions
     {
-        public static void BindMessageChannelInstance<TMessage>(this DIScope scope)
+        public static void BindMessageChannelInstance<TMessage>(this IContainerBuilder builder, Lifetime lifetime)
         {
-            scope.BindInstanceAsSingle<MessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new MessageChannel<TMessage>());
+            builder.Register<MessageChannel<TMessage>>(lifetime).AsImplementedInterfaces();
         }
-        public static void BindNetworkedMessageChannelInstance<TMessage>(this DIScope scope) where TMessage : unmanaged, INetworkSerializeByMemcpy
+        
+        public static void BindNetworkedMessageChannelInstance<TMessage>(this IContainerBuilder builder, Lifetime lifetime) where TMessage : unmanaged, INetworkSerializeByMemcpy
         {
-            scope.BindInstanceAsSingle<NetworkedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new NetworkedMessageChannel<TMessage>());
+            builder.Register<NetworkedMessageChannel<TMessage>>(lifetime).AsImplementedInterfaces();
         }
 
-        public static void BindBufferedMessageChannelInstance<TMessage>(this DIScope scope)
+        public static void BindBufferedMessageChannelInstance<TMessage>(this IContainerBuilder builder, Lifetime lifetime)
         {
-            scope.BindInstanceAsSingle<BufferedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IBufferedMessageChannel<TMessage>>(new BufferedMessageChannel<TMessage>());
+            builder.Register<BufferedMessageChannel<TMessage>>(lifetime).AsImplementedInterfaces();
         }
     }
 }

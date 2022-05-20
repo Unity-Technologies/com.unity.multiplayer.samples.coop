@@ -9,6 +9,8 @@ using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
@@ -28,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         const float k_HeartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
         float m_HeartbeatTime = 0;
 
-        DIScope m_ServiceScope;
+        LifetimeScope m_ServiceScope;
 
         RateLimitCooldown m_RateLimitQuery;
         RateLimitCooldown m_RateLimitJoin;
@@ -41,6 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         [Inject]
         public LobbyServiceFacade(
+            LifetimeScope parentScope,
             UpdateRunner updateRunner,
             LocalLobby localLobby,
             LocalLobbyUser localUser,
@@ -53,14 +56,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             m_UnityServiceErrorMessagePub = serviceErrorMessagePub;
             m_LobbyListFetchedPub = lobbyListFetchedPub;
 
-            m_ServiceScope = new DIScope(DIScope.RootScope);
-            m_ServiceScope.BindInstanceAsSingle(this); //so that LobbyServiceFacade can get injected into whatever internal dependencies
-            m_ServiceScope.BindAsSingle<JoinedLobbyContentHeartbeat>();
-            m_ServiceScope.BindAsSingle<LobbyAPIInterface>();
-            m_ServiceScope.FinalizeScopeConstruction();
-
-            m_LobbyApiInterface = m_ServiceScope.Resolve<LobbyAPIInterface>();
-            m_JoinedLobbyContentHeartbeat = m_ServiceScope.Resolve<JoinedLobbyContentHeartbeat>();
+            m_ServiceScope = parentScope.CreateChild(builder =>
+            {
+                builder.RegisterInstance(this);
+                builder.Register<JoinedLobbyContentHeartbeat>(Lifetime.Scoped);
+                builder.Register<LobbyAPIInterface>(Lifetime.Scoped);
+            });
+            
+            m_LobbyApiInterface = m_ServiceScope.Container.Resolve<LobbyAPIInterface>();
+            m_JoinedLobbyContentHeartbeat = m_ServiceScope.Container.Resolve<JoinedLobbyContentHeartbeat>();
 
             //See https://docs.unity.com/lobby/rate-limits.html
             m_RateLimitQuery = new RateLimitCooldown(1f);
@@ -72,7 +76,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         public void Dispose()
         {
             EndTracking();
-            m_ServiceScope?.Dispose();
+            if (m_ServiceScope != null)
+            {
+                m_ServiceScope.Dispose();
+            }
         }
 
         public void SetRemoteLobby(Lobby lobby)

@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine.UI;
+using VContainer;
 
 public class RoomNameBox : MonoBehaviour
 {

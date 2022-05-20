@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {

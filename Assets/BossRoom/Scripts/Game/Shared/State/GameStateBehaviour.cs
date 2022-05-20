@@ -2,6 +2,7 @@ using System;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -55,22 +56,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private static GameObject s_ActiveStateGO;
 
-        public DIScope Scope
-        {
-            get => m_Scope;
-            private set => m_Scope = value;
+       ivate set => m_Scope = value;
         }
 
-        DIScope m_Scope;
+        LifetimeScope m_Scope;
 
         [SerializeField]
         GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
 
         protected virtual void Awake()
         {
+            
+            
             DIScope.RootScope.InjectIn(this);
             Scope = new DIScope(DIScope.RootScope);
+            
             InitializeScope();
+            
             Scope.FinalizeScopeConstruction();
             foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
             {

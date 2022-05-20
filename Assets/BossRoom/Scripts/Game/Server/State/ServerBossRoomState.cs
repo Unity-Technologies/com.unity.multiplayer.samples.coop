@@ -7,6 +7,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using VContainer;
 using Random = UnityEngine.Random;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
