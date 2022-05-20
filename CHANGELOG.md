@@ -22,6 +22,7 @@ fix: remove initial ugs popup [MTT-3563] (#650) --> Users who do not use UGS wil
 chore: bump NGO to pre.9 (#643)
 chore: bump boss room to 2021 [MTT-3022] (#620)	
 fix: folders and assemblies refactor MTT-2623, MTT-2615 (#628)
+feat: updated boss room's root scene to automatically load child scenes at editor time (#653)
 
 ### Removed
 chore: remove UNET [MTT-3435] (#638) --> removed deprecated UNET transport from Boss Room
