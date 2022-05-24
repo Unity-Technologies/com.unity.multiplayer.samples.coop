@@ -2,12 +2,13 @@
     "name": "Unity.Multiplayer.Samples.BossRoom.Tests.Runtime",
     "rootNamespace": "",
     "references": [
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "Unity.Multiplayer.Samples.Utilities.Testing",
-        "Unity.Netcode.Runtime",
-        "Unity.Multiplayer.Samples.BossRoom.Gameplay",
-        "Unity.Multiplayer.Samples.BossRoom.Infrastructure"
+        "GUID:27619889b8ba8c24980f49ee34dbb44a",
+        "GUID:0acc523941302664db1f4e527237feb3",
+        "GUID:807256462408a52499d74190e2baa578",
+        "GUID:1491147abca9d7d4bb7105af628b223e",
+        "GUID:ed77cc04b29ffca42860b1220217e140",
+        "GUID:ec2e12d3de28e40839f9a0b685184f49",
+        "GUID:b0214a6008ed146ff8f122a6a9c2f6cc"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

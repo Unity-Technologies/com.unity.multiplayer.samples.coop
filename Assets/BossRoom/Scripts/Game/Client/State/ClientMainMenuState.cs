@@ -43,11 +43,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             base.Awake();
         }
 
-        protected override void InitializeScope()
+        protected override void Configure(IContainerBuilder builder)
         {
-            Scope.BindInstanceAsSingle(m_NameGenerationData);
-            Scope.BindInstanceAsSingle(m_LobbyUIMediator);
-            Scope.BindInstanceAsSingle(m_IPUIMediator);
+            base.Configure(builder);
+            builder.RegisterInstance(m_NameGenerationData);
+            builder.RegisterInstance(m_LobbyUIMediator);
+            builder.RegisterInstance(m_IPUIMediator);
         }
 
         [Inject]
@@ -110,7 +111,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             m_ProfileManager.onProfileChanged -= OnProfileChanged;
             base.OnDestroy();

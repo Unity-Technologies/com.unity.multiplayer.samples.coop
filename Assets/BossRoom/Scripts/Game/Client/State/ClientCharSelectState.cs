@@ -120,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             };
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             if (Instance == this)
             {

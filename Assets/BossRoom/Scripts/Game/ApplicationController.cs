@@ -14,6 +14,7 @@ using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared
 {
+
     /// <summary>
     /// An entry point to the application, where we bind all the common dependencies to the root DI scope.
     /// </summary>
@@ -27,81 +28,62 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
 
-        [SerializeField] GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-
         protected override void Configure(IContainerBuilder builder)
         {
-            +            builder.Register<HelloWorldService>(Lifetime.Singleton);
-        }
-        
-        private void Awake()
-        {
-            Application.wantsToQuit += OnWantToQuit;
-
-            DontDestroyOnLoad(gameObject);
-            DontDestroyOnLoad(m_UpdateRunner.gameObject);
-
-            var scope = DIScope.RootScope;
-
-            scope.BindInstanceAsSingle(this);
-            scope.BindInstanceAsSingle(m_UpdateRunner);
-            scope.BindInstanceAsSingle(m_GameNetPortal);
-            scope.BindInstanceAsSingle(m_ClientNetPortal);
-            scope.BindInstanceAsSingle(m_ServerGameNetPortal);
+            base.Configure(builder);
+            builder.RegisterInstance(this);
+            builder.RegisterInstance(m_UpdateRunner);
+            builder.RegisterInstance(m_GameNetPortal);
+            builder.RegisterInstance(m_ClientNetPortal);
+            builder.RegisterInstance(m_ServerGameNetPortal);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
-            scope.BindAsSingle<LocalLobbyUser>();
-            scope.BindAsSingle<LocalLobby>();
+            builder.Register<LocalLobbyUser>(Lifetime.Singleton);
+            builder.Register<LocalLobby>(Lifetime.Singleton);
 
-            scope.BindAsSingle<ProfileManager>();
+            builder.Register<ProfileManager>(Lifetime.Singleton);
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
-            scope.BindMessageChannelInstance<UnityServiceErrorMessage>();
-            scope.BindMessageChannelInstance<ConnectStatus>();
-            scope.BindMessageChannelInstance<DoorStateChangedEventMessage>();
+            builder.Register<MessageChannel<UnityServiceErrorMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<MessageChannel<ConnectStatus>>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<MessageChannel<DoorStateChangedEventMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
             //they are networked so that the clients can subscribe to those messages that are published by the server
-            scope.BindNetworkedMessageChannelInstance<LifeStateChangedEventMessage>();
-            scope.BindNetworkedMessageChannelInstance<ConnectionEventMessage>();
+            builder.Register<NetworkedMessageChannel<LifeStateChangedEventMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.Register<NetworkedMessageChannel<ConnectionEventMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            scope.BindNetworkedMessageChannelInstance<CheatUsedMessage>();
+            builder.Register<NetworkedMessageChannel<CheatUsedMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
 #endif
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
-            scope.BindMessageChannelInstance<ReconnectMessage>();
+            builder.Register<MessageChannel<ReconnectMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
 
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
-            scope.BindBufferedMessageChannelInstance<LobbyListFetchedMessage>();
+            builder.Register<BufferedMessageChannel<LobbyListFetchedMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
 
             //all the lobby service stuff, bound here so that it persists through scene loads
-            scope.BindAsSingle<AuthenticationServiceFacade>(); //a manager entity that allows us to do anonymous authentication with unity services
-            scope.BindAsSingle<LobbyServiceFacade>();
-
-            scope.FinalizeScopeConstruction();
-
-            foreach (var o in m_GameObjectsThatWillBeInjectedAutomatically)
-            {
-                scope.InjectIn(o);
-            }
-
-            m_LocalLobby = scope.Resolve<LocalLobby>();
-            m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
-
-            Application.targetFrameRate = 120;
+            builder.Register<AuthenticationServiceFacade>(Lifetime.Singleton); //a manager entity that allows us to do anonymous authentication with unity services
+            builder.Register<LobbyServiceFacade>(Lifetime.Singleton);
         }
 
         private void Start()
         {
+            m_LocalLobby = Container.Resolve<LocalLobby>();
+            m_LobbyServiceFacade = Container.Resolve<LobbyServiceFacade>();
+
+            Application.wantsToQuit += OnWantToQuit;
+            DontDestroyOnLoad(gameObject);
+            DontDestroyOnLoad(m_UpdateRunner.gameObject);
+            Application.targetFrameRate = 120;
             SceneManager.LoadScene("MainMenu");
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             m_LobbyServiceFacade?.EndTracking();
-            DIScope.RootScope.Dispose();
-            DIScope.RootScope = null;
+            base.OnDestroy();
         }
 
         /// <summary>
