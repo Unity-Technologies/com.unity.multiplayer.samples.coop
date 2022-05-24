@@ -95,9 +95,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        protected override void OnDestroy()
+        protected virtual void InitializeScope()
         {
-            base.OnDestroy();
+        }
+
+        public virtual void OnDestroy()
+        {
+            Scope?.Dispose();
             if (!Persists)
             {
                 s_ActiveStateGO = null;

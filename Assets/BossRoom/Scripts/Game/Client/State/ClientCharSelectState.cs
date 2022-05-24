@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Unity.Netcode;
+using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client specialization of the Character Select game state. Mainly controls the UI during character-select.
     /// </summary>
-    [RequireComponent(typeof(CharSelectData))]
     public class ClientCharSelectState : GameStateBehaviour
     {
         /// <summary>
@@ -103,9 +103,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         protected override void Awake()
         {
             base.Awake();
-
             Instance = this;
-            CharSelectData = GetComponent<CharSelectData>();
+
+            // TODO inject or find another way to find CharSelectData
+            // TODO CharSelectData should directly be in ServerCharSelectState and both client and server should be in same gameplay assembly
+            CharSelectData = FindObjectOfType<CharSelectData>();
+            CharSelectData.OnNetworkSpawnCallback += OnSpawn; if (CharSelectData.IsSpawned) OnSpawn();
+            CharSelectData.OnNetworkDespawnCallback += OnDespawn;
+
             m_LobbyUIElementsByMode = new Dictionary<LobbyMode, List<GameObject>>()
             {
                 { LobbyMode.ChooseSeat, m_UIElementsForNoSeatChosen },
@@ -121,6 +126,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 Instance = null;
             }
+
             base.OnDestroy();
         }
 
@@ -136,7 +142,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
         }
 
-        public override void OnNetworkDespawn()
+        public void OnDespawn()
         {
             if (CharSelectData)
             {
@@ -145,9 +151,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        public override void OnNetworkSpawn()
+        public void OnSpawn()
         {
-            if (!IsClient)
+            if (!NetworkManager.Singleton.IsClient)
             {
                 enabled = false;
             }
@@ -398,7 +404,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
         {
-            if (IsSpawned)
+            if (CharSelectData.IsSpawned)
             {
                 CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
             }
@@ -409,7 +415,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            if (IsSpawned)
+            if (CharSelectData.IsSpawned)
             {
                 // request to lock in or unlock if already locked in
                 CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);

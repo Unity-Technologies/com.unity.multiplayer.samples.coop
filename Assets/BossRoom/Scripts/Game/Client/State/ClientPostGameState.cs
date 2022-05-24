@@ -10,13 +10,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
-        public override void OnNetworkSpawn()
-        {
-            if (!IsClient)
-            {
-                enabled = false;
-            }
-        }
+        // TODO still needed?
+        // public override void OnNetworkSpawn()
+        // {
+        //     if (!IsClient)
+        //     {
+        //         enabled = false;
+        //     }
+        // }
 
     }
 }
