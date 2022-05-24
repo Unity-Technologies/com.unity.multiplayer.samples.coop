@@ -1,4 +1,5 @@
 using System;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Unity.Netcode;
@@ -10,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 {
     public class NetworkLatencyWarning : MonoBehaviour
     {
-        Text m_LatencyText;
+        TextMeshProUGUI m_LatencyText;
         bool m_LatencyTextCreated;
 
         Color m_TextColor = Color.red;
@@ -66,19 +67,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
             Assert.IsNotNull(NetworkOverlay.Instance,
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
-            var statUI = new GameObject("UI Latency Warning Text");
-
-            m_LatencyText = statUI.AddComponent<Text>();
-            m_LatencyText.font = Font.CreateDynamicFontFromOSFont("Arial", 24);
-            m_LatencyText.horizontalOverflow = HorizontalWrapMode.Overflow;
-            m_LatencyText.alignment = TextAnchor.MiddleLeft;
-            m_LatencyText.raycastTarget = false;
-            m_LatencyText.resizeTextForBestFit = true;
-
-            m_LatencyText.text = "Network Latency Enabled";
-
-            var statUIRectTransform = statUI.GetComponent<RectTransform>();
-            NetworkOverlay.Instance.AddToUI(statUIRectTransform);
+            NetworkOverlay.Instance.AddTextToUI("UI Latency Warning Text", "Network Latency Enabled", out m_LatencyText);
         }
     }
 }

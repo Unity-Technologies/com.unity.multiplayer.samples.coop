@@ -9,6 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+feat: bad network conditions warning [MTT-3242] (#632)
 feat: adding RNSM (Runtime Network Stats Monitor) to boss room [MTT-3267] (#621)
 Added basic automated testing and CI (#484)	(#487) (#639)	
 feat: connection feedback + IP connection window [MTT-2315] [MTT-3234] (#613)	
