@@ -1,7 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
@@ -17,20 +15,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
     /// <summary>
     /// An abstraction layer between the direct calls into the Lobby API and the outcomes you actually want.
     /// </summary>
-    public class LobbyServiceFacade : IDisposable
+    public class LobbyServiceFacade : IDisposable, IStartable
     {
-        readonly LobbyAPIInterface m_LobbyApiInterface;
+        [Inject]
+        readonly LifetimeScope m_ParentScope;
+
+        [Inject]
         readonly UpdateRunner m_UpdateRunner;
+
+        [Inject]
         readonly LocalLobby m_LocalLobby;
+
+        [Inject]
         readonly LocalLobbyUser m_LocalUser;
-        readonly JoinedLobbyContentHeartbeat m_JoinedLobbyContentHeartbeat;
+
+        [Inject]
         readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
+
+        [Inject]
         readonly IPublisher<LobbyListFetchedMessage> m_LobbyListFetchedPub;
 
         const float k_HeartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
         float m_HeartbeatTime = 0;
 
         LifetimeScope m_ServiceScope;
+        LobbyAPIInterface m_LobbyApiInterface;
+        JoinedLobbyContentHeartbeat m_JoinedLobbyContentHeartbeat;
 
         RateLimitCooldown m_RateLimitQuery;
         RateLimitCooldown m_RateLimitJoin;
@@ -41,26 +51,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 
         bool m_IsTracking = false;
 
-        [Inject]
-        public LobbyServiceFacade(
-            LifetimeScope parentScope,
-            UpdateRunner updateRunner,
-            LocalLobby localLobby,
-            LocalLobbyUser localUser,
-            IPublisher<UnityServiceErrorMessage> serviceErrorMessagePub,
-            IPublisher<LobbyListFetchedMessage> lobbyListFetchedPub)
+        public void Start()
         {
-            m_UpdateRunner = updateRunner;
-            m_LocalLobby = localLobby;
-            m_LocalUser = localUser;
-            m_UnityServiceErrorMessagePub = serviceErrorMessagePub;
-            m_LobbyListFetchedPub = lobbyListFetchedPub;
-
-            m_ServiceScope = parentScope.CreateChild(builder =>
+            m_ServiceScope = m_ParentScope.CreateChild(builder =>
             {
                 builder.Register<JoinedLobbyContentHeartbeat>(Lifetime.Singleton);
                 builder.Register<LobbyAPIInterface>(Lifetime.Singleton);
             });
+
+            m_ServiceScope.gameObject.name = "LobbyServiceFacade LifetimeScope";
 
             m_LobbyApiInterface = m_ServiceScope.Container.Resolve<LobbyAPIInterface>();
             m_JoinedLobbyContentHeartbeat = m_ServiceScope.Container.Resolve<JoinedLobbyContentHeartbeat>();
