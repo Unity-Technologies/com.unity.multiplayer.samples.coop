@@ -18,7 +18,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         PositionConstraint m_PositionConstraint;
 
-        const float k_DropAnimationLength = 0.7f;
+        const float k_DropAnimationLength = 0.1f;
 
         void Awake()
         {

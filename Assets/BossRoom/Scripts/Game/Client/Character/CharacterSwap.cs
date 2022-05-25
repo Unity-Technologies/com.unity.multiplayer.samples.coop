@@ -25,6 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             public GameObject handLeft;
             public GameObject shoulderRight;
             public GameObject shoulderLeft;
+            public GameObject handSocket;
             public Visual.AnimatorTriggeredSpecialFX specialFx; // should be a component on the same GameObject as the Animator!
             public AnimatorOverrideController animatorOverrides; // references a separate stand-alone object in the project
             private List<Renderer> m_CachedRenderers;

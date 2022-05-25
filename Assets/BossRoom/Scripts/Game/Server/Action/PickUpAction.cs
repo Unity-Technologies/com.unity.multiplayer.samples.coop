@@ -16,19 +16,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         const string k_HeavyTag = "Heavy";
 
         const string k_NpcLayer = "NPCs";
+
+        const float k_PickUpWait = 0.6f;
+
+        const string k_FailedPickupTrigger = "PickUpFailed";
+
+        float m_AnimationTimer;
+
+        PickUpState m_PickUpObject;
+
         public PickUpAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
         }
 
         public override bool Start()
         {
-            var pickUpObject = m_Parent.GetComponentInChildren<NetworkPickUpState>();
+            m_PickUpObject = m_Parent.GetComponentInChildren<PickUpState>();
 
             // first, check if a pot has already been parented; if so, drop it
-            if (pickUpObject)
+            if (m_PickUpObject)
             {
-                pickUpObject.transform.SetParent(null);
-
                 Data.TargetIds = null;
 
                 if (!string.IsNullOrEmpty(Description.Anim))
@@ -41,8 +48,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
                 }
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(Description.Anim2))
+                {
+                    m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+                }
 
-                return false;
+                // pickup
+                if (!string.IsNullOrEmpty(Description.Anim))
+                {
+                    m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+                }
+            }
+
+            m_AnimationTimer = k_PickUpWait;
+
+            return true;
+        }
+
+        void PickUpOrDrop()
+        {
+            if (m_PickUpObject)
+            {
+                // pickup object found inside of hierarchy; drop it
+                m_PickUpObject.transform.SetParent(null);
+                return;
             }
 
             var numResults = Physics.BoxCastNonAlloc(m_Parent.physicsWrapper.Transform.position,
@@ -57,7 +89,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (numResults == 0 || !m_RaycastHits[0].collider.TryGetComponent(out NetworkObject heavyNetworkObject) ||
                 !m_RaycastHits[0].collider.gameObject.CompareTag(k_HeavyTag))
             {
-                return false;
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(k_FailedPickupTrigger);
+                return;
             }
 
             // found a suitable collider; make sure it is not already held by another player
@@ -65,13 +98,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 heavyNetworkObject.transform.parent.TryGetComponent(out NetworkObject parentNetworkObject))
             {
                 // pot already parented; return for now
-                return false;
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(k_FailedPickupTrigger);
+                return;
             }
 
             // found a suitable collider; try to child this NetworkObject
             if (!heavyNetworkObject.TrySetParent(m_Parent.transform))
             {
-                return false;
+                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(k_FailedPickupTrigger);
+                return;
             }
 
             Data.TargetIds = new ulong[] { heavyNetworkObject.NetworkObjectId };
@@ -85,17 +120,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_Parent.transform.forward = Data.Direction;
             }
 
-            if (!string.IsNullOrEmpty(Description.Anim2))
-            {
-                m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
-            }
-
-            // pickup
-            if (!string.IsNullOrEmpty(Description.Anim))
-            {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            }
-
             // try to set the heavy object follow the hand bone transform, through PositionConstraint component
             var positionConstraint = heavyNetworkObject.GetComponent<PositionConstraint>();
             if (positionConstraint)
@@ -104,20 +128,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     var constraintSource = new ConstraintSource()
                     {
-                        sourceTransform = clientCharacter.ChildVizObject.CharacterSwap.CharacterModel.handRight.transform,
+                        sourceTransform = clientCharacter.ChildVizObject.CharacterSwap.CharacterModel.handSocket.transform,
                         weight = 1
                     };
                     positionConstraint.AddSource(constraintSource);
                     positionConstraint.constraintActive = true;
                 }
             }
-
-            return true;
         }
 
         public override bool Update()
         {
-            return ActionConclusion.Stop;
+            m_AnimationTimer -= Time.deltaTime;
+
+            if (m_AnimationTimer <= 0f)
+            {
+                PickUpOrDrop();
+
+                return ActionConclusion.Stop;
+            }
+
+            return ActionConclusion.Continue;
         }
     }
 }

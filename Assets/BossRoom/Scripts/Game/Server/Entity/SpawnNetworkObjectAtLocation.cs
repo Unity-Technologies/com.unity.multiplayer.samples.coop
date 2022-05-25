@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Game
 {
@@ -17,15 +15,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game
                 return;
             }
 
-            NetworkManager.SceneManager.OnLoadEventCompleted += SpawnNetworkPrefab;
+            SpawnNetworkPrefab();
         }
 
-        public override void OnNetworkDespawn()
-        {
-            NetworkManager.SceneManager.OnLoadEventCompleted -= SpawnNetworkPrefab;
-        }
-
-        void SpawnNetworkPrefab(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+        void SpawnNetworkPrefab()
         {
             // spawn NetworkObject prefab at this transform's position & with this transform's rotation
             var clone = Instantiate(m_NetworkObjectPrefab, transform.position, transform.rotation);
