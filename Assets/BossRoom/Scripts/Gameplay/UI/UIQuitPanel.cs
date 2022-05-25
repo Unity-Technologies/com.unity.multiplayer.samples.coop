@@ -32,7 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             switch (m_QuitMode)
             {
                 case QuitMode.ReturnToMenu:
-                    m_QuitGameSessionPub.Publish(new QuitGameSessionMessage(){UserRequested = true});
+                    m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = true });
                     break;
                 case QuitMode.QuitApplication:
                     m_QuitApplicationPub.Publish(new QuitApplicationMessage());

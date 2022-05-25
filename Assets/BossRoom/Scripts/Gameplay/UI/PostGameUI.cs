@@ -93,7 +93,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnMainMenuClicked()
         {
-            m_QuitGameSessionPub.Publish(new QuitGameSessionMessage(){UserRequested = true});
+            m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = true });
         }
     }
 }
