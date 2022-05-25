@@ -9,6 +9,7 @@ using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
+using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -46,9 +47,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         protected override void Configure(IContainerBuilder builder)
         {
             base.Configure(builder);
-            builder.RegisterInstance(m_NameGenerationData);
-            builder.RegisterInstance(m_LobbyUIMediator);
-            builder.RegisterInstance(m_IPUIMediator);
+            builder.RegisterComponent(m_NameGenerationData);
+            builder.RegisterComponent(m_LobbyUIMediator);
+            builder.RegisterComponent(m_IPUIMediator);
         }
 
         [Inject]

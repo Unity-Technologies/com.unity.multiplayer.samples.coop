@@ -31,11 +31,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         protected override void Configure(IContainerBuilder builder)
         {
             base.Configure(builder);
-            builder.RegisterInstance(this);
-            builder.RegisterInstance(m_UpdateRunner);
-            builder.RegisterInstance(m_GameNetPortal);
-            builder.RegisterInstance(m_ClientNetPortal);
-            builder.RegisterInstance(m_ServerGameNetPortal);
+            builder.RegisterComponent(m_UpdateRunner);
+            builder.RegisterComponent(m_GameNetPortal);
+            builder.RegisterComponent(m_ClientNetPortal);
+            builder.RegisterComponent(m_ServerGameNetPortal);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
