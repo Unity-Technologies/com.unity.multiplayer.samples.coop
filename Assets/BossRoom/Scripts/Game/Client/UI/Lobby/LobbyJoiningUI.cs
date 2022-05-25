@@ -53,8 +53,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyUIMediator = lobbyUIMediator;
             m_UpdateRunner = updateRunner;
 
-            m_UpdateRunner.Subscribe(PeriodicRefresh, 10f);
-
             m_Subscriptions = localLobbiesRefreshedSub.Subscribe(UpdateUI);
         }
 
@@ -142,12 +140,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CanvasGroup.blocksRaycasts = true;
             m_JoinCodeField.text = "";
             OnRefresh();
+            m_UpdateRunner.Subscribe(PeriodicRefresh, 10f);
         }
 
         public void Hide()
         {
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
+            m_UpdateRunner.Unsubscribe(PeriodicRefresh);
         }
     }
 }

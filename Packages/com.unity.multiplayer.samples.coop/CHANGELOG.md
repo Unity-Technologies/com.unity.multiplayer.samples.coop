@@ -4,6 +4,7 @@
 
 ### Added
 feat: other players loading progress in loading screen [MTT-2239] (#580)
+feat: adding editor child scene loader for composed scenes (#653)
 
 ### Changed
 
