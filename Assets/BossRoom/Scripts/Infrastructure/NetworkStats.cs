@@ -42,12 +42,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
         const float k_PingIntervalSeconds = 0.1f;
         const float k_MaxWindowSize = k_MaxWindowSizeSeconds / k_PingIntervalSeconds;
 
+        // Some games are less sensitive to latency than others. For fast-paced games, latency above 100ms becomes a challenge for players while for others 500ms is fine. It's up to you to establish those thresholds.
+        const float k_StrugglingNetworkConditionsRTTThreshold = 130;
+        const float k_BadNetworkConditionsRTTThreshold = 200;
+
         ExponentialMovingAverageCalculator m_BossRoomRTT = new ExponentialMovingAverageCalculator(0);
         ExponentialMovingAverageCalculator m_UtpRTT = new ExponentialMovingAverageCalculator(0);
 
         float m_LastPingTime;
         TextMeshProUGUI m_TextStat;
         TextMeshProUGUI m_TextHostType;
+        TextMeshProUGUI m_TextBadNetworkConditions;
 
         // When receiving pong client RPCs, we need to know when the initiating ping sent it so we can calculate its individual RTT
         int m_CurrentRTTPingId;
@@ -86,23 +91,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 "No NetworkOverlay object part of scene. Add NetworkOverlay prefab to bootstrap scene!");
 
             string hostType = IsHost ? "Host" : IsClient ? "Client" : "Unknown";
-            InitializeTextLine($"Type: {hostType}", out m_TextHostType);
-            InitializeTextLine("No Stat", out m_TextStat);
-        }
-
-        void InitializeTextLine(string defaultText, out TextMeshProUGUI textComponent)
-        {
-            var rootGO = new GameObject("UI Stat Text");
-            textComponent = rootGO.AddComponent<TextMeshProUGUI>();
-            textComponent.fontSize = 24;
-            textComponent.text = defaultText;
-            textComponent.horizontalAlignment = HorizontalAlignmentOptions.Left;
-            textComponent.verticalAlignment = VerticalAlignmentOptions.Middle;
-            textComponent.raycastTarget = false;
-            textComponent.autoSizeTextContainer = true;
-
-            var rectTransform = rootGO.GetComponent<RectTransform>();
-            Editor.NetworkOverlay.Instance.AddToUI(rectTransform);
+            Editor.NetworkOverlay.Instance.AddTextToUI("UI Host Type Text", $"Type: {hostType}", out m_TextHostType);
+            Editor.NetworkOverlay.Instance.AddTextToUI("UI Stat Text", "No Stat", out m_TextStat);
+            Editor.NetworkOverlay.Instance.AddTextToUI("UI Bad Conditions Text", "", out m_TextBadNetworkConditions);
         }
 
         void FixedUpdate()
@@ -124,6 +115,28 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (m_TextStat != null)
                 {
                     m_TextToDisplay = $"RTT: {(m_BossRoomRTT.Average * 1000).ToString("0")} ms;\nUTP RTT {m_UtpRTT.Average.ToString("0")} ms";
+                    if (m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold)
+                    {
+                        m_TextStat.color = Color.red;
+                    }
+                    else if (m_UtpRTT.Average > k_StrugglingNetworkConditionsRTTThreshold)
+                    {
+                        m_TextStat.color = Color.yellow;
+                    }
+                    else
+                    {
+                        m_TextStat.color = Color.white;
+                    }
+                }
+
+                if (m_TextBadNetworkConditions != null)
+                {
+                    // Right now, we only base this warning on UTP's RTT metric, but in the future we could watch for packet loss as well, or other metrics.
+                    // This could be a simple icon instead of doing heavy string manipulations.
+                    m_TextBadNetworkConditions.text = m_UtpRTT.Average > k_BadNetworkConditionsRTTThreshold ? "Bad Network Conditions Detected!" : "";
+                    var color = Color.red;
+                    color.a = Mathf.PingPong(Time.time, 1f);
+                    m_TextBadNetworkConditions.color = color;
                 }
             }
             else

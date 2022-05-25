@@ -31,7 +31,7 @@ This project uses Git Large Files Support (LFS), which ensures all large assets 
 
 ## Registering the project with Unity Gaming Services (UGS)
 
-This project leverages several services from UGS to facilitate connectivity between players. In order to use these services inside your project, one must first [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside Unity Dashboard, and enable both the [Relay](https://docs.unity.com/relay/get-started.html) and [Lobby](https://docs.unity.com/lobby/game-lobby-sample.html) services.
+This project leverages several services from UGS to facilitate connectivity between players. In order to use these services inside your project, one must first [create an organization](https://support.unity.com/hc/en-us/articles/208592876-How-do-I-create-a-new-Organization-) inside Unity Dashboard, and enable both the [Relay](https://docs.unity.com/relay/get-started.html) and [Lobby](https://docs.unity.com/lobby/game-lobby-sample.html) services. Otherwise, Boss Room can still be used without UGS.
 
 ## Opening the project for the first time
 
