@@ -1,9 +1,11 @@
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
-    public class ClientProjectileVisualization : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientProjectileVisualization : MonoBehaviour
     {
         [SerializeField]
         [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
@@ -19,10 +21,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         const float k_LerpTime = 0.1f;
 
         PositionLerper m_PositionLerper;
+        NetcodeHooks m_Hooks;
 
-        public override void OnNetworkSpawn()
+        void Awake()
         {
-            if (!IsClient || transform.parent == null)
+            m_Hooks = GetComponent<NetcodeHooks>();
+            m_Hooks.OnNetworkSpawnHook += OnSpawn;
+            m_Hooks.OnNetworkDespawnHook += OnDespawn;
+        }
+
+        void OnSpawn()
+        {
+            if (!NetworkManager.Singleton.IsClient || transform.parent == null)
             {
                 enabled = false;
                 return;
@@ -39,7 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             transform.rotation = m_Parent.transform.rotation;
         }
 
-        public override void OnNetworkDespawn()
+        void OnDespawn()
         {
             m_TrailRenderer.Clear();
 
@@ -48,6 +58,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 transform.parent = m_Parent;
                 m_NetState.HitEnemyEvent -= OnEnemyHit;
             }
+        }
+
+        void OnDestroy()
+        {
+            m_Hooks.OnNetworkSpawnHook -= OnSpawn;
+            m_Hooks.OnNetworkDespawnHook -= OnDespawn;
         }
 
         void Update()
@@ -65,7 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             // clients, no positional smoothing is required, since m_Parent's NetworkTransform will perform
             // positional interpolation on its Update method, and so this position is simply matched 1:1 with m_Parent.
 
-            if (IsHost)
+            if (NetworkManager.Singleton.IsHost)
             {
                 transform.position = m_PositionLerper.LerpPosition(transform.position,
                     m_Parent.transform.position);

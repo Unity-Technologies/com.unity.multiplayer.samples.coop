@@ -105,8 +105,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             m_LobbyServiceFacade?.EndTracking();
             DIScope.RootScope.Dispose();
             DIScope.RootScope = null;
-            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientStarted;
-            NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
+            if (NetworkManager.Singleton != null)
+            {
+                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientStarted;
+                NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
+            }
         }
 
         private static void OnClientStarted(ulong clientID)

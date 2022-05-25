@@ -1,3 +1,5 @@
+using System;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,23 +10,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// This is part of a temporary movement system that will be replaced once Netcode for GameObjects can drive
     /// movement internally.
     /// </summary>
-    public class ClientGenericMovement : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientGenericMovement : MonoBehaviour
     {
         private INetMovement m_MovementSource;
         private Rigidbody m_Rigidbody;
         private bool m_Initialized;
 
+        void Awake()
+        {
+            GetComponent<NetcodeHooks>().OnNetworkSpawnHook += OnSpawn;
+        }
 
-        // Start is called before the first frame update
+        void OnDestroy()
+        {
+            GetComponent<NetcodeHooks>().OnNetworkSpawnHook -= OnSpawn;
+        }
+
         void Start()
         {
             m_MovementSource = GetComponent<INetMovement>();
             m_Rigidbody = GetComponent<Rigidbody>(); //this may be null.
         }
 
-        public override void OnNetworkSpawn()
+        void OnSpawn()
         {
-            if (IsServer)
+            if (NetworkManager.Singleton.IsServer)
             {
                 //this component is not needed on the host (or dedicated server), because ServerCharacterMovement will directly
                 //update the character's position.

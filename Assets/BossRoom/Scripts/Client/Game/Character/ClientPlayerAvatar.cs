@@ -1,23 +1,35 @@
 using System;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
-    public class ClientPlayerAvatar : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientPlayerAvatar : MonoBehaviour
     {
         [SerializeField]
         ClientPlayerAvatarRuntimeCollection m_PlayerAvatars;
+
+        public NetcodeHooks NetcodeHooks;
 
         public static event Action<ClientPlayerAvatar> LocalClientSpawned;
 
         public static event Action LocalClientDespawned;
 
-        public override void OnNetworkSpawn()
+        void Awake()
         {
-            name = "PlayerAvatar" + OwnerClientId;
+            NetcodeHooks = GetComponent<NetcodeHooks>();
+            NetcodeHooks.OnNetworkSpawnHook += OnSpawn;
+            NetcodeHooks.OnNetworkDespawnHook += OnDespawn;
+        }
 
-            if (IsClient && IsOwner)
+        void OnSpawn()
+        {
+            var networkManager = NetworkManager.Singleton;
+            name = "PlayerAvatar" + NetcodeHooks.OwnerClientId;
+
+            if (networkManager.IsClient && NetcodeHooks.IsOwner)
             {
                 LocalClientSpawned?.Invoke(this);
             }
@@ -28,9 +40,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        public override void OnNetworkDespawn()
+        void OnDespawn()
         {
-            if (IsClient && IsOwner)
+            if (NetworkManager.Singleton.IsClient && NetcodeHooks.IsOwner)
             {
                 LocalClientDespawned?.Invoke();
             }
@@ -38,10 +50,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             RemoveNetworkCharacter();
         }
 
-        public override void OnDestroy()
+        public void OnDestroy()
         {
-            base.OnDestroy();
             RemoveNetworkCharacter();
+            NetcodeHooks.OnNetworkSpawnHook -= OnSpawn;
+            NetcodeHooks.OnNetworkDespawnHook -= OnDespawn;
         }
 
         void RemoveNetworkCharacter()

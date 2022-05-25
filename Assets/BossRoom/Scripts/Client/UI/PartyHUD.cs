@@ -61,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void PlayerAvatarAdded(ClientPlayerAvatar clientPlayerAvatar)
         {
-            if (clientPlayerAvatar.IsOwner)
+            if (clientPlayerAvatar.NetcodeHooks.IsOwner)
             {
                 SetHeroData(clientPlayerAvatar);
             }
@@ -77,10 +77,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 RemoveHero();
             }
-            else if (m_TrackedAllies.ContainsKey(clientPlayerAvatar.NetworkObjectId))
+            else if (m_TrackedAllies.ContainsKey(clientPlayerAvatar.NetcodeHooks.NetworkObjectId))
             {
-                RemoveAlly(clientPlayerAvatar.NetworkObjectId);
-                m_TrackedAllies.Remove(clientPlayerAvatar.NetworkObjectId);
+                RemoveAlly(clientPlayerAvatar.NetcodeHooks.NetworkObjectId);
+                m_TrackedAllies.Remove(clientPlayerAvatar.NetcodeHooks.NetworkObjectId);
             }
         }
 

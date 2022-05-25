@@ -124,7 +124,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                 if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
-                    if (targetNetworkObj.NetworkObjectId != m_Parent.NetworkObjectId)
+                    if (targetNetworkObj.NetworkObjectId != m_Parent.NetcodeHooks.NetworkObjectId)
                     {
                         string hitAnim = Description.ReactAnim;
                         if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }

@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,7 +10,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// AvatarRegistry, if possible. Once fetched, the Graphics GameObject is spawned.
     /// </summary>
     [RequireComponent(typeof(NetworkAvatarGuidState))]
-    public class ClientAvatarGuidHandler : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientAvatarGuidHandler : MonoBehaviour
     {
         [SerializeField]
         Animator m_GraphicsAnimator;
@@ -20,10 +22,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public Animator graphicsAnimator => m_GraphicsAnimator;
 
         public event Action<GameObject> AvatarGraphicsSpawned;
-
-        public override void OnNetworkSpawn()
+        void Awake()
         {
-            base.OnNetworkSpawn();
+            GetComponent<NetcodeHooks>().OnNetworkSpawnHook += OnSpawn;
+        }
+
+        void OnDestroy()
+        {
+            GetComponent<NetcodeHooks>().OnNetworkSpawnHook -= OnSpawn;
+        }
+        public void OnSpawn()
+        {
             InstantiateAvatar();
         }
 

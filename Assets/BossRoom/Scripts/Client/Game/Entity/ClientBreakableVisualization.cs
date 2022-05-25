@@ -1,3 +1,5 @@
+using System;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,7 +9,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     /// Visualization class for Breakables. Breakables work by swapping a "broken" prefab at the moment of breakage. The broken prefab
     /// then handles the pesky details of actually falling apart.
     /// </summary>
-    public class ClientBreakableVisualization : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientBreakableVisualization : MonoBehaviour
     {
         [SerializeField]
         private GameObject m_BrokenPrefab;
@@ -28,9 +31,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private GameObject m_CurrentBrokenVisualization;
 
-        public override void OnNetworkSpawn()
+        NetcodeHooks m_Hooks;
+
+        void Awake()
         {
-            if (!IsClient)
+            m_Hooks = GetComponent<NetcodeHooks>();
+            m_Hooks.OnNetworkSpawnHook += OnSpawn;
+            m_Hooks.OnNetworkDespawnHook += OnDespawn;
+        }
+
+        void OnSpawn()
+        {
+            if (!NetworkManager.Singleton.IsClient)
             {
                 enabled = false;
             }
@@ -42,7 +54,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 {
                     PerformBreak(true);
                 }
-
             }
         }
 
@@ -58,12 +69,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        public override void OnNetworkDespawn()
+        void OnDespawn()
         {
             if (m_NetState)
             {
                 m_NetState.IsBroken.OnValueChanged -= OnBreakableStateChanged;
             }
+        }
+
+        void OnDestroy()
+        {
+            m_Hooks.OnNetworkSpawnHook -= OnSpawn;
+            m_Hooks.OnNetworkDespawnHook -= OnDespawn;
         }
 
         private void PerformBreak(bool onStart)

@@ -26,7 +26,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public override bool Update()
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.IsOwner)
+            if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.NetcodeHooks.IsOwner)
             {
                 m_SpawnedGraphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
             }

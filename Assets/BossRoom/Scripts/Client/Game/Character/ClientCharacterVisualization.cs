@@ -2,13 +2,15 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.Utilities;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    public class ClientCharacterVisualization : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientCharacterVisualization : MonoBehaviour
     {
         [SerializeField]
         Animator m_ClientVisualsAnimator;
@@ -43,41 +45,43 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public bool CanPerformActions => m_NetState.CanPerformActions;
 
         NetworkCharacterState m_NetState;
-
         public NetworkCharacterState NetState => m_NetState;
 
         ActionVisualization m_ActionViz;
 
         PositionLerper m_PositionLerper;
-
         RotationLerper m_RotationLerper;
 
         // this value suffices for both positional and rotational interpolations; one may have a constant value for each
         const float k_LerpTime = 0.08f;
 
         Vector3 m_LerpedPosition;
-
         Quaternion m_LerpedRotation;
 
         bool m_IsHost;
 
         float m_CurrentSpeed;
 
+        public NetcodeHooks NetcodeHooks;
+
         void Awake()
         {
             enabled = false;
+            NetcodeHooks = GetComponent<NetcodeHooks>();
+            NetcodeHooks.OnNetworkSpawnHook += OnSpawn;
+            NetcodeHooks.OnNetworkDespawnHook += OnDespawn;
         }
 
-        public override void OnNetworkSpawn()
+        void OnSpawn()
         {
-            if (!IsClient || transform.parent == null)
+            if (!NetworkManager.Singleton.IsClient || transform.parent == null)
             {
                 return;
             }
 
             enabled = true;
 
-            m_IsHost = IsHost;
+            m_IsHost = NetworkManager.Singleton.IsHost;
 
             m_ActionViz = new ActionVisualization(this);
 
@@ -125,7 +129,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     if (m_NetState.TryGetComponent(out ClientInputSender inputSender))
                     {
                         // TODO: revisit; anticipated actions would play twice on the host
-                        if (!IsServer)
+                        if (!NetworkManager.Singleton.IsServer)
                         {
                             inputSender.ActionInputEvent += OnActionInput;
                         }
@@ -135,7 +139,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        public override void OnNetworkDespawn()
+        void OnDespawn()
         {
             if (m_NetState)
             {
@@ -153,6 +157,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             enabled = false;
+        }
+
+        void OnDestroy()
+        {
+            NetcodeHooks.OnNetworkSpawnHook -= OnSpawn;
+            NetcodeHooks.OnNetworkDespawnHook -= OnDespawn;
         }
 
         void OnActionInput(ActionRequestData data)
