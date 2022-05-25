@@ -158,12 +158,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     case ConnectStatus.HostEndedSession:
                     case ConnectStatus.ServerFull:
 
-                        m_QuitGameSessionPub.Publish(new QuitGameSessionMessage(){UserRequested = false}); // go through the normal leave flow
+                        m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = false }); // go through the normal leave flow
                         break;
                     case ConnectStatus.LoggedInAgain:
                         if (m_TryToReconnectCoroutine == null)
                         {
-                            m_QuitGameSessionPub.Publish(new QuitGameSessionMessage(){UserRequested = false}); // if not trying to reconnect, go through the normal leave flow
+                            m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = false }); // if not trying to reconnect, go through the normal leave flow
                         }
                         break;
                     case ConnectStatus.GenericDisconnect:
@@ -224,7 +224,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             // If the coroutine has not been stopped before this, it means we failed to connect during all attempts
             Debug.Log("All tries failed, returning to main menu");
-            m_QuitGameSessionPub.Publish(new QuitGameSessionMessage(){UserRequested = false});
+            m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = false });
             if (!DisconnectReason.HasTransitionReason)
             {
                 DisconnectReason.SetDisconnectReason(ConnectStatus.GenericDisconnect);
