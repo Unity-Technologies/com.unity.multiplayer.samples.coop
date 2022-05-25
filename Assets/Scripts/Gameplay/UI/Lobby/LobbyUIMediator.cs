@@ -27,8 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         LocalLobbyUser m_LocalUser;
         LocalLobby m_LocalLobby;
         NameGenerationData m_NameGenerationData;
-        GameNetPortal m_GameNetPortal;
-        ClientGameNetPortal m_ClientNetPortal;
+        ConnectionManager m_ConnectionManager;
         IDisposable m_Subscriptions;
 
         const string k_DefaultLobbyName = "no-name";
@@ -40,9 +39,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             LocalLobbyUser localUser,
             LocalLobby localLobby,
             NameGenerationData nameGenerationData,
-            GameNetPortal gameNetPortal,
             ISubscriber<ConnectStatus> connectStatusSub,
-            ClientGameNetPortal clientGameNetPortal
+            ConnectionManager connectionManager
         )
         {
             m_AuthenticationServiceFacade = authenticationServiceFacade;
@@ -50,8 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LocalUser = localUser;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
-            m_GameNetPortal = gameNetPortal;
-            m_ClientNetPortal = clientGameNetPortal;
+            m_ConnectionManager = connectionManager;
 
             RegenerateName();
 
@@ -98,10 +95,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_LocalUser.IsHost = true;
                 m_LobbyServiceFacade.SetRemoteLobby(lobbyCreationAttempt.Lobby);
 
-                m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
-
                 Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-                m_GameNetPortal.StartUnityRelayHost();
+                m_ConnectionManager.StartHostLobby(m_LocalUser.DisplayName);
             }
             else
             {
@@ -208,10 +203,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         async void OnJoinedLobby(Lobby remoteLobby)
         {
             m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
-            m_GameNetPortal.PlayerName = m_LocalUser.DisplayName;
 
             Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            await m_ClientNetPortal.StartClientUnityRelayModeAsync(OnRelayJoinFailed);
+            await m_ConnectionManager.StartClientLobbyAsync(m_LocalUser.DisplayName, OnRelayJoinFailed);
 
             void OnRelayJoinFailed(string message)
             {

@@ -60,6 +60,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_Portal = GetComponent<GameNetPortal>();
 
             m_Portal.NetManager.OnClientDisconnectCallback += OnDisconnectOrTimeout;
+            m_Portal.NetManager.OnClientConnectedCallback += NetManagerOnOnClientConnectedCallback;
+        }
+
+        void NetManagerOnOnClientConnectedCallback(ulong obj)
+        {
+            Debug.Log("Client connected callback");
         }
 
         void OnDestroy()
@@ -69,6 +75,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 if (m_Portal.NetManager != null)
                 {
                     m_Portal.NetManager.OnClientDisconnectCallback -= OnDisconnectOrTimeout;
+                    m_Portal.NetManager.OnClientConnectedCallback -= NetManagerOnOnClientConnectedCallback;
                 }
 
                 if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null)
@@ -146,6 +153,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         private void OnDisconnectOrTimeout(ulong clientID)
         {
+            Debug.Log("DisconnectCallback");
             // This is also called on the Host when a different client disconnects. To make sure we only handle our own disconnection, verify that we are either
             // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
             if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientID)
@@ -181,7 +189,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     default:
                         throw new NotImplementedException(DisconnectReason.Reason.ToString());
                 }
-
+                Debug.Log(DisconnectReason.Reason);
                 m_ConnectStatusPub.Publish(DisconnectReason.Reason);
                 DisconnectReason.Clear();
             }

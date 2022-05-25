@@ -31,9 +31,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override GameState ActiveState { get { return GameState.BossRoom; } }
 
-        private GameNetPortal m_NetPortal;
-        private ServerGameNetPortal m_ServerNetPortal;
-
         // Wait time constants for switching to post game after the game is won or lost
         private const float k_WinDelay = 7.0f;
         private const float k_LoseDelay = 2.5f;
@@ -51,10 +48,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         IDisposable m_Subscription;
 
+        ConnectionManager m_ConnectionManager;
+
         [Inject]
-        void InjectDependencies(ISubscriber<LifeStateChangedEventMessage> subscriber)
+        void InjectDependencies(ISubscriber<LifeStateChangedEventMessage> subscriber, ConnectionManager connectionManager)
         {
             m_LifeStateChangedEventMessageSubscriber = subscriber;
+            m_ConnectionManager = connectionManager;
         }
 
         public override void OnNetworkSpawn()
@@ -67,9 +67,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 // reset win state
                 SetWinState(WinState.Invalid);
-
-                m_NetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
-                m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
 
                 NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
                 NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
@@ -88,7 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private bool DoInitialSpawnIfPossible()
         {
-            if (m_ServerNetPortal.AreAllClientsInServerScene() && !InitialSpawnDone)
+            if (m_ConnectionManager.AreAllClientsInServerScene() && !InitialSpawnDone)
             {
                 InitialSpawnDone = true;
                 foreach (var kvp in NetworkManager.ConnectedClients)
@@ -125,7 +122,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
             if (sceneIndex == serverScene)
             {
-                Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
+                Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ConnectionManager.AreAllClientsInServerScene()}");
 
                 bool didSpawn = DoInitialSpawnIfPossible();
 
@@ -145,11 +142,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void OnNetworkDespawn()
         {
-            if (m_NetPortal != null)
-            {
-                NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
-                NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
-            }
+            NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
+            NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
             m_Subscription?.Dispose();
         }
 

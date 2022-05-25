@@ -19,9 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
     public class ApplicationController : MonoBehaviour
     {
         [SerializeField] UpdateRunner m_UpdateRunner;
-        [SerializeField] GameNetPortal m_GameNetPortal;
-        [SerializeField] ClientGameNetPortal m_ClientNetPortal;
-        [SerializeField] ServerGameNetPortal m_ServerGameNetPortal;
+        [SerializeField] ConnectionManager m_ConnectionManager;
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -40,9 +38,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
             scope.BindInstanceAsSingle(this);
             scope.BindInstanceAsSingle(m_UpdateRunner);
-            scope.BindInstanceAsSingle(m_GameNetPortal);
-            scope.BindInstanceAsSingle(m_ClientNetPortal);
-            scope.BindInstanceAsSingle(m_ServerGameNetPortal);
+            scope.BindInstanceAsSingle(m_ConnectionManager);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
