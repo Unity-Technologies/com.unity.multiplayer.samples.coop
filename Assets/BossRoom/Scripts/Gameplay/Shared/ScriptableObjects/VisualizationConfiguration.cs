@@ -56,14 +56,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
 
         // These are maintained by our OnValidate(). Code refers to these hashed values, not the string versions!
-        [SerializeField][HideInInspector] public int AliveStateTriggerID;
-        [SerializeField][HideInInspector] public int FaintedStateTriggerID;
-        [SerializeField][HideInInspector] public int DeadStateTriggerID;
-        [SerializeField][HideInInspector] public int AnticipateMoveTriggerID;
-        [SerializeField][HideInInspector] public int EntryDeathTriggerID;
-        [SerializeField][HideInInspector] public int EntryFaintedTriggerID;
-        [SerializeField][HideInInspector] public int SpeedVariableID;
-        [SerializeField][HideInInspector] public int BaseNodeTagID;
+        [SerializeField] [HideInInspector] public int AliveStateTriggerID;
+        [SerializeField] [HideInInspector] public int FaintedStateTriggerID;
+        [SerializeField] [HideInInspector] public int DeadStateTriggerID;
+        [SerializeField] [HideInInspector] public int AnticipateMoveTriggerID;
+        [SerializeField] [HideInInspector] public int EntryDeathTriggerID;
+        [SerializeField] [HideInInspector] public int EntryFaintedTriggerID;
+        [SerializeField] [HideInInspector] public int SpeedVariableID;
+        [SerializeField] [HideInInspector] public int BaseNodeTagID;
 
         void OnValidate()
         {
