@@ -128,9 +128,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             var listItem = Instantiate(m_LobbyListItemPrototype.gameObject, m_LobbyListItemPrototype.transform.parent)
                 .GetComponent<LobbyListItemUI>();
             listItem.gameObject.SetActive(true);
-            
+
             m_Container.Inject(listItem);
-            
+
             return listItem;
         }
 
