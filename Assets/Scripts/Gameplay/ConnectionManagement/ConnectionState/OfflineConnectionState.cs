@@ -1,7 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.BossRoom;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
@@ -34,12 +32,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void OnServerStarted()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void StartClientIP(string playerId, string playerName, string ipaddress, int port)
@@ -119,12 +117,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnUserRequestedShutdown()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void OnServerShutdown()
         {
-            throw new System.NotImplementedException();
+            throw new NotImplementedException();
         }
 
         public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)

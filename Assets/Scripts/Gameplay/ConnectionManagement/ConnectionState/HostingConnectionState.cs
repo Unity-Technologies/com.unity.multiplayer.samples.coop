@@ -126,7 +126,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of the
                 //approval callback, so that we can provide more context on a reject. In the meantime we must provide
                 //the extra information ourselves, and then wait a short time before manually close down the connection.
-                ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+
+                //ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
                 //StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {

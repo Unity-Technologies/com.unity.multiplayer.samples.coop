@@ -1,14 +1,22 @@
 using System;
 using System.Threading.Tasks;
+using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
     public class ConnectingConnectionState : ConnectionState
     {
-        public ConnectingConnectionState(ConnectionManager connectionManager)
+        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+
+        public ConnectingConnectionState(ConnectionManager connectionManager, IPublisher<QuitGameSessionMessage> quitGameSessionPublisher,
+            IPublisher<ConnectStatus> connectStatusPublisher)
             : base(connectionManager)
         {
+            m_QuitGameSessionPublisher = quitGameSessionPublisher;
+            m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
         public override void OnClientConnected(ulong clientId)
@@ -18,6 +26,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
+            m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage(){UserRequested = false}); // go through the normal leave flow
+            m_ConnectStatusPublisher.Publish(m_ConnectionManager.DisconnectReason.Reason);
+            m_ConnectionManager.DisconnectReason.Clear();
             m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
         }
 

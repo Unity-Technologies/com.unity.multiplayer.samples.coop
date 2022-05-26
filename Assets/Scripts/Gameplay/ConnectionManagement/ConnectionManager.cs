@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Collections;
+using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -11,7 +12,6 @@ using Unity.Netcode;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -74,14 +74,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
         LobbyServiceFacade m_LobbyServiceFacade;
         LocalLobby m_LocalLobby;
         IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
+        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+
+        DisconnectReason m_DisconnectReason = new DisconnectReason();
+        public DisconnectReason DisconnectReason => m_DisconnectReason;
 
         [Inject]
-        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ConnectionEventMessage> connectionEventPublisher)
+        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby,
+            IPublisher<ConnectionEventMessage> connectionEventPublisher, IPublisher<QuitGameSessionMessage> quitGameSessionPublisher,
+            IPublisher<ConnectStatus> connectStatusPublisher)
         {
             m_ProfileManager = profileManager;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
             m_ConnectionEventPublisher = connectionEventPublisher;
+            m_QuitGameSessionPublisher = quitGameSessionPublisher;
+            m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
         void Awake()
@@ -94,8 +103,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_Logics = new Dictionary<ConnectionStateType, ConnectionState>()
             {
                 [ConnectionStateType.Offline] = new OfflineConnectionState(this, m_LobbyServiceFacade, m_LocalLobby),
-                [ConnectionStateType.Connecting] = new ConnectingConnectionState(this),
-                [ConnectionStateType.Connected] = new ConnectedConnectionState(this),
+                [ConnectionStateType.Connecting] = new ConnectingConnectionState(this, m_QuitGameSessionPublisher, m_ConnectStatusPublisher),
+                [ConnectionStateType.Connected] = new ConnectedConnectionState(this, m_QuitGameSessionPublisher, m_ConnectStatusPublisher),
                 [ConnectionStateType.Reconnecting] = new ReconnectingConnectionState(this),
                 [ConnectionStateType.Hosting] = new HostingConnectionState(this, m_LobbyServiceFacade, m_ConnectionEventPublisher)
             };
@@ -164,7 +173,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_Logics[m_CurrentState].ApprovalCheck(connectionData, clientId, connectionApprovedCallback);
         }
 
-
         public Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
         {
             return m_Logics[m_CurrentState].StartClientLobbyAsync(playerName, GetPlayerId(), onFailure);
@@ -205,7 +213,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
         {
             reader.ReadValueSafe(out ConnectStatus status);
-            //m_ConnectStatus = status;
+            m_DisconnectReason.SetDisconnectReason(status);
         }
 
         /// <summary>
