@@ -1,9 +1,7 @@
 using System;
 using System.Collections;
-using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -59,41 +57,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        public override void OnServerStarted()
-        {
-
-        }
-
-        public override void StartClientIP(string playerId, string playerName, string ipaddress, int port)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task StartClientLobbyAsync(string playerName, string playerId, Action<string> onFailure)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override bool StartHostIP(string playerId, string playerName, string ipaddress, int port)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override Task StartHostLobbyAsync(string playerId, string playerName)
-        {
-            throw new NotImplementedException();
-        }
-
         public override void OnUserRequestedShutdown()
         {
             ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
             // Wait before shutting down to make sure clients receive that message before they are disconnected
             m_ConnectionManager.StartCoroutine(WaitToShutdown());
-        }
-
-        public override void OnServerShutdown()
-        {
-            throw new NotImplementedException();
         }
 
         public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)

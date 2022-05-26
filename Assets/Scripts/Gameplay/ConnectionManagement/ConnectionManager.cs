@@ -15,35 +15,6 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
-    public abstract class ConnectionState
-    {
-        protected ConnectionManager m_ConnectionManager;
-
-        public ConnectionState(ConnectionManager connectionManager)
-        {
-            m_ConnectionManager = connectionManager;
-        }
-
-        public abstract void OnClientConnected(ulong clientId);
-        public abstract void OnClientDisconnect(ulong clientId);
-
-        public abstract void OnServerStarted();
-
-        public abstract void StartClientIP(string playerId, string playerName, string ipaddress, int port);
-
-        public abstract Task StartClientLobbyAsync(string playerName, string playerId, Action<string> onFailure);
-
-        public abstract bool StartHostIP(string playerId, string playerName, string ipaddress, int port);
-
-        public abstract Task StartHostLobbyAsync(string playerId, string playerName);
-
-        public abstract void OnUserRequestedShutdown();
-
-        public abstract void OnServerShutdown();
-
-        public abstract void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback);
-    }
-
     public enum ConnectionStateType
     {
         Offline,
@@ -203,7 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_Logics[m_CurrentState].OnServerShutdown();
         }
 
-        void OnClientStarted()
+        public void OnClientStarted()
         {
             // should only do this once StartClient has been called (start client will initialize NetworkSceneManager and CustomMessagingManager)
             SceneLoaderWrapper.Instance.AddOnSceneEventCallback();

@@ -26,20 +26,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_LocalLobby = localLobby;
         }
 
-        public override void OnClientConnected(ulong clientId)
-        {
-        }
-
-        public override void OnClientDisconnect(ulong clientId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void OnServerStarted()
-        {
-            throw new NotImplementedException();
-        }
-
         public override void StartClientIP(string playerId, string playerName, string ipaddress, int port)
         {
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
@@ -113,16 +99,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 m_ConnectionManager.ChangeState(ConnectionStateType.Hosting);
             }
-        }
-
-        public override void OnUserRequestedShutdown()
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void OnServerShutdown()
-        {
-            throw new NotImplementedException();
         }
 
         public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
