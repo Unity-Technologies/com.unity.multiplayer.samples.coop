@@ -175,6 +175,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 Destroy(m_TextHostType.gameObject);
             }
+
+            if (m_TextBadNetworkConditions != null)
+            {
+                Destroy(m_TextBadNetworkConditions.gameObject);
+            }
         }
     }
 }
