@@ -13,14 +13,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     public class ReconnectingConnectionState : ConnectionState
     {
-        Coroutine m_ReconnectCoroutine;
-        string m_LobbyCode = "";
+        const int k_NbReconnectAttempts = 2;
 
         LobbyServiceFacade m_LobbyServiceFacade;
         LocalLobby m_LocalLobby;
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
-        const int k_NbReconnectAttempts = 2;
+        Coroutine m_ReconnectCoroutine;
+        string m_LobbyCode = "";
+        int m_NbAttempts = 0;
 
         public ReconnectingConnectionState(ConnectionManager connectionManager, LobbyServiceFacade lobbyServiceFacade,
             LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher)
@@ -34,7 +35,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void Enter()
         {
             m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
-            m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+            m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+            m_NbAttempts = 0;
         }
 
         public override void Exit()
@@ -61,6 +63,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 case ConnectStatus.ServerFull:
                     m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
                     break;
+                default:
+                    m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                    break;
             }
         }
 
@@ -72,39 +77,35 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IEnumerator ReconnectCoroutine()
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
-            int nbTries = 0;
-            while (nbTries < k_NbReconnectAttempts)
-            {
-                NetworkManager.Singleton.Shutdown();
 
-                yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
-                Debug.Log($"Reconnecting attempt {nbTries + 1}/{k_NbReconnectAttempts}...");
-                m_ReconnectMessagePublisher.Publish(new ReconnectMessage(nbTries, k_NbReconnectAttempts));
-                if (!string.IsNullOrEmpty(m_LobbyCode))
+            NetworkManager.Singleton.Shutdown();
+
+            yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
+            Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{k_NbReconnectAttempts}...");
+            m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, k_NbReconnectAttempts));
+            if (!string.IsNullOrEmpty(m_LobbyCode))
+            {
+                var leavingLobby = m_LobbyServiceFacade.EndTracking();
+                yield return new WaitUntil(() => leavingLobby.IsCompleted);
+                var joiningLobby = m_LobbyServiceFacade.TryJoinLobbyAsync("", m_LobbyCode);
+                yield return new WaitUntil(() => joiningLobby.IsCompleted);
+                if (joiningLobby.Result.Success)
                 {
-                    var leavingLobby = m_LobbyServiceFacade.EndTracking();
-                    yield return new WaitUntil(() => leavingLobby.IsCompleted);
-                    var joiningLobby = m_LobbyServiceFacade.TryJoinLobbyAsync("", m_LobbyCode);
-                    yield return new WaitUntil(() => joiningLobby.IsCompleted);
-                    if (joiningLobby.Result.Success)
-                    {
-                        m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
-                        var joiningRelay = JoinRelayServerAsync();
-                        yield return new WaitUntil(() => joiningRelay.IsCompleted);
-                    }
-                    else
-                    {
-                        Debug.Log("Failed joining lobby.");
-                    }
+                    m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
+                    var joiningRelay = JoinRelayServerAsync();
+                    yield return new WaitUntil(() => joiningRelay.IsCompleted);
                 }
                 else
                 {
-                    ConnectClient();
+                    Debug.Log("Failed joining lobby.");
                 }
-
-                yield return new WaitForSeconds(1.1f * NetworkManager.Singleton.NetworkConfig.ClientConnectionBufferTimeout + ((UnityTransport) NetworkManager.Singleton.NetworkConfig.NetworkTransport).DisconnectTimeoutMS / 1000.0f); // wait a bit longer than the timeout duration to make sure we have enough time to stop this coroutine if successful
-                nbTries++;
             }
+            else
+            {
+                ConnectClient();
+            }
+
+            m_NbAttempts++;
         }
 
         async Task JoinRelayServerAsync()
