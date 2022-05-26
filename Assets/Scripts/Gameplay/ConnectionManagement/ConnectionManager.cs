@@ -75,18 +75,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         LocalLobby m_LocalLobby;
         IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
 
-
-        /// <summary>
-        /// Keeps a list of what clients are in what scenes.
-        /// </summary>
-        Dictionary<ulong, int> m_ClientSceneMap = new Dictionary<ulong, int>();
-
-        /// <summary>
-        /// The active server scene index.
-        /// </summary>
-        static int ServerScene => SceneManager.GetActiveScene().buildIndex;
-
-
         [Inject]
         void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ConnectionEventMessage> connectionEventPublisher)
         {
@@ -127,21 +115,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         }
 
-        public void OnClientSceneChanged(ulong clientId, int sceneIndex)
-        {
-            m_ClientSceneMap[clientId] = sceneIndex;
-        }
-
-        public bool AreAllClientsInServerScene()
-        {
-            foreach (var kvp in m_ClientSceneMap)
-            {
-                if (kvp.Value != ServerScene) { return false; }
-            }
-
-            return true;
-        }
-
         public void ChangeState(ConnectionStateType newState)
         {
             Debug.Log(newState);
@@ -160,16 +133,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             //The "BossRoom" server always advances to CharSelect immediately on start. Different games
             //may do this differently.
             SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
-
-            NetworkManager.SceneManager.OnSceneEvent += SceneManagerOnOnSceneEvent;
-        }
-
-        void SceneManagerOnOnSceneEvent(SceneEvent sceneEvent)
-        {
-            // only processing single player finishing loading events
-            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
-
-            OnClientSceneChanged(sceneEvent.ClientId, SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex);
         }
 
         void OnClientDisconnectCallback(ulong clientId)
@@ -225,7 +188,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public void RequestShutdown()
         {
             m_Logics[m_CurrentState].OnUserRequestedShutdown();
-            m_ClientSceneMap.Clear();
         }
 
         public void OnServerShutdown()

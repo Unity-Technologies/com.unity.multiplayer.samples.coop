@@ -69,9 +69,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 SetWinState(WinState.Invalid);
 
                 NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
-                NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
-
-                DoInitialSpawnIfPossible();
+                NetworkManager.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
+                NetworkManager.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
 
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
                 m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
@@ -83,18 +82,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_Subscription?.Dispose();
         }
 
-        private bool DoInitialSpawnIfPossible()
+        void OnSynchronizeComplete(ulong clientId)
         {
-            if (m_ConnectionManager.AreAllClientsInServerScene() && !InitialSpawnDone)
+            if (InitialSpawnDone &&
+                !PlayerServerCharacter.GetPlayerServerCharacter(clientId))
+            {
+                //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
+                //(either because multiple people are late-joining at once, or because some dynamic entities are
+                //getting spawned while joining. But that's not something we can fully address by changes in
+                //ServerBossRoomState.
+                SpawnPlayer(clientId, true);
+            }
+        }
+
+        void OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+        {
+            if (!InitialSpawnDone && loadSceneMode == LoadSceneMode.Single)
             {
                 InitialSpawnDone = true;
                 foreach (var kvp in NetworkManager.ConnectedClients)
                 {
                     SpawnPlayer(kvp.Key, false);
                 }
-                return true;
             }
-            return false;
         }
 
         void OnClientDisconnect(ulong clientId)
@@ -113,37 +123,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             CheckForGameOver();
         }
 
-        public void OnClientSceneChanged(SceneEvent sceneEvent)
-        {
-            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
-
-            var clientId = sceneEvent.ClientId;
-            var sceneIndex = SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex;
-            int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-            if (sceneIndex == serverScene)
-            {
-                Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ConnectionManager.AreAllClientsInServerScene()}");
-
-                bool didSpawn = DoInitialSpawnIfPossible();
-
-                if (!didSpawn && InitialSpawnDone &&
-                    !PlayerServerCharacter.GetPlayerServerCharacters().Find(
-                        player => player.OwnerClientId == clientId))
-                {
-                    //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
-                    //(either because multiple people are late-joining at once, or because some dynamic entities are
-                    //getting spawned while joining. But that's not something we can fully address by changes in
-                    //ServerBossRoomState.
-                    SpawnPlayer(clientId, true);
-                }
-
-            }
-        }
-
         public override void OnNetworkDespawn()
         {
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
-            NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
+            NetworkManager.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
+            NetworkManager.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
             m_Subscription?.Dispose();
         }
 
