@@ -104,11 +104,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_Logics[m_CurrentState].Enter();
         }
 
-        public void InstantiateGameState()
-        {
-
-        }
-
         void OnClientDisconnectCallback(ulong clientId)
         {
             m_Logics[m_CurrentState].OnClientDisconnect(clientId);
