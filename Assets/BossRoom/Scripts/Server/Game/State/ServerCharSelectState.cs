@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -189,8 +190,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
             }
-            if (NetworkManager.Singleton.IsClient)
+
+            if (NetworkManager.Singleton.IsClient && !ClientGameNetPortal.Instance.IsConnectedToHost) // host should load, client should load if connected to DGS
             {
+                Debug.Log("loading char select client scene");
                 SceneManager.LoadScene(SceneNames.CharSelectClient, LoadSceneMode.Additive);
             }
         }

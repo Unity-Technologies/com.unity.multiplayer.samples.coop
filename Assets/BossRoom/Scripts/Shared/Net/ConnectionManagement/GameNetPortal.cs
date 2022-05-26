@@ -172,7 +172,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 //special host code. This is what kicks off the flow that happens on a regular client
                 //when it has finished connecting successfully. A dedicated server would remove this.
-                m_ClientPortal.OnConnectFinished(ConnectStatus.Success);
+                m_ClientPortal.OnConnectFinished(ConnectStatus.Success, isConnectedToHost: false); // not connected to host as we are the host...
             }
 
             m_ClientPortal.OnNetworkReady();

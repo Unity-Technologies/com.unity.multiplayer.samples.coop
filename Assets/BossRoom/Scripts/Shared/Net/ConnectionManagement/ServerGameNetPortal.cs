@@ -202,7 +202,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
                     new SessionPlayerData(clientId, connectionPayload.playerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
-                SendServerToClientConnectResult(clientId, gameReturnStatus);
+                SendServerToClientConnectResult(clientId, gameReturnStatus, NetworkManager.Singleton.IsHost);
 
                 //Populate our client scene map
                 m_ClientSceneMap[clientId] = connectionPayload.clientScene;
@@ -218,7 +218,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of the
                 //approval callback, so that we can provide more context on a reject. In the meantime we must provide
                 //the extra information ourselves, and then wait a short time before manually close down the connection.
-                SendServerToClientConnectResult(clientId, gameReturnStatus);
+                SendServerToClientConnectResult(clientId, gameReturnStatus, NetworkManager.Singleton.IsHost);
                 SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
                 StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
@@ -285,10 +285,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         /// <param name="clientID"> id of the client to send to </param>
         /// <param name="status"> the status to pass to the client</param>
-        static void SendServerToClientConnectResult(ulong clientID, ConnectStatus status)
+        /// <param name="isHost"> whether the server is a host or a dedicated server</param>
+        static void SendServerToClientConnectResult(ulong clientID, ConnectStatus status, bool isHost)
         {
-            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            var writer = new FastBufferWriter(sizeof(ConnectStatus) + sizeof(bool), Allocator.Temp);
             writer.WriteValueSafe(status);
+            writer.WriteValueSafe(isHost);
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientConnectResult_CustomMessage), clientID, writer);
         }
 

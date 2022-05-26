@@ -27,6 +27,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public DisconnectReason DisconnectReason { get; } = new DisconnectReason();
 
+        public bool IsConnectedToHost { get; private set; }
+
         const int k_NbReconnectAttempts = 2;
 
         Coroutine m_TryToReconnectCoroutine;
@@ -112,11 +114,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        public void OnConnectFinished(ConnectStatus status)
+        public void OnConnectFinished(ConnectStatus status, bool isConnectedToHost)
         {
             //on success, there is nothing to do (the Netcode for GameObjects (Netcode) scene management system will take us to the next scene).
             //on failure, we must raise an event so that the UI layer can display something.
             Debug.Log("RecvConnectFinished Got status: " + status);
+
+            IsConnectedToHost = isConnectedToHost; // todo this might not be needed if we just say the server should change the scene for the client?
 
             if (status != ConnectStatus.Success)
             {
@@ -322,7 +326,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         public static void ReceiveServerToClientConnectResult_CustomMessage(ulong clientID, FastBufferReader reader)
         {
             reader.ReadValueSafe(out ConnectStatus status);
-            Instance.OnConnectFinished(status);
+            reader.ReadValueSafe(out bool serverIsHost);
+            Instance.OnConnectFinished(status, serverIsHost);
         }
 
         public static void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
