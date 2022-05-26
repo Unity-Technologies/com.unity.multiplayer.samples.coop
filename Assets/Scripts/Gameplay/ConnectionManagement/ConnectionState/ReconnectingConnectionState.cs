@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         Coroutine m_ReconnectCoroutine;
         string m_LobbyCode = "";
-        int m_NbAttempts = 0;
+        int m_NbAttempts;
 
         public ReconnectingConnectionState(ConnectionManager connectionManager, LobbyServiceFacade lobbyServiceFacade,
             LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher)
@@ -119,7 +119,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return;//not re-throwing, but still not allowing to connect
             }
