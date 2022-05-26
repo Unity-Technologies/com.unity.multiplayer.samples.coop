@@ -22,13 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         NetworkNameState m_NameState;
 
-        IPublisher<LifeStateChangedEventMessage> m_Publisher;
-
-        [Inject]
-        void InjectDependencies(IPublisher<LifeStateChangedEventMessage> publisher)
-        {
-            m_Publisher = publisher;
-        }
+        [Inject] IPublisher<LifeStateChangedEventMessage> m_Publisher;
 
         public override void OnNetworkSpawn()
         {

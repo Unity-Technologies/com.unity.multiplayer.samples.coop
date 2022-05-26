@@ -24,15 +24,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         List<ProfileListItemUI> m_ProfileListItems = new List<ProfileListItemUI>();
 
-        IObjectResolver m_Container;
-        ProfileManager m_ProfileManager;
-
-        [Inject]
-        void InjectDependency(IObjectResolver container, ProfileManager profileManager)
-        {
-            m_Container = container;
-            m_ProfileManager = profileManager;
-        }
+        [Inject] IObjectResolver m_Resolver;
+        [Inject] ProfileManager m_ProfileManager;
 
         void Awake()
         {
@@ -102,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 .GetComponent<ProfileListItemUI>();
             m_ProfileListItems.Add(listItem);
             listItem.gameObject.SetActive(true);
-            m_Container.Inject(listItem);
+            m_Resolver.Inject(listItem);
         }
 
         public void Show()

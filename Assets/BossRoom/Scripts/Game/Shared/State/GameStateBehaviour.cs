@@ -57,9 +57,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private static GameObject s_ActiveStateGO;
 
+        protected override void Awake()
+        {
+            base.Awake();
 
-        [SerializeField]
-        GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
+            if (Parent != null)
+            {
+                Parent.Container.Inject(this);
+            }
+        }
 
         // Start is called before the first frame update
         protected virtual void Start()

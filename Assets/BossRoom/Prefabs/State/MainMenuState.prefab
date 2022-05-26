@@ -69,12 +69,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ab10fd7c6aa7d36438f5ac1c0ebfadbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_GameObjectsThatWillBeInjectedAutomatically: []
+  parentReference:
+    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
+  autoRun: 1
+  autoInjectGameObjects:
+  - {fileID: 0}
+  - {fileID: 0}
   m_NameGenerationData: {fileID: 11400000, guid: cc0e4025ad893614a8db0d9c10bf7c4f, type: 2}
   m_LobbyUIMediator: {fileID: 0}
   m_IPUIMediator: {fileID: 0}
   m_LobbyButton: {fileID: 0}
   m_SignInSpinner: {fileID: 0}
+  m_UIProfileSelector: {fileID: 0}
+  m_UGSSetupTooltipDetector: {fileID: 0}
 --- !u!223 &2665876610389888237
 Canvas:
   m_ObjectHideFlags: 0

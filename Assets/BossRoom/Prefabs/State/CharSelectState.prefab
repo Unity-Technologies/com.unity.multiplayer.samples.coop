@@ -67,7 +67,6 @@ MonoBehaviour:
     TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
   autoRun: 1
   autoInjectGameObjects: []
-  m_GameObjectsThatWillBeInjectedAutomatically: []
 --- !u!114 &3565665953789623674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -81,10 +80,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: 
+    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
   autoRun: 1
-  autoInjectGameObjects: []
-  m_GameObjectsThatWillBeInjectedAutomatically: []
+  autoInjectGameObjects:
+  - {fileID: 0}
   m_AnimationTriggerOnCharSelect: BeginRevive
   m_AnimationTriggerOnCharChosen: BeginRevive
   m_PlayerSeats:

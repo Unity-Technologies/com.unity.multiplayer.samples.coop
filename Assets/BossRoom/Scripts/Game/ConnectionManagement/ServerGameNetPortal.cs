@@ -35,16 +35,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         static int ServerScene => SceneManager.GetActiveScene().buildIndex;
 
-        LobbyServiceFacade m_LobbyServiceFacade;
-
-        IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
-
-        [Inject]
-        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectionEventMessage> connectionEventPublisher)
-        {
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_ConnectionEventPublisher = connectionEventPublisher;
-        }
+        [Inject] LobbyServiceFacade m_LobbyServiceFacade;
+        [Inject] IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
 
         void Start()
         {

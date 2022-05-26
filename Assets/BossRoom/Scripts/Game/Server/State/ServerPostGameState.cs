@@ -16,7 +16,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnAllClientsFinishedLoading;
+            if (NetworkManager.Singleton.SceneManager != null)
+            {
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnAllClientsFinishedLoading;
+            }
         }
 
         static void OnAllClientsFinishedLoading(SceneEvent sceneEvent)

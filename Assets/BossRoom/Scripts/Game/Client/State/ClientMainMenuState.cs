@@ -1,7 +1,6 @@
 using System;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Services.Authentication;
@@ -32,16 +31,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField] UIProfileSelector m_UIProfileSelector;
         [SerializeField] UITooltipDetector m_UGSSetupTooltipDetector;
 
-        AuthenticationServiceFacade m_AuthServiceFacade;
-        LocalLobbyUser m_LocalUser;
-        LocalLobby m_LocalLobby;
-        ProfileManager m_ProfileManager;
+        [Inject] AuthenticationServiceFacade m_AuthServiceFacade;
+        [Inject] LocalLobbyUser m_LocalUser;
+        [Inject] LocalLobby m_LocalLobby;
+        [Inject] ProfileManager m_ProfileManager;
 
         protected override void Awake()
         {
+            base.Awake();
+
             m_LobbyButton.interactable = false;
             m_LobbyUIMediator.Hide();
-            base.Awake();
+
+            if (string.IsNullOrEmpty(Application.cloudProjectId))
+            {
+                OnSignInFailed();
+                return;
+            }
+
+            TrySignIn();
         }
 
         protected override void Configure(IContainerBuilder builder)
@@ -52,21 +60,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             builder.RegisterComponent(m_IPUIMediator);
         }
 
-        [Inject]
-        async void InjectDependenciesAndInitialize(AuthenticationServiceFacade authServiceFacade, LocalLobbyUser localUser, LocalLobby localLobby, ProfileManager profileManager)
+
+        private async void TrySignIn()
         {
-            m_AuthServiceFacade = authServiceFacade;
-            m_LocalUser = localUser;
-            m_LocalLobby = localLobby;
-            m_ProfileManager = profileManager;
-
-
-            if (string.IsNullOrEmpty(Application.cloudProjectId))
-            {
-                OnSignInFailed();
-                return;
-            }
-
             try
             {
                 var unityAuthenticationInitOptions = new InitializationOptions();
@@ -84,31 +80,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             {
                 OnSignInFailed();
             }
+        }
 
-            void OnAuthSignIn()
+        private void OnAuthSignIn()
+        {
+            m_LobbyButton.interactable = true;
+            m_UGSSetupTooltipDetector.enabled = false;
+            m_SignInSpinner.SetActive(false);
+
+            Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
+
+            m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
+            // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
+            m_LocalLobby.AddUser(m_LocalUser);
+        }
+
+        private void OnSignInFailed()
+        {
+            if (m_LobbyButton)
             {
-                m_LobbyButton.interactable = true;
-                m_UGSSetupTooltipDetector.enabled = false;
-                m_SignInSpinner.SetActive(false);
-
-                Debug.Log($"Signed in. Unity Player ID {AuthenticationService.Instance.PlayerId}");
-
-                m_LocalUser.ID = AuthenticationService.Instance.PlayerId;
-                // The local LobbyUser object will be hooked into UI before the LocalLobby is populated during lobby join, so the LocalLobby must know about it already when that happens.
-                m_LocalLobby.AddUser(m_LocalUser);
+                m_LobbyButton.interactable = false;
+                m_UGSSetupTooltipDetector.enabled = true;
             }
-
-            void OnSignInFailed()
+            if (m_SignInSpinner)
             {
-                if (m_LobbyButton)
-                {
-                    m_LobbyButton.interactable = false;
-                    m_UGSSetupTooltipDetector.enabled = true;
-                }
-                if (m_SignInSpinner)
-                {
-                    m_SignInSpinner.SetActive(false);
-                }
+                m_SignInSpinner.SetActive(false);
             }
         }
 

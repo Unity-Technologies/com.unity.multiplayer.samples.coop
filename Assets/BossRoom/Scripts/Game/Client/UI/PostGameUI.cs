@@ -37,13 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Color m_LoseLightColor;
 
-        ApplicationController m_ApplicationController;
-
-        [Inject]
-        void InjectDependencies(ApplicationController applicationController)
-        {
-            m_ApplicationController = applicationController;
-        }
+        [Inject] ApplicationController m_ApplicationController;
 
         void Start()
         {

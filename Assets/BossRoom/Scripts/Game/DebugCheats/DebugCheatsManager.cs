@@ -48,13 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
 
         bool m_DestroyPortalsOnNextToggle = true;
 
-        IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
-
-        [Inject]
-        void InjectDependencies(IPublisher<CheatUsedMessage> publisher)
-        {
-            m_CheatUsedMessagePublisher = publisher;
-        }
+        [Inject] IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
 
         void Update()
         {

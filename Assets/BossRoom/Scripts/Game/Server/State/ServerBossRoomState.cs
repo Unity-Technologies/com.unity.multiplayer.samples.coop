@@ -48,18 +48,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Keeping the subscriber during this GameState's lifetime to allow disposing of subscription and re-subscribing
         /// when despawning and spawning again.
         /// </summary>
-        [Inject]
-        ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
+        [Inject] ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
 
         IDisposable m_Subscription;
 
 
         protected override void Awake()
         {
+            base.Awake();
             NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnSceneEvent += OnServerUnloadComplete;
             NetworkManager.Singleton.SceneManager.OnSceneEvent += OnClientSceneChanged;
-            base.Awake();
         }
 
         public void OnServerLoadComplete(SceneEvent sceneEvent)
@@ -89,8 +88,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void OnDestroy()
         {
             m_Subscription?.Dispose();
-            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerUnloadComplete;
+
+            if (NetworkManager.Singleton.SceneManager != null)
+            {
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerLoadComplete;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnServerUnloadComplete;
+            }
+
             base.OnDestroy();
         }
 

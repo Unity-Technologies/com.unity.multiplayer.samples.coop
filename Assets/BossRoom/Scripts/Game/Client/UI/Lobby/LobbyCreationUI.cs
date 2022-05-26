@@ -11,17 +11,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] GameObject m_LoadingIndicatorObject;
         [SerializeField] Toggle m_IsPrivate;
         [SerializeField] CanvasGroup m_CanvasGroup;
-        LobbyUIMediator m_LobbyUIMediator;
+        [Inject] LobbyUIMediator m_LobbyUIMediator;
 
         void Awake()
         {
             EnableUnityRelayUI();
-        }
-
-        [Inject]
-        void InjectDependencies(LobbyUIMediator lobbyUIMediator)
-        {
-            m_LobbyUIMediator = lobbyUIMediator;
         }
 
         void EnableUnityRelayUI()

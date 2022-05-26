@@ -17,16 +17,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         TextMeshProUGUI m_TitleText;
 
-        IPUIMediator m_IPUIMediator;
-
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-
-        [Inject]
-        void InjectDependencies(IPUIMediator ipUIMediator, IPublisher<ConnectStatus> connectStatusPublisher)
-        {
-            m_IPUIMediator = ipUIMediator;
-            m_ConnectStatusPublisher = connectStatusPublisher;
-        }
+        [Inject] IPUIMediator m_IPUIMediator;
+        [Inject] IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         void Awake()
         {

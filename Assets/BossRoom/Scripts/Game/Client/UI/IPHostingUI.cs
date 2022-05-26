@@ -13,13 +13,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
-        IPUIMediator m_IPUIMediator;
-
-        [Inject]
-        void InjectDependencies(IPUIMediator ipUIMediator)
-        {
-            m_IPUIMediator = ipUIMediator;
-        }
+        [Inject] IPUIMediator m_IPUIMediator;
 
         void Awake()
         {

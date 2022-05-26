@@ -17,23 +17,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
     /// </summary>
     public class LobbyServiceFacade : IDisposable, IStartable
     {
-        [Inject]
-        readonly LifetimeScope m_ParentScope;
-
-        [Inject]
-        readonly UpdateRunner m_UpdateRunner;
-
-        [Inject]
-        readonly LocalLobby m_LocalLobby;
-
-        [Inject]
-        readonly LocalLobbyUser m_LocalUser;
-
-        [Inject]
-        readonly IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
-
-        [Inject]
-        readonly IPublisher<LobbyListFetchedMessage> m_LobbyListFetchedPub;
+        [Inject] LifetimeScope m_ParentScope;
+        [Inject] UpdateRunner m_UpdateRunner;
+        [Inject] LocalLobby m_LocalLobby;
+        [Inject] LocalLobbyUser m_LocalUser;
+        [Inject] IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePub;
+        [Inject] IPublisher<LobbyListFetchedMessage> m_LobbyListFetchedPub;
 
         const float k_HeartbeatPeriod = 8; // The heartbeat must be rate-limited to 5 calls per 30 seconds. We'll aim for longer in case periods don't align.
         float m_HeartbeatTime = 0;

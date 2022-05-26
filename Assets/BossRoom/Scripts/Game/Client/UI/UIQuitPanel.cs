@@ -17,14 +17,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         QuitMode m_QuitMode = QuitMode.ReturnToMenu;
 
-        ApplicationController m_ApplicationController;
-
-
-        [Inject]
-        void InjectDependencies(ApplicationController applicationController)
-        {
-            m_ApplicationController = applicationController;
-        }
+        [Inject] ApplicationController m_ApplicationController;
 
         public void Quit()
         {

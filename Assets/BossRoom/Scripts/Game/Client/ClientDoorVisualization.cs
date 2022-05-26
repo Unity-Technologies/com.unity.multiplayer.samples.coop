@@ -21,13 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         NetworkDoorState m_DoorState;
 
-        IPublisher<DoorStateChangedEventMessage> m_Publisher;
-
-        [Inject]
-        void InjectDependencies(IPublisher<DoorStateChangedEventMessage> publisher)
-        {
-            m_Publisher = publisher;
-        }
+        [Inject] IPublisher<DoorStateChangedEventMessage> m_Publisher;
 
         public override void OnNetworkSpawn()
         {

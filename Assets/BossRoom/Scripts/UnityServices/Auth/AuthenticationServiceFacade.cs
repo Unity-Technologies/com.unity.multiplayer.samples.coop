@@ -11,13 +11,7 @@ namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 {
     public class AuthenticationServiceFacade
     {
-        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
-
-        [Inject]
-        void InjectDependencies(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
-        {
-            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
-        }
+        [Inject] IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
         public async Task InitializeAndSignInAsync(InitializationOptions initializationOptions)
         {
