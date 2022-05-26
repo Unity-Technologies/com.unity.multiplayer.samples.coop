@@ -88,9 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
             // Wait before shutting down to make sure clients receive that message before they are disconnected
-            //StartCoroutine(WaitToShutdown());
-            m_ConnectionManager.NetworkManager.Shutdown();
-            SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+            m_ConnectionManager.StartCoroutine(WaitToShutdown());
         }
 
         public override void OnServerShutdown()
@@ -127,8 +125,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 //approval callback, so that we can provide more context on a reject. In the meantime we must provide
                 //the extra information ourselves, and then wait a short time before manually close down the connection.
 
-                //ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                //StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
+                ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+                m_ConnectionManager.StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
                     m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
