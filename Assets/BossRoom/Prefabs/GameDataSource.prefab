@@ -27,6 +27,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -50,6 +51,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b9743318c3216254bb32b815c6edcb7b, type: 2}
   - {fileID: 11400000, guid: 131bd29e682b4e34aa5c8b1f8ba4a48d, type: 2}
   - {fileID: 11400000, guid: 358012a7531bbb644bc269602d1ddaed, type: 2}
+  - {fileID: 11400000, guid: 165f16700f0820e47ba93cd1046c0d40, type: 2}
   m_ActionData:
   - {fileID: 11400000, guid: b7b106a096be3cb4cb0e19fe5e8bbe2f, type: 2}
   - {fileID: 11400000, guid: 866271751effcf64a8f225b2a6a78d75, type: 2}
@@ -74,3 +76,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0626aa2c2ce0d3a4ab4cad814432c2e5, type: 2}
   - {fileID: 11400000, guid: 08dc234d2353e0f489e45a0a4a09bf60, type: 2}
   - {fileID: 11400000, guid: f129c86376940384fb96b3512705c6e2, type: 2}
+  - {fileID: 11400000, guid: 723a546f69cc50543b7b04f8277d26b5, type: 2}
