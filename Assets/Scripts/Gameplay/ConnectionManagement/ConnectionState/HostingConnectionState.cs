@@ -2,8 +2,10 @@ using System;
 using System.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -21,6 +23,21 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_ConnectionEventPublisher = connectionEventPublisher;
         }
+
+        public override void Enter()
+        {
+            var gameState = Object.Instantiate(m_ConnectionManager.GameState);
+
+            gameState.Spawn();
+
+            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+
+            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
+            //may do this differently.
+            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
+        }
+
+        public override void Exit() { }
 
         public override void OnClientConnected(ulong clientId)
         {

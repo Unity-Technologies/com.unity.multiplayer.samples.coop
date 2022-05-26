@@ -26,6 +26,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_LocalLobby = localLobby;
         }
 
+        public override void Enter() { }
+
+        public override void Exit() { }
+
         public override void StartClientIP(string playerId, string playerName, string ipaddress, int port)
         {
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
@@ -121,7 +125,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var payload = JsonUtility.ToJson(new ConnectionPayload()
             {
                 playerId = playerId,
-                clientScene = SceneManager.GetActiveScene().buildIndex,
                 playerName = playerName,
                 isDebug = Debug.isDebugBuild
             });

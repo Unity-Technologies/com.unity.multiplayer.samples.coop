@@ -1,6 +1,7 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.Utilities;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -16,6 +17,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_QuitGameSessionPublisher = quitGameSessionPublisher;
             m_ConnectStatusPublisher = connectStatusPublisher;
         }
+
+        public override void Enter()
+        {
+            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+            m_ConnectionManager.RegisterCustomMessages();
+        }
+
+        public override void Exit() { }
 
         public override void OnClientConnected(ulong clientId)
         {

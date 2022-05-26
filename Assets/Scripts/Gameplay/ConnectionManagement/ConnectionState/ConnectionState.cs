@@ -13,10 +13,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectionManager = connectionManager;
         }
 
+        public abstract void Enter();
+
+        public abstract void Exit();
+
         public virtual void OnClientConnected(ulong clientId) {}
         public virtual void OnClientDisconnect(ulong clientId) {}
-
-        public virtual void OnServerStarted() {}
 
         public virtual void StartClientIP(string playerId, string playerName, string ipaddress, int port) {}
 

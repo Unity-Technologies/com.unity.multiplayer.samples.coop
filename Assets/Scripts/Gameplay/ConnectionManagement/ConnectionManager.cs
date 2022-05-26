@@ -40,6 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         [SerializeField]
         NetworkObject m_GameState;
+        public NetworkObject GameState => m_GameState;
 
         ProfileManager m_ProfileManager;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -47,6 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
         IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+        IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
         DisconnectReason m_DisconnectReason = new DisconnectReason();
         public DisconnectReason DisconnectReason => m_DisconnectReason;
@@ -54,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [Inject]
         void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby,
             IPublisher<ConnectionEventMessage> connectionEventPublisher, IPublisher<QuitGameSessionMessage> quitGameSessionPublisher,
-            IPublisher<ConnectStatus> connectStatusPublisher)
+            IPublisher<ConnectStatus> connectStatusPublisher, IPublisher<ReconnectMessage> reconnectMessagePublisher)
         {
             m_ProfileManager = profileManager;
             m_LobbyServiceFacade = lobbyServiceFacade;
@@ -62,6 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectionEventPublisher = connectionEventPublisher;
             m_QuitGameSessionPublisher = quitGameSessionPublisher;
             m_ConnectStatusPublisher = connectStatusPublisher;
+            m_ReconnectMessagePublisher = reconnectMessagePublisher;
         }
 
         void Awake()
@@ -76,14 +79,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 [ConnectionStateType.Offline] = new OfflineConnectionState(this, m_LobbyServiceFacade, m_LocalLobby),
                 [ConnectionStateType.Connecting] = new ConnectingConnectionState(this, m_QuitGameSessionPublisher, m_ConnectStatusPublisher),
                 [ConnectionStateType.Connected] = new ConnectedConnectionState(this, m_QuitGameSessionPublisher, m_ConnectStatusPublisher),
-                [ConnectionStateType.Reconnecting] = new ReconnectingConnectionState(this),
+                [ConnectionStateType.Reconnecting] = new ReconnectingConnectionState(this, m_LobbyServiceFacade, m_LocalLobby, m_ReconnectMessagePublisher),
                 [ConnectionStateType.Hosting] = new HostingConnectionState(this, m_LobbyServiceFacade, m_ConnectionEventPublisher)
             };
             m_CurrentState = ConnectionStateType.Offline;
 
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
-            NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
         }
 
@@ -91,28 +93,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             NetworkManager.OnClientConnectedCallback -= OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
-            NetworkManager.OnServerStarted -= OnServerStarted;
 
         }
 
         public void ChangeState(ConnectionStateType newState)
         {
             Debug.Log(newState);
+            m_Logics[m_CurrentState].Exit();
             m_CurrentState = newState;
+            m_Logics[m_CurrentState].Enter();
         }
 
-        void OnServerStarted()
+        public void InstantiateGameState()
         {
-            // server spawns game state
-            var gameState = Instantiate(m_GameState);
 
-            gameState.Spawn();
-
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-
-            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
-            //may do this differently.
-            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
         }
 
         void OnClientDisconnectCallback(ulong clientId)
@@ -174,10 +168,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_Logics[m_CurrentState].OnServerShutdown();
         }
 
-        public void OnClientStarted()
+        public void RegisterCustomMessages()
         {
             // should only do this once StartClient has been called (start client will initialize NetworkSceneManager and CustomMessagingManager)
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
             NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), ReceiveServerToClientSetDisconnectReason_CustomMessage);
         }
 

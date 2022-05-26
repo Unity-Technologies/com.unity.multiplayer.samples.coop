@@ -18,6 +18,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
+        public override void Enter() { }
+
+        public override void Exit() { }
+
         public override void OnClientDisconnect(ulong clientId)
         {
             // This is also called on the Host when a different client disconnects. To make sure we only handle our own disconnection, verify that we are either
