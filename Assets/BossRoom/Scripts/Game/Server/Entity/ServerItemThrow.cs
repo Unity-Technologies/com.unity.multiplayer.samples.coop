@@ -5,6 +5,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class ServerItemThrow : NetworkBehaviour
     {
+        [SerializeField]
+        int m_DamagePoints;
+
         bool m_Started;
 
         const int k_MaxCollisions = 8;
@@ -53,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 if (m_CollisionCache[i].gameObject.TryGetComponent(out IDamageable damageReceiver))
                 {
-                    damageReceiver.ReceiveHP(null, -200);
+                    damageReceiver.ReceiveHP(null, -m_DamagePoints);
                 }
             }
 
