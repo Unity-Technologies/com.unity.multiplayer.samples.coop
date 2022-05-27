@@ -45,8 +45,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 m_ConnectionManager.StopCoroutine(m_ReconnectCoroutine);
                 m_ReconnectCoroutine = null;
-                m_ReconnectMessagePublisher.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
             }
+            m_ReconnectMessagePublisher.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
         }
 
         public override void OnClientConnected(ulong clientId)
@@ -64,7 +64,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
                     break;
                 default:
-                    m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                    if (m_NbAttempts < k_NbReconnectAttempts)
+                    {
+                        m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                    }
+                    else
+                    {
+                        m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
+                    }
                     break;
             }
         }
