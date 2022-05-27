@@ -60,6 +60,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void Awake()
         {
             base.Awake();
+            DedicatedServerUtilities.PrintSceneHierarchy();
             SceneEventsUtilities.RegisterGameObjectSpawn(gameObject, OnServerSceneLoadComplete, SceneEventType.LoadEventCompleted);
             SceneEventsUtilities.RegisterGameObjectSpawn(gameObject, OnServerSceneUnloadStarted, SceneEventType.Load, SceneNames.PostGame);
             // SceneEventsUtilities.RegisterGameObjectSpawn(gameObject, OnServerSceneUnloadComplete, SceneEventType.Unload); // TODO this doesn't called. bug created with Noel MTT-3580

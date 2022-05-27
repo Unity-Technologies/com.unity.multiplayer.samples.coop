@@ -29,6 +29,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             NetworkManager.Singleton.SceneManager.VerifySceneBeforeLoading += DontSyncClientOnlyScenes;
 
+            if (DedicatedServerUtilities.IsServerBuildTarget)
+            {
+                DedicatedServerUtilities.PrintSceneHierarchy();
+            }
         }
 
         public override void OnDestroy()

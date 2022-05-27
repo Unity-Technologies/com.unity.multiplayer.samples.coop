@@ -84,6 +84,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             Application.targetFrameRate = 120;
         }
 
+#if UNITY_EDITOR && UNITY_SERVER
+        void OnGUI()
+        {
+            GUI.Label(new Rect(10, 10, 500, 20), "Dedicated Server Running");
+        }
+#endif
+
         private void Start()
         {
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientStarted;
