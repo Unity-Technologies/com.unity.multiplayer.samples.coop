@@ -31,10 +31,13 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+*
 ### Changed
+*
 ### Removed
+*
 ### Fixed
-
+*
 ## [1.2.0-pre] - 2022-04-28
 ### Changes
 * Bump to pre.8 and fix compile issues [MTT-3413] (#631) --> Custom message structs now need new interfaces
