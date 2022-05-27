@@ -142,7 +142,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our ReceiveServerToClientConnectResult_CustomMessage invoked. This is where game-layer failures will be reported.
             m_ConnectionManager.NetworkManager.StartClient();
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
         }
 
         bool StartHost(string playerId, string playerName)
