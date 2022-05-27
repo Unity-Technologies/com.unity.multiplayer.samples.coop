@@ -22,10 +22,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void Awake()
         {
             base.Awake();
-            CharSelectData = GetComponent<CharSelectData>();
 
+            CharSelectData = GetComponent<CharSelectData>();
             CharSelectData.OnNetworkSpawnCallback += OnNetworkSpawn;
             CharSelectData.OnNetworkDespawnCallback += OnNetworkDespawn;
+
+            NetworkManager.Singleton.SceneManager.VerifySceneBeforeLoading += DontSyncClientOnlyScenes;
+
+        }
+
+        public override void OnDestroy()
+        {
+            base.OnDestroy();
+            NetworkManager.Singleton.SceneManager.VerifySceneBeforeLoading -= DontSyncClientOnlyScenes;
+        }
+
+        static bool DontSyncClientOnlyScenes(int index, string sceneName, LoadSceneMode mode)
+        {
+            return sceneName != SceneNames.CharSelectClient;
         }
 
         void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
@@ -191,9 +205,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
             }
 
-            if (NetworkManager.Singleton.IsClient && !ClientGameNetPortal.Instance.IsConnectedToHost) // host should load, client should load if connected to DGS
+            if (NetworkManager.Singleton.IsClient) // host should load, client should load if connected to DGS
             {
-                Debug.Log("loading char select client scene");
                 SceneManager.LoadScene(SceneNames.CharSelectClient, LoadSceneMode.Additive);
             }
         }
@@ -201,10 +214,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         void OnSceneEvent(SceneEvent sceneEvent)
         {
             // We need to filter out the event that are not a client has finished loading the scene
-            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
-            // When the client finishes loading the Lobby Map, we will need to Seat it
-            if (NetworkManager.Singleton.IsServer && NetworkManager.Singleton.ConnectedClients.ContainsKey(sceneEvent.ClientId)) // if the client is DGS, don't do this
+            // if the client is DGS, don't do this
+            if (sceneEvent.SceneEventType == SceneEventType.LoadComplete && sceneEvent.SceneName == gameObject.scene.name &&
+                NetworkManager.Singleton.IsServer && NetworkManager.Singleton.ConnectedClients.ContainsKey(sceneEvent.ClientId))
             {
+                // When the client finishes loading the Lobby Map, we will need to Seat it
                 SeatNewPlayer(sceneEvent.ClientId);
             }
         }

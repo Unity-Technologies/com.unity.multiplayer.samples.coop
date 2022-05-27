@@ -149,6 +149,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 "NetworkCharacterState component not found on ClientPlayerAvatar");
 
             ulong id = networkCharacterState.NetworkObjectId;
+            if (id == 0)
+            {
+                throw new Exception("Order of components initialization might be messed up, shouldn't be here");
+            }
             int slot = FindOrAddAlly(id);
             // do nothing if not in a slot
             if (slot == -1)
