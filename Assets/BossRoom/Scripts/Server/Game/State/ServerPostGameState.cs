@@ -7,8 +7,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class ServerPostGameState : GameStateBehaviour
     {
-        [SerializeField, Tooltip("Number of seconds to wait for new dedicated server game")]
-        int m_SecondsToWaitForNewGame = 5;
+        public const int SecondsToWaitForNewGame = 5;
 
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
@@ -35,8 +34,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     IEnumerator WaitAndStartNewGame()
                     {
-                        DedicatedServerUtilities.Log($"Waiting a {m_SecondsToWaitForNewGame} seconds until new game");
-                        yield return new WaitForSeconds(m_SecondsToWaitForNewGame); // TODO there should be a UI timer for a countdown for this
+                        DedicatedServerUtilities.Log($"Waiting a {SecondsToWaitForNewGame} seconds until new game");
+                        yield return new WaitForSeconds(SecondsToWaitForNewGame); // TODO there should be a UI timer for a countdown for this
                         SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
                     }
 

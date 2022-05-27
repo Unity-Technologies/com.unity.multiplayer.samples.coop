@@ -1,5 +1,7 @@
+using System.Collections;
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
@@ -20,6 +22,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [SerializeField]
         private TextMeshProUGUI m_LoseGameMessage;
+
+        [SerializeField]
+        private TextMeshProUGUI m_DedicatedServerCountdownText;
 
         [SerializeField]
         private GameObject m_ReplayButton;
@@ -62,6 +67,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkGameState networkGameState))
             {
                 SetPostGameUI(networkGameState.NetworkWinState.winState.Value);
+            }
+
+            if (!ClientGameNetPortal.Instance.IsConnectedToHost)
+            {
+                IEnumerator CountdownToNextGame()
+                {
+                    var count = 5; // todo get ref to ServerPostGameState.SecondsToWaitForNewGame once asmdef refactor is done
+                    while (count > 0)
+                    {
+                        m_DedicatedServerCountdownText.text = count.ToString();
+                        count--;
+                        yield return new WaitForSeconds(1);
+                    }
+                }
+
+                StartCoroutine(CountdownToNextGame());
             }
         }
 
