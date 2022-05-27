@@ -143,11 +143,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             if (msg.UserRequested)
             {
                 // first disconnect then return to menu
-                var gameNetPortal = GameNetPortal.Instance;
-                if (gameNetPortal != null)
-                {
-                    gameNetPortal.RequestDisconnect();
-                }
+                m_ConnectionManager.RequestShutdown();
             }
             SceneLoaderWrapper.Instance.LoadScene("MainMenu", useNetworkSceneManager: false);
         }

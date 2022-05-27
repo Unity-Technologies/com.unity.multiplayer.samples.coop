@@ -35,6 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     case ConnectStatus.UserRequestedDisconnect:
                     case ConnectStatus.HostEndedSession:
                         m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage() {UserRequested = false}); // go through the normal leave flow
+                        m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
                         break;
                     default:
                         // try reconnecting
@@ -45,6 +46,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 m_ConnectStatusPublisher.Publish(m_ConnectionManager.DisconnectReason.Reason);
                 m_ConnectionManager.DisconnectReason.Clear();
             }
+        }
+
+        public override void OnUserRequestedShutdown()
+        {
+            m_ConnectionManager.NetworkManager.Shutdown();
+            m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
         }
     }
 }

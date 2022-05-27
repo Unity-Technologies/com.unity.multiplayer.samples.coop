@@ -155,6 +155,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void RequestShutdown()
         {
+            DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
             m_Logics[m_CurrentState].OnUserRequestedShutdown();
         }
 
