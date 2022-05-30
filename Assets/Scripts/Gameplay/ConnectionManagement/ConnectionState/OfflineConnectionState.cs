@@ -45,10 +45,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override async Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
         {
-            if (await JoinRelayServerAsync(onFailure)) return;//not re-throwing, but still not allowing to connect
-
-            ConnectClient(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(ConnectionStateType.Connecting);
+            if (await JoinRelayServerAsync(onFailure))
+            {
+                ConnectClient(GetPlayerId(), playerName);
+                m_ConnectionManager.ChangeState(ConnectionStateType.Connecting);
+            }
         }
 
         protected async Task<bool> JoinRelayServerAsync(Action<string> onFailure)
@@ -67,10 +68,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             catch (Exception e)
             {
                 onFailure?.Invoke(e.Message);
-                return true;
+                return false;
             }
 
-            return false;
+            return true;
         }
 
         public override bool StartHostIP(string playerName, string ipaddress, int port)
