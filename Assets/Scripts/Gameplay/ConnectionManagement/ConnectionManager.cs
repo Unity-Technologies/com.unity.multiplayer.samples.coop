@@ -2,11 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Collections;
-using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -39,30 +36,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         NetworkObject m_GameState;
         public NetworkObject GameState => m_GameState;
 
-        ProfileManager m_ProfileManager;
-        LobbyServiceFacade m_LobbyServiceFacade;
-        LocalLobby m_LocalLobby;
-        IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
-        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-        IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
-
         DisconnectReason m_DisconnectReason = new DisconnectReason();
         public DisconnectReason DisconnectReason => m_DisconnectReason;
-
-        [Inject]
-        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby,
-            IPublisher<ConnectionEventMessage> connectionEventPublisher, IPublisher<QuitGameSessionMessage> quitGameSessionPublisher,
-            IPublisher<ConnectStatus> connectStatusPublisher, IPublisher<ReconnectMessage> reconnectMessagePublisher)
-        {
-            m_ProfileManager = profileManager;
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_LocalLobby = localLobby;
-            m_ConnectionEventPublisher = connectionEventPublisher;
-            m_QuitGameSessionPublisher = quitGameSessionPublisher;
-            m_ConnectStatusPublisher = connectStatusPublisher;
-            m_ReconnectMessagePublisher = reconnectMessagePublisher;
-        }
 
         void Awake()
         {
@@ -73,13 +48,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             m_Logics = new Dictionary<ConnectionStateType, ConnectionState>()
             {
-                [ConnectionStateType.Offline] = new OfflineConnectionState(this, m_LobbyServiceFacade, m_LocalLobby, m_ProfileManager),
-                [ConnectionStateType.Connecting] = new ConnectingConnectionState(this, m_QuitGameSessionPublisher, m_ConnectStatusPublisher),
-                [ConnectionStateType.Connected] = new ConnectedConnectionState(this, m_QuitGameSessionPublisher, m_ConnectStatusPublisher),
-                [ConnectionStateType.Reconnecting] = new ReconnectingConnectionState(this, m_LobbyServiceFacade, m_LocalLobby, m_ReconnectMessagePublisher, m_ProfileManager),
-                [ConnectionStateType.Hosting] = new HostingConnectionState(this, m_LobbyServiceFacade, m_ConnectionEventPublisher)
+                [ConnectionStateType.Offline] = new OfflineConnectionState(this),
+                [ConnectionStateType.Connecting] = new ConnectingConnectionState(this),
+                [ConnectionStateType.Connected] = new ConnectedConnectionState(this),
+                [ConnectionStateType.Reconnecting] = new ReconnectingConnectionState(this),
+                [ConnectionStateType.Hosting] = new HostingConnectionState(this)
             };
             m_CurrentState = ConnectionStateType.Offline;
+
+            var scope = DIScope.RootScope;
+            foreach (var connectionState in m_Logics.Values)
+            {
+                scope.InjectIn(connectionState);
+            }
 
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
@@ -95,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void ChangeState(ConnectionStateType newState)
         {
-            Debug.Log(newState);
+            Debug.Log($"Changed connection sate from {m_CurrentState} to {newState}.");
             m_Logics[m_CurrentState].Exit();
             m_CurrentState = newState;
             m_Logics[m_CurrentState].Enter();

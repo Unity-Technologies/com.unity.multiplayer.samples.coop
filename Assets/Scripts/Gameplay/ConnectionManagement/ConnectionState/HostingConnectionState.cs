@@ -17,8 +17,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
         const int k_MaxConnectPayload = 1024;
 
-        public HostingConnectionState(ConnectionManager connectionManager, LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectionEventMessage> connectionEventPublisher)
-            : base(connectionManager)
+        public HostingConnectionState(ConnectionManager connectionManager)
+            : base(connectionManager) { }
+
+        [Inject]
+        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade,
+            IPublisher<ConnectionEventMessage> connectionEventPublisher)
         {
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_ConnectionEventPublisher = connectionEventPublisher;

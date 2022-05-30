@@ -2,6 +2,7 @@ using System;
 using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -22,13 +23,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private const int k_MaxUnityRelayConnections = 8;
 
-        public OfflineConnectionState(ConnectionManager connectionManager, LobbyServiceFacade lobbyServiceFacade,
-            LocalLobby localLobby, ProfileManager profileManager)
-            : base(connectionManager)
+        public OfflineConnectionState(ConnectionManager connectionManager)
+            : base(connectionManager) { }
+
+        [Inject]
+        protected void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby)
         {
+            m_ProfileManager = profileManager;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
-            m_ProfileManager = profileManager;
         }
 
         public override void Enter() { }

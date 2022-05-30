@@ -1,13 +1,11 @@
 using System;
 using System.Collections;
 using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
-using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
@@ -22,11 +20,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
         string m_LobbyCode = "";
         int m_NbAttempts;
 
-        public ReconnectingConnectionState(ConnectionManager connectionManager, LobbyServiceFacade lobbyServiceFacade,
-            LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, ProfileManager profileManager)
-            : base(connectionManager, lobbyServiceFacade, localLobby, profileManager)
+        public ReconnectingConnectionState(ConnectionManager connectionManager)
+            : base(connectionManager) { }
+
+        [Inject]
+        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher)
         {
             m_ReconnectMessagePublisher = reconnectMessagePublisher;
+            base.InjectDependencies(profileManager, lobbyServiceFacade, localLobby);
         }
 
         public override void Enter()
@@ -75,6 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnUserRequestedShutdown()
         {
+            m_ConnectionManager.NetworkManager.Shutdown();
             m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
         }
 

@@ -8,7 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         protected ConnectionManager m_ConnectionManager;
 
-        public ConnectionState(ConnectionManager connectionManager)
+        protected ConnectionState(ConnectionManager connectionManager)
         {
             m_ConnectionManager = connectionManager;
         }

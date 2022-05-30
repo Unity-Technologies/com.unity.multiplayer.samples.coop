@@ -10,9 +10,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
         IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
-        public ConnectedConnectionState(ConnectionManager connectionManager, IPublisher<QuitGameSessionMessage> quitGameSessionPublisher,
+        public ConnectedConnectionState(ConnectionManager connectionManager)
+            : base(connectionManager) { }
+
+        [Inject]
+        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPublisher,
             IPublisher<ConnectStatus> connectStatusPublisher)
-            : base(connectionManager)
         {
             m_QuitGameSessionPublisher = quitGameSessionPublisher;
             m_ConnectStatusPublisher = connectStatusPublisher;
