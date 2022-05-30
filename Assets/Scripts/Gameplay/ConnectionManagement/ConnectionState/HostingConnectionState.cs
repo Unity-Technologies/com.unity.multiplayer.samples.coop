@@ -152,7 +152,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             yield return null;
             m_ConnectionManager.NetworkManager.Shutdown();
-            SessionManager<SessionPlayerData>.Instance.OnServerEnded();
             m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
         }
     }
