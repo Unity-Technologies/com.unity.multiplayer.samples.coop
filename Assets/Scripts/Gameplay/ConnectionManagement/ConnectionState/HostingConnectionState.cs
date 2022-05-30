@@ -5,7 +5,6 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -30,7 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Enter()
         {
-            var gameState = Object.Instantiate(m_ConnectionManager.GameState);
+            var gameState = UnityEngine.Object.Instantiate(m_ConnectionManager.GameState);
 
             gameState.Spawn();
 
@@ -41,7 +40,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
             SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
         }
 
-        public override void Exit() { }
+        public override void Exit()
+        {
+            if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+            {
+                m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id);
+            }
+            SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+        }
 
         public override void OnClientConnected(ulong clientId)
         {
@@ -52,11 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
-                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                {
-                    m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id);
-                }
-                SessionManager<SessionPlayerData>.Instance.OnServerEnded();
+                m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
             }
             else
             {

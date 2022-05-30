@@ -150,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
-        /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the client.
+        /// Sends a DisconnectReason to all connected clients. This should only be done on the server, prior to disconnecting the clients.
         /// </summary>
         /// <param name="status"> The reason for the upcoming disconnect.</param>
         public static void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)

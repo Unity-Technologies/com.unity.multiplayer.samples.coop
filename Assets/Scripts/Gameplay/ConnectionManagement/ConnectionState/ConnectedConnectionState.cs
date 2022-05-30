@@ -27,28 +27,21 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            // This is also called on the Host when a different client disconnects. To make sure we only handle our own disconnection, verify that we are either
-            // not a host (in which case we know this is about us) or that the clientID is the same as ours if we are the host.
-            if (!NetworkManager.Singleton.IsHost || NetworkManager.Singleton.IsHost && NetworkManager.Singleton.LocalClientId == clientId)
+            switch (m_ConnectionManager.DisconnectReason.Reason)
             {
-                //On a client disconnect we want to take them back to the main menu.
-                //We have to check here in SceneManager if our active scene is the main menu, as if it is, it means we timed out rather than a raw disconnect;
-                switch (m_ConnectionManager.DisconnectReason.Reason)
-                {
-                    case ConnectStatus.UserRequestedDisconnect:
-                    case ConnectStatus.HostEndedSession:
-                        m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage() {UserRequested = false}); // go through the normal leave flow
-                        m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
-                        break;
-                    default:
-                        // try reconnecting
-                        m_ConnectionManager.ChangeState(ConnectionStateType.Reconnecting);
-                        break;
-                }
-
-                m_ConnectStatusPublisher.Publish(m_ConnectionManager.DisconnectReason.Reason);
-                m_ConnectionManager.DisconnectReason.Clear();
+                case ConnectStatus.UserRequestedDisconnect:
+                case ConnectStatus.HostEndedSession:
+                    m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage() {UserRequested = false}); // go through the normal leave flow
+                    m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
+                    break;
+                default:
+                    // try reconnecting
+                    m_ConnectionManager.ChangeState(ConnectionStateType.Reconnecting);
+                    break;
             }
+
+            m_ConnectStatusPublisher.Publish(m_ConnectionManager.DisconnectReason.Reason);
+            m_ConnectionManager.DisconnectReason.Clear();
         }
 
         public override void OnUserRequestedShutdown()
