@@ -3,20 +3,18 @@ using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
     public class OfflineConnectionState : ConnectionState
     {
         protected LobbyServiceFacade m_LobbyServiceFacade;
-        protected LocalLobby m_LocalLobby;
+        LocalLobby m_LocalLobby;
         ProfileManager m_ProfileManager;
 
         /// <summary>
