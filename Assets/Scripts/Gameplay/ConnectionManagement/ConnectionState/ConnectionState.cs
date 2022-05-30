@@ -39,8 +39,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public virtual void OnUserRequestedShutdown() {}
 
-        public virtual void OnServerShutdown() {}
-
         public virtual void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback) {}
     }
 }

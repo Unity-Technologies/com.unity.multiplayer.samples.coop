@@ -156,11 +156,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_Logics[m_CurrentState].OnUserRequestedShutdown();
         }
 
-        public void OnServerShutdown()
-        {
-            m_Logics[m_CurrentState].OnServerShutdown();
-        }
-
         public void RegisterCustomMessages()
         {
             // should only do this once StartClient has been called (start client will initialize NetworkSceneManager and CustomMessagingManager)
