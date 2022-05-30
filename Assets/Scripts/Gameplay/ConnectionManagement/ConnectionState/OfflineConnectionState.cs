@@ -1,9 +1,13 @@
 using System;
 using System.Threading.Tasks;
+using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,34 +15,45 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     public class OfflineConnectionState : ConnectionState
     {
-        LobbyServiceFacade m_LobbyServiceFacade;
-        LocalLobby m_LocalLobby;
+        protected LobbyServiceFacade m_LobbyServiceFacade;
+        protected LocalLobby m_LocalLobby;
+        ProfileManager m_ProfileManager;
 
         /// <summary>
         /// How many connections we create a Unity relay allocation for
         /// </summary>
         private const int k_MaxUnityRelayConnections = 8;
 
-        public OfflineConnectionState(ConnectionManager connectionManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby)
+        public OfflineConnectionState(ConnectionManager connectionManager, LobbyServiceFacade lobbyServiceFacade,
+            LocalLobby localLobby, ProfileManager profileManager)
             : base(connectionManager)
         {
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
+            m_ProfileManager = profileManager;
         }
 
         public override void Enter() { }
 
         public override void Exit() { }
 
-        public override void StartClientIP(string playerId, string playerName, string ipaddress, int port)
+        public override void StartClientIP(string playerName, string ipaddress, int port)
         {
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
-            ConnectClient(playerId, playerName);
+            ConnectClient(GetPlayerId(), playerName);
             m_ConnectionManager.ChangeState(ConnectionStateType.Connecting);
         }
 
-        public override async Task StartClientLobbyAsync(string playerName, string playerId, Action<string> onFailure)
+        public override async Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
+        {
+            if (await JoinRelayServerAsync(onFailure)) return;//not re-throwing, but still not allowing to connect
+
+            ConnectClient(GetPlayerId(), playerName);
+            m_ConnectionManager.ChangeState(ConnectionStateType.Connecting);
+        }
+
+        protected async Task<bool> JoinRelayServerAsync(Action<string> onFailure)
         {
             Debug.Log($"Setting Unity Relay client with join code {m_LocalLobby.RelayJoinCode}");
 
@@ -48,25 +63,24 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
 
                 await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
-                var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+                var utp = (UnityTransport) m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)
             {
                 onFailure?.Invoke(e.Message);
-                return;//not re-throwing, but still not allowing to connect
+                return true;
             }
 
-            ConnectClient(playerId, playerName);
-            m_ConnectionManager.ChangeState(ConnectionStateType.Connecting);
+            return false;
         }
 
-        public override bool StartHostIP(string playerId, string playerName, string ipaddress, int port)
+        public override bool StartHostIP(string playerName, string ipaddress, int port)
         {
             var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
 
-            var success = StartHost(playerId, playerName);
+            var success = StartHost(GetPlayerId(), playerName);
             if (success)
             {
                 m_ConnectionManager.ChangeState(ConnectionStateType.Hosting);
@@ -75,7 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             return success;
         }
 
-        public override async Task StartHostLobbyAsync(string playerId, string playerName)
+        public override async Task StartHostLobbyAsync(string playerName)
         {
             Debug.Log("Setting up Unity Relay host");
 
@@ -99,7 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 throw;
             }
 
-            if (StartHost(playerId, playerName))
+            if (StartHost(GetPlayerId(), playerName))
             {
                 m_ConnectionManager.ChangeState(ConnectionStateType.Hosting);
             }
@@ -148,6 +162,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             SetConnectionPayload(playerId, playerName);
             return m_ConnectionManager.NetworkManager.StartHost();
+        }
+
+        string GetPlayerId()
+        {
+            if (UnityServices.State != ServicesInitializationState.Initialized)
+            {
+                return ClientPrefs.GetGuid() + m_ProfileManager.Profile;
+            }
+
+            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + m_ProfileManager.Profile;
         }
     }
 }

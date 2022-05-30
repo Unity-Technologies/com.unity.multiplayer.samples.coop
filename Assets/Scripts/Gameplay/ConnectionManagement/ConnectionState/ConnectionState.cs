@@ -20,19 +20,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public virtual void OnClientConnected(ulong clientId) {}
         public virtual void OnClientDisconnect(ulong clientId) {}
 
-        public virtual void StartClientIP(string playerId, string playerName, string ipaddress, int port) {}
+        public virtual void StartClientIP(string playerName, string ipaddress, int port) {}
 
-        public virtual Task StartClientLobbyAsync(string playerName, string playerId, Action<string> onFailure)
+        public virtual Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
         {
             return Task.CompletedTask;
         }
 
-        public virtual bool StartHostIP(string playerId, string playerName, string ipaddress, int port)
+        public virtual bool StartHostIP(string playerName, string ipaddress, int port)
         {
             return false;
         }
 
-        public virtual Task StartHostLobbyAsync(string playerId, string playerName)
+        public virtual Task StartHostLobbyAsync(string playerName)
         {
             return Task.CompletedTask;
         }

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
+using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
@@ -11,12 +12,10 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
-    public class ReconnectingConnectionState : ConnectionState
+    public class ReconnectingConnectionState : OfflineConnectionState
     {
         const int k_NbReconnectAttempts = 2;
 
-        LobbyServiceFacade m_LobbyServiceFacade;
-        LocalLobby m_LocalLobby;
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
         Coroutine m_ReconnectCoroutine;
@@ -24,11 +23,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         int m_NbAttempts;
 
         public ReconnectingConnectionState(ConnectionManager connectionManager, LobbyServiceFacade lobbyServiceFacade,
-            LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher)
-            : base(connectionManager)
+            LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, ProfileManager profileManager)
+            : base(connectionManager, lobbyServiceFacade, localLobby, profileManager)
         {
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_LocalLobby = localLobby;
             m_ReconnectMessagePublisher = reconnectMessagePublisher;
         }
 
@@ -81,6 +78,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
         }
 
+        public override void StartClientIP(string playerName, string ipaddress, int port) {}
+
+        public override Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
+        {
+            return Task.CompletedTask;
+        }
+
+        public override bool StartHostIP(string playerName, string ipaddress, int port)
+        {
+            return false;
+        }
+
+        public override Task StartHostLobbyAsync(string playerName)
+        {
+            return Task.CompletedTask;
+        }
+
         IEnumerator ReconnectCoroutine()
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
@@ -90,6 +104,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
             Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{k_NbReconnectAttempts}...");
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, k_NbReconnectAttempts));
+            m_NbAttempts++;
             if (!string.IsNullOrEmpty(m_LobbyCode))
             {
                 var leavingLobby = m_LobbyServiceFacade.EndTracking();
@@ -99,39 +114,28 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (joiningLobby.Result.Success)
                 {
                     m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
-                    var joiningRelay = JoinRelayServerAsync();
+                    var joiningRelay = JoinRelayServerAsync(null);
                     yield return new WaitUntil(() => joiningRelay.IsCompleted);
+                    if (joiningRelay.Result)
+                    {
+                        ConnectClient();
+                    }
+                    else
+                    {
+                        Debug.Log("Failed joining Relay server.");
+                        OnClientDisconnect(0);
+                    }
                 }
                 else
                 {
                     Debug.Log("Failed joining lobby.");
+                    OnClientDisconnect(0);
                 }
             }
             else
             {
                 ConnectClient();
             }
-
-            m_NbAttempts++;
-        }
-
-        async Task JoinRelayServerAsync()
-        {
-            try
-            {
-                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) =
-                    await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
-
-                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
-                var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
-                utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
-            }
-            catch (Exception)
-            {
-                return;//not re-throwing, but still not allowing to connect
-            }
-
-            ConnectClient();
         }
 
         void ConnectClient()

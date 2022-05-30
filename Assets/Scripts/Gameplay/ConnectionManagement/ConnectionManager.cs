@@ -7,10 +7,7 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
-using Unity.Services.Authentication;
-using Unity.Services.Core;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
@@ -76,10 +73,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             m_Logics = new Dictionary<ConnectionStateType, ConnectionState>()
             {
-                [ConnectionStateType.Offline] = new OfflineConnectionState(this, m_LobbyServiceFacade, m_LocalLobby),
+                [ConnectionStateType.Offline] = new OfflineConnectionState(this, m_LobbyServiceFacade, m_LocalLobby, m_ProfileManager),
                 [ConnectionStateType.Connecting] = new ConnectingConnectionState(this, m_QuitGameSessionPublisher, m_ConnectStatusPublisher),
                 [ConnectionStateType.Connected] = new ConnectedConnectionState(this, m_QuitGameSessionPublisher, m_ConnectStatusPublisher),
-                [ConnectionStateType.Reconnecting] = new ReconnectingConnectionState(this, m_LobbyServiceFacade, m_LocalLobby, m_ReconnectMessagePublisher),
+                [ConnectionStateType.Reconnecting] = new ReconnectingConnectionState(this, m_LobbyServiceFacade, m_LocalLobby, m_ReconnectMessagePublisher, m_ProfileManager),
                 [ConnectionStateType.Hosting] = new HostingConnectionState(this, m_LobbyServiceFacade, m_ConnectionEventPublisher)
             };
             m_CurrentState = ConnectionStateType.Offline;
@@ -135,22 +132,22 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
         {
-            return m_Logics[m_CurrentState].StartClientLobbyAsync(playerName, GetPlayerId(), onFailure);
+            return m_Logics[m_CurrentState].StartClientLobbyAsync(playerName, onFailure);
         }
 
         public void StartClientIp(string playerName, string ipaddress, int port)
         {
-            m_Logics[m_CurrentState].StartClientIP(GetPlayerId(), playerName, ipaddress, port);
+            m_Logics[m_CurrentState].StartClientIP(playerName, ipaddress, port);
         }
 
         public void StartHostLobby(string playerName)
         {
-            m_Logics[m_CurrentState].StartHostLobbyAsync(GetPlayerId(), playerName);
+            m_Logics[m_CurrentState].StartHostLobbyAsync(playerName);
         }
 
         public bool StartHostIp(string playerName, string ipaddress, int port)
         {
-            return m_Logics[m_CurrentState].StartHostIP(GetPlayerId(), playerName, ipaddress, port);
+            return m_Logics[m_CurrentState].StartHostIP(playerName, ipaddress, port);
         }
 
         public void RequestShutdown()
@@ -197,16 +194,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ClientGameNetPortal.ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
-        }
-
-        string GetPlayerId()
-        {
-            if (UnityServices.State != ServicesInitializationState.Initialized)
-            {
-                return ClientPrefs.GetGuid() + m_ProfileManager.Profile;
-            }
-
-            return AuthenticationService.Instance.IsSignedIn ? AuthenticationService.Instance.PlayerId : ClientPrefs.GetGuid() + m_ProfileManager.Profile;
         }
     }
 }
