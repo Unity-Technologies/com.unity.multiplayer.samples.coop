@@ -1,5 +1,5 @@
 {
-    "name": "BossRoom.DebugCheats",
+    "name": "Unity.BossRoom.DebugCheats",
     "rootNamespace": "",
     "references": [
         "GUID:1491147abca9d7d4bb7105af628b223e",
