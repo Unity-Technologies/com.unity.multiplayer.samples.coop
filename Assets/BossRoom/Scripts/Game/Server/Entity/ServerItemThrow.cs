@@ -8,20 +8,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         int m_DamagePoints;
 
+        [SerializeField]
+        float m_HitRadius = 5f;
+
+        [SerializeField]
+        LayerMask m_LayerMask;
+
         bool m_Started;
 
-        const int k_MaxCollisions = 8;
+        const int k_MaxCollisions = 16;
         Collider[] m_CollisionCache = new Collider[k_MaxCollisions];
 
         const float k_DetonateAfterSeconds = 5f;
-        float m_DetonateAtSec;
+        float m_DetonateAfterSeconds;
 
-        const float k_DestroyAfterSeconds = 8f;
-
-        // Time when we should destroy this arrow, in Time.time seconds.
-        float m_DestroyAtSec;
-
-        int m_PCLayer;
+        const float k_DestroyAfterSeconds = 5.5f;
+        float m_DestroyAfterSeconds;
 
         bool m_Detonated;
 
@@ -36,10 +38,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_Started = true;
             m_Detonated = false;
 
-            m_DetonateAtSec = Time.fixedTime + k_DetonateAfterSeconds;
-            m_DestroyAtSec = Time.fixedTime + k_DestroyAfterSeconds;
-
-            m_PCLayer = 1 << LayerMask.NameToLayer("PCs");
+            m_DetonateAfterSeconds = Time.fixedTime + k_DetonateAfterSeconds;
+            m_DestroyAfterSeconds = Time.fixedTime + k_DestroyAfterSeconds;
         }
 
         public override void OnNetworkDespawn()
@@ -50,7 +50,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void Detonate()
         {
-            var hits = Physics.OverlapSphereNonAlloc(transform.position, 10f, m_CollisionCache, m_PCLayer);
+            var hits = Physics.OverlapSphereNonAlloc(transform.position, m_HitRadius, m_CollisionCache, m_LayerMask);
 
             for (int i = 0; i < hits; i++)
             {
@@ -70,12 +70,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return; //don't do anything before OnNetworkSpawn has run.
             }
 
-            if (!m_Detonated && m_DetonateAtSec < Time.fixedTime)
+            if (!m_Detonated && m_DetonateAfterSeconds < Time.fixedTime)
             {
                 Detonate();
             }
 
-            if (m_DestroyAtSec < Time.fixedTime)
+            if (m_DestroyAfterSeconds < Time.fixedTime)
             {
                 // Time to return to the pool from whence it came.
                 var networkObject = gameObject.GetComponent<NetworkObject>();

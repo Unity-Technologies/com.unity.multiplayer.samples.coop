@@ -1,5 +1,6 @@
 using UnityEngine;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
+using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -15,7 +16,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public override bool Start()
         {
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
-            m_Parent.physicsWrapper.Transform.forward = Data.Direction;
+            //m_Parent.physicsWrapper.Transform.forward = Data.Direction;
+
+            if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
+            {
+                var initialTarget = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
+                if (initialTarget)
+                {
+                    Vector3 lookAtPosition;
+                    if (PhysicsWrapper.TryGetPhysicsWrapper(initialTarget.NetworkObjectId, out var physicsWrapper))
+                    {
+                        lookAtPosition = physicsWrapper.Transform.position;
+                    }
+                    else
+                    {
+                        lookAtPosition = initialTarget.transform.position;
+                    }
+
+                    // snap to face our target! This is the direction we'll attack in
+                    m_Parent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                }
+            }
 
             m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             m_Parent.NetState.RecvDoActionClientRPC(Data);
@@ -65,17 +86,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 var no = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab, projectileInfo.ProjectilePrefab.transform.position, projectileInfo.ProjectilePrefab.transform.rotation);
 
-                // point the projectile the same way we're facing
-                no.transform.forward = m_Parent.physicsWrapper.Transform.forward;
+                var networkObjectTransform = no.transform;
 
-                no.transform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
-                no.transform.position += no.transform.forward;
+                // point the projectile the same way we're facing
+                networkObjectTransform.forward = m_Parent.physicsWrapper.Transform.forward;
+
+                networkObjectTransform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
+                    networkObjectTransform.forward + (Vector3.up * 2f);
 
                 no.Spawn(true);
 
                 // important to add a force AFTER a NetworkObject is spawned, since IsKinematic is enabled on the
                 // Rigidbody component after it is spawned
-                no.GetComponent<Rigidbody>().AddForce((no.transform.forward * 60f) + (no.transform.up * 150f), ForceMode.Impulse);
+                var bombRigidbody = no.GetComponent<Rigidbody>();
+
+                bombRigidbody.AddForce((networkObjectTransform.forward * 80f) + (networkObjectTransform.up * 150f), ForceMode.Impulse);
+                bombRigidbody.AddTorque((networkObjectTransform.forward * Random.Range(-15f, 15f)) + (networkObjectTransform.up * Random.Range(-15f, 15f)), ForceMode.Impulse);
             }
         }
     }
