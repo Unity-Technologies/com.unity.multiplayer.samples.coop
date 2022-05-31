@@ -49,7 +49,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public class ConnectionPayload
     {
         public string playerId;
-        public int clientScene = -1;
         public string playerName;
         public bool isDebug;
     }
