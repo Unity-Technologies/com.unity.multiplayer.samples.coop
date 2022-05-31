@@ -1,13 +1,10 @@
 {
-    "name": "BossRoom.Editor",
+    "name": "Unity.BossRoom.CameraController",
     "rootNamespace": "",
     "references": [
-        "GUID:1491147abca9d7d4bb7105af628b223e",
-        "GUID:ed77cc04b29ffca42860b1220217e140"
+        "GUID:4307f53044263cf4b835bd812fc161a4"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,
