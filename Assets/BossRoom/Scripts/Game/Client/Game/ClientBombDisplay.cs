@@ -34,7 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_BombDisplayTransform.gameObject.SetActive(false);
         }
 
-        void Update()
+        void LateUpdate()
         {
             var bombPosition = transform.position;
             m_BombDisplayTransform.SetPositionAndRotation(
