@@ -156,6 +156,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     case ConnectStatus.UserRequestedDisconnect:
                     case ConnectStatus.HostEndedSession:
                     case ConnectStatus.ServerFull:
+                    case ConnectStatus.IncompatibleBuildType:
                         m_ApplicationController.LeaveSession(false); // go through the normal leave flow
                         break;
                     case ConnectStatus.LoggedInAgain:
