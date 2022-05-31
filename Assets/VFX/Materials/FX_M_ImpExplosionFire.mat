@@ -8,20 +8,15 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: FX_M_ImpExplosionFire
-  m_Shader: {fileID: -6465566751694194690, guid: 98d049a5b372986479d42cfc7e88f269, type: 3}
+  m_Shader: {fileID: -6465566751694194690, guid: 42787e4b9b9ce6049827a84217a0075e, type: 3}
   m_ValidKeywords:
   - _ALPHAPREMULTIPLY_ON
   - _SURFACE_TYPE_TRANSPARENT
-  m_InvalidKeywords:
-  - _HASTEXTUREDISSOLVE_ON
-  - _SWITCH_ALPHA_ON
-  - _USEALPHACHANNEL_ON
-  - _USE_ALPHA_ON
-  - _VERTEXAOPACITY_ON
+  m_InvalidKeywords: []
   m_LightmapFlags: 0
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: 3000
+  m_CustomRenderQueue: -1
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:

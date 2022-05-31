@@ -3,15 +3,15 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-feat: other players loading progress in loading screen [MTT-2239] (#580)
-feat: adding editor child scene loader for composed scenes (#653)
+* feat: other players loading progress in loading screen [MTT-2239] (#580)
+* feat: adding editor child scene loader for composed scenes (#653)
 
 ### Changed
-
+*
 ### Removed
-
+*
 ### Fixed
-
+*
 ## [1.2.0-pre] - 2022-04-28
 ### Added
 * Client network transform move to samples [MTT-3406] (#629) --> You can now use Boss Room's Utilities package to import ClientNetworkTransform using this line in your manifest file     

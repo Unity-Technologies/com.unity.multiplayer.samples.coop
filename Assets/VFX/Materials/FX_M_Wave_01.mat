@@ -122,7 +122,7 @@ Material:
     - _SrcBlend: 5
     - _Surface: 1
     - _UVSec: 0
-    - _UseAlpha: 1
+    - _UseAlpha: 0
     - _UseSoftParticles: 0
     - _ZTest: 4
     - _ZWrite: 0
