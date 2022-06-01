@@ -3,13 +3,19 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
-    public class ServerItemThrow : NetworkBehaviour
+    public class ServerTossAttack : NetworkBehaviour
     {
         [SerializeField]
         int m_DamagePoints;
 
         [SerializeField]
         float m_HitRadius = 5f;
+
+        [SerializeField]
+        float m_KnockbackSpeed;
+
+        [SerializeField]
+        float m_KnockbackDuration;
 
         [SerializeField]
         LayerMask m_LayerMask;
@@ -57,6 +63,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 if (m_CollisionCache[i].gameObject.TryGetComponent(out IDamageable damageReceiver))
                 {
                     damageReceiver.ReceiveHP(null, -m_DamagePoints);
+
+                    var serverCharacter = m_CollisionCache[i].gameObject.GetComponentInParent<ServerCharacter>();
+                    if (serverCharacter)
+                    {
+                        serverCharacter.Movement.StartKnockback(transform.position, m_KnockbackSpeed, m_KnockbackDuration);
+                    }
                 }
             }
 

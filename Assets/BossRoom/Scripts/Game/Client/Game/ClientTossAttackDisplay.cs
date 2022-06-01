@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
-    public class ClientBombDisplay : NetworkBehaviour
+    public class ClientTossAttackDisplay : NetworkBehaviour
     {
         [SerializeField]
         Transform m_BombDisplayTransform;
@@ -36,9 +36,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void LateUpdate()
         {
-            var bombPosition = transform.position;
+            var tossedItemPosition = transform.position;
             m_BombDisplayTransform.SetPositionAndRotation(
-                new Vector3(bombPosition.x, k_DisplayHeight, bombPosition.z),
+                new Vector3(tossedItemPosition.x, k_DisplayHeight, tossedItemPosition.z),
                 k_BombDisplayRotation);
         }
     }

@@ -7,11 +7,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// <summary>
     /// Action responsible for creating a projectile object.
     /// </summary>
-    public class ItemTossAction : Action
+    public class TossAction : Action
     {
         bool m_Launched;
 
-        public ItemTossAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
+        public TossAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
         public override bool Start()
         {
@@ -98,10 +98,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 // important to add a force AFTER a NetworkObject is spawned, since IsKinematic is enabled on the
                 // Rigidbody component after it is spawned
-                var bombRigidbody = no.GetComponent<Rigidbody>();
+                var tossedItemRigidbody = no.GetComponent<Rigidbody>();
 
-                bombRigidbody.AddForce((networkObjectTransform.forward * 80f) + (networkObjectTransform.up * 150f), ForceMode.Impulse);
-                bombRigidbody.AddTorque((networkObjectTransform.forward * Random.Range(-15f, 15f)) + (networkObjectTransform.up * Random.Range(-15f, 15f)), ForceMode.Impulse);
+                tossedItemRigidbody.AddForce((networkObjectTransform.forward * 80f) + (networkObjectTransform.up * 150f), ForceMode.Impulse);
+                tossedItemRigidbody.AddTorque((networkObjectTransform.forward * Random.Range(-15f, 15f)) + (networkObjectTransform.up * Random.Range(-15f, 15f)), ForceMode.Impulse);
             }
         }
     }
