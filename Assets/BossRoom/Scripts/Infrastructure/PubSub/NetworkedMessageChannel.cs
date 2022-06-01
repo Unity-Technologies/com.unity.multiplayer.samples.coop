@@ -22,6 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             m_NetworkManager = networkManager;
             m_Name = $"{typeof(T).FullName}NetworkMessageChannel";
+            m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
         }
 
         public override void Dispose()
@@ -36,27 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             base.Dispose();
         }
 
-        public override IDisposable Subscribe(Action<T> handler)
-        {
-            if (m_NetworkManager != null)
-            {
-                if (m_NetworkManager.IsListening)
-                {
-                    RegisterHandler();
-                }
-                else
-                {
-                    m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
-                }
-
-                return base.Subscribe(handler);
-            }
-
-            Debug.LogError("Cannot subscribe to NetworkedMessageChannel. NetworkManager is null.");
-            return null;
-        }
-
-        void RegisterHandler()
+        void OnClientConnected(ulong clientId)
         {
             // Only register message handler on clients
             if (!m_NetworkManager.IsServer)
@@ -64,11 +45,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
                 Debug.Log($"Registering handler for {m_Name}");
                 m_NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(m_Name, ReceiveMessageThroughNetwork);
             }
-        }
-
-        void OnClientConnected(ulong clientId)
-        {
-            RegisterHandler();
         }
 
         public override void Publish(T message)
