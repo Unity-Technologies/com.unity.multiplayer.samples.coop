@@ -7,11 +7,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     public class ClientTossAttackDisplay : NetworkBehaviour
     {
         [SerializeField]
-        Transform m_BombDisplayTransform;
+        Transform m_TossAttackDisplayTransform;
 
         const float k_DisplayHeight = 0.1f;
 
-        readonly Quaternion k_BombDisplayRotation = Quaternion.Euler(90f, 0f, 0f);
+        readonly Quaternion k_TossAttackDisplayRotation = Quaternion.Euler(90f, 0f, 0f);
 
         void Awake()
         {
@@ -26,20 +26,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             enabled = true;
-            m_BombDisplayTransform.gameObject.SetActive(true);
+            m_TossAttackDisplayTransform.gameObject.SetActive(true);
         }
 
         public override void OnNetworkDespawn()
         {
-            m_BombDisplayTransform.gameObject.SetActive(false);
+            m_TossAttackDisplayTransform.gameObject.SetActive(false);
         }
 
         void LateUpdate()
         {
             var tossedItemPosition = transform.position;
-            m_BombDisplayTransform.SetPositionAndRotation(
+            m_TossAttackDisplayTransform.SetPositionAndRotation(
                 new Vector3(tossedItemPosition.x, k_DisplayHeight, tossedItemPosition.z),
-                k_BombDisplayRotation);
+                k_TossAttackDisplayRotation);
         }
     }
 }
