@@ -7,9 +7,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     /// <summary>
     /// This type of message channel allows the server to publish a message that will be sent to clients as well as
-    /// being published locally. Clients and the server both can subscribe to it. However, that subscription needs to be
-    /// done after the NetworkManager has initialized. On objects whose lifetime is bigger than a networked session,
-    /// subscribing will be required each time a new session starts.
+    /// being published locally. Clients and the server both can subscribe to it.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class NetworkedMessageChannel<T> : MessageChannel<T> where T : unmanaged, INetworkSerializeByMemcpy
