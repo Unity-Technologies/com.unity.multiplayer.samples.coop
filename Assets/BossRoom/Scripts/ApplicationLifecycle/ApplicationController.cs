@@ -139,6 +139,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             return canQuit;
         }
 
+        // TODO remove messaging for this once we have vcontainer.
         private void LeaveSession(QuitGameSessionMessage msg)
         {
             m_LobbyServiceFacade.EndTracking();
