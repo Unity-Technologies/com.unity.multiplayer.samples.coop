@@ -157,6 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     case ConnectStatus.UserRequestedDisconnect:
                     case ConnectStatus.HostEndedSession:
                     case ConnectStatus.ServerFull:
+                    case ConnectStatus.IncompatibleBuildType:
 
                         m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = false }); // go through the normal leave flow
                         break;
