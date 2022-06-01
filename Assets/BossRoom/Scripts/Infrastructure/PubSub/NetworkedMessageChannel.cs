@@ -42,7 +42,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             // Only register message handler on clients
             if (!m_NetworkManager.IsServer)
             {
-                Debug.Log($"Registering handler for {m_Name}");
                 m_NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(m_Name, ReceiveMessageThroughNetwork);
             }
         }
