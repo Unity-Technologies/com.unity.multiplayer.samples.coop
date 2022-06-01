@@ -56,10 +56,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
             //they are networked so that the clients can subscribe to those messages that are published by the server
-            scope.BindNetworkedMessageChannelInstance<LifeStateChangedEventMessage>();
-            scope.BindNetworkedMessageChannelInstance<ConnectionEventMessage>();
+            scope.BindNetworkedMessageChannelInstance<LifeStateChangedEventMessage>(m_GameNetPortal.NetManager);
+            scope.BindNetworkedMessageChannelInstance<ConnectionEventMessage>(m_GameNetPortal.NetManager);
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            scope.BindNetworkedMessageChannelInstance<CheatUsedMessage>();
+            scope.BindNetworkedMessageChannelInstance<CheatUsedMessage>(m_GameNetPortal.NetManager);
 #endif
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services

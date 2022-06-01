@@ -14,12 +14,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
     /// <typeparam name="T"></typeparam>
     public class NetworkedMessageChannel<T> : MessageChannel<T> where T : unmanaged, INetworkSerializeByMemcpy
     {
+        NetworkManager m_NetworkManager;
+
         string m_Name;
 
-        bool m_HasRegisteredHandler;
-
-        public NetworkedMessageChannel()
+        public NetworkedMessageChannel(NetworkManager networkManager)
         {
+            m_NetworkManager = networkManager;
             m_Name = $"{typeof(T).FullName}NetworkMessageChannel";
         }
 
@@ -27,45 +28,52 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             if (!IsDisposed)
             {
-                if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null && m_HasRegisteredHandler)
+                if (m_NetworkManager != null && m_NetworkManager.CustomMessagingManager != null)
                 {
-                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
+                    m_NetworkManager.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
                 }
-
-                m_HasRegisteredHandler = false;
             }
             base.Dispose();
         }
 
         public override IDisposable Subscribe(Action<T> handler)
         {
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
+            if (m_NetworkManager != null)
             {
-                // Only register message handler on clients
-                if (!m_HasRegisteredHandler && !NetworkManager.Singleton.IsServer)
+                if (m_NetworkManager.IsListening)
                 {
-                    NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(m_Name, ReceiveMessageThroughNetwork);
-                    m_HasRegisteredHandler = true;
-                    NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+                    RegisterHandler();
+                }
+                else
+                {
+                    m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
                 }
 
                 return base.Subscribe(handler);
             }
 
-            Debug.LogError("Cannot subscribe to NetworkedMessageChannel. NetworkManager is not initialized.");
+            Debug.LogError("Cannot subscribe to NetworkedMessageChannel. NetworkManager is null.");
             return null;
         }
 
-        void OnClientDisconnect(ulong clientId)
+        void RegisterHandler()
         {
-            m_HasRegisteredHandler = false;
-            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientDisconnect;
-            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
+            // Only register message handler on clients
+            if (!m_NetworkManager.IsServer)
+            {
+                Debug.Log($"Registering handler for {m_Name}");
+                m_NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(m_Name, ReceiveMessageThroughNetwork);
+            }
+        }
+
+        void OnClientConnected(ulong clientId)
+        {
+            RegisterHandler();
         }
 
         public override void Publish(T message)
         {
-            if (NetworkManager.Singleton.IsServer)
+            if (m_NetworkManager.IsServer)
             {
                 // send message to clients, then publish locally
                 SendMessageThroughNetwork(message);
@@ -81,7 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             var writer = new FastBufferWriter(FastBufferWriter.GetWriteSize<T>(), Allocator.Temp);
             writer.WriteValueSafe(message);
-            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessageToAll(m_Name, writer);
+            m_NetworkManager.CustomMessagingManager.SendNamedMessageToAll(m_Name, writer);
         }
 
         void ReceiveMessageThroughNetwork(ulong clientID, FastBufferReader reader)
