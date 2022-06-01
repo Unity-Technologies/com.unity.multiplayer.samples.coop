@@ -5,7 +5,7 @@ using Unity.Netcode;
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
-    /// Action responsible for creating a projectile object.
+    /// Action responsible for creating a physics-based thrown object.
     /// </summary>
     public class TossAction : Action
     {
@@ -15,8 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override bool Start()
         {
-            //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
-            //m_Parent.physicsWrapper.Transform.forward = Data.Direction;
+            // snap to face the direction we're firing
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
@@ -71,7 +70,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         }
 
         /// <summary>
-        /// Instantiates and configures the arrow. Repeatedly calling this does nothing.
+        /// Instantiates and configures the thrown object. Repeatedly calling this does nothing.
         /// </summary>
         /// <remarks>
         /// This calls GetProjectilePrefab() to find the prefab it should instantiate.
@@ -88,7 +87,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 var networkObjectTransform = no.transform;
 
-                // point the projectile the same way we're facing
+                // point the thrown object the same way we're facing
                 networkObjectTransform.forward = m_Parent.physicsWrapper.Transform.forward;
 
                 networkObjectTransform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
