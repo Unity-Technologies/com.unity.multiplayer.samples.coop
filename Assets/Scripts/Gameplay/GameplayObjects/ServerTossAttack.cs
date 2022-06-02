@@ -25,10 +25,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         const int k_MaxCollisions = 16;
         Collider[] m_CollisionCache = new Collider[k_MaxCollisions];
 
-        const float k_DetonateAfterSeconds = 5f;
+        [SerializeField]
+        float detonateAfterSeconds = 5f;
+
         float m_DetonateAfterSeconds;
 
-        const float k_DestroyAfterSeconds = 5.5f;
+        [SerializeField]
+        float destroyAfterSeconds = 5.5f;
+
         float m_DestroyAfterSeconds;
 
         bool m_Detonated;
@@ -44,8 +48,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_Started = true;
             m_Detonated = false;
 
-            m_DetonateAfterSeconds = Time.fixedTime + k_DetonateAfterSeconds;
-            m_DestroyAfterSeconds = Time.fixedTime + k_DestroyAfterSeconds;
+            m_DetonateAfterSeconds = Time.fixedTime + detonateAfterSeconds;
+            m_DestroyAfterSeconds = Time.fixedTime + destroyAfterSeconds;
         }
 
         public override void OnNetworkDespawn()
