@@ -1,0 +1,16 @@
+{
+    "name": "Unity.BossRoom.Audio",
+    "rootNamespace": "",
+    "references": [
+        "GUID:59b3bd604d0445f583783872c3e648fc"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

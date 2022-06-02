@@ -7,7 +7,8 @@
         "Unity.Netcode.Runtime",
         "Unity.Services.Core",
         "Unity.Services.Authentication",
-        "Unity.Services.Relay"
+        "Unity.Services.Relay",
+        "Unity.Multiplayer.Tools.NetStatsMonitor.Component"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

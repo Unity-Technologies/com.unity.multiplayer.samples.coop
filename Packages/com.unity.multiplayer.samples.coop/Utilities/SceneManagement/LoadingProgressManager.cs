@@ -80,6 +80,7 @@ namespace Unity.Multiplayer.Samples.Utilities
                 NetworkManager.OnClientDisconnectCallback -= RemoveTracker;
             }
             ProgressTrackers.Clear();
+            onTrackersUpdated?.Invoke();
         }
 
         void Update()
@@ -128,11 +129,19 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             if (IsServer)
             {
-                var tracker = ProgressTrackers[clientId];
-                ProgressTrackers.Remove(clientId);
-                tracker.NetworkObject.Despawn();
-                UpdateTrackersClientRpc();
+                if (ProgressTrackers.ContainsKey(clientId))
+                {
+                    var tracker = ProgressTrackers[clientId];
+                    ProgressTrackers.Remove(clientId);
+                    tracker.NetworkObject.Despawn();
+                    UpdateTrackersClientRpc();
+                }
             }
+        }
+
+        public void ResetLocalProgress()
+        {
+            LocalProgress = 0;
         }
     }
 }
