@@ -6,7 +6,7 @@ PhysicMaterial:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: BombPhysics
+  m_Name: ImpTossPhysics
   dynamicFriction: 0.1
   staticFriction: 0.6
   bounciness: 1
