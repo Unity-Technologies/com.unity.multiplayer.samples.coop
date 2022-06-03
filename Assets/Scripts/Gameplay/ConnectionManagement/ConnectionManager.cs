@@ -106,6 +106,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             NetworkManager.OnClientConnectedCallback -= OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+            NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
 
         }
 
