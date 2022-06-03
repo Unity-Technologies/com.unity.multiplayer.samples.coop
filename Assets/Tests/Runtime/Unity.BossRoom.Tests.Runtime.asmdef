@@ -1,15 +1,5 @@
 {
-<<<<<<< HEAD:Assets/Tests/Runtime/HostTests/com.unity.multiplayer.samples.bossroom.tests.runtime.hosttests.asmdef
-    "name": "Unity.Multiplayer.Samples.BossRoom.Tests.Runtime.HostTests",
-    "rootNamespace": "",
-    "references": [
-        "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner",
-        "Unity.Multiplayer.Samples.Utilities.Testing",
-        "Unity.Multiplayer.Samples.BossRoom.Client",
-        "Unity.Multiplayer.Samples.BossRoom.Shared",
-        "Unity.Netcode.Runtime"
-=======
+
     "name": "Unity.BossRoom.Tests.Runtime",
     "rootNamespace": "",
     "references": [
@@ -19,7 +9,7 @@
         "GUID:1491147abca9d7d4bb7105af628b223e",
         "GUID:ed77cc04b29ffca42860b1220217e140",
         "GUID:ec2e12d3de28e40839f9a0b685184f49"
->>>>>>> develop-true:Assets/Tests/Runtime/Unity.BossRoom.Tests.Runtime.asmdef
+
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -30,8 +20,8 @@
     ],
     "autoReferenced": false,
     "defineConstraints": [
-        "UNITY_INCLUDE_TESTS"
-	"!UNITY_SERVER"
+        "UNITY_INCLUDE_TESTS",
+	    "!UNITY_SERVER"
     ],
     "versionDefines": [],
     "noEngineReferences": false
