@@ -21,6 +21,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             m_NetworkManager = networkManager;
             m_Name = $"{typeof(T).FullName}NetworkMessageChannel";
             m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
+            if (m_NetworkManager.IsListening)
+            {
+                RegisterHandler();
+            }
         }
 
         public override void Dispose()
@@ -36,6 +40,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         }
 
         void OnClientConnected(ulong clientId)
+        {
+            RegisterHandler();
+        }
+
+        void RegisterHandler()
         {
             // Only register message handler on clients
             if (!m_NetworkManager.IsServer)
