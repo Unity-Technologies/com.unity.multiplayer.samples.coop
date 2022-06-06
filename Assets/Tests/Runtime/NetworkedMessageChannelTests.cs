@@ -23,6 +23,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         NetworkManager FirstClient => m_ClientNetworkManagers[0];
         NetworkManager SecondClient => m_ClientNetworkManagers[1];
 
+        DisposableGroup m_Subscriptions;
+
+        protected override IEnumerator OnTearDown()
+        {
+            m_Subscriptions.Dispose();
+            return base.OnTearDown();
+        }
+
         [UnityTest]
         public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnMultipleClients()
         {
@@ -32,9 +40,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             var nbMessagesReceived = 0;
 
-            var subscriptions = new DisposableGroup();
-            subscriptions.Add(emptyMessageChannelClient1.Subscribe(OnEmptyMessageReceived));
-            subscriptions.Add(emptyMessageChannelClient2.Subscribe(OnEmptyMessageReceived));
+            m_Subscriptions = new DisposableGroup();
+            m_Subscriptions.Add(emptyMessageChannelClient1.Subscribe(OnEmptyMessageReceived));
+            m_Subscriptions.Add(emptyMessageChannelClient2.Subscribe(OnEmptyMessageReceived));
 
             void OnEmptyMessageReceived(EmptyMessage message)
             {
@@ -58,9 +66,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             var nbMessagesReceived = 0;
 
-            var subscriptions = new DisposableGroup();
-            subscriptions.Add(emptyMessageChannelClient.Subscribe(OnEmptyMessageReceived));
-            subscriptions.Add(emptyMessageChannelClient.Subscribe(OnEmptyMessageReceived2));
+            m_Subscriptions = new DisposableGroup();
+            m_Subscriptions.Add(emptyMessageChannelClient.Subscribe(OnEmptyMessageReceived));
+            m_Subscriptions.Add(emptyMessageChannelClient.Subscribe(OnEmptyMessageReceived2));
 
             void OnEmptyMessageReceived(EmptyMessage message)
             {
@@ -90,8 +98,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             var nbMessagesReceived = 0;
 
-            var subscriptions = new DisposableGroup();
-            subscriptions.Add(genericMessageChannelClient.Subscribe(OnGenericMessageReceived));
+            m_Subscriptions = new DisposableGroup();
+            m_Subscriptions.Add(genericMessageChannelClient.Subscribe(OnGenericMessageReceived));
 
             void OnGenericMessageReceived(GenericMessage message)
             {
@@ -106,7 +114,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
 
             Assert.AreEqual(1, nbMessagesReceived);
-
         }
 
         [UnityTest]
@@ -118,9 +125,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             var nbMessagesReceived = 0;
 
-            var subscriptions = new DisposableGroup();
-            subscriptions.Add(emptyMessageChannelClient1.Subscribe(OnEmptyMessageReceived));
-            subscriptions.Add(emptyMessageChannelClient2.Subscribe(OnEmptyMessageReceived));
+            m_Subscriptions = new DisposableGroup();
+            m_Subscriptions.Add(emptyMessageChannelClient1.Subscribe(OnEmptyMessageReceived));
+            m_Subscriptions.Add(emptyMessageChannelClient2.Subscribe(OnEmptyMessageReceived));
 
             void OnEmptyMessageReceived(EmptyMessage message)
             {
@@ -152,15 +159,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return WaitForClientsConnectedOrTimeOut();
 
             // Test sending a message a second time
-            nbMessagesReceived = 0;
-
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
             yield return null;
             yield return null;
 
-            Assert.AreEqual(2, nbMessagesReceived);
+            Assert.AreEqual(4, nbMessagesReceived);
         }
     }
 }
