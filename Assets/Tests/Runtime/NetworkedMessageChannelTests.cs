@@ -24,19 +24,43 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         NetworkManager SecondClient => m_ClientNetworkManagers[1];
 
         [UnityTest]
-        public IEnumerator NetworkedMessageIsReceivedByAllSubscribersOnSingleClient()
+        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnMultipleClients()
+        {
+            var emptyMessageChannelClient1 = new NetworkedMessageChannel<EmptyMessage>(FirstClient);
+            var emptyMessageChannelClient2 = new NetworkedMessageChannel<EmptyMessage>(SecondClient);
+            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>(m_ServerNetworkManager);
+
+            var nbMessagesReceived = 0;
+
+            var subscriptions = new DisposableGroup();
+            subscriptions.Add(emptyMessageChannelClient1.Subscribe(OnEmptyMessageReceived));
+            subscriptions.Add(emptyMessageChannelClient2.Subscribe(OnEmptyMessageReceived));
+
+            void OnEmptyMessageReceived(EmptyMessage message)
+            {
+                nbMessagesReceived++;
+            }
+
+            emptyMessageChannelServer.Publish(new EmptyMessage());
+
+            // wait for the custom named message to be sent on the server and received on the clients
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual(2, nbMessagesReceived);
+        }
+
+        [UnityTest]
+        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnSingleClient()
         {
             var emptyMessageChannelClient = new NetworkedMessageChannel<EmptyMessage>(FirstClient);
             var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>(m_ServerNetworkManager);
 
-            var genericMessageChannelClient = new NetworkedMessageChannel<GenericMessage>(FirstClient);
-            var genericMessageChannelServer = new NetworkedMessageChannel<GenericMessage>(m_ServerNetworkManager);
+            var nbMessagesReceived = 0;
 
             var subscriptions = new DisposableGroup();
-            var nbMessagesReceived = 0;
             subscriptions.Add(emptyMessageChannelClient.Subscribe(OnEmptyMessageReceived));
             subscriptions.Add(emptyMessageChannelClient.Subscribe(OnEmptyMessageReceived2));
-            subscriptions.Add(genericMessageChannelClient.Subscribe(OnGenericMessageReceived));
 
             void OnEmptyMessageReceived(EmptyMessage message)
             {
@@ -48,21 +72,40 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 nbMessagesReceived++;
             }
 
+            emptyMessageChannelServer.Publish(new EmptyMessage());
+
+            // wait for the custom named message to be sent on the server and received on the client
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual(2, nbMessagesReceived);
+        }
+
+        [UnityTest]
+        public IEnumerator NetworkedMessageContentIsProperlyReceived()
+        {
+
+            var genericMessageChannelClient = new NetworkedMessageChannel<GenericMessage>(FirstClient);
+            var genericMessageChannelServer = new NetworkedMessageChannel<GenericMessage>(m_ServerNetworkManager);
+
+            var nbMessagesReceived = 0;
+
+            var subscriptions = new DisposableGroup();
+            subscriptions.Add(genericMessageChannelClient.Subscribe(OnGenericMessageReceived));
+
             void OnGenericMessageReceived(GenericMessage message)
             {
                 nbMessagesReceived++;
                 Assert.IsTrue(message.value);
             }
 
-            yield return null;
-
-            emptyMessageChannelServer.Publish(new EmptyMessage());
-            emptyMessageChannelServer.Publish(new EmptyMessage());
             genericMessageChannelServer.Publish(new GenericMessage() {value = true});
 
-            yield return new WaitForSeconds(1);
+            // wait for the custom named message to be sent on the server and received on the client
+            yield return null;
+            yield return null;
 
-            Assert.AreEqual(5, nbMessagesReceived);
+            Assert.AreEqual(1, nbMessagesReceived);
 
         }
     }
