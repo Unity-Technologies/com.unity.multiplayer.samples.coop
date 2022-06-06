@@ -1,5 +1,4 @@
 using System.Collections;
-using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
