@@ -174,24 +174,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <param name="connectionData">binary data passed into StartClient. In our case this is the client's GUID, which is a unique identifier for their install of the game that persists across app restarts. </param>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="connectionApprovedCallback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
+        NetworkManager.ConnectionApprovalResponse ApprovalCheck(NetworkManager.ConnectionApprovalRequest request)
         {
+            var response = new NetworkManager.ConnectionApprovalResponse();
+            var connectionData = request.Payload;
+            var clientId = request.ClientNetworkId;
             if (connectionData.Length > k_MaxConnectPayload)
             {
                 // If connectionData too high, deny immediately to avoid wasting time on the server. This is intended as
                 // a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
-                connectionApprovedCallback(false, 0, false, null, null);
-                return;
+                response.Approved = false;
+                // connectionApprovedCallback(false, 0, false, null, null);
+                return response;
             }
 
+            // todo below still needed?
             // Approval check happens for Host too, but obviously we want it to be approved
             if (clientId == NetworkManager.Singleton.LocalClientId)
             {
                 SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, m_Portal.GetPlayerId(),
                     new SessionPlayerData(clientId, m_Portal.PlayerName, m_Portal.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
 
-                connectionApprovedCallback(true, null, true, null, null);
-                return;
+                response.Approved = true;
+                response.CreatePlayerObject = true;
+                // connectionApprovedCallback(true, null, true, null, null);
+                return response;
             }
 
             var payload = System.Text.Encoding.UTF8.GetString(connectionData);
@@ -208,9 +215,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_ClientSceneMap[clientId] = connectionPayload.clientScene;
 
                 // connection approval will create a player object for you
-                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
+                // connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
 
                 m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.Success, PlayerName = SessionManager<SessionPlayerData>.Instance.GetPlayerData(clientId)?.PlayerName });
+                response.Approved = true;
+                response.CreatePlayerObject = true;
+                response.Position = Vector3.zero;
+                response.Rotation = Quaternion.identity;
+                return response;
             }
             else
             {
@@ -220,11 +232,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 //the extra information ourselves, and then wait a short time before manually close down the connection.
                 SendServerToClientConnectResult(clientId, gameReturnStatus);
                 SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
+                // StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
+                response.Approved = false;
                 if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
                     m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
                 }
+
+                return response;
             }
         }
 
@@ -244,11 +259,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 ConnectStatus.LoggedInAgain : ConnectStatus.Success;
         }
 
-        static IEnumerator WaitToDenyApproval(NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
-        {
-            yield return new WaitForSeconds(0.5f);
-            connectionApprovedCallback(false, 0, false, null, null);
-        }
+        // static IEnumerator WaitToDenyApproval(NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
+        // {
+        //     yield return new WaitForSeconds(0.5f);
+        //     connectionApprovedCallback(false, 0, false, null, null);
+        // }
 
         IEnumerator WaitToShutdown()
         {

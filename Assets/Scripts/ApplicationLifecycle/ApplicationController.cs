@@ -8,8 +8,10 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Action = Unity.Multiplayer.Samples.BossRoom.Server.Action;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared
 {
@@ -35,6 +37,38 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(m_UpdateRunner.gameObject);
+
+            // TMP DO NOT COMMIT
+            UserNetworkVariableSerialization<WinState>.WriteValue += (FastBufferWriter writer, in WinState value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<WinState>.ReadValue += (FastBufferReader reader, out WinState value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<MovementStatus>.ReadValue += (FastBufferReader reader, out MovementStatus value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<MovementStatus>.WriteValue += (FastBufferWriter writer, in MovementStatus value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<LifeState>.ReadValue += (FastBufferReader reader, out LifeState value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<LifeState>.WriteValue += (FastBufferWriter writer, in LifeState value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<Action.BuffableValue>.ReadValue += (FastBufferReader reader, out Action.BuffableValue value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<Action.BuffableValue>.WriteValue += (FastBufferWriter writer, in Action.BuffableValue value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<Action.GameplayActivity>.ReadValue += (FastBufferReader reader, out Action.GameplayActivity value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<Action.GameplayActivity>.WriteValue += (FastBufferWriter writer, in Action.GameplayActivity value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<ActionType>.ReadValue += (FastBufferReader reader, out ActionType value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<ActionType>.WriteValue += (FastBufferWriter writer, in ActionType value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<ActionLogic>.ReadValue += (FastBufferReader reader, out ActionLogic value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<ActionLogic>.WriteValue += (FastBufferWriter writer, in ActionLogic value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<ActionDescription.BlockingModeType>.ReadValue += (FastBufferReader reader, out ActionDescription.BlockingModeType value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<ActionDescription.BlockingModeType>.WriteValue += (FastBufferWriter writer, in ActionDescription.BlockingModeType value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<ConnectStatus>.ReadValue += (FastBufferReader reader, out ConnectStatus value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<ConnectStatus>.WriteValue += (FastBufferWriter writer, in ConnectStatus value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<CharSelectData.SeatState>.ReadValue += (FastBufferReader reader, out CharSelectData.SeatState value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<CharSelectData.SeatState>.WriteValue += (FastBufferWriter writer, in CharSelectData.SeatState value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<GameState>.ReadValue += (FastBufferReader reader, out GameState value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<GameState>.WriteValue += (FastBufferWriter writer, in GameState value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<CharacterSwap.SpecialMaterialMode>.ReadValue += (FastBufferReader reader, out CharacterSwap.SpecialMaterialMode value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<CharacterSwap.SpecialMaterialMode>.WriteValue += (FastBufferWriter writer, in CharacterSwap.SpecialMaterialMode value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<CharacterTypeEnum>.ReadValue += (FastBufferReader reader, out CharacterTypeEnum value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<CharacterTypeEnum>.WriteValue += (FastBufferWriter writer, in CharacterTypeEnum value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<IDamageable.SpecialDamageFlags>.ReadValue += (FastBufferReader reader, out IDamageable.SpecialDamageFlags value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<IDamageable.SpecialDamageFlags>.WriteValue += (FastBufferWriter writer, in IDamageable.SpecialDamageFlags value) => writer.WriteValueSafe(value);
+            UserNetworkVariableSerialization<ClientInputSender.SkillTriggerStyle>.ReadValue += (FastBufferReader reader, out ClientInputSender.SkillTriggerStyle value) => reader.ReadValueSafe(out value);
+            UserNetworkVariableSerialization<ClientInputSender.SkillTriggerStyle>.WriteValue += (FastBufferWriter writer, in ClientInputSender.SkillTriggerStyle value) => writer.WriteValueSafe(value);
 
             var scope = DIScope.RootScope;
 
