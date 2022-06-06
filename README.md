@@ -83,8 +83,6 @@ One of the eight clients acts as the host/server. That client will use a composi
 
 The game is server-authoritative, with latency-masking animations. Position updates are done through NetworkedVars that sync position, rotation and movement speed. NetworkedVars and Remote Procedure Calls (RPC) endpoints are isolated in a class that is shared between the server and client specialized logic components. All game logic runs in FixedUpdate at 30 Hz, matching our network update rate. 
 
-Code is organized into three separate assemblies: **Client**, **Shared** and **Server** which reference each other when appropriate.
-
 For an overview of the project's architecture please check out our [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ---------------
