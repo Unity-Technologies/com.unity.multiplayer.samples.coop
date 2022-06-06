@@ -108,5 +108,59 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.AreEqual(1, nbMessagesReceived);
 
         }
+
+        [UnityTest]
+        public IEnumerator NetworkedMessagesAreStillReceivedAfterNetworkManagerShutsDownAndRestarts()
+        {
+            var emptyMessageChannelClient1 = new NetworkedMessageChannel<EmptyMessage>(FirstClient);
+            var emptyMessageChannelClient2 = new NetworkedMessageChannel<EmptyMessage>(SecondClient);
+            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>(m_ServerNetworkManager);
+
+            var nbMessagesReceived = 0;
+
+            var subscriptions = new DisposableGroup();
+            subscriptions.Add(emptyMessageChannelClient1.Subscribe(OnEmptyMessageReceived));
+            subscriptions.Add(emptyMessageChannelClient2.Subscribe(OnEmptyMessageReceived));
+
+            void OnEmptyMessageReceived(EmptyMessage message)
+            {
+                nbMessagesReceived++;
+            }
+
+            emptyMessageChannelServer.Publish(new EmptyMessage());
+
+            // wait for the custom named message to be sent on the server and received on the clients
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual(2, nbMessagesReceived);
+
+            // Shutdown the server and clients
+            m_ServerNetworkManager.Shutdown();
+            FirstClient.Shutdown();
+            SecondClient.Shutdown();
+
+            yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
+            yield return new WaitWhile(() => FirstClient.ShutdownInProgress);
+            yield return new WaitWhile(() => SecondClient.ShutdownInProgress);
+
+            // Restart the server and clients
+            m_ServerNetworkManager.StartServer();
+            FirstClient.StartClient();
+            SecondClient.StartClient();
+
+            yield return WaitForClientsConnectedOrTimeOut();
+
+            // Test sending a message a second time
+            nbMessagesReceived = 0;
+
+            emptyMessageChannelServer.Publish(new EmptyMessage());
+
+            // wait for the custom named message to be sent on the server and received on the clients
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual(2, nbMessagesReceived);
+        }
     }
 }
