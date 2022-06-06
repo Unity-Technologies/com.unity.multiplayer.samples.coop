@@ -8,7 +8,7 @@ using UnityEngine.TestTools;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 {
-    public class NetworkedMessageChannelTests: NetcodeIntegrationTest
+    public class NetworkedMessageChannelTests : NetcodeIntegrationTest
     {
         struct EmptyMessage : INetworkSerializeByMemcpy { }
 
@@ -91,7 +91,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator NetworkedMessageContentIsProperlyReceived()
         {
-
             var genericMessageChannelClient = new NetworkedMessageChannel<GenericMessage>(FirstClient);
             var genericMessageChannelServer = new NetworkedMessageChannel<GenericMessage>(m_ServerNetworkManager);
 
@@ -106,7 +105,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 Assert.IsTrue(message.value);
             }
 
-            genericMessageChannelServer.Publish(new GenericMessage() {value = true});
+            genericMessageChannelServer.Publish(new GenericMessage() { value = true });
 
             // wait for the custom named message to be sent on the server and received on the client
             yield return null;
