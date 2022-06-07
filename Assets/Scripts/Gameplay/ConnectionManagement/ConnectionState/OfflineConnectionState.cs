@@ -21,10 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <summary>
         /// How many connections we create a Unity relay allocation for
         /// </summary>
-        private const int k_MaxUnityRelayConnections = 8;
-
-        public OfflineConnectionState(ConnectionManager connectionManager)
-            : base(connectionManager) { }
+        const int k_MaxUnityRelayConnections = 8;
 
         [Inject]
         protected void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby)

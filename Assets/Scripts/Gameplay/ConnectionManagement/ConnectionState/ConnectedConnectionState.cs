@@ -1,7 +1,6 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -9,9 +8,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
         IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-
-        public ConnectedConnectionState(ConnectionManager connectionManager)
-            : base(connectionManager) { }
 
         [Inject]
         void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPublisher,

@@ -20,9 +20,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         string m_LobbyCode = "";
         int m_NbAttempts;
 
-        public ReconnectingConnectionState(ConnectionManager connectionManager)
-            : base(connectionManager) { }
-
         [Inject]
         void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher)
         {

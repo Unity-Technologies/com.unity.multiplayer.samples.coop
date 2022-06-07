@@ -3,39 +3,30 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
     public abstract class ConnectionState
     {
-        public static OfflineConnectionState Offline { get; private set; }
-        public static ConnectingConnectionState Connecting { get; private set; }
-        public static ConnectedConnectionState Connected { get; private set; }
-        public static ReconnectingConnectionState Reconnecting { get; private set; }
-        public static HostingConnectionState Hosting { get; private set; }
+        public static readonly OfflineConnectionState Offline = new OfflineConnectionState();
+        public static readonly ConnectingConnectionState Connecting = new ConnectingConnectionState();
+        public static readonly ConnectedConnectionState Connected = new ConnectedConnectionState();
+        public static readonly ReconnectingConnectionState Reconnecting = new ReconnectingConnectionState();
+        public static readonly HostingConnectionState Hosting = new HostingConnectionState();
 
-        public static List<ConnectionState> States = new() { Offline, Connecting, Connected, Reconnecting, Hosting };
+        public static readonly List<ConnectionState> States = new() { Offline, Connecting, Connected, Reconnecting, Hosting };
 
         public static void InitializeStates(ConnectionManager connectionManager, DIScope scope)
         {
-            Offline = new OfflineConnectionState(connectionManager);
-            Connecting = new ConnectingConnectionState(connectionManager);
-            Connected = new ConnectedConnectionState(connectionManager);
-            Reconnecting = new ReconnectingConnectionState(connectionManager);
-            Hosting = new HostingConnectionState(connectionManager);
-
             foreach (var connectionState in States)
             {
+                connectionState.m_ConnectionManager = connectionManager;
                 scope.InjectIn(connectionState);
             }
         }
 
         protected ConnectionManager m_ConnectionManager;
-
-        protected ConnectionState(ConnectionManager connectionManager)
-        {
-            m_ConnectionManager = connectionManager;
-        }
 
         public abstract void Enter();
 
