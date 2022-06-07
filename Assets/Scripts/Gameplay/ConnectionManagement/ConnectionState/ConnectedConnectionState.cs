@@ -31,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 case ConnectStatus.UserRequestedDisconnect:
                 case ConnectStatus.HostEndedSession:
-                    m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage() {UserRequested = false}); // go through the normal leave flow
+                    m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage() { UserRequested = false }); // go through the normal leave flow
                     m_ConnectionManager.ChangeState(Offline);
                     break;
                 default:

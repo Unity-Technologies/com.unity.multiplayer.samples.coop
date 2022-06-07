@@ -35,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage(){UserRequested = false}); // go through the normal leave flow
+            m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage(){ UserRequested = false }); // go through the normal leave flow
             m_ConnectStatusPublisher.Publish(m_ConnectionManager.DisconnectReason.Reason);
             m_ConnectionManager.DisconnectReason.Clear();
             m_ConnectionManager.ChangeState(Offline);
