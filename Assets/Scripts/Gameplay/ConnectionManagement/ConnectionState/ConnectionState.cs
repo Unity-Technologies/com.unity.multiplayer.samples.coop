@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
-    /// Base class representing a connection state. Contains a static member for each possible state
+    /// Base class representing a connection state. Contains a static member for each possible state.
     /// </summary>
     public abstract class ConnectionState
     {

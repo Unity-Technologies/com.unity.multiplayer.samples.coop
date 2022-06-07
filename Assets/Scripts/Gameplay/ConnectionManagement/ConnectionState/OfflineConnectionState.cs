@@ -124,7 +124,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
-            if (m_ConnectionManager.NetworkManager.IsHost)
+            // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
+            if (m_ConnectionManager.NetworkManager.IsHost && clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
                 var payload = System.Text.Encoding.UTF8.GetString(connectionData);
                 var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
