@@ -59,8 +59,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         NetworkObject m_GameState;
         public NetworkObject GameState => m_GameState;
 
-        DisconnectReason m_DisconnectReason = new DisconnectReason();
-        public DisconnectReason DisconnectReason => m_DisconnectReason;
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+
+        [Inject]
+        void InjectDependencies(IPublisher<ConnectStatus> connectStatusPublisher)
+        {
+            m_ConnectStatusPublisher = connectStatusPublisher;
+        }
 
         void Awake()
         {
@@ -145,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void RequestShutdown()
         {
-            DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
+            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
             m_CurrentState.OnUserRequestedShutdown();
         }
 
@@ -158,7 +163,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
         {
             reader.ReadValueSafe(out ConnectStatus status);
-            m_DisconnectReason.SetDisconnectReason(status);
+            m_ConnectStatusPublisher.Publish(status);
         }
 
         /// <summary>

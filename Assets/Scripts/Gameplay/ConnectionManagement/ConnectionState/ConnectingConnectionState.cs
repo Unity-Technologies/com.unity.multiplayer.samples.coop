@@ -8,13 +8,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public class ConnectingConnectionState : ConnectionState
     {
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         [Inject]
-        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPublisher, IPublisher<ConnectStatus> connectStatusPublisher)
+        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPublisher)
         {
             m_QuitGameSessionPublisher = quitGameSessionPublisher;
-            m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
         public override void Enter()
@@ -33,8 +31,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnClientDisconnect(ulong clientId)
         {
             m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage(){ UserRequested = false }); // go through the normal leave flow
-            m_ConnectStatusPublisher.Publish(m_ConnectionManager.DisconnectReason.Reason);
-            m_ConnectionManager.DisconnectReason.Clear();
             m_ConnectionManager.ChangeState(Offline);
         }
 

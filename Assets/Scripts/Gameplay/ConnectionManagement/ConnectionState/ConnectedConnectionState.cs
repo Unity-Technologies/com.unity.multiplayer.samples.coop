@@ -7,23 +7,31 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public class ConnectedConnectionState : ConnectionState
     {
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
+        IDisposable m_Subscription;
+
+        ConnectStatus m_ConnectStatus;
 
         [Inject]
-        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPublisher,
-            IPublisher<ConnectStatus> connectStatusPublisher)
+        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPublisher, ISubscriber<ConnectStatus> connectStatusSubscriber)
         {
             m_QuitGameSessionPublisher = quitGameSessionPublisher;
-            m_ConnectStatusPublisher = connectStatusPublisher;
+            m_ConnectStatusSubscriber = connectStatusSubscriber;
         }
 
-        public override void Enter() { }
+        public override void Enter()
+        {
+            m_Subscription = m_ConnectStatusSubscriber.Subscribe(status => m_ConnectStatus = status);
+        }
 
-        public override void Exit() { }
+        public override void Exit()
+        {
+            m_Subscription.Dispose();
+        }
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            switch (m_ConnectionManager.DisconnectReason.Reason)
+            switch (m_ConnectStatus)
             {
                 case ConnectStatus.UserRequestedDisconnect:
                 case ConnectStatus.HostEndedSession:
@@ -35,9 +43,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     m_ConnectionManager.ChangeState(Reconnecting);
                     break;
             }
-
-            m_ConnectStatusPublisher.Publish(m_ConnectionManager.DisconnectReason.Reason);
-            m_ConnectionManager.DisconnectReason.Clear();
         }
 
         public override void OnUserRequestedShutdown()

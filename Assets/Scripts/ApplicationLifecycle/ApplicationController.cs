@@ -51,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindMessageChannelInstance<QuitGameSessionMessage>();
             scope.BindMessageChannelInstance<QuitApplicationMessage>();
             scope.BindMessageChannelInstance<UnityServiceErrorMessage>();
-            scope.BindMessageChannelInstance<ConnectStatus>();
+            scope.BindBufferedMessageChannelInstance<ConnectStatus>();
             scope.BindMessageChannelInstance<DoorStateChangedEventMessage>();
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services

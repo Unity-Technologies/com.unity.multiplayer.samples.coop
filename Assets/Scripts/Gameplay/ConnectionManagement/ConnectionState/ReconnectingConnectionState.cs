@@ -15,15 +15,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
         const int k_NbReconnectAttempts = 2;
 
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
+        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
+        IDisposable m_Subscription;
+
+        ConnectStatus m_ConnectStatus;
 
         Coroutine m_ReconnectCoroutine;
         string m_LobbyCode = "";
         int m_NbAttempts;
 
         [Inject]
-        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher)
+        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, ISubscriber<ConnectStatus> connectStatusSubscriber)
         {
             m_ReconnectMessagePublisher = reconnectMessagePublisher;
+            m_ConnectStatusSubscriber = connectStatusSubscriber;
             base.InjectDependencies(profileManager, lobbyServiceFacade, localLobby);
         }
 
@@ -32,6 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
             m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
             m_NbAttempts = 0;
+            m_Subscription = m_ConnectStatusSubscriber.Subscribe(status => m_ConnectStatus = status);
         }
 
         public override void Exit()
@@ -42,6 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 m_ReconnectCoroutine = null;
             }
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
+            m_Subscription.Dispose();
         }
 
         public override void OnClientConnected(ulong clientId)
@@ -51,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            switch (m_ConnectionManager.DisconnectReason.Reason)
+            switch (m_ConnectStatus)
             {
                 case ConnectStatus.UserRequestedDisconnect:
                 case ConnectStatus.HostEndedSession:
