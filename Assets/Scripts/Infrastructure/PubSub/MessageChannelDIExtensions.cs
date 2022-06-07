@@ -9,9 +9,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             scope.BindInstanceAsSingle<MessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new MessageChannel<TMessage>());
         }
-        public static void BindNetworkedMessageChannelInstance<TMessage>(this DIScope scope, NetworkManager networkManager) where TMessage : unmanaged, INetworkSerializeByMemcpy
+        public static void BindNetworkedMessageChannelInstance<TMessage>(this DIScope scope) where TMessage : unmanaged, INetworkSerializeByMemcpy
         {
-            scope.BindInstanceAsSingle<NetworkedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new NetworkedMessageChannel<TMessage>(networkManager));
+            scope.BindInstanceAsSingle<NetworkedMessageChannel<TMessage>, IPublisher<TMessage>, ISubscriber<TMessage>, IMessageChannel<TMessage>>(new NetworkedMessageChannel<TMessage>());
         }
 
         public static void BindBufferedMessageChannelInstance<TMessage>(this DIScope scope)

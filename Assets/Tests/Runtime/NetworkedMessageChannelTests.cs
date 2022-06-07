@@ -24,18 +24,46 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         DisposableGroup m_Subscriptions;
 
+        DIScope m_FirstClientScope;
+        DIScope m_SecondClientScope;
+        DIScope m_ServerScope;
+
+        protected override void OnServerAndClientsCreated()
+        {
+            m_FirstClientScope = new DIScope();
+            m_FirstClientScope.BindInstanceAsSingle(FirstClient);
+            m_FirstClientScope.FinalizeScopeConstruction();
+
+            m_SecondClientScope = new DIScope();
+            m_SecondClientScope.BindInstanceAsSingle(SecondClient);
+            m_SecondClientScope.FinalizeScopeConstruction();
+
+            m_ServerScope = new DIScope();
+            m_ServerScope.BindInstanceAsSingle(m_ServerNetworkManager);
+            m_ServerScope.FinalizeScopeConstruction();
+
+            base.OnServerAndClientsCreated();
+        }
+
         protected override IEnumerator OnTearDown()
         {
             m_Subscriptions.Dispose();
+            m_FirstClientScope.Dispose();
+            m_SecondClientScope.Dispose();
+            m_ServerScope.Dispose();
             return base.OnTearDown();
         }
+
 
         [UnityTest]
         public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnMultipleClients()
         {
-            var emptyMessageChannelClient1 = new NetworkedMessageChannel<EmptyMessage>(FirstClient);
-            var emptyMessageChannelClient2 = new NetworkedMessageChannel<EmptyMessage>(SecondClient);
-            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>(m_ServerNetworkManager);
+            var emptyMessageChannelClient1 = new NetworkedMessageChannel<EmptyMessage>();
+            m_FirstClientScope.InjectIn(emptyMessageChannelClient1);
+            var emptyMessageChannelClient2 = new NetworkedMessageChannel<EmptyMessage>();
+            m_SecondClientScope.InjectIn(emptyMessageChannelClient2);
+            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>();
+            m_ServerScope.InjectIn(emptyMessageChannelServer);
 
             var nbMessagesReceived = 0;
 
@@ -60,8 +88,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnSingleClient()
         {
-            var emptyMessageChannelClient = new NetworkedMessageChannel<EmptyMessage>(FirstClient);
-            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>(m_ServerNetworkManager);
+            var emptyMessageChannelClient = new NetworkedMessageChannel<EmptyMessage>();
+            m_FirstClientScope.InjectIn(emptyMessageChannelClient);
+            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>();
+            m_ServerScope.InjectIn(emptyMessageChannelServer);
 
             var nbMessagesReceived = 0;
 
@@ -91,8 +121,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator NetworkedMessageContentIsProperlyReceived()
         {
-            var genericMessageChannelClient = new NetworkedMessageChannel<GenericMessage>(FirstClient);
-            var genericMessageChannelServer = new NetworkedMessageChannel<GenericMessage>(m_ServerNetworkManager);
+            var genericMessageChannelClient = new NetworkedMessageChannel<GenericMessage>();
+            m_FirstClientScope.InjectIn(genericMessageChannelClient);
+            var genericMessageChannelServer = new NetworkedMessageChannel<GenericMessage>();
+            m_ServerScope.InjectIn(genericMessageChannelServer);
 
             var nbMessagesReceived = 0;
 
@@ -117,9 +149,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator NetworkedMessagesAreStillReceivedAfterNetworkManagerShutsDownAndRestarts()
         {
-            var emptyMessageChannelClient1 = new NetworkedMessageChannel<EmptyMessage>(FirstClient);
-            var emptyMessageChannelClient2 = new NetworkedMessageChannel<EmptyMessage>(SecondClient);
-            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>(m_ServerNetworkManager);
+            var emptyMessageChannelClient1 = new NetworkedMessageChannel<EmptyMessage>();
+            m_FirstClientScope.InjectIn(emptyMessageChannelClient1);
+            var emptyMessageChannelClient2 = new NetworkedMessageChannel<EmptyMessage>();
+            m_SecondClientScope.InjectIn(emptyMessageChannelClient2);
+            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>();
+            m_ServerScope.InjectIn(emptyMessageChannelServer);
 
             var nbMessagesReceived = 0;
 

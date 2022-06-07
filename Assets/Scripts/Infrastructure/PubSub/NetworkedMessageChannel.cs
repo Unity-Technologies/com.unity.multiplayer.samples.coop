@@ -16,10 +16,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         string m_Name;
 
-        public NetworkedMessageChannel(NetworkManager networkManager)
+        public NetworkedMessageChannel()
+        {
+            m_Name = $"{typeof(T).FullName}NetworkMessageChannel";
+        }
+
+        [Inject]
+        void InjectDependencies(NetworkManager networkManager)
         {
             m_NetworkManager = networkManager;
-            m_Name = $"{typeof(T).FullName}NetworkMessageChannel";
             m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
             if (m_NetworkManager.IsListening)
             {

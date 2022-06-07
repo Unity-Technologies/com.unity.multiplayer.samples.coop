@@ -43,6 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindInstanceAsSingle(m_GameNetPortal);
             scope.BindInstanceAsSingle(m_ClientNetPortal);
             scope.BindInstanceAsSingle(m_ServerGameNetPortal);
+            scope.BindInstanceAsSingle(m_GameNetPortal.NetManager);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
@@ -60,10 +61,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
             //they are networked so that the clients can subscribe to those messages that are published by the server
-            scope.BindNetworkedMessageChannelInstance<LifeStateChangedEventMessage>(m_GameNetPortal.NetManager);
-            scope.BindNetworkedMessageChannelInstance<ConnectionEventMessage>(m_GameNetPortal.NetManager);
+            scope.BindNetworkedMessageChannelInstance<LifeStateChangedEventMessage>();
+            scope.BindNetworkedMessageChannelInstance<ConnectionEventMessage>();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            scope.BindNetworkedMessageChannelInstance<CheatUsedMessage>(m_GameNetPortal.NetManager);
+            scope.BindNetworkedMessageChannelInstance<CheatUsedMessage>();
 #endif
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
