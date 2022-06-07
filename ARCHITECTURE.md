@@ -4,7 +4,29 @@ If you want to familiarize yourself with the code base, you are just in the righ
 
 Boss Room is an 8-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey. 
 
-Code is organized into three separate assemblies: `Client`, `Server` and `Shared` (which, as its name implies, contains shared functionality that both client and the server require).
+
+
+
+------------------------------
+------------------------------
+
+Code is organized into a multitude of separate assemblies, each serving a limited purpose. The only exception to this rule is `Gameplay` assembly, which houses most of our networked gameplay logic, connection management and other tightly coupled functionality.
+
+First of all it's important to mention that BossRoom relies on Dependency Injection to wire the dependencies in the app. See `Infrastructure` assembly to find our simple dependency injection container - `DIScope.cs`.
+
+We also rely on a custom PubSub messaging system (see `Infrastructure` assembly, PubSub folder), which allows us various modes of message transfer. This mechanism allows us to have a more limited dependency surface between our assemblies - cross-communicating systems rely on common messages, but don't necessarily need to know about each-other, thus allowing us to separate them into separate purposeful assemblies.
+
+The first assembly to look at is `ApplicationLifecycle` - it contains our `ApplicationController.cs` - the entrypoint to the game. It's purpose is to bind all the common dependencies that will live for the lifetime of the application, to serve as the final shut-down location and to transition us to the next game state when all the bootstrap logic has concluded.
+
+Each scene contains a `...State.cs`, which serves as a scene-specific entrypoint, which, similar to `ApplicationController` binds dependencies (but these dependencies are local to the specific scene and will be released when the scene unloads). 
+
+
+
+--------------------------------
+----------------------------------
+
+
+
 
 ## Host model
 Boss Room uses a Host model for its server. This means one client acts as a server and hosts the other clients. 
@@ -58,15 +80,26 @@ Each scene has exactly one `GameStateBehaviour` (a specialization of `Netcode.Ne
 
 ## Important classes
 
-**Shared**
+
+
+
+------------------------
+UPDATE THIS BIT:
+-----------------------
+
+**Gameplay/Action**
+ - `Action` is the abstract base class for all server actions
+   - `MeleeAction`, `AoeAction`, etc. contain logic for their respective action types. 
+
+
+**Gameplay/**
  - `NetworkCharacterState` contains NetworkVariables that store the state of any given character, and both server and client RPC endpoints. The RPC endpoints only read out the call parameters and then raise events from them; they don’t do any logic internally. 
 
 **Server**
  - `ServerCharacterMovement` manages the movement Finite State Machine (FSM) on the server. Updates the NetworkVariables that synchronize position, rotation and movement speed of the entity on its FixedUpdate.
  - `ServerCharacter` has the `AIBrain`, as well as the ActionQueue. Receives action requests (either from the AIBrain in case of NPCs, or user input in case of player characters), and executes them.
  - `AIBrain` contains main AI FSM.  
- - `Action` is the abstract base class for all server actions
-   - `MeleeAction`, `AoeAction`, etc. contain logic for their respective action types. 
+
 
 **Client**
  - `ClientCharacterVisualization` primarily is a host for the running `ActionFX` class.
