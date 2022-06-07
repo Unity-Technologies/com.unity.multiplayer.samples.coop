@@ -75,6 +75,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="connectionData">binary data passed into StartClient. In our case this is defined by the class ConnectionPayload. </param>
         /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
         /// <param name="connectionApprovedCallback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        public virtual void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback) {}
+        public virtual void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback) { }
     }
 }
