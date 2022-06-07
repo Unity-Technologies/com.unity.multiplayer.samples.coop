@@ -77,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectionManager.ChangeState(Offline);
         }
 
-        public override void StartClientIP(string playerName, string ipaddress, int port) {}
+        public override void StartClientIP(string playerName, string ipaddress, int port) { }
 
         public override Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
         {
