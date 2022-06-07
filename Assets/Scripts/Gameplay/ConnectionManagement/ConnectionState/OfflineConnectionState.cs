@@ -12,6 +12,10 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
+    /// <summary>
+    /// Connection state corresponding to when the NetworkManager is shut down. From this state we can transition to the
+    /// Connecting sate, if starting as a client, or the Hosting state, if starting as a host.
+    /// </summary>
     public class OfflineConnectionState : ConnectionState
     {
         protected LobbyServiceFacade m_LobbyServiceFacade;

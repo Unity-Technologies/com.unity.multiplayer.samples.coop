@@ -4,6 +4,10 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
+    /// <summary>
+    /// Connection state corresponding to a connected client. When being disconnected or timed out, transitions to the
+    /// Offline or Reconnecting state, depending on the cause of the disconnect.
+    /// </summary>
     public class ConnectedConnectionState : ConnectionState
     {
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;

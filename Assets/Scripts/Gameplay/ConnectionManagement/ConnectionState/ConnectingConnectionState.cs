@@ -5,6 +5,10 @@ using Unity.Multiplayer.Samples.Utilities;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
+    /// <summary>
+    /// Connection state corresponding to when a client is attempting to connect to a server. If successful,transitions
+    /// to the Connected state. If not, transitions to the Offline state.
+    /// </summary>
     public class ConnectingConnectionState : ConnectionState
     {
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;

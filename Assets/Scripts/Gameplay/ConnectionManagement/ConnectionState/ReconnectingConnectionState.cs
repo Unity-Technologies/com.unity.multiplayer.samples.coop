@@ -10,6 +10,11 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
+    /// <summary>
+    /// Connection state corresponding to a client attempting to reconnect to a server. It will try to reconnect a
+    /// number of times defined by k_NbReconnectAttempts. If it succeeds, it will transition to the Connected state. If
+    /// not, it will transition to the Offline state.
+    /// </summary>
     public class ReconnectingConnectionState : OfflineConnectionState
     {
         const int k_NbReconnectAttempts = 2;
