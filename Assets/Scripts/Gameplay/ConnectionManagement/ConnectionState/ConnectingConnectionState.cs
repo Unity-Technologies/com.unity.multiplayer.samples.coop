@@ -30,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientConnected(ulong clientId)
         {
-            m_ConnectionManager.ChangeState(ConnectionStateType.Connected);
+            m_ConnectionManager.ChangeState(Connected);
         }
 
         public override void OnClientDisconnect(ulong clientId)
@@ -38,13 +38,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage(){UserRequested = false}); // go through the normal leave flow
             m_ConnectStatusPublisher.Publish(m_ConnectionManager.DisconnectReason.Reason);
             m_ConnectionManager.DisconnectReason.Clear();
-            m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
+            m_ConnectionManager.ChangeState(Offline);
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectionManager.NetworkManager.Shutdown();
-            m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
+            m_ConnectionManager.ChangeState(Offline);
         }
     }
 }

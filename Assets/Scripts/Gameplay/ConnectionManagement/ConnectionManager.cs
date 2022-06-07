@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Client;
@@ -9,15 +8,6 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
-    public enum ConnectionStateType
-    {
-        Offline,
-        Connecting,
-        Connected,
-        Reconnecting,
-        Hosting
-    }
-
     public enum ConnectStatus
     {
         Undefined,
@@ -55,9 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
     public class ConnectionManager : MonoBehaviour
     {
-        static readonly ConnectionStateType[] k_ConnectionStates = (ConnectionStateType[])Enum.GetValues(typeof(ConnectionStateType));
-        ConnectionStateType m_CurrentState;
-        Dictionary<ConnectionStateType, ConnectionState> m_Logics;
+        ConnectionState m_CurrentState;
 
         [SerializeField]
         NetworkManager m_NetworkManager;
@@ -81,21 +69,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void Start()
         {
-            m_Logics = new Dictionary<ConnectionStateType, ConnectionState>()
-            {
-                [ConnectionStateType.Offline] = new OfflineConnectionState(this),
-                [ConnectionStateType.Connecting] = new ConnectingConnectionState(this),
-                [ConnectionStateType.Connected] = new ConnectedConnectionState(this),
-                [ConnectionStateType.Reconnecting] = new ReconnectingConnectionState(this),
-                [ConnectionStateType.Hosting] = new HostingConnectionState(this)
-            };
-            m_CurrentState = ConnectionStateType.Offline;
+            ConnectionState.InitializeStates(this, DIScope.RootScope);
 
-            var scope = DIScope.RootScope;
-            foreach (var connectionState in m_Logics.Values)
-            {
-                scope.InjectIn(connectionState);
-            }
+            m_CurrentState = ConnectionState.Offline;
 
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
@@ -110,22 +86,22 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         }
 
-        public void ChangeState(ConnectionStateType newState)
+        public void ChangeState(ConnectionState newState)
         {
             Debug.Log($"Changed connection sate from {m_CurrentState} to {newState}.");
-            m_Logics[m_CurrentState].Exit();
+            m_CurrentState.Exit();
             m_CurrentState = newState;
-            m_Logics[m_CurrentState].Enter();
+            m_CurrentState.Enter();
         }
 
         void OnClientDisconnectCallback(ulong clientId)
         {
-            m_Logics[m_CurrentState].OnClientDisconnect(clientId);
+            m_CurrentState.OnClientDisconnect(clientId);
         }
 
         void OnClientConnectedCallback(ulong clientId)
         {
-            m_Logics[m_CurrentState].OnClientConnected(clientId);
+            m_CurrentState.OnClientConnected(clientId);
         }
 
         /// <summary>
@@ -144,33 +120,33 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="connectionApprovedCallback">The delegate we must invoke to signal that the connection was approved or not. </param>
         void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
-            m_Logics[m_CurrentState].ApprovalCheck(connectionData, clientId, connectionApprovedCallback);
+            m_CurrentState.ApprovalCheck(connectionData, clientId, connectionApprovedCallback);
         }
 
         public Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
         {
-            return m_Logics[m_CurrentState].StartClientLobbyAsync(playerName, onFailure);
+            return m_CurrentState.StartClientLobbyAsync(playerName, onFailure);
         }
 
         public void StartClientIp(string playerName, string ipaddress, int port)
         {
-            m_Logics[m_CurrentState].StartClientIP(playerName, ipaddress, port);
+            m_CurrentState.StartClientIP(playerName, ipaddress, port);
         }
 
         public void StartHostLobby(string playerName)
         {
-            m_Logics[m_CurrentState].StartHostLobbyAsync(playerName);
+            m_CurrentState.StartHostLobbyAsync(playerName);
         }
 
         public bool StartHostIp(string playerName, string ipaddress, int port)
         {
-            return m_Logics[m_CurrentState].StartHostIP(playerName, ipaddress, port);
+            return m_CurrentState.StartHostIP(playerName, ipaddress, port);
         }
 
         public void RequestShutdown()
         {
             DisconnectReason.SetDisconnectReason(ConnectStatus.UserRequestedDisconnect);
-            m_Logics[m_CurrentState].OnUserRequestedShutdown();
+            m_CurrentState.OnUserRequestedShutdown();
         }
 
         public void RegisterCustomMessages()

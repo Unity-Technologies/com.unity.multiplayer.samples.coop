@@ -43,7 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
             ConnectClient(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(ConnectionStateType.Connecting);
+            m_ConnectionManager.ChangeState(Connecting);
         }
 
         public override async Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
@@ -51,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (await JoinRelayServerAsync(onFailure))
             {
                 ConnectClient(GetPlayerId(), playerName);
-                m_ConnectionManager.ChangeState(ConnectionStateType.Connecting);
+                m_ConnectionManager.ChangeState(Connecting);
             }
         }
 
@@ -85,7 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var success = StartHost(GetPlayerId(), playerName);
             if (success)
             {
-                m_ConnectionManager.ChangeState(ConnectionStateType.Hosting);
+                m_ConnectionManager.ChangeState(Hosting);
             }
 
             return success;
@@ -117,7 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             if (StartHost(GetPlayerId(), playerName))
             {
-                m_ConnectionManager.ChangeState(ConnectionStateType.Hosting);
+                m_ConnectionManager.ChangeState(Hosting);
             }
         }
 

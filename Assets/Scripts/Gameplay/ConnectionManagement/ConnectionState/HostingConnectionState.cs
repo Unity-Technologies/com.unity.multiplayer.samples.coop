@@ -58,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
-                m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
+                m_ConnectionManager.ChangeState(Offline);
             }
             else
             {
@@ -152,7 +152,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             yield return null;
             m_ConnectionManager.NetworkManager.Shutdown();
-            m_ConnectionManager.ChangeState(ConnectionStateType.Offline);
+            m_ConnectionManager.ChangeState(Offline);
         }
     }
 }
