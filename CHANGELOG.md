@@ -6,27 +6,38 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [v1.3.0-pre UNRELEASED] - yyyy-mm-dd
+
+### Added
+* Adding RNSM (Runtime Network Stats Monitor) to boss room [MTT-3267] (#621)
+* Other players loading progress in loading screen [MTT-2239] (#580)
+* Auto reconnect [MTT-2617] (#611)
+* Bumping relay version so we now have auto region selection (with the QoS package). This allows selecting the right relay region instead of the default us-central and should reduce latency for non-central folks. (#657)
+* Bad network conditions warning [MTT-3242] (#632)
+* Added basis for automated testing and CI (#484) (#487) (#639)	
+* Connection feedback + IP connection window [MTT-2315] [MTT-3234] (#613)	
+* First import of all the vandal imp artwork (#637)
+* Updated boss room's root scene to automatically load child scenes at editor time (#653)
+
+### Changed
+* Bump NGO to pre.9 (#643)
+* Bump Boss Room to Unity 2021 [MTT-3022] (#620)
+* Remove initial ugs popup [MTT-3563] (#650) --> Users who do not use UGS will no longer receive a popup when starting the application telling them how to set it up. It is replaced with a tooltip that appears when hovering on the "Start with Lobby" button with the cursor.
+* Folders and assemblies refactor MTT-2623, MTT-2615 (#628) --> work in progress
+
+### Removed
+* Remove UNET [MTT-3435] (#638) --> removed deprecated UNET transport from Boss Room
+
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-feat: adding RNSM (Runtime Network Stats Monitor) to boss room [MTT-3267] (#621)
-Added basic automated testing and CI (#484)	(#487) (#639)	
-feat: connection feedback + IP connection window [MTT-2315] [MTT-3234] (#613)	
-First import of all the vandal imp artwork (#637)
-feat: other players loading progress in loading screen [MTT-2239] (#580)
-feat: auto reconnect [MTT-2617] (#611)
-
+*
 ### Changed
-fix: remove initial ugs popup [MTT-3563] (#650) --> Users who do not use UGS will no longer receive a popup when starting the application telling them how to set it up. It is replaced with a tooltip that appears when hovering on the "Start with Lobby" button with the cursor.
-chore: bump NGO to pre.9 (#643)
-chore: bump boss room to 2021 [MTT-3022] (#620)	
-fix: folders and assemblies refactor MTT-2623, MTT-2615 (#628)
-
+*
 ### Removed
-chore: remove UNET [MTT-3435] (#638) --> removed deprecated UNET transport from Boss Room
-
+*
 ### Fixed
-
+*
 ## [1.2.0-pre] - 2022-04-28
 ### Changes
 * Bump to pre.8 and fix compile issues [MTT-3413] (#631) --> Custom message structs now need new interfaces
