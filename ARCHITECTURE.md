@@ -4,29 +4,34 @@ If you want to familiarize yourself with the code base, you are just in the righ
 
 Boss Room is an 8-player co-op RPG game experience, where players collaborate to take down some minions, and then a boss. Players can select between classes that each have skills with didactically interesting networking characteristics. Control model is click-to-move, with skills triggered by mouse button or hotkey. 
 
+## Assembly structure
+In Boss Room code is organized into a multitude of domain-based assemblies. Each assembly serves a relatively self-contained purpose. 
+An exception to this guideline is Gameplay assembly, which houses most of our networked gameplay logic, connection management and other tightly coupled functionality.
 
+This assembly separation style forces us to have better separation of concerns and serves as one of the ways to keep the code-base organized. It also provides a benefit of more granular recompilation during our iterations, which shaves us some time we would've spent looking at the progress bar.
 
+## Important architectural patterns
+In Boss Room we made several noteworthy architectural decisions:
 
-------------------------------
-------------------------------
+1) We use [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) pattern, with our library of choice being [VContainer](https://vcontainer.hadashikick.jp/).
 
-Code is organized into a multitude of separate assemblies, each serving a limited purpose. The only exception to this rule is `Gameplay` assembly, which houses most of our networked gameplay logic, connection management and other tightly coupled functionality.
+DI allows us to clearly define our dependencies in code, as opposed to using ScriptableObjects, static access and pervasive singletons. Code is easy to version-control and comparatively easy to understand for a programmer, as opposed to Unity YAML-based objects, such as scenes, scriptable object instances and prefabs.
 
-First of all it's important to mention that BossRoom relies on Dependency Injection to wire the dependencies in the app. See `Infrastructure` assembly to find our simple dependency injection container - `DIScope.cs`.
+2) We have implemented the DI-friendly Publisher-Subscriber pattern (see Infrastructure assembly, PubSub folder).
 
-We also rely on a custom PubSub messaging system (see `Infrastructure` assembly, PubSub folder), which allows us various modes of message transfer. This mechanism allows us to have a more limited dependency surface between our assemblies - cross-communicating systems rely on common messages, but don't necessarily need to know about each-other, thus allowing us to separate them into separate purposeful assemblies.
+It allows us various modes of message transfer. This mechanism allows us to both avoid circular references and to have a more limited dependency surface between our assemblies - cross-communicating systems rely on common messages, but don't necessarily need to know about each-other, thus allowing us to separate them into separate purposeful assemblies.
+It allows us to avoid having circular references between assemblies, the code of which needs only to know about the messaging protocol, but doesn't actually need to reference anything else. The other benefit is strong separation of concerns and coupling reduction, which is achieved by using PubSub along with Dependency Injection. DI is used to pass the handles to either `IPublisher` or `ISubscriber` of any given event type, and thus our message publishers and consumers are truly not aware of each-other.
 
-The first assembly to look at is `ApplicationLifecycle` - it contains our `ApplicationController.cs` - the entrypoint to the game. It's purpose is to bind all the common dependencies that will live for the lifetime of the application, to serve as the final shut-down location and to transition us to the next game state when all the bootstrap logic has concluded.
+## Application entrypoint and application state
+The first scene that the application should load to do a normal launch is the `Startup` scene, which contains a game object with an `ApplicationController.cs` component on it.
 
-Each scene contains a `...State.cs`, which serves as a scene-specific entrypoint, which, similar to `ApplicationController` binds dependencies (but these dependencies are local to the specific scene and will be released when the scene unloads). 
+This component inherits from the `VContainer`'s `LifetimeScope` - a class that serves as a dependency injection scope and bootrstrapper, where we can bind dependencies. `LifetimeScopes` are organized in a tree, starting from the root scope. By defining in the interface a parent scope we make our lives easier when handling scene loads - all of the logic to start and dispose of a scope would largely be on the `VContainer`.
 
+`ApplicationController` is the root scope and the entry point of the application. It binds the dependencies that are used. It's purpose is to bind all the common dependencies that will live for the lifetime of the application, to serve as the final shut-down location and to transition us to the `MainMenu` scene when all the bootstrap logic has concluded.
 
+`MainMenu` scene has it's own `State` component sitting on a root-level game object in that scene. It serves as a scene-specific entrypoint, which, similar to ApplicationController binds dependencies (but these dependencies are local to the specific scene and will be released when the scene unloads).
 
---------------------------------
-----------------------------------
-
-
-
+For MainMenu scene we only have the client state, however for the scenes that contain networked logic we also have the `server` counterparts to the client scenes, and both exist on the same game object.
 
 ## Host model
 Boss Room uses a Host model for its server. This means one client acts as a server and hosts the other clients. 
