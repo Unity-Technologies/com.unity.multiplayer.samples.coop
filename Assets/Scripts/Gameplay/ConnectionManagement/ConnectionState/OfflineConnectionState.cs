@@ -131,7 +131,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
 
                 SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
-                    new SessionPlayerData(clientId, connectionPayload.playerName, m_ConnectionManager.AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid(), 0, true));
+                    new SessionPlayerData(clientId, connectionPayload.playerName, new NetworkGuid(), 0, true));
 
                 // connection approval will create a player object for you
                 connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);

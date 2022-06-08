@@ -56,10 +56,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public NetworkManager NetworkManager => m_NetworkManager;
 
         [SerializeField]
-        AvatarRegistry m_AvatarRegistry;
-        public AvatarRegistry AvatarRegistry => m_AvatarRegistry;
-
-        [SerializeField]
         NetworkObject m_GameState;
         public NetworkObject GameState => m_GameState;
 
