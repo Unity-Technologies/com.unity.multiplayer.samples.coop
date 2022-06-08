@@ -18,13 +18,13 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Connection feedback + IP connection window [MTT-2315] [MTT-3234] (#613)	
 * First import of all the vandal imp artwork (#637)
 * Updated boss room's root scene to automatically load child scenes at editor time (#653)
-* Refactored connection management into simpler state machine (#666)
 
 ### Changed
 * Bump NGO to pre.9 (#643)
 * Bump Boss Room to Unity 2021 [MTT-3022] (#620)
 * Remove initial ugs popup [MTT-3563] (#650) --> Users who do not use UGS will no longer receive a popup when starting the application telling them how to set it up. It is replaced with a tooltip that appears when hovering on the "Start with Lobby" button with the cursor.
 * Folders and assemblies refactor MTT-2623, MTT-2615 (#628) --> work in progress
+* Refactored connection management into simpler state machine (#666)
 
 ### Removed
 * Remove UNET [MTT-3435] (#638) --> removed deprecated UNET transport from Boss Room
