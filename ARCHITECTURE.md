@@ -31,6 +31,17 @@ This component inherits from the `VContainer`'s `LifetimeScope` - a class that s
 
 `MainMenu` scene has it's own `State` component sitting on a root-level game object in that scene. It serves as a scene-specific entrypoint, which, similar to ApplicationController binds dependencies (but these dependencies are local to the specific scene and will be released when the scene unloads).
 
+# Game state / Scene flow
+In Boss Room, scenes correspond to top-level Game States (see `GameStateBehaviour` class) in a 1:1 way. That is, there is a `MainMenu` scene, `Character Select` scene (and state), and so on. 
+
+Because it is currently challenging to have a client be in a different scene than the server it's connected to, the options for Netcode developers are either to not use scenes at all, or to use scenes, and let game state transitions on the host drive game state transitions on the client indirectly by forcing client scene transitions through Netcode's networked scene management. 
+
+We chose the latter approach. 
+
+Each scene has exactly one `GameStateBehaviour` (a specialization of `Netcode.NetworkBehaviour`), that is responsible for running the global state logic for that scene. States are transitioned by triggered scene transitions.
+
+!!!! GAME STATE BEHAVIOURS are no longer network behaviours
+
 For MainMenu scene we only have the client state, however for the scenes that contain networked logic we also have the `server` counterparts to the client scenes, and both exist on the same game object.
 
 ## Host model
@@ -74,14 +85,6 @@ The transport is set in the transport field in the `NetworkManager`. We are usin
 
 To add new transports in the project, parts of `GameNetPortal` and `ClientGameNetPortal` (transport switches) need to be extended.
 
-## Game state / Scene flow
-In Boss Room, scenes correspond to top-level Game States (see `GameStateBehaviour` class) in a 1:1 way. That is, there is a `MainMenu` scene, `Character Select` scene (and state), and so on. 
-
-Because it is currently challenging to have a client be in a different scene than the server it's connected to, the options for Netcode developers are either to not use scenes at all, or to use scenes, and let game state transitions on the host drive game state transitions on the client indirectly by forcing client scene transitions through Netcode's networked scene management. 
-
-We chose the latter approach. 
-
-Each scene has exactly one `GameStateBehaviour` (a specialization of `Netcode.NetworkBehaviour`), that is responsible for running the global state logic for that scene. States are transitioned by triggered scene transitions.
 
 ## Important classes
 
