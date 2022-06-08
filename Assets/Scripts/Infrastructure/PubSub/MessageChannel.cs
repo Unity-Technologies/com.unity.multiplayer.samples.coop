@@ -8,11 +8,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
     {
         readonly List<Action<T>> m_MessageHandlers = new List<Action<T>>();
 
-        /// <summary>
-        /// This queue of actions that would either add or remove subscriber is used to prevent problems from immediate modification
-        /// of the list of subscribers. It could happen if one decides to unsubscribe in a message handler etc.
-        /// </summary>
-        readonly Queue<Action> m_PendingHandlers = new Queue<Action>();
+        /// This dictionary of handlers to be either added or removed is used to prevent problems from immediate
+        /// modification of the list of subscribers. It could happen if one decides to unsubscribe in a message handler
+        /// etc.A true value means this handler should be added, and a false one means it should be removed
+        readonly Dictionary<Action<T>, bool> m_PendingHandlers = new Dictionary<Action<T>, bool>();
 
         public bool IsDisposed { get; private set; } = false;
 
@@ -28,10 +27,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public virtual void Publish(T message)
         {
-            while (m_PendingHandlers.Count > 0)
+            foreach (var handler in m_PendingHandlers.Keys)
             {
-                m_PendingHandlers.Dequeue()?.Invoke();
+                if (m_PendingHandlers[handler])
+                {
+                    m_MessageHandlers.Add(handler);
+                }
+                else
+                {
+                    m_MessageHandlers.Remove(handler);
+                }
             }
+            m_PendingHandlers.Clear();
 
             foreach (var messageHandler in m_MessageHandlers)
             {
@@ -41,30 +48,46 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public virtual IDisposable Subscribe(Action<T> handler)
         {
-            Assert.IsTrue(!m_MessageHandlers.Contains(handler), "Attempting to subscribe with the same handler more than once");
-            // so we don't modify the handler list while iterating on it (which could happen if the handler unsubscribes). With this, we'd unsubscribe on next publish.
-            m_PendingHandlers.Enqueue(() => { DoSubscribe(handler); });
+            Assert.IsTrue(!IsSubscribed(handler), "Attempting to subscribe with the same handler more than once");
+
+            if (m_PendingHandlers.ContainsKey(handler))
+            {
+                if (!m_PendingHandlers[handler])
+                {
+                    m_PendingHandlers.Remove(handler);
+                }
+            }
+            else
+            {
+                m_PendingHandlers[handler] = true;
+            }
 
             var subscription = new DisposableSubscription<T>(this, handler);
             return subscription;
-
-            void DoSubscribe(Action<T> h)
-            {
-                if (h != null && !m_MessageHandlers.Contains(h))
-                {
-                    m_MessageHandlers.Add(h);
-                }
-            }
         }
 
         public void Unsubscribe(Action<T> handler)
         {
-            m_PendingHandlers.Enqueue(() => { DoUnsubscribe(handler); });
+            Assert.IsTrue(IsSubscribed(handler), "Attempting to unsubscribe with a handler that is not subscribed");
 
-            void DoUnsubscribe(Action<T> h)
+            if (m_PendingHandlers.ContainsKey(handler))
             {
-                m_MessageHandlers.Remove(h);
+                if (m_PendingHandlers[handler])
+                {
+                    m_PendingHandlers.Remove(handler);
+                }
             }
+            else
+            {
+                m_PendingHandlers[handler] = false;
+            }
+        }
+
+        bool IsSubscribed(Action<T> handler)
+        {
+            var isPendingRemoval = m_PendingHandlers.ContainsKey(handler) && !m_PendingHandlers[handler];
+            var isPendingAdding = m_PendingHandlers.ContainsKey(handler) && m_PendingHandlers[handler];
+            return m_MessageHandlers.Contains(handler) && !isPendingRemoval || isPendingAdding;
         }
     }
 }
