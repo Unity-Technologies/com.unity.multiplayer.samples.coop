@@ -4,11 +4,13 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -27,6 +29,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         const int k_MaxUnityRelayConnections = 8;
 
+        const string k_MainMenuSceneName = "MainMenu";
+
         [Inject]
         protected void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby)
         {
@@ -35,7 +39,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_LocalLobby = localLobby;
         }
 
-        public override void Enter() { }
+        public override void Enter()
+        {
+            m_LobbyServiceFacade.EndTracking();
+            if (SceneManager.GetActiveScene().name != k_MainMenuSceneName)
+            {
+                SceneLoaderWrapper.Instance.LoadScene(k_MainMenuSceneName, useNetworkSceneManager: false);
+            }
+        }
 
         public override void Exit() { }
 

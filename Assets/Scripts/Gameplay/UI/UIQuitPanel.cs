@@ -17,13 +17,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         QuitMode m_QuitMode = QuitMode.ReturnToMenu;
 
-        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
+        ConnectionManager m_ConnectionManager;
         IPublisher<QuitApplicationMessage> m_QuitApplicationPub;
 
         [Inject]
-        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPub, IPublisher<QuitApplicationMessage> quitApplicationPub)
+        void InjectDependencies(ConnectionManager connectionManager, IPublisher<QuitApplicationMessage> quitApplicationPub)
         {
-            m_QuitGameSessionPub = quitGameSessionPub;
+            m_ConnectionManager = connectionManager;
             m_QuitApplicationPub = quitApplicationPub;
         }
 
@@ -32,7 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             switch (m_QuitMode)
             {
                 case QuitMode.ReturnToMenu:
-                    m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = true });
+                    m_ConnectionManager.RequestShutdown();
                     break;
                 case QuitMode.QuitApplication:
                     m_QuitApplicationPub.Publish(new QuitApplicationMessage());

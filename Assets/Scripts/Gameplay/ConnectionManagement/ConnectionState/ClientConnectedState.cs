@@ -1,5 +1,4 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 
 namespace Unity.Multiplayer.Samples.BossRoom
@@ -10,16 +9,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public class ClientConnectedState : ConnectionState
     {
-        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
         ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
         IDisposable m_Subscription;
 
         ConnectStatus m_ConnectStatus;
 
         [Inject]
-        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPublisher, ISubscriber<ConnectStatus> connectStatusSubscriber)
+        void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSubscriber)
         {
-            m_QuitGameSessionPublisher = quitGameSessionPublisher;
             m_ConnectStatusSubscriber = connectStatusSubscriber;
         }
 
@@ -39,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 case ConnectStatus.UserRequestedDisconnect:
                 case ConnectStatus.HostEndedSession:
-                    m_QuitGameSessionPublisher.Publish(new QuitGameSessionMessage() { UserRequested = false }); // go through the normal leave flow
+                    // go through the normal leave flow
                     m_ConnectionManager.ChangeState(Offline);
                     break;
                 default:

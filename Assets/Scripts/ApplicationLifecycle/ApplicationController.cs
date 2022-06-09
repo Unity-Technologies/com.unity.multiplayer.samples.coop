@@ -48,7 +48,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             scope.BindAsSingle<ProfileManager>();
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
-            scope.BindMessageChannelInstance<QuitGameSessionMessage>();
             scope.BindMessageChannelInstance<QuitApplicationMessage>();
             scope.BindMessageChannelInstance<UnityServiceErrorMessage>();
             scope.BindBufferedMessageChannelInstance<ConnectStatus>();
@@ -82,11 +81,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             m_LocalLobby = scope.Resolve<LocalLobby>();
             m_LobbyServiceFacade = scope.Resolve<LobbyServiceFacade>();
 
-            var quitGameSessionSub = scope.Resolve<ISubscriber<QuitGameSessionMessage>>();
             var quitApplicationSub = scope.Resolve<ISubscriber<QuitApplicationMessage>>();
 
             var subHandles = new DisposableGroup();
-            subHandles.Add(quitGameSessionSub.Subscribe(LeaveSession));
             subHandles.Add(quitApplicationSub.Subscribe(QuitGame));
             m_Subscriptions = subHandles;
 
@@ -133,19 +130,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                 StartCoroutine(LeaveBeforeQuit());
             }
             return canQuit;
-        }
-
-        // TODO remove messaging for this once we have vcontainer.
-        private void LeaveSession(QuitGameSessionMessage msg)
-        {
-            m_LobbyServiceFacade.EndTracking();
-
-            if (msg.UserRequested)
-            {
-                // first disconnect then return to menu
-                m_ConnectionManager.RequestShutdown();
-            }
-            SceneLoaderWrapper.Instance.LoadScene("MainMenu", useNetworkSceneManager: false);
         }
 
         private void QuitGame(QuitApplicationMessage msg)
