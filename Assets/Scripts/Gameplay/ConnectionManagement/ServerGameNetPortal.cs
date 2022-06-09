@@ -8,6 +8,7 @@ using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using Unity.Netcode;
 using UnityEngine.SceneManagement;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -34,16 +35,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         static int ServerScene => SceneManager.GetActiveScene().buildIndex;
 
+        [Inject]
         LobbyServiceFacade m_LobbyServiceFacade;
 
-        IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
-
         [Inject]
-        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, IPublisher<ConnectionEventMessage> connectionEventPublisher)
-        {
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_ConnectionEventPublisher = connectionEventPublisher;
-        }
+        IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
 
         void Start()
         {

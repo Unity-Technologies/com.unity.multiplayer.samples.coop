@@ -37,13 +37,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Color m_LoseLightColor;
 
-        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
-
         [Inject]
-        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPub)
-        {
-            m_QuitGameSessionPub = quitGameSessionPub;
-        }
+        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
 
         void Start()
         {

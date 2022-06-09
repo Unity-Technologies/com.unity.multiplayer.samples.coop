@@ -8,6 +8,7 @@ using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -47,15 +48,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Keeping the subscriber during this GameState's lifetime to allow disposing of subscription and re-subscribing
         /// when despawning and spawning again.
         /// </summary>
+        [Inject]
         ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
 
         IDisposable m_Subscription;
-
-        [Inject]
-        void InjectDependencies(ISubscriber<LifeStateChangedEventMessage> subscriber)
-        {
-            m_LifeStateChangedEventMessageSubscriber = subscriber;
-        }
 
         public override void OnNetworkSpawn()
         {

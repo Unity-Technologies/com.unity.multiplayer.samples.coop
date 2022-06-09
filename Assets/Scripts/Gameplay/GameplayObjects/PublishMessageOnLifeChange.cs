@@ -1,6 +1,7 @@
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -21,13 +22,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         NetworkNameState m_NameState;
 
-        IPublisher<LifeStateChangedEventMessage> m_Publisher;
-
         [Inject]
-        void InjectDependencies(IPublisher<LifeStateChangedEventMessage> publisher)
-        {
-            m_Publisher = publisher;
-        }
+        IPublisher<LifeStateChangedEventMessage> m_Publisher;
 
         public override void OnNetworkSpawn()
         {

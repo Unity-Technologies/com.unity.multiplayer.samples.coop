@@ -1,3 +1,4 @@
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
@@ -6,13 +7,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     {
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
-        public override void OnNetworkSpawn()
+        protected override void Awake()
         {
-            if (!IsServer)
+            base.Awake();
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnAllClientsFinishedLoading;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            if (NetworkManager.Singleton.SceneManager != null)
             {
-                enabled = false;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnAllClientsFinishedLoading;
             }
-            else
+        }
+
+        static void OnAllClientsFinishedLoading(SceneEvent sceneEvent)
+        {
+            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete && sceneEvent.ClientId != NetworkManager.ServerClientId) return;
+            if (NetworkManager.Singleton.IsServer)
             {
                 SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
             }
