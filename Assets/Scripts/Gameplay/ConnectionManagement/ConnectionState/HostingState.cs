@@ -145,13 +145,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         static IEnumerator WaitToDenyApproval(NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(0.2f);
             connectionApprovedCallback(false, 0, false, null, null);
         }
 
         IEnumerator WaitToShutdown()
         {
-            yield return null;
+            yield return new WaitForSeconds(0.2f);
             m_ConnectionManager.NetworkManager.Shutdown();
             m_ConnectionManager.ChangeState(Offline);
         }
