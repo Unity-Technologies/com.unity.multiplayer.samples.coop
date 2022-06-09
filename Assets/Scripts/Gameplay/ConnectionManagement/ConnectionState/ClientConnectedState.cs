@@ -8,7 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to a connected client. When being disconnected or timed out, transitions to the
     /// Offline or Reconnecting state, depending on the cause of the disconnect.
     /// </summary>
-    public class ConnectedConnectionState : ConnectionState
+    public class ClientConnectedState : ConnectionState
     {
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
         ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
@@ -44,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     break;
                 default:
                     // try reconnecting
-                    m_ConnectionManager.ChangeState(Reconnecting);
+                    m_ConnectionManager.ChangeState(ClientReconnecting);
                     break;
             }
         }

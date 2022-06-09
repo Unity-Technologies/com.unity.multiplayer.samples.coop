@@ -15,7 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// number of times defined by k_NbReconnectAttempts. If it succeeds, it will transition to the Connected state. If
     /// not, it will transition to the Offline state.
     /// </summary>
-    public class ReconnectingConnectionState : OfflineConnectionState
+    public class ClientReconnectingState : OfflineState
     {
         const int k_NbReconnectAttempts = 2;
 
@@ -58,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientConnected(ulong clientId)
         {
-            m_ConnectionManager.ChangeState(Connected);
+            m_ConnectionManager.ChangeState(ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong clientId)

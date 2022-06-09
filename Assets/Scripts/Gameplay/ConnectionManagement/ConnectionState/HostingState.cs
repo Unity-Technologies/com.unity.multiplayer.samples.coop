@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to a listening host. Handles incoming client connections. When shutting down or
     /// being timed out, transitions to the Offline state.
     /// </summary>
-    public class HostingConnectionState : ConnectionState
+    public class HostingState : ConnectionState
     {
         LobbyServiceFacade m_LobbyServiceFacade;
         IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;

@@ -9,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to when a client is attempting to connect to a server. If successful,transitions
     /// to the Connected state. If not, transitions to the Offline state.
     /// </summary>
-    public class ConnectingConnectionState : ConnectionState
+    public class ClientConnectingState : ConnectionState
     {
         IPublisher<QuitGameSessionMessage> m_QuitGameSessionPublisher;
 
@@ -29,7 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientConnected(ulong clientId)
         {
-            m_ConnectionManager.ChangeState(Connected);
+            m_ConnectionManager.ChangeState(ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong clientId)

@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to when the NetworkManager is shut down. From this state we can transition to the
     /// Connecting sate, if starting as a client, or the Hosting state, if starting as a host.
     /// </summary>
-    public class OfflineConnectionState : ConnectionState
+    public class OfflineState : ConnectionState
     {
         protected LobbyServiceFacade m_LobbyServiceFacade;
         LocalLobby m_LocalLobby;
@@ -44,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
             ConnectClient(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(Connecting);
+            m_ConnectionManager.ChangeState(ClientConnecting);
         }
 
         public override async Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
@@ -52,7 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (await JoinRelayServerAsync(onFailure))
             {
                 ConnectClient(GetPlayerId(), playerName);
-                m_ConnectionManager.ChangeState(Connecting);
+                m_ConnectionManager.ChangeState(ClientConnecting);
             }
         }
 
