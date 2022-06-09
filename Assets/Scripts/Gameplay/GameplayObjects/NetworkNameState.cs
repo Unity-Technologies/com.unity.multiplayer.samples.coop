@@ -19,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public struct FixedPlayerName : INetworkSerializable
     {
-        ForceNetworkSerializeByMemcpy<FixedString32Bytes> m_Name; // using ForceNetworkSerializeByMemcpy to force compatibility between FixedString and NetworkSerializable
+        FixedString32Bytes m_Name;
         public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
         {
             serializer.SerializeValue(ref m_Name);

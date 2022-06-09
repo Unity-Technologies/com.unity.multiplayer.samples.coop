@@ -11,7 +11,7 @@
 ### Removed
 *
 ### Fixed
-*
+* Fixed breaking change from NetworkTransform in ClientNetworkTransform
 ## [1.2.0-pre] - 2022-04-28
 ### Added
 * Client network transform move to samples [MTT-3406] (#629) --> You can now use Boss Room's Utilities package to import ClientNetworkTransform using this line in your manifest file     
