@@ -35,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 var gameState = FindObjectOfType<ServerBossRoomState>();
                 if (gameState != null)
                 {
-                    gameState.Scope.InjectIn(this);
+                    gameState.Container.Inject(this);
                 }
             }
         }

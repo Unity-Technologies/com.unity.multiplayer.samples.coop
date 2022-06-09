@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -27,6 +28,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
+
+        IDisposable m_Subscriptions;
 
         protected override void Configure(IContainerBuilder builder)
         {
