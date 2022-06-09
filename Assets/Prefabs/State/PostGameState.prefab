@@ -47,7 +47,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: 
+    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
   autoRun: 1
   autoInjectGameObjects: []
 --- !u!114 &-1007214952234040975
