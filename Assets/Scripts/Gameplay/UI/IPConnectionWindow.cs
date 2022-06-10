@@ -18,15 +18,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         IPUIMediator m_IPUIMediator;
 
+        IDisposable m_Subscription;
+
         [Inject]
-        void InjectDependencies(IPUIMediator ipUIMediator)
+        void InjectDependencies(IPUIMediator ipUIMediator, ISubscriber<ConnectStatus> connectStatusSubscriber)
         {
             m_IPUIMediator = ipUIMediator;
+            m_Subscription = connectStatusSubscriber.Subscribe(OnConnectStatusMessage);
         }
 
         void Awake()
         {
             Hide();
+        }
+
+        void OnDestroy()
+        {
+            m_Subscription.Dispose();
+        }
+
+        void OnConnectStatusMessage(ConnectStatus connectStatus)
+        {
+            CancelConnectionWindow();
+            m_IPUIMediator.DisableSignInSpinner();
         }
 
         void Show()

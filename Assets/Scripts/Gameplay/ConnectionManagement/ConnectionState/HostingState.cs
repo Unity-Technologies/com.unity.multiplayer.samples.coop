@@ -123,7 +123,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 {
                     m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
                 }
-                connectionApprovedCallback(false, 0, false, null, null);
             }
         }
 
@@ -145,13 +144,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         static IEnumerator WaitToDenyApproval(NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
             connectionApprovedCallback(false, 0, false, null, null);
         }
 
         IEnumerator WaitToShutdown()
         {
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
             m_ConnectionManager.NetworkManager.Shutdown();
             m_ConnectionManager.ChangeState(Offline);
         }
