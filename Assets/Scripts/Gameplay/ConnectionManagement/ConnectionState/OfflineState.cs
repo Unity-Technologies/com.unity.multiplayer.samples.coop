@@ -158,9 +158,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             SetConnectionPayload(playerId, playerName);
 
-            //and...we're off! Netcode will establish a socket connection to the host.
-            //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
-            //  If the socket connection succeeds, we'll get our ReceiveServerToClientConnectResult_CustomMessage invoked. This is where game-layer failures will be reported.
             if (m_ConnectionManager.NetworkManager.StartClient())
             {
                 m_ConnectionManager.ChangeState(ClientConnecting);
