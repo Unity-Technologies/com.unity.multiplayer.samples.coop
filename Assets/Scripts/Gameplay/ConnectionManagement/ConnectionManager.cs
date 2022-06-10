@@ -1,7 +1,6 @@
 using System;
 using System.Threading.Tasks;
 using Unity.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
@@ -58,14 +57,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [SerializeField]
         NetworkObject m_GameState;
         public NetworkObject GameState => m_GameState;
-
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-
-        [Inject]
-        void InjectDependencies(IPublisher<ConnectStatus> connectStatusPublisher)
-        {
-            m_ConnectStatusPublisher = connectStatusPublisher;
-        }
 
         void Awake()
         {
@@ -136,7 +127,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void RequestShutdown()
         {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
             m_CurrentState.OnUserRequestedShutdown();
         }
 
@@ -152,7 +142,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
         {
             reader.ReadValueSafe(out ConnectStatus status);
-            m_ConnectStatusPublisher.Publish(status);
+            m_CurrentState.OnDisconnectReasonReceived(status);
         }
 
         /// <summary>

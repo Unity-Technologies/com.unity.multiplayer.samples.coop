@@ -9,47 +9,35 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public class ClientConnectedState : ConnectionState
     {
-        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
-        IDisposable m_Subscription;
-
-        ConnectStatus m_ConnectStatus;
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         [Inject]
-        void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSubscriber)
+        void InjectDependencies(IPublisher<ConnectStatus> connectStatusPublisher)
         {
-            m_ConnectStatusSubscriber = connectStatusSubscriber;
+            m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
-        public override void Enter()
-        {
-            m_Subscription = m_ConnectStatusSubscriber.Subscribe(status => m_ConnectStatus = status);
-        }
+        public override void Enter() { }
 
-        public override void Exit()
-        {
-            m_Subscription.Dispose();
-        }
+        public override void Exit() { }
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            switch (m_ConnectStatus)
-            {
-                case ConnectStatus.UserRequestedDisconnect:
-                case ConnectStatus.HostEndedSession:
-                    // go through the normal leave flow
-                    m_ConnectionManager.ChangeState(Offline);
-                    break;
-                default:
-                    // try reconnecting
-                    m_ConnectionManager.ChangeState(ClientReconnecting);
-                    break;
-            }
+            m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
+            m_ConnectionManager.ChangeState(ClientReconnecting);
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectionManager.NetworkManager.Shutdown();
+            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
             m_ConnectionManager.ChangeState(Offline);
+        }
+
+        public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
+        {
+            m_ConnectStatusPublisher.Publish(disconnectReason);
+            m_ConnectionManager.ChangeState(DisconnectingWithReason);
         }
     }
 }

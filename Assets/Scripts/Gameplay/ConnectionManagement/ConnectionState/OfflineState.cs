@@ -21,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public class OfflineState : ConnectionState
     {
         protected LobbyServiceFacade m_LobbyServiceFacade;
+        protected IPublisher<ConnectStatus> m_ConnectStatusPublisher;
         LocalLobby m_LocalLobby;
         ProfileManager m_ProfileManager;
 
@@ -32,11 +33,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         const string k_MainMenuSceneName = "MainMenu";
 
         [Inject]
-        protected void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby)
+        protected void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ConnectStatus> connectStatusPublisher)
         {
             m_ProfileManager = profileManager;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
+            m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
         public override void Enter()
@@ -55,7 +57,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
             ConnectClient(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(ClientConnecting);
         }
 
         public override async Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
@@ -63,7 +64,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (await JoinRelayServerAsync(onFailure))
             {
                 ConnectClient(GetPlayerId(), playerName);
-                m_ConnectionManager.ChangeState(ClientConnecting);
             }
         }
 
@@ -94,13 +94,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
 
-            var success = StartHost(GetPlayerId(), playerName);
-            if (success)
-            {
-                m_ConnectionManager.ChangeState(Hosting);
-            }
-
-            return success;
+            return StartHost(GetPlayerId(), playerName);
         }
 
         public override async Task StartHostLobbyAsync(string playerName)
@@ -127,10 +121,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 throw;
             }
 
-            if (StartHost(GetPlayerId(), playerName))
-            {
-                m_ConnectionManager.ChangeState(Hosting);
-            }
+            StartHost(GetPlayerId(), playerName);
         }
 
         public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
@@ -170,13 +161,30 @@ namespace Unity.Multiplayer.Samples.BossRoom
             //and...we're off! Netcode will establish a socket connection to the host.
             //  If the socket connection fails, we'll hear back by getting an ReceiveServerToClientSetDisconnectReason_CustomMessage callback for ourselves and get a message telling us the reason
             //  If the socket connection succeeds, we'll get our ReceiveServerToClientConnectResult_CustomMessage invoked. This is where game-layer failures will be reported.
-            m_ConnectionManager.NetworkManager.StartClient();
+            if (m_ConnectionManager.NetworkManager.StartClient())
+            {
+                m_ConnectionManager.ChangeState(ClientConnecting);
+            }
+            else
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
+            }
         }
 
         bool StartHost(string playerId, string playerName)
         {
             SetConnectionPayload(playerId, playerName);
-            return m_ConnectionManager.NetworkManager.StartHost();
+            var success = m_ConnectionManager.NetworkManager.StartHost();
+            if (!success)
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
+            }
+            else
+            {
+                m_ConnectionManager.ChangeState(Hosting);
+            }
+
+            return success;
         }
 
         string GetPlayerId()

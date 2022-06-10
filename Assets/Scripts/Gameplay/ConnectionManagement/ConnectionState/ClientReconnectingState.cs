@@ -20,21 +20,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
         const int k_NbReconnectAttempts = 2;
 
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
-        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
-        IDisposable m_Subscription;
-
-        ConnectStatus m_ConnectStatus;
 
         Coroutine m_ReconnectCoroutine;
         string m_LobbyCode = "";
         int m_NbAttempts;
 
         [Inject]
-        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, ISubscriber<ConnectStatus> connectStatusSubscriber)
+        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, IPublisher<ConnectStatus> connectStatusPublisher)
         {
             m_ReconnectMessagePublisher = reconnectMessagePublisher;
-            m_ConnectStatusSubscriber = connectStatusSubscriber;
-            base.InjectDependencies(profileManager, lobbyServiceFacade, localLobby);
+            base.InjectDependencies(profileManager, lobbyServiceFacade, localLobby, connectStatusPublisher);
         }
 
         public override void Enter()
@@ -42,7 +37,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
             m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
             m_NbAttempts = 0;
-            m_Subscription = m_ConnectStatusSubscriber.Subscribe(status => m_ConnectStatus = status);
         }
 
         public override void Exit()
@@ -53,7 +47,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 m_ReconnectCoroutine = null;
             }
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
-            m_Subscription.Dispose();
         }
 
         public override void OnClientConnected(ulong clientId)
@@ -63,30 +56,35 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            switch (m_ConnectStatus)
+            if (m_NbAttempts < k_NbReconnectAttempts)
             {
-                case ConnectStatus.UserRequestedDisconnect:
-                case ConnectStatus.HostEndedSession:
-                case ConnectStatus.ServerFull:
-                    m_ConnectionManager.ChangeState(Offline);
-                    break;
-                default:
-                    if (m_NbAttempts < k_NbReconnectAttempts)
-                    {
-                        m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
-                    }
-                    else
-                    {
-                        m_ConnectionManager.ChangeState(Offline);
-                    }
-                    break;
+                m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+            }
+            else
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
+                m_ConnectionManager.ChangeState(Offline);
             }
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectionManager.NetworkManager.Shutdown();
+            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
             m_ConnectionManager.ChangeState(Offline);
+        }
+
+        public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
+        {
+            m_ConnectStatusPublisher.Publish(disconnectReason);
+            switch (disconnectReason)
+            {
+                case ConnectStatus.UserRequestedDisconnect:
+                case ConnectStatus.HostEndedSession:
+                case ConnectStatus.ServerFull:
+                    m_ConnectionManager.ChangeState(DisconnectingWithReason);
+                    break;
+            }
         }
 
         public override void StartClientIP(string playerName, string ipaddress, int port) { }

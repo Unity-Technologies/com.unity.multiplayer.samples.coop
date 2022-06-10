@@ -1,7 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 
@@ -36,19 +35,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         NameGenerationData m_NameGenerationData;
         ConnectionManager m_ConnectionManager;
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         public IPHostingUI IPHostingUI => m_IPHostingUI;
 
         [Inject]
         void InjectDependenciesAndInitialize(
             NameGenerationData nameGenerationData,
-            IPublisher<ConnectStatus> connectStatusPublisher,
             ConnectionManager connectionManager
         )
         {
             m_NameGenerationData = nameGenerationData;
-            m_ConnectStatusPublisher = connectStatusPublisher;
             m_ConnectionManager = connectionManager;
 
             RegenerateName();
@@ -78,10 +74,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_ConnectionManager.StartHostIp(m_PlayerNameLabel.text, ip, portNum))
             {
                 m_SignInSpinner.SetActive(true);
-            }
-            else
-            {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
             }
         }
 

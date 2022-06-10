@@ -18,13 +18,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         IPUIMediator m_IPUIMediator;
 
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-
         [Inject]
-        void InjectDependencies(IPUIMediator ipUIMediator, IPublisher<ConnectStatus> connectStatusPublisher)
+        void InjectDependencies(IPUIMediator ipUIMediator)
         {
             m_IPUIMediator = ipUIMediator;
-            m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
         void Awake()
@@ -48,7 +45,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             void OnTimeElapsed()
             {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
                 Hide();
                 m_IPUIMediator.DisableSignInSpinner();
             }
