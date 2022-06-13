@@ -25,8 +25,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         DIScope[] m_ClientScopes;
         DIScope m_ServerScope;
 
-        static int[] s_NbClients = { 1, 2 };
-        static int[] s_NbSubs = { 1, 2 };
+        static int[] s_NbClients = { 0, 1, 2 };
+        static int[] s_NbSubs = { 0, 1, 2 };
+
+        int m_NbMessagesReceived;
+
+        protected override IEnumerator OnSetup()
+        {
+            m_NbMessagesReceived = 0;
+            return base.OnSetup();
+        }
 
         protected override void OnServerAndClientsCreated()
         {
@@ -58,19 +66,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             return base.OnTearDown();
         }
 
-        [UnityTest]
-        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnAllClients([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        void InitializeNetworkedMessageChannels<T>(int nbClients, int nbSubscribers, T expectedValue, out NetworkedMessageChannel<T>[] emptyMessageChannelClients, out NetworkedMessageChannel<T> emptyMessageChannelServer) where T : unmanaged, INetworkSerializeByMemcpy
         {
-            var emptyMessageChannelClients = new NetworkedMessageChannel<EmptyMessage>[nbClients];
+            emptyMessageChannelClients = new NetworkedMessageChannel<T>[nbClients];
             for (int i = 0; i < nbClients; i++)
             {
-                emptyMessageChannelClients[i] = new NetworkedMessageChannel<EmptyMessage>();
+                emptyMessageChannelClients[i] = new NetworkedMessageChannel<T>();
                 m_ClientScopes[i].InjectIn(emptyMessageChannelClients[i]);
             }
-            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>();
-            m_ServerScope.InjectIn(emptyMessageChannelServer);
 
-            var nbMessagesReceived = 0;
+            emptyMessageChannelServer = new NetworkedMessageChannel<T>();
+            m_ServerScope.InjectIn(emptyMessageChannelServer);
 
             m_Subscriptions = new DisposableGroup();
             for (int i = 0; i < nbClients; i++)
@@ -79,13 +85,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 {
                     var numClient = i;
                     var numSub = j;
-                    m_Subscriptions.Add(emptyMessageChannelClients[i].Subscribe((message =>
+                    m_Subscriptions.Add(emptyMessageChannelClients[i].Subscribe(message =>
                     {
                         Debug.Log($"Received message on client {numClient} in subscription {numSub}.");
-                        nbMessagesReceived++;
-                    })));
+                        m_NbMessagesReceived++;
+                        Assert.AreEqual(message, expectedValue);
+                    }));
                 }
             }
+        }
+
+        [UnityTest]
+        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnAllClients([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        {
+            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
@@ -93,28 +106,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(nbClients * nbSubscribers, nbMessagesReceived);
+            Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
 
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessageContentIsProperlyReceived()
+        public IEnumerator NetworkedMessageContentIsProperlyReceived([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
         {
-            var genericMessageChannelClient = new NetworkedMessageChannel<GenericMessage>();
-            m_ClientScopes[0].InjectIn(genericMessageChannelClient);
-            var genericMessageChannelServer = new NetworkedMessageChannel<GenericMessage>();
-            m_ServerScope.InjectIn(genericMessageChannelServer);
-
-            var nbMessagesReceived = 0;
-
-            m_Subscriptions = new DisposableGroup();
-            m_Subscriptions.Add(genericMessageChannelClient.Subscribe(OnGenericMessageReceived));
-
-            void OnGenericMessageReceived(GenericMessage message)
-            {
-                nbMessagesReceived++;
-                Assert.IsTrue(message.value);
-            }
+            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new GenericMessage() { value = true }, out var genericMessageChannelClients, out var genericMessageChannelServer);
 
             genericMessageChannelServer.Publish(new GenericMessage() { value = true });
 
@@ -122,29 +121,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(1, nbMessagesReceived);
+            Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreStillReceivedAfterNetworkManagerShutsDownAndRestarts()
+        public IEnumerator NetworkedMessagesAreStillReceivedAfterNetworkManagerShutsDownAndRestarts([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
         {
-            var emptyMessageChannelClient1 = new NetworkedMessageChannel<EmptyMessage>();
-            m_ClientScopes[0].InjectIn(emptyMessageChannelClient1);
-            var emptyMessageChannelClient2 = new NetworkedMessageChannel<EmptyMessage>();
-            m_ClientScopes[1].InjectIn(emptyMessageChannelClient2);
-            var emptyMessageChannelServer = new NetworkedMessageChannel<EmptyMessage>();
-            m_ServerScope.InjectIn(emptyMessageChannelServer);
-
-            var nbMessagesReceived = 0;
-
-            m_Subscriptions = new DisposableGroup();
-            m_Subscriptions.Add(emptyMessageChannelClient1.Subscribe(OnEmptyMessageReceived));
-            m_Subscriptions.Add(emptyMessageChannelClient2.Subscribe(OnEmptyMessageReceived));
-
-            void OnEmptyMessageReceived(EmptyMessage message)
-            {
-                nbMessagesReceived++;
-            }
+            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
@@ -152,9 +135,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(2, nbMessagesReceived);
+            Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
 
-            nbMessagesReceived = 0;
+            m_NbMessagesReceived = 0;
 
             // Shutdown the server and clients
             m_ServerNetworkManager.Shutdown();
@@ -179,7 +162,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(2, nbMessagesReceived);
+            Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
         }
     }
 }
