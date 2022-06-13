@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using NUnit.Framework;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -163,6 +164,49 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
 
             Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
+        }
+
+        [UnityTest]
+        public IEnumerator NetworkedMessagesAreNotReceivedWhenClientsAreShutDown([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        {
+            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+
+            // Shutdown the clients
+            m_ClientNetworkManagers[0].Shutdown();
+            m_ClientNetworkManagers[1].Shutdown();
+
+            yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
+            yield return new WaitWhile(() => m_ClientNetworkManagers[1].ShutdownInProgress);
+
+            // Test sending a message a second time
+            emptyMessageChannelServer.Publish(new EmptyMessage());
+
+            // wait for the custom named message to be sent on the server and received on the clients
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual(0, m_NbMessagesReceived);
+        }
+
+        [UnityTest]
+        public IEnumerator NetworkedMessagesAreNotReceivedWhenServerIsShutDown([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        {
+            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+
+            // Shutdown the server
+            m_ServerNetworkManager.Shutdown();
+
+            yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
+
+            // Test sending a message a second time
+            LogAssert.Expect(LogType.Error, "Only a server can publish in a NetworkedMessageChannel");
+            emptyMessageChannelServer.Publish(new EmptyMessage());
+
+            // wait for the custom named message to be sent on the server and received on the clients
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual(0, m_NbMessagesReceived);
         }
     }
 }
