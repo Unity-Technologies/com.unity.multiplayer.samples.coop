@@ -31,11 +31,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         float detonateAfterSeconds = 5f;
 
         float m_DetonateAfterSeconds;
+        
+        [SerializeField]
+        float destroyAfterSeconds = 6f;
 
         float m_DestroyAfterSeconds;
 
         bool m_Detonated;
-
+        
         public UnityEvent detonatedCallback;
 
         public override void OnNetworkSpawn()
@@ -50,6 +53,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_Detonated = false;
 
             m_DetonateAfterSeconds = Time.fixedTime + detonateAfterSeconds;
+            m_DestroyAfterSeconds = Time.fixedTime + destroyAfterSeconds;
         }
 
         public override void OnNetworkDespawn()
@@ -75,7 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     }
                 }
             }
-
+            
             // send client RPC to detonate on clients
             DetonateClientRpc();
 
@@ -98,7 +102,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (!m_Detonated && m_DetonateAfterSeconds < Time.fixedTime)
             {
                 Detonate();
+            }
 
+            if (m_Detonated && m_DestroyAfterSeconds < Time.deltaTime)
+            {
                 // despawn after sending detonate RPC
                 var networkObject = gameObject.GetComponent<NetworkObject>();
                 networkObject.Despawn();

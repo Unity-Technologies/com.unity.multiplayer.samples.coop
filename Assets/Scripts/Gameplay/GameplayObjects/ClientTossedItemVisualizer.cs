@@ -11,7 +11,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         const float k_DisplayHeight = 0.1f;
 
-        readonly Quaternion k_TossAttackDisplayRotation = Quaternion.Euler(90f, 0f, 0f);
+        readonly Quaternion k_TossAttackRadiusDisplayRotation = Quaternion.Euler(90f, 0f, 0f);
+        
+        [SerializeField] 
+        GameObject m_TossedObjectGraphics;
+
+        [SerializeField]
+        AudioSource m_FallingSound;
 
         void Awake()
         {
@@ -27,6 +33,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             enabled = true;
             m_TossedItemVisualTransform.gameObject.SetActive(true);
+            m_TossedObjectGraphics.SetActive(true);
+            m_FallingSound.Play();
         }
 
         public override void OnNetworkDespawn()
@@ -39,7 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             var tossedItemPosition = transform.position;
             m_TossedItemVisualTransform.SetPositionAndRotation(
                 new Vector3(tossedItemPosition.x, k_DisplayHeight, tossedItemPosition.z),
-                k_TossAttackDisplayRotation);
+                k_TossAttackRadiusDisplayRotation);
         }
     }
 }
