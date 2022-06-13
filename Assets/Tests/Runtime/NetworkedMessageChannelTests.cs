@@ -219,5 +219,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             Assert.AreEqual(0, m_NbMessagesReceived);
         }
+
+        [UnityTest]
+        public IEnumerator NetworkedMessagesCannotBePublishedFromClient()
+        {
+            InitializeNetworkedMessageChannels(2, 1, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+
+            // Test sending a message a second time
+            LogAssert.Expect(LogType.Error, "Only a server can publish in a NetworkedMessageChannel");
+            emptyMessageChannelClients[0].Publish(new EmptyMessage());
+
+            // wait for the custom named message to be sent on the server and received on the clients
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual(0, m_NbMessagesReceived);
+        }
     }
 }
