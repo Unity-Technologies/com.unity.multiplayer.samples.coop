@@ -178,6 +178,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
+        public IEnumerator NetworkedMessagesAreReceivedIfClientsSubscribeBeforeConnecting([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        {
+            // Shutdown the clients
+            m_ClientNetworkManagers[0].Shutdown();
+            m_ClientNetworkManagers[1].Shutdown();
+
+            yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
+            yield return new WaitWhile(() => m_ClientNetworkManagers[1].ShutdownInProgress);
+
+            InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
+
+            // Restart the clients
+            m_ClientNetworkManagers[0].StartClient();
+            m_ClientNetworkManagers[1].StartClient();
+
+            yield return WaitForClientsConnectedOrTimeOut();
+
+            emptyMessageChannelServer.Publish(new EmptyMessage());
+
+            // wait for the custom named message to be sent on the server and received on the clients
+            yield return null;
+            yield return null;
+
+            Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
+        }
+
+        [UnityTest]
         public IEnumerator NetworkedMessagesAreNotReceivedWhenClientsAreShutDown([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
         {
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
@@ -189,7 +216,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
             yield return new WaitWhile(() => m_ClientNetworkManagers[1].ShutdownInProgress);
 
-            // Test sending a message a second time
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
@@ -209,7 +235,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
 
-            // Test sending a message a second time
             LogAssert.Expect(LogType.Error, "Only a server can publish in a NetworkedMessageChannel");
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
@@ -225,7 +250,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             InitializeNetworkedMessageChannels(2, 1, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
-            // Test sending a message a second time
             LogAssert.Expect(LogType.Error, "Only a server can publish in a NetworkedMessageChannel");
             emptyMessageChannelClients[0].Publish(new EmptyMessage());
 
