@@ -94,10 +94,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                     }));
                 }
             }
+
+            for (int j = 0; j < nbSubscribers; j++)
+            {
+                var numSub = j;
+                m_Subscriptions.Add(emptyMessageChannelServer.Subscribe(message =>
+                {
+                    Debug.Log($"Received message on server in subscription {numSub}.");
+                    m_NbMessagesReceived++;
+                    Assert.AreEqual(message, expectedValue);
+                }));
+            }
         }
 
         [UnityTest]
-        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnAllClients([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnAllClientsAndServer([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
         {
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
@@ -107,12 +118,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
+            Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
 
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessageContentIsProperlyReceived([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        public IEnumerator NetworkedMessageContentIsProperlyReceivedOnAllClientsAndServer([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
         {
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new GenericMessage() { value = true }, out var genericMessageChannelClients, out var genericMessageChannelServer);
 
@@ -122,7 +133,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
+            Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
         }
 
         [UnityTest]
@@ -136,7 +147,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
+            Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
 
             m_NbMessagesReceived = 0;
 
@@ -163,7 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(nbClients * nbSubscribers, m_NbMessagesReceived);
+            Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
         }
 
         [UnityTest]
@@ -185,7 +196,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
-            Assert.AreEqual(0, m_NbMessagesReceived);
+            Assert.AreEqual(nbSubscribers, m_NbMessagesReceived);
         }
 
         [UnityTest]
