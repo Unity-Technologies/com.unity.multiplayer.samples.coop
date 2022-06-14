@@ -106,7 +106,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             Instance = this;
 
             // TODO inject or find another way to find CharSelectData
-            // TODO CharSelectData should directly be in ServerCharSelectState and both client and server should be in same gameplay assembly
+            // TODO CharSelectData should directly be in ServerCharSelectState
             CharSelectData = FindObjectOfType<CharSelectData>();
             CharSelectData.OnNetworkSpawnCallback += OnSpawn; if (CharSelectData.IsSpawned) OnSpawn();
             CharSelectData.OnNetworkDespawnCallback += OnDespawn;
