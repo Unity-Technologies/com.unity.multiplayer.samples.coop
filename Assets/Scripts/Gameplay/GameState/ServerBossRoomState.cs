@@ -190,7 +190,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public void OnServerUnloadComplete(ulong clientId, string sceneName)
         {
             if (clientId != NetworkManager.ServerClientId) return;
-            
+
             if (m_NetPortal != null)
             {
                 NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;

@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -10,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void Awake()
         {
             base.Awake();
-            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnAllClientsFinishedLoading;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnAllClientsFinishedLoading;
         }
 
         protected override void OnDestroy()
@@ -18,13 +20,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             base.OnDestroy();
             if (NetworkManager.Singleton.SceneManager != null)
             {
-                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnAllClientsFinishedLoading;
+                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnAllClientsFinishedLoading;
             }
         }
-
-        static void OnAllClientsFinishedLoading(SceneEvent sceneEvent)
+        
+        static void OnAllClientsFinishedLoading(string scenename, LoadSceneMode loadscenemode, List<ulong> clientscompleted, List<ulong> clientstimedout)
         {
-            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete && sceneEvent.ClientId != NetworkManager.ServerClientId) return;
             if (NetworkManager.Singleton.IsServer)
             {
                 SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
