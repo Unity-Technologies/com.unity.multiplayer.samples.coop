@@ -85,8 +85,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             subHandles.Add(quitApplicationSub.Subscribe(QuitGame));
             m_Subscriptions = subHandles;
 
-            Application.targetFrameRate = 120;
-
             Application.wantsToQuit += OnWantToQuit;
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(m_UpdateRunner.gameObject);
