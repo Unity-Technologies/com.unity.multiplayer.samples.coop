@@ -5,8 +5,8 @@ using Unity.Multiplayer.Samples.Utilities;
 namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
-    /// Connection state corresponding to when a client is attempting to connect to a server. If successful,transitions
-    /// to the Connected state. If not, transitions to the Offline state.
+    /// Connection state corresponding to when a client is attempting to connect to a server. Starts the client when
+    /// entering If successful, transitions to the Connected state. If not, transitions to the Offline state.
     /// </summary>
     public class ClientConnectingState : ConnectionState
     {
@@ -20,8 +20,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Enter()
         {
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-            m_ConnectionManager.RegisterCustomMessages();
+            if (m_ConnectionManager.NetworkManager.StartClient())
+            {
+                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+                m_ConnectionManager.RegisterCustomMessages();
+            }
+            else
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
+                m_ConnectionManager.ChangeState(Offline);
+            }
         }
 
         public override void Exit() { }

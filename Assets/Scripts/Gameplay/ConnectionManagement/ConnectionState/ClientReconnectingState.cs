@@ -19,6 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         const int k_NbReconnectAttempts = 2;
 
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
         Coroutine m_ReconnectCoroutine;
@@ -28,8 +29,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [Inject]
         void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, IPublisher<ConnectStatus> connectStatusPublisher)
         {
+            m_ConnectStatusPublisher = connectStatusPublisher;
             m_ReconnectMessagePublisher = reconnectMessagePublisher;
-            base.InjectDependencies(profileManager, lobbyServiceFacade, localLobby, connectStatusPublisher);
+            base.InjectDependencies(profileManager, lobbyServiceFacade, localLobby);
         }
 
         public override void Enter()

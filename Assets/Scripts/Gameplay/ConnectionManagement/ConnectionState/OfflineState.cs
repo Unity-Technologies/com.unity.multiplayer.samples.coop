@@ -21,7 +21,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public class OfflineState : ConnectionState
     {
         protected LobbyServiceFacade m_LobbyServiceFacade;
-        protected IPublisher<ConnectStatus> m_ConnectStatusPublisher;
         LocalLobby m_LocalLobby;
         ProfileManager m_ProfileManager;
 
@@ -33,12 +32,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         const string k_MainMenuSceneName = "MainMenu";
 
         [Inject]
-        protected void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ConnectStatus> connectStatusPublisher)
+        protected void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby)
         {
             m_ProfileManager = profileManager;
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
-            m_ConnectStatusPublisher = connectStatusPublisher;
         }
 
         public override void Enter()
@@ -56,14 +54,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
-            ConnectClient(GetPlayerId(), playerName);
+            SetConnectionPayload(GetPlayerId(), playerName);
+            m_ConnectionManager.ChangeState(ClientConnecting);
         }
 
         public override async Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
         {
             if (await JoinRelayServerAsync(onFailure))
             {
-                ConnectClient(GetPlayerId(), playerName);
+                SetConnectionPayload(GetPlayerId(), playerName);
+                m_ConnectionManager.ChangeState(ClientConnecting);
             }
         }
 
@@ -94,7 +94,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
 
-            return StartHost(GetPlayerId(), playerName);
+            SetConnectionPayload(GetPlayerId(), playerName);
+            m_ConnectionManager.ChangeState(StartingHost);
+            return true;
         }
 
         public override async Task StartHostLobbyAsync(string playerName)
@@ -121,23 +123,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 throw;
             }
 
-            StartHost(GetPlayerId(), playerName);
-        }
-
-        public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
-        {
-            // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
-            if (m_ConnectionManager.NetworkManager.IsHost && clientId == m_ConnectionManager.NetworkManager.LocalClientId)
-            {
-                var payload = System.Text.Encoding.UTF8.GetString(connectionData);
-                var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
-
-                SessionManager<SessionPlayerData>.Instance.SetupConnectingPlayerSessionData(clientId, connectionPayload.playerId,
-                    new SessionPlayerData(clientId, connectionPayload.playerName, new NetworkGuid(), 0, true));
-
-                // connection approval will create a player object for you
-                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
-            }
+            SetConnectionPayload(GetPlayerId(), playerName);
+            m_ConnectionManager.ChangeState(StartingHost);
         }
 
         void SetConnectionPayload(string playerId, string playerName)
@@ -152,36 +139,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
             m_ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
-        }
-
-        void ConnectClient(string playerId, string playerName)
-        {
-            SetConnectionPayload(playerId, playerName);
-
-            if (m_ConnectionManager.NetworkManager.StartClient())
-            {
-                m_ConnectionManager.ChangeState(ClientConnecting);
-            }
-            else
-            {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
-            }
-        }
-
-        bool StartHost(string playerId, string playerName)
-        {
-            SetConnectionPayload(playerId, playerName);
-            var success = m_ConnectionManager.NetworkManager.StartHost();
-            if (!success)
-            {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
-            }
-            else
-            {
-                m_ConnectionManager.ChangeState(Hosting);
-            }
-
-            return success;
         }
 
         string GetPlayerId()
