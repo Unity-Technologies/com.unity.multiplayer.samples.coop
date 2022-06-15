@@ -51,12 +51,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
         }
 
-        public override void OnClientConnected(ulong clientId)
+        public override void OnClientConnected(ulong _)
         {
             m_ConnectionManager.ChangeState(ClientConnected);
         }
 
-        public override void OnClientDisconnect(ulong clientId)
+        public override void OnClientDisconnect(ulong _)
         {
             if (m_NbAttempts < k_NbReconnectAttempts)
             {

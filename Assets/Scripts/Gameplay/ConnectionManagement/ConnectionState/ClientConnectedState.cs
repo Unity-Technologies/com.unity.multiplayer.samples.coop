@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Exit() { }
 
-        public override void OnClientDisconnect(ulong clientId)
+        public override void OnClientDisconnect(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
             m_ConnectionManager.ChangeState(ClientReconnecting);
