@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 5798640841212797410}
   - component: {fileID: 1929004020738845844}
   - component: {fileID: 6578595960882027409}
-  - component: {fileID: 6074465214437177532}
   m_Layer: 0
   m_Name: ImpTossAttackGraphics
   m_TagString: Untagged
@@ -84,16 +83,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6074465214437177532
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8381232259107055460}
-  m_Material: {fileID: 13400000, guid: 89c3353bce9e81340bee4236c92eb0d8, type: 2}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.56
-  m_Center: {x: 0, y: 0, z: 0}
