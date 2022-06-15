@@ -16,8 +16,10 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 > - Boss Room is compatible with the latest Unity LTS version.
 > - Make sure to include standalone support for Windows/Mac in your installation. 
 
-![](Documentation/Images/3Players.png)
 ![](Documentation/Images/Boss.png)
+
+![](Documentation/Images/Players.png)
+
 
 ## Getting the project
  - The pre-release version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
