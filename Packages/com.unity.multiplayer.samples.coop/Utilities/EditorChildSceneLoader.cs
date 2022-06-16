@@ -31,7 +31,7 @@ public class EditorChildSceneLoader : MonoBehaviour
         }
     }
 
-    public void ResetSceneSetupToConfig()
+    public void ResetSceneSetupToConfig(bool askToSave)
     {
         var sceneAssetsToLoad = ChildScenesToLoadConfig;
 
@@ -42,8 +42,17 @@ public class EditorChildSceneLoader : MonoBehaviour
         }
 
         sceneSetupToLoad[0].isActive = true;
-        EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+        if (askToSave)
+        {
+            EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
+        }
         EditorSceneManager.RestoreSceneManagerSetup(sceneSetupToLoad.ToArray());
+    }
+
+    public void ResetToRootSceneOnly()
+    {
+        var rootSceneSetup = new SceneSetup() { path = gameObject.scene.path, isActive = true, isLoaded = true};
+        EditorSceneManager.RestoreSceneManagerSetup(new[] { rootSceneSetup });
     }
 #endif
 }
@@ -65,7 +74,7 @@ public class ChildSceneLoaderInspectorGUI : Editor
 
         if (GUILayout.Button("Reset scene setup from config..."))
         {
-            currentInspectorObject.ResetSceneSetupToConfig();
+            currentInspectorObject.ResetSceneSetupToConfig(askToSave: true);
         }
     }
 }
@@ -76,26 +85,41 @@ public class ChildSceneLoader
     static ChildSceneLoader()
     {
         EditorSceneManager.sceneOpened += OnSceneLoaded;
+        EditorApplication.playModeStateChanged += ExecuteUnloadChildOnPlay;
+    }
+
+    private static void ExecuteUnloadChildOnPlay(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.ExitingEditMode)
+        {
+            Debug.Log("Resetting to root scene. Runtime scripts should handle loading any child scene");
+            TryGetRootSceneConfig()?.ResetToRootSceneOnly();
+        }
+        if (state == PlayModeStateChange.ExitingPlayMode)
+        {
+            TryGetRootSceneConfig()?.ResetSceneSetupToConfig(askToSave: false);
+        }
     }
 
     static void OnSceneLoaded(Scene _, OpenSceneMode mode)
     {
         if (mode != OpenSceneMode.Single || BuildPipeline.isBuildingPlayer) return; // try to load child scenes only for root scenes or if not building
 
+        TryGetRootSceneConfig()?.ResetSceneSetupToConfig(askToSave: true);
+
+        Debug.Log("Setup done for root scene and child scenes");
+    }
+
+    static EditorChildSceneLoader TryGetRootSceneConfig()
+    {
         var scenesToLoadObjects = GameObject.FindObjectsOfType<EditorChildSceneLoader>();
         if (scenesToLoadObjects.Length > 1)
         {
             throw new Exception("Should only have one root scene at once loaded");
         }
 
-        if (scenesToLoadObjects.Length == 0 || !scenesToLoadObjects[0].enabled) // only when we have a config and when that config is enabled
-        {
-            return;
-        }
-
-        scenesToLoadObjects[0].ResetSceneSetupToConfig();
-
-        Debug.Log("Setup done for root scene and child scenes");
+        if (scenesToLoadObjects.Length == 0 || !scenesToLoadObjects[0].enabled) return null; // only when we have a config and when that config is enabled
+        return scenesToLoadObjects[0];
     }
 }
 #endif
