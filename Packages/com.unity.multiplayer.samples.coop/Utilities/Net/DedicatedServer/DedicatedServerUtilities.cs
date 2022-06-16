@@ -22,7 +22,8 @@ namespace Unity.Multiplayer.Samples
             }
         }
 
-        // todo improve perf on this
+        // todo improve perf on this, don't do string concatenation everywhere, especially if log level is too high
+        // TODO use json structure for log analysis tools (kibana, elasticsearch, etc)
         // todo find a way to disable full stack trace if needed, this could take a lot of resources.
         // Logging format should change following which logging analytics service you use. Elasticsearch could
         // require a different format than splunk for example.

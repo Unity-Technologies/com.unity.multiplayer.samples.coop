@@ -34,7 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var portArg = "-port";
             if (args.ContainsKey(portArg) && !int.TryParse(args[portArg], out port))
             {
-                Debug.Log("failed to parse -port arg: " + args[portArg]);
+                DedicatedServerUtilities.Log("failed to parse -port arg: " + args[portArg]);
             }
 
             DedicatedServerUtilities.Log($"Starting Headless Server, listening on address {address}:{port}");
