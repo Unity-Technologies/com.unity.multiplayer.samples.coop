@@ -4,10 +4,10 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
-    public class ClientTossAttackDisplay : NetworkBehaviour
+    public class ClientTossedItemVisualizer : NetworkBehaviour
     {
         [SerializeField]
-        Transform m_TossAttackDisplayTransform;
+        Transform m_TossedItemVisualTransform;
 
         const float k_DisplayHeight = 0.1f;
 
@@ -26,18 +26,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             enabled = true;
-            m_TossAttackDisplayTransform.gameObject.SetActive(true);
+            m_TossedItemVisualTransform.gameObject.SetActive(true);
         }
 
         public override void OnNetworkDespawn()
         {
-            m_TossAttackDisplayTransform.gameObject.SetActive(false);
+            m_TossedItemVisualTransform.gameObject.SetActive(false);
         }
 
         void LateUpdate()
         {
             var tossedItemPosition = transform.position;
-            m_TossAttackDisplayTransform.SetPositionAndRotation(
+            m_TossedItemVisualTransform.SetPositionAndRotation(
                 new Vector3(tossedItemPosition.x, k_DisplayHeight, tossedItemPosition.z),
                 k_TossAttackDisplayRotation);
         }
