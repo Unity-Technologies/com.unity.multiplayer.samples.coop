@@ -18,6 +18,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Connection feedback + IP connection window [MTT-2315] [MTT-3234] (#613)	
 * First import of all the vandal imp artwork (#637)
 * Updated boss room's root scene to automatically load child scenes at editor time (#653)
+* Users can change profile in-game in addition to the -AuthProfile command line argument (#636)
 * NetworkRigidbody-based toss Action, thrown by new VandalImp class [MTT-2333](#671)
 
 ### Changed
