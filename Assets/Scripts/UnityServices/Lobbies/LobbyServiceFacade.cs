@@ -279,7 +279,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
         public async Task LeaveLobbyAsync(string lobbyId)
         {
             string uasId = AuthenticationService.Instance.PlayerId;
-            await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+            try
+            {
+                await m_LobbyApiInterface.RemovePlayerFromLobby(uasId, lobbyId);
+            }
+            catch (LobbyServiceException e)
+                when (e is { Reason: LobbyExceptionReason.LobbyNotFound })
+            {
+                // If Lobby is not found, it has already been deleted. No need to throw here.
+            }
+
         }
 
         public async void RemovePlayerFromLobbyAsync(string uasId, string lobbyId)
