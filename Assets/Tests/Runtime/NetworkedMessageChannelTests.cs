@@ -26,9 +26,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         DIScope[] m_ClientScopes;
         DIScope m_ServerScope;
 
-        static int[] s_NbClients = { 0, 1, 2 };
-        static int[] s_NbSubs = { 0, 1, 2 };
-
         int m_NbMessagesReceived;
 
         protected override IEnumerator OnSetup()
@@ -108,7 +105,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnAllClientsAndServer([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        public IEnumerator EmptyNetworkedMessageIsReceivedByAllSubscribersOnAllClientsAndServer([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
         {
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
@@ -123,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessageContentIsProperlyReceivedOnAllClientsAndServer([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        public IEnumerator NetworkedMessageContentIsProperlyReceivedOnAllClientsAndServer([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
         {
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new GenericMessage() { value = true }, out var genericMessageChannelClients, out var genericMessageChannelServer);
 
@@ -137,7 +134,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreStillReceivedAfterNetworkManagerShutsDownAndRestarts([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        public IEnumerator NetworkedMessagesAreStillReceivedAfterNetworkManagerShutsDownAndRestarts([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
         {
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
@@ -178,7 +175,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreReceivedIfClientsSubscribeBeforeConnecting([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        public IEnumerator NetworkedMessagesAreReceivedIfClientsSubscribeBeforeConnecting([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
         {
             // Shutdown the clients
             m_ClientNetworkManagers[0].Shutdown();
@@ -205,7 +202,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreNotReceivedWhenClientsAreShutDown([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        public IEnumerator NetworkedMessagesAreNotReceivedWhenClientsAreShutDown([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
         {
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
@@ -226,7 +223,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator NetworkedMessagesAreNotReceivedWhenServerIsShutDown([ValueSource(nameof(s_NbClients))] int nbClients, [ValueSource(nameof(s_NbSubs))] int nbSubscribers)
+        public IEnumerator NetworkedMessagesAreNotReceivedWhenServerIsShutDown([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
         {
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
