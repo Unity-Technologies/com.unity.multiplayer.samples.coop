@@ -57,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnConnectStatus(ConnectStatus status)
         {
-            if (status == ConnectStatus.GenericDisconnect)
+            if (status is ConnectStatus.GenericDisconnect or ConnectStatus.StartClientFailed)
             {
                 UnblockUIAfterLoadingIsComplete();
             }
@@ -95,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_LocalUser.IsHost = true;
                 m_LobbyServiceFacade.SetRemoteLobby(lobbyCreationAttempt.Lobby);
 
-                Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
+                Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}");
                 m_ConnectionManager.StartHostLobby(m_LocalUser.DisplayName);
             }
             else
@@ -200,21 +200,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        async void OnJoinedLobby(Lobby remoteLobby)
+        void OnJoinedLobby(Lobby remoteLobby)
         {
             m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
 
             Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            await m_ConnectionManager.StartClientLobbyAsync(m_LocalUser.DisplayName, OnRelayJoinFailed);
-
-            void OnRelayJoinFailed(string message)
-            {
-                PopupManager.ShowPopupPanel("Relay join failed", message);
-                Debug.Log($"Relay join failed: {message}");
-                //leave the lobby if relay failed for some reason
-                m_LobbyServiceFacade.EndTracking();
-                UnblockUIAfterLoadingIsComplete();
-            }
+            m_ConnectionManager.StartClientLobbyAsync(m_LocalUser.DisplayName);
         }
 
         //show/hide UI

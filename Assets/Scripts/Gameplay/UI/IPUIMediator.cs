@@ -36,16 +36,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         NameGenerationData m_NameGenerationData;
         ConnectionManager m_ConnectionManager;
 
+        IDisposable m_Subscription;
+
         public IPHostingUI IPHostingUI => m_IPHostingUI;
 
         [Inject]
         void InjectDependenciesAndInitialize(
             NameGenerationData nameGenerationData,
-            ConnectionManager connectionManager
+            ConnectionManager connectionManager,
+            ISubscriber<ConnectStatus> connectStatusSubscriber
         )
         {
             m_NameGenerationData = nameGenerationData;
             m_ConnectionManager = connectionManager;
+            m_Subscription = connectStatusSubscriber.Subscribe(OnConnectStatusMessage);
 
             RegenerateName();
         }
@@ -61,6 +65,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             ToggleCreateIPUI();
         }
 
+        void OnDestroy()
+        {
+            m_Subscription.Dispose();
+        }
+
+        void OnConnectStatusMessage(ConnectStatus connectStatus)
+        {
+            DisableSignInSpinner();
+        }
+
         public void HostIPRequest(string ip, string port)
         {
             int.TryParse(port, out var portNum);
@@ -71,10 +85,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             ip = string.IsNullOrEmpty(ip) ? k_DefaultIP : ip;
 
-            if (m_ConnectionManager.StartHostIp(m_PlayerNameLabel.text, ip, portNum))
-            {
-                m_SignInSpinner.SetActive(true);
-            }
+            m_SignInSpinner.SetActive(true);
+            m_ConnectionManager.StartHostIp(m_PlayerNameLabel.text, ip, portNum);
         }
 
         public void JoinWithIP(string ip, string port)

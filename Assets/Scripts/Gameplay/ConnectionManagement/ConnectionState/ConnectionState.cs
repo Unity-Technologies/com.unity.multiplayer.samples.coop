@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
@@ -47,20 +46,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public virtual void StartClientIP(string playerName, string ipaddress, int port) { }
 
-        public virtual Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
-        {
-            return Task.CompletedTask;
-        }
+        public virtual void StartClientLobby(string playerName) { }
 
-        public virtual bool StartHostIP(string playerName, string ipaddress, int port)
-        {
-            return false;
-        }
+        public virtual void StartHostIP(string playerName, string ipaddress, int port) { }
 
-        public virtual Task StartHostLobbyAsync(string playerName)
-        {
-            return Task.CompletedTask;
-        }
+        public virtual void StartHostLobby(string playerName) { }
 
         public virtual void OnUserRequestedShutdown() { }
 

@@ -105,9 +105,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_CurrentState.ApprovalCheck(connectionData, clientId, connectionApprovedCallback);
         }
 
-        public Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
+        public void StartClientLobbyAsync(string playerName)
         {
-            return m_CurrentState.StartClientLobbyAsync(playerName, onFailure);
+            m_CurrentState.StartClientLobby(playerName);
         }
 
         public void StartClientIp(string playerName, string ipaddress, int port)
@@ -117,12 +117,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public void StartHostLobby(string playerName)
         {
-            m_CurrentState.StartHostLobbyAsync(playerName);
+            m_CurrentState.StartHostLobby(playerName);
         }
 
-        public bool StartHostIp(string playerName, string ipaddress, int port)
+        public void StartHostIp(string playerName, string ipaddress, int port)
         {
-            return m_CurrentState.StartHostIP(playerName, ipaddress, port);
+            m_CurrentState.StartHostIP(playerName, ipaddress, port);
         }
 
         public void RequestShutdown()

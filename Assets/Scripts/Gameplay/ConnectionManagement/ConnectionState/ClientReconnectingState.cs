@@ -15,11 +15,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// number of times defined by k_NbReconnectAttempts. If it succeeds, it will transition to the Connected state. If
     /// not, it will transition to the Offline state.
     /// </summary>
-    public class ClientReconnectingState : OfflineState
+    public class ClientReconnectingState : ClientConnectingState
     {
         const int k_NbReconnectAttempts = 2;
 
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
         Coroutine m_ReconnectCoroutine;
@@ -27,11 +26,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         int m_NbAttempts;
 
         [Inject]
-        void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, IPublisher<ConnectStatus> connectStatusPublisher)
+        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, IPublisher<ConnectStatus> connectStatusPublisher)
         {
-            m_ConnectStatusPublisher = connectStatusPublisher;
             m_ReconnectMessagePublisher = reconnectMessagePublisher;
-            base.InjectDependencies(profileManager, lobbyServiceFacade, localLobby);
+            base.InjectDependencies(connectStatusPublisher, lobbyServiceFacade, localLobby);
         }
 
         public override void Enter()
@@ -89,23 +87,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        public override void StartClientIP(string playerName, string ipaddress, int port) { }
-
-        public override Task StartClientLobbyAsync(string playerName, Action<string> onFailure)
-        {
-            return Task.CompletedTask;
-        }
-
-        public override bool StartHostIP(string playerName, string ipaddress, int port)
-        {
-            return false;
-        }
-
-        public override Task StartHostLobbyAsync(string playerName)
-        {
-            return Task.CompletedTask;
-        }
-
         IEnumerator ReconnectCoroutine()
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
@@ -125,17 +106,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (joiningLobby.Result.Success)
                 {
                     m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
-                    var joiningRelay = JoinRelayServerAsync(null);
-                    yield return new WaitUntil(() => joiningRelay.IsCompleted);
-                    if (joiningRelay.Result)
-                    {
-                        ConnectClient();
-                    }
-                    else
-                    {
-                        Debug.Log("Failed joining Relay server.");
-                        OnClientDisconnect(0);
-                    }
+                    var connectingToRelay = ConnectClient();
+                    yield return new WaitUntil(() => connectingToRelay.IsCompleted);
                 }
                 else
                 {
@@ -145,15 +117,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             else
             {
-                ConnectClient();
+                var connectingClient = ConnectClient();
+                yield return new WaitUntil(() => connectingClient.IsCompleted);
             }
-        }
-
-        void ConnectClient()
-        {
-            m_ConnectionManager.NetworkManager.StartClient();
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-            m_ConnectionManager.RegisterCustomMessages();
         }
     }
 }
