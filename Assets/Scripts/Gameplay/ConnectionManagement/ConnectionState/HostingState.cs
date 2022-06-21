@@ -43,10 +43,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Exit()
         {
-            if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-            {
-                m_LobbyServiceFacade.DeleteLobbyAsync(m_LobbyServiceFacade.CurrentUnityLobby.Id);
-            }
             SessionManager<SessionPlayerData>.Instance.OnServerEnded();
         }
 
