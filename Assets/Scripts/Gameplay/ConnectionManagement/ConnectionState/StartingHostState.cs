@@ -38,6 +38,21 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Exit() { }
 
+        public override void OnClientDisconnect(ulong clientId)
+        {
+            if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
+            {
+                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
+                m_ConnectionManager.ChangeState(Offline);
+            }
+        }
+
+        public override void OnServerStarted()
+        {
+            m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
+            m_ConnectionManager.ChangeState(Hosting);
+        }
+
         public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
         {
             // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
@@ -83,16 +98,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");
             }
 
-            var success = m_ConnectionManager.NetworkManager.StartHost();
-            if (success)
+            if (!m_ConnectionManager.NetworkManager.StartHost())
             {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
-                m_ConnectionManager.ChangeState(Hosting);
-            }
-            else
-            {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
-                m_ConnectionManager.ChangeState(Offline);
+                OnClientDisconnect(m_ConnectionManager.NetworkManager.LocalClientId);
             }
         }
     }

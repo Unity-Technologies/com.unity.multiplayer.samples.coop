@@ -44,6 +44,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public virtual void OnClientConnected(ulong clientId) { }
         public virtual void OnClientDisconnect(ulong clientId) { }
 
+        public virtual void OnServerStarted() { }
+
         public virtual void StartClientIP(string playerName, string ipaddress, int port) { }
 
         public virtual void StartClientLobby(string playerName) { }

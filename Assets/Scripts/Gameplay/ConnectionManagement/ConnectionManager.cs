@@ -71,6 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
+            NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
         }
 
@@ -78,6 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             NetworkManager.OnClientConnectedCallback -= OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
+            NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
 
         }
@@ -98,6 +100,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void OnClientConnectedCallback(ulong clientId)
         {
             m_CurrentState.OnClientConnected(clientId);
+        }
+
+        void OnServerStarted()
+        {
+            m_CurrentState.OnServerStarted();
         }
 
         void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
