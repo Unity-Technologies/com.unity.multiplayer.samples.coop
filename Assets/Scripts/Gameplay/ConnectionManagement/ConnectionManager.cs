@@ -112,7 +112,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_CurrentState.ApprovalCheck(connectionData, clientId, connectionApprovedCallback);
         }
 
-        public void StartClientLobbyAsync(string playerName)
+        public void StartClientLobby(string playerName)
         {
             m_CurrentState.StartClientLobby(playerName);
         }

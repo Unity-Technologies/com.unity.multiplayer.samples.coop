@@ -205,7 +205,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
 
             Debug.Log($"Joined lobby with code: {m_LocalLobby.LobbyCode}, Internal Relay Join Code{m_LocalLobby.RelayJoinCode}");
-            m_ConnectionManager.StartClientLobbyAsync(m_LocalUser.DisplayName);
+            m_ConnectionManager.StartClientLobby(m_LocalUser.DisplayName);
         }
 
         //show/hide UI
