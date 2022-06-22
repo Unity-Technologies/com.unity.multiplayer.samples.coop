@@ -6,7 +6,8 @@
         "Unity.BossRoom.Infrastructure",
         "Unity.BossRoom.Gameplay",
         "Unity.Multiplayer.Samples.Utilities",
-        "VContainer"
+        "VContainer",
+        "VContainer.EnableCodeGen"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

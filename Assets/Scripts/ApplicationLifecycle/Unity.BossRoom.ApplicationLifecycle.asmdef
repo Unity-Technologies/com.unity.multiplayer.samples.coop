@@ -10,7 +10,8 @@
         "Unity.Collections",
         "Unity.Multiplayer.Samples.Utilities",
         "Unity.BossRoom.Utils",
-        "VContainer"
+        "VContainer",
+        "VContainer.EnableCodeGen"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
