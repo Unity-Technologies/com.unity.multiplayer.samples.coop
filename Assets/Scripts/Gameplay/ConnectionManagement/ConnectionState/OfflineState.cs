@@ -34,6 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void Enter()
         {
             m_LobbyServiceFacade.EndTracking();
+            m_ConnectionManager.NetworkManager.Shutdown();
             if (SceneManager.GetActiveScene().name != k_MainMenuSceneName)
             {
                 SceneLoaderWrapper.Instance.LoadScene(k_MainMenuSceneName, useNetworkSceneManager: false);

@@ -160,7 +160,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IEnumerator WaitToShutdown()
         {
             yield return null;
-            m_ConnectionManager.NetworkManager.Shutdown();
             StateChangeRequest?.Invoke(Offline);
         }
     }

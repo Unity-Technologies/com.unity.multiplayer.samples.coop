@@ -29,7 +29,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnUserRequestedShutdown()
         {
-            m_ConnectionManager.NetworkManager.Shutdown();
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
             StateChangeRequest?.Invoke(Offline);
         }
