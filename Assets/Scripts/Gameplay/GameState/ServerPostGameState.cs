@@ -23,7 +23,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnAllClientsFinishedLoading;
             }
         }
-        
+
         static void OnAllClientsFinishedLoading(string scenename, LoadSceneMode loadscenemode, List<ulong> clientscompleted, List<ulong> clientstimedout)
         {
             if (NetworkManager.Singleton.IsServer)
