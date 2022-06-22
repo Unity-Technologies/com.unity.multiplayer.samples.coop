@@ -56,9 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             m_Subscriptions.Dispose();
             for (int i = 0; i < NumberOfClients; i++)
             {
-                m_ClientScopes[i] = new DIScope();
-                m_ClientScopes[i].BindInstanceAsSingle(m_ClientNetworkManagers[i]);
-                m_ClientScopes[i].FinalizeScopeConstruction();
+                m_ClientScopes[i].Dispose();
             }
             m_ServerScope.Dispose();
             return base.OnTearDown();
