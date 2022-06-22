@@ -47,29 +47,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             builder.Register<ProfileManager>(Lifetime.Singleton);
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
-            builder.Register<MessageChannel<QuitGameSessionMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<MessageChannel<QuitApplicationMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<MessageChannel<UnityServiceErrorMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<MessageChannel<ConnectStatus>>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<MessageChannel<DoorStateChangedEventMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<QuitGameSessionMessage>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<QuitApplicationMessage>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<ConnectStatus>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<DoorStateChangedEventMessage>()).AsImplementedInterfaces();
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
             //they are networked so that the clients can subscribe to those messages that are published by the server
-            builder.Register<NetworkedMessageChannel<LifeStateChangedEventMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
-            builder.Register<NetworkedMessageChannel<ConnectionEventMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.RegisterInstance(new NetworkedMessageChannel<LifeStateChangedEventMessage>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new NetworkedMessageChannel<ConnectionEventMessage>()).AsImplementedInterfaces();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
-            builder.Register<NetworkedMessageChannel<CheatUsedMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.RegisterInstance(new NetworkedMessageChannel<CheatUsedMessage>()).AsImplementedInterfaces();
 #endif
 
             //this message channel is essential and persists for the lifetime of the lobby and relay services
-            builder.Register<MessageChannel<ReconnectMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.RegisterInstance(new MessageChannel<ReconnectMessage>()).AsImplementedInterfaces();
 
             //buffered message channels hold the latest received message in buffer and pass to any new subscribers
-            builder.Register<BufferedMessageChannel<LobbyListFetchedMessage>>(Lifetime.Singleton).AsImplementedInterfaces();
+            builder.RegisterInstance(new BufferedMessageChannel<LobbyListFetchedMessage>()).AsImplementedInterfaces();
 
             //all the lobby service stuff, bound here so that it persists through scene loads
             builder.Register<AuthenticationServiceFacade>(Lifetime.Singleton); //a manager entity that allows us to do anonymous authentication with unity services
-            builder.Register<LobbyServiceFacade>(Lifetime.Singleton);
+
+            //LobbyServiceFacade is registered as entrypoint because it wants a callback after container is built to do it's initialization
+            builder.RegisterEntryPoint<LobbyServiceFacade>().AsSelf();
         }
 
         private void Start()
