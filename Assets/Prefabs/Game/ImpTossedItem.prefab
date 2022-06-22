@@ -98,7 +98,6 @@ GameObject:
   - component: {fileID: 3757530492134123977}
   - component: {fileID: 6563030650317158872}
   - component: {fileID: 6687170048049847228}
-  - component: {fileID: 4179024201448208444}
   - component: {fileID: 646432022378958216}
   - component: {fileID: 5792943200133235216}
   m_Layer: 0
@@ -220,7 +219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8bff02995bf9984488cdd9c4cda2c328, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ClientTossedItem: {fileID: 4179024201448208444}
+  m_ClientTossedItem: {fileID: 0}
   m_DamagePoints: 1
   m_HitRadius: 5
   m_KnockbackSpeed: 4.2
@@ -229,18 +228,6 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 72
   detonateAfterSeconds: 5
---- !u!114 &4179024201448208444
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5473352307376472481}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f18eaab3de119c849b00dd10ed550c3e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
   detonatedCallback:
     m_PersistentCalls:
       m_Calls:

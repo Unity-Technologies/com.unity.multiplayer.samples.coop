@@ -1,14 +1,11 @@
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Events;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class ServerTossedItem : NetworkBehaviour
     {
-        [SerializeField]
-        ClientTossedItem m_ClientTossedItem;
-
         [SerializeField]
         int m_DamagePoints;
 
@@ -38,6 +35,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         float m_DestroyAfterSeconds;
 
         bool m_Detonated;
+
+        public UnityEvent detonatedCallback;
 
         public override void OnNetworkSpawn()
         {
@@ -86,7 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [ClientRpc]
         void DetonateClientRpc()
         {
-            m_ClientTossedItem.Detonate();
+            detonatedCallback?.Invoke();
         }
 
         void FixedUpdate()
