@@ -71,7 +71,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             builder.Register<AuthenticationServiceFacade>(Lifetime.Singleton); //a manager entity that allows us to do anonymous authentication with unity services
 
             //LobbyServiceFacade is registered as entrypoint because it wants a callback after container is built to do it's initialization
-            builder.RegisterEntryPoint<LobbyServiceFacade>().AsSelf();
+            builder.RegisterEntryPoint<LobbyServiceFacade>(Lifetime.Singleton).AsSelf();
         }
 
         private void Start()

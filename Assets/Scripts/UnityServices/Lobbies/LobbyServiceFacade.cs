@@ -48,8 +48,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
                 builder.Register<LobbyAPIInterface>(Lifetime.Singleton);
             });
 
-            m_ServiceScope.gameObject.name = "LobbyServiceFacade LifetimeScope";
-
             m_LobbyApiInterface = m_ServiceScope.Container.Resolve<LobbyAPIInterface>();
             m_JoinedLobbyContentHeartbeat = m_ServiceScope.Container.Resolve<JoinedLobbyContentHeartbeat>();
 

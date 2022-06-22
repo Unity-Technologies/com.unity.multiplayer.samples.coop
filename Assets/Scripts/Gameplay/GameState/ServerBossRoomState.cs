@@ -122,7 +122,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             m_Subscription?.Dispose();
 
-            if (NetworkManager.Singleton.SceneManager != null)
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
             {
                 NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
                 NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
