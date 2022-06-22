@@ -36,26 +36,26 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnClientConnected(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
-            m_ConnectionManager.ChangeState(ClientConnected);
+            StateChangeRequest?.Invoke(ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
-            m_ConnectionManager.ChangeState(Offline);
+            StateChangeRequest?.Invoke(Offline);
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectionManager.NetworkManager.Shutdown();
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            m_ConnectionManager.ChangeState(Offline);
+            StateChangeRequest?.Invoke(Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
-            m_ConnectionManager.ChangeState(DisconnectingWithReason);
+            StateChangeRequest?.Invoke(DisconnectingWithReason);
         }
 
         protected async Task ConnectClient()

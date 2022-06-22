@@ -59,5 +59,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public virtual void OnDisconnectReasonReceived(ConnectStatus disconnectReason) { }
 
         public virtual void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback) { }
+
+        public Action<ConnectionState> StateChangeRequest;
     }
 }
