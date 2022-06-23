@@ -242,7 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             foreach (var id in m_ClientIDToPlayerId.Keys)
             {
                 var data = GetPlayerData(id);
-                if (data is {IsConnected: false})
+                if (data is { IsConnected: false })
                 {
                     idsToClear.Add(id);
                 }
