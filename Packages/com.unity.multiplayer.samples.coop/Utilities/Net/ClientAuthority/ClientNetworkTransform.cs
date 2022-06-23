@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.Utilities.ClientAuthority
             }
         }
 
-        protected override bool OnIsServerAuthoritatitive()
+        protected override bool OnIsServerAuthoritative()
         {
             return false;
         }

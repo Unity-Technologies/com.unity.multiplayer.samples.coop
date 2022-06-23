@@ -23,7 +23,7 @@ public class EditorChildSceneLoader : MonoBehaviour
 
     public void SaveSceneSetup()
     {
-        ChildScenesToLoadConfig ??= new();
+        ChildScenesToLoadConfig ??= new List<SceneAsset>();
         ChildScenesToLoadConfig.Clear();
         foreach (var sceneSetup in EditorSceneManager.GetSceneManagerSetup())
         {
@@ -35,7 +35,7 @@ public class EditorChildSceneLoader : MonoBehaviour
     {
         var sceneAssetsToLoad = ChildScenesToLoadConfig;
 
-        List<SceneSetup> sceneSetupToLoad = new();
+        List<SceneSetup> sceneSetupToLoad = new List<SceneSetup>();
         foreach (var sceneAsset in sceneAssetsToLoad)
         {
             sceneSetupToLoad.Add(new SceneSetup() { path = AssetDatabase.GetAssetPath(sceneAsset), isActive = false, isLoaded = true });

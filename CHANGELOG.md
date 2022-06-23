@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [v1.3.0-pre UNRELEASED] - yyyy-mm-dd
+## [v1.3.0-pre] - 2022-06-23
 
 ### Added
 * Adding RNSM (Runtime Network Stats Monitor) to boss room [MTT-3267] (#621)
@@ -22,7 +22,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * NetworkRigidbody-based toss Action, thrown by new VandalImp class [MTT-2333](#671)
 
 ### Changed
-* Bump NGO to pre.9 (#643)
+* Bump NGO to pre.10 (#678) --> Fix in Boss Room related to the connection approval breaking change. Removing useless ForceNetworkSerializeByMemcpy for player names.
 * Bump Boss Room to Unity 2021 [MTT-3022] (#620)
 * Remove initial ugs popup [MTT-3563] (#650) --> Users who do not use UGS will no longer receive a popup when starting the application telling them how to set it up. It is replaced with a tooltip that appears when hovering on the "Start with Lobby" button with the cursor.
 * Folders and assemblies refactor MTT-2623, MTT-2615 (#628) --> work in progress
