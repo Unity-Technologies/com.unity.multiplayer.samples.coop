@@ -101,7 +101,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 ActionTypeEnum = m_CurAttackAction,
                 TargetIds = new ulong[] { m_Foe.NetworkObjectId },
-                ShouldClose = true
+                ShouldClose = true,
+                Direction = m_Brain.GetMyServerCharacter().physicsWrapper.Transform.forward
             };
             m_ActionPlayer.PlayAction(ref attackData);
         }

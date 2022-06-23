@@ -199,7 +199,7 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void RemoveOtherPlayerProgressBar(ulong clientId, NetworkedLoadingProgressTracker progressTracker = null)
         {
-            if (progressTracker is not null)
+            if (progressTracker != null)
             {
                 progressTracker.Progress.OnValueChanged -= m_LoadingProgressBars[clientId].UpdateProgress;
             }
