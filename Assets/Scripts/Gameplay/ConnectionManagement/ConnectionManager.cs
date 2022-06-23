@@ -121,9 +121,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
             CurrentState.OnServerStarted();
         }
 
-        void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
+        void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
         {
-            CurrentState.ApprovalCheck(connectionData, clientId, connectionApprovedCallback);
+            CurrentState.ApprovalCheck(request, response);
         }
 
         public void StartClientLobby(string playerName)

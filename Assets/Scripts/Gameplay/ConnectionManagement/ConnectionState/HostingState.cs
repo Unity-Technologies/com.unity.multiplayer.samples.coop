@@ -85,25 +85,26 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         /// <summary>
-        /// This logic plugs into the "ConnectionApprovalCallback" exposed by the NetworkManager, and is run every time a client connects to us.
+        /// This logic plugs into the "ConnectionApprovalResponse" exposed by Netcode.NetworkManager. It is run every time a client connects to us.
+        /// The complementary logic that runs when the client starts its connection can be found in ClientConnectingState.
         /// </summary>
         /// <remarks>
-        /// Since our game doesn't have to interact with some third party authentication service to validate the identity of the new connection, our ApprovalCheck
-        /// method is simple, and runs synchronously, invoking "callback" to signal approval at the end of the method. Netcode currently doesn't support the ability
-        /// to send back more than a "true/false", which means we have to work a little harder to provide a useful error return to the client. To do that, we invoke a
-        /// custom message in the same channel that Netcode uses for its connection callback. Since the delivery is NetworkDelivery.ReliableSequenced, we can be
-        /// confident that our login result message will execute before any disconnect message.
+        /// Multiple things can be done here, some asynchronously. For example, it could authenticate your user against an auth service like UGS' auth service. It can
+        /// also send custom messages to connecting users before they receive their connection result (this is useful to set status messages client side
+        /// when connection is refused, for example).
         /// </remarks>
-        /// <param name="connectionData">binary data passed into StartClient. In our case this is defined by the class ConnectionPayload. </param>
-        /// <param name="clientId">This is the clientId that Netcode assigned us on login. It does not persist across multiple logins from the same client. </param>
-        /// <param name="connectionApprovedCallback">The delegate we must invoke to signal that the connection was approved or not. </param>
-        public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
+        /// <param name="request"> The initial request contains, among other things, binary data passed into StartClient. In our case, this is the client's GUID,
+        /// which is a unique identifier for their install of the game that persists across app restarts.
+        ///  <param name="response"> Our response to the approval process. In case of connection refusal with custom return message, we delay using the Pending field.
+        public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
         {
+            var connectionData = request.Payload;
+            var clientId = request.ClientNetworkId;
             if (connectionData.Length > k_MaxConnectPayload)
             {
                 // If connectionData too high, deny immediately to avoid wasting time on the server. This is intended as
                 // a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
-                connectionApprovedCallback(false, 0, false, null, null);
+                response.Approved = false;
                 return;
             }
 
@@ -117,21 +118,31 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     new SessionPlayerData(clientId, connectionPayload.playerName, new NetworkGuid(), 0, true));
 
                 // connection approval will create a player object for you
-                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
+                response.Approved = true;
+                response.CreatePlayerObject = true;
+                response.Position = Vector3.zero;
+                response.Rotation = Quaternion.identity;
+                return;
             }
-            else
-            {
-                //TODO-FIXME:Netcode Issue #796. We should be able to send a reason and disconnect without a coroutine delay.
-                //TODO:Netcode: In the future we expect Netcode to allow us to return more information as part of the
-                //approval callback, so that we can provide more context on a reject. In the meantime we must provide
-                //the extra information ourselves, and then wait a short time before manually close down the connection.
 
+            // In order for clients to not just get disconnected with no feedback, the server needs to tell the client why it disconnected it.
+            // This could happen after an auth check on a service or because of gameplay reasons (server full, wrong build version, etc)
+            // Since network objects haven't synced yet (still in the approval process), we need to send a custom message to clients, wait for
+            // UTP to update a frame and flush that message, then give our response to NetworkManager's connection approval process, with a denied approval.
+            IEnumerator WaitToDenyApproval()
+            {
+                response.Pending = true; // give some time for server to send connection status message to clients
+                response.Approved = false;
                 ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-                m_ConnectionManager.StartCoroutine(WaitToDenyApproval(connectionApprovedCallback));
-                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                {
-                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
-                }
+                yield return null; // wait a frame so UTP can flush it's messages on next update
+                response.Pending = false; // connection approval process can be finished.
+            }
+
+            ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+            m_ConnectionManager.StartCoroutine(WaitToDenyApproval());
+            if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+            {
+                m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
             }
         }
 
@@ -149,12 +160,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             return SessionManager<SessionPlayerData>.Instance.IsDuplicateConnection(connectionPayload.playerId) ?
                 ConnectStatus.LoggedInAgain : ConnectStatus.Success;
-        }
-
-        static IEnumerator WaitToDenyApproval(NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
-        {
-            yield return null;
-            connectionApprovedCallback(false, 0, false, null, null);
         }
 
         IEnumerator WaitToShutdown()

@@ -53,8 +53,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             StateChangeRequest?.Invoke(Hosting);
         }
 
-        public override void ApprovalCheck(byte[] connectionData, ulong clientId, NetworkManager.ConnectionApprovedDelegate connectionApprovedCallback)
+        public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
         {
+            var connectionData = request.Payload;
+            var clientId = request.ClientNetworkId;
             // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
             if (m_ConnectionManager.NetworkManager.IsHost && clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
@@ -65,7 +67,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     new SessionPlayerData(clientId, connectionPayload.playerName, new NetworkGuid(), 0, true));
 
                 // connection approval will create a player object for you
-                connectionApprovedCallback(true, null, true, Vector3.zero, Quaternion.identity);
+                response.Approved = true;
+                response.CreatePlayerObject = true;
             }
         }
 
