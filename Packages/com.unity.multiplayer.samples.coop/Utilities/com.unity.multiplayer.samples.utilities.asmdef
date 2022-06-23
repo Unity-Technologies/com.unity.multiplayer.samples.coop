@@ -2,7 +2,6 @@
     "name": "Unity.Multiplayer.Samples.Utilities",
     "rootNamespace": "",
     "references": [
-        "Unity.Netcode.Adapter.UTP",
         "Unity.Netcode.Components",
         "Unity.Netcode.Runtime",
         "Unity.Services.Core",
