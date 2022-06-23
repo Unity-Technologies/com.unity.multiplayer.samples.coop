@@ -1,12 +1,8 @@
 {
-    "name": "Unity.Multiplayer.Samples.Utilities",
+    "name": "Unity.Multiplayer.Samples.Utilities.RNSM",
     "rootNamespace": "",
     "references": [
-        "Unity.Netcode.Components",
-        "Unity.Netcode.Runtime",
-        "Unity.Services.Core",
-        "Unity.Services.Authentication",
-        "Unity.Services.Relay"
+        "GUID:2c360f3794ebc41388fc11424ddbfdd0"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -14,7 +10,9 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": [],
+    "defineConstraints": [
+        "UNITY_2021_2_OR_NEWER"
+    ],
     "versionDefines": [],
     "noEngineReferences": false
 }
