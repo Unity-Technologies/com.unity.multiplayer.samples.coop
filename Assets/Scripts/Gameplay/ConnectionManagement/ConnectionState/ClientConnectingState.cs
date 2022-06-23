@@ -10,7 +10,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Connection state corresponding to when a client is attempting to connect to a server. Starts the client when
-    /// entering If successful, transitions to the Connected state. If not, transitions to the Offline state.
+    /// entering. If successful, transitions to the ClientConnected state. If not, transitions to the Offline state. If
+    /// given a disconnect reason first, transitions to the DisconnectingWithReason state.
     /// </summary>
     public class ClientConnectingState : ConnectionState
     {

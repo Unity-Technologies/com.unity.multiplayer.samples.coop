@@ -12,8 +12,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
     /// Connection state corresponding to a client attempting to reconnect to a server. It will try to reconnect a
-    /// number of times defined by k_NbReconnectAttempts. If it succeeds, it will transition to the Connected state. If
-    /// not, it will transition to the Offline state.
+    /// number of times defined by k_NbReconnectAttempts. If it succeeds, it will transition to the ClientConnected
+    /// state. If not, it will transition to the Offline state. If given a disconnect reason first, depending on the
+    /// reason given, may transition to the DisconnectingWithReason state.
     /// </summary>
     public class ClientReconnectingState : ClientConnectingState
     {
