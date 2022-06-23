@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
-## [v1.3.0-pre UNRELEASED] - yyyy-mm-dd
+## [v1.3.0-pre] - 2022-06-23
 
 ### Added
 * Adding RNSM (Runtime Network Stats Monitor) to boss room [MTT-3267] (#621)

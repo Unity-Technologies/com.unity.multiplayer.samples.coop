@@ -1,6 +1,6 @@
 # Multiplayer Samples Co-op Changelog
 
-## [1.3.0-pre] - 2022-04-28
+## [1.3.0-pre] - 2022-06-23
 
 ### Added
 * feat: other players loading progress in loading screen [MTT-2239] (#580)
