@@ -1,10 +1,11 @@
 # Multiplayer Samples Co-op Changelog
 
-## [Unreleased] - yyyy-mm-dd
+## [1.3.0-pre] - 2022-04-28
 
 ### Added
 * feat: other players loading progress in loading screen [MTT-2239] (#580)
 * feat: adding editor child scene loader for composed scenes (#653)
+* Added an assembly definition for the RNSM utilities so that they are only compiled if using Unity version 2021.2 or newer
 
 ### Changed
 *
