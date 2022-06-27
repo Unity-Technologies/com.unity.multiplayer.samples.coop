@@ -27,8 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 throw new Exception($"Creating allocation request has failed: \n {exception.Message}");
             }
 
-            Debug.Log($"server: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}");
-            Debug.Log($"server: {allocation.AllocationId}");
+            Debug.Log($"server: connection data: {allocation.ConnectionData[0]} {allocation.ConnectionData[1]}, allocation ID:{allocation.AllocationId}, region:{allocation.Region}");
 
             try
             {

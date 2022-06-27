@@ -1,0 +1,20 @@
+{
+    "name": "Unity.Multiplayer.Samples.Utilities.Testing",
+    "rootNamespace": "",
+    "references": [
+        "GUID:1491147abca9d7d4bb7105af628b223e"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": true,
+    "precompiledReferences": [
+        "nunit.framework.dll"
+    ],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "UNITY_INCLUDE_TESTS"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

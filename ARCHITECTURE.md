@@ -32,7 +32,7 @@ The Boss Room network connection flow is owned by the `GameNetPortal`:
 Game data in Boss Room is defined in `ScriptableObjects`. The `ScriptableObjects` are organized by enum and made available in a singleton class: the `GameDataSource`, in particular `ActionDescription` and `CharacterData`. `Actions` represent discrete verbs (like swinging a weapon, or reviving someone), and are substantially data driven. Characters represent both the different player classes, and also monsters, and represent basic details like health, as well as what "Skill" Actions are available to each Character.
 
 ## Transports
-Currently three network transport mechanisms are supported: 
+Currently two network transport mechanisms are supported: 
 - IP based
 - Unity Relay Based
 
@@ -42,10 +42,8 @@ For Unity Relay based multiplayer sessions, some setup is required. Please see o
 
 Please see [Multiplayer over internet](README.md) section of our Readme for more information on using either one.
 
-To allow for any of these options to be chosen at runtime we created `TransportPicker`. It allows one to choose between an IP-based and a Relay-based transport and will hook up the game UI to use those transports. The transport field in the `NetworkManager` will be ignored. Currently we support the following transports:
-- **UNET(IP):** UNET is the default Netcode transport. However, it is not the default IP transport for Boss Room.
-- **UTP (IP):** Unity Transport Package is a network transport layer, packaged with network simulation tools which are useful for spotting networking issues early during development. This IP based protocol is the default IP transport for Boss Room. See the documentation on [Unity Transport Package](https://docs-multiplayer.unity3d.com/docs/transport-utp/about-transport-utp/#unity-transport-package-utp).
-- **Unity (Relay):** Unity Relay is a relay service provided by Unity services, supported by Unity Transport. Read more about [Unity Relay](https://docs-multiplayer.unity3d.com/docs/relay/relay).
+The transport is set in the transport field in the `NetworkManager`. We are using the following transport:
+- **Unity Transport Package (UTP):** Unity Transport Package is a network transport layer, packaged with network simulation tools which are useful for spotting networking issues early during development. This protocol is initialized to use direct IP to connect, but is configured at runtime to use Unity Relay if starting a game as a host using the Lobby Service, or joining a Lobby as a client. Unity Relay is a relay service provided by Unity services, supported by Unity Transport. See the documentation on [Unity Transport Package](https://docs-multiplayer.unity3d.com/docs/transport-utp/about-transport-utp/#unity-transport-package-utp) and on [Unity Relay](https://docs-multiplayer.unity3d.com/docs/relay/relay).
 
 To add new transports in the project, parts of `GameNetPortal` and `ClientGameNetPortal` (transport switches) need to be extended.
 
