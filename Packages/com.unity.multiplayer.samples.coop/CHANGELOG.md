@@ -1,17 +1,18 @@
 # Multiplayer Samples Co-op Changelog
 
-## [Unreleased] - yyyy-mm-dd
+## [1.3.0-pre] - 2022-06-23
 
 ### Added
-feat: other players loading progress in loading screen [MTT-2239] (#580)
-feat: adding editor child scene loader for composed scenes (#653)
+* feat: other players loading progress in loading screen [MTT-2239] (#580)
+* feat: adding editor child scene loader for composed scenes (#653)
+* Added an assembly definition for the RNSM utilities so that they are only compiled if using Unity version 2021.2 or newer
 
 ### Changed
-
+*
 ### Removed
-
+*
 ### Fixed
-
+* Fixed breaking change from NetworkTransform in ClientNetworkTransform
 ## [1.2.0-pre] - 2022-04-28
 ### Added
 * Client network transform move to samples [MTT-3406] (#629) --> You can now use Boss Room's Utilities package to import ClientNetworkTransform using this line in your manifest file     
