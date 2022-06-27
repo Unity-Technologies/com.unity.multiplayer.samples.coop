@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Torso_Imp_Bomb
+  m_Name: Head_Imp_Vandal
   m_Shader: {fileID: -6465566751694194690, guid: 317f1cf71d2fc30458456d44f39763d2, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords:
@@ -22,7 +22,7 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BumpMap:
-        m_Texture: {fileID: 2800000, guid: 2fa499f9cfde15e4599f73e73c1e9fb5, type: 3}
+        m_Texture: {fileID: 2800000, guid: 6241db63cd35e7a47bdbc327c5058789, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailAlbedoMap:
@@ -42,7 +42,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 5e5c8233e7cf5fd4e98f1993e8b0ab57, type: 3}
+        m_Texture: {fileID: 2800000, guid: 9bcfcb8446217f84babd0e1729b9a411, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -76,15 +76,15 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: -2.86
+    - _Glossiness: 2.89
     - _GlossyReflections: 1
-    - _Metallic: 0.57
+    - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _RimAmount: 0.366
+    - _RimAmount: 0.667
     - _RimThreshold: 0
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
@@ -95,10 +95,10 @@ Material:
     - _AmbientColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 0.36078432, g: 0.36078432, b: 0.36078432, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _RimColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
-    - _SpecularColor: {r: 3.9999995, g: 3.9999995, b: 3.9999995, a: 1}
+    - _RimColor: {r: 1.6941177, g: 1.6941177, b: 1.6941177, a: 1}
+    - _SpecularColor: {r: 4.0156865, g: 4.0156865, b: 4.0156865, a: 1}
   m_BuildTextureStacks: []
---- !u!114 &3341475901199570861
+--- !u!114 &1959664285060799131
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
