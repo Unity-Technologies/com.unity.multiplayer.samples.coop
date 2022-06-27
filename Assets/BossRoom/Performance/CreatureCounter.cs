@@ -3,9 +3,8 @@ using Unity.Profiling;
 
 public class CreatureCounter : MonoBehaviour
 {
-    static readonly ProfilerCategory k_BossRoomProfilerCategory = new("Boss Room");
     static readonly ProfilerCounterValue<int> k_CreatureCounter = new(
-        k_BossRoomProfilerCategory,
+        ProfilerCategory.Scripts,
         "Creature Count",
         ProfilerMarkerDataUnit.Count,
         ProfilerCounterOptions.FlushOnEndOfFrame);
