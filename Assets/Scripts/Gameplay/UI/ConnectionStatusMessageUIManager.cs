@@ -45,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ConnectStatus.Success:
                     break;
                 case ConnectStatus.LoggedInAgain:
-                    PopupManager.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account.");
+                    PopupManager.ShowPopupPanel("Connection Failed", "You have logged in elsewhere using the same account. If you still want to connect, select a different profile by using the 'Change Profile' button.");
                     break;
                 case ConnectStatus.IncompatibleBuildType:
                     PopupManager.ShowPopupPanel("Connection Failed", "Server and client builds are not compatible. You cannot connect a release build to a development build or an in-editor session.");

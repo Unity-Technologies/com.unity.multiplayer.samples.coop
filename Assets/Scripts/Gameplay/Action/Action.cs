@@ -174,6 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction(parent, ref data);
                 case ActionLogic.StealthMode: return new StealthModeAction(parent, ref data);
                 case ActionLogic.DashAttack: return new DashAttackAction(parent, ref data);
+                case ActionLogic.ImpToss: return new TossAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }

@@ -16,8 +16,8 @@
       "hash": "0fc6f532e4f47d66d173314efcb906bc7cf0d00f"
     },
     "com.unity.burst": {
-      "version": "1.6.5",
-      "depth": 1,
+      "version": "1.6.6",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
         "com.unity.mathematics": "1.2.1"
@@ -41,11 +41,11 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collections": {
-      "version": "1.2.3",
-      "depth": 1,
+      "version": "1.2.4",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
-        "com.unity.burst": "1.6.4",
+        "com.unity.burst": "1.6.6",
         "com.unity.test-framework": "1.1.31"
       },
       "url": "https://packages.unity.com"
@@ -121,10 +121,11 @@
       "source": "embedded",
       "dependencies": {
         "com.unity.learn.iet-framework": "1.2.1",
-        "com.unity.netcode.gameobjects": "1.0.0-pre.8",
+        "com.unity.multiplayer.tools": "1.0.0-pre.7",
+        "com.unity.netcode.gameobjects": "1.0.0-pre.10",
         "com.unity.services.authentication": "1.0.0-pre.4",
         "com.unity.services.lobby": "1.0.0-pre.6",
-        "com.unity.services.relay": "1.0.1-pre.5"
+        "com.unity.services.relay": "1.0.2"
       }
     },
     "com.unity.multiplayer.tools": {
@@ -141,12 +142,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.0.0-pre.9",
+      "version": "1.0.0-pre.10",
       "depth": 0,
       "source": "registry",
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1",
-        "com.unity.transport": "1.0.0"
+        "com.unity.transport": "1.1.0"
       },
       "url": "https://packages.unity.com"
     },
@@ -352,13 +353,13 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "1.0.0",
+      "version": "1.1.0",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.collections": "1.2.3",
-        "com.unity.burst": "1.6.4",
-        "com.unity.mathematics": "1.2.5"
+        "com.unity.collections": "1.2.4",
+        "com.unity.burst": "1.6.6",
+        "com.unity.mathematics": "1.2.6"
       },
       "url": "https://packages.unity.com"
     },

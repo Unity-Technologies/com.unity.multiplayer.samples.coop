@@ -15,5 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         //monsters
         Imp,
         ImpBoss,
+        VandalImp
     }
 }
