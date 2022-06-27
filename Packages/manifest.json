@@ -14,7 +14,7 @@
     "com.unity.netcode.adapter.utp": "1.0.0-pre.5",
     "com.unity.netcode.gameobjects": "1.0.0-pre.5",
     "com.unity.postprocessing": "3.2.0",
-    "com.unity.render-pipelines.universal": "12.1.5",
+    "com.unity.render-pipelines.universal": "12.1.6",
     "com.unity.services.authentication": "1.0.0-pre.4",
     "com.unity.services.relay": "1.0.1-pre.4",
     "com.unity.test-framework": "1.1.29",
