@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) 
 
 Additional documentation and release notes are available at [Multiplayer Documentation](https://docs-multiplayer.unity3d.com).
 
+## [Unreleased] - yyyy-mm-dd
+
+### Added
+*
+### Changed
+* Replaced our dependency injection solution with VContainer.
+### Removed
+*
+### Fixed
+
+
 ## [v1.3.0-pre] - 2022-06-23
 
 ### Added
@@ -30,16 +41,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Removed
 * Remove UNET [MTT-3435] (#638) --> removed deprecated UNET transport from Boss Room
 
-## [Unreleased] - yyyy-mm-dd
 
-### Added
-*
-### Changed
-*
-### Removed
-*
-### Fixed
-*
 ## [1.2.0-pre] - 2022-04-28
 ### Changes
 * Bump to pre.8 and fix compile issues [MTT-3413] (#631) --> Custom message structs now need new interfaces
