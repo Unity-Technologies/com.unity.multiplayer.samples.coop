@@ -34,6 +34,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
     }
 
+    public struct ConnectionEventMessage : INetworkSerializeByMemcpy
+    {
+        public ConnectStatus ConnectStatus;
+        public FixedPlayerName PlayerName;
+    }
+
     [Serializable]
     public class ConnectionPayload
     {
@@ -48,7 +54,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public class ConnectionManager : MonoBehaviour
     {
-
         ConnectionState m_CurrentState;
         ConnectionState CurrentState
         {
@@ -73,6 +78,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [SerializeField]
         NetworkObject m_GameState;
         public NetworkObject GameState => m_GameState;
+
+        public const int k_MaxLobbyPlayers = 8;
 
         void Awake()
         {

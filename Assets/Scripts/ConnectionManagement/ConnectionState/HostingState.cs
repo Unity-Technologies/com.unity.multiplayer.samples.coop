@@ -148,7 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
-            if (m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= CharSelectData.k_MaxLobbyPlayers)
+            if (m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= ConnectionManager.k_MaxLobbyPlayers)
             {
                 return ConnectStatus.ServerFull;
             }

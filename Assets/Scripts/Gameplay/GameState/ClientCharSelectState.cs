@@ -432,7 +432,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
-                while (m_PlayerSeats.Count < CharSelectData.k_MaxLobbyPlayers)
+                while (m_PlayerSeats.Count < ConnectionManager.k_MaxLobbyPlayers)
                 {
                     m_PlayerSeats.Add(null);
                 }

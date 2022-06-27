@@ -197,7 +197,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         int GetAvailablePlayerNumber()
         {
-            for (int possiblePlayerNumber = 0; possiblePlayerNumber < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNumber)
+            for (int possiblePlayerNumber = 0; possiblePlayerNumber < ConnectionManager.k_MaxLobbyPlayers; ++possiblePlayerNumber)
             {
                 if (IsPlayerNumberAvailable(possiblePlayerNumber))
                 {
