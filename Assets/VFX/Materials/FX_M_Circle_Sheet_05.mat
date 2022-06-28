@@ -109,7 +109,7 @@ Material:
     - _UseSoftParticles: 0
     - _Use_alpha: 1
     - _WorkflowMode: 1
-    - _ZTest: 8
+    - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0
     - __dirty: 0
