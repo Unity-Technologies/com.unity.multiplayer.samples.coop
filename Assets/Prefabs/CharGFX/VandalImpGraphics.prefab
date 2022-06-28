@@ -2089,7 +2089,7 @@ GameObject:
   - component: {fileID: 8731501901720154717}
   - component: {fileID: 4907214515068745264}
   m_Layer: 6
-  m_Name: Imp_WeaponR
+  m_Name: Imp_TossedObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
