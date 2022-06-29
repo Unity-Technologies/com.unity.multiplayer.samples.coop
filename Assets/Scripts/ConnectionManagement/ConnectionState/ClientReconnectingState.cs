@@ -36,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void Enter()
         {
             m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
-            m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+            m_ReconnectCoroutine = ConnectionManager.StartCoroutine(ReconnectCoroutine());
             m_NbAttempts = 0;
         }
 
@@ -44,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (m_ReconnectCoroutine != null)
             {
-                m_ConnectionManager.StopCoroutine(m_ReconnectCoroutine);
+                ConnectionManager.StopCoroutine(m_ReconnectCoroutine);
                 m_ReconnectCoroutine = null;
             }
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
@@ -52,26 +52,26 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientConnected(ulong _)
         {
-            StateChangeRequest.Invoke(ClientConnected);
+            StateChangeRequest.Invoke(ConnectionManager.ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong _)
         {
             if (m_NbAttempts < k_NbReconnectAttempts)
             {
-                m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                m_ReconnectCoroutine = ConnectionManager.StartCoroutine(ReconnectCoroutine());
             }
             else
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
-                StateChangeRequest.Invoke(Offline);
+                StateChangeRequest.Invoke(ConnectionManager.Offline);
             }
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            StateChangeRequest.Invoke(Offline);
+            StateChangeRequest.Invoke(ConnectionManager.Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
@@ -82,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 case ConnectStatus.UserRequestedDisconnect:
                 case ConnectStatus.HostEndedSession:
                 case ConnectStatus.ServerFull:
-                    StateChangeRequest.Invoke(DisconnectingWithReason);
+                    StateChangeRequest.Invoke(ConnectionManager.DisconnectingWithReason);
                     break;
             }
         }

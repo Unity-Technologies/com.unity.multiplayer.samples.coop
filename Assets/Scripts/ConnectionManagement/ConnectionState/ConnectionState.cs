@@ -11,31 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public abstract class ConnectionState
     {
-        public static readonly OfflineState Offline = new OfflineState();
-        public static readonly ClientConnectingState ClientConnecting = new ClientConnectingState();
-        public static readonly ClientConnectedState ClientConnected = new ClientConnectedState();
-        public static readonly ClientReconnectingState ClientReconnecting = new ClientReconnectingState();
-        public static readonly DisconnectingWithReasonState DisconnectingWithReason = new DisconnectingWithReasonState();
-        public static readonly StartingHostState StartingHost = new StartingHostState();
-        public static readonly HostingState Hosting = new HostingState();
-
-        public static readonly List<ConnectionState> States = new() { Offline, ClientConnecting, ClientConnected, ClientReconnecting, DisconnectingWithReason, StartingHost, Hosting };
-
-        /// <summary>
-        /// Initializes each of the static states, by setting the reference to the ConnectionManager and injecting dependencies.
-        /// </summary>
-        /// <param name="connectionManager"></param>
-        /// <param name="scope"></param>
-        public static void InitializeStates(ConnectionManager connectionManager, DIScope scope)
-        {
-            foreach (var connectionState in States)
-            {
-                connectionState.m_ConnectionManager = connectionManager;
-                scope.InjectIn(connectionState);
-            }
-        }
-
-        protected ConnectionManager m_ConnectionManager;
+        public ConnectionManager ConnectionManager { get; set; }
 
         public abstract void Enter();
 

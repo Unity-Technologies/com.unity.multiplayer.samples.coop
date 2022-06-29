@@ -34,7 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void Enter()
         {
             m_LobbyServiceFacade.EndTracking();
-            m_ConnectionManager.NetworkManager.Shutdown();
+            ConnectionManager.NetworkManager.Shutdown();
             if (SceneManager.GetActiveScene().name != k_MainMenuSceneName)
             {
                 SceneLoaderWrapper.Instance.LoadScene(k_MainMenuSceneName, useNetworkSceneManager: false);
@@ -45,16 +45,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void StartClientIP(string playerName, string ipaddress, int port)
         {
-            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+            var utp = (UnityTransport)ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
             SetConnectionPayload(GetPlayerId(), playerName);
-            StateChangeRequest.Invoke(ClientConnecting);
+            StateChangeRequest.Invoke(ConnectionManager.ClientConnecting);
         }
 
         public override void StartClientLobby(string playerName)
         {
             SetConnectionPayload(GetPlayerId(), playerName);
-            StateChangeRequest.Invoke(ClientConnecting);
+            StateChangeRequest.Invoke(ConnectionManager.ClientConnecting);
         }
 
         public override void StartHostIP(string playerName, string ipaddress, int port)
@@ -63,13 +63,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             utp.SetConnectionData(ipaddress, (ushort)port);
 
             SetConnectionPayload(GetPlayerId(), playerName);
-            StateChangeRequest.Invoke(StartingHost);
+            StateChangeRequest.Invoke(ConnectionManager.StartingHost);
         }
 
         public override void StartHostLobby(string playerName)
         {
             SetConnectionPayload(GetPlayerId(), playerName);
-            StateChangeRequest.Invoke(StartingHost);
+            StateChangeRequest.Invoke(ConnectionManager.StartingHost);
         }
 
         void SetConnectionPayload(string playerId, string playerName)
@@ -83,7 +83,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
-            m_ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
+            ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
         }
 
         string GetPlayerId()

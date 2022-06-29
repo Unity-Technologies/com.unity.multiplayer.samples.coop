@@ -37,25 +37,25 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnClientConnected(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
-            StateChangeRequest.Invoke(ClientConnected);
+            StateChangeRequest.Invoke(ConnectionManager.ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
-            StateChangeRequest.Invoke(Offline);
+            StateChangeRequest.Invoke(ConnectionManager.Offline);
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            StateChangeRequest.Invoke(Offline);
+            StateChangeRequest.Invoke(ConnectionManager.Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
-            StateChangeRequest.Invoke(DisconnectingWithReason);
+            StateChangeRequest.Invoke(ConnectionManager.DisconnectingWithReason);
         }
 
         protected async Task ConnectClient()
@@ -68,13 +68,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             if (success)
             {
-                success = m_ConnectionManager.NetworkManager.StartClient();
+                success = ConnectionManager.NetworkManager.StartClient();
             }
 
             if (success)
             {
                 SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-                m_ConnectionManager.RegisterCustomMessages();
+                ConnectionManager.RegisterCustomMessages();
             }
             else
             {
@@ -92,7 +92,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
 
                 await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
-                var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+                var utp = (UnityTransport)ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)

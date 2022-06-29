@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -83,6 +84,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public int MaxConnectedPlayers = 8;
 
+        public readonly OfflineState Offline = new OfflineState();
+        public readonly ClientConnectingState ClientConnecting = new ClientConnectingState();
+        public readonly ClientConnectedState ClientConnected = new ClientConnectedState();
+        public readonly ClientReconnectingState ClientReconnecting = new ClientReconnectingState();
+        public readonly DisconnectingWithReasonState DisconnectingWithReason = new DisconnectingWithReasonState();
+        public readonly StartingHostState StartingHost = new StartingHostState();
+        public readonly HostingState Hosting = new HostingState();
+
         void Awake()
         {
             DontDestroyOnLoad(gameObject);
@@ -90,9 +99,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void Start()
         {
-            ConnectionState.InitializeStates(this, DIScope.RootScope);
-
-            CurrentState = ConnectionState.Offline;
+            CurrentState = Offline;
 
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
@@ -107,6 +114,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
 
+        }
+
+        [Inject]
+        void InjectDependencies(DIScope scope)
+        {
+            List<ConnectionState> states = new() { Offline, ClientConnecting, ClientConnected, ClientReconnecting, DisconnectingWithReason, StartingHost, Hosting };
+            foreach (var connectionState in states)
+            {
+                connectionState.ConnectionManager = this;
+                scope.InjectIn(connectionState);
+            }
         }
 
         void OnStateChangeRequest(ConnectionState nextState)

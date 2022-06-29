@@ -40,17 +40,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
+            if (clientId == ConnectionManager.NetworkManager.LocalClientId)
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
-                StateChangeRequest.Invoke(Offline);
+                StateChangeRequest.Invoke(ConnectionManager.Offline);
             }
         }
 
         public override void OnServerStarted()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
-            StateChangeRequest.Invoke(Hosting);
+            StateChangeRequest.Invoke(ConnectionManager.Hosting);
         }
 
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
@@ -58,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var connectionData = request.Payload;
             var clientId = request.ClientNetworkId;
             // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
-            if (m_ConnectionManager.NetworkManager.IsHost && clientId == m_ConnectionManager.NetworkManager.LocalClientId)
+            if (ConnectionManager.NetworkManager.IsHost && clientId == ConnectionManager.NetworkManager.LocalClientId)
             {
                 var payload = System.Text.Encoding.UTF8.GetString(connectionData);
                 var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
@@ -89,7 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), joinCode);
 
                     // we now need to set the RelayCode somewhere :P
-                    var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+                    var utp = (UnityTransport)ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
                     utp.SetHostRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, isSecure: true);
                 }
                 catch (Exception e)
@@ -101,9 +101,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 Debug.Log($"Created relay allocation with join code {m_LocalLobby.RelayJoinCode}");
             }
 
-            if (!m_ConnectionManager.NetworkManager.StartHost())
+            if (!ConnectionManager.NetworkManager.StartHost())
             {
-                OnClientDisconnect(m_ConnectionManager.NetworkManager.LocalClientId);
+                OnClientDisconnect(ConnectionManager.NetworkManager.LocalClientId);
             }
         }
     }

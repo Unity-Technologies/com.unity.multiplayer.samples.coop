@@ -30,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Enter()
         {
-            var gameState = UnityEngine.Object.Instantiate(m_ConnectionManager.GameState);
+            var gameState = UnityEngine.Object.Instantiate(ConnectionManager.GameState);
 
             gameState.Spawn();
 
@@ -53,9 +53,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
+            if (clientId == ConnectionManager.NetworkManager.LocalClientId)
             {
-                StateChangeRequest.Invoke(Offline);
+                StateChangeRequest.Invoke(ConnectionManager.Offline);
             }
             else
             {
@@ -81,7 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
             // Wait before shutting down to make sure clients receive that message before they are disconnected
-            m_ConnectionManager.StartCoroutine(WaitToShutdown());
+            ConnectionManager.StartCoroutine(WaitToShutdown());
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
 
             ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-            m_ConnectionManager.StartCoroutine(WaitToDenyApproval());
+            ConnectionManager.StartCoroutine(WaitToDenyApproval());
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
             {
                 m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
@@ -148,7 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
-            if (m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= m_ConnectionManager.MaxConnectedPlayers)
+            if (ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= ConnectionManager.MaxConnectedPlayers)
             {
                 return ConnectStatus.ServerFull;
             }
@@ -165,7 +165,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IEnumerator WaitToShutdown()
         {
             yield return null;
-            StateChangeRequest.Invoke(Offline);
+            StateChangeRequest.Invoke(ConnectionManager.Offline);
         }
     }
 }
