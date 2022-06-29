@@ -24,19 +24,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnClientDisconnect(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
-            StateChangeRequest?.Invoke(ClientReconnecting);
+            StateChangeRequest.Invoke(ClientReconnecting);
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            StateChangeRequest?.Invoke(Offline);
+            StateChangeRequest.Invoke(Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
-            StateChangeRequest?.Invoke(DisconnectingWithReason);
+            StateChangeRequest.Invoke(DisconnectingWithReason);
         }
     }
 }

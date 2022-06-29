@@ -43,14 +43,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
-                StateChangeRequest?.Invoke(Offline);
+                StateChangeRequest.Invoke(Offline);
             }
         }
 
         public override void OnServerStarted()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
-            StateChangeRequest?.Invoke(Hosting);
+            StateChangeRequest.Invoke(Hosting);
         }
 
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)

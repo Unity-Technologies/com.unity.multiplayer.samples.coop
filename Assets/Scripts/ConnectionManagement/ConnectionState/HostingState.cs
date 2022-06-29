@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
-                StateChangeRequest?.Invoke(Offline);
+                StateChangeRequest.Invoke(Offline);
             }
             else
             {
@@ -165,7 +165,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IEnumerator WaitToShutdown()
         {
             yield return null;
-            StateChangeRequest?.Invoke(Offline);
+            StateChangeRequest.Invoke(Offline);
         }
     }
 }

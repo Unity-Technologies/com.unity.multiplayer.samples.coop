@@ -52,7 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientConnected(ulong _)
         {
-            StateChangeRequest?.Invoke(ClientConnected);
+            StateChangeRequest.Invoke(ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong _)
@@ -64,14 +64,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
             else
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
-                StateChangeRequest?.Invoke(Offline);
+                StateChangeRequest.Invoke(Offline);
             }
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            StateChangeRequest?.Invoke(Offline);
+            StateChangeRequest.Invoke(Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
@@ -82,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 case ConnectStatus.UserRequestedDisconnect:
                 case ConnectStatus.HostEndedSession:
                 case ConnectStatus.ServerFull:
-                    StateChangeRequest?.Invoke(DisconnectingWithReason);
+                    StateChangeRequest.Invoke(DisconnectingWithReason);
                     break;
             }
         }
