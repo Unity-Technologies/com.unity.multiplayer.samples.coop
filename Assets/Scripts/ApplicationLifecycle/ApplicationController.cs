@@ -47,6 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             builder.Register<ProfileManager>(Lifetime.Singleton);
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
+            // Registering as instance to prevent code stripping on iOS
             builder.RegisterInstance(new MessageChannel<QuitGameSessionMessage>()).AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<QuitApplicationMessage>()).AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
