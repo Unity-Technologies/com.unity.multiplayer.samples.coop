@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -99,6 +100,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
+
+        ConnectionManager m_ConnectionManager;
+
+        [Inject]
+        void InjectDependencies(ConnectionManager connectionManager)
+        {
+            m_ConnectionManager = connectionManager;
+        }
 
         protected override void Awake()
         {
@@ -432,7 +441,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
             {
-                while (m_PlayerSeats.Count < ConnectionManager.k_MaxLobbyPlayers)
+                while (m_PlayerSeats.Count < m_ConnectionManager.MaxConnectedPlayers)
                 {
                     m_PlayerSeats.Add(null);
                 }

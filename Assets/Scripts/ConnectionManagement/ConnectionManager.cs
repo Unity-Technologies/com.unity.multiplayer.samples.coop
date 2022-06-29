@@ -81,7 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         NetworkObject m_GameState;
         public NetworkObject GameState => m_GameState;
 
-        public const int k_MaxLobbyPlayers = 8;
+        public int MaxConnectedPlayers = 8;
 
         void Awake()
         {
