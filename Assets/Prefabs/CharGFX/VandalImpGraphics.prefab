@@ -1245,7 +1245,6 @@ GameObject:
   - component: {fileID: -559815779163765970}
   - component: {fileID: -8995571906845300287}
   - component: {fileID: 6030569013059244219}
-  - component: {fileID: -823941263164167683}
   - component: {fileID: 1324944314608130499}
   m_Layer: 6
   m_Name: VandalImpGraphics
@@ -1324,13 +1323,13 @@ MonoBehaviour:
   m_EventsOnNodeEntry:
   - m_AnimatorNodeName: Attack1
     m_AnimatorNodeNameHash: -47317214
-    m_Prefab: {fileID: 1652666497380707034, guid: abf9f7de0d4eb4941a1b17568597deb2, type: 3}
+    m_Prefab: {fileID: 0}
     m_PrefabSpawnDelaySeconds: 0.8
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: 808ba00e4b69fe8489fd8020ec50ed2d, type: 3}
+    m_SoundEffect: {fileID: 8300000, guid: a08cbad8bcaf8c345aa6ae1e7578eee9, type: 3}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -1767,23 +1766,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Animator: {fileID: 0}
---- !u!114 &-823941263164167683
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6839301660383890230}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 951099334
-  AlwaysReplicateAsRoot: 0
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
+  m_Animator: {fileID: 234724737205816310}
 --- !u!114 &1324944314608130499
 MonoBehaviour:
   m_ObjectHideFlags: 0
