@@ -60,6 +60,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             get => m_CurrentState;
             set
             {
+                // Unregister from old state's StateChangeRequest and registers on the next one's so that only that
+                // state can trigger a state change, and call the Exit and Enter methods of the old and new states.
                 if (m_CurrentState != null)
                 {
                     m_CurrentState.StateChangeRequest -= OnStateChangeRequest;
