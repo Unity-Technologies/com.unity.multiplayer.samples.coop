@@ -140,7 +140,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.0.0-pre.10",
+      "version": "1.0.0",
       "depth": 0,
       "source": "registry",
       "dependencies": {
