@@ -436,18 +436,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             return characterGraphics;
         }
 
-#if UNITY_EDITOR
-        void OnValidate()
-        {
-            if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
-            {
-                while (m_PlayerSeats.Count < m_ConnectionManager.MaxConnectedPlayers)
-                {
-                    m_PlayerSeats.Add(null);
-                }
-            }
-        }
-#endif
-
     }
 }
