@@ -8,7 +8,7 @@
   "description": "Utilities package built on top of Netcode for GameObjects, providing useful scripts and tools.",
   "dependencies": {
     "com.unity.learn.iet-framework": "1.2.1",
-    "com.unity.multiplayer.tools": "1.0.0-pre.8",
+    "com.unity.multiplayer.tools": "1.0.0",
     "com.unity.netcode.gameobjects": "1.0.0",
     "com.unity.services.relay": "1.0.3"
   }
