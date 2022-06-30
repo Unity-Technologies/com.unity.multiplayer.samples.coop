@@ -110,7 +110,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
+            yield return null;
 
             Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
 
@@ -124,7 +125,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             genericMessageChannelServer.Publish(new GenericMessage() { value = true });
 
             // wait for the custom named message to be sent on the server and received on the client
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
+            yield return null;
 
             Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
         }
@@ -137,7 +139,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
+            yield return null;
 
             Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
 
@@ -163,7 +166,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
+            yield return null;
 
             Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
         }
@@ -189,7 +193,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
+            yield return null;
 
             Assert.AreEqual((nbClients + 1) * nbSubscribers, m_NbMessagesReceived);
         }
@@ -209,7 +214,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
+            yield return null;
 
             Assert.AreEqual(nbSubscribers, m_NbMessagesReceived);
         }
@@ -228,7 +234,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             emptyMessageChannelServer.Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
+            yield return null;
 
             Assert.AreEqual(0, m_NbMessagesReceived);
         }
@@ -242,7 +249,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             emptyMessageChannelClients[0].Publish(new EmptyMessage());
 
             // wait for the custom named message to be sent on the server and received on the clients
-            yield return new WaitForSeconds(0.2f);
+            yield return null;
+            yield return null;
 
             Assert.AreEqual(0, m_NbMessagesReceived);
         }
