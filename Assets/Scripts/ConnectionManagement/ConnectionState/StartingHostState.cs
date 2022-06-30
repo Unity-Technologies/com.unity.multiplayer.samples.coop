@@ -58,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var connectionData = request.Payload;
             var clientId = request.ClientNetworkId;
             // This happens when starting as a host, before the end of the StartHost call. In that case, we simply approve ourselves.
-            if (ConnectionManager.NetworkManager.IsHost && clientId == ConnectionManager.NetworkManager.LocalClientId)
+            if (clientId == ConnectionManager.NetworkManager.LocalClientId)
             {
                 var payload = System.Text.Encoding.UTF8.GetString(connectionData);
                 var connectionPayload = JsonUtility.FromJson<ConnectionPayload>(payload); // https://docs.unity3d.com/2020.2/Documentation/Manual/JSONSerialization.html
