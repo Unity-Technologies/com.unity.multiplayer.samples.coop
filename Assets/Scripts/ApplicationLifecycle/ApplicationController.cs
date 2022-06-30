@@ -90,6 +90,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             Application.targetFrameRate = 120;
         }
 
+        private void Start()
+        {
+            SceneManager.LoadScene("MainMenu");
+        }
+
         private void OnDestroy()
         {
             m_Subscriptions?.Dispose();
