@@ -31,14 +31,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         float detonateAfterSeconds = 5f;
 
         float m_DetonateAfterSeconds;
-        
+
         [SerializeField]
         float destroyAfterSeconds = 6f;
 
         float m_DestroyAfterSeconds;
 
         bool m_Detonated;
-        
+
         public UnityEvent detonatedCallback;
 
         public override void OnNetworkSpawn()
@@ -79,7 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     }
                 }
             }
-            
+
             // send client RPC to detonate on clients
             DetonateClientRpc();
 
@@ -113,4 +113,3 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         }
     }
 }
-

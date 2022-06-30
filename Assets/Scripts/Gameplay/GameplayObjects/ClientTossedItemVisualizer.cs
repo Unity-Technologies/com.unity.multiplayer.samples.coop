@@ -12,8 +12,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         const float k_DisplayHeight = 0.1f;
 
         readonly Quaternion k_TossAttackRadiusDisplayRotation = Quaternion.Euler(90f, 0f, 0f);
-        
-        [SerializeField] 
+
+        [SerializeField]
         GameObject m_TossedObjectGraphics;
 
         [SerializeField]

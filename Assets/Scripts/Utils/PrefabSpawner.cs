@@ -6,10 +6,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     {
         [SerializeField]
         bool m_UseLocalPosition;
-        
+
         [SerializeField]
         bool m_UseLocalRotation;
-        
+
         [SerializeField]
         GameObject m_Prefab;
 
