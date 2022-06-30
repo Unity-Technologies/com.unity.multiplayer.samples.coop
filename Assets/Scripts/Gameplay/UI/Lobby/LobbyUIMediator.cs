@@ -70,7 +70,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         //Lobby and Relay calls done from UI
 
-        public async void CreateLobbyRequest(string lobbyName, bool isPrivate, int maxPlayers)
+        public async void CreateLobbyRequest(string lobbyName, bool isPrivate)
         {
             // before sending request to lobby service, populate an empty lobby name, if necessary
             if (string.IsNullOrEmpty(lobbyName))
@@ -88,7 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 return;
             }
 
-            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, maxPlayers, isPrivate);
+            var lobbyCreationAttempt = await m_LobbyServiceFacade.TryCreateLobbyAsync(lobbyName, m_ConnectionManager.MaxConnectedPlayers, isPrivate);
 
             if (lobbyCreationAttempt.Success)
             {
