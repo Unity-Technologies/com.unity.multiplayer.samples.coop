@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to a listening host. Handles incoming client connections. When shutting down or
     /// being timed out, transitions to the Offline state.
     /// </summary>
-    public class HostingState : ConnectionState
+    class HostingState : ConnectionState
     {
         LobbyServiceFacade m_LobbyServiceFacade;
         IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (clientId == ConnectionManager.NetworkManager.LocalClientId)
             {
-                StateChangeRequest.Invoke(ConnectionManager.Offline);
+                ConnectionManager.ChangeState(ConnectionManager.m_Offline);
             }
             else
             {
@@ -165,7 +165,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IEnumerator WaitToShutdown()
         {
             yield return null;
-            StateChangeRequest.Invoke(ConnectionManager.Offline);
+            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
         }
     }
 }

@@ -5,7 +5,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Since our disconnect process runs in multiple steps host side, this state is the first step client side. This
     /// state simply waits for the actual disconnect, then transitions to the offline state.
     /// </summary>
-    public class DisconnectingWithReasonState : ConnectionState
+    class DisconnectingWithReasonState : ConnectionState
     {
         public override void Enter() { }
 
@@ -13,12 +13,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong _)
         {
-            StateChangeRequest.Invoke(ConnectionManager.Offline);
+            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
         }
 
         public override void OnUserRequestedShutdown()
         {
-            StateChangeRequest.Invoke(ConnectionManager.Offline);
+            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
         }
     }
 }

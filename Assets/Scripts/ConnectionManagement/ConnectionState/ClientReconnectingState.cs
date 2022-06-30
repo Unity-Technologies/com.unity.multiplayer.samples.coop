@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// state. If not, it will transition to the Offline state. If given a disconnect reason first, depending on the
     /// reason given, may transition to the DisconnectingWithReason state.
     /// </summary>
-    public class ClientReconnectingState : ClientConnectingState
+    class ClientReconnectingState : ClientConnectingState
     {
         const int k_NbReconnectAttempts = 2;
 
@@ -52,7 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientConnected(ulong _)
         {
-            StateChangeRequest.Invoke(ConnectionManager.ClientConnected);
+            ConnectionManager.ChangeState(ConnectionManager.m_ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong _)
@@ -64,14 +64,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
             else
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
-                StateChangeRequest.Invoke(ConnectionManager.Offline);
+                ConnectionManager.ChangeState(ConnectionManager.m_Offline);
             }
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            StateChangeRequest.Invoke(ConnectionManager.Offline);
+            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
@@ -82,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 case ConnectStatus.UserRequestedDisconnect:
                 case ConnectStatus.HostEndedSession:
                 case ConnectStatus.ServerFull:
-                    StateChangeRequest.Invoke(ConnectionManager.DisconnectingWithReason);
+                    ConnectionManager.ChangeState(ConnectionManager.m_DisconnectingWithReason);
                     break;
             }
         }

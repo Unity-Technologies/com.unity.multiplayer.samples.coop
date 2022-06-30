@@ -17,7 +17,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to when the NetworkManager is shut down. From this state we can transition to the
     /// ClientConnecting sate, if starting as a client, or the StartingHost state, if starting as a host.
     /// </summary>
-    public class OfflineState : ConnectionState
+    class OfflineState : ConnectionState
     {
         LobbyServiceFacade m_LobbyServiceFacade;
         ProfileManager m_ProfileManager;
@@ -48,13 +48,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var utp = (UnityTransport)ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
             SetConnectionPayload(GetPlayerId(), playerName);
-            StateChangeRequest.Invoke(ConnectionManager.ClientConnecting);
+            ConnectionManager.ChangeState(ConnectionManager.m_ClientConnecting);
         }
 
         public override void StartClientLobby(string playerName)
         {
             SetConnectionPayload(GetPlayerId(), playerName);
-            StateChangeRequest.Invoke(ConnectionManager.ClientConnecting);
+            ConnectionManager.ChangeState(ConnectionManager.m_ClientConnecting);
         }
 
         public override void StartHostIP(string playerName, string ipaddress, int port)
@@ -63,13 +63,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             utp.SetConnectionData(ipaddress, (ushort)port);
 
             SetConnectionPayload(GetPlayerId(), playerName);
-            StateChangeRequest.Invoke(ConnectionManager.StartingHost);
+            ConnectionManager.ChangeState(ConnectionManager.m_StartingHost);
         }
 
         public override void StartHostLobby(string playerName)
         {
             SetConnectionPayload(GetPlayerId(), playerName);
-            StateChangeRequest.Invoke(ConnectionManager.StartingHost);
+            ConnectionManager.ChangeState(ConnectionManager.m_StartingHost);
         }
 
         void SetConnectionPayload(string playerId, string playerName)

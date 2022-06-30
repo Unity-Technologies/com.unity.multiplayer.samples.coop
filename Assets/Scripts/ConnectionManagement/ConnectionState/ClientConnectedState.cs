@@ -7,7 +7,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to a connected client. When being disconnected, transitions to the
     /// ClientReconnecting state. When receiving a disconnect reason, transitions to the DisconnectingWithReason state.
     /// </summary>
-    public class ClientConnectedState : ConnectionState
+    class ClientConnectedState : ConnectionState
     {
         IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
@@ -24,19 +24,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnClientDisconnect(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
-            StateChangeRequest.Invoke(ConnectionManager.ClientReconnecting);
+            ConnectionManager.ChangeState(ConnectionManager.m_ClientReconnecting);
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            StateChangeRequest.Invoke(ConnectionManager.Offline);
+            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
-            StateChangeRequest.Invoke(ConnectionManager.DisconnectingWithReason);
+            ConnectionManager.ChangeState(ConnectionManager.m_DisconnectingWithReason);
         }
     }
 }

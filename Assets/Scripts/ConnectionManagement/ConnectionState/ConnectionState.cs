@@ -9,7 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// <summary>
     /// Base class representing a connection state. Contains a static member for each possible state.
     /// </summary>
-    public abstract class ConnectionState
+    abstract class ConnectionState
     {
         public ConnectionManager ConnectionManager { get; set; }
 
@@ -35,7 +35,5 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public virtual void OnDisconnectReasonReceived(ConnectStatus disconnectReason) { }
 
         public virtual void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response) { }
-
-        public Action<ConnectionState> StateChangeRequest;
     }
 }

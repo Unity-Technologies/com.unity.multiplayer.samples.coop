@@ -11,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to a host starting up. Starts the host when entering the state. If successful,
     /// transitions to the Hosting state, if not, transitions back to the Offline state.
     /// </summary>
-    public class StartingHostState : ConnectionState
+    class StartingHostState : ConnectionState
 
     {
         IPublisher<ConnectStatus> m_ConnectStatusPublisher;
@@ -43,14 +43,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (clientId == ConnectionManager.NetworkManager.LocalClientId)
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
-                StateChangeRequest.Invoke(ConnectionManager.Offline);
+                ConnectionManager.ChangeState(ConnectionManager.m_Offline);
             }
         }
 
         public override void OnServerStarted()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
-            StateChangeRequest.Invoke(ConnectionManager.Hosting);
+            ConnectionManager.ChangeState(ConnectionManager.m_Hosting);
         }
 
         public override void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)

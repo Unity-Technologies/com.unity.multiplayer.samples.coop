@@ -56,23 +56,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public class ConnectionManager : MonoBehaviour
     {
         ConnectionState m_CurrentState;
-        ConnectionState CurrentState
-        {
-            get => m_CurrentState;
-            set
-            {
-                // Unregister from old state's StateChangeRequest and registers on the next one's so that only that
-                // state can trigger a state change, and call the Exit and Enter methods of the old and new states.
-                if (m_CurrentState != null)
-                {
-                    m_CurrentState.StateChangeRequest -= OnStateChangeRequest;
-                    m_CurrentState.Exit();
-                }
-                m_CurrentState = value;
-                m_CurrentState.StateChangeRequest += OnStateChangeRequest;
-                m_CurrentState.Enter();
-            }
-        }
 
         [SerializeField]
         NetworkManager m_NetworkManager;
@@ -84,13 +67,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public int MaxConnectedPlayers = 8;
 
-        public readonly OfflineState Offline = new OfflineState();
-        public readonly ClientConnectingState ClientConnecting = new ClientConnectingState();
-        public readonly ClientConnectedState ClientConnected = new ClientConnectedState();
-        public readonly ClientReconnectingState ClientReconnecting = new ClientReconnectingState();
-        public readonly DisconnectingWithReasonState DisconnectingWithReason = new DisconnectingWithReasonState();
-        public readonly StartingHostState StartingHost = new StartingHostState();
-        public readonly HostingState Hosting = new HostingState();
+        internal readonly OfflineState m_Offline = new OfflineState();
+        internal readonly ClientConnectingState m_ClientConnecting = new ClientConnectingState();
+        internal readonly ClientConnectedState m_ClientConnected = new ClientConnectedState();
+        internal readonly ClientReconnectingState m_ClientReconnecting = new ClientReconnectingState();
+        internal readonly DisconnectingWithReasonState m_DisconnectingWithReason = new DisconnectingWithReasonState();
+        internal readonly StartingHostState m_StartingHost = new StartingHostState();
+        internal readonly HostingState m_Hosting = new HostingState();
 
         void Awake()
         {
@@ -99,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void Start()
         {
-            CurrentState = Offline;
+            m_CurrentState = m_Offline;
 
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
@@ -119,7 +102,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [Inject]
         void InjectDependencies(DIScope scope)
         {
-            List<ConnectionState> states = new() { Offline, ClientConnecting, ClientConnected, ClientReconnecting, DisconnectingWithReason, StartingHost, Hosting };
+            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting };
             foreach (var connectionState in states)
             {
                 connectionState.ConnectionManager = this;
@@ -127,55 +110,61 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        void OnStateChangeRequest(ConnectionState nextState)
+        internal void ChangeState(ConnectionState nextState)
         {
-            Debug.Log($"Changed connection state from {CurrentState.GetType().Name} to {nextState.GetType().Name}.");
-            CurrentState = nextState;
+            Debug.Log($"Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
+
+            if (m_CurrentState != null)
+            {
+                m_CurrentState.Exit();
+            }
+            m_CurrentState = nextState;
+            m_CurrentState.Enter();
         }
 
         void OnClientDisconnectCallback(ulong clientId)
         {
-            CurrentState.OnClientDisconnect(clientId);
+            m_CurrentState.OnClientDisconnect(clientId);
         }
 
         void OnClientConnectedCallback(ulong clientId)
         {
-            CurrentState.OnClientConnected(clientId);
+            m_CurrentState.OnClientConnected(clientId);
         }
 
         void OnServerStarted()
         {
-            CurrentState.OnServerStarted();
+            m_CurrentState.OnServerStarted();
         }
 
         void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
         {
-            CurrentState.ApprovalCheck(request, response);
+            m_CurrentState.ApprovalCheck(request, response);
         }
 
         public void StartClientLobby(string playerName)
         {
-            CurrentState.StartClientLobby(playerName);
+            m_CurrentState.StartClientLobby(playerName);
         }
 
         public void StartClientIp(string playerName, string ipaddress, int port)
         {
-            CurrentState.StartClientIP(playerName, ipaddress, port);
+            m_CurrentState.StartClientIP(playerName, ipaddress, port);
         }
 
         public void StartHostLobby(string playerName)
         {
-            CurrentState.StartHostLobby(playerName);
+            m_CurrentState.StartHostLobby(playerName);
         }
 
         public void StartHostIp(string playerName, string ipaddress, int port)
         {
-            CurrentState.StartHostIP(playerName, ipaddress, port);
+            m_CurrentState.StartHostIP(playerName, ipaddress, port);
         }
 
         public void RequestShutdown()
         {
-            CurrentState.OnUserRequestedShutdown();
+            m_CurrentState.OnUserRequestedShutdown();
         }
 
         /// <summary>
@@ -190,7 +179,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
         {
             reader.ReadValueSafe(out ConnectStatus status);
-            CurrentState.OnDisconnectReasonReceived(status);
+            m_CurrentState.OnDisconnectReasonReceived(status);
         }
 
         /// <summary>
