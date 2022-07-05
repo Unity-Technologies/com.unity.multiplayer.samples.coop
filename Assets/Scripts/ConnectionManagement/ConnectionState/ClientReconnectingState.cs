@@ -1,12 +1,9 @@
 using System;
 using System.Collections;
-using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -20,23 +17,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         const int k_NbReconnectAttempts = 2;
 
+        [Inject]
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
         Coroutine m_ReconnectCoroutine;
         string m_LobbyCode = "";
         int m_NbAttempts;
 
-        [Inject]
-        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<ReconnectMessage> reconnectMessagePublisher, IPublisher<ConnectStatus> connectStatusPublisher)
-        {
-            m_ReconnectMessagePublisher = reconnectMessagePublisher;
-            base.InjectDependencies(connectStatusPublisher, lobbyServiceFacade, localLobby);
-        }
-
         public override void Enter()
         {
             m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
-            m_ReconnectCoroutine = ConnectionManager.StartCoroutine(ReconnectCoroutine());
+            m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
             m_NbAttempts = 0;
         }
 
@@ -44,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (m_ReconnectCoroutine != null)
             {
-                ConnectionManager.StopCoroutine(m_ReconnectCoroutine);
+                m_ConnectionManager.StopCoroutine(m_ReconnectCoroutine);
                 m_ReconnectCoroutine = null;
             }
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
@@ -52,26 +43,26 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientConnected(ulong _)
         {
-            ConnectionManager.ChangeState(ConnectionManager.m_ClientConnected);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong _)
         {
             if (m_NbAttempts < k_NbReconnectAttempts)
             {
-                m_ReconnectCoroutine = ConnectionManager.StartCoroutine(ReconnectCoroutine());
+                m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
             }
             else
             {
                 m_ConnectStatusPublisher.Publish(ConnectStatus.GenericDisconnect);
-                ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
             }
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
@@ -82,7 +73,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 case ConnectStatus.UserRequestedDisconnect:
                 case ConnectStatus.HostEndedSession:
                 case ConnectStatus.ServerFull:
-                    ConnectionManager.ChangeState(ConnectionManager.m_DisconnectingWithReason);
+                    m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
                     break;
             }
         }

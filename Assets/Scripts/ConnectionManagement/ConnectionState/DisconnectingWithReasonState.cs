@@ -13,12 +13,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong _)
         {
-            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
         public override void OnUserRequestedShutdown()
         {
-            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
     }
 }

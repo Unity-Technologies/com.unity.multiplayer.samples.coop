@@ -1,9 +1,9 @@
 using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -18,13 +18,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         Coroutine m_WaitToEndLobbyCoroutine;
 
-        ConnectionManager m_ConnectionManager;
-
         [Inject]
-        void InjectDependencies(ConnectionManager connectionManager)
-        {
-            m_ConnectionManager = connectionManager;
-        }
+        ConnectionManager m_ConnectionManager;
 
         protected override void Awake()
         {

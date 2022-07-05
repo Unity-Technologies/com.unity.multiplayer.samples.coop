@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -11,7 +10,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     abstract class ConnectionState
     {
-        public ConnectionManager ConnectionManager { get; set; }
+        [Inject]
+        protected ConnectionManager m_ConnectionManager;
 
         public abstract void Enter();
 

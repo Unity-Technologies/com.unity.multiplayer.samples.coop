@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -14,23 +15,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     class HostingState : ConnectionState
     {
+        [Inject]
         LobbyServiceFacade m_LobbyServiceFacade;
+        [Inject]
         IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
         const int k_MaxConnectPayload = 1024;
 
-        [Inject]
-        void InjectDependencies(LobbyServiceFacade lobbyServiceFacade,
-            IPublisher<ConnectionEventMessage> connectionEventPublisher)
-        {
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_ConnectionEventPublisher = connectionEventPublisher;
-        }
-
         public override void Enter()
         {
-            var gameState = UnityEngine.Object.Instantiate(ConnectionManager.GameState);
+            var gameState = UnityEngine.Object.Instantiate(m_ConnectionManager.GameState);
 
             gameState.Spawn();
 
@@ -53,9 +48,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            if (clientId == ConnectionManager.NetworkManager.LocalClientId)
+            if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
             {
-                ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
             }
             else
             {
@@ -81,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
             // Wait before shutting down to make sure clients receive that message before they are disconnected
-            ConnectionManager.StartCoroutine(WaitToShutdown());
+            m_ConnectionManager.StartCoroutine(WaitToShutdown());
         }
 
         /// <summary>
@@ -139,7 +134,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
 
             ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
-            ConnectionManager.StartCoroutine(WaitToDenyApproval());
+            m_ConnectionManager.StartCoroutine(WaitToDenyApproval());
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
             {
                 m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(connectionPayload.playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
@@ -148,7 +143,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         ConnectStatus GetConnectStatus(ConnectionPayload connectionPayload)
         {
-            if (ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= ConnectionManager.MaxConnectedPlayers)
+            if (m_ConnectionManager.NetworkManager.ConnectedClientsIds.Count >= m_ConnectionManager.MaxConnectedPlayers)
             {
                 return ConnectStatus.ServerFull;
             }
@@ -165,7 +160,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         IEnumerator WaitToShutdown()
         {
             yield return null;
-            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
     }
 }

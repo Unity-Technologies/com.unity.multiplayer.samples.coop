@@ -5,6 +5,8 @@ using Unity.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -100,13 +102,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         [Inject]
-        void InjectDependencies(DIScope scope)
+        void InjectDependencies(LifetimeScope scope)
         {
             List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting };
             foreach (var connectionState in states)
             {
-                connectionState.ConnectionManager = this;
-                scope.InjectIn(connectionState);
+                scope.Container.Inject(connectionState);
             }
         }
 

@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
-using UnityEngine.SceneManagement;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -101,13 +100,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
-        ConnectionManager m_ConnectionManager;
-
         [Inject]
-        void InjectDependencies(ConnectionManager connectionManager)
-        {
-            m_ConnectionManager = connectionManager;
-        }
+        ConnectionManager m_ConnectionManager;
 
         protected override void Awake()
         {

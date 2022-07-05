@@ -1,7 +1,6 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
@@ -10,6 +9,7 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -19,22 +19,17 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     class OfflineState : ConnectionState
     {
+        [Inject]
         LobbyServiceFacade m_LobbyServiceFacade;
+        [Inject]
         ProfileManager m_ProfileManager;
 
         const string k_MainMenuSceneName = "MainMenu";
 
-        [Inject]
-        protected void InjectDependencies(ProfileManager profileManager, LobbyServiceFacade lobbyServiceFacade)
-        {
-            m_ProfileManager = profileManager;
-            m_LobbyServiceFacade = lobbyServiceFacade;
-        }
-
         public override void Enter()
         {
             m_LobbyServiceFacade.EndTracking();
-            ConnectionManager.NetworkManager.Shutdown();
+            m_ConnectionManager.NetworkManager.Shutdown();
             if (SceneManager.GetActiveScene().name != k_MainMenuSceneName)
             {
                 SceneLoaderWrapper.Instance.LoadScene(k_MainMenuSceneName, useNetworkSceneManager: false);
@@ -45,16 +40,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void StartClientIP(string playerName, string ipaddress, int port)
         {
-            var utp = (UnityTransport)ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
             SetConnectionPayload(GetPlayerId(), playerName);
-            ConnectionManager.ChangeState(ConnectionManager.m_ClientConnecting);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting);
         }
 
         public override void StartClientLobby(string playerName)
         {
             SetConnectionPayload(GetPlayerId(), playerName);
-            ConnectionManager.ChangeState(ConnectionManager.m_ClientConnecting);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnecting);
         }
 
         public override void StartHostIP(string playerName, string ipaddress, int port)
@@ -63,13 +58,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             utp.SetConnectionData(ipaddress, (ushort)port);
 
             SetConnectionPayload(GetPlayerId(), playerName);
-            ConnectionManager.ChangeState(ConnectionManager.m_StartingHost);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
         }
 
         public override void StartHostLobby(string playerName)
         {
             SetConnectionPayload(GetPlayerId(), playerName);
-            ConnectionManager.ChangeState(ConnectionManager.m_StartingHost);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
         }
 
         void SetConnectionPayload(string playerId, string playerName)
@@ -83,7 +78,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             var payloadBytes = System.Text.Encoding.UTF8.GetBytes(payload);
 
-            ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
+            m_ConnectionManager.NetworkManager.NetworkConfig.ConnectionData = payloadBytes;
         }
 
         string GetPlayerId()

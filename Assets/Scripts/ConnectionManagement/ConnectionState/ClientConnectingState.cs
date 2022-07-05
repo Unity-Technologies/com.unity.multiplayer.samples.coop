@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -15,17 +16,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     class ClientConnectingState : ConnectionState
     {
-        protected IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-        protected LobbyServiceFacade m_LobbyServiceFacade;
-        LocalLobby m_LocalLobby;
-
         [Inject]
-        protected void InjectDependencies(IPublisher<ConnectStatus> connectStatusPublisher, LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby)
-        {
-            m_ConnectStatusPublisher = connectStatusPublisher;
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_LocalLobby = localLobby;
-        }
+        protected IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+        [Inject]
+        protected LobbyServiceFacade m_LobbyServiceFacade;
+        [Inject]
+        LocalLobby m_LocalLobby;
 
         public override void Enter()
         {
@@ -37,25 +33,25 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnClientConnected(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Success);
-            ConnectionManager.ChangeState(ConnectionManager.m_ClientConnected);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientConnected);
         }
 
         public override void OnClientDisconnect(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
-            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
-            ConnectionManager.ChangeState(ConnectionManager.m_DisconnectingWithReason);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
         }
 
         protected async Task ConnectClient()
@@ -68,13 +64,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             if (success)
             {
-                success = ConnectionManager.NetworkManager.StartClient();
+                success = m_ConnectionManager.NetworkManager.StartClient();
             }
 
             if (success)
             {
                 SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-                ConnectionManager.RegisterCustomMessages();
+                m_ConnectionManager.RegisterCustomMessages();
             }
             else
             {
@@ -92,7 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
 
                 await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
-                var utp = (UnityTransport)ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
+                var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
             catch (Exception e)

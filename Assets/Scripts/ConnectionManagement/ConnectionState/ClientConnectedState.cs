@@ -1,5 +1,6 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -9,13 +10,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     class ClientConnectedState : ConnectionState
     {
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-
         [Inject]
-        void InjectDependencies(IPublisher<ConnectStatus> connectStatusPublisher)
-        {
-            m_ConnectStatusPublisher = connectStatusPublisher;
-        }
+        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         public override void Enter() { }
 
@@ -24,19 +20,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnClientDisconnect(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.Reconnecting);
-            ConnectionManager.ChangeState(ConnectionManager.m_ClientReconnecting);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ClientReconnecting);
         }
 
         public override void OnUserRequestedShutdown()
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            ConnectionManager.ChangeState(ConnectionManager.m_Offline);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
-            ConnectionManager.ChangeState(ConnectionManager.m_DisconnectingWithReason);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
         }
     }
 }
