@@ -64,10 +64,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 ServerLoaded();
             }
-            else
-            {
-                ClientLoaded(clientId, sceneName);
-            }
         }
 
         private void ServerLoaded()
@@ -82,34 +78,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 SetWinState(WinState.Invalid);
 
                 NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
-
-                DoInitialSpawnIfPossible();
+                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
+                NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
 
                 SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
                 m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
-            }
-        }
-
-        private void ClientLoaded(ulong clientId, string sceneName)
-        {
-            var sceneIndex = SceneManager.GetSceneByName(sceneName).buildIndex;
-            int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-            if (sceneIndex == serverScene)
-            {
-                Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
-
-                bool didSpawn = DoInitialSpawnIfPossible();
-
-                if (!didSpawn && InitialSpawnDone &&
-                    !PlayerServerCharacter.GetPlayerServerCharacters().Find(
-                        player => player.OwnerClientId == clientId))
-                {
-                    //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
-                    //(either because multiple people are late-joining at once, or because some dynamic entities are
-                    //getting spawned while joining. But that's not something we can fully address by changes in
-                    //ServerBossRoomState.
-                    SpawnPlayer(clientId, true);
-                }
             }
         }
 
@@ -167,41 +140,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             CheckForGameOver();
         }
 
-        public void OnClientSceneChanged(SceneEvent sceneEvent)
-        {
-            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
-
-            var clientId = sceneEvent.ClientId;
-            var sceneIndex = SceneManager.GetSceneByName(sceneEvent.SceneName).buildIndex;
-            int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
-            if (sceneIndex == serverScene)
-            {
-                Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
-
-                bool didSpawn = DoInitialSpawnIfPossible();
-
-                if (!didSpawn && InitialSpawnDone &&
-                    !PlayerServerCharacter.GetPlayerServerCharacters().Find(
-                        player => player.OwnerClientId == clientId))
-                {
-                    //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
-                    //(either because multiple people are late-joining at once, or because some dynamic entities are
-                    //getting spawned while joining. But that's not something we can fully address by changes in
-                    //ServerBossRoomState.
-                    SpawnPlayer(clientId, true);
-                }
-            }
-        }
-
         public void OnServerUnloadComplete(ulong clientId, string sceneName)
         {
             if (clientId != NetworkManager.ServerClientId) return;
 
-            if (m_NetPortal != null)
-            {
-                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
-                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnClientSceneChanged;
-            }
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
+            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
             m_Subscription?.Dispose();
         }
 
