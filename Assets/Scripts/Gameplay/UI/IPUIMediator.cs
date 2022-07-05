@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -33,25 +34,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         IPConnectionWindow m_IPConnectionWindow;
 
-        NameGenerationData m_NameGenerationData;
-        ConnectionManager m_ConnectionManager;
-
-        IDisposable m_Subscription;
+        [Inject] NameGenerationData m_NameGenerationData;
+        [Inject] ConnectionManager m_ConnectionManager;
 
         public IPHostingUI IPHostingUI => m_IPHostingUI;
 
+        IDisposable m_Subscription;
+        
         [Inject]
-        void InjectDependenciesAndInitialize(
-            NameGenerationData nameGenerationData,
-            ConnectionManager connectionManager,
-            ISubscriber<ConnectStatus> connectStatusSubscriber
-        )
+        void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSubscriber)
         {
-            m_NameGenerationData = nameGenerationData;
-            m_ConnectionManager = connectionManager;
             m_Subscription = connectStatusSubscriber.Subscribe(OnConnectStatusMessage);
-
-            RegenerateName();
         }
 
         void Awake()
@@ -63,6 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             // show create IP as default
             ToggleCreateIPUI();
+            RegenerateName();
         }
 
         void OnDestroy()

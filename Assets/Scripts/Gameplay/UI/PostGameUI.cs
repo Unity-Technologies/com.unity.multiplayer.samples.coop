@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -37,13 +38,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Color m_LoseLightColor;
 
-        ConnectionManager m_ConnectionManager;
-
         [Inject]
-        void InjectDependencies(ConnectionManager connectionManager)
-        {
-            m_ConnectionManager = connectionManager;
-        }
+        ConnectionManager m_ConnectionManager;
 
         void Start()
         {

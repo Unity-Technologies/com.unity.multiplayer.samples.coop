@@ -30,6 +30,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             base.Awake();
             CharSelectData = GetComponent<CharSelectData>();
+
+            CharSelectData.OnNetworkSpawnCallback += OnNetworkSpawn;
+            CharSelectData.OnNetworkDespawnCallback += OnNetworkDespawn;
         }
 
         void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
@@ -168,7 +171,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
         }
 
-        public override void OnNetworkDespawn()
+        public void OnNetworkDespawn()
         {
             if (NetworkManager.Singleton)
             {
@@ -181,9 +184,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public override void OnNetworkSpawn()
+        public void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
             }

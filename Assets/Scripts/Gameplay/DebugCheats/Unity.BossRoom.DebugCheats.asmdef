@@ -2,11 +2,12 @@
     "name": "Unity.BossRoom.DebugCheats",
     "rootNamespace": "",
     "references": [
-        "GUID:1491147abca9d7d4bb7105af628b223e",
-        "GUID:ec2e12d3de28e40839f9a0b685184f49",
-        "GUID:ed77cc04b29ffca42860b1220217e140",
-        "GUID:e9e5562f77c754b2ca364915385b3d43",
-        "GUID:6df647c78c32a1c4f858e9619b600ec7"
+        "Unity.Netcode.Runtime",
+        "Unity.BossRoom.Infrastructure",
+        "Unity.BossRoom.Gameplay",
+        "Unity.Multiplayer.Samples.Utilities",
+        "VContainer",
+        "VContainer.EnableCodeGen"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

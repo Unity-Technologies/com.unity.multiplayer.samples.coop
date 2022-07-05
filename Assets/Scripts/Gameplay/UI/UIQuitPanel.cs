@@ -3,6 +3,7 @@ using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -17,15 +18,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         QuitMode m_QuitMode = QuitMode.ReturnToMenu;
 
+        [Inject]
         ConnectionManager m_ConnectionManager;
-        IPublisher<QuitApplicationMessage> m_QuitApplicationPub;
 
         [Inject]
-        void InjectDependencies(ConnectionManager connectionManager, IPublisher<QuitApplicationMessage> quitApplicationPub)
-        {
-            m_ConnectionManager = connectionManager;
-            m_QuitApplicationPub = quitApplicationPub;
-        }
+        IPublisher<QuitApplicationMessage> m_QuitApplicationPub;
 
         public void Quit()
         {
