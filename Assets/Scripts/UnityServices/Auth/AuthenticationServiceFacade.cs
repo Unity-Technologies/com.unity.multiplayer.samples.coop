@@ -5,18 +5,13 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
+using VContainer;
 
 namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
 {
     public class AuthenticationServiceFacade
     {
-        IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
-
-        [Inject]
-        void InjectDependencies(IPublisher<UnityServiceErrorMessage> unityServiceErrorMessagePublisher)
-        {
-            m_UnityServiceErrorMessagePublisher = unityServiceErrorMessagePublisher;
-        }
+        [Inject] IPublisher<UnityServiceErrorMessage> m_UnityServiceErrorMessagePublisher;
 
         public async Task InitializeAndSignInAsync(InitializationOptions initializationOptions)
         {

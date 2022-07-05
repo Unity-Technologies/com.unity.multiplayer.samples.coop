@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
@@ -7,26 +8,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
     /// </summary>
     public class JoinedLobbyContentHeartbeat
     {
-        readonly LocalLobby m_LocalLobby;
-        readonly LocalLobbyUser m_LocalUser;
-        readonly UpdateRunner m_UpdateRunner;
-        readonly LobbyServiceFacade m_LobbyServiceFacade;
+        [Inject] LocalLobby m_LocalLobby;
+        [Inject] LocalLobbyUser m_LocalUser;
+        [Inject] UpdateRunner m_UpdateRunner;
+        [Inject] LobbyServiceFacade m_LobbyServiceFacade;
 
         int m_AwaitingQueryCount = 0;
         bool m_ShouldPushData = false;
-
-        [Inject]
-        public JoinedLobbyContentHeartbeat(
-            UpdateRunner updateRunner,
-            LobbyServiceFacade lobbyServiceFacade,
-            LocalLobby localLobby,
-            LocalLobbyUser localUser)
-        {
-            m_UpdateRunner = updateRunner;
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_LocalLobby = localLobby;
-            m_LocalUser = localUser;
-        }
 
         public void BeginTracking()
         {
