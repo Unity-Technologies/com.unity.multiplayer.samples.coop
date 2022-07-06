@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [Inject]
         protected LobbyServiceFacade m_LobbyServiceFacade;
         [Inject]
-        LocalLobby m_LocalLobby;
+        protected LocalLobby m_LocalLobby;
 
         public override void Enter()
         {
