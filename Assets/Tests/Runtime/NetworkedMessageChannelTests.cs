@@ -86,7 +86,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                     {
                         Debug.Log($"Received message on client {numClient} in subscription {numSub}.");
                         m_NbMessagesReceived++;
-                        Assert.AreEqual(message, expectedValue);
+                        Assert.AreEqual(expectedValue, message, "Message received with unexpected value.");
                     }));
                 }
             }
@@ -98,7 +98,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 {
                     Debug.Log($"Received message on server in subscription {numSub}.");
                     m_NbMessagesReceived++;
-                    Assert.AreEqual(message, expectedValue);
+                    Assert.AreEqual(expectedValue, message, "Message received with unexpected value.");
                 }));
             }
         }
