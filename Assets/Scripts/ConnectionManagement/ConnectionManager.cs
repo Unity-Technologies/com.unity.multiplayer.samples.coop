@@ -67,6 +67,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         NetworkObject m_GameState;
         public NetworkObject GameState => m_GameState;
 
+        [Inject]
+        IObjectResolver m_Resolver;
+
         public int MaxConnectedPlayers = 8;
 
         internal readonly OfflineState m_Offline = new OfflineState();
@@ -84,6 +87,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void Start()
         {
+            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting };
+            foreach (var connectionState in states)
+            {
+                m_Resolver.Inject(connectionState);
+            }
+
             m_CurrentState = m_Offline;
 
             NetworkManager.OnClientConnectedCallback += OnClientConnectedCallback;
@@ -99,16 +108,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
 
-        }
-
-        [Inject]
-        void InjectDependencies(LifetimeScope scope)
-        {
-            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting };
-            foreach (var connectionState in states)
-            {
-                scope.Container.Inject(connectionState);
-            }
         }
 
         internal void ChangeState(ConnectionState nextState)
