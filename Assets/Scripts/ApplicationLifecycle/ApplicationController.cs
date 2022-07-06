@@ -109,6 +109,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         {
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientStarted;
             NetworkManager.Singleton.OnServerStarted += OnServerStarted;
+            DedicatedServerUtilities.InitLogging(); // todo move to dgs state before review
             if (DedicatedServerUtilities.IsServerBuildTarget)
             {
                 // skip main menu and start IP server directly
@@ -168,6 +169,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
         private bool OnWantToQuit()
         {
+            DedicatedServerUtilities.ApplicationQuit();
             var canQuit = string.IsNullOrEmpty(m_LocalLobby?.LobbyID);
             if (!canQuit)
             {
