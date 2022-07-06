@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -12,6 +13,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         [Inject]
         protected ConnectionManager m_ConnectionManager;
+
+        [Inject]
+        protected IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         public abstract void Enter();
 

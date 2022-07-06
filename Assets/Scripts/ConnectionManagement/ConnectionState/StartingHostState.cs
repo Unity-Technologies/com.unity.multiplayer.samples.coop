@@ -1,5 +1,4 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
@@ -13,10 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// transitions to the Hosting state, if not, transitions back to the Offline state.
     /// </summary>
     class StartingHostState : ConnectionState
-
     {
-        [Inject]
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
         [Inject]
         LobbyServiceFacade m_LobbyServiceFacade;
         [Inject]

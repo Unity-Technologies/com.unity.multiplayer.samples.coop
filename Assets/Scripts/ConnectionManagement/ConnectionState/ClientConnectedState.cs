@@ -1,6 +1,4 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -10,9 +8,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     class ClientConnectedState : ConnectionState
     {
-        [Inject]
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-
         public override void Enter() { }
 
         public override void Exit() { }

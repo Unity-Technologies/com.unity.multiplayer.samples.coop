@@ -1,6 +1,5 @@
 using System;
 using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode.Transports.UTP;
@@ -16,8 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     class ClientConnectingState : ConnectionState
     {
-        [Inject]
-        protected IPublisher<ConnectStatus> m_ConnectStatusPublisher;
         [Inject]
         protected LobbyServiceFacade m_LobbyServiceFacade;
         [Inject]
