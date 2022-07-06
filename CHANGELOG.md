@@ -12,6 +12,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 *
 ### Changed
 * Replaced our dependency injection solution with VContainer. (#679)
+* Refactored connection management into simpler state machine (#666)
+* 
 ### Removed
 *
 ### Fixed
@@ -38,7 +40,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Remove initial ugs popup [MTT-3563] (#650) --> Users who do not use UGS will no longer receive a popup when starting the application telling them how to set it up. It is replaced with a tooltip that appears when hovering on the "Start with Lobby" button with the cursor.
 * Folders and assemblies refactor MTT-2623, MTT-2615 (#628)(#668)(#669)(#673)(#674)
 * Docs: Readme Image Updates (#680)
-* Refactored connection management into simpler state machine (#666)
 
 ### Removed
 * Remove UNET [MTT-3435] (#638) --> removed deprecated UNET transport from Boss Room
