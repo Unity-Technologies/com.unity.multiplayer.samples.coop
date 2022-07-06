@@ -1,6 +1,7 @@
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -20,13 +21,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         NetworkDoorState m_DoorState;
 
-        IPublisher<DoorStateChangedEventMessage> m_Publisher;
-
         [Inject]
-        void InjectDependencies(IPublisher<DoorStateChangedEventMessage> publisher)
-        {
-            m_Publisher = publisher;
-        }
+        IPublisher<DoorStateChangedEventMessage> m_Publisher;
 
         public override void OnNetworkSpawn()
         {
@@ -44,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 var gameState = FindObjectOfType<ClientBossRoomState>();
                 if (gameState != null)
                 {
-                    gameState.Scope.InjectIn(this);
+                    gameState.Container.Inject(this);
                 }
             }
         }

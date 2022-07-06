@@ -12,6 +12,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 *
 ### Changed
 * Updated tools, authentication and relay packages (#690)
+* Replaced our dependency injection solution with VContainer. (#679)
 ### Removed
 *
 ### Fixed
@@ -36,7 +37,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Bump NGO to pre.10 (#678) --> Fix in Boss Room related to the connection approval breaking change. Removing useless ForceNetworkSerializeByMemcpy for player names.
 * Bump Boss Room to Unity 2021 [MTT-3022] (#620)
 * Remove initial ugs popup [MTT-3563] (#650) --> Users who do not use UGS will no longer receive a popup when starting the application telling them how to set it up. It is replaced with a tooltip that appears when hovering on the "Start with Lobby" button with the cursor.
-* Folders and assemblies refactor MTT-2623, MTT-2615 (#628) --> work in progress
+* Folders and assemblies refactor MTT-2623, MTT-2615 (#628)(#668)(#669)(#673)(#674)
+* Docs: Readme Image Updates (#680)
 
 ### Removed
 * Remove UNET [MTT-3435] (#638) --> removed deprecated UNET transport from Boss Room

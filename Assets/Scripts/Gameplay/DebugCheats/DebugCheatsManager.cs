@@ -4,7 +4,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
 {
@@ -47,13 +47,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
 
         bool m_DestroyPortalsOnNextToggle = true;
 
-        IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
-
         [Inject]
-        void InjectDependencies(IPublisher<CheatUsedMessage> publisher)
-        {
-            m_CheatUsedMessagePublisher = publisher;
-        }
+        IPublisher<CheatUsedMessage> m_CheatUsedMessagePublisher;
 
         void Update()
         {

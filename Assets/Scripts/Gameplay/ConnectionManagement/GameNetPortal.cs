@@ -10,6 +10,7 @@ using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -97,17 +98,14 @@ namespace Unity.Multiplayer.Samples.BossRoom
         private ClientGameNetPortal m_ClientPortal;
         private ServerGameNetPortal m_ServerPortal;
 
+        [Inject]
         private LocalLobby m_LocalLobby;
-        private LobbyServiceFacade m_LobbyServiceFacade;
-        private ProfileManager m_ProfileManager;
 
         [Inject]
-        private void InjectDependencies(LocalLobby localLobby, LobbyServiceFacade lobbyServiceFacade, ProfileManager profileManager)
-        {
-            m_LocalLobby = localLobby;
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_ProfileManager = profileManager;
-        }
+        private LobbyServiceFacade m_LobbyServiceFacade;
+
+        [Inject]
+        private ProfileManager m_ProfileManager;
 
         private void Awake()
         {
