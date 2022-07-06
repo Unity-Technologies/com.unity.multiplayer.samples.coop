@@ -1,7 +1,6 @@
 using System;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Services.Core;
