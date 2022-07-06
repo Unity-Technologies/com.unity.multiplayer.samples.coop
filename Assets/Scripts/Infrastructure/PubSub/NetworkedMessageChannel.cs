@@ -2,6 +2,7 @@ using System;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {

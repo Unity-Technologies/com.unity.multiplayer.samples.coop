@@ -6,6 +6,7 @@ using Unity.Netcode;
 using UnityEngine;
 using Unity.Netcode.TestHelpers.Runtime;
 using UnityEngine.TestTools;
+using VContainer;
 using Assert = UnityEngine.Assertions.Assert;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
@@ -23,8 +24,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         DisposableGroup m_Subscriptions;
 
-        DIScope[] m_ClientScopes;
-        DIScope m_ServerScope;
+        IObjectResolver[] m_ClientScopes;
+        IObjectResolver m_ServerScope;
 
         int m_NbMessagesReceived;
 
@@ -36,17 +37,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         protected override void OnServerAndClientsCreated()
         {
-            m_ClientScopes = new DIScope[NumberOfClients];
+            m_ClientScopes = new IObjectResolver[NumberOfClients];
             for (int i = 0; i < NumberOfClients; i++)
             {
-                m_ClientScopes[i] = new DIScope();
-                m_ClientScopes[i].BindInstanceAsSingle(m_ClientNetworkManagers[i]);
-                m_ClientScopes[i].FinalizeScopeConstruction();
+                var clientBuilder = new ContainerBuilder();
+                clientBuilder.RegisterInstance(m_ClientNetworkManagers[i]);
+                m_ClientScopes[i] = clientBuilder.Build();
             }
 
-            m_ServerScope = new DIScope();
-            m_ServerScope.BindInstanceAsSingle(m_ServerNetworkManager);
-            m_ServerScope.FinalizeScopeConstruction();
+            var serverBuilder = new ContainerBuilder();
+            serverBuilder.RegisterInstance(m_ServerNetworkManager);
+            m_ServerScope = serverBuilder.Build();
 
             base.OnServerAndClientsCreated();
         }
@@ -68,11 +69,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             for (int i = 0; i < nbClients; i++)
             {
                 emptyMessageChannelClients[i] = new NetworkedMessageChannel<T>();
-                m_ClientScopes[i].InjectIn(emptyMessageChannelClients[i]);
+                m_ClientScopes[i].Inject(emptyMessageChannelClients[i]);
             }
 
             emptyMessageChannelServer = new NetworkedMessageChannel<T>();
-            m_ServerScope.InjectIn(emptyMessageChannelServer);
+            m_ServerScope.Inject(emptyMessageChannelServer);
 
             m_Subscriptions = new DisposableGroup();
             for (int i = 0; i < nbClients; i++)
