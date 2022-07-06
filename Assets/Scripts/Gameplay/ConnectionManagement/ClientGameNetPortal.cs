@@ -10,6 +10,7 @@ using UnityEngine.SceneManagement;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -31,22 +32,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         Coroutine m_TryToReconnectCoroutine;
 
+        [Inject]
         LobbyServiceFacade m_LobbyServiceFacade;
-        LocalLobby m_LocalLobby;
-        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
-        IPublisher<ConnectStatus> m_ConnectStatusPub;
-        IPublisher<ReconnectMessage> m_ReconnectMessagePub;
 
         [Inject]
-        private void InjectDependencies(LobbyServiceFacade lobbyServiceFacade, LocalLobby localLobby, IPublisher<QuitGameSessionMessage> quitGameSessionPub, IPublisher<ConnectStatus> connectStatusPub, IPublisher<ReconnectMessage> reconnectMessagePub)
-        {
-            m_QuitGameSessionPub = quitGameSessionPub;
-            m_LobbyServiceFacade = lobbyServiceFacade;
-            m_LocalLobby = localLobby;
-            m_ConnectStatusPub = connectStatusPub;
+        LocalLobby m_LocalLobby;
 
-            m_ReconnectMessagePub = reconnectMessagePub;
-        }
+        [Inject]
+        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
+
+        [Inject]
+        IPublisher<ConnectStatus> m_ConnectStatusPub;
+
+        [Inject]
+        IPublisher<ReconnectMessage> m_ReconnectMessagePub;
 
         private void Awake()
         {

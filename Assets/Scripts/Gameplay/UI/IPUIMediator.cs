@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -34,28 +35,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         IPConnectionWindow m_IPConnectionWindow;
 
-        NameGenerationData m_NameGenerationData;
-        GameNetPortal m_GameNetPortal;
-        ClientGameNetPortal m_ClientNetPortal;
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+        [Inject] NameGenerationData m_NameGenerationData;
+        [Inject] GameNetPortal m_GameNetPortal;
+        [Inject] ClientGameNetPortal m_ClientNetPortal;
+        [Inject] IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         public IPHostingUI IPHostingUI => m_IPHostingUI;
-
-        [Inject]
-        void InjectDependenciesAndInitialize(
-            NameGenerationData nameGenerationData,
-            GameNetPortal gameNetPortal,
-            ClientGameNetPortal clientGameNetPortal,
-            IPublisher<ConnectStatus> connectStatusPublisher
-        )
-        {
-            m_NameGenerationData = nameGenerationData;
-            m_GameNetPortal = gameNetPortal;
-            m_ClientNetPortal = clientGameNetPortal;
-            m_ConnectStatusPublisher = connectStatusPublisher;
-
-            RegenerateName();
-        }
 
         void Awake()
         {
@@ -66,6 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             // show create IP as default
             ToggleCreateIPUI();
+            RegenerateName();
         }
 
         public void HostIPRequest(string ip, string port)

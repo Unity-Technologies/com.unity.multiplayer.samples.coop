@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -23,15 +24,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         List<ProfileListItemUI> m_ProfileListItems = new List<ProfileListItemUI>();
 
-        IInstanceResolver m_Container;
-        ProfileManager m_ProfileManager;
-
-        [Inject]
-        void InjectDependency(IInstanceResolver container, ProfileManager profileManager)
-        {
-            m_Container = container;
-            m_ProfileManager = profileManager;
-        }
+        [Inject] IObjectResolver m_Resolver;
+        [Inject] ProfileManager m_ProfileManager;
 
         void Awake()
         {
@@ -101,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 .GetComponent<ProfileListItemUI>();
             m_ProfileListItems.Add(listItem);
             listItem.gameObject.SetActive(true);
-            m_Container.InjectIn(listItem);
+            m_Resolver.Inject(listItem);
         }
 
         public void Show()

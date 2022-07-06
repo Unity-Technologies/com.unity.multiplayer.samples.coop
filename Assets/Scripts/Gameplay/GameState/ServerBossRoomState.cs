@@ -7,6 +7,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using VContainer;
 using Random = UnityEngine.Random;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
@@ -47,19 +48,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Keeping the subscriber during this GameState's lifetime to allow disposing of subscription and re-subscribing
         /// when despawning and spawning again.
         /// </summary>
-        ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
+        [Inject] ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
 
         IDisposable m_Subscription;
 
-        [Inject]
-        void InjectDependencies(ISubscriber<LifeStateChangedEventMessage> subscriber)
+
+        protected override void Awake()
         {
-            m_LifeStateChangedEventMessageSubscriber = subscriber;
+            base.Awake();
+            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
+            NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
         }
 
-        public override void OnNetworkSpawn()
+        void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
         {
-            if (!IsServer)
+            if (clientId == NetworkManager.ServerClientId)
+            {
+                ServerLoaded();
+            }
+            else
+            {
+                ClientLoaded(clientId, sceneName);
+            }
+        }
+
+        private void ServerLoaded()
+        {
+            if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
             }
@@ -71,8 +86,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_NetPortal = GameObject.FindGameObjectWithTag("GameNetPortal").GetComponent<GameNetPortal>();
                 m_ServerNetPortal = m_NetPortal.GetComponent<ServerGameNetPortal>();
 
-                NetworkManager.OnClientDisconnectCallback += OnClientDisconnect;
-                NetworkManager.SceneManager.OnSceneEvent += OnClientSceneChanged;
+                NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
 
                 DoInitialSpawnIfPossible();
 
@@ -81,9 +95,40 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public override void OnDestroy()
+        private void ClientLoaded(ulong clientId, string sceneName)
+        {
+            var sceneIndex = SceneManager.GetSceneByName(sceneName).buildIndex;
+            int serverScene = UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex;
+            if (sceneIndex == serverScene)
+            {
+                Debug.Log($"client={clientId} now in scene {sceneIndex}, server_scene={serverScene}, all players in server scene={m_ServerNetPortal.AreAllClientsInServerScene()}");
+
+                bool didSpawn = DoInitialSpawnIfPossible();
+
+                if (!didSpawn && InitialSpawnDone &&
+                    !PlayerServerCharacter.GetPlayerServerCharacters().Find(
+                        player => player.OwnerClientId == clientId))
+                {
+                    //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
+                    //(either because multiple people are late-joining at once, or because some dynamic entities are
+                    //getting spawned while joining. But that's not something we can fully address by changes in
+                    //ServerBossRoomState.
+                    SpawnPlayer(clientId, true);
+                }
+            }
+        }
+
+        protected override void OnDestroy()
         {
             m_Subscription?.Dispose();
+
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
+            {
+                NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
+                NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
+            }
+
+            base.OnDestroy();
         }
 
         private bool DoInitialSpawnIfPossible()
@@ -91,7 +136,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (m_ServerNetPortal.AreAllClientsInServerScene() && !InitialSpawnDone)
             {
                 InitialSpawnDone = true;
-                foreach (var kvp in NetworkManager.ConnectedClients)
+                foreach (var kvp in NetworkManager.Singleton.ConnectedClients)
                 {
                     SpawnPlayer(kvp.Key, false);
                 }
@@ -102,7 +147,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void OnClientDisconnect(ulong clientId)
         {
-            if (clientId != NetworkManager.LocalClientId)
+            if (clientId != NetworkManager.Singleton.LocalClientId)
             {
                 // If a client disconnects, check for game over in case all other players are already down
                 StartCoroutine(WaitToCheckForGameOver());
@@ -139,16 +184,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     //ServerBossRoomState.
                     SpawnPlayer(clientId, true);
                 }
-
             }
         }
 
-        public override void OnNetworkDespawn()
+        public void OnServerUnloadComplete(ulong clientId, string sceneName)
         {
+            if (clientId != NetworkManager.ServerClientId) return;
+
             if (m_NetPortal != null)
             {
-                NetworkManager.OnClientDisconnectCallback -= OnClientDisconnect;
-                NetworkManager.SceneManager.OnSceneEvent -= OnClientSceneChanged;
+                NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnClientSceneChanged;
             }
             m_Subscription?.Dispose();
         }

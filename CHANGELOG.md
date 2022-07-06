@@ -11,7 +11,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Added
 *
 ### Changed
-*
+* Replaced our dependency injection solution with VContainer. (#679)
 ### Removed
 *
 ### Fixed
