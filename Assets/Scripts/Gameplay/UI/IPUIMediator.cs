@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public IPHostingUI IPHostingUI => m_IPHostingUI;
 
         IDisposable m_Subscription;
-        
+
         [Inject]
         void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSubscriber)
         {
