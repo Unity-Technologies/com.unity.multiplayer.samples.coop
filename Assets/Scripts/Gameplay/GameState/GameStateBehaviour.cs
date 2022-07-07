@@ -2,6 +2,8 @@ using System;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -35,7 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Important Note: We assume that every Scene has a GameState object. If not, then it's possible that a Persisting game state
     /// will outlast its lifetime (as there is no successor state to clean it up).
     /// </remarks>
-    public abstract class GameStateBehaviour : NetworkBehaviour
+    public abstract class GameStateBehaviour : LifetimeScope
     {
         /// <summary>
         /// Does this GameState persist across multiple scenes?
@@ -55,26 +57,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private static GameObject s_ActiveStateGO;
 
-        public DIScope Scope
+        protected override void Awake()
         {
-            get => m_Scope;
-            private set => m_Scope = value;
-        }
+            base.Awake();
 
-        DIScope m_Scope;
-
-        [SerializeField]
-        GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-
-        protected virtual void Awake()
-        {
-            DIScope.RootScope.InjectIn(this);
-            Scope = new DIScope(DIScope.RootScope);
-            InitializeScope();
-            Scope.FinalizeScopeConstruction();
-            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
+            if (Parent != null)
             {
-                Scope.InjectIn(autoInjectedGameObject);
+                Parent.Container.Inject(this);
             }
         }
 
@@ -112,14 +101,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        protected virtual void InitializeScope()
+        protected override void OnDestroy()
         {
-        }
-
-        public override void OnDestroy()
-        {
-            Scope?.Dispose();
-            base.OnDestroy();
             if (!Persists)
             {
                 s_ActiveStateGO = null;

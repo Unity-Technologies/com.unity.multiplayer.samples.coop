@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -16,16 +17,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         TextMeshProUGUI m_TitleText;
 
-        IPUIMediator m_IPUIMediator;
-
-        IPublisher<ConnectStatus> m_ConnectStatusPublisher;
-
-        [Inject]
-        void InjectDependencies(IPUIMediator ipUIMediator, IPublisher<ConnectStatus> connectStatusPublisher)
-        {
-            m_IPUIMediator = ipUIMediator;
-            m_ConnectStatusPublisher = connectStatusPublisher;
-        }
+        [Inject] IPUIMediator m_IPUIMediator;
+        [Inject] IPublisher<ConnectStatus> m_ConnectStatusPublisher;
 
         void Awake()
         {

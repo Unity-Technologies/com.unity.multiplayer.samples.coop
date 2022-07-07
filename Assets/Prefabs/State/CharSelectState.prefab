@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -62,6 +63,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4ae93287066a264d92939aa957cf227, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parentReference:
+    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
+  autoRun: 1
+  autoInjectGameObjects: []
 --- !u!114 &3565665953789623674
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +79,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eca1f4b442326cc4d9be3975746b8cdb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  parentReference:
+    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
+  autoRun: 1
+  autoInjectGameObjects: []
   m_AnimationTriggerOnCharSelect: BeginRevive
   m_AnimationTriggerOnCharChosen: BeginRevive
   m_PlayerSeats:
@@ -103,6 +112,7 @@ MonoBehaviour:
   - Indicator: {fileID: 21300000, guid: 5e0531f7cad04b346bf05685f3b9a846, type: 3}
     Color: {r: 0.19215687, g: 0.03137255, b: 0.9882353, a: 1}
   m_NumPlayersText: {fileID: 0}
+  m_ReadyButtonText: {fileID: 0}
   m_UIElementsForNoSeatChosen:
   - {fileID: 0}
   - {fileID: 0}
@@ -114,8 +124,6 @@ MonoBehaviour:
   m_UIElementsForFatalError:
   - {fileID: 0}
   m_ClassInfoBox: {fileID: 0}
-  m_FatalLobbyErrorText: {fileID: 0}
-  m_FatalErrorLobbyFullMsg: 'Error: lobby is full! You cannot play.'
   m_CharacterGraphicsParent: {fileID: 0}
 --- !u!114 &3565665953789623673
 MonoBehaviour:
