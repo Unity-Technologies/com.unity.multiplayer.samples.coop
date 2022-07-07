@@ -22,17 +22,34 @@ namespace Unity.Multiplayer.Samples
             }
         }
 
-        // todo improve perf on this, don't do string concatenation everywhere, especially if log level is too high
-        // TODO use json structure for log analysis tools (kibana, elasticsearch, etc)
-        // todo find a way to disable full stack trace if needed, this could take a lot of resources.
-        // Logging format should change following which logging analytics service you use. Elasticsearch could
-        // require a different format than splunk for example.
+        /// <summary>
+        /// With dedicated server, you don't have a view into your game like you'd have with other types of platforms. You'll rely on logging a lot to get
+        /// insights into what's happening on your server.
+        /// Unity's default logging isn't usable for dedicated server use cases. The following requirements are missing:
+        /// - Structured logging: with 1000+ server fleets, you don't want to look at log files individually. You'll need log ingestion/analysis tools to be able
+        /// to parse all that data (think tools like elasticsearch for example). Making your logs structured so they are machine friendly (for example
+        /// having each log entry be a json object) makes this easier to integrate with those tools
+        /// - Log levels: most of the time, you won't want to receive info logs, only warnings and errors (so you don't spam your analysis tools and so they don't
+        /// cost your a fortune). However, you'll also want to enable info and debug logs for specific servers when debugging them. Having a logger that
+        /// manages this for you is better than wrapping your logs yourself and managing this yourself.
+        /// - Log file rotation: Dedicated servers can run for days and days, while normal games will run for a few play sessions before being closed. This means your
+        /// log file will grow and grow. Rotation is an automated way to swap log files each x hours/days. This allows deleting older log files and allows for more manageable
+        /// log files in general.
+        /// - Performance: logging can be a performance costly operation, which contributes to your CPU perf costs, which in turn are translated to hosting monetary costs.
+        /// Having a logging library that's optimized for these scenarios is essential (burstable, threaded, etc).
+        /// This also includes not having to print full stack traces (not needed for most devops operations, but could be enabled for debugging)
+        ///
+        /// A few solutions exists for this. ZLogger https://github.com/Cysharp/ZLogger and serilog https://www.nuget.org/packages/serilog/ for example
+        /// Unity also has an experimental package com.unity.logging that answers the above needs as well. Once this is out of experimental, this will be
+        /// integrated in boss room.
+        /// </summary>
+        /// <param name="message"></param>
         public static void Log(string message)
         {
-            Debug.LogFormat($"<b>===[{DateTime.UtcNow}]|{Time.realtimeSinceStartup}|{Time.time}|pid[{Process.GetCurrentProcess().Id}]</b> - {message}");
+            // IMPORTANT FOR LOGGING READ ABOVE. The following isn't recommended for production use with dedicated game servers.
+            Debug.Log($"[{DateTime.UtcNow}] {Time.realtimeSinceStartup} {Time.time} pid[{Process.GetCurrentProcess().Id}] - {message}");
         }
 
-        // [MenuItem("Debug/GetAll")]
         public static void PrintSceneHierarchy()
         {
             List<GameObject> rootObjects = new List<GameObject>();
