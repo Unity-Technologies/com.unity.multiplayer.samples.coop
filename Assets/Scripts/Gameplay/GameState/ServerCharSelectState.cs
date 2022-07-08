@@ -9,9 +9,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// <summary>
     /// Server specialization of Character Select game state.
     /// </summary>
-    [RequireComponent(typeof(CharSelectData))]
+    [RequireComponent(typeof(NetcodeHooks), typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
+        [SerializeField]
+        NetcodeHooks m_NetcodeHooks;
+
         public override GameState ActiveState => GameState.CharSelect;
         public CharSelectData CharSelectData { get; private set; }
 
@@ -22,8 +25,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             base.Awake();
             CharSelectData = GetComponent<CharSelectData>();
 
-            CharSelectData.OnNetworkSpawnCallback += OnNetworkSpawn;
-            CharSelectData.OnNetworkDespawnCallback += OnNetworkDespawn;
+            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
+            m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (m_NetcodeHooks)
+            {
+                m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
+                m_NetcodeHooks.OnNetworkDespawnHook -= OnNetworkDespawn;
+            }
         }
 
         void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
