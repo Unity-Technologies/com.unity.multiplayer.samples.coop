@@ -11,6 +11,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Added
 *
 ### Changed
+* Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
 * Refactored connection management into simpler state machine (#666)
 * 
