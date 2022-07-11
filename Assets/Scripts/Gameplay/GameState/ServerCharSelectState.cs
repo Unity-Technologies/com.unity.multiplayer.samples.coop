@@ -4,6 +4,7 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
@@ -19,11 +20,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         Coroutine m_WaitToEndLobbyCoroutine;
 
+        [Inject]
+        ConnectionManager m_ConnectionManager;
+
         protected override void Awake()
         {
             base.Awake();
 
             CharSelectData = GetComponent<CharSelectData>();
+
             CharSelectData.OnNetworkSpawnCallback += OnNetworkSpawn;
             CharSelectData.OnNetworkDespawnCallback += OnNetworkDespawn;
 
@@ -229,7 +234,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         int GetAvailablePlayerNumber()
         {
-            for (int possiblePlayerNumber = 0; possiblePlayerNumber < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNumber)
+            for (int possiblePlayerNumber = 0; possiblePlayerNumber < m_ConnectionManager.MaxConnectedPlayers; ++possiblePlayerNumber)
             {
                 if (IsPlayerNumberAvailable(possiblePlayerNumber))
                 {

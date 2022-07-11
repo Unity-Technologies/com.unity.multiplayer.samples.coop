@@ -34,6 +34,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
+        public void SetRandomAvatar()
+        {
+            AvatarGuid.Value = m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
+        }
+
         void Awake()
         {
             m_CharacterClassContainer = GetComponent<CharacterClassContainer>();

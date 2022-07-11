@@ -1,12 +1,10 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -42,13 +40,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Color m_LoseLightColor;
 
-        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
-
         [Inject]
-        void InjectDependencies(IPublisher<QuitGameSessionMessage> quitGameSessionPub)
-        {
-            m_QuitGameSessionPub = quitGameSessionPub;
-        }
+        ConnectionManager m_ConnectionManager;
 
         void Start()
         {
@@ -114,7 +107,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnMainMenuClicked()
         {
-            m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = true });
+            m_ConnectionManager.RequestShutdown();
         }
     }
 }

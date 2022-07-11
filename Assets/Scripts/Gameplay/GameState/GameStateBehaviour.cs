@@ -2,6 +2,8 @@ using System;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
+using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -36,7 +38,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Important Note: We assume that every Scene has a GameState object. If not, then it's possible that a Persisting game state
     /// will outlast its lifetime (as there is no successor state to clean it up).
     /// </remarks>
-    public abstract class GameStateBehaviour : MonoBehaviour
+    public abstract class GameStateBehaviour : LifetimeScope
     {
         /// <summary>
         /// What GameState this represents. Server and client specializations of a state should always return the same enum.
@@ -48,26 +50,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// </summary>
         private static GameObject s_ActiveStateGO;
 
-        public DIScope Scope
+        protected override void Awake()
         {
-            get => m_Scope;
-            private set => m_Scope = value;
-        }
+            base.Awake();
 
-        DIScope m_Scope;
-
-        [SerializeField]
-        GameObject[] m_GameObjectsThatWillBeInjectedAutomatically;
-
-        protected virtual void Awake()
-        {
-            DIScope.RootScope.InjectIn(this);
-            Scope = new DIScope(DIScope.RootScope);
-            InitializeScope();
-            Scope.FinalizeScopeConstruction();
-            foreach (var autoInjectedGameObject in m_GameObjectsThatWillBeInjectedAutomatically)
+            if (Parent != null)
             {
-                Scope.InjectIn(autoInjectedGameObject);
+                Parent.Container.Inject(this);
             }
             if (DedicatedServerUtilities.IsServerBuildTarget)
             {
@@ -94,12 +83,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             s_ActiveStateGO = gameObject;
         }
 
-        protected virtual void InitializeScope() { }
-
-        public virtual void OnDestroy()
+        protected override void OnDestroy()
         {
-            Scope?.Dispose();
-            s_ActiveStateGO = null;
+            if (!Persists)
+            {
+                s_ActiveStateGO = null;
+            }
         }
     }
 }

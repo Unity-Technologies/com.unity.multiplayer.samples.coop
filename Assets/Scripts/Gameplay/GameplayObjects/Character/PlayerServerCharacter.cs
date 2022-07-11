@@ -82,7 +82,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     return playerServerCharacter;
                 }
             }
-            Debug.LogError($"PlayerServerCharacter owned by client {ownerClientId} not found");
             return null;
         }
     }

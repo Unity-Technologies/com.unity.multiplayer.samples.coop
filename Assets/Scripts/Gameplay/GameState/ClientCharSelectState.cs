@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Unity.Netcode;
+using VContainer;
 using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
@@ -100,13 +101,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
+        [Inject]
+        ConnectionManager m_ConnectionManager;
+
         protected override void Awake()
         {
             base.Awake();
             Instance = this;
 
             // TODO inject or find another way to find CharSelectData
-            // TODO CharSelectData should directly be in ServerCharSelectState and both client and server should be in same gameplay assembly
             CharSelectData = FindObjectOfType<CharSelectData>();
             CharSelectData.OnNetworkSpawnCallback += OnSpawn; if (CharSelectData.IsSpawned) OnSpawn();
             CharSelectData.OnNetworkDespawnCallback += OnDespawn;
@@ -120,7 +123,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             };
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             if (Instance == this)
             {
@@ -432,19 +435,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             return characterGraphics;
         }
-
-#if UNITY_EDITOR
-        void OnValidate()
-        {
-            if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
-            {
-                while (m_PlayerSeats.Count < CharSelectData.k_MaxLobbyPlayers)
-                {
-                    m_PlayerSeats.Add(null);
-                }
-            }
-        }
-#endif
 
     }
 }

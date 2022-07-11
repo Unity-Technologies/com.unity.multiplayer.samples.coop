@@ -4,8 +4,6 @@
     "references": [
         "Unity.Netcode.Components",
         "Unity.Netcode.Runtime",
-        "Unity.Services.Core",
-        "Unity.Services.Authentication",
         "Unity.Services.Relay"
     ],
     "includePlatforms": [],

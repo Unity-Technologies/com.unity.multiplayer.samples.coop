@@ -6,6 +6,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
 {
