@@ -1,4 +1,3 @@
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
@@ -25,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnCreateClick()
         {
-            m_LobbyUIMediator.CreateLobbyRequest(m_LobbyNameInputField.text, m_IsPrivate.isOn, 8);
+            m_LobbyUIMediator.CreateLobbyRequest(m_LobbyNameInputField.text, m_IsPrivate.isOn);
         }
 
         public void Show()

@@ -1,14 +1,17 @@
 {
-    "name": "Unity.BossRoom.DebugCheats",
+    "name": "Unity.BossRoom.ConnectionManagement",
     "rootNamespace": "",
     "references": [
         "Unity.Netcode.Runtime",
-        "Unity.BossRoom.Infrastructure",
-        "Unity.BossRoom.Gameplay",
-        "Unity.BossRoom.ConnectionManagement",
         "Unity.Multiplayer.Samples.Utilities",
-        "VContainer",
-        "VContainer.EnableCodeGen"
+        "Unity.BossRoom.UnityServices",
+        "Unity.BossRoom.Infrastructure",
+        "Unity.Services.Core",
+        "Unity.Services.Authentication",
+        "Unity.BossRoom.Utils",
+        "Unity.Services.Lobbies",
+        "Unity.Networking.Transport",
+        "VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

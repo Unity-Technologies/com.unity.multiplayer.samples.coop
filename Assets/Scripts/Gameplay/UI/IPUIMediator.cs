@@ -1,7 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using VContainer;
@@ -36,11 +35,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         IPConnectionWindow m_IPConnectionWindow;
 
         [Inject] NameGenerationData m_NameGenerationData;
-        [Inject] GameNetPortal m_GameNetPortal;
-        [Inject] ClientGameNetPortal m_ClientNetPortal;
-        [Inject] IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+        [Inject] ConnectionManager m_ConnectionManager;
 
         public IPHostingUI IPHostingUI => m_IPHostingUI;
+
+        IDisposable m_Subscription;
+
+        [Inject]
+        void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSubscriber)
+        {
+            m_Subscription = connectStatusSubscriber.Subscribe(OnConnectStatusMessage);
+        }
 
         void Awake()
         {
@@ -54,6 +59,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             RegenerateName();
         }
 
+        void OnDestroy()
+        {
+            m_Subscription.Dispose();
+        }
+
+        void OnConnectStatusMessage(ConnectStatus connectStatus)
+        {
+            DisableSignInSpinner();
+        }
+
         public void HostIPRequest(string ip, string port)
         {
             int.TryParse(port, out var portNum);
@@ -64,16 +79,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             ip = string.IsNullOrEmpty(ip) ? k_DefaultIP : ip;
 
-            m_GameNetPortal.PlayerName = m_PlayerNameLabel.text;
-
-            if (m_GameNetPortal.StartHost(ip, portNum))
-            {
-                m_SignInSpinner.SetActive(true);
-            }
-            else
-            {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartHostFailed);
-            }
+            m_SignInSpinner.SetActive(true);
+            m_ConnectionManager.StartHostIp(m_PlayerNameLabel.text, ip, portNum);
         }
 
         public void JoinWithIP(string ip, string port)
@@ -86,11 +93,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             ip = string.IsNullOrEmpty(ip) ? k_DefaultIP : ip;
 
-            m_GameNetPortal.PlayerName = m_PlayerNameLabel.text;
-
             m_SignInSpinner.SetActive(true);
 
-            m_ClientNetPortal.StartClient(ip, portNum);
+            m_ConnectionManager.StartClientIp(m_PlayerNameLabel.text, ip, portNum);
 
             m_IPConnectionWindow.ShowConnectingWindow();
         }
@@ -108,9 +113,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void RequestShutdown()
         {
-            if (m_GameNetPortal && m_GameNetPortal.NetManager)
+            if (m_ConnectionManager && m_ConnectionManager.NetworkManager)
             {
-                m_GameNetPortal.NetManager.Shutdown();
+                m_ConnectionManager.RequestShutdown();
             }
         }
 

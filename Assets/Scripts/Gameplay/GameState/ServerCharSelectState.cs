@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -16,6 +17,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public CharSelectData CharSelectData { get; private set; }
 
         Coroutine m_WaitToEndLobbyCoroutine;
+
+        [Inject]
+        ConnectionManager m_ConnectionManager;
 
         protected override void Awake()
         {
@@ -200,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         int GetAvailablePlayerNumber()
         {
-            for (int possiblePlayerNumber = 0; possiblePlayerNumber < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNumber)
+            for (int possiblePlayerNumber = 0; possiblePlayerNumber < m_ConnectionManager.MaxConnectedPlayers; ++possiblePlayerNumber)
             {
                 if (IsPlayerNumberAvailable(possiblePlayerNumber))
                 {

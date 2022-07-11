@@ -19,6 +19,7 @@
         "Unity.BossRoom.Audio",
         "Unity.Multiplayer.Samples.Utilities",
         "Unity.BossRoom.Utils",
+        "Unity.BossRoom.ConnectionManagement",
         "VContainer"
     ],
     "includePlatforms": [],
