@@ -1,6 +1,5 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using VContainer;
@@ -19,7 +18,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         QuitMode m_QuitMode = QuitMode.ReturnToMenu;
 
         [Inject]
-        IPublisher<QuitGameSessionMessage> m_QuitGameSessionPub;
+        ConnectionManager m_ConnectionManager;
 
         [Inject]
         IPublisher<QuitApplicationMessage> m_QuitApplicationPub;
@@ -29,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             switch (m_QuitMode)
             {
                 case QuitMode.ReturnToMenu:
-                    m_QuitGameSessionPub.Publish(new QuitGameSessionMessage() { UserRequested = true });
+                    m_ConnectionManager.RequestShutdown();
                     break;
                 case QuitMode.QuitApplication:
                     m_QuitApplicationPub.Publish(new QuitApplicationMessage());

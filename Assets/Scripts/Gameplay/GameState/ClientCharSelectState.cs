@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -103,6 +104,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         }
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
+
+        [Inject]
+        ConnectionManager m_ConnectionManager;
 
         protected override void Awake()
         {
@@ -436,19 +440,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             return characterGraphics;
         }
-
-#if UNITY_EDITOR
-        void OnValidate()
-        {
-            if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
-            {
-                while (m_PlayerSeats.Count < CharSelectData.k_MaxLobbyPlayers)
-                {
-                    m_PlayerSeats.Add(null);
-                }
-            }
-        }
-#endif
 
     }
 }
