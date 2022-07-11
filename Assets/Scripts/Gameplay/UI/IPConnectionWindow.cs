@@ -18,11 +18,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         TextMeshProUGUI m_TitleText;
 
         [Inject] IPUIMediator m_IPUIMediator;
-        [Inject] IPublisher<ConnectStatus> m_ConnectStatusPublisher;
+
+        IDisposable m_Subscription;
+
+        [Inject]
+        void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSubscriber)
+        {
+            m_Subscription = connectStatusSubscriber.Subscribe(OnConnectStatusMessage);
+        }
 
         void Awake()
         {
             Hide();
+        }
+
+        void OnDestroy()
+        {
+            m_Subscription.Dispose();
+        }
+
+        void OnConnectStatusMessage(ConnectStatus connectStatus)
+        {
+            CancelConnectionWindow();
+            m_IPUIMediator.DisableSignInSpinner();
         }
 
         void Show()
@@ -41,7 +59,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             void OnTimeElapsed()
             {
-                m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
                 Hide();
                 m_IPUIMediator.DisableSignInSpinner();
             }
