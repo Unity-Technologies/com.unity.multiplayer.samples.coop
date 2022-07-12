@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;
 
@@ -10,12 +11,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// <summary>
     /// Client specialization of the Character Select game state. Mainly controls the UI during character-select.
     /// </summary>
+    [RequireComponent(typeof(NetcodeHooks))]
     public class ClientCharSelectState : GameStateBehaviour
     {
         /// <summary>
         /// Reference to the scene's state object so that UI can access state
         /// </summary>
         public static ClientCharSelectState Instance { get; private set; }
+
+        [SerializeField]
+        NetcodeHooks m_NetcodeHooks;
 
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
@@ -111,8 +116,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             // TODO inject or find another way to find CharSelectData
             // TODO CharSelectData should directly be in ServerCharSelectState
             CharSelectData = FindObjectOfType<CharSelectData>();
-            CharSelectData.OnNetworkSpawnCallback += OnSpawn; if (CharSelectData.IsSpawned) OnSpawn();
-            CharSelectData.OnNetworkDespawnCallback += OnDespawn;
+            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
+            m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
 
             m_LobbyUIElementsByMode = new Dictionary<LobbyMode, List<GameObject>>()
             {
@@ -145,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
         }
 
-        public void OnDespawn()
+        void OnNetworkDespawn()
         {
             if (CharSelectData)
             {
@@ -154,7 +159,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        public void OnSpawn()
+        void OnNetworkSpawn()
         {
             if (!NetworkManager.Singleton.IsClient)
             {

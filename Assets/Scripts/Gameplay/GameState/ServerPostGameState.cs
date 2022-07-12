@@ -1,35 +1,41 @@
-using System.Collections.Generic;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
+    [RequireComponent(typeof(NetcodeHooks))]
     public class ServerPostGameState : GameStateBehaviour
     {
+        [SerializeField]
+        NetcodeHooks m_NetcodeHooks;
+
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
         protected override void Awake()
         {
             base.Awake();
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnAllClientsFinishedLoading;
+
+            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
+        }
+
+        void OnNetworkSpawn()
+        {
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                enabled = false;
+            }
+            else
+            {
+                SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
+            }
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            if (NetworkManager.Singleton.SceneManager != null)
-            {
-                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnAllClientsFinishedLoading;
-            }
-        }
 
-        static void OnAllClientsFinishedLoading(string scenename, LoadSceneMode loadscenemode, List<ulong> clientscompleted, List<ulong> clientstimedout)
-        {
-            if (NetworkManager.Singleton.IsServer)
-            {
-                SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
-            }
+            m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
         }
     }
 }
