@@ -56,6 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             base.Awake();
             NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
             NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
+            DedicatedServerUtilities.PrintSceneHierarchy();
         }
 
         void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
@@ -66,11 +67,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        protected override void Awake()
-        {
-            base.Awake();
-            DedicatedServerUtilities.PrintSceneHierarchy();
-        }
         private void ServerLoaded()
         {
             if (!NetworkManager.Singleton.IsServer)

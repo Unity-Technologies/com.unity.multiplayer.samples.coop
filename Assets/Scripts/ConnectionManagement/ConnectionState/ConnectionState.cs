@@ -32,6 +32,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public virtual void StartHostIP(string playerName, string ipaddress, int port) { }
 
+        public virtual void StartServerIP(string ipaddress, int port) { }
+
         public virtual void StartHostLobby(string playerName) { }
 
         public virtual void OnUserRequestedShutdown() { }

@@ -5,6 +5,8 @@ using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
+
 // TODO lots of code duplication with UIMessageFeed?
 public class ServerMessageFeedLogger : MonoBehaviour
 {

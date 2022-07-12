@@ -1,20 +1,15 @@
 using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     public class DSLobbyManagementState : GameStateBehaviour
     {
-        GameNetPortal m_GameNetPortal;
-        public override GameState ActiveState => GameState.LobbyManagement;
-
         [Inject]
-        void InjectDependencies(GameNetPortal gameNetPortal)
-        {
-            m_GameNetPortal = gameNetPortal;
-        }
+        ConnectionManager m_ConnectionManager;
+        public override GameState ActiveState => GameState.LobbyManagement;
 
         protected override void Start()
         {
@@ -38,7 +33,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
 
             DedicatedServerUtilities.Log($"Starting Headless Server, listening on address {address}:{port}");
-            m_GameNetPortal.StartIPServer(address, port, isHost: false); // This will switch to the char select scene once the server started callback has been called
+            m_ConnectionManager.StartServerIP(address, port); // This will switch to the char select scene once the server started callback has been called
         }
-    }
-}
+    }}

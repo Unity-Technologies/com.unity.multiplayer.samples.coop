@@ -90,8 +90,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(m_UpdateRunner.gameObject);
             Application.targetFrameRate = 120;
-			
-			NetworkManager.Singleton.OnClientConnectedCallback += OnClientStarted;
+
+            NetworkManager.Singleton.OnClientConnectedCallback += OnClientStarted;
             NetworkManager.Singleton.OnServerStarted += OnServerStarted;
             if (DedicatedServerUtilities.IsServerBuildTarget)
             {
@@ -101,8 +101,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             else
             {
                 SceneManager.LoadScene(SceneNames.StartupClient, LoadSceneMode.Additive);
-            	SceneManager.LoadScene("MainMenu");
-			}
+                SceneManager.LoadScene(SceneNames.MainMenu);
+            }
         }
 
         protected override void OnDestroy()

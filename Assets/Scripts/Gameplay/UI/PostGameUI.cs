@@ -63,7 +63,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 SetPostGameUI(networkGameState.NetworkWinState.winState.Value);
             }
 
-            if (!ClientGameNetPortal.Instance.IsConnectedToHost && !NetworkManager.Singleton.IsServer)
+            if (!m_ConnectionManager.IsConnectedToHost && !NetworkManager.Singleton.IsServer)
             {
                 IEnumerator CountdownToNextGame()
                 {
@@ -111,4 +111,3 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
     }
 }
-

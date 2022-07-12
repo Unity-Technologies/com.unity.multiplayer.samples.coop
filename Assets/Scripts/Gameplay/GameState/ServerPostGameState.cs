@@ -19,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             NetworkManager.Singleton.SceneManager.OnSceneEvent += OnAllClientsFinishedLoading;
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             base.OnDestroy();
             if (NetworkManager.Singleton != null)

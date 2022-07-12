@@ -85,10 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         protected override void OnDestroy()
         {
-            if (!Persists)
-            {
-                s_ActiveStateGO = null;
-            }
+            s_ActiveStateGO = null;
         }
     }
 }

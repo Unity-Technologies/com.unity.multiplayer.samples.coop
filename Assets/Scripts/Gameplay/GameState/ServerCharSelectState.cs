@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             base.OnDestroy();
             NetworkManager.Singleton.SceneManager.VerifySceneBeforeLoading -= DontSyncClientOnlyScenes;
