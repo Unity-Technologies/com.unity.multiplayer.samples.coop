@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
@@ -20,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
     {
         [SerializeField] UpdateRunner m_UpdateRunner;
         [SerializeField] ConnectionManager m_ConnectionManager;
+        [SerializeField] NetworkManager m_NetworkManager;
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -31,6 +33,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             base.Configure(builder);
             builder.RegisterComponent(m_UpdateRunner);
             builder.RegisterComponent(m_ConnectionManager);
+            builder.RegisterComponent(m_NetworkManager);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join

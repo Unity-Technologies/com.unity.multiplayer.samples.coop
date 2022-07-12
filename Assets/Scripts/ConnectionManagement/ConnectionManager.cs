@@ -56,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         ConnectionState m_CurrentState;
 
-        [SerializeField]
+        [Inject]
         NetworkManager m_NetworkManager;
         public NetworkManager NetworkManager => m_NetworkManager;
 
