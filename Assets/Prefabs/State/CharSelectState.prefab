@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 1092063945021251778}
   - component: {fileID: 3565665953789623675}
   - component: {fileID: 3565665953789623673}
-  - component: {fileID: 8494646029522094751}
+  - component: {fileID: 4791671232360312601}
   m_Layer: 0
   m_Name: CharSelectState
   m_TagString: Untagged
@@ -67,6 +67,7 @@ MonoBehaviour:
     TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
   autoRun: 1
   autoInjectGameObjects: []
+  m_NetcodeHooks: {fileID: 4791671232360312601}
 --- !u!114 &3565665953789623673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -88,7 +89,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f49fc0646d4e9554f88a31ac496afd19, type: 2}
   - {fileID: 11400000, guid: 70d299733c76b0649852336624091fca, type: 2}
   - {fileID: 11400000, guid: 9cc69a593b6ff1b4b95bf7330ec5ab46, type: 2}
---- !u!114 &8494646029522094751
+--- !u!114 &4791671232360312601
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -97,6 +98,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3565665953789623672}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6aedfcf74b3f4f248897af16490caa9d, type: 3}
+  m_Script: {fileID: 11500000, guid: e2c949841cd7402f96426d2d177731a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

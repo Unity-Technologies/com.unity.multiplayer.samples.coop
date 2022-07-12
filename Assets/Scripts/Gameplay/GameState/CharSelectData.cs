@@ -79,6 +79,18 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_LobbyPlayers = new NetworkList<LobbyPlayerState>();
         }
 
+        public Action OnNetworkSpawnCallback;
+        public override void OnNetworkSpawn()
+        {
+            OnNetworkSpawnCallback?.Invoke();
+        }
+
+        public Action OnNetworkDespawnCallback;
+        public override void OnNetworkDespawn()
+        {
+            OnNetworkDespawnCallback?.Invoke();
+        }
+
         /// <summary>
         /// Current state of all players in the lobby.
         /// </summary>

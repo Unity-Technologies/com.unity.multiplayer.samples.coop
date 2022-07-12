@@ -20,8 +20,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public static ClientCharSelectState Instance { get; private set; }
 
-        [SerializeField]
-        NetcodeHooks m_NetcodeHooks;
 
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
@@ -116,8 +114,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             // TODO inject or find another way to find CharSelectData
             CharSelectData = FindObjectOfType<CharSelectData>();
-            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
-            m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
+            CharSelectData.OnNetworkSpawnCallback += OnSpawn; if (CharSelectData.IsSpawned) OnSpawn();
+            CharSelectData.OnNetworkDespawnCallback += OnDespawn;
 
             m_LobbyUIElementsByMode = new Dictionary<LobbyMode, List<GameObject>>()
             {
@@ -150,7 +148,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
         }
 
-        void OnNetworkDespawn()
+        void OnDespawn()
         {
             if (CharSelectData)
             {
@@ -159,7 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        void OnNetworkSpawn()
+        void OnSpawn()
         {
             if (!NetworkManager.Singleton.IsClient)
             {
