@@ -117,8 +117,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d305a23aab66843ab49f61511c8662, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_PositionConstraint: {fileID: 172480899766740213}
   m_NetworkTransform: {fileID: -6910049848596396308}
+  m_PositionConstraint: {fileID: 172480899766740213}
 --- !u!1818360608 &172480899766740213
 PositionConstraint:
   m_ObjectHideFlags: 0

@@ -45,6 +45,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 StopAllCoroutines();
 
+                m_NetworkTransform.InLocalSpace = false;
+
                 // when Netcode detects that a NetworkObject's parent has been destroyed, it assigns no parent for that
                 // object
                 // when this happens, NetworkTransform and PositionConstraint are disabled; here they are re-enabled
@@ -53,6 +55,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 // this NetworkObject has been dropped, move it slowly back to the ground
                 StartCoroutine(SmoothPositionLerpY(k_DropAnimationLength, 0));
+            }
+            else
+            {
+                m_NetworkTransform.InLocalSpace = true;
             }
         }
 

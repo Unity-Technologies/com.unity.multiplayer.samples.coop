@@ -1,3 +1,4 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
@@ -11,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// </summary>
     public class PickUpAction : Action
     {
-        RaycastHit[] m_RaycastHits = new RaycastHit[1];
+        RaycastHit[] m_RaycastHits = new RaycastHit[8];
 
         const string k_HeavyTag = "Heavy";
 
@@ -23,18 +24,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         float m_AnimationTimer;
 
-        PickUpState m_PickUpObject;
+        NetworkPickUpState m_NetworkPickUpState;
+
+        static RaycastHitComparer s_RaycastHitComparer;
 
         public PickUpAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
+            m_NetworkPickUpState = parent.GetComponent<NetworkPickUpState>();
+
+            s_RaycastHitComparer ??= new RaycastHitComparer();
         }
 
         public override bool Start()
         {
-            m_PickUpObject = m_Parent.GetComponentInChildren<PickUpState>();
-
-            // first, check if a pot has already been parented; if so, drop it
-            if (m_PickUpObject)
+            // play animation based on if a heavy object is already held and start timer
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetworkPickUpState.heldObject.Value,
+                    out var heldObject))
             {
                 Data.TargetIds = null;
 
@@ -70,20 +75,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void PickUpOrDrop()
         {
-            if (m_PickUpObject)
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetworkPickUpState.heldObject.Value,
+                    out var heldObject))
             {
                 // pickup object found inside of hierarchy; drop it
-                m_PickUpObject.transform.SetParent(null);
+                m_NetworkPickUpState.heldObject.Value = 0;
+                heldObject.transform.SetParent(null);
                 return;
             }
 
-            var numResults = Physics.BoxCastNonAlloc(m_Parent.physicsWrapper.Transform.position,
-                m_Parent.physicsWrapper.DamageCollider.bounds.extents,
+            var numResults = Physics.RaycastNonAlloc(m_Parent.physicsWrapper.Transform.position,
                 m_Parent.physicsWrapper.Transform.forward,
                 m_RaycastHits,
-                Quaternion.identity,
                 Description.Range,
                 1 << LayerMask.NameToLayer(k_NpcLayer));
+
+            Array.Sort(m_RaycastHits, 0, numResults, s_RaycastHitComparer);
 
             // collider must contain "Heavy" tag
             if (numResults == 0 || !m_RaycastHits[0].collider.TryGetComponent(out NetworkObject heavyNetworkObject) ||
@@ -108,6 +115,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(k_FailedPickupTrigger);
                 return;
             }
+
+            m_NetworkPickUpState.heldObject.Value = heavyNetworkObject.NetworkObjectId;
 
             Data.TargetIds = new ulong[] { heavyNetworkObject.NetworkObjectId };
 
