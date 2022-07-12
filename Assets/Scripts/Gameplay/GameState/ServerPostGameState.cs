@@ -1,14 +1,27 @@
+using Unity.Multiplayer.Samples.Utilities;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
+    [RequireComponent(typeof(NetcodeHooks))]
     public class ServerPostGameState : GameStateBehaviour
     {
+        [SerializeField]
+        NetcodeHooks m_NetcodeHooks;
+
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
-        public override void OnNetworkSpawn()
+        protected override void Awake()
         {
-            if (!IsServer)
+            base.Awake();
+
+            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
+        }
+
+        void OnNetworkSpawn()
+        {
+            if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
             }
@@ -16,6 +29,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
             }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
         }
     }
 }

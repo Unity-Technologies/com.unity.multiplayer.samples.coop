@@ -3,24 +3,45 @@ using System.Collections;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     /// <summary>
     /// Server specialization of Character Select game state.
     /// </summary>
-    [RequireComponent(typeof(CharSelectData))]
+    [RequireComponent(typeof(NetcodeHooks), typeof(CharSelectData))]
     public class ServerCharSelectState : GameStateBehaviour
     {
+        [SerializeField]
+        NetcodeHooks m_NetcodeHooks;
+
         public override GameState ActiveState => GameState.CharSelect;
         public CharSelectData CharSelectData { get; private set; }
 
         Coroutine m_WaitToEndLobbyCoroutine;
 
+        [Inject]
+        ConnectionManager m_ConnectionManager;
+
         protected override void Awake()
         {
             base.Awake();
             CharSelectData = GetComponent<CharSelectData>();
+
+            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
+            m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            if (m_NetcodeHooks)
+            {
+                m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
+                m_NetcodeHooks.OnNetworkDespawnHook -= OnNetworkDespawn;
+            }
         }
 
         void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
@@ -159,7 +180,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
         }
 
-        public override void OnNetworkDespawn()
+        public void OnNetworkDespawn()
         {
             if (NetworkManager.Singleton)
             {
@@ -172,9 +193,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        public override void OnNetworkSpawn()
+        public void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
             }
@@ -197,7 +218,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         int GetAvailablePlayerNumber()
         {
-            for (int possiblePlayerNumber = 0; possiblePlayerNumber < CharSelectData.k_MaxLobbyPlayers; ++possiblePlayerNumber)
+            for (int possiblePlayerNumber = 0; possiblePlayerNumber < m_ConnectionManager.MaxConnectedPlayers; ++possiblePlayerNumber)
             {
                 if (IsPlayerNumberAvailable(possiblePlayerNumber))
                 {
