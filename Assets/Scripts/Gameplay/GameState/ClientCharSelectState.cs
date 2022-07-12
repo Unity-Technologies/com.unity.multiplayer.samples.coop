@@ -2,17 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
-using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client specialization of the Character Select game state. Mainly controls the UI during character-select.
     /// </summary>
-    [RequireComponent(typeof(NetcodeHooks))]
     public class ClientCharSelectState : GameStateBehaviour
     {
         /// <summary>
