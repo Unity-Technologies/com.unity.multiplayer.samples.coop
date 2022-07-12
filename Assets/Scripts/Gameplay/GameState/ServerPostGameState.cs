@@ -3,12 +3,15 @@ using System.Collections;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
+    [RequireComponent(typeof(NetcodeHooks))]
     public class ServerPostGameState : GameStateBehaviour
     {
+        [SerializeField]
+        NetcodeHooks m_NetcodeHooks;
+
         public const int SecondsToWaitForNewGame = 5;
 
         public override GameState ActiveState { get { return GameState.PostGame; } }
@@ -16,25 +19,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void Awake()
         {
             base.Awake();
-            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnAllClientsFinishedLoading;
+
+            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
         }
 
-        protected override void OnDestroy()
+        void OnNetworkSpawn()
         {
-            base.OnDestroy();
-            if (NetworkManager.Singleton != null)
+            if (!NetworkManager.Singleton.IsServer)
             {
-                NetworkManager.Singleton.SceneManager.OnSceneEvent -= OnAllClientsFinishedLoading;
+                enabled = false;
             }
-        }
-
-        void OnAllClientsFinishedLoading(SceneEvent sceneEvent)
-        {
-            if (sceneEvent.SceneEventType != SceneEventType.LoadEventCompleted || gameObject.scene.name != sceneEvent.SceneName) return;
-            if (NetworkManager.Singleton.IsServer)
+            else
             {
                 SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
-
+				
                 if (DedicatedServerUtilities.IsServerBuildTarget)
                 {
                     IEnumerator WaitAndStartNewGame()
@@ -47,6 +45,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     StartCoroutine(WaitAndStartNewGame());
                 }
             }
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+
+            m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
         }
     }
 }

@@ -1,6 +1,5 @@
-using Unity.Netcode;
 using System;
-
+using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
@@ -10,13 +9,13 @@ namespace Unity.Multiplayer.Samples.Utilities
     {
         public event Action OnNetworkSpawnHook;
 
+        public event Action OnNetworkDespawnHook;
+
         public override void OnNetworkSpawn()
         {
             base.OnNetworkSpawn();
             OnNetworkSpawnHook?.Invoke();
         }
-
-        public event Action OnNetworkDespawnHook;
 
         public override void OnNetworkDespawn()
         {
