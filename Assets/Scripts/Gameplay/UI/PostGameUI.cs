@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;
+using static Unity.Multiplayer.Samples.BossRoom.ConnectionManager.ServerType;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -63,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 SetPostGameUI(networkGameState.NetworkWinState.winState.Value);
             }
 
-            if (!m_ConnectionManager.IsConnectedToHost && !NetworkManager.Singleton.IsServer)
+            if (m_ConnectionManager.IsConnectedToHost == DedicatedServer && !NetworkManager.Singleton.IsServer)
             {
                 IEnumerator CountdownToNextGame()
                 {

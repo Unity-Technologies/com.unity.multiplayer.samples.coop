@@ -11,10 +11,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
 {
     class ServerListeningState : ConnectionState
     {
-      [Inject]
-        LobbyServiceFacade m_LobbyServiceFacade;
         [Inject]
-        IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
+        protected LobbyServiceFacade m_LobbyServiceFacade;
+
+        [Inject]
+        protected IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
         const int k_MaxConnectPayload = 1024;
@@ -101,7 +102,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 response.Position = Vector3.zero;
                 response.Rotation = Quaternion.identity;
 
-                ConnectionManager.SendServertoClientSuccessPayload(clientId, NetworkManager.Singleton.IsHost);
+                ConnectionManager.SendServertoClientSuccessPayload(clientId, NetworkManager.Singleton.IsHost ? ConnectionManager.ServerType.ClientHostedServer : ConnectionManager.ServerType.DedicatedServer);
 
                 return;
             }

@@ -54,6 +54,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public class ConnectionManager : MonoBehaviour
     {
+        public enum ServerType : byte
+        {
+            Undefined = 0,
+            DedicatedServer,
+            ClientHostedServer
+        }
+
         ConnectionState m_CurrentState;
 
         [SerializeField]
@@ -79,7 +86,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         internal readonly StartingHostState m_StartingHost = new StartingHostState();
         internal readonly HostingState m_Hosting = new HostingState();
 
-        public bool IsConnectedToHost { get; private set; }
+        public ServerType IsConnectedToHost { get; set; }
 
         void Awake()
         {
@@ -88,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void Start()
         {
-            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting };
+            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting, m_ServerListening, m_ServerStarting };
             foreach (var connectionState in states)
             {
                 m_Resolver.Inject(connectionState);
@@ -113,8 +120,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         internal void ChangeState(ConnectionState nextState)
         {
             Debug.Log($"Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
-
-            IsConnectedToHost = false;
 
             if (m_CurrentState != null)
             {
@@ -215,13 +220,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
         }
 
-        public void ReceiveServertoClientSuccessPayload_CustomMessage(ulong clientID, FastBufferReader reader)
+        internal void ReceiveServertoClientSuccessPayload_CustomMessage(ulong clientID, FastBufferReader reader)
         {
-            reader.ReadValueSafe(out bool isHost);
+            reader.ReadValueSafe(out ServerType isHost);
             IsConnectedToHost = isHost;
         }
 
-        public static void SendServertoClientSuccessPayload(ulong clientID, bool isHost)
+        internal static void SendServertoClientSuccessPayload(ulong clientID, ServerType isHost)
         {
             var writer = new FastBufferWriter(sizeof(bool), Allocator.Temp);
             writer.WriteValueSafe(isHost);

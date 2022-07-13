@@ -10,7 +10,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
     {
         public override void Enter() { }
 
-        public override void Exit() { }
+        public override void Exit()
+        {
+            m_ConnectionManager.IsConnectedToHost = ConnectionManager.ServerType.Undefined;
+        }
 
         public override void OnClientDisconnect(ulong _)
         {
