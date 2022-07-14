@@ -91,9 +91,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 m_ClientScopes[i].ConnectionManager = m_ClientConnectionManagers[i];
                 m_ClientScopes[i].UpdateRunner = clientUpdateRunner;
                 m_ClientScopes[i].Build();
-
-                var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
-                profileManager.Profile = $"Client{i}";
             }
 
             // Create gameObject
@@ -177,8 +174,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
+                profileManager.Profile = $"Client{i}";
+            }
+
             yield return ConnectClients();
-            for (int i = 0; i < NumberOfClients; i++)
+            for (var i = 0; i < NumberOfClients; i++)
             {
                 Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
             }
@@ -190,8 +193,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
+                profileManager.Profile = $"Client{i}";
+            }
+
             yield return ConnectClients();
-            for (int i = 0; i < NumberOfClients; i++)
+            for (var i = 0; i < NumberOfClients; i++)
             {
                 Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
             }
@@ -219,6 +228,34 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
                 Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
             }
+        }
+
+        [UnityTest]
+        public IEnumerator ClientsDisconnectedWithReasonAfterAttemptingToConnectWithSamePlayerId_Valid()
+        {
+            yield return StartHost();
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
+                profileManager.Profile = $"Client";
+            }
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                LogAssert.Expect(LogType.Log, "Changed connection state from OfflineState to ClientConnectingState.");
+                m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
+            }
+
+            LogAssert.Expect(LogType.Log, "Changed connection state from ClientConnectingState to DisconnectingWithReasonState.");
+            LogAssert.Expect(LogType.Log, "Changed connection state from DisconnectingWithReasonState to OfflineState.");
+            LogAssert.Expect(LogType.Log, "Changed connection state from ClientConnectingState to ClientConnectedState.");
+
+            yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
+
+            Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient);
+            Assert.IsFalse(m_ClientNetworkManagers[1].IsConnectedClient);
         }
 
     }
