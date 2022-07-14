@@ -140,29 +140,84 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return base.OnTearDown();
         }
 
+        IEnumerator StartHost()
+        {
+            LogAssert.Expect(LogType.Log, "Changed connection state from OfflineState to StartingHostState.");
+            LogAssert.Expect(LogType.Log, "Changed connection state from StartingHostState to HostingState.");
+            m_ServerConnectionManager.StartHostIp("server", "127.0.0.1", 9998);
+            yield return null;
+        }
+
+        IEnumerator ConnectClients()
+        {
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                LogAssert.Expect(LogType.Log, "Changed connection state from OfflineState to ClientConnectingState.");
+                m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
+            }
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                LogAssert.Expect(LogType.Log, "Changed connection state from ClientConnectingState to ClientConnectedState.");
+            }
+
+            yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
+        }
+
         [UnityTest]
         public IEnumerator StartHost_Valid()
         {
-            m_ServerConnectionManager.StartHostIp("server", "127.0.0.1", 9998);
-            yield return null;
-            Assert.IsTrue(m_ServerNetworkManager.IsServer);
+            yield return StartHost();
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
         }
 
         [UnityTest]
         public IEnumerator StartHostAndConnectClients_Valid()
         {
-            m_ServerConnectionManager.StartHostIp("server", "127.0.0.1", 9998);
-            yield return null;
+            yield return StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
+
+            yield return ConnectClients();
             for (int i = 0; i < NumberOfClients; i++)
             {
-                m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ClientsDisconnectedWithReasonAfterUserRequestedHostShutdown_Valid()
+        {
+            yield return StartHost();
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+
+            yield return ConnectClients();
+            for (int i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
             }
 
-            yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
-            for (int i = 0; i < NumberOfClients; i++)
+            LogAssert.Expect(LogType.Log, "Changed connection state from HostingState to OfflineState.");
+            m_ServerConnectionManager.RequestShutdown();
+
+            for (var i = 0; i < NumberOfClients; i++)
             {
-                UnityEngine.Assertions.Assert.IsTrue(m_ClientNetworkManagers[i].IsClient);
+                LogAssert.Expect(LogType.Log, "Changed connection state from ClientConnectedState to DisconnectingWithReasonState.");
+            }
+
+            yield return new WaitWhile(() => m_ServerNetworkManager.IsListening);
+
+            Assert.IsFalse(m_ServerNetworkManager.IsHost);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                LogAssert.Expect(LogType.Log, "Changed connection state from DisconnectingWithReasonState to OfflineState.");
+            }
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var clientId = i;
+                yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
+                Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
             }
         }
 
