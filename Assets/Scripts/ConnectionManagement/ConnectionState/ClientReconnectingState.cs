@@ -82,9 +82,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             Debug.Log("Lost connection to host, trying to reconnect...");
 
-            NetworkManager.Singleton.Shutdown();
+            m_ConnectionManager.NetworkManager.Shutdown();
 
-            yield return new WaitWhile(() => NetworkManager.Singleton.ShutdownInProgress); // wait until NetworkManager completes shutting down
+            yield return new WaitWhile(() => m_ConnectionManager.NetworkManager.ShutdownInProgress); // wait until NetworkManager completes shutting down
             Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{k_NbReconnectAttempts}...");
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, k_NbReconnectAttempts));
             m_NbAttempts++;
