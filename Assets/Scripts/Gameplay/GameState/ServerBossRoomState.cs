@@ -15,8 +15,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// <summary>
     /// Server specialization of core BossRoom game logic.
     /// </summary>
+    [RequireComponent(typeof(NetcodeHooks))]
     public class ServerBossRoomState : GameStateBehaviour
     {
+        [SerializeField]
+        NetcodeHooks m_NetcodeHooks;
+
         [SerializeField]
         TransformVariable m_NetworkGameStateTransform;
 
@@ -54,46 +58,70 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void Awake()
         {
             base.Awake();
-            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
+
+            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
+            m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
         }
 
-        void OnLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
-        {
-            if (clientId == NetworkManager.ServerClientId)
-            {
-                ServerLoaded();
-            }
-        }
-
-        private void ServerLoaded()
+        void OnNetworkSpawn()
         {
             if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
+                return;
             }
-            else
+
+            m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
+
+            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnServerLoadComplete;
+            NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
+        }
+
+        void OnNetworkDespawn()
+        {
+            m_Subscription?.Dispose();
+
+            NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnServerLoadComplete;
+            NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
+        }
+
+        void OnServerLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
+        {
+            if (clientId != NetworkManager.ServerClientId)
             {
-                // reset win state
-                SetWinState(WinState.Invalid);
-
-                NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
-                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
-                NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
-
-                SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
-                m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
+                return;
             }
+
+            // reset win state
+            SetWinState(WinState.Invalid);
+
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
+            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
+
+            SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
+        }
+
+        void OnServerUnloadComplete(ulong clientId, string sceneName)
+        {
+            if (clientId != NetworkManager.ServerClientId)
+            {
+                return;
+            }
+
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
+            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
         }
 
         protected override void OnDestroy()
         {
             m_Subscription?.Dispose();
 
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
+            if (m_NetcodeHooks)
             {
-                NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnLoadComplete;
-                NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
+                m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
+                m_NetcodeHooks.OnNetworkDespawnHook -= OnNetworkDespawn;
             }
 
             base.OnDestroy();
@@ -101,8 +129,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void OnSynchronizeComplete(ulong clientId)
         {
-            if (InitialSpawnDone &&
-                !PlayerServerCharacter.GetPlayerServerCharacter(clientId))
+            if (InitialSpawnDone && !PlayerServerCharacter.GetPlayerServerCharacter(clientId))
             {
                 //somebody joined after the initial spawn. This is a Late Join scenario. This player may have issues
                 //(either because multiple people are late-joining at once, or because some dynamic entities are
@@ -140,18 +167,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             CheckForGameOver();
         }
 
-        public void OnServerUnloadComplete(ulong clientId, string sceneName)
-        {
-            if (clientId != NetworkManager.ServerClientId) return;
-
-            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
-            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
-            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
-            m_Subscription?.Dispose();
-        }
-
-        private void SpawnPlayer(ulong clientId, bool lateJoin)
+        void SpawnPlayer(ulong clientId, bool lateJoin)
         {
             Transform spawnPoint = null;
 
@@ -214,12 +230,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             newPlayer.SpawnWithOwnership(clientId, true);
         }
 
-        static IEnumerator WaitToReposition(Transform moveTransform, Vector3 newPosition, Quaternion newRotation)
-        {
-            yield return new WaitForSeconds(1.5f);
-            moveTransform.SetPositionAndRotation(newPosition, newRotation);
-        }
-
         void OnLifeStateChangedEventMessage(LifeStateChangedEventMessage message)
         {
             switch (message.CharacterType)
@@ -277,7 +287,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        private IEnumerator CoroGameOver(float wait, bool gameWon)
+        IEnumerator CoroGameOver(float wait, bool gameWon)
         {
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
