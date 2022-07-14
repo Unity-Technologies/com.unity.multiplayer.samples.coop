@@ -27,6 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             protected override void Configure(IContainerBuilder builder)
             {
+                NetworkManager.NetworkConfig.ConnectionApproval = true;
                 builder.RegisterComponent(NetworkManager);
                 builder.RegisterComponent(ConnectionManager);
                 builder.RegisterComponent(UpdateRunner);
@@ -56,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             public override void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single) { }
         }
 
-        protected override int NumberOfClients => 1;
+        protected override int NumberOfClients => 2;
 
         ConnectionManagementTestsLifeTimeScope[] m_ClientScopes;
         ConnectionManagementTestsLifeTimeScope m_ServerScope;
@@ -76,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             m_ClientScopes = new ConnectionManagementTestsLifeTimeScope[NumberOfClients];
             m_ClientConnectionManagers = new ConnectionManager[NumberOfClients];
-            for (int i = 0; i < NumberOfClients; i++)
+            for (var i = 0; i < NumberOfClients; i++)
             {
                 var clientConnectionManagerGO = new GameObject("ConnectionManager - Client - " + i);
                 m_ClientConnectionManagers[i] = clientConnectionManagerGO.AddComponent<ConnectionManager>();
@@ -90,9 +91,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 m_ClientScopes[i].ConnectionManager = m_ClientConnectionManagers[i];
                 m_ClientScopes[i].UpdateRunner = clientUpdateRunner;
                 m_ClientScopes[i].Build();
-            }
 
-            var serverBuilder = new ContainerBuilder();
+                var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
+                profileManager.Profile = $"Client{i}";
+            }
 
             // Create gameObject
             var serverConnectionManagerGO = new GameObject("ConnectionManager - Server");
@@ -114,20 +116,54 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         protected override IEnumerator OnTearDown()
         {
-            for (int i = 0; i < NumberOfClients; i++)
+            m_ServerConnectionManager.RequestShutdown();
+
+            yield return new WaitWhile(() => m_ServerNetworkManager.IsListening);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var clientId = i;
+                yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
+            }
+
+            m_ServerScope.Dispose();
+
+            for (var i = 0; i < NumberOfClients; i++)
             {
                 m_ClientScopes[i].Dispose();
             }
-            m_ServerScope.Dispose();
-            return base.OnTearDown();
+
+            foreach (var sceneGameObject in GameObject.FindObjectsOfType<GameObject>())
+            {
+                GameObject.DestroyImmediate(sceneGameObject);
+            }
+            yield return base.OnTearDown();
         }
 
         [UnityTest]
-        public IEnumerator StartHostingTest()
+        public IEnumerator StartHost_Valid()
         {
-            m_ServerConnectionManager.StartHostIp("test", "127.0.0.1", 9998);
+            m_ServerConnectionManager.StartHostIp("server", "127.0.0.1", 9998);
             yield return null;
             Assert.IsTrue(m_ServerNetworkManager.IsServer);
+        }
+
+        [UnityTest]
+        public IEnumerator StartHostAndConnectClients_Valid()
+        {
+            m_ServerConnectionManager.StartHostIp("server", "127.0.0.1", 9998);
+            yield return null;
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            for (int i = 0; i < NumberOfClients; i++)
+            {
+                m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
+            }
+
+            yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
+            for (int i = 0; i < NumberOfClients; i++)
+            {
+                UnityEngine.Assertions.Assert.IsTrue(m_ClientNetworkManagers[i].IsClient);
+            }
         }
 
     }
