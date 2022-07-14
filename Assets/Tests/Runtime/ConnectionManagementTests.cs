@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using NUnit.Framework;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
@@ -65,6 +66,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         ConnectionManager[] m_ClientConnectionManagers;
         ConnectionManager m_ServerConnectionManager;
 
+        List<ConnectionState> m_ServerConnectionStateSequence;
+        List<ConnectionState>[] m_ClientConnectionStateSequences;
+
+
         protected override bool CanStartServerAndClients()
         {
             return false;
@@ -77,20 +82,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             m_ClientScopes = new ConnectionManagementTestsLifeTimeScope[NumberOfClients];
             m_ClientConnectionManagers = new ConnectionManager[NumberOfClients];
+            m_ClientConnectionStateSequences = new List<ConnectionState>[NumberOfClients];
             for (var i = 0; i < NumberOfClients; i++)
             {
-                var clientConnectionManagerGO = new GameObject("ConnectionManager - Client - " + i);
-                m_ClientConnectionManagers[i] = clientConnectionManagerGO.AddComponent<ConnectionManager>();
+                var clientId = i;
+                var clientConnectionManagerGO = new GameObject("ConnectionManager - Client - " + clientId);
+                m_ClientConnectionManagers[clientId] = clientConnectionManagerGO.AddComponent<ConnectionManager>();
 
-                var clientUpdateRunnerGO = new GameObject("UpdateRunner - Client - " + i);
+                var clientUpdateRunnerGO = new GameObject("UpdateRunner - Client - " + clientId);
                 var clientUpdateRunner = clientUpdateRunnerGO.AddComponent<UpdateRunner>();
 
-                var clientLifeTimeScopeGO = new GameObject("LifeTimeScope - Client - " + i);
-                m_ClientScopes[i] = clientLifeTimeScopeGO.AddComponent<ConnectionManagementTestsLifeTimeScope>();
-                m_ClientScopes[i].NetworkManager = m_ClientNetworkManagers[i];
-                m_ClientScopes[i].ConnectionManager = m_ClientConnectionManagers[i];
-                m_ClientScopes[i].UpdateRunner = clientUpdateRunner;
-                m_ClientScopes[i].Build();
+                var clientLifeTimeScopeGO = new GameObject("LifeTimeScope - Client - " + clientId);
+                m_ClientScopes[clientId] = clientLifeTimeScopeGO.AddComponent<ConnectionManagementTestsLifeTimeScope>();
+                m_ClientScopes[clientId].NetworkManager = m_ClientNetworkManagers[clientId];
+                m_ClientScopes[clientId].ConnectionManager = m_ClientConnectionManagers[clientId];
+                m_ClientScopes[clientId].UpdateRunner = clientUpdateRunner;
+                m_ClientScopes[clientId].Build();
+
+                m_ClientConnectionStateSequences[clientId] = new List<ConnectionState>();
+                m_ClientConnectionManagers[clientId].OnStateChanged += state => m_ClientConnectionStateSequences[clientId].Add(state);
             }
 
             // Create gameObject
@@ -107,6 +117,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             m_ServerScope.ConnectionManager = m_ServerConnectionManager;
             m_ServerScope.UpdateRunner = serverUpdateRunner;
             m_ServerScope.Build();
+
+            m_ServerConnectionStateSequence = new List<ConnectionState>();
+            m_ServerConnectionManager.OnStateChanged += state => m_ServerConnectionStateSequence.Add(state);
 
             base.OnServerAndClientsCreated();
         }
@@ -139,8 +152,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
         IEnumerator StartHost()
         {
-            LogAssert.Expect(LogType.Log, "Changed connection state from OfflineState to StartingHostState.");
-            LogAssert.Expect(LogType.Log, "Changed connection state from StartingHostState to HostingState.");
             m_ServerConnectionManager.StartHostIp("server", "127.0.0.1", 9998);
             yield return null;
         }
@@ -149,13 +160,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             for (var i = 0; i < NumberOfClients; i++)
             {
-                LogAssert.Expect(LogType.Log, "Changed connection state from OfflineState to ClientConnectingState.");
                 m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
-            }
-
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                LogAssert.Expect(LogType.Log, "Changed connection state from ClientConnectingState to ClientConnectedState.");
             }
 
             yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
@@ -166,6 +171,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             yield return StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            var expectedServerConnectionStateSequence = new List<ConnectionState>();
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+            Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
         }
 
         [UnityTest]
@@ -184,6 +193,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             for (var i = 0; i < NumberOfClients; i++)
             {
                 Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+            var expectedServerConnectionStateSequence = new List<ConnectionState>();
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+            Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
             }
         }
 
@@ -205,13 +227,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
             }
 
-            LogAssert.Expect(LogType.Log, "Changed connection state from HostingState to OfflineState.");
             m_ServerConnectionManager.RequestShutdown();
-
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                LogAssert.Expect(LogType.Log, "Changed connection state from ClientConnectedState to DisconnectingWithReasonState.");
-            }
 
             yield return new WaitWhile(() => m_ServerNetworkManager.IsListening);
 
@@ -219,14 +235,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             for (var i = 0; i < NumberOfClients; i++)
             {
-                LogAssert.Expect(LogType.Log, "Changed connection state from DisconnectingWithReasonState to OfflineState.");
-            }
-
-            for (var i = 0; i < NumberOfClients; i++)
-            {
                 var clientId = i;
                 yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
                 Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
+            }
+
+            var expectedServerConnectionStateSequence = new List<ConnectionState>();
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Offline);
+            Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_DisconnectingWithReason);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
+                Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
             }
         }
 
@@ -244,18 +271,34 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             for (var i = 0; i < NumberOfClients; i++)
             {
-                LogAssert.Expect(LogType.Log, "Changed connection state from OfflineState to ClientConnectingState.");
                 m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
             }
-
-            LogAssert.Expect(LogType.Log, "Changed connection state from ClientConnectingState to DisconnectingWithReasonState.");
-            LogAssert.Expect(LogType.Log, "Changed connection state from DisconnectingWithReasonState to OfflineState.");
-            LogAssert.Expect(LogType.Log, "Changed connection state from ClientConnectingState to ClientConnectedState.");
 
             yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
 
             Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient);
             Assert.IsFalse(m_ClientNetworkManagers[1].IsConnectedClient);
+
+            var expectedServerConnectionStateSequence = new List<ConnectionState>();
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+            Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                if (i == 0)
+                {
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                }
+                else
+                {
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_DisconnectingWithReason);
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
+                }
+                Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
+            }
         }
 
     }
