@@ -14,7 +14,8 @@
         "Unity.Netcode.TestHelpers.Runtime",
         "Unity.BossRoom.UnityServices",
         "Unity.BossRoom.Utils",
-        "Unity.Collections"
+        "Unity.Collections",
+        "Unity.Multiplayer.Samples.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

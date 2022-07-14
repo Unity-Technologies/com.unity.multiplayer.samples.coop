@@ -4,9 +4,11 @@ using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.TestHelpers.Runtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
 using VContainer;
 using VContainer.Unity;
@@ -40,6 +42,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             }
         }
 
+        class SceneLoaderWrapperStub : SceneLoaderWrapper
+        {
+            public override void Awake()
+            {
+                Instance = this;
+            }
+
+            public override void Start() { }
+
+            public override void AddOnSceneEventCallback() { }
+
+            public override void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single) { }
+        }
 
         protected override int NumberOfClients => 1;
 
@@ -49,8 +64,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         ConnectionManager[] m_ClientConnectionManagers;
         ConnectionManager m_ServerConnectionManager;
 
+        protected override bool CanStartServerAndClients()
+        {
+            return false;
+        }
+
         protected override void OnServerAndClientsCreated()
         {
+            var sceneLoaderWrapperGO = new GameObject("SceneLoader");
+            sceneLoaderWrapperGO.AddComponent<SceneLoaderWrapperStub>();
+
             m_ClientScopes = new ConnectionManagementTestsLifeTimeScope[NumberOfClients];
             m_ClientConnectionManagers = new ConnectionManager[NumberOfClients];
             for (int i = 0; i < NumberOfClients; i++)
