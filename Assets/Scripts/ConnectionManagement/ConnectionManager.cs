@@ -61,13 +61,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public NetworkManager NetworkManager => m_NetworkManager;
 
         [SerializeField]
-        NetworkObject m_GameState;
-        public NetworkObject GameState => m_GameState;
+        List<NetworkObject> m_NetworkObjectsToSpawnWhenServerStarted = new List<NetworkObject>();
+        public List<NetworkObject> NetworkObjectsToSpawnWhenServerStarted => m_NetworkObjectsToSpawnWhenServerStarted;
 
         [Inject]
         IObjectResolver m_Resolver;
 
         public int MaxConnectedPlayers = 8;
+
+        [SerializeField]
+        string m_OfflineScene;
+
+        public string OfflineScene => m_OfflineScene;
+
+        [SerializeField]
+        string m_StartScene;
+
+        public string StartScene => m_StartScene;
 
         internal readonly OfflineState m_Offline = new OfflineState();
         internal readonly ClientConnectingState m_ClientConnecting = new ClientConnectingState();

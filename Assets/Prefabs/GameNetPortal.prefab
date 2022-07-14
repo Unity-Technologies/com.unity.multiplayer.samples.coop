@@ -44,6 +44,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf51ea31bbc84cc3aa883cc5f1caae06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkManager: {fileID: 0}
-  m_AvatarRegistry: {fileID: 11400000, guid: 48d17d764bff6c643a3dc035fb71c979, type: 2}
-  m_GameState: {fileID: 7151198093957655792, guid: 3af96a32a84bcf74d9538fa7af973c97, type: 3}
+  m_NetworkObjectsToSpawnWhenServerStarted:
+  - {fileID: 7151198093957655792, guid: 3af96a32a84bcf74d9538fa7af973c97, type: 3}
+  MaxConnectedPlayers: 8
+  m_OfflineScene: MainMenu
+  m_StartScene: CharSelect
