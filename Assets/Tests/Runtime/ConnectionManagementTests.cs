@@ -321,5 +321,54 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             }
         }
 
+        [UnityTest]
+        public IEnumerator ClientReconnectingAfterUnexpectedShutdown_Valid()
+        {
+            yield return StartHost();
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+
+            SetUniqueProfilesForEachClient();
+
+            yield return ConnectClients();
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+            // wait for client synchronization to be over server-side before shutting down client
+            yield return null;
+            yield return null;
+
+            // Disconnecting the client at the transport level
+            m_ClientNetworkManagers[0].NetworkConfig.NetworkTransport.DisconnectLocalClient();
+
+            // Waiting until shutdown is complete
+            yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
+            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient);
+
+            // Waiting for client to automatically reconnect
+            yield return WaitForClientsConnectedOrTimeOut();
+            Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient);
+
+            var expectedServerConnectionStateSequence = new List<ConnectionState>();
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+            Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                if (i == 0)
+                {
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientReconnecting);
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                }
+                Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
+            }
+
+        }
+
     }
 }
