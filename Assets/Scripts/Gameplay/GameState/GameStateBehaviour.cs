@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     }
 
     /// <summary>
-    /// A special kind of NetworkBehaviour that represents a discrete game state. The special feature it offers is
+    /// A special component that represents a discrete game state. The special feature it offers is
     /// that it provides some guarantees that only one such GameState will be running at a time.
     /// </summary>
     /// <remarks>
