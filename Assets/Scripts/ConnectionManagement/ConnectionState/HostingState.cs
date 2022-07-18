@@ -76,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnUserRequestedShutdown()
         {
-            ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
+            m_ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
             // Wait before shutting down to make sure clients receive that message before they are disconnected
             m_ConnectionManager.StartCoroutine(WaitToShutdown());
         }
@@ -130,12 +130,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 response.Pending = true; // give some time for server to send connection status message to clients
                 response.Approved = false;
-                ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+                m_ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
                 yield return null; // wait a frame so UTP can flush it's messages on next update
                 response.Pending = false; // connection approval process can be finished.
             }
 
-            ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
+            m_ConnectionManager.SendServerToClientSetDisconnectReason(clientId, gameReturnStatus);
             m_ConnectionManager.StartCoroutine(WaitToDenyApproval());
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
             {

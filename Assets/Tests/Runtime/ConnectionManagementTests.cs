@@ -18,6 +18,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 {
     public class ConnectionManagementTests : NetcodeIntegrationTest
     {
+        const string k_FailedToConnectToServerErrorMessage = "Failed to connect to server.";
+
         class ConnectionManagementTestsLifeTimeScope : LifetimeScope
         {
             public NetworkManager NetworkManager;
@@ -302,9 +304,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             SetUniqueProfilesForEachClient();
 
-            const string errorMessage = "Failed to connect to server.";
-            LogAssert.Expect(LogType.Error, errorMessage);
-            LogAssert.Expect(LogType.Error, errorMessage);
+            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
             yield return ConnectClients();
 
             for (var i = 0; i < NumberOfClients; i++)
@@ -322,7 +323,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientReconnectingAfterUnexpectedShutdown_Valid()
+        public IEnumerator ClientReconnectingAfterUnexpectedClientDisconnect_Valid()
         {
             yield return StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -365,6 +366,56 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientReconnecting);
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
                 }
+                Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
+            }
+
+        }
+
+        [UnityTest]
+        public IEnumerator ClientReconnectingAfterUnexpectedServerShutdown_Failed()
+        {
+            yield return StartHost();
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+
+            SetUniqueProfilesForEachClient();
+
+            yield return ConnectClients();
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+            // Shutting down the server
+            m_ServerNetworkManager.Shutdown();
+            yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
+            Assert.IsFalse(m_ServerNetworkManager.IsListening);
+
+            // Waiting until shutdown is complete for the client as well
+            yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
+            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient);
+
+            // Waiting for clients to fail to automatically reconnect
+            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            yield return WaitForClientsConnectedOrTimeOut();
+            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient);
+
+            var expectedServerConnectionStateSequence = new List<ConnectionState>();
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+            // Should also transition to Offline state normally, but OnClientDisconnectCallback is not invoked on the
+            // host when shutting down.
+            Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientReconnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
                 Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
             }
 
