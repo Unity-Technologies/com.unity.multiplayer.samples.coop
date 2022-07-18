@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// Server specialization of core BossRoom game logic.
     /// </summary>
     [RequireComponent(typeof(NetcodeHooks))]
-    public class ServerBossRoomState : GameStateBehaviour
+    public class BossRoomState : GameStateBehaviour
     {
         [SerializeField]
         NetcodeHooks m_NetcodeHooks;
