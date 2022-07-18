@@ -60,10 +60,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         NetworkManager m_NetworkManager;
         public NetworkManager NetworkManager => m_NetworkManager;
 
-        [SerializeField]
-        NetworkObject m_GameState;
-        public NetworkObject GameState => m_GameState;
-
         [Inject]
         IObjectResolver m_Resolver;
 

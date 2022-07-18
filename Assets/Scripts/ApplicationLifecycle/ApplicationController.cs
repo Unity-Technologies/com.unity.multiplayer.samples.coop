@@ -50,6 +50,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             //they are networked so that the clients can subscribe to those messages that are published by the server
             builder.RegisterInstance(new NetworkedMessageChannel<LifeStateChangedEventMessage>()).AsImplementedInterfaces();
             builder.RegisterInstance(new NetworkedMessageChannel<ConnectionEventMessage>()).AsImplementedInterfaces();
+            builder.RegisterInstance(new BufferedNetworkedMessageChannel<WinStateMessage>()).AsImplementedInterfaces();
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
             builder.RegisterInstance(new NetworkedMessageChannel<CheatUsedMessage>()).AsImplementedInterfaces();
 #endif

@@ -22,9 +22,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         NetcodeHooks m_NetcodeHooks;
 
         [SerializeField]
-        TransformVariable m_NetworkGameStateTransform;
-
-        [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
         private NetworkObject m_PlayerPrefab;
 
@@ -54,6 +51,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         IDisposable m_Subscription;
 
         [Inject] ConnectionManager m_ConnectionManager;
+
+        [Inject]
+        IPublisher<WinStateMessage> m_WinStateMessagePublisher;
 
         protected override void Awake()
         {
@@ -89,7 +89,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
 
             // reset win state
-            SetWinState(WinState.Invalid);
+            SendWinStateMessage(new WinStateMessage());
 
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
@@ -276,13 +276,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             StartCoroutine(CoroGameOver(k_WinDelay, true));
         }
 
-        void SetWinState(WinState winState)
+        void SendWinStateMessage(WinStateMessage winStateMessage)
         {
-            if (m_NetworkGameStateTransform && m_NetworkGameStateTransform.Value &&
-                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkGameState networkGameState))
-            {
-                networkGameState.NetworkWinState.winState.Value = winState;
-            }
+            m_WinStateMessagePublisher.Publish(winStateMessage);
         }
 
         IEnumerator CoroGameOver(float wait, bool gameWon)
@@ -290,7 +286,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
 
-            SetWinState(gameWon ? WinState.Win : WinState.Loss);
+            SendWinStateMessage( new WinStateMessage( gameWon ? WinState.Win : WinState.Loss));
 
             SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
         }

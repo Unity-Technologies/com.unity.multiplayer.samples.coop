@@ -1,5 +1,7 @@
+using System;
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;
@@ -27,19 +29,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         private GameObject m_WaitOnHostMsg;
 
         [SerializeField]
-        TransformVariable m_NetworkGameStateTransform;
-
-        [SerializeField]
         private Color m_WinLightColor;
 
         [SerializeField]
         private Color m_LoseLightColor;
 
-        [Inject]
-        ConnectionManager m_ConnectionManager;
 
-        void Start()
+        ConnectionManager m_ConnectionManager;
+        ISubscriber<WinStateMessage> m_WinStateSub;
+
+        IDisposable m_WinStateSubscription;
+
+        [Inject]
+        void Inject(ISubscriber<WinStateMessage> winStateSub, ConnectionManager connectionManager)
         {
+            m_ConnectionManager = connectionManager;
+            m_WinStateSub = winStateSub;
+
             // only hosts can restart the game, other players see a wait message
             if (NetworkManager.Singleton.IsHost)
             {
@@ -52,27 +58,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_WaitOnHostMsg.SetActive(true);
             }
 
-            if (m_NetworkGameStateTransform && m_NetworkGameStateTransform.Value &&
-                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkGameState networkGameState))
-            {
-                SetPostGameUI(networkGameState.NetworkWinState.winState.Value);
-            }
+            m_WinStateSubscription = m_WinStateSub.Subscribe(SetPostGameUI);
         }
 
-        void SetPostGameUI(WinState winState)
+        void SetPostGameUI(WinStateMessage winStateMessage)
         {
-            // Set end message and background color based last game outcome
-            if (winState == WinState.Win)
+            m_WinStateSubscription.Dispose();
+
+            switch (winStateMessage.WinState)
             {
-                m_SceneLight.color = m_WinLightColor;
-                m_WinEndMessage.gameObject.SetActive(true);
-                m_LoseGameMessage.gameObject.SetActive(false);
-            }
-            else if (winState == WinState.Loss)
-            {
-                m_SceneLight.color = m_LoseLightColor;
-                m_WinEndMessage.gameObject.SetActive(false);
-                m_LoseGameMessage.gameObject.SetActive(true);
+                // Set end message and background color based last game outcome
+                case WinState.Win:
+                    m_SceneLight.color = m_WinLightColor;
+                    m_WinEndMessage.gameObject.SetActive(true);
+                    m_LoseGameMessage.gameObject.SetActive(false);
+                    break;
+                case WinState.Loss:
+                    m_SceneLight.color = m_LoseLightColor;
+                    m_WinEndMessage.gameObject.SetActive(false);
+                    m_LoseGameMessage.gameObject.SetActive(true);
+                    break;
+                case WinState.Invalid:
+                    Debug.LogError("PostGameUI encountered Invalid WinState");
+                    break;
             }
         }
 
