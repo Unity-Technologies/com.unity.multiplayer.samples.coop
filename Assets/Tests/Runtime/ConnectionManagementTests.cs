@@ -100,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 m_ClientScopes[clientId].Build();
 
                 m_ClientConnectionStateSequences[clientId] = new List<ConnectionState>();
-                m_ClientConnectionManagers[clientId].OnStateChanged += state => m_ClientConnectionStateSequences[clientId].Add(state);
+                m_ClientConnectionManagers[clientId].m_OnStateChanged += state => m_ClientConnectionStateSequences[clientId].Add(state);
             }
 
             // Create gameObject
@@ -119,7 +119,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             m_ServerScope.Build();
 
             m_ServerConnectionStateSequence = new List<ConnectionState>();
-            m_ServerConnectionManager.OnStateChanged += state => m_ServerConnectionStateSequence.Add(state);
+            m_ServerConnectionManager.m_OnStateChanged += state => m_ServerConnectionStateSequence.Add(state);
 
             base.OnServerAndClientsCreated();
         }
@@ -166,6 +166,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
         }
 
+        void SetUniqueProfilesForEachClient()
+        {
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
+                profileManager.Profile = $"Client{i}";
+            }
+        }
+
         [UnityTest]
         public IEnumerator StartHost_Valid()
         {
@@ -183,11 +192,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
-                profileManager.Profile = $"Client{i}";
-            }
+            SetUniqueProfilesForEachClient();
 
             yield return ConnectClients();
             for (var i = 0; i < NumberOfClients; i++)
@@ -215,11 +220,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
-                profileManager.Profile = $"Client{i}";
-            }
+            SetUniqueProfilesForEachClient();
 
             yield return ConnectClients();
             for (var i = 0; i < NumberOfClients; i++)
@@ -269,12 +270,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 profileManager.Profile = $"Client";
             }
 
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
-            }
-
-            yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
+            yield return ConnectClients();
 
             Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient);
             Assert.IsFalse(m_ClientNetworkManagers[1].IsConnectedClient);
@@ -297,6 +293,30 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_DisconnectingWithReason);
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
                 }
+                Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ClientConnectingWithoutHost_Failed()
+        {
+            SetUniqueProfilesForEachClient();
+
+            const string errorMessage = "Failed to connect to server.";
+            LogAssert.Expect(LogType.Error, errorMessage);
+            LogAssert.Expect(LogType.Error, errorMessage);
+            yield return ConnectClients();
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
                 Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
             }
         }

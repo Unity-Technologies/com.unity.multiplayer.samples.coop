@@ -87,7 +87,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         internal readonly StartingHostState m_StartingHost = new StartingHostState();
         internal readonly HostingState m_Hosting = new HostingState();
 
-        internal Action<ConnectionState> OnStateChanged;
+        internal Action<ConnectionState> m_OnStateChanged;
 
         void Awake()
         {
@@ -121,7 +121,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         internal void ChangeState(ConnectionState nextState)
         {
-            OnStateChanged?.Invoke(nextState);
+            m_OnStateChanged?.Invoke(nextState);
             Debug.Log($"Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
 
             if (m_CurrentState != null)
