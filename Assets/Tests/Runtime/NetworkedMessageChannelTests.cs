@@ -150,18 +150,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             m_NbMessagesReceived = 0;
 
             // Shutdown the server and clients
-            m_ServerNetworkManager.Shutdown();
-            m_ClientNetworkManagers[0].Shutdown();
-            m_ClientNetworkManagers[1].Shutdown();
+            NetcodeIntegrationTestHelpers.StopOneClient(m_ServerNetworkManager, false);
+            NetcodeIntegrationTestHelpers.StopOneClient(m_ClientNetworkManagers[0], false);
+            NetcodeIntegrationTestHelpers.StopOneClient(m_ClientNetworkManagers[1], false);
 
             yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
             yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
             yield return new WaitWhile(() => m_ClientNetworkManagers[1].ShutdownInProgress);
 
             // Restart the server and clients
-            m_ServerNetworkManager.StartServer();
-            m_ClientNetworkManagers[0].StartClient();
-            m_ClientNetworkManagers[1].StartClient();
+            m_ServerNetworkManager.StartHost();
+            NetcodeIntegrationTestHelpers.StartOneClient(m_ClientNetworkManagers[0]);
+            NetcodeIntegrationTestHelpers.StartOneClient(m_ClientNetworkManagers[1]);
 
             yield return WaitForClientsConnectedOrTimeOut();
 
@@ -179,8 +179,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         public IEnumerator NetworkedMessagesAreReceivedIfClientsSubscribeBeforeConnecting([Values(0, 1, 2)] int nbClients, [Values(0, 1, 2)] int nbSubscribers)
         {
             // Shutdown the clients
-            m_ClientNetworkManagers[0].Shutdown();
-            m_ClientNetworkManagers[1].Shutdown();
+            NetcodeIntegrationTestHelpers.StopOneClient(m_ClientNetworkManagers[0], false);
+            NetcodeIntegrationTestHelpers.StopOneClient(m_ClientNetworkManagers[1], false);
 
             yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
             yield return new WaitWhile(() => m_ClientNetworkManagers[1].ShutdownInProgress);
@@ -188,8 +188,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
             // Restart the clients
-            m_ClientNetworkManagers[0].StartClient();
-            m_ClientNetworkManagers[1].StartClient();
+            NetcodeIntegrationTestHelpers.StartOneClient(m_ClientNetworkManagers[0]);
+            NetcodeIntegrationTestHelpers.StartOneClient(m_ClientNetworkManagers[1]);
 
             yield return WaitForClientsConnectedOrTimeOut();
 
@@ -208,8 +208,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
             // Shutdown the clients
-            m_ClientNetworkManagers[0].Shutdown();
-            m_ClientNetworkManagers[1].Shutdown();
+            NetcodeIntegrationTestHelpers.StopOneClient(m_ClientNetworkManagers[0], false);
+            NetcodeIntegrationTestHelpers.StopOneClient(m_ClientNetworkManagers[1], false);
 
             yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
             yield return new WaitWhile(() => m_ClientNetworkManagers[1].ShutdownInProgress);
@@ -229,7 +229,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             InitializeNetworkedMessageChannels(nbClients, nbSubscribers, new EmptyMessage(), out var emptyMessageChannelClients, out var emptyMessageChannelServer);
 
             // Shutdown the server
-            m_ServerNetworkManager.Shutdown();
+            NetcodeIntegrationTestHelpers.StopOneClient(m_ServerNetworkManager, false);
 
             yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
 
