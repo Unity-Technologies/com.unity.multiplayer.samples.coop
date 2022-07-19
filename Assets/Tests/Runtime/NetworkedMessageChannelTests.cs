@@ -43,11 +43,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 var clientBuilder = new ContainerBuilder();
                 clientBuilder.RegisterInstance(m_ClientNetworkManagers[i]);
                 m_ClientScopes[i] = clientBuilder.Build();
+                m_ClientNetworkManagers[i].NetworkConfig.EnableSceneManagement = false;
             }
 
             var serverBuilder = new ContainerBuilder();
             serverBuilder.RegisterInstance(m_ServerNetworkManager);
             m_ServerScope = serverBuilder.Build();
+            m_ServerNetworkManager.NetworkConfig.EnableSceneManagement = false;
 
             base.OnServerAndClientsCreated();
         }
