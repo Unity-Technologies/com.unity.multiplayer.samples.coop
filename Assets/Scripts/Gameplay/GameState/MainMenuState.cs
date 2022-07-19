@@ -19,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// <remarks> OnNetworkSpawn() won't ever run, because there is no network connection at the main menu screen.
     /// Fortunately we know you are a client, because all players are clients when sitting at the main menu screen.
     /// </remarks>
-    public class ClientMainMenuState : GameStateBehaviour
+    public class MainMenuState : GameStateBehaviour
     {
         public override GameState ActiveState { get { return GameState.MainMenu; } }
 

@@ -114,7 +114,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             yield return WaitUntilMainMenuSceneIsLoaded();
 
-            var clientMainMenuState = GameObject.FindObjectOfType<ClientMainMenuState>();
+            var clientMainMenuState = GameObject.FindObjectOfType<MainMenuState>();
 
             Assert.That(clientMainMenuState != null, $"{nameof(clientMainMenuState)} component not found!");
 
