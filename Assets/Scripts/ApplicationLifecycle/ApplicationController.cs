@@ -2,12 +2,9 @@ using System;
 using System.Collections;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
@@ -22,9 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
     public class ApplicationController : LifetimeScope
     {
         [SerializeField] UpdateRunner m_UpdateRunner;
-        [SerializeField] GameNetPortal m_GameNetPortal;
-        [SerializeField] ClientGameNetPortal m_ClientNetPortal;
-        [SerializeField] ServerGameNetPortal m_ServerGameNetPortal;
+        [SerializeField] ConnectionManager m_ConnectionManager;
 
         LocalLobby m_LocalLobby;
         LobbyServiceFacade m_LobbyServiceFacade;
@@ -35,10 +30,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         {
             base.Configure(builder);
             builder.RegisterComponent(m_UpdateRunner);
-            builder.RegisterComponent(m_GameNetPortal);
-            builder.RegisterComponent(m_ClientNetPortal);
-            builder.RegisterComponent(m_ServerGameNetPortal);
-            builder.RegisterComponent(m_GameNetPortal.NetManager);
+            builder.RegisterComponent(m_ConnectionManager.NetworkManager);
+            builder.RegisterComponent(m_ConnectionManager);
 
             //the following singletons represent the local representations of the lobby that we're in and the user that we are
             //they can persist longer than the lifetime of the UI in MainMenu where we set up the lobby that we create or join
@@ -49,7 +42,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 
             //these message channels are essential and persist for the lifetime of the lobby and relay services
             // Registering as instance to prevent code stripping on iOS
-            builder.RegisterInstance(new MessageChannel<QuitGameSessionMessage>()).AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<QuitApplicationMessage>()).AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
             builder.RegisterInstance(new MessageChannel<ConnectStatus>()).AsImplementedInterfaces();
@@ -81,11 +73,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             m_LocalLobby = Container.Resolve<LocalLobby>();
             m_LobbyServiceFacade = Container.Resolve<LobbyServiceFacade>();
 
-            var quitGameSessionSub = Container.Resolve<ISubscriber<QuitGameSessionMessage>>();
             var quitApplicationSub = Container.Resolve<ISubscriber<QuitApplicationMessage>>();
 
             var subHandles = new DisposableGroup();
-            subHandles.Add(quitGameSessionSub.Subscribe(LeaveSession));
             subHandles.Add(quitApplicationSub.Subscribe(QuitGame));
             m_Subscriptions = subHandles;
 
@@ -130,22 +120,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                 StartCoroutine(LeaveBeforeQuit());
             }
             return canQuit;
-        }
-
-        private void LeaveSession(QuitGameSessionMessage msg)
-        {
-            m_LobbyServiceFacade.EndTracking();
-
-            if (msg.UserRequested)
-            {
-                // first disconnect then return to menu
-                var gameNetPortal = GameNetPortal.Instance;
-                if (gameNetPortal != null)
-                {
-                    gameNetPortal.RequestDisconnect();
-                }
-            }
-            SceneLoaderWrapper.Instance.LoadScene("MainMenu", useNetworkSceneManager: false);
         }
 
         private void QuitGame(QuitApplicationMessage msg)

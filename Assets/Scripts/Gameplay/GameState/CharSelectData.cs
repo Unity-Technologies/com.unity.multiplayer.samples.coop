@@ -15,8 +15,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             LockedIn,
         }
 
-        public const int k_MaxLobbyPlayers = 8;
-
         /// <summary>
         /// Describes one of the players in the lobby, and their current character-select status.
         /// </summary>
@@ -79,18 +77,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         private void Awake()
         {
             m_LobbyPlayers = new NetworkList<LobbyPlayerState>();
-        }
-
-        public Action OnNetworkSpawnCallback;
-        public override void OnNetworkSpawn()
-        {
-            OnNetworkSpawnCallback();
-        }
-
-        public Action OnNetworkDespawnCallback;
-        public override void OnNetworkDespawn()
-        {
-            OnNetworkDespawnCallback();
         }
 
         /// <summary>

@@ -11,13 +11,15 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Added
 *
 ### Changed
+* Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
+* Refactored connection management into simpler state machine (#666)
 * 
 ### Removed
 *
 ### Fixed
-*
+* Subscribing to a message channel while unsubscribing is pending (#675)
 
 ## [v1.3.0-pre] - 2022-06-23
 
