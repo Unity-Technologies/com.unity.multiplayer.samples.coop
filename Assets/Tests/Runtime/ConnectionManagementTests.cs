@@ -418,7 +418,78 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
                 Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
             }
+        }
 
+        [UnityTest]
+        public IEnumerator ClientAndHostChangingRolesBetweenSessions_Valid()
+        {
+            yield return StartHost();
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+
+            SetUniqueProfilesForEachClient();
+
+            yield return ConnectClients();
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+            m_ServerConnectionManager.RequestShutdown();
+
+            yield return new WaitWhile(() => m_ServerNetworkManager.IsListening);
+
+            Assert.IsFalse(m_ServerNetworkManager.IsHost);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var clientId = i;
+                yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
+                Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
+            }
+
+            m_ClientConnectionManagers[0].StartHostIp("server", "127.0.0.1", 9998);
+            yield return null;
+            Assert.IsTrue(m_ClientNetworkManagers[0].IsHost);
+
+            m_ServerConnectionManager.StartClientIp("client0", "127.0.0.1", 9998);
+            for (var i = 1; i < NumberOfClients; i++)
+            {
+                m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
+            }
+
+            yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
+            Assert.IsTrue(m_ServerNetworkManager.IsConnectedClient);
+            for (var i = 1; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+            var expectedServerConnectionStateSequence = new List<ConnectionState>();
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Offline);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_ClientConnecting);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_ClientConnected);
+            Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
+                if (i == 0)
+                {
+                    expectedClientConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+                    expectedClientConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+                }
+                else
+                {
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                }
+                Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
+            }
         }
 
         [UnityTest]
