@@ -5,7 +5,7 @@ using UnityEngine;
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
     [RequireComponent(typeof(NetcodeHooks))]
-    public class ServerPostGameState : GameStateBehaviour
+    public class PostGameState : GameStateBehaviour
     {
         [SerializeField]
         NetcodeHooks m_NetcodeHooks;
