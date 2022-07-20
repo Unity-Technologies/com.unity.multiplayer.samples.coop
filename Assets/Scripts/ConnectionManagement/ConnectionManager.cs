@@ -108,6 +108,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetworkManager.OnClientDisconnectCallback += OnClientDisconnectCallback;
             NetworkManager.OnServerStarted += OnServerStarted;
             NetworkManager.ConnectionApprovalCallback += ApprovalCheck;
+            NetworkManager.OnTransportFailure += OnTransportFailure;
         }
 
         void OnDestroy()
@@ -116,6 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
+            NetworkManager.OnTransportFailure -= OnTransportFailure;
 
         }
 
@@ -124,10 +126,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_OnStateChanged?.Invoke(nextState);
             Debug.Log($"Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
 
-            if (m_CurrentState != null)
-            {
-                m_CurrentState.Exit();
-            }
+            m_CurrentState?.Exit();
             m_CurrentState = nextState;
             m_CurrentState.Enter();
         }
@@ -150,6 +149,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
         {
             m_CurrentState.ApprovalCheck(request, response);
+        }
+
+        void OnTransportFailure()
+        {
+            m_CurrentState.OnTransportFailure();
         }
 
         public void StartClientLobby(string playerName)
