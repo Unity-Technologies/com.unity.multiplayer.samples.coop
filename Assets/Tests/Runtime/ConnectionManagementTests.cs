@@ -392,6 +392,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             // Shutting down the server
             m_ServerNetworkManager.Shutdown();
+            // ConnectionManager should also transition to Offline state normally, but OnClientDisconnectCallback is not
+            // invoked on the host when shutting down, so transitioning here manually
+            m_ServerConnectionManager.ChangeState(m_ServerConnectionManager.m_Offline);
             yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
             Assert.IsFalse(m_ServerNetworkManager.IsListening);
 
@@ -416,8 +419,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             var expectedServerConnectionStateSequence = new List<ConnectionState>();
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
-            // Should also transition to Offline state normally, but OnClientDisconnectCallback is not invoked on the
-            // host when shutting down.
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Offline);
             Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
 
             for (var i = 0; i < NumberOfClients; i++)
