@@ -8,6 +8,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.TestHelpers.Runtime;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -31,6 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             protected override void Configure(IContainerBuilder builder)
             {
                 NetworkManager.NetworkConfig.ConnectionApproval = true;
+                NetworkManager.NetworkConfig.PlayerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Character/PersistentPlayer.prefab");
                 builder.RegisterComponent(NetworkManager);
                 builder.RegisterComponent(ConnectionManager);
                 builder.RegisterComponent(UpdateRunner);
@@ -423,30 +425,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator ClientAndHostChangingRolesBetweenSessions_Valid()
         {
-            yield return StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
-
             SetUniqueProfilesForEachClient();
-
-            yield return ConnectClients();
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
-            }
-
-            m_ServerConnectionManager.RequestShutdown();
-
-            yield return new WaitWhile(() => m_ServerNetworkManager.IsListening);
-
-            Assert.IsFalse(m_ServerNetworkManager.IsHost);
-
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                var clientId = i;
-                yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
-                Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
-            }
-
             m_ClientConnectionManagers[0].StartHostIp("server", "127.0.0.1", 9998);
             yield return null;
             Assert.IsTrue(m_ClientNetworkManagers[0].IsHost);
@@ -464,20 +443,40 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
             }
 
+            m_ClientConnectionManagers[0].RequestShutdown();
+            yield return new WaitWhile(() => m_ClientNetworkManagers[0].IsListening);
+
+            yield return StartHost();
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+
+            yield return ConnectClients();
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+
+            Assert.IsFalse(m_ServerNetworkManager.IsHost);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var clientId = i;
+                yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
+                Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
+            }
+
             var expectedServerConnectionStateSequence = new List<ConnectionState>();
-            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
-            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
-            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Offline);
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_ClientConnecting);
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_ClientConnected);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_DisconnectingWithReason);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Offline);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
             Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
 
             for (var i = 0; i < NumberOfClients; i++)
             {
                 var expectedClientConnectionStateSequence = new List<ConnectionState>();
-                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
-                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
-                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
                 if (i == 0)
                 {
                     expectedClientConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
@@ -488,6 +487,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
                 }
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_DisconnectingWithReason);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+
                 Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
             }
         }
