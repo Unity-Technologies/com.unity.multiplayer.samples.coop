@@ -198,12 +198,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="status"> The reason for the upcoming disconnect.</param>
         public void SendServerToAllClientsSetDisconnectReason(ConnectStatus status)
         {
-            if (NetworkManager.IsListening)
-            {
-                var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
-                writer.WriteValueSafe(status);
-                NetworkManager.CustomMessagingManager.SendNamedMessageToAll(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
-            }
+            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            writer.WriteValueSafe(status);
+            NetworkManager.CustomMessagingManager.SendNamedMessageToAll(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), writer);
         }
 
         /// <summary>
@@ -213,12 +210,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <param name="status"> The reason for the upcoming disconnect.</param>
         public void SendServerToClientSetDisconnectReason(ulong clientID, ConnectStatus status)
         {
-            if (NetworkManager.IsListening)
-            {
-                var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
-                writer.WriteValueSafe(status);
-                NetworkManager.CustomMessagingManager.SendNamedMessage(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
-            }
+            var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
+            writer.WriteValueSafe(status);
+            NetworkManager.CustomMessagingManager.SendNamedMessage(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
         }
     }
 }
