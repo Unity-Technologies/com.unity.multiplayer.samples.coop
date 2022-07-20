@@ -65,8 +65,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
         }
 
-        public override void OnTransportFailure() { }
-
         void SetConnectionPayload(string playerId, string playerName)
         {
             var payload = JsonUtility.ToJson(new ConnectionPayload()
