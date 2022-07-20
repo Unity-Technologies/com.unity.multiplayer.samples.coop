@@ -106,7 +106,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         protected override void OnDestroy()
         {
-            m_ProfileManager.onProfileChanged -= OnProfileChanged;
+            if (m_ProfileManager != null)
+            {
+                m_ProfileManager.onProfileChanged -= OnProfileChanged;
+            }
+
             base.OnDestroy();
         }
 

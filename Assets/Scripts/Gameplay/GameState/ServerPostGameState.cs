@@ -31,8 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             else
             {
-                SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
-				
+
                 if (DedicatedServerUtilities.IsServerBuildTarget)
                 {
                     IEnumerator WaitAndStartNewGame()

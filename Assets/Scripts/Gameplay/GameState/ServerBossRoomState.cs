@@ -72,51 +72,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
-            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
-        }
-
-        void OnNetworkDespawn()
-        {
-            NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
-        }
-
-        void OnServerLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
-        {
-            if (clientId != NetworkManager.ServerClientId)
-            {
-                return;
-            }
-
             // reset win state
             SetWinState(WinState.Invalid);
 
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
-            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCheckGameOver;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompletedSpawnAllPlayers;
+            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeCompleteForLateJoin;
 
             SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
             m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
         }
 
-        void OnServerUnloadComplete(ulong clientId, string sceneName)
+        void OnNetworkDespawn()
         {
-            if (clientId != NetworkManager.ServerClientId)
-            {
-                return;
-            }
+            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnectCheckGameOver;
+            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompletedSpawnAllPlayers;
+            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeCompleteForLateJoin;
 
-            NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
-            NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
-            NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
+            SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
             m_Subscription?.Dispose();
         }
 
         protected override void OnDestroy()
         {
-            m_Subscription?.Dispose();
-
             if (m_NetcodeHooks)
             {
                 m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
@@ -126,7 +104,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             base.OnDestroy();
         }
 
-        void OnSynchronizeComplete(ulong clientId)
+        void OnSynchronizeCompleteForLateJoin(ulong clientId)
         {
             if (InitialSpawnDone && !PlayerServerCharacter.GetPlayerServerCharacter(clientId))
             {
@@ -138,7 +116,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        void OnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
+        void OnLoadEventCompletedSpawnAllPlayers(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
         {
             if (!InitialSpawnDone && loadSceneMode == LoadSceneMode.Single)
             {
@@ -150,8 +128,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        void OnClientDisconnect(ulong clientId)
+        void OnClientDisconnectCheckGameOver(ulong clientId)
         {
+            //TODO exception in on client disconnect causes a bunch of bugs in NGO?
             if (clientId != NetworkManager.Singleton.LocalClientId)
             {
                 // If a client disconnects, check for game over in case all other players are already down

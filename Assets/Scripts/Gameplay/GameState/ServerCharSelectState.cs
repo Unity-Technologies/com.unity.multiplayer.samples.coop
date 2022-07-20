@@ -46,7 +46,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void OnDestroy()
         {
             base.OnDestroy();
-            NetworkManager.Singleton.SceneManager.VerifySceneBeforeLoading -= DontSyncClientOnlyScenes;
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
+            {
+                NetworkManager.Singleton.SceneManager.VerifySceneBeforeLoading -= DontSyncClientOnlyScenes;
+            }
+
             if (m_NetcodeHooks)
             {
                 m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
