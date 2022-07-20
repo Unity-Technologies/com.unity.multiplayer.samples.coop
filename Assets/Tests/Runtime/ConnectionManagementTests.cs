@@ -277,7 +277,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return ConnectClients();
 
             Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient);
-            Assert.IsFalse(m_ClientNetworkManagers[1].IsConnectedClient);
+            for (var i = 1; i < NumberOfClients; i++)
+            {
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
 
             var expectedServerConnectionStateSequence = new List<ConnectionState>();
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
@@ -393,8 +396,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.IsFalse(m_ServerNetworkManager.IsListening);
 
             // Waiting until shutdown is complete for the client as well
-            yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
-            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient);
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                yield return new WaitWhile(() => m_ClientNetworkManagers[i].ShutdownInProgress);
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
 
             // Waiting for clients to fail to automatically reconnect
             LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
@@ -402,7 +408,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
             LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
             yield return WaitForClientsConnectedOrTimeOut();
-            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient);
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
 
             var expectedServerConnectionStateSequence = new List<ConnectionState>();
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
