@@ -149,6 +149,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         void CloseLobbyIfReady()
         {
+            // If dedicated server, leave char select open if there's no one left
+            if (DedicatedServerUtilities.IsServerBuildTarget && CharSelectData.LobbyPlayers.Count == 0)
+            {
+                return;
+            }
+
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
                 if (playerInfo.SeatState != CharSelectData.SeatState.LockedIn)
@@ -162,6 +168,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SaveLobbyResults();
 
             // Delay a few seconds to give the UI time to react, then switch scenes
+            IEnumerator WaitToEndLobby()
+            {
+                yield return new WaitForSeconds(3);
+                SceneLoaderWrapper.Instance.LoadScene(SceneNames.BossRoom, useNetworkSceneManager: true);
+            }
             m_WaitToEndLobbyCoroutine = StartCoroutine(WaitToEndLobby());
         }
 
@@ -193,11 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        IEnumerator WaitToEndLobby()
-        {
-            yield return new WaitForSeconds(3);
-            SceneLoaderWrapper.Instance.LoadScene(SceneNames.BossRoom, useNetworkSceneManager: true);
-        }
+
 
         public void OnNetworkDespawn()
         {
