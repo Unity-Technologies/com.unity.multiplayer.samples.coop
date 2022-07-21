@@ -300,8 +300,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             SetUniqueProfilesForEachClient();
 
-            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
-            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            }
+
             yield return ConnectClients();
 
             for (var i = 0; i < NumberOfClients; i++)
@@ -397,10 +400,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             }
 
             // Waiting for clients to fail to automatically reconnect
-            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
-            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
-            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
-            LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                // expecting that error twice per client since there are two reconnect attempts
+                LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+                LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            }
             yield return WaitForClientsConnectedOrTimeOut();
             for (var i = 0; i < NumberOfClients; i++)
             {
@@ -498,7 +503,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientCancellingWhileConnecting_Valid()
+        public IEnumerator ClientCancellingWhileConnectingToListeningServer_Valid()
         {
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -509,12 +514,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             {
                 m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
             }
+
             m_ClientConnectionManagers[0].RequestShutdown();
 
             yield return WaitForClientsConnectedOrTimeOut();
 
             Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient);
-            Assert.IsTrue(m_ClientNetworkManagers[1].IsConnectedClient);
+
+            for (var i = 1; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
 
             var expectedServerConnectionStateSequence = new List<ConnectionState>();
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
@@ -533,6 +543,42 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 {
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
                 }
+                Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
+            }
+        }
+
+        [UnityTest]
+        public IEnumerator ClientCancellingWhileConnectingToNonExistingServer_Valid()
+        {
+            SetUniqueProfilesForEachClient();
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
+            }
+            m_ClientConnectionManagers[0].RequestShutdown();
+
+            for (var i = 1; i < NumberOfClients; i++)
+            {
+                // expecting that error for every client except the one that cancelled its connection
+                LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+            }
+
+            yield return WaitForClientsConnectedOrTimeOut();
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+            var expectedServerConnectionStateSequence = new List<ConnectionState>();
+            Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
+
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
                 Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
             }
         }
