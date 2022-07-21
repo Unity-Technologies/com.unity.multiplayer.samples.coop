@@ -1,4 +1,3 @@
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;

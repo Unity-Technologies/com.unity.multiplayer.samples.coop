@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {

@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;

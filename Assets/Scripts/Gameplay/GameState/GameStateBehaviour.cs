@@ -1,8 +1,5 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Netcode;
 using UnityEngine;
-using VContainer;
 using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom

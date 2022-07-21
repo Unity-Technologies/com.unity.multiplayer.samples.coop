@@ -1,6 +1,5 @@
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using VContainer;
 

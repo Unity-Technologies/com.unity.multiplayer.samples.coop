@@ -1,7 +1,6 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;

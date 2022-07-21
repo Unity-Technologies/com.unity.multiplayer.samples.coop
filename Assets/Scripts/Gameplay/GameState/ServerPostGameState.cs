@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Collections;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
