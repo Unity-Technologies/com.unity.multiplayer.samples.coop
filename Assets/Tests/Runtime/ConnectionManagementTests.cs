@@ -79,6 +79,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             return false;
         }
 
+        static void InitializeInstance(string name, NetworkManager networkManager, List<ConnectionState> connectionStateSequence, out ConnectionManager connectionManager, out ConnectionManagementTestsLifeTimeScope scope)
+        {
+            // Create gameObject
+            var serverConnectionManagerGO = new GameObject($"ConnectionManager - {name}");
+
+            // Create networkManager component
+            connectionManager = serverConnectionManagerGO.AddComponent<ConnectionManager>();
+
+            var serverUpdateRunnerGO = new GameObject($"UpdateRunner - {name}");
+            var serverUpdateRunner = serverUpdateRunnerGO.AddComponent<UpdateRunner>();
+
+            var serverLifeTimeScopeGO = new GameObject($"LifeTimeScope - {name}");
+            scope = serverLifeTimeScopeGO.AddComponent<ConnectionManagementTestsLifeTimeScope>();
+            scope.NetworkManager = networkManager;
+            scope.ConnectionManager = connectionManager;
+            scope.UpdateRunner = serverUpdateRunner;
+            scope.Build();
+            connectionManager.m_OnStateChanged += connectionStateSequence.Add;
+        }
+
         protected override void OnServerAndClientsCreated()
         {
             var sceneLoaderWrapperGO = new GameObject("SceneLoader");
@@ -90,40 +110,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             for (var i = 0; i < NumberOfClients; i++)
             {
                 var clientId = i;
-                var clientConnectionManagerGO = new GameObject("ConnectionManager - Client - " + clientId);
-                m_ClientConnectionManagers[clientId] = clientConnectionManagerGO.AddComponent<ConnectionManager>();
-
-                var clientUpdateRunnerGO = new GameObject("UpdateRunner - Client - " + clientId);
-                var clientUpdateRunner = clientUpdateRunnerGO.AddComponent<UpdateRunner>();
-
-                var clientLifeTimeScopeGO = new GameObject("LifeTimeScope - Client - " + clientId);
-                m_ClientScopes[clientId] = clientLifeTimeScopeGO.AddComponent<ConnectionManagementTestsLifeTimeScope>();
-                m_ClientScopes[clientId].NetworkManager = m_ClientNetworkManagers[clientId];
-                m_ClientScopes[clientId].ConnectionManager = m_ClientConnectionManagers[clientId];
-                m_ClientScopes[clientId].UpdateRunner = clientUpdateRunner;
-                m_ClientScopes[clientId].Build();
-
                 m_ClientConnectionStateSequences[clientId] = new List<ConnectionState>();
-                m_ClientConnectionManagers[clientId].m_OnStateChanged += state => m_ClientConnectionStateSequences[clientId].Add(state);
+                InitializeInstance($"Client{clientId}", m_ClientNetworkManagers[clientId], m_ClientConnectionStateSequences[clientId], out m_ClientConnectionManagers[clientId], out m_ClientScopes[clientId]);
             }
 
-            // Create gameObject
-            var serverConnectionManagerGO = new GameObject("ConnectionManager - Server");
-            // Create networkManager component
-            m_ServerConnectionManager = serverConnectionManagerGO.AddComponent<ConnectionManager>();
-
-            var serverUpdateRunnerGO = new GameObject("UpdateRunner - Server");
-            var serverUpdateRunner = serverUpdateRunnerGO.AddComponent<UpdateRunner>();
-
-            var serverLifeTimeScopeGO = new GameObject("LifeTimeScope - Server");
-            m_ServerScope = serverLifeTimeScopeGO.AddComponent<ConnectionManagementTestsLifeTimeScope>();
-            m_ServerScope.NetworkManager = m_ServerNetworkManager;
-            m_ServerScope.ConnectionManager = m_ServerConnectionManager;
-            m_ServerScope.UpdateRunner = serverUpdateRunner;
-            m_ServerScope.Build();
-
             m_ServerConnectionStateSequence = new List<ConnectionState>();
-            m_ServerConnectionManager.m_OnStateChanged += state => m_ServerConnectionStateSequence.Add(state);
+            InitializeInstance("Server", m_ServerNetworkManager, m_ServerConnectionStateSequence, out m_ServerConnectionManager, out m_ServerScope);
 
             base.OnServerAndClientsCreated();
         }
