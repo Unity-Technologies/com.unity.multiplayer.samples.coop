@@ -96,8 +96,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             DontDestroyOnLoad(m_UpdateRunner.gameObject);
             Application.targetFrameRate = 120;
 
-            NetworkManager.Singleton.OnClientConnectedCallback += OnClientStarted;
-            NetworkManager.Singleton.OnServerStarted += OnServerStarted;
             if (DedicatedServerUtilities.IsServerBuildTarget)
             {
                 // skip main menu and start IP server directly
@@ -115,25 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             m_Subscriptions?.Dispose();
             m_LobbyServiceFacade?.EndTracking();
 
-            if (NetworkManager.Singleton != null)
-            {
-                NetworkManager.Singleton.OnClientConnectedCallback -= OnClientStarted;
-                NetworkManager.Singleton.OnServerStarted -= OnServerStarted;
-            }
             base.OnDestroy();
-        }
-
-        private static void OnClientStarted(ulong clientID)
-        {
-            if (clientID == NetworkManager.Singleton.LocalClientId)
-            {
-                SceneEventsUtilities.Initialize();
-            }
-        }
-
-        private static void OnServerStarted()
-        {
-            SceneEventsUtilities.Initialize(); // todo find a place to teardown those
         }
 
         /// <summary>

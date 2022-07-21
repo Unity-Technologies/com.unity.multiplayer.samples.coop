@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -18,13 +19,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         bool m_Won;
 
+        NetcodeHooks m_NetcodeHooks;
+
         void Awake()
         {
             enabled = false;
-            SceneEventsUtilities.OnAnySceneSpawned += OnSceneSpawn;
+            m_NetcodeHooks = GetComponent<NetcodeHooks>();
+            m_NetcodeHooks.OnNetworkSpawnHook += OnSpawn;
         }
 
-        void OnSceneSpawn()
+        void OnSpawn()
         {
             if (NetworkManager.Singleton.IsClient)
             {
@@ -39,7 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void OnDestroy()
         {
-            SceneEventsUtilities.OnAnySceneSpawned -= OnSceneSpawn;
+            m_NetcodeHooks.OnNetworkSpawnHook -= OnSpawn;
 
             var netState = GetComponent<NetworkCharacterState>();
             if (netState != null)
