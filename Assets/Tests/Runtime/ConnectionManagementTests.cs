@@ -146,10 +146,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return base.OnTearDown();
         }
 
-        IEnumerator StartHost()
+        void StartHost()
         {
             m_ServerConnectionManager.StartHostIp("server", "127.0.0.1", 9998);
-            yield return null;
         }
 
         IEnumerator ConnectClients()
@@ -171,10 +170,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             }
         }
 
-        [UnityTest]
-        public IEnumerator StartHost_Valid()
+        [Test]
+        public void StartHost_Valid()
         {
-            yield return StartHost();
+            StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
             var expectedServerConnectionStateSequence = new List<ConnectionState>();
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
@@ -185,7 +184,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator StartHostAndConnectClients_Valid()
         {
-            yield return StartHost();
+            StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
             SetUniqueProfilesForEachClient();
@@ -213,7 +212,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator ClientsDisconnectedWithReasonAfterUserRequestedHostShutdown_Valid()
         {
-            yield return StartHost();
+            StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
             SetUniqueProfilesForEachClient();
@@ -257,7 +256,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator ClientsDisconnectedWithReasonAfterAttemptingToConnectWithSamePlayerId_Valid()
         {
-            yield return StartHost();
+            StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
             for (var i = 0; i < NumberOfClients; i++)
@@ -322,7 +321,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator ClientReconnectingAfterUnexpectedClientDisconnect_Valid()
         {
-            yield return StartHost();
+            StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
             SetUniqueProfilesForEachClient();
@@ -371,7 +370,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator ClientReconnectingAfterUnexpectedServerShutdown_Failed()
         {
-            yield return StartHost();
+            StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
             SetUniqueProfilesForEachClient();
@@ -430,7 +429,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             SetUniqueProfilesForEachClient();
             m_ClientConnectionManagers[0].StartHostIp("server", "127.0.0.1", 9998);
-            yield return null;
             Assert.IsTrue(m_ClientNetworkManagers[0].IsHost);
 
             m_ServerConnectionManager.StartClientIp("client0", "127.0.0.1", 9998);
@@ -449,7 +447,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             m_ClientConnectionManagers[0].RequestShutdown();
             yield return new WaitWhile(() => m_ClientNetworkManagers[0].IsListening);
 
-            yield return StartHost();
+            StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
             yield return ConnectClients();
@@ -502,7 +500,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         [UnityTest]
         public IEnumerator ClientCancellingWhileConnecting_Valid()
         {
-            yield return StartHost();
+            StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
 
             SetUniqueProfilesForEachClient();
