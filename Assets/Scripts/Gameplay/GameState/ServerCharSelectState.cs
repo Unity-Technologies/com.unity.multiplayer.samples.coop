@@ -57,6 +57,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
+        // This is excluding client only scenes from automatic NGO scene syncing, this way we can load it client side without having to worry about
+        // the server loading it as well. It's a way to mix offline and online scenes in your project.
         static bool DontSyncClientOnlyScenes(int index, string sceneName, LoadSceneMode mode)
         {
             return sceneName != SceneNames.CharSelectClient;
@@ -220,28 +222,29 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public void OnNetworkSpawn()
         {
-            if (!NetworkManager.Singleton.IsServer)
-            {
-                enabled = false;
-            }
-            else
-            {
-                NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
-                CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
-
-                NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
-            }
-
-            if (NetworkManager.Singleton.IsClient) // host should load, client should load if connected to DGS
+            // Server scene is the core scene optionally loading client scenes. If we're a a client or a host,
+            // should load client side scene. DGS shouldn't load this scene.
+            if (NetworkManager.Singleton.IsClient)
             {
                 SceneManager.LoadScene(SceneNames.CharSelectClient, LoadSceneMode.Additive);
             }
+
+            if (!NetworkManager.Singleton.IsServer)
+            {
+                enabled = false;
+                return;
+            }
+
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
+            CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
+
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
         }
 
         void OnSceneEvent(SceneEvent sceneEvent)
         {
             // We need to filter out the event that are not a client has finished loading the scene
-            // if the client is DGS, don't do this
+            // If the ClientID is the dedicated server (so not contained in ConnectedClients), don't do this
             if (sceneEvent.SceneEventType == SceneEventType.LoadComplete && sceneEvent.SceneName == gameObject.scene.name &&
                 NetworkManager.Singleton.IsServer && NetworkManager.Singleton.ConnectedClients.ContainsKey(sceneEvent.ClientId))
             {

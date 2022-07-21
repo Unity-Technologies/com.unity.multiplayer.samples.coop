@@ -7,7 +7,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public enum GameState
     {
         MainMenu,
-        LobbyManagement,
+        DedicatedServerLobbyManagement,
         CharSelect,
         BossRoom,
         PostGame

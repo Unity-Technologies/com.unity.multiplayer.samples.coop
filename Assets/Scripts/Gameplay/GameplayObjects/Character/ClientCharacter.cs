@@ -6,7 +6,6 @@ using Unity.Multiplayer.Samples.Utilities;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
-    // TODO this whole class seems unnecessary, it might be worth it to put this ref somewhere else.
     [RequireComponent(typeof(NetworkCharacterState))]
     public class ClientCharacter : MonoBehaviour
     {

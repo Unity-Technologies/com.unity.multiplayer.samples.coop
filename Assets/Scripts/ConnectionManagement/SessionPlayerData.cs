@@ -1,7 +1,7 @@
 using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.Utilities
+namespace Unity.Multiplayer.Samples.BossRoom
 {
     public struct SessionPlayerData : ISessionPlayerData
     {
