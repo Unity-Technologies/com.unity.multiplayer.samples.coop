@@ -71,7 +71,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
 #if UNITY_EDITOR && UNITY_SERVER
         void OnGUI()
         {
-            GUI.Label(new Rect(10, 10, 500, 20), "Dedicated Server Running");
+            var styleToUse = GUI.skin.label;
+            styleToUse.fontSize = 50;
+            styleToUse.alignment = TextAnchor.LowerLeft;
+            var textToDisplay = "Dedicated Server Running";
+            var textWidth = styleToUse.fontSize * textToDisplay.Length;
+            GUI.Label(new Rect(10, 10, textWidth, styleToUse.fontSize * 2), textToDisplay, styleToUse);
         }
 #endif
 
