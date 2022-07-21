@@ -56,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             utp.SetConnectionData(ipaddress, (ushort)port);
 
             SetConnectionPayload(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_HostStarting);
         }
 
         public override void StartServerIP(string ip, int port)
@@ -69,7 +69,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void StartHostLobby(string playerName)
         {
             SetConnectionPayload(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_HostStarting);
         }
 
         void SetConnectionPayload(string playerId, string playerName)

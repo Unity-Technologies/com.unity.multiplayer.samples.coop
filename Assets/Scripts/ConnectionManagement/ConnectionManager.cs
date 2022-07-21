@@ -83,8 +83,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         internal readonly DisconnectingWithReasonState m_DisconnectingWithReason = new DisconnectingWithReasonState();
         internal readonly ServerStartingState m_ServerStarting = new ServerStartingState();
         internal readonly ServerListeningState m_ServerListening = new ServerListeningState();
-        internal readonly StartingHostState m_StartingHost = new StartingHostState();
-        internal readonly HostingState m_Hosting = new HostingState();
+        internal readonly HostStartingState m_HostStarting = new HostStartingState();
+        internal readonly HostListeningState m_HostListening = new HostListeningState();
 
         public ServerType IsConnectedToHost { get; set; }
 
@@ -95,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void Start()
         {
-            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting, m_ServerListening, m_ServerStarting };
+            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_HostStarting, m_HostListening, m_ServerListening, m_ServerStarting };
             foreach (var connectionState in states)
             {
                 m_Resolver.Inject(connectionState);

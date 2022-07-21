@@ -1,11 +1,6 @@
 using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.Utilities;
-using Unity.Netcode;
 using UnityEngine;
-using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -13,7 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// Connection state corresponding to a listening host. Handles incoming client connections. When shutting down or
     /// being timed out, transitions to the Offline state.
     /// </summary>
-    class HostingState : ServerListeningState
+    class HostListeningState : ServerListeningState
     {
         public override void OnUserRequestedShutdown()
         {
