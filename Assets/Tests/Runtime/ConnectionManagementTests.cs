@@ -171,7 +171,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [Test]
-        public void StartHost_Valid()
+        public void StartHost_Success()
         {
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -182,7 +182,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator StartHostAndConnectClients_Valid()
+        public IEnumerator StartHostAndConnectClients_Success()
         {
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -210,7 +210,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientsDisconnectedWithReasonAfterUserRequestedHostShutdown_Valid()
+        public IEnumerator UserRequestedHostShutdownAfterClientsConnected_ClientsDisconnectedWithReason()
         {
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -254,7 +254,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientsDisconnectedWithReasonAfterAttemptingToConnectWithSamePlayerId_Valid()
+        public IEnumerator AttemptingToConnectWithSamePlayerId_ClientsDisconnectedWithReason()
         {
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -296,7 +296,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientConnectingWithoutHost_Failed()
+        public IEnumerator ClientConnectingWithoutHost_ConnectionFailed()
         {
             SetUniqueProfilesForEachClient();
 
@@ -322,7 +322,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientReconnectingAfterUnexpectedClientDisconnect_Valid()
+        public IEnumerator UnexpectedClientDisconnect_ClientReconnectingSuccessfully()
         {
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -371,7 +371,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientReconnectingAfterUnexpectedServerShutdown_Failed()
+        public IEnumerator UnexpectedServerShutdown_ClientsFailToReconnect()
         {
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -430,7 +430,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientAndHostChangingRolesBetweenSessions_Valid()
+        public IEnumerator ClientAndHostChangingRolesBetweenSessions_Success()
         {
             SetUniqueProfilesForEachClient();
             m_ClientConnectionManagers[0].StartHostIp("server", "127.0.0.1", 9998);
@@ -503,7 +503,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientCancellingWhileConnectingToListeningServer_Valid()
+        public IEnumerator ClientCancellingWhileConnectingToListeningServer_ConnectionCancelled()
         {
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -548,7 +548,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
 
         [UnityTest]
-        public IEnumerator ClientCancellingWhileConnectingToNonExistingServer_Valid()
+        public IEnumerator ClientCancellingWhileConnectingToNonExistingServer_NoConnectionError()
         {
             SetUniqueProfilesForEachClient();
 
