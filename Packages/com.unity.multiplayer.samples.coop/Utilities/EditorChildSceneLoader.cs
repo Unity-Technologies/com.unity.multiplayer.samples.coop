@@ -95,7 +95,7 @@ public class ChildSceneLoader
             Debug.Log("Resetting to root scene. Runtime scripts should handle loading any child scene");
             TryGetRootSceneConfig()?.ResetToRootSceneOnly();
         }
-        if (state == PlayModeStateChange.ExitingPlayMode)
+        if (state == PlayModeStateChange.EnteredEditMode)
         {
             TryGetRootSceneConfig()?.ResetSceneSetupToConfig(askToSave: false);
         }
