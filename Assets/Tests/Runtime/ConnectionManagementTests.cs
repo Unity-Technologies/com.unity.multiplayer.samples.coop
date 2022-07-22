@@ -518,6 +518,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
             }
 
+            yield return null;
+            yield return null;
+
             m_ClientConnectionManagers[0].RequestShutdown();
 
             yield return WaitForClientsConnectedOrTimeOut();
