@@ -69,8 +69,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             SceneLoaderWrapper.Instance.LoadingStarted += StartLoadingScreen;
             SceneLoaderWrapper.Instance.LoadingStopped += StopLoadingScreen;
             SceneLoaderWrapper.Instance.LoadingUpdated += UpdateLoadingScreen;
-            // todo have client DI scope
-            m_LoadingProgressManager = FindObjectOfType<LoadingProgressManager>();
+            m_LoadingProgressManager = FindObjectOfType<LoadingProgressManager>(); // Because of DGS, this is in another scene and can't use SerializeField
         }
 
         void Start()
