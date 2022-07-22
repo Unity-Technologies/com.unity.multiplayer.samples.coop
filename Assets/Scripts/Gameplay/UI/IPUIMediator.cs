@@ -1,7 +1,10 @@
 using System;
+using System.Collections;
 using System.Text.RegularExpressions;
+using BossRoom.Scripts.Shared.Utilities;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using VContainer;
 
@@ -79,8 +82,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             ip = string.IsNullOrEmpty(ip) ? k_DefaultIP : ip;
 
-            m_SignInSpinner.SetActive(true);
-            m_ConnectionManager.StartHostIp(m_PlayerNameLabel.text, ip, portNum);
+            IEnumerator StartServerCoroutine()
+            {
+                m_SignInSpinner.SetActive(true);
+                m_ConnectionManager.StartHostIp(m_PlayerNameLabel.text, ip, portNum);
+
+                yield return new WaitForServerStarted();
+
+                m_SignInSpinner.SetActive(false);
+                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+                SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
+            }
+
+            StartCoroutine(StartServerCoroutine());
         }
 
         public void JoinWithIP(string ip, string port)
