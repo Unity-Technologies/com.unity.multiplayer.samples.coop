@@ -130,7 +130,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void OnClientDisconnectCheckGameOver(ulong clientId)
         {
-            //TODO exception in on client disconnect causes a bunch of bugs in NGO?
             if (clientId != NetworkManager.Singleton.LocalClientId)
             {
                 // If a client disconnects, check for game over in case all other players are already down
