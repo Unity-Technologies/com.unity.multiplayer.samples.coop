@@ -13,7 +13,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public const int SecondsToWaitForNewGame = 5;
 
-        public override GameState ActiveState { get { return GameState.PostGame; } }
+        public override GameState ActiveState => GameState.PostGame;
 
         protected override void Awake()
         {

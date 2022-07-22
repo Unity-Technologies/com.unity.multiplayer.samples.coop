@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;
@@ -67,7 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 IEnumerator CountdownToNextGame()
                 {
-                    var count = 5; // todo get ref to ServerPostGameState.SecondsToWaitForNewGame once asmdef refactor is done
+                    var count = ServerPostGameState.SecondsToWaitForNewGame;
                     while (count > 0)
                     {
                         m_DedicatedServerCountdownText.text = count.ToString();
