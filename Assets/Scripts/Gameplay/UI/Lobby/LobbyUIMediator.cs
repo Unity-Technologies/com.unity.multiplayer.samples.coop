@@ -1,8 +1,11 @@
 using System;
+using System.Collections;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using BossRoom.Scripts.Shared.Utilities;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Services.Core;
 using Unity.Services.Lobbies.Models;
 using UnityEngine;
@@ -95,8 +98,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_LocalUser.IsHost = true;
                 m_LobbyServiceFacade.SetRemoteLobby(lobbyCreationAttempt.Lobby);
 
-                Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}");
-                m_ConnectionManager.StartHostLobby(m_LocalUser.DisplayName);
+                IEnumerator StartServerCoroutine()
+                {
+                    Debug.Log($"Created lobby with ID: {m_LocalLobby.LobbyID} and code {m_LocalLobby.LobbyCode}");
+                    m_ConnectionManager.StartHostLobby(m_LocalUser.DisplayName);
+                    yield return new WaitForServerStarted(); // Less performant than just the callback, but way more readable than a callback hell.
+
+                    SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+                    SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
+                }
+
+                StartCoroutine(StartServerCoroutine());
             }
             else
             {
