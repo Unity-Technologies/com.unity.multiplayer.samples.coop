@@ -1,5 +1,8 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
+using BossRoom.Scripts.Shared.Utilities;
+using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 using VContainer;
 
@@ -34,8 +37,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 DedicatedServerUtilities.Log("failed to parse -port arg: " + args[portArg]);
             }
 
-            DedicatedServerUtilities.Log($"Starting Headless Server, listening on address {address}:{port}");
-            m_ConnectionManager.StartServerIP(address, port); // This will switch to the char select scene once the server started callback has been called
+            IEnumerator StartServerCoroutine()
+            {
+                DedicatedServerUtilities.Log($"Starting Headless Server, listening on address {address}:{port}");
+                m_ConnectionManager.StartServerIP(address, port); // This will switch to the char select scene once the server started callback has been called
+
+                yield return new WaitForServerStarted(); // Less performant than just the callback, but way more readable than a callback hell.
+
+                // TODO change scene to char select here and do other init. why is it handled by connection manager right now?
+                SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
+                SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
+            }
+            StartCoroutine(StartServerCoroutine());
         }
     }
 }
