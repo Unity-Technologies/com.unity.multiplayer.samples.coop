@@ -3,7 +3,7 @@
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-* added WaitForServerStarted custom yield instruction (#TODO)
+* added WaitForServerStarted custom yield instruction (#696)
 *
 ### Changed
 *

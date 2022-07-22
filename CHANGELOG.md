@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-* Dedicated Server Mode (#TODO) - TODO more details
+* Dedicated Server Mode (#696) - This PR adds the new flows necessary for boss room to start a dedicated server. Please read PR for more details.
 * 
 ### Changed
 * Updated tools, authentication and relay packages (#690)
