@@ -9,7 +9,8 @@
 ### Removed
 *
 ### Fixed
-*
+* Fixed issue in ChildSceneLoader where additively loaded scenes at runtime could mess with editor loading. (#695)
+* Decoupled ClientLoadingScreen from SceneLoaderWrapper, so one could be stripped from project without messing with the other. (#695) 
 
 ## [1.3.0-pre] - 2022-06-23
 
