@@ -1,8 +1,11 @@
+using System.Collections;
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;
+using static Unity.Multiplayer.Samples.BossRoom.ConnectionManager.ServerType;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -19,6 +22,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [SerializeField]
         private TextMeshProUGUI m_LoseGameMessage;
+
+        [SerializeField]
+        private TextMeshProUGUI m_DedicatedServerCountdownText;
 
         [SerializeField]
         private GameObject m_ReplayButton;
@@ -57,6 +63,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 SetPostGameUI(networkGameState.NetworkWinState.winState.Value);
             }
+
+            if (m_ConnectionManager.IsConnectedToHost == DedicatedServer && !NetworkManager.Singleton.IsServer)
+            {
+                IEnumerator CountdownToNextGame()
+                {
+                    var count = ServerPostGameState.SecondsToWaitForNewGame;
+                    while (count > 0)
+                    {
+                        m_DedicatedServerCountdownText.text = count.ToString();
+                        count--;
+                        yield return new WaitForSeconds(1);
+                    }
+                }
+
+                StartCoroutine(CountdownToNextGame());
+            }
         }
 
         void SetPostGameUI(WinState winState)
@@ -79,7 +101,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         public void OnPlayAgainClicked()
         {
             // this should only ever be called by the Host - so just go ahead and switch scenes
-            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
+            SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
 
             // FUTURE: could be improved to better support a dedicated server architecture
         }
@@ -90,4 +112,3 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         }
     }
 }
-

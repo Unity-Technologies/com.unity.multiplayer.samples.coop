@@ -4,6 +4,7 @@ using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
+using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -27,21 +28,40 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void Awake()
         {
             base.Awake();
+
             CharSelectData = GetComponent<CharSelectData>();
 
             m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
             m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
+
+            NetworkManager.Singleton.SceneManager.VerifySceneBeforeLoading += DontSyncClientOnlyScenes;
+
+            if (DedicatedServerUtilities.IsServerBuildTarget)
+            {
+                DedicatedServerUtilities.PrintSceneHierarchy();
+            }
         }
 
         protected override void OnDestroy()
         {
             base.OnDestroy();
+            if (NetworkManager.Singleton != null && NetworkManager.Singleton.SceneManager != null)
+            {
+                NetworkManager.Singleton.SceneManager.VerifySceneBeforeLoading -= DontSyncClientOnlyScenes;
+            }
 
             if (m_NetcodeHooks)
             {
                 m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
                 m_NetcodeHooks.OnNetworkDespawnHook -= OnNetworkDespawn;
             }
+        }
+
+        // This is excluding client only scenes from automatic NGO scene syncing, this way we can load it client side without having to worry about
+        // the server loading it as well. It's a way to mix offline and online scenes in your project.
+        static bool DontSyncClientOnlyScenes(int index, string sceneName, LoadSceneMode mode)
+        {
+            return sceneName != SceneNames.CharSelectClient;
         }
 
         void OnClientChangedSeat(ulong clientId, int newSeatIdx, bool lockedIn)
@@ -130,6 +150,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         void CloseLobbyIfReady()
         {
+            // If dedicated server, leave char select open if there's no one left
+            if (DedicatedServerUtilities.IsServerBuildTarget && CharSelectData.LobbyPlayers.Count == 0)
+            {
+                return;
+            }
+
             foreach (CharSelectData.LobbyPlayerState playerInfo in CharSelectData.LobbyPlayers)
             {
                 if (playerInfo.SeatState != CharSelectData.SeatState.LockedIn)
@@ -143,6 +169,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SaveLobbyResults();
 
             // Delay a few seconds to give the UI time to react, then switch scenes
+            IEnumerator WaitToEndLobby()
+            {
+                yield return new WaitForSeconds(3);
+                SceneLoaderWrapper.Instance.LoadScene(SceneNames.BossRoom, useNetworkSceneManager: true);
+            }
             m_WaitToEndLobbyCoroutine = StartCoroutine(WaitToEndLobby());
         }
 
@@ -174,11 +205,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
         }
 
-        IEnumerator WaitToEndLobby()
-        {
-            yield return new WaitForSeconds(3);
-            SceneLoaderWrapper.Instance.LoadScene("BossRoom", useNetworkSceneManager: true);
-        }
+
 
         public void OnNetworkDespawn()
         {
@@ -195,25 +222,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public void OnNetworkSpawn()
         {
+            // Server scene is the core scene optionally loading client scenes. If we're a a client or a host,
+            // should load client side scene. DGS shouldn't load this scene.
+            if (NetworkManager.Singleton.IsClient)
+            {
+                SceneManager.LoadScene(SceneNames.CharSelectClient, LoadSceneMode.Additive);
+            }
+
             if (!NetworkManager.Singleton.IsServer)
             {
                 enabled = false;
+                return;
             }
-            else
-            {
-                NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
-                CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
 
-                NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
-            }
+            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnectCallback;
+            CharSelectData.OnClientChangedSeat += OnClientChangedSeat;
+
+            NetworkManager.Singleton.SceneManager.OnSceneEvent += OnSceneEvent;
         }
 
         void OnSceneEvent(SceneEvent sceneEvent)
         {
             // We need to filter out the event that are not a client has finished loading the scene
-            if (sceneEvent.SceneEventType != SceneEventType.LoadComplete) return;
-            // When the client finishes loading the Lobby Map, we will need to Seat it
-            SeatNewPlayer(sceneEvent.ClientId);
+            // If the ClientID is the dedicated server (so not contained in ConnectedClients), don't do this
+            if (sceneEvent.SceneEventType == SceneEventType.LoadComplete && sceneEvent.SceneName == gameObject.scene.name &&
+                NetworkManager.Singleton.IsServer && NetworkManager.Singleton.ConnectedClients.ContainsKey(sceneEvent.ClientId))
+            {
+                // When the client finishes loading the Lobby Map, we will need to Seat it
+                SeatNewPlayer(sceneEvent.ClientId);
+            }
         }
 
         int GetAvailablePlayerNumber()

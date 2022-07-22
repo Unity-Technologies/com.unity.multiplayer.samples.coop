@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -10,7 +11,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         NetcodeHooks m_NetcodeHooks;
 
-        public override GameState ActiveState { get { return GameState.PostGame; } }
+        public const int SecondsToWaitForNewGame = 5;
+
+        public override GameState ActiveState => GameState.PostGame;
 
         protected override void Awake()
         {
@@ -27,7 +30,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
             else
             {
-                SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
+                if (DedicatedServerUtilities.IsServerBuildTarget)
+                {
+                    IEnumerator WaitAndStartNewGame()
+                    {
+                        DedicatedServerUtilities.Log($"Waiting a {SecondsToWaitForNewGame} seconds until new game");
+                        yield return new WaitForSeconds(SecondsToWaitForNewGame);
+                        SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
+                    }
+
+                    StartCoroutine(WaitAndStartNewGame());
+                }
             }
         }
 

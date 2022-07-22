@@ -1,8 +1,5 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Netcode;
 using UnityEngine;
-using VContainer;
 using VContainer.Unity;
 
 namespace Unity.Multiplayer.Samples.BossRoom
@@ -10,6 +7,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public enum GameState
     {
         MainMenu,
+        DedicatedServerLobbyManagement,
         CharSelect,
         BossRoom,
         PostGame
@@ -32,21 +30,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
     ///    with other networked prefabs).
     /// Q: If these are MonoBehaviours, how do you have a single state that persists across multiple scenes?
     /// A: Set your Persists property to true. If you transition to another scene that has the same gamestate, the
-    ///    current GameState object will live on, and the version in the new scene will suicide to make room for it.
+    ///    current GameState object will live on, and the version in the new scene will self destroy to make room for it.
     ///
     /// Important Note: We assume that every Scene has a GameState object. If not, then it's possible that a Persisting game state
     /// will outlast its lifetime (as there is no successor state to clean it up).
     /// </remarks>
     public abstract class GameStateBehaviour : LifetimeScope
     {
-        /// <summary>
-        /// Does this GameState persist across multiple scenes?
-        /// </summary>
-        public virtual bool Persists
-        {
-            get { return false; }
-        }
-
         /// <summary>
         /// What GameState this represents. Server and client specializations of a state should always return the same enum.
         /// </summary>
@@ -65,6 +55,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 Parent.Container.Inject(this);
             }
+            if (DedicatedServerUtilities.IsServerBuildTarget)
+            {
+                DedicatedServerUtilities.Log($"Entering game state:[{GetType().Name}], waiting for player joining and making their selection");
+            }
         }
 
         // Start is called before the first frame update
@@ -72,41 +66,23 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             if (s_ActiveStateGO != null)
             {
-                if (s_ActiveStateGO == gameObject)
+                if (s_ActiveStateGO == gameObject || s_ActiveStateGO.GetComponent<GameStateBehaviour>().ActiveState == ActiveState)
                 {
                     //nothing to do here, if we're already the active state object.
                     return;
                 }
 
-                //on the host, this might return either the client or server version, but it doesn't matter which;
-                //we are only curious about its type, and its persist state.
-                var previousState = s_ActiveStateGO.GetComponent<GameStateBehaviour>();
-
-                if (previousState.Persists && previousState.ActiveState == ActiveState)
-                {
-                    //we need to make way for the DontDestroyOnLoad state that already exists.
-                    Destroy(gameObject);
-                    return;
-                }
-
-                //otherwise, the old state is going away. Either it wasn't a Persisting state, or it was,
+                //the old state is going away. Either it wasn't a Persisting state, or it was,
                 //but we're a different kind of state. In either case, we're going to be replacing it.
                 Destroy(s_ActiveStateGO);
             }
 
             s_ActiveStateGO = gameObject;
-            if (Persists)
-            {
-                DontDestroyOnLoad(gameObject);
-            }
         }
 
         protected override void OnDestroy()
         {
-            if (!Persists)
-            {
-                s_ActiveStateGO = null;
-            }
+            s_ActiveStateGO = null;
         }
     }
 }
