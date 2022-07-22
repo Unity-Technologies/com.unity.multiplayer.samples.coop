@@ -67,6 +67,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             builder.RegisterEntryPoint<LobbyServiceFacade>(Lifetime.Singleton).AsSelf();
         }
 
+#if UNITY_EDITOR && UNITY_SERVER
+        void OnGUI()
+        {
+            var styleToUse = GUI.skin.label;
+            styleToUse.fontSize = 50;
+            styleToUse.alignment = TextAnchor.LowerLeft;
+            var textToDisplay = "Dedicated Server Running";
+            var textWidth = styleToUse.fontSize * textToDisplay.Length;
+            GUI.Label(new Rect(10, 10, textWidth, styleToUse.fontSize * 2), textToDisplay, styleToUse);
+        }
+#endif
+
         private void Start()
         {
             m_LocalLobby = Container.Resolve<LocalLobby>();
@@ -82,13 +94,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(m_UpdateRunner.gameObject);
             Application.targetFrameRate = 120;
-            SceneManager.LoadScene("MainMenu");
+
+            if (DedicatedServerUtilities.IsServerBuildTarget)
+            {
+                // skip main menu and start IP server directly
+                SceneManager.LoadScene(SceneNames.DedicatedServerLobbyManagement);
+            }
+            else
+            {
+                SceneManager.LoadScene(SceneNames.StartupClient, LoadSceneMode.Additive);
+                SceneManager.LoadScene(SceneNames.MainMenu);
+            }
         }
 
         protected override void OnDestroy()
         {
             m_Subscriptions?.Dispose();
             m_LobbyServiceFacade?.EndTracking();
+
             base.OnDestroy();
         }
 

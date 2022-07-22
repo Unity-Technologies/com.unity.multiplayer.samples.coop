@@ -24,15 +24,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [Inject]
         ProfileManager m_ProfileManager;
 
-        const string k_MainMenuSceneName = "MainMenu";
-
         public override void Enter()
         {
             m_LobbyServiceFacade.EndTracking();
             m_ConnectionManager.NetworkManager.Shutdown();
-            if (SceneManager.GetActiveScene().name != k_MainMenuSceneName)
+            if (SceneManager.GetActiveScene().name != SceneNames.MainMenu)
             {
-                SceneLoaderWrapper.Instance.LoadScene(k_MainMenuSceneName, useNetworkSceneManager: false);
+                SceneLoaderWrapper.Instance.LoadScene(SceneNames.MainMenu, useNetworkSceneManager: false);
             }
         }
 
@@ -58,13 +56,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
             utp.SetConnectionData(ipaddress, (ushort)port);
 
             SetConnectionPayload(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_HostStarting);
+        }
+
+        public override void StartServerIP(string ip, int port)
+        {
+            var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            utp.SetConnectionData(ip, (ushort)port);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_ServerStarting);
         }
 
         public override void StartHostLobby(string playerName)
         {
             SetConnectionPayload(GetPlayerId(), playerName);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_StartingHost);
+            m_ConnectionManager.ChangeState(m_ConnectionManager.m_HostStarting);
         }
 
         void SetConnectionPayload(string playerId, string playerName)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
@@ -9,16 +8,13 @@ using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
-    /// <summary>
-    /// Connection state corresponding to a listening host. Handles incoming client connections. When shutting down or
-    /// being timed out, transitions to the Offline state.
-    /// </summary>
-    class HostingState : ConnectionState
+    class ServerListeningState : ConnectionState
     {
         [Inject]
-        LobbyServiceFacade m_LobbyServiceFacade;
+        protected LobbyServiceFacade m_LobbyServiceFacade;
+
         [Inject]
-        IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
+        protected IPublisher<ConnectionEventMessage> m_ConnectionEventPublisher;
 
         // used in ApprovalCheck. This is intended as a bit of light protection against DOS attacks that rely on sending silly big buffers of garbage.
         const int k_MaxConnectPayload = 1024;
@@ -28,12 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var gameState = UnityEngine.Object.Instantiate(m_ConnectionManager.GameState);
 
             gameState.Spawn();
-
-            SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
-
-            //The "BossRoom" server always advances to CharSelect immediately on start. Different games
-            //may do this differently.
-            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
+            // TODO Phil is refactoring the above, leaving this here for now
         }
 
         public override void Exit()
@@ -48,35 +39,22 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong clientId)
         {
-            if (clientId == m_ConnectionManager.NetworkManager.LocalClientId)
+            var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
+            if (playerId != null)
             {
-                m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-            }
-            else
-            {
-                var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
-                if (playerId != null)
+                if (m_LobbyServiceFacade.CurrentUnityLobby != null)
                 {
-                    if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                    {
-                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
-                    }
-
-                    var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
-                    if (sessionData.HasValue)
-                    {
-                        m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.GenericDisconnect, PlayerName = sessionData.Value.PlayerName });
-                    }
-                    SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
+                    m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
                 }
-            }
-        }
 
-        public override void OnUserRequestedShutdown()
-        {
-            ConnectionManager.SendServerToAllClientsSetDisconnectReason(ConnectStatus.HostEndedSession);
-            // Wait before shutting down to make sure clients receive that message before they are disconnected
-            m_ConnectionManager.StartCoroutine(WaitToShutdown());
+                var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
+                if (sessionData.HasValue)
+                {
+                    m_ConnectionEventPublisher.Publish(new ConnectionEventMessage() { ConnectStatus = ConnectStatus.GenericDisconnect, PlayerName = sessionData.Value.PlayerName });
+                }
+
+                SessionManager<SessionPlayerData>.Instance.DisconnectClient(clientId);
+            }
         }
 
         /// <summary>
@@ -117,6 +95,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 response.CreatePlayerObject = true;
                 response.Position = Vector3.zero;
                 response.Rotation = Quaternion.identity;
+
+                ConnectionManager.SendServertoClientSuccessPayload(clientId, NetworkManager.Singleton.IsHost ? ConnectionManager.ServerType.ClientHostedServer : ConnectionManager.ServerType.DedicatedServer);
+
                 return;
             }
 
@@ -157,10 +138,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 ConnectStatus.LoggedInAgain : ConnectStatus.Success;
         }
 
-        IEnumerator WaitToShutdown()
-        {
-            yield return null;
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-        }
+        // TODO handle server shutdown by itself (clean shutdown) and tells clients to disconnect? connection draining? MTT-4069
     }
 }

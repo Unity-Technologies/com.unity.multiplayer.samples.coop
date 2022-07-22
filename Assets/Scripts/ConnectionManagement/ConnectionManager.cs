@@ -54,6 +54,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     public class ConnectionManager : MonoBehaviour
     {
+        public enum ServerType : byte
+        {
+            Undefined = 0,
+            DedicatedServer,
+            ClientHostedServer
+        }
+
         ConnectionState m_CurrentState;
 
         [SerializeField]
@@ -74,8 +81,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         internal readonly ClientConnectedState m_ClientConnected = new ClientConnectedState();
         internal readonly ClientReconnectingState m_ClientReconnecting = new ClientReconnectingState();
         internal readonly DisconnectingWithReasonState m_DisconnectingWithReason = new DisconnectingWithReasonState();
-        internal readonly StartingHostState m_StartingHost = new StartingHostState();
-        internal readonly HostingState m_Hosting = new HostingState();
+        internal readonly ServerStartingState m_ServerStarting = new ServerStartingState();
+        internal readonly ServerListeningState m_ServerListening = new ServerListeningState();
+        internal readonly HostStartingState m_HostStarting = new HostStartingState();
+        internal readonly HostListeningState m_HostListening = new HostListeningState();
+
+        public ServerType IsConnectedToHost { get; set; }
 
         void Awake()
         {
@@ -84,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         void Start()
         {
-            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_StartingHost, m_Hosting };
+            List<ConnectionState> states = new() { m_Offline, m_ClientConnecting, m_ClientConnected, m_ClientReconnecting, m_DisconnectingWithReason, m_HostStarting, m_HostListening, m_ServerListening, m_ServerStarting };
             foreach (var connectionState in states)
             {
                 m_Resolver.Inject(connectionState);
@@ -104,7 +115,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             NetworkManager.OnClientDisconnectCallback -= OnClientDisconnectCallback;
             NetworkManager.OnServerStarted -= OnServerStarted;
             NetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
-
         }
 
         internal void ChangeState(ConnectionState nextState)
@@ -115,6 +125,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             {
                 m_CurrentState.Exit();
             }
+
             m_CurrentState = nextState;
             m_CurrentState.Enter();
         }
@@ -159,6 +170,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_CurrentState.StartHostIP(playerName, ipaddress, port);
         }
 
+        public void StartServerIP(string ipaddress, int port)
+        {
+            m_CurrentState.StartServerIP(ipaddress, port);
+        }
+
         public void RequestShutdown()
         {
             m_CurrentState.OnUserRequestedShutdown();
@@ -167,10 +183,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <summary>
         /// Registers the message handler for custom named messages. This should only be done once StartClient has been
         /// called (start client will initialize NetworkSceneManager and CustomMessagingManager)
+        /// This will override the message handler each time and will use this instance's method.
         /// </summary>
         public void RegisterCustomMessages()
         {
             NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), ReceiveServerToClientSetDisconnectReason_CustomMessage);
+            NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(nameof(ReceiveServertoClientSuccessPayload_CustomMessage), ReceiveServertoClientSuccessPayload_CustomMessage);
         }
 
         void ReceiveServerToClientSetDisconnectReason_CustomMessage(ulong clientID, FastBufferReader reader)
@@ -200,6 +218,19 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var writer = new FastBufferWriter(sizeof(ConnectStatus), Allocator.Temp);
             writer.WriteValueSafe(status);
             NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ReceiveServerToClientSetDisconnectReason_CustomMessage), clientID, writer);
+        }
+
+        internal void ReceiveServertoClientSuccessPayload_CustomMessage(ulong clientID, FastBufferReader reader)
+        {
+            reader.ReadValueSafe(out ServerType isHost);
+            IsConnectedToHost = isHost;
+        }
+
+        internal static void SendServertoClientSuccessPayload(ulong clientID, ServerType isHost)
+        {
+            var writer = new FastBufferWriter(sizeof(bool), Allocator.Temp);
+            writer.WriteValueSafe(isHost);
+            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessage(nameof(ReceiveServertoClientSuccessPayload_CustomMessage), clientID, writer);
         }
     }
 }
