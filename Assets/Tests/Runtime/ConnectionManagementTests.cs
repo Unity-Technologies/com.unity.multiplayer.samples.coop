@@ -31,8 +31,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             protected override void Configure(IContainerBuilder builder)
             {
-                NetworkManager.NetworkConfig.ConnectionApproval = true;
-                NetworkManager.NetworkConfig.PlayerPrefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Prefabs/Character/PersistentPlayer.prefab");
                 builder.RegisterComponent(NetworkManager);
                 builder.RegisterComponent(ConnectionManager);
                 builder.RegisterComponent(UpdateRunner);
@@ -79,13 +77,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             return false;
         }
 
-        static void InitializeInstance(string name, NetworkManager networkManager, List<ConnectionState> connectionStateSequence, out ConnectionManager connectionManager, out ConnectionManagementTestsLifeTimeScope scope)
+        static void InitializeInstance(string name, NetworkManager networkManager, List<ConnectionState> connectionStateSequence, GameObject playerGameObject, out ConnectionManager connectionManager, out ConnectionManagementTestsLifeTimeScope scope)
         {
-            // Create gameObject
             var serverConnectionManagerGO = new GameObject($"ConnectionManager - {name}");
-
-            // Create networkManager component
             connectionManager = serverConnectionManagerGO.AddComponent<ConnectionManager>();
+
+            networkManager.NetworkConfig.ConnectionApproval = true;
+            networkManager.NetworkConfig.PlayerPrefab = playerGameObject;
 
             var serverUpdateRunnerGO = new GameObject($"UpdateRunner - {name}");
             var serverUpdateRunner = serverUpdateRunnerGO.AddComponent<UpdateRunner>();
@@ -104,6 +102,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             var sceneLoaderWrapperGO = new GameObject("SceneLoader");
             sceneLoaderWrapperGO.AddComponent<SceneLoaderWrapperStub>();
 
+            var playerPrefabGO = new GameObject("PlayerObject");
+            var networkObject = playerPrefabGO.AddComponent<NetworkObject>();
+            networkObject.DontDestroyWithOwner = true;
+            NetcodeIntegrationTestHelpers.MakeNetworkObjectTestPrefab(networkObject);
+
             m_ClientScopes = new ConnectionManagementTestsLifeTimeScope[NumberOfClients];
             m_ClientConnectionManagers = new ConnectionManager[NumberOfClients];
             m_ClientConnectionStateSequences = new List<ConnectionState>[NumberOfClients];
@@ -111,11 +114,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             {
                 var clientId = i;
                 m_ClientConnectionStateSequences[clientId] = new List<ConnectionState>();
-                InitializeInstance($"Client{clientId}", m_ClientNetworkManagers[clientId], m_ClientConnectionStateSequences[clientId], out m_ClientConnectionManagers[clientId], out m_ClientScopes[clientId]);
+                InitializeInstance($"Client{clientId}", m_ClientNetworkManagers[clientId], m_ClientConnectionStateSequences[clientId], playerPrefabGO, out m_ClientConnectionManagers[clientId], out m_ClientScopes[clientId]);
             }
 
             m_ServerConnectionStateSequence = new List<ConnectionState>();
-            InitializeInstance("Server", m_ServerNetworkManager, m_ServerConnectionStateSequence, out m_ServerConnectionManager, out m_ServerScope);
+            InitializeInstance("Server", m_ServerNetworkManager, m_ServerConnectionStateSequence, playerPrefabGO, out m_ServerConnectionManager, out m_ServerScope);
 
             base.OnServerAndClientsCreated();
         }
