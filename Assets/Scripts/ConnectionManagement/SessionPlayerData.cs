@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.Utilities;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
