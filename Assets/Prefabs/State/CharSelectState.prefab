@@ -11,9 +11,8 @@ GameObject:
   - component: {fileID: 3565665953789623676}
   - component: {fileID: 1092063945021251778}
   - component: {fileID: 3565665953789623675}
-  - component: {fileID: 3565665953789623674}
   - component: {fileID: 3565665953789623673}
-  - component: {fileID: 8494646029522094751}
+  - component: {fileID: 4791671232360312601}
   m_Layer: 0
   m_Name: CharSelectState
   m_TagString: Untagged
@@ -68,66 +67,7 @@ MonoBehaviour:
     TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
   autoRun: 1
   autoInjectGameObjects: []
-  m_NetcodeHooks: {fileID: 8494646029522094751}
---- !u!114 &3565665953789623674
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3565665953789623672}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: eca1f4b442326cc4d9be3975746b8cdb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentReference:
-    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
-  autoRun: 1
-  autoInjectGameObjects: []
-  m_NetcodeHooks: {fileID: 8494646029522094751}
-  m_AnimationTriggerOnCharSelect: BeginRevive
-  m_AnimationTriggerOnCharChosen: BeginRevive
-  m_PlayerSeats:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  m_IdentifiersForEachPlayerNumber:
-  - Indicator: {fileID: 21300000, guid: 4efd4bc875cf78440a2bba2df426df59, type: 3}
-    Color: {r: 1, g: 0.9607843, b: 0.03529412, a: 1}
-  - Indicator: {fileID: 21300000, guid: eb78c7426de84ba4fb581a39bd47e1ea, type: 3}
-    Color: {r: 1, g: 0.25490198, b: 0.25882354, a: 1}
-  - Indicator: {fileID: 21300000, guid: 9f3c077482954fd47ac14f226b754aa4, type: 3}
-    Color: {r: 0.40392157, g: 0.6901961, b: 1, a: 1}
-  - Indicator: {fileID: 21300000, guid: 354c9edfa39e18f4a8b4bbeab8afa08b, type: 3}
-    Color: {r: 0, g: 1, b: 0.3882353, a: 1}
-  - Indicator: {fileID: 21300000, guid: 96e799a96c02bea4bb1664c70d61a7fa, type: 3}
-    Color: {r: 0.5882353, g: 0.03137255, b: 0.99215686, a: 1}
-  - Indicator: {fileID: 21300000, guid: 9e74ea5f2c75a624e9d29ced68c1faa6, type: 3}
-    Color: {r: 0, g: 0.72156864, b: 0.7137255, a: 1}
-  - Indicator: {fileID: 21300000, guid: 4587568254b46b74382b2e5db4111e2e, type: 3}
-    Color: {r: 0.99607843, g: 0.6745098, b: 0.03137255, a: 1}
-  - Indicator: {fileID: 21300000, guid: 5e0531f7cad04b346bf05685f3b9a846, type: 3}
-    Color: {r: 0.19215687, g: 0.03137255, b: 0.9882353, a: 1}
-  m_NumPlayersText: {fileID: 0}
-  m_ReadyButtonText: {fileID: 0}
-  m_UIElementsForNoSeatChosen:
-  - {fileID: 0}
-  - {fileID: 0}
-  m_UIElementsForSeatChosen:
-  - {fileID: 0}
-  - {fileID: 0}
-  m_UIElementsForLobbyEnding:
-  - {fileID: 0}
-  m_UIElementsForFatalError:
-  - {fileID: 0}
-  m_ClassInfoBox: {fileID: 0}
-  m_CharacterGraphicsParent: {fileID: 0}
+  m_NetcodeHooks: {fileID: 4791671232360312601}
 --- !u!114 &3565665953789623673
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -149,7 +89,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f49fc0646d4e9554f88a31ac496afd19, type: 2}
   - {fileID: 11400000, guid: 70d299733c76b0649852336624091fca, type: 2}
   - {fileID: 11400000, guid: 9cc69a593b6ff1b4b95bf7330ec5ab46, type: 2}
---- !u!114 &8494646029522094751
+--- !u!114 &4791671232360312601
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -158,6 +98,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 3565665953789623672}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6aedfcf74b3f4f248897af16490caa9d, type: 3}
+  m_Script: {fileID: 11500000, guid: e2c949841cd7402f96426d2d177731a5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

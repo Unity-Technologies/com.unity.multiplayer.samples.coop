@@ -26,6 +26,7 @@ Transform:
   m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -3.33389, y: 5.1356144, z: -0.00000047683716}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5281082990251655230}
   m_RootOrder: 0
@@ -56,6 +57,7 @@ Transform:
   m_LocalRotation: {x: 0, y: -0.00000011920929, z: -0, w: 1}
   m_LocalPosition: {x: 3.2996511, y: 5.1356144, z: -0.00000047683716}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5281082990251655230}
   m_RootOrder: 1
@@ -88,6 +90,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 12, y: 10, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1962970309805677278}
   m_RootOrder: 0
@@ -149,6 +152,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 12, y: 10, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1962970309805677278}
   m_RootOrder: 1
@@ -208,6 +212,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3784045606710551546}
   - {fileID: 1067615519027872932}
@@ -240,6 +245,7 @@ Transform:
   m_LocalRotation: {x: -1.7112914e-15, y: 1, z: -0.000000021855694, w: -0.0000000754979}
   m_LocalPosition: {x: -0.05600357, y: -0.015982103, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8352429603068409619}
   - {fileID: 3823504829683890292}
@@ -259,6 +265,7 @@ GameObject:
   - component: {fileID: 7788790407431586434}
   - component: {fileID: 7788790407431586435}
   - component: {fileID: 7788790407431586432}
+  - component: {fileID: 3393738567990896601}
   m_Layer: 0
   m_Name: InteractiveBossDoor
   m_TagString: Untagged
@@ -276,6 +283,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5694566148258285863}
   - {fileID: 1962970309805677278}
@@ -328,6 +336,7 @@ MonoBehaviour:
   m_Animator: {fileID: 9017285538409940355}
   m_NetworkDoorState: {fileID: 7788790407431586434}
   m_AnimatorDoorOpenBoolID: 48337822
+  ForceOpen: 0
 --- !u!114 &7788790407431586432
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -342,6 +351,18 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PhysicsObject: {fileID: 9183722010770990113}
   m_DoorState: {fileID: 7788790407431586434}
+--- !u!114 &3393738567990896601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7788790407431586438}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2c949841cd7402f96426d2d177731a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9183722010770990113
 GameObject:
   m_ObjectHideFlags: 0
@@ -370,6 +391,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 5, z: 0}
   m_LocalScale: {x: 12, y: 10, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7788790407431586433}
   m_RootOrder: 0
@@ -473,14 +495,9 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 5aaa823f44d09b9499e0b010951524aa, type: 3}
   m_PrefabInstance: {fileID: 700970646951541397}
   m_PrefabAsset: {fileID: 0}
---- !u!4 &1022563868116311422 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5aaa823f44d09b9499e0b010951524aa, type: 3}
-  m_PrefabInstance: {fileID: 700970646951541397}
-  m_PrefabAsset: {fileID: 0}
 --- !u!95 &9017285538409940355
 Animator:
-  serializedVersion: 3
+  serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -493,6 +510,7 @@ Animator:
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
@@ -510,3 +528,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 9017285538409940355}
+--- !u!4 &1022563868116311422 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 5aaa823f44d09b9499e0b010951524aa, type: 3}
+  m_PrefabInstance: {fileID: 700970646951541397}
+  m_PrefabAsset: {fileID: 0}

@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
@@ -12,7 +13,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// and vice versa.
     /// </summary>
     [RequireComponent(typeof(NetworkDoorState))]
-    public class ClientDoorVisualization : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientDoorVisualization : MonoBehaviour
     {
         [SerializeField]
         [Tooltip("This physics and navmesh obstacle is enabled when the door is closed.")]
@@ -21,12 +23,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         [SerializeField]
         NetworkDoorState m_DoorState;
 
+        NetcodeHooks m_Hooks;
         [Inject]
         IPublisher<DoorStateChangedEventMessage> m_Publisher;
 
-        public override void OnNetworkSpawn()
+        void Awake()
         {
-            if (!IsClient)
+            m_Hooks = GetComponent<NetcodeHooks>();
+            m_Hooks.OnNetworkSpawnHook += OnSpawn;
+            m_Hooks.OnNetworkDespawnHook += OnDespawn;
+        }
+
+        void OnSpawn()
+        {
+            if (!NetworkManager.Singleton.IsClient)
             {
                 enabled = false;
             }
@@ -45,12 +55,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        public override void OnNetworkDespawn()
+        void OnDespawn()
         {
             if (m_DoorState)
             {
                 m_DoorState.IsOpen.OnValueChanged -= OnDoorStateChanged;
             }
+        }
+
+        public void OnDestroy()
+        {
+            m_Hooks.OnNetworkSpawnHook -= OnSpawn;
+            m_Hooks.OnNetworkDespawnHook -= OnDespawn;
         }
 
         void OnDoorStateChanged(bool wasDoorOpen, bool isDoorOpen)

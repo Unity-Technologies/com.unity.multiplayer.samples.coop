@@ -1,3 +1,5 @@
+using System;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -7,7 +9,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// Responsible for managing and creating a feedback icon where the player clicked to move
     /// </summary>
     [RequireComponent(typeof(ClientInputSender))]
-    public class ClientClickFeedback : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientClickFeedback : MonoBehaviour
     {
         [SerializeField]
         GameObject m_FeedbackPrefab;
@@ -17,11 +20,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         ClientInputSender m_ClientSender;
 
         ClickFeedbackLerper m_ClickFeedbackLerper;
+        NetcodeHooks m_NetcodeHooks;
 
+        void Awake()
+        {
+            m_NetcodeHooks = GetComponent<NetcodeHooks>();
+        }
 
         void Start()
         {
-            if (NetworkManager.Singleton.LocalClientId != OwnerClientId)
+            if (NetworkManager.Singleton.LocalClientId != m_NetcodeHooks.OwnerClientId)
             {
                 Destroy(this);
                 return;
@@ -40,14 +48,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_ClickFeedbackLerper.SetTarget(position);
         }
 
-        public override void OnDestroy()
+        public void OnDestroy()
         {
-            base.OnDestroy();
             if (m_ClientSender)
             {
                 m_ClientSender.ClientMoveEvent -= OnClientMove;
             }
-
         }
     }
 }

@@ -54,7 +54,6 @@ namespace Unity.Multiplayer.Samples.Utilities
         [SerializeField]
         List<Text> m_OtherPlayerNamesTexts;
 
-        [SerializeField]
         protected LoadingProgressManager m_LoadingProgressManager;
 
         protected Dictionary<ulong, LoadingProgressBar> m_LoadingProgressBars = new Dictionary<ulong, LoadingProgressBar>();
@@ -67,6 +66,10 @@ namespace Unity.Multiplayer.Samples.Utilities
         {
             DontDestroyOnLoad(this);
             Assert.AreEqual(m_OtherPlayersProgressBars.Count, m_OtherPlayerNamesTexts.Count, "There should be the same number of progress bars and name labels");
+            SceneLoaderWrapper.Instance.LoadingStarted += StartLoadingScreen;
+            SceneLoaderWrapper.Instance.LoadingStopped += StopLoadingScreen;
+            SceneLoaderWrapper.Instance.LoadingUpdated += UpdateLoadingScreen;
+            m_LoadingProgressManager = FindObjectOfType<LoadingProgressManager>(); // Because of DGS, this is in another scene and can't use SerializeField
         }
 
         void Start()

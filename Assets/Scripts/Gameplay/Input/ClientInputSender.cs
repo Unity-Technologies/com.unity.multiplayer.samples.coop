@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
@@ -11,7 +12,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// Captures inputs for a character on a client and sends them to the server.
     /// </summary>
     [RequireComponent(typeof(NetworkCharacterState))]
-    public class ClientInputSender : NetworkBehaviour
+    [RequireComponent(typeof(NetcodeHooks))]
+    public class ClientInputSender : MonoBehaviour
     {
         const float k_MouseInputRaycastDistance = 100f;
 
@@ -105,10 +107,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         [SerializeField]
         PhysicsWrapper m_PhysicsWrapper;
+        NetcodeHooks m_Hooks;
 
-        public override void OnNetworkSpawn()
+        void Awake()
         {
-            if (!IsClient || !IsOwner)
+            m_Hooks = GetComponent<NetcodeHooks>();
+            m_Hooks.OnNetworkSpawnHook += OnSpawn;
+            m_NetworkCharacter = GetComponent<NetworkCharacterState>();
+            m_MainCamera = Camera.main;
+        }
+        public void OnSpawn()
+        {
+            if (!NetworkManager.Singleton.IsClient || !m_Hooks.IsOwner)
             {
                 enabled = false;
                 // dont need to do anything else if not the owner
@@ -121,10 +131,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             m_RaycastHitComparer = new RaycastHitComparer();
         }
 
-        void Awake()
+        public void OnDestroy()
         {
-            m_NetworkCharacter = GetComponent<NetworkCharacterState>();
-            m_MainCamera = Camera.main;
+            m_Hooks.OnNetworkSpawnHook -= OnSpawn;
         }
 
         void FinishSkill()

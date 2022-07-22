@@ -1,3 +1,5 @@
+using Unity.Multiplayer.Samples.Utilities;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -17,17 +19,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         bool m_Won;
 
-        void Start()
-        {
-            Assert.IsNotNull(m_NetworkLifeState, "NetworkLifeState not set!");
-            Assert.IsNotNull(m_NetworkHealthState, "NetworkHealthState not set!");
+        NetcodeHooks m_NetcodeHooks;
 
-            m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
-            m_NetworkHealthState.HitPoints.OnValueChanged += OnHealthChanged;
+        void Awake()
+        {
+            enabled = false;
+            m_NetcodeHooks = GetComponent<NetcodeHooks>();
+            m_NetcodeHooks.OnNetworkSpawnHook += OnSpawn;
+        }
+
+        void OnSpawn()
+        {
+            if (NetworkManager.Singleton.IsClient)
+            {
+                enabled = true;
+                Assert.IsNotNull(m_NetworkLifeState, "NetworkLifeState not set!");
+                Assert.IsNotNull(m_NetworkHealthState, "NetworkHealthState not set!");
+
+                m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
+                m_NetworkHealthState.HitPoints.OnValueChanged += OnHealthChanged;
+            }
         }
 
         void OnDestroy()
         {
+            m_NetcodeHooks.OnNetworkSpawnHook -= OnSpawn;
+
             var netState = GetComponent<NetworkCharacterState>();
             if (netState != null)
             {

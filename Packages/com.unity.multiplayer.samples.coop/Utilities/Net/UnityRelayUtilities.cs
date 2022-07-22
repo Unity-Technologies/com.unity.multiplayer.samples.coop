@@ -5,7 +5,7 @@ using UnityEngine;
 using Unity.Services.Relay;
 using Unity.Services.Relay.Models;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.Multiplayer.Samples.Utilities
 {
     public static class UnityRelayUtilities
     {

@@ -1,11 +1,13 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.Multiplayer.Samples.Utilities;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     [RequireComponent(typeof(NetworkCharacterState))]
-    public class ClientCharacter : NetworkBehaviour
+    public class ClientCharacter : MonoBehaviour
     {
         [SerializeField]
         ClientCharacterVisualization m_ClientCharacterVisualization;
@@ -16,12 +18,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public ClientCharacterVisualization ChildVizObject => m_ClientCharacterVisualization;
 
-        public override void OnNetworkSpawn()
+        void Awake()
         {
-            if (!IsClient)
+            GetComponent<NetcodeHooks>().OnNetworkSpawnHook += OnSpawn;
+        }
+
+        public void OnSpawn()
+        {
+            if (!NetworkManager.Singleton.IsClient)
             {
                 enabled = false;
             }
+        }
+
+        void OnDestroy()
+        {
+            GetComponent<NetcodeHooks>().OnNetworkSpawnHook -= OnSpawn;
         }
     }
 }

@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using Unity.Collections;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom

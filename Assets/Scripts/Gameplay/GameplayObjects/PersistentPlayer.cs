@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -74,7 +75,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             if (IsServer)
             {
                 var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
-                if (sessionPlayerData.HasValue)
+                if (sessionPlayerData.HasValue) // it's possible no session has started yet (for ex when in character select)
                 {
                     var playerData = sessionPlayerData.Value;
                     playerData.PlayerName = m_NetworkNameState.Name.Value;

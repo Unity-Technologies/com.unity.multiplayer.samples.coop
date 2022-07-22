@@ -1,6 +1,5 @@
 {
-
-    "name": "Unity.BossRoom.Tests.Runtime",
+    "name": "Unity.BossRoom.Tests.Runtime.hosttests",
     "rootNamespace": "",
     "references": [
         "UnityEngine.TestRunner",
@@ -9,8 +8,7 @@
         "Unity.Netcode.Runtime",
         "Unity.BossRoom.Gameplay",
         "Unity.BossRoom.Infrastructure",
-        "VContainer",
-        "VContainer.EnableCodeGen"
+        "VContainer"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
@@ -22,7 +20,7 @@
     "autoReferenced": false,
     "defineConstraints": [
         "UNITY_INCLUDE_TESTS",
-	    "!UNITY_SERVER"
+        "!UNITY_SERVER"
     ],
     "versionDefines": [],
     "noEngineReferences": false

@@ -1245,6 +1245,7 @@ GameObject:
   - component: {fileID: -559815779163765970}
   - component: {fileID: -8995571906845300287}
   - component: {fileID: 6030569013059244219}
+  - component: {fileID: 1324944314608130499}
   m_Layer: 6
   m_Name: VandalImpGraphics
   m_TagString: Untagged
@@ -1305,6 +1306,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_ClientVisualsAnimator: {fileID: 234724737205816310}
   m_VisualizationConfiguration: {fileID: 11400000, guid: 9504973cdecd65749889771972fa0117, type: 2}
+  NetcodeHooks: {fileID: 0}
 --- !u!114 &8005647249789065143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1765,6 +1767,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 234724737205816310}
+--- !u!114 &1324944314608130499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6839301660383890230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2c949841cd7402f96426d2d177731a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7108127146651356877
 GameObject:
   m_ObjectHideFlags: 0

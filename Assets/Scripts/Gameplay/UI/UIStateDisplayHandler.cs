@@ -1,4 +1,6 @@
+using System;
 using System.Collections;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -13,7 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     /// LateUpdate calls, which may alter the final position of the game camera.
     /// </remarks>
     [DefaultExecutionOrder(300)]
-    public class UIStateDisplayHandler : NetworkBehaviour
+    public class UIStateDisplayHandler : MonoBehaviour
     {
         [SerializeField]
         bool m_DisplayHealth;
@@ -71,7 +73,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         // used to compute world position based on target and offsets
         Vector3 m_WorldPos;
 
-        public override void OnNetworkSpawn()
+        void Awake()
+        {
+            GetComponent<NetcodeHooks>().OnNetworkSpawnHook += OnSpawn;
+        }
+
+        public void OnSpawn()
         {
             if (!NetworkManager.Singleton.IsClient)
             {
@@ -225,13 +232,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        public override void OnDestroy()
+        public void OnDestroy()
         {
-            base.OnDestroy();
             if (m_UIState != null)
             {
                 Destroy(m_UIState.gameObject);
             }
+
+            GetComponent<NetcodeHooks>().OnNetworkSpawnHook -= OnSpawn;
         }
     }
 }

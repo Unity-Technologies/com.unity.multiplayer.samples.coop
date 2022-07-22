@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 1460791283510277443}
   - component: {fileID: 7670444733571025649}
   - component: {fileID: 6825752226794478105}
+  - component: {fileID: 8149853067219362841}
   m_Layer: 6
   m_Name: BreakablePillar
   m_TagString: Untagged
@@ -32,6 +33,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5054035021295717131}
   m_Father: {fileID: 0}
@@ -130,6 +132,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 126
   m_CollisionDetection: 0
+--- !u!114 &8149853067219362841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 884761565141663561}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e2c949841cd7402f96426d2d177731a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &2926384259182416435
 PrefabInstance:
   m_ObjectHideFlags: 0
