@@ -8,8 +8,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void Enter()
         {
             var success = NetworkManager.Singleton.StartServer();
+            if (!success)
+            {
+                DedicatedServerUtilities.Log("StartServer returned false and failed starting. Killing process.");
+                Application.Quit(1); // "1" exit code to tell whatever is running this server something wrong happened.
+                return;
+            }
 
-            // TODO do something with success != true
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_ServerListening);
         }
 
