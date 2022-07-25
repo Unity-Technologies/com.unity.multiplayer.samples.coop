@@ -36,15 +36,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
 
         ConnectionManager m_ConnectionManager;
-        ISubscriber<WinStateMessage> m_WinStateSub;
-
-        IDisposable m_WinStateSubscription;
+        IMessageChannel<WinStateMessage> m_WinStatePubSub;
 
         [Inject]
-        void Inject(ISubscriber<WinStateMessage> winStateSub, ConnectionManager connectionManager)
+        void Inject(IMessageChannel<WinStateMessage> winStatePubSub, ConnectionManager connectionManager)
         {
             m_ConnectionManager = connectionManager;
-            m_WinStateSub = winStateSub;
+            m_WinStatePubSub = winStatePubSub;
 
             // only hosts can restart the game, other players see a wait message
             if (NetworkManager.Singleton.IsHost)
@@ -58,12 +56,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_WaitOnHostMsg.SetActive(true);
             }
 
-            m_WinStateSubscription = m_WinStateSub.Subscribe(SetPostGameUI);
+            m_WinStatePubSub.Subscribe(SetPostGameUI);
         }
 
         void SetPostGameUI(WinStateMessage winStateMessage)
         {
-            m_WinStateSubscription.Dispose();
+            m_WinStatePubSub.Unsubscribe(SetPostGameUI);
 
             switch (winStateMessage.WinState)
             {
