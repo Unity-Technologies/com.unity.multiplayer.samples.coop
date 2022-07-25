@@ -9,11 +9,12 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-*
+* Added BufferedNetworkMessageChannel (#697)
 ### Changed
 * Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
 * Refactored connection management into simpler state machine (#666)
+* Merged GameState bridge classes (the ones that contained no or limited functionality) (#697)
 * 
 ### Removed
 *

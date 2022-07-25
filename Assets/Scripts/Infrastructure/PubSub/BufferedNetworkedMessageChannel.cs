@@ -22,7 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 
         public BufferedNetworkedMessageChannel()
         {
-            m_Name = $"{typeof(T).FullName}BufferedNetworkMessageChannel";
+            m_Name = $"{typeof(T).FullName}BufferedNetworkedMessageChannel";
         }
 
         public override void Dispose()
@@ -75,7 +75,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
             }
             else
             {
-                Debug.LogError("Only a server can publish in a NetworkedMessageChannel");
+                Debug.LogError("Only a server can publish in a BufferedNetworkedMessageChannel");
             }
         }
 
