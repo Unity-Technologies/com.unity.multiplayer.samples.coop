@@ -1,9 +1,12 @@
 {
     "name": "Unity.Multiplayer.Samples.Utilities.Tests.Runtime",
-    "rootNamespace": "",
+    "rootNamespace": "Unity.Multiplayer.Samples.Utilities.Tests.Runtime ",
     "references": [
         "UnityEngine.TestRunner",
-        "UnityEditor.TestRunner"
+        "UnityEditor.TestRunner",
+        "Unity.Netcode.Runtime",
+        "Unity.Netcode.TestHelpers.Runtime",
+        "Unity.Multiplayer.Samples.Utilities"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

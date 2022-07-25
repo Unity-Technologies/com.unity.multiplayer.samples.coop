@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -8,21 +9,40 @@ namespace BossRoom.Scripts.Shared.Utilities
     /// This is less performant, as it actively polls each frames for the bool, but helps make server starting code more readable, by allowing to
     /// sequence pre-server startup code and post-server startup code without having to put it in a callback
     /// </summary>
+    /// <remarks>TODO look into timeout</remarks>
     public class WaitForServerStarted : CustomYieldInstruction
     {
         bool m_IsDone;
+        NetworkManager m_NetworkManager;
 
-        public override bool keepWaiting => m_IsDone;
-
-        public WaitForServerStarted()
+        public override bool keepWaiting
         {
+            get
+            {
+                if (m_NetworkManager.IsClient && !m_NetworkManager.IsServer) throw new NotServerException("shouldn't be called on clients");
+
+                return !m_IsDone;
+            }
+        }
+
+        public WaitForServerStarted() : this(NetworkManager.Singleton) { }
+
+        public WaitForServerStarted(NetworkManager managerInstance)
+        {
+            m_NetworkManager = managerInstance;
+            if (m_NetworkManager.IsServer)
+            {
+                m_IsDone = true;
+                return;
+            }
+
             void SetDone()
             {
-                NetworkManager.Singleton.OnServerStarted -= SetDone;
+                m_NetworkManager.OnServerStarted -= SetDone;
                 m_IsDone = true;
             }
 
-            NetworkManager.Singleton.OnServerStarted += SetDone;
+            m_NetworkManager.OnServerStarted += SetDone;
         }
     }
 }
