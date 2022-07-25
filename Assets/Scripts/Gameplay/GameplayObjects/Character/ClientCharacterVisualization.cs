@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 using Unity.Multiplayer.Samples.BossRoom.Client;
@@ -12,6 +13,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     {
         [SerializeField]
         Animator m_ClientVisualsAnimator;
+
+        [SerializeField]
+        Renderer[] m_GraphicsRenderers;
+
+        [SerializeField]
+        [Tooltip("Setting negative value disables destroying object after it is killed.")]
+        float m_KilledDestroyDelaySeconds = 3.0f;
 
         CharacterSwap m_CharacterSwapper;
 
@@ -90,6 +98,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
+            m_NetState.NetworkLifeState.LifeState.OnValueChanged += LifeStateChanged;
+            LifeStateChanged(LifeState.Alive, m_NetState.NetworkLifeState.LifeState.Value);
             m_NetState.MovementStatus.OnValueChanged += OnMovementStatusChanged;
             OnMovementStatusChanged(MovementStatus.Normal, m_NetState.MovementStatus.Value);
 
@@ -135,6 +145,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
+        void LifeStateChanged(LifeState previousValue, LifeState newValue)
+        {
+            switch (newValue)
+            {
+                case LifeState.Alive:
+                    break;
+                case LifeState.Dead:
+                    if (m_KilledDestroyDelaySeconds >= 0.0f && previousValue != LifeState.Dead)
+                    {
+                        StartCoroutine(KilledDestroyProcess());
+                    }
+                    break;
+                case LifeState.Fainted:
+                    break;
+                default:
+                    throw new Exception($"Unknown LifeState {newValue}");
+            }
+        }
+
         public override void OnNetworkDespawn()
         {
             if (m_NetState)
@@ -144,6 +173,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+                m_NetState.NetworkLifeState.LifeState.OnValueChanged -= LifeStateChanged;
+                m_NetState.MovementStatus.OnValueChanged -= OnMovementStatusChanged;
 
                 if (m_NetState.TryGetComponent(out ClientInputSender sender))
                 {
@@ -153,6 +184,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             enabled = false;
+        }
+
+        IEnumerator KilledDestroyProcess()
+        {
+            yield return new WaitForSeconds(m_KilledDestroyDelaySeconds);
+
+            Hide();
+        }
+
+        void Hide()
+        {
+            foreach (var childRenderer in m_GraphicsRenderers)
+            {
+                childRenderer.gameObject.SetActive(false);
+            }
         }
 
         void OnActionInput(ActionRequestData data)

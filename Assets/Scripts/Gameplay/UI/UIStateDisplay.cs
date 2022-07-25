@@ -1,5 +1,3 @@
-using Unity.Collections;
-using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom
@@ -15,21 +13,30 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [SerializeField]
         UIHealth m_UIHealth;
 
-        public void DisplayName(NetworkVariable<FixedPlayerName> networkedName)
+        public void DisplayName()
         {
             m_UIName.gameObject.SetActive(true);
-            m_UIName.Initialize(networkedName);
         }
 
-        public void DisplayHealth(NetworkVariable<int> networkedHealth, int maxValue)
+        public void DisplayHealth(int maxValue)
         {
             m_UIHealth.gameObject.SetActive(true);
-            m_UIHealth.Initialize(networkedHealth, maxValue);
+            m_UIHealth.Initialize(maxValue);
         }
 
         public void HideHealth()
         {
             m_UIHealth.gameObject.SetActive(false);
+        }
+
+        public void NameChanged(string previousValue, string newValue)
+        {
+            m_UIName.NameUpdated(previousValue, newValue);
+        }
+
+        public void HitPointsChanged(int previousValue, int newValue)
+        {
+            m_UIHealth.HealthChanged(previousValue, newValue);
         }
     }
 }

@@ -114,42 +114,64 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 {
                     m_ClientAvatarGuidHandler.AvatarGraphicsSpawned += TrackGraphicsTransform;
                 }
-
-                if (m_DisplayHealth)
-                {
-                    m_NetworkHealthState.hitPointsReplenished += DisplayUIHealth;
-                    m_NetworkHealthState.hitPointsDepleted += RemoveUIHealth;
-                }
             }
 
             if (m_DisplayName)
             {
+                m_NetworkNameState.Name.OnValueChanged += OnNameChanged;
                 DisplayUIName();
+                OnNameChanged(string.Empty, m_NetworkNameState.Name.Value);
             }
 
             if (m_DisplayHealth)
             {
+                m_NetworkHealthState.HitPoints.OnValueChanged += OnHitPointsChanged;
                 DisplayUIHealth();
+                OnHitPointsChanged(0, m_NetworkHealthState.HitPoints.Value);
             }
         }
 
-        void OnDisable()
+        public override void OnNetworkDespawn()
         {
-            if (!m_DisplayHealth)
-            {
-                return;
-            }
-
             if (m_NetworkHealthState != null)
             {
-                m_NetworkHealthState.hitPointsReplenished -= DisplayUIHealth;
-                m_NetworkHealthState.hitPointsDepleted -= RemoveUIHealth;
+                m_NetworkHealthState.HitPoints.OnValueChanged -= OnHitPointsChanged;
+            }
+
+            if (m_NetworkNameState)
+            {
+                m_NetworkNameState.Name.OnValueChanged -= OnNameChanged;
             }
 
             if (m_ClientAvatarGuidHandler)
             {
                 m_ClientAvatarGuidHandler.AvatarGraphicsSpawned -= TrackGraphicsTransform;
             }
+        }
+
+        void OnHitPointsChanged(int previousValue, int newValue)
+        {
+            if (!m_DisplayHealth)
+            {
+                return;
+            }
+
+            m_UIState.HitPointsChanged(previousValue, newValue);
+
+            if (newValue <= 0)
+            {
+                RemoveUIHealth();
+            }
+        }
+
+        void OnNameChanged(FixedPlayerName previousValue, FixedPlayerName newValue)
+        {
+            if (!m_DisplayName)
+            {
+                return;
+            }
+
+            m_UIState.NameChanged(previousValue, newValue);
         }
 
         void DisplayUIName()
@@ -164,7 +186,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 SpawnUIState();
             }
 
-            m_UIState.DisplayName(m_NetworkNameState.Name);
+            m_UIState.DisplayName();
             m_UIStateActive = true;
         }
 
@@ -180,7 +202,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 SpawnUIState();
             }
 
-            m_UIState.DisplayHealth(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
+            m_UIState.DisplayHealth(m_BaseHP.Value);
             m_UIStateActive = true;
         }
 

@@ -1,4 +1,3 @@
-using System.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -28,10 +27,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
         private bool m_BrainEnabled = true;
-
-        [SerializeField]
-        [Tooltip("Setting negative value disables destroying object after it is killed.")]
-        private float m_KilledDestroyDelaySeconds = 3.0f;
 
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
@@ -182,16 +177,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             PlayAction(ref data);
         }
 
-        IEnumerator KilledDestroyProcess()
-        {
-            yield return new WaitForSeconds(m_KilledDestroyDelaySeconds);
-
-            if (NetworkObject != null)
-            {
-                NetworkObject.Despawn(true);
-            }
-        }
-
         /// <summary>
         /// Receive an HP change from somewhere. Could be healing or damage.
         /// </summary>
@@ -239,11 +224,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 if (IsNpc)
                 {
-                    if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.LifeState != LifeState.Dead)
-                    {
-                        StartCoroutine(KilledDestroyProcess());
-                    }
-
                     NetState.LifeState = LifeState.Dead;
                 }
                 else
