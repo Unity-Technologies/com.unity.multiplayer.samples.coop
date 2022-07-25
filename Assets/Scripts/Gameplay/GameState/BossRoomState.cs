@@ -71,12 +71,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
+            m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
+
             NetworkManager.Singleton.SceneManager.OnLoadComplete += OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
         }
 
         void OnNetworkDespawn()
         {
+            m_Subscription?.Dispose();
+
             NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
         }
@@ -96,7 +100,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
 
             SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
-            m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
         }
 
         void OnServerUnloadComplete(ulong clientId, string sceneName)
@@ -109,7 +112,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
-            m_Subscription?.Dispose();
         }
 
         protected override void OnDestroy()

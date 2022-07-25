@@ -19,7 +19,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Removed
 *
 ### Fixed
-*
+* Subscribing to a message channel while unsubscribing is pending (#675)
 
 ## [v1.3.0-pre] - 2022-06-23
 
