@@ -14,14 +14,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 {
     public class HostAndDisconnectTest
     {
-        const string k_BootstrapSceneName = "Startup";
-
-        const string k_MainMenuSceneName = "MainMenu";
-
-        const string k_CharSelectSceneName = "CharSelect";
-
-        const string k_BossRoomSceneName = "BossRoom";
-
         static int[] s_PlayerIndices = new int[] { 0, 1, 2, 3, 4, 5, 6, 7 };
 
         NetworkManager m_NetworkManager;
@@ -29,10 +21,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         IEnumerator WaitUntilMainMenuSceneIsLoaded()
         {
             // load Bootstrap scene
-            SceneManager.LoadSceneAsync(k_BootstrapSceneName);
+            SceneManager.LoadSceneAsync(SceneNames.Startup);
 
             // validate the loading of project's Bootstrap scene
-            yield return new TestUtilities.WaitForSceneLoad(k_BootstrapSceneName);
+            yield return new TestUtilities.WaitForSceneLoad(SceneNames.Startup);
 
             // Bootstrap scene is loaded, containing NetworkManager instance; cache it
             m_NetworkManager = NetworkManager.Singleton;
@@ -40,14 +32,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.That(m_NetworkManager != null);
 
             // MainMenu is loaded as soon as Startup scene is launched, validate it is loaded
-            yield return new TestUtilities.WaitForSceneLoad(k_MainMenuSceneName);
+            yield return new TestUtilities.WaitForSceneLoad(SceneNames.MainMenu);
 
             yield return null;
         }
 
         IEnumerator WaitUntilCharacterIsSelectedAndReady(int playerIndex)
         {
-            yield return new TestUtilities.WaitForSceneLoad(k_CharSelectSceneName);
+            yield return new TestUtilities.WaitForSceneLoad(SceneNames.CharSelect);
 
             yield return null;
 
@@ -75,7 +67,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         /// <returns></returns>
         IEnumerator WaitUntilBossRoomSceneIsLoaded()
         {
-            yield return TestUtilities.AssertIsNetworkSceneLoaded(k_BossRoomSceneName, m_NetworkManager.SceneManager);
+            yield return TestUtilities.AssertIsNetworkSceneLoaded(SceneNames.BossRoom, m_NetworkManager.SceneManager);
         }
 
         IEnumerator WaitUntilDisconnectedAndMainMenuSceneIsLoaded()
@@ -101,7 +93,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             Assert.That(!NetworkManager.Singleton.IsListening, "NetworkManager not fully shut down!");
 
             // MainMenu is loaded as soon as a shutdown is encountered; validate it is loaded
-            yield return new TestUtilities.WaitForSceneLoad(k_MainMenuSceneName);
+            yield return new TestUtilities.WaitForSceneLoad(SceneNames.MainMenu);
         }
 
         /// <summary>

@@ -21,6 +21,13 @@ test_platforms:
     flavor: b1.large
     editorpath: .Editor/Unity
     utr: ./utr
+  - name: ubuntu-server
+    type: Unity::VM
+    image: package-ci/ubuntu:stable
+    flavor: b1.large
+    editorpath: .Editor/Unity
+    utr: ./utr
+    extra-utr-args: --extra-editor-arg="-standaloneBuildSubtarget" --extra-editor-arg="Server"
 
 # Projects within the repository that will be tested. Name will be used
 # for job ids, so it should not contain spaces/non-supported characters

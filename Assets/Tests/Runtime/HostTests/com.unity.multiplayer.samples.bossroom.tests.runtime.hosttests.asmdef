@@ -8,7 +8,8 @@
         "Unity.Netcode.Runtime",
         "Unity.BossRoom.Gameplay",
         "Unity.BossRoom.Infrastructure",
-        "VContainer"
+        "VContainer",
+        "Unity.BossRoom.Utils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
