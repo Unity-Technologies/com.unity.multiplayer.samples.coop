@@ -8,17 +8,16 @@ pull_request_trigger:
   dependencies:
     - .yamato/project-standards.yml#standards_{{ projects.first.name }}
 {% for project in projects -%}
-{% for package in project.packages -%}
 {% for platform in test_platforms -%}
     # desktop platforms
     - .yamato/project-tests.yml#test_{{ project.name }}_{{ project.test_editors.first }}_{{ platform.name }}
-{% endfor -%}
+{% endfor -%} # platform
     # iOS
     - .yamato/mobile-build-and-run.yml#mobile_test_ios_{{ project.name }}_{{ project.test_editors.first }}
     # Android
     - .yamato/mobile-build-and-run.yml#mobile_test_android_{{ project.name }}_{{ project.test_editors.first }}
-{% endfor -%}
-{% endfor -%}
+{% endfor -%} # projects
+
   triggers:
     cancel_old_ci: true
     pull_requests:

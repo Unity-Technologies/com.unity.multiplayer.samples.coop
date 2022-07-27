@@ -10,6 +10,15 @@ namespace BossRoom.Scripts.Shared.Utilities
     /// sequence pre-server startup code and post-server startup code without having to put it in a callback
     /// </summary>
     /// <remarks>TODO look into timeout</remarks>
+    /// <example>
+    /// IEnumerator StartServerCoroutine()
+    /// {
+    ///     NetworkManager.Singleton.StartServer();
+    ///     yield return new WaitForServerStarted(); // Less performant than just the server started callback, but way more readable than a callback hell.
+    ///     SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
+    /// }
+    /// StartCoroutine(StartServerCoroutine());
+    /// </example>
     public class WaitForServerStarted : CustomYieldInstruction
     {
         bool m_IsDone;

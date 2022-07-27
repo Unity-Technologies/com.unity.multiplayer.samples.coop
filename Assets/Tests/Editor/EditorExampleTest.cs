@@ -2,14 +2,13 @@ using UnityEngine;
 using UnityEngine.TestTools;
 using NUnit.Framework;
 using System.Collections;
-using Unity.Netcode;
 
-namespace Unity.Multiplayer.Samples.Utilities.Tests.Runtime
+namespace Unity.Multiplayer.Samples.BossRoom.Tests.Editor
 {
-    public class RuntimeExampleTest
+    class EditorExampleTest
     {
         [Test]
-        public void RuntimeExampleTestSimplePasses()
+        public void EditorSampleTestSimplePasses()
         {
             // Use the Assert class to test conditions.
         }
@@ -17,7 +16,7 @@ namespace Unity.Multiplayer.Samples.Utilities.Tests.Runtime
         // A UnityTest behaves like a coroutine in PlayMode
         // and allows you to yield null to skip a frame in EditMode
         [UnityTest]
-        public IEnumerator RuntimeExampleTestWithEnumeratorPasses()
+        public IEnumerator EditorSampleTestWithEnumeratorPasses()
         {
             // Use the Assert class to test conditions.
             // yield to skip a frame

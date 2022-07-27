@@ -10,6 +10,8 @@
 /[Ll]ogs/
 /[Uu]ser[Ss]ettings/
 
+/.Editor
+
 # output dir
 /Bin/
 
