@@ -2,7 +2,6 @@
   "name": "com.unity.multiplayer.samples.coop",
   "displayName": "Multiplayer Samples Utilities",
   "version": "1.3.0-pre",
-  "type": "template",
   "host": "hub",
   "unity": "2020.3",
   "description": "Utilities package built on top of Netcode for GameObjects, providing useful scripts and tools.",
