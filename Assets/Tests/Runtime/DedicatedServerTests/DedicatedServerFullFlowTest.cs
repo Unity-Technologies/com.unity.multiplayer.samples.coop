@@ -8,11 +8,10 @@ using UnityEditor.TestTools;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
-// #if UNITY_SERVER
 
 namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 {
-    [RequirePlatformSupport(BuildTarget.StandaloneOSX)]
+    [ConditionalIgnore(DedicatedServerTestUtilities.ServerOnly, "Ignored on Client.")]
     public class DedicatedServerFullFlowTest
     {
         [UnityTest]
@@ -45,4 +44,3 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         }
     }
 }
-// #endif
