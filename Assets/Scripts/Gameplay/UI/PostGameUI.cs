@@ -1,6 +1,7 @@
 using System;
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
@@ -36,15 +37,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
 
         ConnectionManager m_ConnectionManager;
-        ISubscriber<WinStateMessage> m_WinStateSub;
-
-        IDisposable m_WinStateSubscription;
+        PostGameState m_PostGameState;
 
         [Inject]
-        void Inject(ISubscriber<WinStateMessage> winStateSub, ConnectionManager connectionManager)
+        void Inject(ConnectionManager connectionManager, PostGameState postGameState)
         {
             m_ConnectionManager = connectionManager;
-            m_WinStateSub = winStateSub;
+            m_PostGameState = postGameState;
 
             // only hosts can restart the game, other players see a wait message
             if (NetworkManager.Singleton.IsHost)
@@ -58,14 +57,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_WaitOnHostMsg.SetActive(true);
             }
 
-            m_WinStateSubscription = m_WinStateSub.Subscribe(SetPostGameUI);
+            SetPostGameUI(NetworkWinState.Instance.winState.Value);
         }
 
-        void SetPostGameUI(WinStateMessage winStateMessage)
+        void SetPostGameUI(WinState winState)
         {
-            m_WinStateSubscription.Dispose();
-
-            switch (winStateMessage.WinState)
+            switch (winState)
             {
                 // Set end message and background color based last game outcome
                 case WinState.Win:
@@ -86,15 +83,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnPlayAgainClicked()
         {
-            // this should only ever be called by the Host - so just go ahead and switch scenes
-            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
-
-            // FUTURE: could be improved to better support a dedicated server architecture
+            m_PostGameState.PlayAgain();
         }
 
         public void OnMainMenuClicked()
         {
-            m_ConnectionManager.RequestShutdown();
+            m_PostGameState.GoToMainMenu();
         }
     }
 }
