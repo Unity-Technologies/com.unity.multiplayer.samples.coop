@@ -288,9 +288,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
 
-            //todo
-            // NetworkWinState.Insta,ce
-            // SendWinStateMessage( new WinStateMessage( gameWon ? PlaythroughState.Win : PlaythroughState.Loss));
+            m_NetworkWinState.winState.Value = gameWon ? WinState.Win : WinState.Loss;
 
             SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
         }
