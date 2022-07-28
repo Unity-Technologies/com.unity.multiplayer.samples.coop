@@ -76,6 +76,22 @@ Running the game over internet currently requires setting up a relay. Boss Room 
 
 Alternatively you can use Port Forwarding. The https://portforward.com/ site has guides on how to enable port forwarding on a huge number of routers. Boss Room uses `UDP` and needs a `9998` external port to be open. Make sure your host's address listens on 0.0.0.0 (127.0.0.1 is for local development only).
 
+---------------
+**Dedicated Server**
+
+Boss Room has a dedicated server mode, allowing you to use it as a headless server with no player running on it. To run it:
+
+Local testing
+1. Switch your editor to the **Dedicated Server** build target.
+2. Hit play. Boss Room will bypass the main menu and enter directly the character select scene and wait for players.
+3. On a clone or build, connect your client to 127.0.0.1 with default port.
+
+A build can be uploaded to a dedicated server hosting provider (for example [Multiplay](https://unity.com/products/multiplay))
+On Multiplay, please use these launch parameters: ```-port=$$port$$ -logFile $$server_log_dir$$/Engine.log```
+
+For more info on dedicated servers and why you'd want to use this, see our docs site!
+<!--TODO link to DGS doc page -->
+
 ------------------------------------------
 
 ## Exploring the project
