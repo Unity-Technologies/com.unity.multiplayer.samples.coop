@@ -76,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                     m_LoseGameMessage.gameObject.SetActive(true);
                     break;
                 case WinState.Invalid:
-                    Debug.LogError("PostGameUI encountered Invalid WinState");
+                    Debug.LogWarning("PostGameUI encountered Invalid WinState");
                     break;
             }
         }

@@ -285,10 +285,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         IEnumerator CoroGameOver(float wait, bool gameWon)
         {
+            m_NetworkWinState.winState.Value = gameWon ? WinState.Win : WinState.Loss;
+
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
-
-            m_NetworkWinState.winState.Value = gameWon ? WinState.Win : WinState.Loss;
 
             SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
         }
