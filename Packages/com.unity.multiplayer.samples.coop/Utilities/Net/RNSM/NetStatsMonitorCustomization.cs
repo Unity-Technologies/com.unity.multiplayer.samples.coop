@@ -12,14 +12,14 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         void Start()
         {
-            m_Monitor.enabled = false;
+            m_Monitor.Visible = false;
         }
 
         void Update()
         {
             if (Input.GetKeyUp(KeyCode.S) || Input.touchCount == k_NbTouchesToOpenWindow && AnyTouchDown())
             {
-                m_Monitor.enabled = !m_Monitor.enabled; // toggle
+                m_Monitor.Visible = !m_Monitor.Visible; // toggle
             }
         }
 
