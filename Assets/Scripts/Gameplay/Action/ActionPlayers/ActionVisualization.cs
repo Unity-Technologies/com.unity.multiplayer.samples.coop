@@ -24,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             Parent = parent;
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             //do a reverse-walk so we can safely remove inside the loop.
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)

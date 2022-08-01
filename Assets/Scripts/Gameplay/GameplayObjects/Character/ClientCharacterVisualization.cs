@@ -273,7 +273,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, m_CurrentSpeed);
             }
 
-            m_ActionViz.Update();
+            m_ActionViz.OnUpdate();
         }
 
         void OnAnimEvent(string id)
