@@ -8,7 +8,6 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.TestHelpers.Runtime;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.TestTools;
@@ -34,9 +33,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 builder.RegisterComponent(NetworkManager);
                 builder.RegisterComponent(ConnectionManager);
                 builder.RegisterComponent(UpdateRunner);
+                builder.RegisterComponent(new NetworkedMessageChannel<ConnectionEventMessage>()).AsImplementedInterfaces();
                 builder.RegisterInstance(new BufferedMessageChannel<ConnectStatus>()).AsImplementedInterfaces();
                 builder.RegisterInstance(new MessageChannel<UnityServiceErrorMessage>()).AsImplementedInterfaces();
-                builder.RegisterInstance(new NetworkedMessageChannel<ConnectionEventMessage>()).AsImplementedInterfaces();
                 builder.RegisterInstance(new MessageChannel<ReconnectMessage>()).AsImplementedInterfaces();
                 builder.RegisterInstance(new BufferedMessageChannel<LobbyListFetchedMessage>()).AsImplementedInterfaces();
                 builder.Register<LocalLobby>(Lifetime.Singleton);
@@ -77,35 +76,48 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             return false;
         }
 
-        static void InitializeInstance(string name, NetworkManager networkManager, List<ConnectionState> connectionStateSequence, GameObject playerGameObject, out ConnectionManager connectionManager, out ConnectionManagementTestsLifeTimeScope scope)
+        static void InitializeInstance(string name, NetworkManager networkManager, List<ConnectionState> connectionStateSequence, out ConnectionManager connectionManager, out ConnectionManagementTestsLifeTimeScope scope)
         {
-            var serverConnectionManagerGO = new GameObject($"ConnectionManager - {name}");
-            connectionManager = serverConnectionManagerGO.AddComponent<ConnectionManager>();
+            var connectionManagerGO = new GameObject($"ConnectionManager - {name}");
+            connectionManager = connectionManagerGO.AddComponent<ConnectionManager>();
 
             networkManager.NetworkConfig.ConnectionApproval = true;
-            networkManager.NetworkConfig.PlayerPrefab = playerGameObject;
+            networkManager.NetworkConfig.EnableSceneManagement = false;
 
-            var serverUpdateRunnerGO = new GameObject($"UpdateRunner - {name}");
-            var serverUpdateRunner = serverUpdateRunnerGO.AddComponent<UpdateRunner>();
+            var updateRunnerGO = new GameObject($"UpdateRunner - {name}");
+            var updateRunner = updateRunnerGO.AddComponent<UpdateRunner>();
 
-            var serverLifeTimeScopeGO = new GameObject($"LifeTimeScope - {name}");
-            scope = serverLifeTimeScopeGO.AddComponent<ConnectionManagementTestsLifeTimeScope>();
+            var lifeTimeScopeGO = new GameObject($"LifeTimeScope - {name}");
+            scope = lifeTimeScopeGO.AddComponent<ConnectionManagementTestsLifeTimeScope>();
             scope.NetworkManager = networkManager;
             scope.ConnectionManager = connectionManager;
-            scope.UpdateRunner = serverUpdateRunner;
+            scope.UpdateRunner = updateRunner;
             scope.Build();
             connectionManager.m_OnStateChanged += connectionStateSequence.Add;
+        }
+
+        void CreatePlayerPrefab()
+        {
+            // Create playerPrefab
+            m_PlayerPrefab = new GameObject("Player");
+            NetworkObject networkObject = m_PlayerPrefab.AddComponent<NetworkObject>();
+
+            // Make it a prefab
+            NetcodeIntegrationTestHelpers.MakeNetworkObjectTestPrefab(networkObject);
+
+            // Set the player prefab for the server and clients
+            m_ServerNetworkManager.NetworkConfig.PlayerPrefab = m_PlayerPrefab;
+
+            foreach (var client in m_ClientNetworkManagers)
+            {
+                client.NetworkConfig.PlayerPrefab = m_PlayerPrefab;
+            }
         }
 
         protected override void OnServerAndClientsCreated()
         {
             var sceneLoaderWrapperGO = new GameObject("SceneLoader");
             sceneLoaderWrapperGO.AddComponent<SceneLoaderWrapperStub>();
-
-            var playerPrefabGO = new GameObject("PlayerObject");
-            var networkObject = playerPrefabGO.AddComponent<NetworkObject>();
-            networkObject.DontDestroyWithOwner = true;
-            NetcodeIntegrationTestHelpers.MakeNetworkObjectTestPrefab(networkObject);
 
             m_ClientScopes = new ConnectionManagementTestsLifeTimeScope[NumberOfClients];
             m_ClientConnectionManagers = new ConnectionManager[NumberOfClients];
@@ -114,11 +126,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             {
                 var clientId = i;
                 m_ClientConnectionStateSequences[clientId] = new List<ConnectionState>();
-                InitializeInstance($"Client{clientId}", m_ClientNetworkManagers[clientId], m_ClientConnectionStateSequences[clientId], playerPrefabGO, out m_ClientConnectionManagers[clientId], out m_ClientScopes[clientId]);
+                InitializeInstance($"Client{clientId}", m_ClientNetworkManagers[clientId], m_ClientConnectionStateSequences[clientId], out m_ClientConnectionManagers[clientId], out m_ClientScopes[clientId]);
             }
 
             m_ServerConnectionStateSequence = new List<ConnectionState>();
-            InitializeInstance("Server", m_ServerNetworkManager, m_ServerConnectionStateSequence, playerPrefabGO, out m_ServerConnectionManager, out m_ServerScope);
+            InitializeInstance("Server", m_ServerNetworkManager, m_ServerConnectionStateSequence, out m_ServerConnectionManager, out m_ServerScope);
+
+            CreatePlayerPrefab();
 
             base.OnServerAndClientsCreated();
         }
@@ -132,6 +146,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             for (var i = 0; i < NumberOfClients; i++)
             {
                 var clientId = i;
+                m_ClientConnectionManagers[clientId].RequestShutdown();
                 yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
             }
 
@@ -434,24 +449,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         public IEnumerator ClientAndHostChangingRolesBetweenSessions_Success()
         {
             SetUniqueProfilesForEachClient();
-            m_ClientConnectionManagers[0].StartHostIp("server", "127.0.0.1", 9998);
-            Assert.IsTrue(m_ClientNetworkManagers[0].IsHost);
 
-            m_ServerConnectionManager.StartClientIp("client0", "127.0.0.1", 9998);
-            for (var i = 1; i < NumberOfClients; i++)
-            {
-                m_ClientConnectionManagers[i].StartClientIp($"client{i}", "127.0.0.1", 9998);
-            }
 
-            yield return WaitForClientsConnectedOrTimeOut(m_ClientNetworkManagers);
-            Assert.IsTrue(m_ServerNetworkManager.IsConnectedClient);
-            for (var i = 1; i < NumberOfClients; i++)
-            {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
-            }
-
-            m_ClientConnectionManagers[0].RequestShutdown();
-            yield return new WaitWhile(() => m_ClientNetworkManagers[0].IsListening);
 
             StartHost();
             Assert.IsTrue(m_ServerNetworkManager.IsHost);
@@ -462,7 +461,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
             }
 
-
+            m_ServerConnectionManager.RequestShutdown();
+            yield return new WaitWhile(() => m_ServerNetworkManager.IsListening);
             Assert.IsFalse(m_ServerNetworkManager.IsHost);
 
             for (var i = 0; i < NumberOfClients; i++)
@@ -472,33 +472,51 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
             }
 
+            // Switching references for Client0 and Server temporarily
+            (m_ServerNetworkManager, m_ClientNetworkManagers[0]) = (m_ClientNetworkManagers[0], m_ServerNetworkManager);
+            (m_ServerConnectionManager, m_ClientConnectionManagers[0]) = (m_ClientConnectionManagers[0], m_ServerConnectionManager);
+
+            // recreate player prefab here
+            CreatePlayerPrefab();
+
+            StartHost();
+            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+
+            yield return ConnectClients();
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+            }
+
+            // Switching back references for Client0 and Server
+            (m_ServerNetworkManager, m_ClientNetworkManagers[0]) = (m_ClientNetworkManagers[0], m_ServerNetworkManager);
+            (m_ServerConnectionManager, m_ClientConnectionManagers[0]) = (m_ClientConnectionManagers[0], m_ServerConnectionManager);
+
             var expectedServerConnectionStateSequence = new List<ConnectionState>();
-            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_ClientConnecting);
-            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_ClientConnected);
-            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_DisconnectingWithReason);
-            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Offline);
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
             expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_Offline);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_ClientConnecting);
+            expectedServerConnectionStateSequence.Add(m_ServerConnectionManager.m_ClientConnected);
             Assert.AreEqual(expectedServerConnectionStateSequence, m_ServerConnectionStateSequence);
 
             for (var i = 0; i < NumberOfClients; i++)
             {
                 var expectedClientConnectionStateSequence = new List<ConnectionState>();
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_DisconnectingWithReason);
+                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
                 if (i == 0)
                 {
-                    expectedClientConnectionStateSequence.Add(m_ServerConnectionManager.m_StartingHost);
-                    expectedClientConnectionStateSequence.Add(m_ServerConnectionManager.m_Hosting);
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_StartingHost);
+                    expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Hosting);
                 }
                 else
                 {
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
                     expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
                 }
-                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_DisconnectingWithReason);
-                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_Offline);
-                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnecting);
-                expectedClientConnectionStateSequence.Add(m_ClientConnectionManagers[i].m_ClientConnected);
-
                 Assert.AreEqual(expectedClientConnectionStateSequence, m_ClientConnectionStateSequences[i]);
             }
         }
