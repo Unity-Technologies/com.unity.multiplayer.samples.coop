@@ -5,9 +5,10 @@
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
         "Unity.Multiplayer.Samples.Utilities.Testing",
-        "Unity.Netcode.Runtime",
         "Unity.BossRoom.Gameplay",
         "Unity.BossRoom.Infrastructure",
+        "Unity.Netcode.Runtime",
+        "Unity.Netcode.TestHelpers.Runtime",
         "VContainer",
         "VContainer.EnableCodeGen"
     ],
