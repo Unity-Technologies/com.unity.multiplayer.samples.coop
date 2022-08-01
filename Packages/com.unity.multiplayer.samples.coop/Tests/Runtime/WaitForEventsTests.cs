@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using BossRoom.Scripts.Shared.Utilities;
@@ -122,6 +123,21 @@ namespace Unity.Multiplayer.Samples.Utilities.Tests.Runtime
 
             Assert.That(m_ServerNetworkManager.IsServer);
             Assert.That(m_ServerNetworkManager.IsListening);
+        }
+
+        [UnityTest]
+        public IEnumerator TimeoutTest()
+        {
+            float timeToWait = 0.5f;
+            var waitForServerIterator = new WaitForServerStarted(m_ServerNetworkManager, timeToWait);
+            Assert.True(waitForServerIterator.MoveNext()); // check that this would be waiting since server isn't started
+
+            yield return new WaitForSecondsRealtime(timeToWait);
+
+            Assert.Throws(typeof(TimeoutException), () =>
+            {
+                waitForServerIterator.MoveNext();
+            });
         }
     }
 }

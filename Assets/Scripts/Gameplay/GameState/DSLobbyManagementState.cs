@@ -48,6 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
                 SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
             }
+
             StartCoroutine(StartServerCoroutine());
         }
     }
