@@ -12,7 +12,8 @@
         "Unity.BossRoom.Utils",
         "Unity.BossRoom.ConnectionManagement",
         "VContainer",
-        "VContainer.EnableCodeGen"
+        "VContainer.EnableCodeGen",
+        "TODO-REMOVE-UNSAFE"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

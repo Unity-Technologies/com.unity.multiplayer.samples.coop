@@ -20,7 +20,8 @@
         "Unity.Multiplayer.Samples.Utilities",
         "Unity.BossRoom.Utils",
         "Unity.BossRoom.ConnectionManagement",
-        "VContainer"
+        "VContainer",
+        "TODO-REMOVE-UNSAFE"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

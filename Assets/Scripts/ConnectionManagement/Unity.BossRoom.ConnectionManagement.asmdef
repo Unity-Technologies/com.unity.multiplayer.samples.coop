@@ -11,7 +11,8 @@
         "Unity.BossRoom.Utils",
         "Unity.Services.Lobbies",
         "Unity.Networking.Transport",
-        "VContainer"
+        "VContainer",
+        "TODO-REMOVE-UNSAFE"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

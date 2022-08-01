@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             var success = NetworkManager.Singleton.StartServer();
             if (!success)
             {
-                DedicatedServerUtilities.Log("StartServer returned false and failed starting. Killing process.");
+                DedicatedServerUtilities.LogCustom("StartServer returned false and failed starting. Killing process.");
                 Application.Quit(1); // "1" exit code to tell whatever is running this server something wrong happened.
                 return;
             }

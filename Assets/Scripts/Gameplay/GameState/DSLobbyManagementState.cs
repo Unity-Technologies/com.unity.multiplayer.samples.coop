@@ -34,12 +34,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var portArg = "-port";
             if (args.ContainsKey(portArg) && !int.TryParse(args[portArg], out port))
             {
-                DedicatedServerUtilities.Log("failed to parse -port arg: " + args[portArg]);
+                DedicatedServerUtilities.LogCustom("failed to parse -port arg: " + args[portArg]);
             }
 
             IEnumerator StartServerCoroutine()
             {
-                DedicatedServerUtilities.Log($"Starting Headless Server, listening on address {address}:{port}");
+                DedicatedServerUtilities.LogCustom($"Starting Headless Server, listening on address {address}:{port}");
                 m_ConnectionManager.StartServerIP(address, port); // This will switch to the char select scene once the server started callback has been called
 
                 yield return new WaitForServerStarted(); // Less performant than just the callback, but way more readable than a callback hell.

@@ -1,9 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using Unity.Logging;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Debug = UnityEngine.Debug;
+
+using Unity.Logging.Internal.Debug;
+using Unity.Logging.Sinks;
+using Logger = Unity.Logging.Logger;
 
 namespace Unity.Multiplayer.Samples
 {
@@ -45,10 +50,61 @@ namespace Unity.Multiplayer.Samples
         /// integrated in boss room. TODO for this first pass at DGS, we're using the default logger. TODO replace me - MTT-4038
         /// </summary>
         /// <param name="message"></param>
-        public static void Log(string message)
+
+        public static void LogCustom(string message)
         {
             // IMPORTANT FOR LOGGING READ ABOVE. The following isn't recommended for production use with dedicated game servers.
             Debug.Log($"[{DateTime.UtcNow}] {Time.realtimeSinceStartup} {Time.time} pid[{Process.GetCurrentProcess().Id}] - {message}");
+        }
+
+        public static void InitializeLogging()
+        {
+            // Feedback Iurii
+            // example doesn't work Log.Logger = new LoggerConfig() --> where do I find Log? Is that an instance of someting? It looks like a static class, but I can't find it
+            // -- looking at the sample, it's a generated internal class?
+            string template = "{Timestamp} - {Level} - {Message}";
+            var fileName = "unity-logging-test"; // TODO Multiplay format
+            var logPathPrefix = "DGSEditorLogging/" + fileName;
+
+            Log.Logger = new LoggerConfig().
+                WriteTo.Console(captureStackTrace: true, minLevel: LogLevel.Verbose) // will the console be disabled by default in a build? Will its logs still output to -logFile's location?
+                .WriteTo.File(captureStackTrace: false, minLevel: LogLevel.Warning, fileName: logPathPrefix, maxRoll: 5, maxTimeSpan: TimeSpan.FromDays(1))
+                .MinimumLevel.Debug()
+                .OutputTemplate(template)
+                .CreateLogger();
+
+            SelfLog.SetMode(SelfLog.Mode.EnabledInUnityEngineDebugLogError);
+
+            Log.Verbose("Hello Verbose");                                                                      // file only
+            Log.Debug("Hello Debug");                                                                                                          // console & file
+            Log.Info("Hello Info");                                                                                    // console & file
+            Log.Warning("Hello Warning");                                                                                                      // console & file
+            Log.Error("Hello Error");                                                                                  // console & file
+            Log.Fatal("Hello Fatal. That was {Level}");
+
+            Log.Error("test structured {0}", 123);
+
+            Log.Info("Logging initialized");
+            Debug.Log("debug.log in comparison");
+
+
+            Log.Logger.SetMinimalLogLevelAcrossAllSinks(LogLevel.Info);
+
+            Log.Info("infoooooooooo");
+
+
+            // Log.Logger = new Logger(new LoggerConfig()
+            //     .MinimumLevel.Debug()
+            //     .OutputTemplate("{Timestamp} - {Level} - {Message}")
+            //     .WriteTo.File("LogName.log", minLevel: LogLevel.Verbose)
+            //     .WriteTo.Console(outputTemplate: "{Level} || {Timestamp} || {Message}"));
+            // Log.Info("Logging initialized");
+
+        }
+
+        public static void OnUpdate()
+        {
+            Unity.Logging.Internal.LoggerManager.ScheduleUpdateLoggers(); // make sure to call this once per frame. can be in any place
         }
 
         /// <summary>
@@ -66,7 +122,7 @@ namespace Unity.Multiplayer.Samples
                 PrintChildObjectsRecursive(rootObject, depth: 0, ref toPrint);
             }
 
-            Log(toPrint);
+            LogCustom(toPrint);
         }
 
         private static void PrintChildObjectsRecursive(GameObject parentObject, int depth, ref string toPrint)

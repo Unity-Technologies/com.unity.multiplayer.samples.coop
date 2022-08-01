@@ -57,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             if (DedicatedServerUtilities.IsServerBuildTarget)
             {
-                DedicatedServerUtilities.Log($"Entering game state:[{GetType().Name}], waiting for player joining and making their selection");
+                DedicatedServerUtilities.LogCustom($"Entering game state:[{GetType().Name}], waiting for player joining and making their selection");
             }
         }
 

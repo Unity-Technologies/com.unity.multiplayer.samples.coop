@@ -93,10 +93,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
             Application.wantsToQuit += OnWantToQuit;
             DontDestroyOnLoad(gameObject);
             DontDestroyOnLoad(m_UpdateRunner.gameObject);
+            DedicatedServerUtilities.InitializeLogging();
 
             if (DedicatedServerUtilities.IsServerBuildTarget)
             {
                 Application.targetFrameRate = 30; // Fix your framerates!! There's no visual here, it's useless to have your server at 60+FPS!
+                // DedicatedServerUtilities.InitializeLogging();
 
                 // skip main menu and start IP server directly
                 SceneManager.LoadScene(SceneNames.DedicatedServerLobbyManagement);
@@ -107,6 +109,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
                 SceneManager.LoadScene(SceneNames.StartupClient, LoadSceneMode.Additive);
                 SceneManager.LoadScene(SceneNames.MainMenu);
             }
+        }
+
+        void Update()
+        {
+            DedicatedServerUtilities.OnUpdate();
         }
 
         protected override void OnDestroy()

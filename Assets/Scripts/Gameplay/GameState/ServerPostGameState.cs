@@ -34,7 +34,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     IEnumerator WaitAndStartNewGame()
                     {
-                        DedicatedServerUtilities.Log($"Waiting a {SecondsToWaitForNewGame} seconds until new game");
+                        DedicatedServerUtilities.LogCustom($"Waiting a {SecondsToWaitForNewGame} seconds until new game");
                         yield return new WaitForSeconds(SecondsToWaitForNewGame);
                         SceneLoaderWrapper.Instance.LoadScene(SceneNames.CharSelect, useNetworkSceneManager: true);
                     }
