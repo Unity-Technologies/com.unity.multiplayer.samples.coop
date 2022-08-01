@@ -9,7 +9,6 @@ namespace BossRoom.Scripts.Shared.Utilities
     /// This is less performant, as it actively polls each frames for the bool, but helps make server starting code more readable, by allowing to
     /// sequence pre-server startup code and post-server startup code without having to put it in a callback
     /// </summary>
-    /// <remarks>TODO look into timeout</remarks>
     /// <example>
     /// IEnumerator StartServerCoroutine()
     /// {
@@ -23,12 +22,15 @@ namespace BossRoom.Scripts.Shared.Utilities
     {
         bool m_IsDone;
         NetworkManager m_NetworkManager;
+        readonly float m_Timeout;
+        bool IsTimedOut => Time.realtimeSinceStartup > m_Timeout;
 
         public override bool keepWaiting
         {
             get
             {
                 if (m_NetworkManager.IsClient && !m_NetworkManager.IsServer) throw new NotServerException("shouldn't be called on clients");
+                if (IsTimedOut) throw new TimeoutException("Timed out waiting for server start");
 
                 return !m_IsDone;
             }
@@ -36,8 +38,10 @@ namespace BossRoom.Scripts.Shared.Utilities
 
         public WaitForServerStarted() : this(NetworkManager.Singleton) { }
 
-        public WaitForServerStarted(NetworkManager managerInstance)
+        // default timeout is short, compared to connection timeout, since the server starting to listen on a port shouldn't take too long
+        public WaitForServerStarted(NetworkManager managerInstance, float secondsToWait = 1f)
         {
+            m_Timeout = Time.realtimeSinceStartup + secondsToWait;
             m_NetworkManager = managerInstance;
             if (m_NetworkManager.IsServer)
             {
