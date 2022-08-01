@@ -122,7 +122,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         internal void ChangeState(ConnectionState nextState)
         {
             m_OnStateChanged?.Invoke(nextState);
-            Debug.Log($"Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
+            Debug.Log($"{name}: Changed connection state from {m_CurrentState.GetType().Name} to {nextState.GetType().Name}.");
 
             if (m_CurrentState != null)
             {
