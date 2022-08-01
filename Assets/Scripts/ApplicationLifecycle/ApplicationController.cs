@@ -32,7 +32,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared
         {
             base.Configure(builder);
             builder.RegisterComponent(m_UpdateRunner);
-            builder.RegisterComponent(m_ConnectionManager.NetworkManager);
             builder.RegisterComponent(m_ConnectionManager);
             builder.RegisterComponent(m_NetworkManager);
 
