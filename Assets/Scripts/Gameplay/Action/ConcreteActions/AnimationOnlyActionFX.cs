@@ -1,4 +1,6 @@
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+using Unity.Multiplayer.Samples.BossRoom.Visual;
+
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Used for simple Actions that only need to play a few animations (one at startup and optionally
@@ -8,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
     {
         public AnimationOnlyActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             return ActionConclusion.Continue;
         }

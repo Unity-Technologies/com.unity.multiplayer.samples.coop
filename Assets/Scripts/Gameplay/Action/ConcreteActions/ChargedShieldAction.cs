@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// A defensive action where the character becomes resistant to damage.
@@ -30,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public ChargedShieldAction(ServerCharacter parent, ref ActionRequestData data)
             : base(parent, ref data) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
@@ -60,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return m_StoppedChargingUpTime == 0;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (m_StoppedChargingUpTime == 0)
             {

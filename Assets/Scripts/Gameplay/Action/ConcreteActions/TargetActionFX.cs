@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// The TargetActionFX runs persistently on the local player, and will attach target reticules to the player's active target.
@@ -19,9 +20,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
         }
 
-        public override bool Start()
+        public override bool OnStart()
         {
-            base.Start();
+            base.OnStart();
             m_ParentState = m_Parent.NetState;
 
             m_ParentState.TargetId.OnValueChanged += OnTargetChanged;
@@ -44,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (m_CurrentTarget != m_NewTarget)
             {

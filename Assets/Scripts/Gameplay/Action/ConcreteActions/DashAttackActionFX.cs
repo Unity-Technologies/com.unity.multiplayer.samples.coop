@@ -1,6 +1,7 @@
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Visualization of a DashAttackAction. See DashAttackAction.cs for more info.
@@ -17,15 +18,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public DashAttackActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
 
-            base.Start();
+            base.OnStart();
 
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (m_Dashed) { return ActionConclusion.Stop; } // we're done!
 

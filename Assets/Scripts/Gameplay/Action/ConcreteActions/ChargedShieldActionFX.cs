@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// The visual aspect of a ChargedShieldAction. Shows "charge up particles" while the power is charging up.
@@ -28,11 +29,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public ChargedShieldActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             Assert.IsTrue(Description.Spawns.Length == 2, $"Found {Description.Spawns.Length} spawns for action {Description.ActionTypeEnum}. Should be exactly 2: a charge-up particle and a fully-charged particle");
 
-            base.Start();
+            base.OnStart();
             m_ChargeGraphics = InstantiateSpecialFXGraphic(Description.Spawns[0], m_Parent.transform, true);
             return true;
         }
@@ -42,7 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return m_StoppedChargingUpTime == 0;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             return IsChargingUp() || (Time.time - m_StoppedChargingUpTime) < Description.EffectDurationSeconds;
         }

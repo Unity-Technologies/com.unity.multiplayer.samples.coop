@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// This class is the first step in AoE ability. It will update the initial input visuals' position and will be in charge

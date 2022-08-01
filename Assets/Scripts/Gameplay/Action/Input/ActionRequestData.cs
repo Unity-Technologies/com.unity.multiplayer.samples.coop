@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// List of all Actions supported in the game.

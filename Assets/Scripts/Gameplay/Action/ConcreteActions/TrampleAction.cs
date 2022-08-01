@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// This represents a "charge-across-the-screen" attack. The character deals damage to every enemy hit.
@@ -50,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public TrampleAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             m_PreviousStage = ActionStage.Windup;
             m_Movement = m_Parent.Movement;
@@ -104,7 +105,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return ActionStage.Complete;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             ActionStage newState = GetCurrentStage();
             if (newState != m_PreviousStage && newState == ActionStage.Charging)

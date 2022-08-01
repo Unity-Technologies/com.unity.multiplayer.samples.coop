@@ -1,8 +1,9 @@
 using Unity.Netcode;
 using UnityEngine;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Action responsible for creating a projectile object.
@@ -13,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public LaunchProjectileAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
             m_Parent.physicsWrapper.Transform.forward = Data.Direction;
@@ -23,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (TimeRunning >= Description.ExecTimeSeconds && !m_Launched)
             {

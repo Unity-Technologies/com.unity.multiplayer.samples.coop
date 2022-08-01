@@ -1,7 +1,8 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
 
     /// <summary>
@@ -34,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </remarks>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             float age = Time.time - TimeStarted;
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)

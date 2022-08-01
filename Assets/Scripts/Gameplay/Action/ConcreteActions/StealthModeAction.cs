@@ -1,4 +1,6 @@
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+using Unity.Multiplayer.Samples.BossRoom.Server;
+
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Causes the character to become hidden to enemies and other players. Notes:
@@ -12,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public StealthModeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
 
@@ -26,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return TimeRunning >= Description.ExecTimeSeconds;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (TimeRunning >= Description.ExecTimeSeconds && !m_IsStealthStarted && !m_IsStealthEnded)
             {

@@ -1,7 +1,9 @@
+using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Controls the visuals for an always-hit-projectile attack. See FXProjectileTargetedAction.cs for more about this action type.
@@ -24,9 +26,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         Transform m_TargetTransform;
 
-        public override bool Start()
+        public override bool OnStart()
         {
-            base.Start();
+            base.OnStart();
             m_Target = GetTarget();
 
             if (m_Target && PhysicsWrapper.TryGetPhysicsWrapper(m_Target.NetworkObjectId, out var physicsWrapper))
@@ -40,7 +42,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (TimeRunning >= Description.ExecTimeSeconds && m_Projectile == null)
             {

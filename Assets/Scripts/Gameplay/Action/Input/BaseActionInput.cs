@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     public abstract class BaseActionInput : MonoBehaviour
     {
@@ -9,9 +9,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         protected Vector3 m_Origin;
         protected ActionType m_ActionType;
         protected Action<ActionRequestData> m_SendInput;
-        Action m_OnFinished;
+        System.Action m_OnFinished;
 
-        public void Initiate(NetworkCharacterState playerOwner, Vector3 origin, ActionType actionType, Action<ActionRequestData> onSendInput, Action onFinished)
+        public void Initiate(NetworkCharacterState playerOwner, Vector3 origin, ActionType actionType, Action<ActionRequestData> onSendInput, System.Action onFinished)
         {
             m_PlayerOwner = playerOwner;
             m_Origin = origin;

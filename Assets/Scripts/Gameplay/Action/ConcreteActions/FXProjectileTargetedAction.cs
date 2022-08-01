@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Action that represents an always-hit raybeam-style ranged attack. A particle is shown from caster to target, and then the
@@ -18,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public FXProjectileTargetedAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             m_Target = GetTarget();
 
@@ -50,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (!m_ImpactedTarget && m_TimeUntilImpact <= TimeRunning)
             {

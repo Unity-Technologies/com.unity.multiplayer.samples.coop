@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Area-of-effect attack Action. The attack is centered on a point provided by the client.
@@ -20,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         public AoeAction(ServerCharacter parent, ref ActionRequestData data)
             : base(parent, ref data) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             float distanceAway = Vector3.Distance(m_Parent.physicsWrapper.Transform.position, Data.Position);
             if (distanceAway > Description.Range + k_MaxDistanceDivergence)
@@ -38,7 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return ActionConclusion.Continue;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (TimeRunning >= Description.ExecTimeSeconds && !m_DidAoE)
             {

@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Graphics for the rogue's StealthModeAction. Note that this is only part of the visual-effects for this action!
@@ -24,7 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public StealthModeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.IsOwner)
             {

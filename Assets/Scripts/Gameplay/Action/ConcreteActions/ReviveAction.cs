@@ -1,8 +1,9 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     public class ReviveAction : Action
     {
@@ -13,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
         }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             if (m_Data.TargetIds == null || m_Data.TargetIds.Length == 0 || !NetworkManager.Singleton.SpawnManager.SpawnedObjects.ContainsKey(m_Data.TargetIds[0]))
             {
@@ -29,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (!m_ExecFired && Time.time - TimeStarted >= Description.ExecTimeSeconds)
             {

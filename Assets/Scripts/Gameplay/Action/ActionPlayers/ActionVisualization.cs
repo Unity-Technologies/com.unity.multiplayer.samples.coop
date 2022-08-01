@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// This is a companion class to ClientCharacterVisualization that is specifically responsible for visualizing Actions. Action visualizations have lifetimes
@@ -29,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
                 var action = m_PlayingActions[i];
-                bool keepGoing = action.Anticipated || action.Update(); // only call Update() on actions that are past anticipation
+                bool keepGoing = action.Anticipated || action.OnUpdate(); // only call OnUpdate() on actions that are past anticipation
                 bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
                 bool timeExpired = expirable && action.TimeRunning >= action.Description.DurationSeconds;
                 bool timedOut = action.Anticipated && action.TimeRunning >= k_AnticipationTimeoutSeconds;
@@ -114,7 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             var anticipatedActionIndex = FindAction(data.ActionTypeEnum, true);
 
             var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFX.MakeActionFX(ref data, Parent);
-            if (actionFX.Start())
+            if (actionFX.OnStart())
             {
                 m_PlayingActions.Add(actionFX);
             }

@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Abstract base class for playing back the visual feedback of an Action.
@@ -30,17 +31,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// Starts the ActionFX. Derived classes may return false if they wish to end immediately without their Update being called.
         /// </summary>
         /// <remarks>
-        /// Derived class should be sure to call base.Start() in their implementation, but note that this resets "Anticipated" to false.
+        /// Derived class should be sure to call base.OnStart() in their implementation, but note that this resets "Anticipated" to false.
         /// </remarks>
         /// <returns>true to play, false to be immediately cleaned up.</returns>
-        public virtual bool Start()
+        public virtual bool OnStart()
         {
             Anticipated = false; //once you start for real you are no longer an anticipated action.
             TimeStarted = UnityEngine.Time.time;
             return true;
         }
 
-        public abstract bool Update();
+        public abstract bool OnUpdate();
 
         /// <summary>
         /// End is always called when the ActionFX finishes playing. This is a good place for derived classes to put

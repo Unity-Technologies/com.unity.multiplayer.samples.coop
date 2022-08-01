@@ -1,4 +1,6 @@
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+using Unity.Multiplayer.Samples.BossRoom.Server;
+
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Action that plays while a character is Stunned. The character does nothing... just sits there.
@@ -14,13 +16,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
         }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             return true;
         }

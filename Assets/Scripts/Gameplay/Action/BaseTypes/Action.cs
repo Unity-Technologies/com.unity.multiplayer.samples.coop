@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using UnityEngine;
 using BlockingMode = Unity.Multiplayer.Samples.BossRoom.ActionDescription.BlockingModeType;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// The abstract parent class that all Actions derive from.
@@ -40,17 +41,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
         /// </summary>
         /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>
-        public abstract bool Start();
+        public abstract bool OnStart();
 
 
         /// <summary>
         /// Called each frame while the action is running.
         /// </summary>
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
-        public abstract bool Update();
+        public abstract bool OnUpdate();
 
         /// <summary>
-        /// Called each frame (before Update()) for the active ("blocking") Action, asking if it should become a background Action.
+        /// Called each frame (before OnUpdate()) for the active ("blocking") Action, asking if it should become a background Action.
         /// </summary>
         /// <returns>true to become a non-blocking Action, false to remain a blocking Action</returns>
         public virtual bool ShouldBecomeNonBlocking()

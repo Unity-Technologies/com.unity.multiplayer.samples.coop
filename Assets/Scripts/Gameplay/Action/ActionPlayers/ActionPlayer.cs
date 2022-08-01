@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using UnityEngine;
 using BlockingMode = Unity.Multiplayer.Samples.BossRoom.ActionDescription.BlockingModeType;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Class responsible for playing back action inputs from user.
@@ -156,7 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 SynthesizeChaseIfNecessary(index);
 
                 m_Queue[0].TimeStarted = Time.time;
-                bool play = m_Queue[0].Start();
+                bool play = m_Queue[0].OnStart();
                 if (!play)
                 {
                     //actions that exited out in the "Start" method will not have their End method called, by design.
@@ -312,7 +313,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <returns>true if the action is still active, false if it's dead</returns>
         private bool UpdateAction(Action action)
         {
-            bool keepGoing = action.Update();
+            bool keepGoing = action.OnUpdate();
             bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
             var timeElapsed = Time.time - action.TimeStarted;
             bool timeExpired = expirable && timeElapsed >= action.Description.DurationSeconds;

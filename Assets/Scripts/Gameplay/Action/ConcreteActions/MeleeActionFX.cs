@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
 
     /// <summary>
@@ -26,9 +27,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
 
-        public override bool Start()
+        public override bool OnStart()
         {
-            base.Start();
+            base.OnStart();
 
             // we can optionally have special particles that should play on the target. If so, add them now.
             // (don't wait until impact, because the particles need to start sooner!)
@@ -58,7 +59,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             return ActionConclusion.Continue;
         }

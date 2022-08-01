@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Causes the attacker to teleport near a target spot, then perform a melee attack. The client
@@ -27,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             Assert.IsTrue(Description.Radius > 0, $"ActionDescription for {Description.ActionTypeEnum} needs a Radius assigned!");
         }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             // remember the exact spot we'll stop.
             m_TargetSpot = ActionUtils.GetDashDestination(m_Parent.physicsWrapper.Transform, Data.Position, true, Description.Range, Description.Range);
@@ -43,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return ActionConclusion.Continue;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             return ActionConclusion.Continue;
         }

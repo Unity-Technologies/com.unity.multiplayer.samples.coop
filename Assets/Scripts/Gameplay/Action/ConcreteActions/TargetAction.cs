@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// The "Target" Action is not a skill, but rather the result of a user left-clicking an enemy. This
@@ -15,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private ServerCharacterMovement m_Movement;
 
-        public override bool Start()
+        public override bool OnStart()
         {
             //we must always clear the existing target, even if we don't run. This is how targets get cleared--running a TargetAction
             //with no target selected.
@@ -35,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             bool isValid = ActionUtils.IsValidTarget(TargetId);
 

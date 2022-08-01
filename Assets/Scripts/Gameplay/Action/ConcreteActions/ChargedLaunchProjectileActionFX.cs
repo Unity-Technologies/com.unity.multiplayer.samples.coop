@@ -1,6 +1,7 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// The visual aspect of a ChargedLaunchProjectileAction.
@@ -23,15 +24,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private bool m_ChargeEnded;
 
-        public override bool Start()
+        public override bool OnStart()
         {
-            base.Start();
+            base.OnStart();
 
             m_Graphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             return !m_ChargeEnded;
         }

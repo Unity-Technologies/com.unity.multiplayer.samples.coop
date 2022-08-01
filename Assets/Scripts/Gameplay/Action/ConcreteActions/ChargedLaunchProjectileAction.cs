@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// A version of LaunchProjectileAction that can be "powered up" by holding down the attack key.
@@ -34,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public ChargedLaunchProjectileAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             // if we have an explicit target, make sure we're aimed at them.
             // (But if the player just clicked on an attack button, there won't be an explicit target, so we should stay facing however we're facing.)
@@ -64,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (m_StoppedChargingUpTime == 0 && GetPercentChargedUp() >= 1)
             {

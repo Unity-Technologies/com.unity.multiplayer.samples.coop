@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     public class ChargedActionInput : BaseActionInput
     {

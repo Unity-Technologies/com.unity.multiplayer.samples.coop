@@ -1,7 +1,8 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     public class ChaseAction : Action
     {
@@ -20,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
         /// </summary>
         /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>
-        public override bool Start()
+        public override bool OnStart()
         {
             if (!HasValidTarget())
             {
@@ -94,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Called each frame while the action is running.
         /// </summary>
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (StopIfDone()) { return ActionConclusion.Stop; }
 

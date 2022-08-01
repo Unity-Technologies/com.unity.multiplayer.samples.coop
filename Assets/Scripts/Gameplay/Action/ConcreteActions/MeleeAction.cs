@@ -1,6 +1,7 @@
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Action that represents a swing of a melee weapon. It is not explicitly targeted, but rather detects the foe that was hit with a physics check.
@@ -35,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
         }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_Parent.NetState.TargetId.Value;
             IDamageable foe = DetectFoe(target);
@@ -56,7 +57,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (!m_ExecutionFired && (Time.time - TimeStarted) >= Description.ExecTimeSeconds)
             {
