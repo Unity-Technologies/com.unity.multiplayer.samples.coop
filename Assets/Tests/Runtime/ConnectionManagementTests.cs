@@ -181,41 +181,48 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             }
         }
 
+        void AssertHostIsListening()
+        {
+            Assert.IsTrue(m_ServerNetworkManager.IsHost && m_ServerNetworkManager.IsListening, "Host not listening.");
+        }
+
+        void AssertAllClientsAreConnected()
+        {
+            for (var i = 0; i < NumberOfClients; i++)
+            {
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient, $"Client{i} is not connected.");
+            }
+        }
+
         [Test]
         public void StartHost_Success()
         {
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
         }
 
         [UnityTest]
         public IEnumerator StartHostAndConnectClients_Success()
         {
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
 
             SetUniqueProfilesForEachClient();
 
             yield return ConnectClients();
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
-            }
+            AssertAllClientsAreConnected();
         }
 
         [UnityTest]
         public IEnumerator UserRequestedHostShutdownAfterClientsConnected_ClientsDisconnectedWithReason()
         {
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
 
             SetUniqueProfilesForEachClient();
 
             yield return ConnectClients();
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
-            }
+            AssertAllClientsAreConnected();
 
             m_ServerConnectionManager.RequestShutdown();
 
@@ -235,8 +242,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         public IEnumerator AttemptingToConnectWithSamePlayerId_ClientsDisconnectedWithReason()
         {
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
 
+            // setting the same profile for all clients so that they have the same player ID
             for (var i = 0; i < NumberOfClients; i++)
             {
                 var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
@@ -245,10 +253,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             yield return ConnectClients();
 
-            Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient);
+            // The first client should be able to connect
+            Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient, "The first client is not connected.");
+            // Every other client should get their connection denied
             for (var i = 1; i < NumberOfClients; i++)
             {
-                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient, "A client with the same player ID has connected.");
             }
         }
 
@@ -266,7 +276,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             for (var i = 0; i < NumberOfClients; i++)
             {
-                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient, $"Client{i} is connected while no server is running.");
             }
         }
 
@@ -274,15 +284,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         public IEnumerator UnexpectedClientDisconnect_ClientReconnectingSuccessfully()
         {
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
 
             SetUniqueProfilesForEachClient();
 
             yield return ConnectClients();
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
-            }
+            AssertAllClientsAreConnected();
 
             // wait for client synchronization to be over server-side before shutting down client
             yield return null;
@@ -293,11 +300,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             // Waiting until shutdown is complete
             yield return new WaitWhile(() => m_ClientNetworkManagers[0].ShutdownInProgress);
-            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient);
+            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient, "Client0 has not shut down properly.");
 
             // Waiting for client to automatically reconnect
             yield return WaitForClientsConnectedOrTimeOut();
-            Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient);
+            Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient, "Client0 failed to reconnect.");
         }
 
 
@@ -305,26 +312,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         public IEnumerator UnexpectedServerShutdown_ClientsFailToReconnect()
         {
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
 
             SetUniqueProfilesForEachClient();
 
             yield return ConnectClients();
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
-            }
+            AssertAllClientsAreConnected();
 
             // Shutting down the server
             m_ServerNetworkManager.Shutdown();
             yield return new WaitWhile(() => m_ServerNetworkManager.ShutdownInProgress);
-            Assert.IsFalse(m_ServerNetworkManager.IsListening);
+            Assert.IsFalse(m_ServerNetworkManager.IsListening, "Server has not shut down properly.");
 
-            // Waiting until shutdown is complete for the client as well
+            // Waiting until shutdown is complete for the clients as well
             for (var i = 0; i < NumberOfClients; i++)
             {
-                yield return new WaitWhile(() => m_ClientNetworkManagers[i].ShutdownInProgress);
-                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+                var clientId = i;
+                yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].ShutdownInProgress);
+                Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient, $"Client{clientId} has not shut down properly after losing connection.");
             }
 
             // Waiting for clients to fail to automatically reconnect
@@ -337,7 +342,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return WaitForClientsConnectedOrTimeOut();
             for (var i = 0; i < NumberOfClients; i++)
             {
-                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient, $"Client{i} is connected while no server is running.");
             }
         }
 
@@ -346,26 +351,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         {
             SetUniqueProfilesForEachClient();
 
-
-
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
 
             yield return ConnectClients();
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
-            }
+            AssertAllClientsAreConnected();
 
+            // Requesting shutdown on the server
             m_ServerConnectionManager.RequestShutdown();
             yield return new WaitWhile(() => m_ServerNetworkManager.IsListening);
             Assert.IsFalse(m_ServerNetworkManager.IsHost);
 
+            // Waiting until shutdown is complete for the clients
             for (var i = 0; i < NumberOfClients; i++)
             {
                 var clientId = i;
-                yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
-                Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
+                yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].ShutdownInProgress);
+                Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient, $"Client{clientId} has not shut down properly after losing connection.");
             }
 
             // Switching references for Client0 and Server temporarily
@@ -376,13 +378,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             CreatePlayerPrefab();
 
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
 
             yield return ConnectClients();
-            for (var i = 0; i < NumberOfClients; i++)
-            {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
-            }
+            AssertAllClientsAreConnected();
 
             // Switching back references for Client0 and Server
             (m_ServerNetworkManager, m_ClientNetworkManagers[0]) = (m_ClientNetworkManagers[0], m_ServerNetworkManager);
@@ -393,7 +392,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
         public IEnumerator ClientCancellingWhileConnectingToListeningServer_ConnectionCancelled()
         {
             StartHost();
-            Assert.IsTrue(m_ServerNetworkManager.IsHost);
+            AssertHostIsListening();
 
             SetUniqueProfilesForEachClient();
 
@@ -409,11 +408,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             yield return WaitForClientsConnectedOrTimeOut();
 
-            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient);
+            Assert.IsFalse(m_ClientNetworkManagers[0].IsConnectedClient, "Client0 has not successfully cancelled its connection.");
 
             for (var i = 1; i < NumberOfClients; i++)
             {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient);
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient,  $"Client{i} is not connected.");
             }
         }
 
@@ -438,7 +437,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             for (var i = 0; i < NumberOfClients; i++)
             {
-                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient);
+                Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient, $"Client{i} is connected while no server is running.");
             }
         }
 
