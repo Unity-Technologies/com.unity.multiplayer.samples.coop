@@ -6,6 +6,7 @@ using UnityEditor.SceneManagement;
 #endif
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// Allows setting a scene as a root scene and setting its child scenes. To use this, drag this component on any object in a scene to make that scene a root scene. In the background, ChildSceneLoader will automatically manage this.
@@ -44,31 +45,108 @@ public class EditorChildSceneLoader : MonoBehaviour
         sceneSetupToLoad[0].isActive = true;
         EditorSceneManager.SaveCurrentModifiedScenesIfUserWantsTo();
         EditorSceneManager.RestoreSceneManagerSetup(sceneSetupToLoad.ToArray());
+
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            var scene = SceneManager.GetSceneAt(i);
+
+            // hacky way to "expand" a scene. If someone found a cleaner way to do this, let me know
+            var selection = new List<Object>();
+            selection.AddRange(Selection.objects);
+            selection.Add(scene.GetRootGameObjects()[0]);
+            Selection.objects = selection.ToArray();
+        }
+    }
+
+    const string k_MenuBase = "Boss Room/Child Scene Loader";
+
+    [MenuItem(k_MenuBase + "/Save Scene Setup To Config")]
+    static void DoSaveSceneSetupMenu()
+    {
+        var activeScene = EditorSceneManager.GetActiveScene();
+        var wasDirty = activeScene.isDirty;
+        var foundLoaders = GameObject.FindObjectsOfType<EditorChildSceneLoader>();
+        EditorChildSceneLoader loader;
+        if (foundLoaders.Length == 0)
+        {
+            // create loader in scene
+            var supportingGameObject = new GameObject("YOU SHOULD NOT SEE THIS");
+            supportingGameObject.hideFlags = HideFlags.DontSaveInBuild | HideFlags.HideInHierarchy;
+            loader = supportingGameObject.AddComponent<EditorChildSceneLoader>();
+            SceneManager.MoveGameObjectToScene(supportingGameObject, activeScene);
+        }
+        else
+        {
+            loader = foundLoaders[0];
+        }
+
+        loader.SaveSceneSetup();
+        EditorSceneManager.MarkSceneDirty(loader.gameObject.scene);
+        TrySave(wasDirty, activeScene);
+        ReadConfig();
+    }
+
+    static void TrySave(bool wasDirty, Scene activeScene)
+    {
+        if (!wasDirty)
+        {
+            EditorSceneManager.SaveScene(activeScene);
+        }
+        else
+        {
+            EditorSceneManager.SaveModifiedScenesIfUserWantsTo(new[] { activeScene });
+        }
+    }
+
+    static EditorChildSceneLoader TryFind()
+    {
+        var foundLoaders = GameObject.FindObjectsOfType<EditorChildSceneLoader>();
+        if (foundLoaders.Length > 1)
+        {
+            throw new Exception("not normal, should only have one loaded child scene loader");
+        }
+
+        if (foundLoaders.Length == 0)
+        {
+            throw new Exception("couldn't find any child scene loader, please use Save Scene setup");
+        }
+
+        return foundLoaders[0];
+    }
+
+    [MenuItem(k_MenuBase + "/Remove Config")]
+    static void RemoveConfig()
+    {
+        var foundObj = TryFind().gameObject;
+        var parentScene = foundObj.scene;
+        var wasDirty = parentScene.isDirty;
+        DestroyImmediate(foundObj);
+        EditorSceneManager.MarkSceneDirty(parentScene);
+        TrySave(wasDirty, parentScene);
+    }
+
+    [MenuItem(k_MenuBase + "/Load Scene Setup from Config")]
+    static void DoResetSceneToConfig()
+    {
+        TryFind().ResetSceneSetupToConfig();
+    }
+
+    [MenuItem(k_MenuBase + "/Read Current Config")]
+    static void ReadConfig()
+    {
+        var foundLoader = TryFind();
+        string toPrint = $"To Load ({foundLoader.ChildScenesToLoadConfig.Count}): ";
+        foreach (var config in foundLoader.ChildScenesToLoadConfig)
+        {
+            toPrint += $"{config.name}, ";
+        }
+
+        Debug.Log(toPrint);
     }
 #endif
 }
 
 #if UNITY_EDITOR
-[CustomEditor(typeof(EditorChildSceneLoader))]
-public class ChildSceneLoaderInspectorGUI : Editor
-{
-    public override void OnInspectorGUI()
-    {
-        base.OnInspectorGUI();
-
-        var currentInspectorObject = (EditorChildSceneLoader)target;
-
-        if (GUILayout.Button("Save scene setup to config"))
-        {
-            currentInspectorObject.SaveSceneSetup();
-        }
-
-        if (GUILayout.Button("Reset scene setup from config..."))
-        {
-            currentInspectorObject.ResetSceneSetupToConfig();
-        }
-    }
-}
 
 [InitializeOnLoad]
 public class ChildSceneLoader
