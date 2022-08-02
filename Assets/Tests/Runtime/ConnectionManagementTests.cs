@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using NUnit.Framework;
@@ -225,6 +226,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             AssertAllClientsAreConnected();
 
             var nbHostEndedSessionMsgsReceived = 0;
+            var subscriptions = new DisposableGroup();
 
             for (int i = 0; i < NumberOfClients; i++)
             {
@@ -253,6 +255,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             }
 
             Assert.AreEqual(NumberOfClients, nbHostEndedSessionMsgsReceived, "Not all clients received a HostEndedSession message.");
+            subscriptions.Dispose();
         }
 
         [UnityTest]
@@ -261,11 +264,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             StartHost();
             AssertHostIsListening();
 
+            var nbLoggedInAgainMsgsReceived = 0;
+            var subscriptions = new DisposableGroup();
+
             // setting the same profile for all clients so that they have the same player ID
             for (var i = 0; i < NumberOfClients; i++)
             {
                 var profileManager = m_ClientScopes[i].Container.Resolve<ProfileManager>();
                 profileManager.Profile = $"Client";
+                if (i > 0)
+                {
+                    subscriptions.Add(m_ClientScopes[i].Container.Resolve<ISubscriber<ConnectStatus>>().Subscribe(message =>
+                    {
+                        Assert.AreEqual(ConnectStatus.LoggedInAgain, message, "Received unexpected ConnectStatus message.");
+                        nbLoggedInAgainMsgsReceived++;
+                    }));
+                }
             }
 
             yield return ConnectClients();
@@ -277,6 +291,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             {
                 Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient, "A client with the same player ID has connected.");
             }
+
+            Assert.AreEqual(NumberOfClients - 1, nbLoggedInAgainMsgsReceived, "Not all clients received a LoggedInAgain message.");
+            subscriptions.Dispose();
         }
 
         [UnityTest]
@@ -312,6 +329,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return null;
             yield return null;
 
+            var nbReconnectingMsgsReceived = 0;
+            var subscriptions = new DisposableGroup();
+
+            subscriptions.Add(m_ClientScopes[0].Container.Resolve<ISubscriber<ConnectStatus>>().Subscribe(message =>
+            {
+                // ignoring the first success message that is in the buffer
+                if (message != ConnectStatus.Success)
+                {
+                    Assert.AreEqual(ConnectStatus.Reconnecting, message, "Received unexpected ConnectStatus message.");
+                    nbReconnectingMsgsReceived++;
+                }
+            }));
+
             // Disconnecting the client at the transport level
             m_ClientNetworkManagers[0].NetworkConfig.NetworkTransport.DisconnectLocalClient();
 
@@ -322,6 +352,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             // Waiting for client to automatically reconnect
             yield return WaitForClientsConnectedOrTimeOut();
             Assert.IsTrue(m_ClientNetworkManagers[0].IsConnectedClient, "Client0 failed to reconnect.");
+
+            Assert.AreEqual(1, nbReconnectingMsgsReceived, "No Reconnecting message received.");
+            subscriptions.Dispose();
         }
 
 
@@ -335,6 +368,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             yield return ConnectClients();
             AssertAllClientsAreConnected();
+
+            var nbReconnectingMsgsReceived = 0;
+            var subscriptions = new DisposableGroup();
+
+            for (int i = 0; i < NumberOfClients; i++)
+            {
+                subscriptions.Add(m_ClientScopes[i].Container.Resolve<ISubscriber<ConnectStatus>>().Subscribe(message =>
+                {
+                    // ignoring the first success message that is in the buffer
+                    if (message != ConnectStatus.Success)
+                    {
+                        Assert.AreEqual(ConnectStatus.Reconnecting, message, "Received unexpected ConnectStatus message.");
+                        nbReconnectingMsgsReceived++;
+                    }
+                }));
+            }
 
             // Shutting down the server
             m_ServerNetworkManager.Shutdown();
@@ -361,6 +410,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             {
                 Assert.IsFalse(m_ClientNetworkManagers[i].IsConnectedClient, $"Client{i} is connected while no server is running.");
             }
+
+            Assert.AreEqual(NumberOfClients, nbReconnectingMsgsReceived, "Not all clients received a Reconnecting message.");
+            subscriptions.Dispose();
         }
 
         [UnityTest]
