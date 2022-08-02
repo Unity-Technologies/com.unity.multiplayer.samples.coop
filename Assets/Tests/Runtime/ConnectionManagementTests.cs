@@ -224,11 +224,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             yield return ConnectClients();
             AssertAllClientsAreConnected();
 
+            var nbHostEndedSessionMsgsReceived = 0;
+
+            for (int i = 0; i < NumberOfClients; i++)
+            {
+                m_ClientScopes[i].Container.Resolve<ISubscriber<ConnectStatus>>().Subscribe(message =>
+                {
+                    // ignoring the first success message that is in the buffer
+                    if (message != ConnectStatus.Success)
+                    {
+                        Assert.AreEqual(ConnectStatus.HostEndedSession, message, "Received unexpected ConnectStatus message.");
+                        nbHostEndedSessionMsgsReceived++;
+                    }
+                });
+            }
+
             m_ServerConnectionManager.RequestShutdown();
 
             yield return new WaitWhile(() => m_ServerNetworkManager.IsListening);
 
-            Assert.IsFalse(m_ServerNetworkManager.IsHost);
+            Assert.IsFalse(m_ServerNetworkManager.IsHost && m_ServerNetworkManager.IsListening, "Host has not properly shut down.");
 
             for (var i = 0; i < NumberOfClients; i++)
             {
@@ -236,6 +251,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
                 yield return new WaitWhile(() => m_ClientNetworkManagers[clientId].IsListening);
                 Assert.IsFalse(m_ClientNetworkManagers[clientId].IsConnectedClient);
             }
+
+            Assert.AreEqual(NumberOfClients, nbHostEndedSessionMsgsReceived, "Not all clients received a HostEndedSession message.");
         }
 
         [UnityTest]
