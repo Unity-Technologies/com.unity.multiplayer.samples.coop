@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
@@ -32,13 +33,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private ulong m_ProvisionalTarget;
 
         //cache Physics Cast hits, to minimize allocs.
-        public MeleeAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data)
+        public MeleeAction(ref ActionRequestData data) : base(ref data)
         {
         }
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
-            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_ServerParent.NetState.TargetId.Value;
+            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : parent.NetState.TargetId.Value;
             IDamageable foe = DetectFoe(target);
             if (foe != null)
             {
@@ -49,11 +50,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // snap to face the right direction
             if (Data.Direction != Vector3.zero)
             {
-                m_ServerParent.physicsWrapper.Transform.forward = Data.Direction;
+                parent.physicsWrapper.Transform.forward = Data.Direction;
             }
 
-            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 

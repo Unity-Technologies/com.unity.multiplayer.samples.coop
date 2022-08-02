@@ -47,7 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public NetworkCharacterState NetState => m_NetState;
 
-        ActionVisualization m_ActionViz;
+        ClientActionPlayer m_ClientActionViz;
 
         PositionLerper m_PositionLerper;
 
@@ -80,7 +80,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             m_IsHost = IsHost;
 
-            m_ActionViz = new ActionVisualization(this);
+            m_ClientActionViz = new ClientActionPlayer(this);
 
             m_NetState = GetComponentInParent<NetworkCharacterState>();
 
@@ -120,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 if (m_NetState.IsOwner)
                 {
                     ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
-                    m_ActionViz.PlayAction(ref data);
+                    m_ClientActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
 
                     if (m_NetState.TryGetComponent(out ClientInputSender inputSender))
@@ -158,7 +158,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnActionInput(ActionRequestData data)
         {
-            m_ActionViz.AnticipateAction(ref data);
+            m_ClientActionViz.AnticipateAction(ref data);
         }
 
         void OnMoveInput(Vector3 position)
@@ -171,22 +171,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void PerformActionFX(ActionRequestData data)
         {
-            m_ActionViz.PlayAction(ref data);
+            m_ClientActionViz.PlayAction(ref data);
         }
 
         void CancelAllActionFXs()
         {
-            m_ActionViz.CancelAllActions();
+            m_ClientActionViz.CancelAllActions();
         }
 
         void CancelActionFXByType(ActionType actionType)
         {
-            m_ActionViz.CancelAllActionsOfType(actionType);
+            m_ClientActionViz.CancelAllActionsOfType(actionType);
         }
 
         void OnStoppedChargingUp(float finalChargeUpPercentage)
         {
-            m_ActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
+            m_ClientActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
         }
 
         void OnStealthyChanged(bool oldValue, bool newValue)
@@ -273,7 +273,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 OurAnimator.SetFloat(m_VisualizationConfiguration.SpeedVariableID, m_CurrentSpeed);
             }
 
-            m_ActionViz.OnUpdate();
+            m_ClientActionViz.OnUpdate();
         }
 
         void OnAnimEvent(string id)
@@ -282,7 +282,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one
             //example of where this is configured.
 
-            m_ActionViz.OnAnimEvent(id);
+            m_ClientActionViz.OnAnimEvent(id, this);
         }
 
         public bool IsAnimating()

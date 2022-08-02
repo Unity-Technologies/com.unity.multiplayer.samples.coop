@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -17,17 +18,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private float m_TimeUntilImpact;
         private IDamageable m_Target;
 
-        public FXProjectileTargetedAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
+        public FXProjectileTargetedAction(ref ActionRequestData data) : base(ref data) { }
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
-            m_Target = GetTarget();
+            m_Target = GetTarget(parent);
 
             // figure out where the player wants us to aim at...
             Vector3 targetPos = m_Target != null ? m_Target.transform.position : m_Data.Position;
 
             // then make sure we can actually see that point!
-            if (!ActionUtils.HasLineOfSight(m_ServerParent.physicsWrapper.Transform.position, targetPos, out Vector3 collidePos))
+            if (!ActionUtils.HasLineOfSight(parent.physicsWrapper.Transform.position, targetPos, out Vector3 collidePos))
             {
                 // we do not have line of sight to the target point. So our target instead becomes the obstruction point
                 m_Target = null;
@@ -39,43 +40,43 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             // turn to face our target!
-            m_ServerParent.physicsWrapper.Transform.LookAt(targetPos);
+            parent.physicsWrapper.Transform.LookAt(targetPos);
 
             // figure out how long the pretend-projectile will be flying to the target
-            float distanceToTargetPos = Vector3.Distance(targetPos, m_ServerParent.physicsWrapper.Transform.position);
+            float distanceToTargetPos = Vector3.Distance(targetPos, parent.physicsWrapper.Transform.position);
             m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed_m_s);
 
-            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             // tell clients to visualize this action
-            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             if (!m_ImpactedTarget && m_TimeUntilImpact <= TimeRunning)
             {
                 m_ImpactedTarget = true;
                 if (m_Target != null)
                 {
-                    m_Target.ReceiveHP(m_ServerParent, -Description.Projectiles[0].Damage);
+                    m_Target.ReceiveHP(parent, -Description.Projectiles[0].Damage);
                 }
             }
             return true;
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
             if (!m_ImpactedTarget)
             {
-                m_ServerParent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+                parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
             }
         }
 
         /// <summary>
         /// Returns our intended target, or null if not found/no target.
         /// </summary>
-        private IDamageable GetTarget()
+        private IDamageable GetTarget(ServerCharacter parent)
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
@@ -87,7 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var serverChar = obj.GetComponent<ServerCharacter>();
-                if (serverChar && serverChar.IsNpc == (Description.IsFriendly ^ m_ServerParent.IsNpc))
+                if (serverChar && serverChar.IsNpc == (Description.IsFriendly ^ parent.IsNpc))
                 {
                     // not a valid target
                     return null;

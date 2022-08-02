@@ -8,7 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// <summary>
     /// Class responsible for playing back action inputs from user.
     /// </summary>
-    public class ActionPlayer
+    public class ServerActionPlayer
     {
         private ServerCharacter m_Parent;
 
@@ -30,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private ActionRequestData m_PendingSynthesizedAction = new ActionRequestData();
         private bool m_HasPendingSynthesizedAction;
 
-        public ActionPlayer(ServerCharacter parent)
+        public ServerActionPlayer(ServerCharacter parent)
         {
             m_Parent = parent;
             m_Movement = parent.Movement;
@@ -55,7 +55,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 return;
             }
 
-            var newAction = Action.MakeAction(m_Parent, ref action);
+            var newAction = Action.MakeAction(ref action);
             m_Queue.Add(newAction);
             if (m_Queue.Count == 1) { StartAction(); }
         }
@@ -68,7 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 // to be able to start it again. It should be restartable immediately!
                 m_LastUsedTimestamps.Remove(m_Queue[0].Description.ActionTypeEnum);
 
-                m_Queue[0].Cancel();
+                m_Queue[0].Cancel(m_Parent);
             }
             m_Queue.Clear();
 
@@ -76,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 foreach (var action in m_NonBlockingActions)
                 {
-                    action.Cancel();
+                    action.Cancel(m_Parent);
                 }
                 m_NonBlockingActions.Clear();
             }
@@ -157,7 +157,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 SynthesizeChaseIfNecessary(index);
 
                 m_Queue[0].TimeStarted = Time.time;
-                bool play = m_Queue[0].OnStart();
+                bool play = m_Queue[0].OnStart(m_Parent);
                 if (!play)
                 {
                     //actions that exited out in the "Start" method will not have their End method called, by design.
@@ -204,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     Amount = baseAction.Description.Range
                 };
                 baseAction.Data.ShouldClose = false; //you only get to do this once!
-                Action chaseAction = Action.MakeAction(m_Parent, ref data);
+                Action chaseAction = Action.MakeAction(ref data);
                 m_Queue.Insert(baseIndex, chaseAction);
                 return baseIndex + 1;
             }
@@ -234,7 +234,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 //this shouldn't run redundantly, because the next time the base Action comes up to play, its Target
                 //and the active target in our NetState should match.
-                Action targetAction = Action.MakeAction(m_Parent, ref data);
+                Action targetAction = Action.MakeAction(ref data);
                 m_Queue.Insert(baseIndex, targetAction);
                 return baseIndex + 1;
             }
@@ -252,7 +252,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 if (endRemoved)
                 {
-                    m_Queue[0].End();
+                    m_Queue[0].End(m_Parent);
                     if (m_Queue[0].ChainIntoNewAction(ref m_PendingSynthesizedAction))
                     {
                         m_HasPendingSynthesizedAction = true;
@@ -268,7 +268,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public void Update()
+        public void OnUpdate()
         {
             if (m_HasPendingSynthesizedAction)
             {
@@ -301,7 +301,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 if (!UpdateAction(runningAction))
                 {
                     // it's dead!
-                    runningAction.End();
+                    runningAction.End(m_Parent);
                     m_NonBlockingActions.RemoveAt(i);
                 }
             }
@@ -313,7 +313,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <returns>true if the action is still active, false if it's dead</returns>
         private bool UpdateAction(Action action)
         {
-            bool keepGoing = action.OnUpdate();
+            bool keepGoing = action.OnUpdate(m_Parent);
             bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
             var timeElapsed = Time.time - action.TimeStarted;
             bool timeExpired = expirable && timeElapsed >= action.Description.DurationSeconds;
@@ -346,7 +346,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (m_Queue.Count > 0)
             {
-                m_Queue[0].OnCollisionEnter(collision);
+                m_Queue[0].OnCollisionEnter(m_Parent, collision);
             }
         }
 
@@ -378,15 +378,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// getting healed, dying, etc. Actions can change their behavior as a result.
         /// </summary>
         /// <param name="activityThatOccurred">The type of event that has occurred</param>
-        public void OnGameplayActivity(Action.GameplayActivity activityThatOccurred)
+        public virtual void OnGameplayActivity(Action.GameplayActivity activityThatOccurred)
         {
             if (m_Queue.Count > 0)
             {
-                m_Queue[0].OnGameplayActivity(activityThatOccurred);
+                m_Queue[0].OnGameplayActivity(m_Parent, activityThatOccurred);
             }
             foreach (var action in m_NonBlockingActions)
             {
-                action.OnGameplayActivity(activityThatOccurred);
+                action.OnGameplayActivity(m_Parent, activityThatOccurred);
             }
         }
 
@@ -404,7 +404,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 if (m_NonBlockingActions[i].Description.Logic == logic && m_NonBlockingActions[i] != exceptThis)
                 {
-                    m_NonBlockingActions[i].Cancel();
+                    m_NonBlockingActions[i].Cancel(m_Parent);
                     m_NonBlockingActions.RemoveAt(i);
                     if (!cancelAll) { return; }
                 }
@@ -414,7 +414,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 if (m_Queue[0].Description.Logic == logic && m_Queue[0] != exceptThis)
                 {
-                    m_Queue[0].Cancel();
+                    m_Queue[0].Cancel(m_Parent);
                     m_Queue.RemoveAt(0);
                 }
             }

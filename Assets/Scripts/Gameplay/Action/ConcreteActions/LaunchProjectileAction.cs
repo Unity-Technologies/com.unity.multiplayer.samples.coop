@@ -2,6 +2,7 @@ using Unity.Netcode;
 using UnityEngine;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -12,23 +13,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     {
         private bool m_Launched = false;
 
-        public LaunchProjectileAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
 
-        public override bool OnStart()
+        public LaunchProjectileAction(ref ActionRequestData data)
+            : base(ref data) { }
+
+        public override bool OnStart(ServerCharacter parent)
         {
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
-            m_ServerParent.physicsWrapper.Transform.forward = Data.Direction;
+            parent.physicsWrapper.Transform.forward = Data.Direction;
 
-            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             if (TimeRunning >= Description.ExecTimeSeconds && !m_Launched)
             {
-                LaunchProjectile();
+                LaunchProjectile(parent);
             }
 
             return true;
@@ -55,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <remarks>
         /// This calls GetProjectilePrefab() to find the prefab it should instantiate.
         /// </remarks>
-        protected void LaunchProjectile()
+        protected void LaunchProjectile(ServerCharacter parent)
         {
             if (!m_Launched)
             {
@@ -65,30 +68,36 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 NetworkObject no = NetworkObjectPool.Singleton.GetNetworkObject(projectileInfo.ProjectilePrefab, projectileInfo.ProjectilePrefab.transform.position, projectileInfo.ProjectilePrefab.transform.rotation);
                 // point the projectile the same way we're facing
-                no.transform.forward = m_ServerParent.physicsWrapper.Transform.forward;
+                no.transform.forward = parent.physicsWrapper.Transform.forward;
 
                 //this way, you just need to "place" the arrow by moving it in the prefab, and that will control
                 //where it appears next to the player.
-                no.transform.position = m_ServerParent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
+                no.transform.position = parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
 
-                no.GetComponent<ServerProjectileLogic>().Initialize(m_ServerParent.NetworkObjectId, projectileInfo);
+                no.GetComponent<ServerProjectileLogic>().Initialize(parent.NetworkObjectId, projectileInfo);
 
                 no.Spawn(true);
             }
         }
 
-        public override void End()
+        public override void End(ServerCharacter parent)
         {
             //make sure this happens.
-            LaunchProjectile();
+            LaunchProjectile(parent);
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
         }
+
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        {
+            return ActionConclusion.Continue;
+        }
+
     }
 }

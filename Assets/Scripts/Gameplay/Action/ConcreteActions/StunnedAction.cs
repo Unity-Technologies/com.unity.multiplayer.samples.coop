@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -12,17 +13,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public class StunnedAction : Action
     {
-        public StunnedAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data)
+        public StunnedAction(ref ActionRequestData data) : base(ref data)
         {
         }
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
-            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             return true;
         }
@@ -35,12 +36,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
+        }
+
+
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        {
+            return ActionConclusion.Continue;
         }
     }
 }

@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -12,13 +13,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private bool m_IsStealthStarted = false;
         private bool m_IsStealthEnded = false;
 
-        public StealthModeAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
+        public StealthModeAction(ref ActionRequestData data) : base(ref data) { }
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
-            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
 
-            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
+            parent.NetState.RecvDoActionClientRPC(Data);
 
             return true;
         }
@@ -28,51 +29,51 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return TimeRunning >= Description.ExecTimeSeconds;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             if (TimeRunning >= Description.ExecTimeSeconds && !m_IsStealthStarted && !m_IsStealthEnded)
             {
                 // start actual stealth-mode... NOW!
                 m_IsStealthStarted = true;
-                m_ServerParent.NetState.IsStealthy.Value = true;
+                parent.NetState.IsStealthy.Value = true;
             }
             return !m_IsStealthEnded;
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
 
-            EndStealth();
+            EndStealth(parent);
         }
 
-        public override void OnGameplayActivity(GameplayActivity activityType)
+        public override void OnGameplayActivity(ServerCharacter parent, GameplayActivity activityType)
         {
             // we break stealth after using an attack. (Or after being hit, which could happen during exec time before we're stealthed, or even afterwards, such as from an AoE attack)
             if (activityType == GameplayActivity.UsingAttackAction || activityType == GameplayActivity.AttackedByEnemy)
             {
-                EndStealth();
+                EndStealth(parent);
             }
         }
 
-        private void EndStealth()
+        private void EndStealth(ServerCharacter parent)
         {
             if (!m_IsStealthEnded)
             {
                 m_IsStealthEnded = true;
                 if (m_IsStealthStarted)
                 {
-                    m_ServerParent.NetState.IsStealthy.Value = false;
+                    parent.NetState.IsStealthy.Value = false;
                 }
 
                 // note that we cancel the ActionFX here, and NOT in Cancel(). That's to handle the case where someone
                 // presses the Stealth button twice in a row: "end this Stealth action and start a new one". If we cancelled
                 // all actions of this type in Cancel(), we'd end up cancelling both the old AND the new one, because
                 // the new one would already be in the clients' actionFX queue.
-                m_ServerParent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+                parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
             }
         }
 

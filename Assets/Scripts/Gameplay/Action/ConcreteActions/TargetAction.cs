@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -12,24 +13,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public class TargetAction : Action
     {
-        public TargetAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
+        public TargetAction(ref ActionRequestData data) : base(ref data) { }
 
         private ServerCharacterMovement m_Movement;
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
             //we must always clear the existing target, even if we don't run. This is how targets get cleared--running a TargetAction
             //with no target selected.
-            m_ServerParent.NetState.TargetId.Value = 0;
+            parent.NetState.TargetId.Value = 0;
 
             //there can only be one TargetAction at a time!
-            m_ServerParent.RunningActions.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
+            parent.ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
 
             if (Data.TargetIds == null || Data.TargetIds.Length == 0) { return false; }
 
-            m_Movement = m_ServerParent.Movement;
+            m_Movement = parent.Movement;
 
-            m_ServerParent.NetState.TargetId.Value = TargetId;
+            parent.NetState.TargetId.Value = TargetId;
 
             FaceTarget(TargetId);
 

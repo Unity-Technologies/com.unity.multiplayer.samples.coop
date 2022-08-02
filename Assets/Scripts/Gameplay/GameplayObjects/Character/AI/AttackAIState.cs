@@ -7,16 +7,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     public class AttackAIState : AIState
     {
         private AIBrain m_Brain;
-        private ActionPlayer m_ActionPlayer;
+        private ServerActionPlayer m_ServerActionPlayer;
         private ServerCharacter m_Foe;
         private ActionType m_CurAttackAction;
 
         List<ActionType> m_AttackActions;
 
-        public AttackAIState(AIBrain brain, ActionPlayer actionPlayer)
+        public AttackAIState(AIBrain brain, ServerActionPlayer serverActionPlayer)
         {
             m_Brain = brain;
-            m_ActionPlayer = actionPlayer;
+            m_ServerActionPlayer = serverActionPlayer;
         }
 
         public override bool IsEligible()
@@ -54,7 +54,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 // time for a new foe!
                 m_Foe = ChooseFoe();
                 // whatever we used to be doing, stop that. New plan is coming!
-                m_ActionPlayer.ClearActions(true);
+                m_ServerActionPlayer.ClearActions(true);
             }
 
             // if we're out of foes, stop! IsEligible() will now return false so we'll soon switch to a new state
@@ -64,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
 
             // see if we're already chasing or attacking our active foe!
-            if (m_ActionPlayer.GetActiveActionInfo(out var info))
+            if (m_ServerActionPlayer.GetActiveActionInfo(out var info))
             {
                 if (info.ActionTypeEnum == ActionType.GeneralChase)
                 {
@@ -105,7 +105,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 ShouldClose = true,
                 Direction = m_Brain.GetMyServerCharacter().physicsWrapper.Transform.forward
             };
-            m_ActionPlayer.PlayAction(ref attackData);
+            m_ServerActionPlayer.PlayAction(ref attackData);
         }
 
         /// <summary>
@@ -147,7 +147,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 anyUsable = false;
                 foreach (var actionType in m_AttackActions)
                 {
-                    if (m_ActionPlayer.IsReuseTimeElapsed(actionType))
+                    if (m_ServerActionPlayer.IsReuseTimeElapsed(actionType))
                     {
                         anyUsable = true;
                         if (idx == 0)

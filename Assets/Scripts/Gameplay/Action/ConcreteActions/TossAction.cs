@@ -1,6 +1,7 @@
 using UnityEngine;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
@@ -12,9 +13,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     {
         bool m_Launched;
 
-        public TossAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
+        public TossAction(ref ActionRequestData data) : base(ref data) { }
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
             // snap to face the direction we're firing
 
@@ -34,20 +35,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     }
 
                     // snap to face our target! This is the direction we'll attack in
-                    m_ServerParent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                    parent.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
-            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             if (TimeRunning >= Description.ExecTimeSeconds && !m_Launched)
             {
-                Throw();
+                Throw(parent);
             }
 
             return true;
@@ -76,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <remarks>
         /// This calls GetProjectilePrefab() to find the prefab it should instantiate.
         /// </remarks>
-        void Throw()
+        void Throw(ServerCharacter parent)
         {
             if (!m_Launched)
             {
@@ -89,9 +90,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 var networkObjectTransform = no.transform;
 
                 // point the thrown object the same way we're facing
-                networkObjectTransform.forward = m_ServerParent.physicsWrapper.Transform.forward;
+                networkObjectTransform.forward = parent.physicsWrapper.Transform.forward;
 
-                networkObjectTransform.position = m_ServerParent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
+                networkObjectTransform.position = parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
                     networkObjectTransform.forward + (Vector3.up * 2f);
 
                 no.Spawn(true);

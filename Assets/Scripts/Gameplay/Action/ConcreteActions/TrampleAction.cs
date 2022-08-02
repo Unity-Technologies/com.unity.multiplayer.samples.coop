@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -30,11 +31,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private ActionStage m_PreviousStage;
 
         /// <summary>
-        /// Cached reference to a component in Parent
-        /// </summary>
-        private ServerCharacterMovement m_Movement;
-
-        /// <summary>
         /// Keeps track of which Colliders we've already hit, so that our attack doesn't hit the same character twice.
         /// </summary>
         private HashSet<Collider> m_CollidedAlready = new HashSet<Collider>();
@@ -45,16 +41,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private const float k_PhysicalTouchDistance = 1;
 
         /// <summary>
+        /// We spawn the "visual cue" graphics a moment after we begin our action.
+        /// (A little extra delay helps ensure we have the correct orientation for the
+        /// character, so the graphics are oriented in the right direction!)
+        /// </summary>
+        private const float k_GraphicsSpawnDelay = 0.3f;
+
+        /// <summary>
+        /// Prior to spawning graphics, this is null. Once we spawn the graphics, this is a list of everything we spawned.
+        /// </summary>
+        /// <remarks>
+        /// Mobile performance note: constantly creating new GameObjects like this has bad performance on mobile and should
+        /// be replaced with object-pooling (i.e. reusing the same art GameObjects repeatedly). But that's outside the scope of this demo.
+        /// </remarks>
+        private List<SpecialFXGraphic> m_SpawnedGraphics = null;
+
+        /// <summary>
         /// Set to true in the special-case scenario where we are stunned by one of the characters we tried to trample
         /// </summary>
         private bool m_WasStunned;
 
-        public TrampleAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
+        public TrampleAction(ref ActionRequestData data) : base(ref data) { }
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
             m_PreviousStage = ActionStage.Windup;
-            m_Movement = m_ServerParent.Movement;
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
@@ -72,22 +83,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     }
 
                     // snap to face our target! This is the direction we'll attack in
-                    m_ServerParent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                    parent.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
             // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_ServerParent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
             }
             // start the animation sequence!
             if (!string.IsNullOrEmpty(Description.Anim))
             {
-                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             }
 
-            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -105,14 +116,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return ActionStage.Complete;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             ActionStage newState = GetCurrentStage();
             if (newState != m_PreviousStage && newState == ActionStage.Charging)
             {
                 // we've just started to charge across the screen! Anyone currently touching us gets hit
-                SimulateCollisionWithNearbyFoes();
-                m_Movement.StartForwardCharge(Description.MoveSpeed, Description.DurationSeconds - Description.ExecTimeSeconds);
+                SimulateCollisionWithNearbyFoes(parent);
+                parent.Movement.StartForwardCharge(Description.MoveSpeed, Description.DurationSeconds - Description.ExecTimeSeconds);
             }
 
             m_PreviousStage = newState;
@@ -126,9 +137,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// and further collisions with other victims will also have no effect.
         /// </summary>
         /// <param name="victim">The character we've collided with</param>
-        private void CollideWithVictim(ServerCharacter victim)
+        private void CollideWithVictim(ServerCharacter parent, ServerCharacter victim)
         {
-            if (victim == m_ServerParent)
+            if (victim == parent)
             {
                 // can't collide with ourselves!
                 return;
@@ -141,14 +152,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             // if we collide with allies, we don't want to hurt them (but we do knock them back, see below)
-            if (m_ServerParent.IsNpc != victim.IsNpc)
+            if (parent.IsNpc != victim.IsNpc)
             {
                 // first see if this victim has the special ability to stun us!
                 float chanceToStun = victim.GetBuffedValue(BuffableValue.ChanceToStunTramplers);
                 if (chanceToStun > 0 && Random.Range(0, 1) < chanceToStun)
                 {
                     // we're stunned! No collision behavior for the victim. Stun ourselves and abort.
-                    StunSelf();
+                    StunSelf(parent);
                     return;
                 }
 
@@ -165,26 +176,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 if (victim.gameObject.TryGetComponent(out IDamageable damageable))
                 {
-                    damageable.ReceiveHP(m_ServerParent, -damage);
+                    damageable.ReceiveHP(parent, -damage);
                 }
             }
 
             var victimMovement = victim.Movement;
-            victimMovement.StartKnockback(m_ServerParent.physicsWrapper.Transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
+            victimMovement.StartKnockback(parent.physicsWrapper.Transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
         }
 
         // called by owning class when parent's Collider collides with stuff
-        public override void OnCollisionEnter(Collision collision)
+        public override void OnCollisionEnter(ServerCharacter parent, Collision collision)
         {
             // we only detect other possible victims when we start charging
             if (GetCurrentStage() != ActionStage.Charging)
                 return;
 
-            Collide(collision.collider);
+            Collide(parent, collision.collider);
         }
 
         // here we handle colliding with anything (whether a victim or not)
-        private void Collide(Collider collider)
+        private void Collide(ServerCharacter parent, Collider collider)
         {
             if (m_CollidedAlready.Contains(collider))
                 return; // already hit them!
@@ -194,7 +205,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             var victim = collider.gameObject.GetComponentInParent<ServerCharacter>();
             if (victim)
             {
-                CollideWithVictim(victim);
+                CollideWithVictim(parent, victim);
             }
             else if (!m_WasStunned)
             {
@@ -202,36 +213,36 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 var damageable = collider.gameObject.GetComponent<IDamageable>();
                 if (damageable != null)
                 {
-                    damageable.ReceiveHP(this.m_ServerParent, -Description.SplashDamage);
+                    damageable.ReceiveHP(parent, -Description.SplashDamage);
 
                     // lastly, a special case: if the trampler runs into certain breakables, they are stunned!
                     if ((damageable.GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.StunOnTrample) == IDamageable.SpecialDamageFlags.StunOnTrample)
                     {
-                        StunSelf();
+                        StunSelf(parent);
                     }
                 }
             }
         }
 
-        private void SimulateCollisionWithNearbyFoes()
+        private void SimulateCollisionWithNearbyFoes(ServerCharacter parent)
         {
             // We don't get OnCollisionEnter() calls for things that are already collided with us!
             // So when we start charging across the screen, we check to see what's already touching us
             // (or close enough) and treat that like a collision.
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectNearbyEntities(true, true, m_ServerParent.physicsWrapper.DamageCollider, k_PhysicalTouchDistance, out results);
+            int numResults = ActionUtils.DetectNearbyEntities(true, true, parent.physicsWrapper.DamageCollider, k_PhysicalTouchDistance, out results);
             for (int i = 0; i < numResults; i++)
             {
-                Collide(results[i].collider);
+                Collide(parent, results[i].collider);
             }
         }
 
-        private void StunSelf()
+        private void StunSelf(ServerCharacter parent)
         {
             if (!m_WasStunned)
             {
-                m_Movement.CancelMove();
-                m_ServerParent.NetState.RecvCancelAllActionsClientRpc();
+                parent.Movement.CancelMove();
+                parent.NetState.RecvCancelAllActionsClientRpc();
             }
             m_WasStunned = true;
         }
@@ -250,12 +261,38 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return false;
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
+        }
+
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        {
+            float age = Time.time - TimeStarted;
+            if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
+            {
+                m_SpawnedGraphics = InstantiateSpecialFXGraphicsClient(parent.transform, false);
+            }
+            return true;
+        }
+
+        public override void CancelClient(ClientCharacterVisualization parent)
+        {
+            // we've been aborted -- destroy the "cue graphics"
+            if (m_SpawnedGraphics != null)
+            {
+                foreach (var fx in m_SpawnedGraphics)
+                {
+                    if (fx)
+                    {
+                        fx.Shutdown();
+                    }
+                }
+            }
+            m_SpawnedGraphics = null;
         }
     }
 }

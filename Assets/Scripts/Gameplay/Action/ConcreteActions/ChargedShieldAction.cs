@@ -1,4 +1,5 @@
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -28,10 +29,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private float m_StoppedChargingUpTime = 0;
 
-        public ChargedShieldAction(ServerCharacter serverParent, ref ActionRequestData data)
-            : base(serverParent, ref data) { }
+        public ChargedShieldAction( ref ActionRequestData data)
+            : base( ref data) { }
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
@@ -39,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 if (initialTarget)
                 {
                     // face our target, if we had one
-                    m_ServerParent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
+                    parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
                 }
             }
 
@@ -47,12 +48,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // for several copies of this action to be playing at once. This can lead to situations where several
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            m_ServerParent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+            parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
 
             // raise the start trigger to start the animation loop!
-            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
 
-            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -61,14 +62,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return m_StoppedChargingUpTime == 0;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             if (m_StoppedChargingUpTime == 0)
             {
                 // we haven't explicitly stopped charging up... but if we've reached max charge, that implicitly stops us
                 if (TimeRunning >= Description.ExecTimeSeconds)
                 {
-                    StopChargingUp();
+                    StopChargingUp(parent);
                 }
             }
 
@@ -111,35 +112,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void OnGameplayActivity(GameplayActivity activityType)
+        public override void OnGameplayActivity(ServerCharacter parent, GameplayActivity activityType)
         {
             // for this particular type of Action, being attacked immediately causes you to stop charging up
             if (activityType == GameplayActivity.AttackedByEnemy || activityType == GameplayActivity.StoppedChargingUp)
             {
-                StopChargingUp();
+                StopChargingUp(parent);
             }
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
-            StopChargingUp();
+            StopChargingUp(parent);
 
             // if stepped into invincibility, decrement invincibility counter
             if (Mathf.Approximately(GetPercentChargedUp(), 1f))
             {
-                m_ServerParent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
-                    m_ServerParent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) - 1);
+                parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
+                    parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) - 1);
             }
         }
 
-        private void StopChargingUp()
+        private void StopChargingUp(ServerCharacter parent)
         {
             if (IsChargingUp())
             {
                 m_StoppedChargingUpTime = Time.time;
-                m_ServerParent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
+                parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
 
-                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
 
                 //tell the animator controller to enter "invincibility mode" (where we don't flinch from damage)
                 if (Mathf.Approximately(GetPercentChargedUp(), 1f))
@@ -148,8 +149,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.
                     // So each active copy of the charge-up increments the invincibility counter, and the animator controller
                     // knows anything greater than zero means we shouldn't show hit-reacts.
-                    m_ServerParent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
-                        m_ServerParent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) + 1);
+                    parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
+                        parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) + 1);
                 }
             }
         }
