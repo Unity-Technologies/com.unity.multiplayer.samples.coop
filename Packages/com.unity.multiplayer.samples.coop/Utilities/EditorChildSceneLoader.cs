@@ -17,12 +17,14 @@ public class EditorChildSceneLoader : MonoBehaviour
     [SerializeField]
     public List<SceneAsset> ChildScenesToLoadConfig;
 
+    const string k_MenuBase = "Boss Room/Child Scene Loader";
+
     void Update()
     {
         // DO NOT DELETE keep this so we can enable/disable this script... (used in ChildSceneLoader)
     }
 
-    public void SaveSceneSetup()
+    void SaveSceneSetup()
     {
         ChildScenesToLoadConfig ??= new List<SceneAsset>();
         ChildScenesToLoadConfig.Clear();
@@ -58,8 +60,6 @@ public class EditorChildSceneLoader : MonoBehaviour
         }
     }
 
-    const string k_MenuBase = "Boss Room/Child Scene Loader";
-
     [MenuItem(k_MenuBase + "/Save Scene Setup To Config")]
     static void DoSaveSceneSetupMenu()
     {
@@ -71,7 +71,7 @@ public class EditorChildSceneLoader : MonoBehaviour
         {
             // create loader in scene
             var supportingGameObject = new GameObject("YOU SHOULD NOT SEE THIS");
-            supportingGameObject.hideFlags = HideFlags.DontSaveInBuild | HideFlags.HideInHierarchy;
+            supportingGameObject.hideFlags = HideFlags.DontSaveInBuild | HideFlags.HideInHierarchy; // object only findable through scripts
             loader = supportingGameObject.AddComponent<EditorChildSceneLoader>();
             SceneManager.MoveGameObjectToScene(supportingGameObject, activeScene);
         }
@@ -82,11 +82,12 @@ public class EditorChildSceneLoader : MonoBehaviour
 
         loader.SaveSceneSetup();
         EditorSceneManager.MarkSceneDirty(loader.gameObject.scene);
-        TrySave(wasDirty, activeScene);
-        ReadConfig();
+        TrySaveScene(wasDirty, activeScene);
+        PrintConfig();
     }
 
-    static void TrySave(bool wasDirty, Scene activeScene)
+    // wasDirty: was the scene dirty before modifying it? if not, will try to save it directly without asking the user
+    static void TrySaveScene(bool wasDirty, Scene activeScene)
     {
         if (!wasDirty)
         {
@@ -98,7 +99,7 @@ public class EditorChildSceneLoader : MonoBehaviour
         }
     }
 
-    static EditorChildSceneLoader TryFind()
+    static EditorChildSceneLoader TryFindLoader()
     {
         var foundLoaders = GameObject.FindObjectsOfType<EditorChildSceneLoader>();
         if (foundLoaders.Length > 1)
@@ -117,24 +118,24 @@ public class EditorChildSceneLoader : MonoBehaviour
     [MenuItem(k_MenuBase + "/Remove Config")]
     static void RemoveConfig()
     {
-        var foundObj = TryFind().gameObject;
+        var foundObj = TryFindLoader().gameObject;
         var parentScene = foundObj.scene;
         var wasDirty = parentScene.isDirty;
         DestroyImmediate(foundObj);
         EditorSceneManager.MarkSceneDirty(parentScene);
-        TrySave(wasDirty, parentScene);
+        TrySaveScene(wasDirty, parentScene);
     }
 
     [MenuItem(k_MenuBase + "/Load Scene Setup from Config")]
     static void DoResetSceneToConfig()
     {
-        TryFind().ResetSceneSetupToConfig();
+        TryFindLoader().ResetSceneSetupToConfig();
     }
 
-    [MenuItem(k_MenuBase + "/Read Current Config")]
-    static void ReadConfig()
+    [MenuItem(k_MenuBase + "/Print Current Config")]
+    static void PrintConfig()
     {
-        var foundLoader = TryFind();
+        var foundLoader = TryFindLoader();
         string toPrint = $"To Load ({foundLoader.ChildScenesToLoadConfig.Count}): ";
         foreach (var config in foundLoader.ChildScenesToLoadConfig)
         {
