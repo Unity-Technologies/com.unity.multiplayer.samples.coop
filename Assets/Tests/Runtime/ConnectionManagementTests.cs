@@ -481,7 +481,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             for (var i = 1; i < NumberOfClients; i++)
             {
-                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient,  $"Client{i} is not connected.");
+                Assert.IsTrue(m_ClientNetworkManagers[i].IsConnectedClient, $"Client{i} is not connected.");
             }
         }
 
