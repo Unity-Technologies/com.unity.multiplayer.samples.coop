@@ -5,7 +5,7 @@
 ### Added
 *
 ### Changed
-*
+* Cleaning up child scene loader to remove garbage gameObject and adding automatic expand of child scenes (#704)
 ### Removed
 *
 ### Fixed
