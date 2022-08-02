@@ -32,13 +32,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private ulong m_ProvisionalTarget;
 
         //cache Physics Cast hits, to minimize allocs.
-        public MeleeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
+        public MeleeAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data)
         {
         }
 
         public override bool OnStart()
         {
-            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_Parent.NetState.TargetId.Value;
+            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_ServerParent.NetState.TargetId.Value;
             IDamageable foe = DetectFoe(target);
             if (foe != null)
             {
@@ -49,11 +49,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // snap to face the right direction
             if (Data.Direction != Vector3.zero)
             {
-                m_Parent.physicsWrapper.Transform.forward = Data.Direction;
+                m_ServerParent.physicsWrapper.Transform.forward = Data.Direction;
             }
 
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 var foe = DetectFoe(m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.ReceiveHP(this.m_Parent, -Description.Amount);
+                    foe.ReceiveHP(this.m_ServerParent, -Description.Amount);
                 }
             }
 
@@ -78,7 +78,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <returns></returns>
         private IDamageable DetectFoe(ulong foeHint = 0)
         {
-            return GetIdealMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.physicsWrapper.DamageCollider, Description.Range, foeHint);
+            return GetIdealMeleeFoe(Description.IsFriendly ^ m_ServerParent.IsNpc, m_ServerParent.physicsWrapper.DamageCollider, Description.Range, foeHint);
         }
 
         /// <summary>

@@ -5,13 +5,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     public class EmoteAction : Action
     {
-        public EmoteAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
+        public EmoteAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data)
         {
         }
 
         public override bool OnStart()
         {
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             return false;
         }
 
@@ -25,7 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
         }
     }

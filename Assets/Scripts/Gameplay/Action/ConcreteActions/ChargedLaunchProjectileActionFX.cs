@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public class ChargedLaunchProjectileActionFX : ActionFX
     {
-        public ChargedLaunchProjectileActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public ChargedLaunchProjectileActionFX(ref ActionRequestData data, ClientCharacterVisualization clientParent) : base(ref data, clientParent) { }
 
         /// <summary>
         /// A list of the special particle graphics we spawned.
@@ -24,20 +24,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private bool m_ChargeEnded;
 
-        public override bool OnStart()
+        public override bool OnStartClient()
         {
-            base.OnStart();
+            base.OnStartClient();
 
-            m_Graphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
+            m_Graphics = InstantiateSpecialFXGraphicsClient(m_ClientParent.transform, true);
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient()
         {
             return !m_ChargeEnded;
         }
 
-        public override void Cancel()
+        public override void CancelClient()
         {
             if (!m_ChargeEnded)
             {
@@ -51,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void OnStoppedChargingUp(float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(float finalChargeUpPercentage)
         {
             m_ChargeEnded = true;
             foreach (var graphic in m_Graphics)

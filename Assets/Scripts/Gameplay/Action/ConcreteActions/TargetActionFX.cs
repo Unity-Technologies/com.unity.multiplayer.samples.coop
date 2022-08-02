@@ -16,14 +16,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private const float k_ReticuleGroundHeight = 0.2f;
 
-        public TargetActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent)
+        public TargetActionFX(ref ActionRequestData data, ClientCharacterVisualization clientParent) : base(ref data, clientParent)
         {
         }
 
-        public override bool OnStart()
+        public override bool OnStartClient()
         {
-            base.OnStart();
-            m_ParentState = m_Parent.NetState;
+            base.OnStartClient();
+            m_ParentState = m_ClientParent.NetState;
 
             m_ParentState.TargetId.OnValueChanged += OnTargetChanged;
             m_ParentState.GetComponent<Client.ClientInputSender>().ActionInputEvent += OnActionInput;
@@ -45,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient()
         {
             if (m_CurrentTarget != m_NewTarget)
             {
@@ -93,18 +93,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (m_TargetReticule == null)
             {
-                m_TargetReticule = Object.Instantiate(m_Parent.TargetReticulePrefab);
+                m_TargetReticule = Object.Instantiate(m_ClientParent.TargetReticulePrefab);
             }
 
             bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;
             bool myself_isnpc = m_ParentState.CharacterClass.IsNpc;
             bool hostile = target_isnpc != myself_isnpc;
 
-            m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? m_Parent.ReticuleHostileMat : m_Parent.ReticuleFriendlyMat;
+            m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? m_ClientParent.ReticuleHostileMat : m_ClientParent.ReticuleFriendlyMat;
         }
 
 
-        public override void Cancel()
+        public override void CancelClient()
         {
             GameObject.Destroy(m_TargetReticule);
 

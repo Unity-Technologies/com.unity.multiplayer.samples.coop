@@ -28,8 +28,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private float m_StoppedChargingUpTime = 0;
 
-        public ChargedShieldAction(ServerCharacter parent, ref ActionRequestData data)
-            : base(parent, ref data) { }
+        public ChargedShieldAction(ServerCharacter serverParent, ref ActionRequestData data)
+            : base(serverParent, ref data) { }
 
         public override bool OnStart()
         {
@@ -39,7 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 if (initialTarget)
                 {
                     // face our target, if we had one
-                    m_Parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
+                    m_ServerParent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
                 }
             }
 
@@ -47,12 +47,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // for several copies of this action to be playing at once. This can lead to situations where several
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
 
             // raise the start trigger to start the animation loop!
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
 
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -127,8 +127,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // if stepped into invincibility, decrement invincibility counter
             if (Mathf.Approximately(GetPercentChargedUp(), 1f))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
-                    m_Parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) - 1);
+                m_ServerParent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
+                    m_ServerParent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) - 1);
             }
         }
 
@@ -137,9 +137,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             if (IsChargingUp())
             {
                 m_StoppedChargingUpTime = Time.time;
-                m_Parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
+                m_ServerParent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
 
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
 
                 //tell the animator controller to enter "invincibility mode" (where we don't flinch from damage)
                 if (Mathf.Approximately(GetPercentChargedUp(), 1f))
@@ -148,8 +148,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.
                     // So each active copy of the charge-up increments the invincibility counter, and the animator controller
                     // knows anything greater than zero means we shouldn't show hit-reacts.
-                    m_Parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
-                        m_Parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) + 1);
+                    m_ServerParent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
+                        m_ServerParent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) + 1);
                 }
             }
         }

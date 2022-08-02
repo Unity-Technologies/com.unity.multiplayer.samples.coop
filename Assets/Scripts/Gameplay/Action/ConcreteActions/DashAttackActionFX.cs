@@ -16,17 +16,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private bool m_StartedDash;
         private bool m_Dashed;
 
-        public DashAttackActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public DashAttackActionFX(ref ActionRequestData data, ClientCharacterVisualization clientParent) : base(ref data, clientParent) { }
 
-        public override bool OnStart()
+        public override bool OnStartClient()
         {
 
-            base.OnStart();
+            base.OnStartClient();
 
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient()
         {
             if (m_Dashed) { return ActionConclusion.Stop; } // we're done!
 

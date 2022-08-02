@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private ServerCharacterMovement m_Movement;
 
-        public ChaseAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
+        public ChaseAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data)
         {
         }
 
@@ -31,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             m_Target = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
 
-            m_Movement = m_Parent.Movement;
+            m_Movement = m_ServerParent.Movement;
 
             if (PhysicsWrapper.TryGetPhysicsWrapper(m_Data.TargetIds[0], out var physicsWrapper))
             {
@@ -46,7 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             if (StopIfDone())
             {
-                m_Parent.physicsWrapper.Transform.LookAt(currentTargetPos); //even if we didn't move, snap to face the target!
+                m_ServerParent.physicsWrapper.Transform.LookAt(currentTargetPos); //even if we didn't move, snap to face the target!
                 return ActionConclusion.Stop;
             }
 
@@ -80,7 +80,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 return true;
             }
 
-            float distToTarget2 = (m_Parent.physicsWrapper.Transform.position - m_TargetTransform.position).sqrMagnitude;
+            float distToTarget2 = (m_ServerParent.physicsWrapper.Transform.position - m_TargetTransform.position).sqrMagnitude;
             if ((m_Data.Amount * m_Data.Amount) > distToTarget2)
             {
                 //we made it! we're done.

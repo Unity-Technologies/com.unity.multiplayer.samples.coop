@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public class TargetAction : Action
     {
-        public TargetAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
+        public TargetAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
 
         private ServerCharacterMovement m_Movement;
 
@@ -20,16 +20,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             //we must always clear the existing target, even if we don't run. This is how targets get cleared--running a TargetAction
             //with no target selected.
-            m_Parent.NetState.TargetId.Value = 0;
+            m_ServerParent.NetState.TargetId.Value = 0;
 
             //there can only be one TargetAction at a time!
-            m_Parent.RunningActions.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
+            m_ServerParent.RunningActions.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
 
             if (Data.TargetIds == null || Data.TargetIds.Length == 0) { return false; }
 
-            m_Movement = m_Parent.Movement;
+            m_Movement = m_ServerParent.Movement;
 
-            m_Parent.NetState.TargetId.Value = TargetId;
+            m_ServerParent.NetState.TargetId.Value = TargetId;
 
             FaceTarget(TargetId);
 
@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             bool isValid = ActionUtils.IsValidTarget(TargetId);
 
-            if (m_Parent.RunningActions.RunningActionCount == 1 && !m_Movement.IsMoving() && isValid)
+            if (m_ServerParent.RunningActions.RunningActionCount == 1 && !m_Movement.IsMoving() && isValid)
             {
                 //we're the only action running, and we're not moving, so let's swivel to face our target, just to be cool!
                 FaceTarget(TargetId);
@@ -51,9 +51,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public override void Cancel()
         {
-            if (m_Parent.NetState.TargetId.Value == TargetId)
+            if (m_ServerParent.NetState.TargetId.Value == TargetId)
             {
-                m_Parent.NetState.TargetId.Value = 0;
+                m_ServerParent.NetState.TargetId.Value = 0;
             }
         }
 
@@ -78,12 +78,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     targetObjectPosition = targetObject.transform.position;
                 }
 
-                Vector3 diff = targetObjectPosition - m_Parent.physicsWrapper.Transform.position;
+                Vector3 diff = targetObjectPosition - m_ServerParent.physicsWrapper.Transform.position;
 
                 diff.y = 0;
                 if (diff != Vector3.zero)
                 {
-                    m_Parent.physicsWrapper.Transform.forward = diff;
+                    m_ServerParent.physicsWrapper.Transform.forward = diff;
                 }
             }
         }

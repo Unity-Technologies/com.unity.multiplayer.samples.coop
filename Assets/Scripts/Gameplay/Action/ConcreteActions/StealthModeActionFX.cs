@@ -23,19 +23,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public StealthModeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public StealthModeActionFX(ref ActionRequestData data, ClientCharacterVisualization clientParent) : base(ref data, clientParent) { }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient()
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_Parent.IsOwner)
+            if (c_TimeRunning >= c_Description.ExecTimeSeconds && m_SpawnedGraphics == null && m_ClientParent.IsOwner)
             {
-                m_SpawnedGraphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
+                m_SpawnedGraphics = InstantiateSpecialFXGraphicsClient(m_ClientParent.transform, true);
             }
 
             return ActionConclusion.Continue;
         }
 
-        public override void Cancel()
+        public override void CancelClient()
         {
             if (m_SpawnedGraphics != null)
             {

@@ -18,12 +18,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         bool m_DidAoE;
 
-        public AoeAction(ServerCharacter parent, ref ActionRequestData data)
-            : base(parent, ref data) { }
+        public AoeAction(ServerCharacter serverParent, ref ActionRequestData data)
+            : base(serverParent, ref data) { }
 
         public override bool OnStart()
         {
-            float distanceAway = Vector3.Distance(m_Parent.physicsWrapper.Transform.position, Data.Position);
+            float distanceAway = Vector3.Distance(m_ServerParent.physicsWrapper.Transform.position, Data.Position);
             if (distanceAway > Description.Range + k_MaxDistanceDivergence)
             {
                 // Due to latency, it's possible for the client side click check to be out of date with the server driven position. Doing a final check server side to make sure.
@@ -34,8 +34,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // We don't know our actual targets for this attack until it triggers, so the client can't use the TargetIds list (and we clear it out for clarity).
             // This means we are responsible for triggering reaction-anims ourselves, which we do in PerformAoe()
             Data.TargetIds = new ulong[0];
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
             return ActionConclusion.Continue;
         }
 
@@ -63,7 +63,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 if (enemy != null)
                 {
                     // actually deal the damage
-                    enemy.ReceiveHP(m_Parent, -Description.Amount);
+                    enemy.ReceiveHP(m_ServerParent, -Description.Amount);
                 }
             }
         }

@@ -17,7 +17,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private float m_TimeUntilImpact;
         private IDamageable m_Target;
 
-        public FXProjectileTargetedAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
+        public FXProjectileTargetedAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
 
         public override bool OnStart()
         {
@@ -27,7 +27,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             Vector3 targetPos = m_Target != null ? m_Target.transform.position : m_Data.Position;
 
             // then make sure we can actually see that point!
-            if (!ActionUtils.HasLineOfSight(m_Parent.physicsWrapper.Transform.position, targetPos, out Vector3 collidePos))
+            if (!ActionUtils.HasLineOfSight(m_ServerParent.physicsWrapper.Transform.position, targetPos, out Vector3 collidePos))
             {
                 // we do not have line of sight to the target point. So our target instead becomes the obstruction point
                 m_Target = null;
@@ -39,15 +39,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             // turn to face our target!
-            m_Parent.physicsWrapper.Transform.LookAt(targetPos);
+            m_ServerParent.physicsWrapper.Transform.LookAt(targetPos);
 
             // figure out how long the pretend-projectile will be flying to the target
-            float distanceToTargetPos = Vector3.Distance(targetPos, m_Parent.physicsWrapper.Transform.position);
+            float distanceToTargetPos = Vector3.Distance(targetPos, m_ServerParent.physicsWrapper.Transform.position);
             m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed_m_s);
 
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             // tell clients to visualize this action
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -58,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 m_ImpactedTarget = true;
                 if (m_Target != null)
                 {
-                    m_Target.ReceiveHP(m_Parent, -Description.Projectiles[0].Damage);
+                    m_Target.ReceiveHP(m_ServerParent, -Description.Projectiles[0].Damage);
                 }
             }
             return true;
@@ -68,7 +68,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!m_ImpactedTarget)
             {
-                m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+                m_ServerParent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
             }
         }
 
@@ -87,7 +87,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var serverChar = obj.GetComponent<ServerCharacter>();
-                if (serverChar && serverChar.IsNpc == (Description.IsFriendly ^ m_Parent.IsNpc))
+                if (serverChar && serverChar.IsNpc == (Description.IsFriendly ^ m_ServerParent.IsNpc))
                 {
                     // not a valid target
                     return null;

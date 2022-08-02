@@ -27,14 +27,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         SpecialFXGraphic m_ShieldGraphics;
 
-        public ChargedShieldActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public ChargedShieldActionFX(ref ActionRequestData data, ClientCharacterVisualization clientParent) : base(ref data, clientParent) { }
 
-        public override bool OnStart()
+        public override bool OnStartClient()
         {
-            Assert.IsTrue(Description.Spawns.Length == 2, $"Found {Description.Spawns.Length} spawns for action {Description.ActionTypeEnum}. Should be exactly 2: a charge-up particle and a fully-charged particle");
+            Assert.IsTrue(c_Description.Spawns.Length == 2, $"Found {c_Description.Spawns.Length} spawns for action {c_Description.ActionTypeEnum}. Should be exactly 2: a charge-up particle and a fully-charged particle");
 
-            base.OnStart();
-            m_ChargeGraphics = InstantiateSpecialFXGraphic(Description.Spawns[0], m_Parent.transform, true);
+            base.OnStartClient();
+            m_ChargeGraphics = InstantiateSpecialFXGraphicClient(c_Description.Spawns[0], m_ClientParent.transform, true);
             return true;
         }
 
@@ -43,12 +43,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return m_StoppedChargingUpTime == 0;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient()
         {
-            return IsChargingUp() || (Time.time - m_StoppedChargingUpTime) < Description.EffectDurationSeconds;
+            return IsChargingUp() || (Time.time - m_StoppedChargingUpTime) < c_Description.EffectDurationSeconds;
         }
 
-        public override void Cancel()
+        public override void CancelClient()
         {
             if (IsChargingUp())
             {
@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void OnStoppedChargingUp(float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(float finalChargeUpPercentage)
         {
             if (!IsChargingUp()) { return; }
 
@@ -78,18 +78,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // if fully charged, we show a special graphic
             if (Mathf.Approximately(finalChargeUpPercentage, 1))
             {
-                m_ShieldGraphics = InstantiateSpecialFXGraphic(Description.Spawns[1], m_Parent.transform, true);
+                m_ShieldGraphics = InstantiateSpecialFXGraphicClient(c_Description.Spawns[1], m_ClientParent.transform, true);
             }
         }
 
-        public override void AnticipateAction()
+        public override void AnticipateActionClient()
         {
             // because this action can be visually started and stopped as often and as quickly as the player wants, it's possible
             // for several copies of this action to be playing at once. This can lead to situations where several
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            m_Parent.OurAnimator.ResetTrigger(Description.Anim2);
-            base.AnticipateAction();
+            m_ClientParent.OurAnimator.ResetTrigger(c_Description.Anim2);
+            base.AnticipateActionClient();
         }
     }
 }

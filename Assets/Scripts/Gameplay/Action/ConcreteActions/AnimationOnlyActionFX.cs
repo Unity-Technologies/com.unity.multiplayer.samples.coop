@@ -8,9 +8,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public class AnimationOnlyActionFX : ActionFX
     {
-        public AnimationOnlyActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public AnimationOnlyActionFX(ref ActionRequestData data, ClientCharacterVisualization clientParent) : base(ref data, clientParent) { }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient()
         {
             return ActionConclusion.Continue;
         }

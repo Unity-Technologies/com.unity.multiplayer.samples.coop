@@ -12,7 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     {
         bool m_Launched;
 
-        public TossAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
+        public TossAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
 
         public override bool OnStart()
         {
@@ -34,12 +34,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     }
 
                     // snap to face our target! This is the direction we'll attack in
-                    m_Parent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                    m_ServerParent.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -89,9 +89,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 var networkObjectTransform = no.transform;
 
                 // point the thrown object the same way we're facing
-                networkObjectTransform.forward = m_Parent.physicsWrapper.Transform.forward;
+                networkObjectTransform.forward = m_ServerParent.physicsWrapper.Transform.forward;
 
-                networkObjectTransform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
+                networkObjectTransform.position = m_ServerParent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
                     networkObjectTransform.forward + (Vector3.up * 2f);
 
                 no.Spawn(true);

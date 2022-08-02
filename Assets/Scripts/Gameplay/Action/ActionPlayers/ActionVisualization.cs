@@ -30,14 +30,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
                 var action = m_PlayingActions[i];
-                bool keepGoing = action.Anticipated || action.OnUpdate(); // only call OnUpdate() on actions that are past anticipation
-                bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
-                bool timeExpired = expirable && action.TimeRunning >= action.Description.DurationSeconds;
-                bool timedOut = action.Anticipated && action.TimeRunning >= k_AnticipationTimeoutSeconds;
+                bool keepGoing = action.c_Anticipated || action.OnUpdateClient(); // only call OnUpdate() on actions that are past anticipation
+                bool expirable = action.c_Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
+                bool timeExpired = expirable && action.c_TimeRunning >= action.c_Description.DurationSeconds;
+                bool timedOut = action.c_Anticipated && action.c_TimeRunning >= k_AnticipationTimeoutSeconds;
                 if (!keepGoing || timeExpired || timedOut)
                 {
-                    if (timedOut) { action.Cancel(); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
-                    else { action.End(); }
+                    if (timedOut) { action.CancelClient(); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
+                    else { action.EndClient(); }
 
                     m_PlayingActions.RemoveAt(i);
                 }
@@ -47,14 +47,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         //helper wrapper for a FindIndex call on m_PlayingActions.
         private int FindAction(ActionType action, bool anticipatedOnly)
         {
-            return m_PlayingActions.FindIndex(a => a.Description.ActionTypeEnum == action && (!anticipatedOnly || a.Anticipated));
+            return m_PlayingActions.FindIndex(a => a.c_Description.ActionTypeEnum == action && (!anticipatedOnly || a.c_Anticipated));
         }
 
         public void OnAnimEvent(string id)
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnAnimEvent(id);
+                actionFX.OnAnimEventClient(id);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnStoppedChargingUp(finalChargeUpPercentage);
+                actionFX.OnStoppedChargingUpClient(finalChargeUpPercentage);
             }
         }
 
@@ -102,10 +102,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <param name="data">The Action that is being requested.</param>
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!Parent.IsAnimating() && ActionFX.ShouldAnticipate(this, ref data))
+            if (!Parent.IsAnimating() && ActionFX.ShouldAnticipateClient(this, ref data))
             {
                 var actionFX = ActionFX.MakeActionFX(ref data, Parent);
-                actionFX.AnticipateAction();
+                actionFX.AnticipateActionClient();
                 m_PlayingActions.Add(actionFX);
             }
         }
@@ -115,7 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             var anticipatedActionIndex = FindAction(data.ActionTypeEnum, true);
 
             var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFX.MakeActionFX(ref data, Parent);
-            if (actionFX.OnStart())
+            if (actionFX.OnStartClient())
             {
                 m_PlayingActions.Add(actionFX);
             }
@@ -129,7 +129,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             foreach (var actionFx in m_PlayingActions)
             {
-                actionFx.Cancel();
+                actionFx.CancelClient();
             }
             m_PlayingActions.Clear();
         }
@@ -138,9 +138,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
-                if (m_PlayingActions[i].Description.ActionTypeEnum == actionType)
+                if (m_PlayingActions[i].c_Description.ActionTypeEnum == actionType)
                 {
-                    m_PlayingActions[i].Cancel();
+                    m_PlayingActions[i].CancelClient();
                     m_PlayingActions.RemoveAt(i);
                 }
             }
@@ -153,7 +153,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             foreach (var action in m_PlayingActions)
             {
-                action.Cancel();
+                action.CancelClient();
             }
             m_PlayingActions.Clear();
         }

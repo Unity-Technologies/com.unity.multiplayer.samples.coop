@@ -11,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public class MeleeActionFX : ActionFX
     {
-        public MeleeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public MeleeActionFX(ref ActionRequestData data, ClientCharacterVisualization clientParent) : base(ref data, clientParent) { }
 
         //have we actually played an impact? This won't necessarily happen for all swings. Sometimes you're just swinging at space.
         private bool m_ImpactPlayed;
@@ -27,21 +27,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
 
-        public override bool OnStart()
+        public override bool OnStartClient()
         {
-            base.OnStart();
+            base.OnStartClient();
 
             // we can optionally have special particles that should play on the target. If so, add them now.
             // (don't wait until impact, because the particles need to start sooner!)
-            if (Data.TargetIds != null
-                && Data.TargetIds.Length > 0
-                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
+            if (c_Data.TargetIds != null
+                && c_Data.TargetIds.Length > 0
+                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(c_Data.TargetIds[0], out var targetNetworkObj)
                 && targetNetworkObj != null)
             {
-                float padRange = Description.Range + k_RangePadding;
+                float padRange = c_Description.Range + k_RangePadding;
 
                 Vector3 targetPosition;
-                if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var physicsWrapper))
+                if (PhysicsWrapper.TryGetPhysicsWrapper(c_Data.TargetIds[0], out var physicsWrapper))
                 {
                     targetPosition = physicsWrapper.Transform.position;
                 }
@@ -50,21 +50,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     targetPosition = targetNetworkObj.transform.position;
                 }
 
-                if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                if ((m_ClientParent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
                     // target is in range! Play the graphics
-                    m_SpawnedGraphics = InstantiateSpecialFXGraphics(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
+                    m_SpawnedGraphics = InstantiateSpecialFXGraphicsClient(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
                 }
             }
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient()
         {
             return ActionConclusion.Continue;
         }
 
-        public override void OnAnimEvent(string id)
+        public override void OnAnimEventClient(string id)
         {
             if (id == "impact" && !m_ImpactPlayed)
             {
@@ -72,15 +72,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void End()
+        public override void EndClient()
         {
             //if this didn't already happen, make sure it gets a chance to run. This could have failed to run because
             //our animationclip didn't have the "impact" event properly configured (as one possibility).
             PlayHitReact();
-            base.End();
+            base.EndClient();
         }
 
-        public override void Cancel()
+        public override void CancelClient()
         {
             // if we had any special target graphics, tell them we're done
             if (m_SpawnedGraphics != null)
@@ -106,15 +106,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             //Is my original target still in range? Then definitely get him!
-            if (Data.TargetIds != null &&
-                Data.TargetIds.Length > 0 &&
-                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
+            if (c_Data.TargetIds != null &&
+                c_Data.TargetIds.Length > 0 &&
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(c_Data.TargetIds[0], out var targetNetworkObj)
                 && targetNetworkObj != null)
             {
-                float padRange = Description.Range + k_RangePadding;
+                float padRange = c_Description.Range + k_RangePadding;
 
                 Vector3 targetPosition;
-                if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var movementContainer))
+                if (PhysicsWrapper.TryGetPhysicsWrapper(c_Data.TargetIds[0], out var movementContainer))
                 {
                     targetPosition = movementContainer.Transform.position;
                 }
@@ -123,11 +123,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     targetPosition = targetNetworkObj.transform.position;
                 }
 
-                if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                if ((m_ClientParent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
-                    if (targetNetworkObj.NetworkObjectId != m_Parent.NetworkObjectId)
+                    if (targetNetworkObj.NetworkObjectId != m_ClientParent.NetworkObjectId)
                     {
-                        string hitAnim = Description.ReactAnim;
+                        string hitAnim = c_Description.ReactAnim;
                         if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
                         var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
                         if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)

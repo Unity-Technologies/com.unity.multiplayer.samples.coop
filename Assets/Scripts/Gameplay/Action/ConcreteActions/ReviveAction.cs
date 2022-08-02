@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private bool m_ExecFired;
         private ServerCharacter m_TargetCharacter;
 
-        public ReviveAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
+        public ReviveAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data)
         {
         }
 
@@ -25,7 +25,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             var targetNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
             m_TargetCharacter = targetNetworkObject.GetComponent<ServerCharacter>();
 
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
 
             return true;
         }
@@ -39,7 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 if (m_TargetCharacter.NetState.LifeState == LifeState.Fainted)
                 {
                     Assert.IsTrue(Description.Amount > 0, "Revive amount must be greater than 0.");
-                    m_TargetCharacter.Revive(m_Parent, Description.Amount);
+                    m_TargetCharacter.Revive(m_ServerParent, Description.Amount);
                 }
                 else
                 {
@@ -56,7 +56,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
         }
     }

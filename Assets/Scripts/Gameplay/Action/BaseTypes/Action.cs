@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using BlockingMode = Unity.Multiplayer.Samples.BossRoom.ActionDescription.BlockingModeType;
 
@@ -24,17 +26,51 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     ///
     /// Note also that if Start() returns false, no other functions are called on the Action, not even End().
     /// </remarks>
-    public abstract class Action : ActionBase
+    public abstract class Action
     {
-        protected ServerCharacter m_Parent;
+        protected ServerCharacter m_ServerParent;
+        //protected ActionRequestData m_Data;
 
         /// <summary>
         /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
         /// </summary>
-        public Action(ServerCharacter parent, ref ActionRequestData data) : base(ref data)
+        public Action(ServerCharacter serverParent, ClientCharacterVisualization clientParent, ref ActionRequestData data)
         {
-            m_Parent = parent;
+            m_ServerParent = serverParent;
+
+            m_ClientParent = clientParent;
             m_Data = data; //do a shallow copy.
+        }
+
+        /// <summary>
+        /// Time when this Action was started (from Time.time) in seconds. Set by the ActionPlayer or ActionVisualization.
+        /// </summary>
+        public float TimeStarted { get; set; }
+
+        /// <summary>
+        /// How long the Action has been running (since its Start was called)--in seconds, measured via Time.time.
+        /// </summary>
+        public float TimeRunning { get { return (Time.time - TimeStarted); } }
+
+        /// <summary>
+        /// RequestData we were instantiated with. Value should be treated as readonly.
+        /// </summary>
+        public ref ActionRequestData Data => ref m_Data;
+
+        /// <summary>
+        /// Data Description for this action.
+        /// </summary>
+        public ActionDescription Description
+        {
+            get
+            {
+                if (!GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out var result))
+                {
+                    throw new KeyNotFoundException($"Tried to find ActionType {Data.ActionTypeEnum} but it was missing from GameDataSource!");
+                }
+
+                return result;
+            }
         }
 
         /// <summary>
@@ -179,6 +215,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 default: throw new System.NotImplementedException();
             }
         }
+
+        ///fdfdfsdfsdfsdfs sdfsdf sdf sdf sdf sdf sdf sdf sdf
+        /// sdfsdfsdfsdfsd
+        /// sdfsdfsdfsdfsd
+        /// sdfsdfsdfsdfsdfsdfsdf dsf sdf sdf sdf sdf sdf dfds f
+        ///
+
 
 
     }

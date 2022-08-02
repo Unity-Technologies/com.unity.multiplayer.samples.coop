@@ -49,12 +49,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private bool m_WasStunned;
 
-        public TrampleAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
+        public TrampleAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
 
         public override bool OnStart()
         {
             m_PreviousStage = ActionStage.Windup;
-            m_Movement = m_Parent.Movement;
+            m_Movement = m_ServerParent.Movement;
 
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
@@ -72,22 +72,22 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     }
 
                     // snap to face our target! This is the direction we'll attack in
-                    m_Parent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                    m_ServerParent.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
             // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+                m_ServerParent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
             }
             // start the animation sequence!
             if (!string.IsNullOrEmpty(Description.Anim))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
             }
 
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -128,7 +128,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <param name="victim">The character we've collided with</param>
         private void CollideWithVictim(ServerCharacter victim)
         {
-            if (victim == m_Parent)
+            if (victim == m_ServerParent)
             {
                 // can't collide with ourselves!
                 return;
@@ -141,7 +141,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             // if we collide with allies, we don't want to hurt them (but we do knock them back, see below)
-            if (m_Parent.IsNpc != victim.IsNpc)
+            if (m_ServerParent.IsNpc != victim.IsNpc)
             {
                 // first see if this victim has the special ability to stun us!
                 float chanceToStun = victim.GetBuffedValue(BuffableValue.ChanceToStunTramplers);
@@ -165,12 +165,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 if (victim.gameObject.TryGetComponent(out IDamageable damageable))
                 {
-                    damageable.ReceiveHP(m_Parent, -damage);
+                    damageable.ReceiveHP(m_ServerParent, -damage);
                 }
             }
 
             var victimMovement = victim.Movement;
-            victimMovement.StartKnockback(m_Parent.physicsWrapper.Transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
+            victimMovement.StartKnockback(m_ServerParent.physicsWrapper.Transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
         }
 
         // called by owning class when parent's Collider collides with stuff
@@ -202,7 +202,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 var damageable = collider.gameObject.GetComponent<IDamageable>();
                 if (damageable != null)
                 {
-                    damageable.ReceiveHP(this.m_Parent, -Description.SplashDamage);
+                    damageable.ReceiveHP(this.m_ServerParent, -Description.SplashDamage);
 
                     // lastly, a special case: if the trampler runs into certain breakables, they are stunned!
                     if ((damageable.GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.StunOnTrample) == IDamageable.SpecialDamageFlags.StunOnTrample)
@@ -219,7 +219,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // So when we start charging across the screen, we check to see what's already touching us
             // (or close enough) and treat that like a collision.
             RaycastHit[] results;
-            int numResults = ActionUtils.DetectNearbyEntities(true, true, m_Parent.physicsWrapper.DamageCollider, k_PhysicalTouchDistance, out results);
+            int numResults = ActionUtils.DetectNearbyEntities(true, true, m_ServerParent.physicsWrapper.DamageCollider, k_PhysicalTouchDistance, out results);
             for (int i = 0; i < numResults; i++)
             {
                 Collide(results[i].collider);
@@ -231,7 +231,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             if (!m_WasStunned)
             {
                 m_Movement.CancelMove();
-                m_Parent.NetState.RecvCancelAllActionsClientRpc();
+                m_ServerParent.NetState.RecvCancelAllActionsClientRpc();
             }
             m_WasStunned = true;
         }
@@ -254,7 +254,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!string.IsNullOrEmpty(Description.Anim2))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
             }
         }
     }

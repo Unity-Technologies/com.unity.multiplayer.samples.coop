@@ -17,7 +17,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public class TrampleActionFX : ActionFX
     {
-        public TrampleActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
+        public TrampleActionFX(ref ActionRequestData data, ClientCharacterVisualization clientParent) : base(ref data, clientParent) { }
 
         /// <summary>
         /// We spawn the "visual cue" graphics a moment after we begin our action.
@@ -35,17 +35,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </remarks>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient()
         {
-            float age = Time.time - TimeStarted;
+            float age = Time.time - c_TimeStarted;
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
             {
-                m_SpawnedGraphics = InstantiateSpecialFXGraphics(m_Parent.transform, false);
+                m_SpawnedGraphics = InstantiateSpecialFXGraphicsClient(m_ClientParent.transform, false);
             }
             return true;
         }
 
-        public override void Cancel()
+        public override void CancelClient()
         {
             // we've been aborted -- destroy the "cue graphics"
             if (m_SpawnedGraphics != null)

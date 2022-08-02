@@ -33,7 +33,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private bool m_HitByAttack = false;
 
-        public ChargedLaunchProjectileAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
+        public ChargedLaunchProjectileAction(ServerCharacter serverParent, ref ActionRequestData data) : base(serverParent, ref data) { }
 
         public override bool OnStart()
         {
@@ -45,14 +45,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 if (initialTarget)
                 {
                     // face our target
-                    m_Parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
+                    m_ServerParent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
                 }
             }
 
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
 
             // start the "charging up" ActionFX
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            m_ServerParent.NetState.RecvDoActionClientRPC(Data);
 
             // sanity-check our data a bit
             Debug.Assert(Description.Projectiles.Length > 1, $"Action {Data.ActionTypeEnum} has {Description.Projectiles.Length} Projectiles. Expected at least 2!");
@@ -109,10 +109,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 if (!string.IsNullOrEmpty(Description.Anim2))
                 {
-                    m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                    m_ServerParent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
                 }
 
-                m_Parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
+                m_ServerParent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
                 if (!m_HitByAttack)
                 {
                     LaunchProjectile();
