@@ -1,4 +1,7 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -8,7 +11,16 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     class ClientConnectedState : ConnectionState
     {
-        public override void Enter() { }
+        [Inject]
+        protected LobbyServiceFacade m_LobbyServiceFacade;
+
+        public override void Enter()
+        {
+            if (m_LobbyServiceFacade.CurrentUnityLobby != null)
+            {
+                m_LobbyServiceFacade.BeginTracking();
+            }
+        }
 
         public override void Exit() { }
 
