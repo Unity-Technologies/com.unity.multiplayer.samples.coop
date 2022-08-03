@@ -29,15 +29,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </remarks>
     public abstract class Action
     {
-        protected ActionRequestData m_Data;
-
         /// <summary>
-        /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
+        /// The default hit react animation; several different ActionFXs make use of this.
         /// </summary>
-        public Action(ref ActionRequestData data)
-        {
-            m_Data = data; //do a shallow copy.
-        }
+        public const string k_DefaultHitReact = "HitReact1";
+
+        protected ActionRequestData m_Data;
 
         /// <summary>
         /// Time when this Action was started (from Time.time) in seconds. Set by the ActionPlayer or ActionVisualization.
@@ -68,6 +65,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 return result;
             }
+        }
+
+        /// <summary>
+        /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
+        /// </summary>
+        public Action(ref ActionRequestData data)
+        {
+            m_Data = data;
         }
 
         /// <summary>
@@ -216,18 +221,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        ///fdfdfsdfsdfsdfs sdfsdf sdf sdf sdf sdf sdf sdf sdf
-        /// sdfsdfsdfsdfsd
-        /// sdfsdfsdfsdfsd
-        /// sdfsdfsdfsdfsdfsdfsdf dsf sdf sdf sdf sdf sdf dfds f
-        ///
-
-
-        /// <summary>
-        /// The default hit react animation; several different ActionFXs make use of this.
-        /// </summary>
-        public const string k_DefaultHitReact = "HitReact1";
-
         /// <summary>
         /// True if this actionFX began running immediately, prior to getting a confirmation from the server.
         /// </summary>
@@ -258,9 +251,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// classes should aren't required to call base.End(); by default, the method just calls 'Cancel', to handle the
         /// common case where Cancel and End do the same thing.
         /// </summary>
-        public virtual void EndClient(ClientCharacterVisualization clientParent)
+        public virtual void EndClient(ClientCharacterVisualization parent)
         {
-            CancelClient(clientParent);
+            CancelClient(parent);
         }
 
         /// <summary>
@@ -277,7 +270,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <param name="parent">The ActionVisualization that would be playing this ActionFX.</param>
         /// <param name="data">The request being sent to the server</param>
         /// <returns>If true ActionVisualization should pre-emptively create the ActionFX on the owning client, before hearing back from the server.</returns>
-        public static bool ShouldAnticipateClient(ClientCharacterVisualization parent, ref ActionRequestData data)
+        public static bool ShouldClientAnticipate(ClientCharacterVisualization parent, ref ActionRequestData data)
         {
             if (!parent.CanPerformActions) { return false; }
 
@@ -304,27 +297,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <summary>
         /// Called when the visualization receives an animation event.
         /// </summary>
-        public virtual void OnAnimEventClient(ClientCharacterVisualization characterVisualization, string id) { }
+        public virtual void OnAnimEventClient(ClientCharacterVisualization parent, string id) { }
 
         /// <summary>
         /// Called when this action has finished "charging up". (Which is only meaningful for a
         /// few types of actions -- it is not called for other actions.)
         /// </summary>
         /// <param name="finalChargeUpPercentage"></param>
-        public virtual void OnStoppedChargingUpClient(ClientCharacterVisualization characterVisualization, float finalChargeUpPercentage) { }
+        public virtual void OnStoppedChargingUpClient(ClientCharacterVisualization parent, float finalChargeUpPercentage) { }
 
         /// <summary>
         /// Utility function that instantiates all the graphics in the Spawns list.
         /// If parentToOrigin is true, the new graphics are parented to the origin Transform.
         /// If false, they are positioned/oriented the same way but are not parented.
         /// </summary>
-        protected List<SpecialFXGraphic> InstantiateSpecialFXGraphicsClient(Transform origin, bool parentToOrigin)
+        protected List<SpecialFXGraphic> InstantiateSpecialFXGraphics(Transform origin, bool parentToOrigin)
         {
             var returnList = new List<SpecialFXGraphic>();
             foreach (var prefab in Description.Spawns)
             {
                 if (!prefab) { continue; } // skip blank entries in our prefab list
-                returnList.Add(InstantiateSpecialFXGraphicClient(prefab, origin, parentToOrigin));
+                returnList.Add(InstantiateSpecialFXGraphic(prefab, origin, parentToOrigin));
             }
             return returnList;
         }
@@ -334,7 +327,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// If parentToOrigin is true, the new graphics are parented to the origin Transform.
         /// If false, they are positioned/oriented the same way but are not parented.
         /// </summary>
-        protected SpecialFXGraphic InstantiateSpecialFXGraphicClient(GameObject prefab, Transform origin, bool parentToOrigin)
+        protected SpecialFXGraphic InstantiateSpecialFXGraphic(GameObject prefab, Transform origin, bool parentToOrigin)
         {
             if (prefab.GetComponent<SpecialFXGraphic>() == null)
             {

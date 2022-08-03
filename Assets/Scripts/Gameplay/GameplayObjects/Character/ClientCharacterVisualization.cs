@@ -282,7 +282,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             //and calls a method of the same name on a component on the same GameObject as the Animator. See the "attack1" Animation Clip as one
             //example of where this is configured.
 
-            m_ClientActionViz.OnAnimEvent(id, this);
+            m_ClientActionViz.OnAnimEvent(id);
         }
 
         public bool IsAnimating()

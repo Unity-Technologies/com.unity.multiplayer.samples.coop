@@ -24,6 +24,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     {
         private Vector3 m_TargetSpot;
 
+        private bool m_Dashed;
+
         public DashAttackAction( ref ActionRequestData data) : base(ref data)
         {
             Assert.IsTrue(Description.Radius > 0, $"ActionDescription for {Description.ActionTypeEnum} needs a Radius assigned!");
@@ -62,7 +64,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             parent.Movement.Teleport(m_TargetSpot);
 
             // and then swing!
-            PerformMeleeAttack();
+            PerformMeleeAttack(parent);
         }
 
         public override void Cancel(ServerCharacter parent)
@@ -100,6 +102,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 foe.ReceiveHP(parent, -Description.Amount);
             }
+        }
+
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        {
+            if (m_Dashed) { return ActionConclusion.Stop; } // we're done!
+
+            return ActionConclusion.Continue;
         }
     }
 }

@@ -274,7 +274,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             float age = Time.time - TimeStarted;
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
             {
-                m_SpawnedGraphics = InstantiateSpecialFXGraphicsClient(parent.transform, false);
+                m_SpawnedGraphics = InstantiateSpecialFXGraphics(parent.transform, false);
             }
             return true;
         }

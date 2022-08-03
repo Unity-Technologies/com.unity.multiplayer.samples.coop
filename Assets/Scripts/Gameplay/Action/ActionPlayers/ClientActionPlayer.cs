@@ -7,7 +7,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// This is a companion class to ClientCharacterVisualization that is specifically responsible for visualizing Actions. Action visualizations have lifetimes
     /// and ongoing state, making this class closely analogous in spirit to the Unity.Multiplayer.Samples.BossRoom.Server.ActionPlayer class.
     /// </summary>
-    public sealed class ActionVisualization
+    public sealed class ClientActionPlayer
     {
         private List<Action> m_PlayingActions = new List<Action>();
 
@@ -19,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public ClientCharacterVisualization Parent { get; private set; }
 
-        public ActionVisualization(ClientCharacterVisualization parent)
+        public ClientActionPlayer(ClientCharacterVisualization parent)
         {
             Parent = parent;
         }
@@ -102,7 +102,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <param name="data">The Action that is being requested.</param>
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!Parent.IsAnimating() && Action.ShouldAnticipateClient(Parent, ref data))
+            if (!Parent.IsAnimating() && Action.ShouldClientAnticipate(Parent, ref data))
             {
                 var actionFX = Action.MakeAction(ref data);
                 actionFX.AnticipateActionClient(Parent);

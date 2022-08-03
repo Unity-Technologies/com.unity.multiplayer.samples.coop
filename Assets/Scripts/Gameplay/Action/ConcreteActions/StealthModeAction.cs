@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 
@@ -12,6 +13,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     {
         private bool m_IsStealthStarted = false;
         private bool m_IsStealthEnded = false;
+
+        /// <summary>
+        /// When non-null, a list of all graphics spawned.
+        /// (If null, means we haven't been running long enough yet, or we aren't using any graphics because we're invisible on this client)
+        /// These are created from the Description.Spawns list. Each prefab in that list should have a SpecialFXGraphic component.
+        /// </summary>
+        private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
         public StealthModeAction(ref ActionRequestData data) : base(ref data) { }
 
@@ -74,6 +82,31 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 // all actions of this type in Cancel(), we'd end up cancelling both the old AND the new one, because
                 // the new one would already be in the clients' actionFX queue.
                 parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+            }
+        }
+
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        {
+            if (TimeRunning >= Description.ExecTimeSeconds && m_SpawnedGraphics == null && parent.IsOwner)
+            {
+                m_SpawnedGraphics = InstantiateSpecialFXGraphics(parent.transform, true);
+            }
+
+            return ActionConclusion.Continue;
+        }
+
+        public override void CancelClient(ClientCharacterVisualization parent)
+        {
+            if (m_SpawnedGraphics != null)
+            {
+                foreach (var graphic in m_SpawnedGraphics)
+                {
+                    if (graphic)
+                    {
+                        graphic.transform.SetParent(null);
+                        graphic.Shutdown();
+                    }
+                }
             }
         }
 
