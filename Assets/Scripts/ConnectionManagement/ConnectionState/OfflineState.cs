@@ -24,13 +24,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [Inject]
         ProfileManager m_ProfileManager;
 
+        const string k_MainMenuSceneName = "MainMenu";
+
         public override void Enter()
         {
             m_LobbyServiceFacade.EndTracking();
             m_ConnectionManager.NetworkManager.Shutdown();
-            if (SceneManager.GetActiveScene().name != m_ConnectionManager.OfflineScene)
+            if (SceneManager.GetActiveScene().name != k_MainMenuSceneName)
             {
-                SceneLoaderWrapper.Instance.LoadScene(m_ConnectionManager.OfflineScene, useNetworkSceneManager: false);
+                SceneLoaderWrapper.Instance.LoadScene(k_MainMenuSceneName, useNetworkSceneManager: false);
             }
         }
 

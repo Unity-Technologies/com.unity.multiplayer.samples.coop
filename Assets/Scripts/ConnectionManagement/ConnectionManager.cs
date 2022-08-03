@@ -69,16 +69,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public int MaxConnectedPlayers = 8;
 
-        [SerializeField]
-        string m_OfflineScene;
-
-        public string OfflineScene => m_OfflineScene;
-
-        [SerializeField]
-        string m_StartScene;
-
-        public string StartScene => m_StartScene;
-
         internal readonly OfflineState m_Offline = new OfflineState();
         internal readonly ClientConnectingState m_ClientConnecting = new ClientConnectingState();
         internal readonly ClientConnectedState m_ClientConnected = new ClientConnectedState();

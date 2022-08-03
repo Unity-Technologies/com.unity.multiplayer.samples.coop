@@ -35,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             //The "BossRoom" server always advances to CharSelect immediately on start. Different games
             //may do this differently.
-            SceneLoaderWrapper.Instance.LoadScene(m_ConnectionManager.StartScene, useNetworkSceneManager: true);
+            SceneLoaderWrapper.Instance.LoadScene("CharSelect", useNetworkSceneManager: true);
 
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)
             {
