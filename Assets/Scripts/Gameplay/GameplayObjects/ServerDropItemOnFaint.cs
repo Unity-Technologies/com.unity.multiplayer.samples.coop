@@ -32,9 +32,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (newValue == LifeState.Fainted)
             {
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetworkPickUpState.heldObject.Value, out var heavyNetworkObject))
+                if (m_NetworkPickUpState.heldNetworkObjectReference.TryGet(out var heavyNetworkObject))
                 {
-                    m_NetworkPickUpState.heldObject.Value = 0;
+                    m_NetworkPickUpState.heldNetworkObjectReference = default;
                     heavyNetworkObject.transform.SetParent(null);
                 }
             }
