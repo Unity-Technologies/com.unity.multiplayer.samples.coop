@@ -3,14 +3,14 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
-    [RequireComponent(typeof(NetworkPickUpState), typeof(NetworkLifeState))]
+    [RequireComponent(typeof(NetworkCharacterState), typeof(NetworkLifeState))]
     public class ServerDropItemOnFaint : NetworkBehaviour
     {
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
 
         [SerializeField]
-        NetworkPickUpState m_NetworkPickUpState;
+        NetworkCharacterState m_NetworkCharacterState;
 
         public override void OnNetworkSpawn()
         {
@@ -32,11 +32,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (newValue == LifeState.Fainted)
             {
-                if (m_NetworkPickUpState.heldNetworkObjectReference.TryGet(out var heavyNetworkObject))
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetworkCharacterState.heldNetworkObject.Value, out var heavyNetworkObject))
                 {
-                    m_NetworkPickUpState.heldNetworkObjectReference = default;
                     heavyNetworkObject.transform.SetParent(null);
                 }
+                m_NetworkCharacterState.heldNetworkObject.Value = 0;
             }
         }
     }

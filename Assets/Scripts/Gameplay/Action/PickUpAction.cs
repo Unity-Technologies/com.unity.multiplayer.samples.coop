@@ -24,21 +24,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         float m_AnimationTimer;
 
-        NetworkPickUpState m_NetworkPickUpState;
-
         static RaycastHitComparer s_RaycastHitComparer;
 
         public PickUpAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
-            m_NetworkPickUpState = parent.GetComponent<NetworkPickUpState>();
-
             s_RaycastHitComparer ??= new RaycastHitComparer();
         }
 
         public override bool Start()
         {
             // play animation based on if a heavy object is already held and start timer
-            if (m_NetworkPickUpState.heldNetworkObjectReference.TryGet(out var heldObject))
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_Parent.NetState.heldNetworkObject.Value, out var heldObject))
             {
                 Data.TargetIds = null;
 
@@ -74,10 +70,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void PickUpOrDrop()
         {
-            if (m_NetworkPickUpState.heldNetworkObjectReference.TryGet(out var heldObject))
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_Parent.NetState.heldNetworkObject.Value, out var heldObject))
             {
                 // pickup object found inside of hierarchy; drop it
-                m_NetworkPickUpState.heldNetworkObjectReference = default;
+                m_Parent.NetState.heldNetworkObject.Value = 0;
                 heldObject.transform.SetParent(null);
                 return;
             }
@@ -114,7 +110,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
-            m_NetworkPickUpState.heldNetworkObjectReference = heavyNetworkObject;
+            m_Parent.NetState.heldNetworkObject.Value = heavyNetworkObject.NetworkObjectId;
 
             Data.TargetIds = new ulong[] { heavyNetworkObject.NetworkObjectId };
 
