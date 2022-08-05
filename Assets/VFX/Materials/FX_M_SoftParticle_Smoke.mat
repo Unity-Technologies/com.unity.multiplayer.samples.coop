@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FX_M_Smoke
+  m_Name: FX_M_SoftParticle_Smoke
   m_Shader: {fileID: -6465566751694194690, guid: a9ba79dc821093a4c9041bcede85096b, type: 3}
   m_ValidKeywords:
   - _SURFACE_TYPE_TRANSPARENT
