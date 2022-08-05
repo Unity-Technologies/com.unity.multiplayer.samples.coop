@@ -443,7 +443,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             (m_ServerNetworkManager, m_ClientNetworkManagers[0]) = (m_ClientNetworkManagers[0], m_ServerNetworkManager);
             (m_ServerConnectionManager, m_ClientConnectionManagers[0]) = (m_ClientConnectionManagers[0], m_ServerConnectionManager);
 
-            // recreate player prefab here
+            // recreate player prefab here since the GameObject has been destroyed
             CreatePlayerPrefab();
 
             StartHost();
