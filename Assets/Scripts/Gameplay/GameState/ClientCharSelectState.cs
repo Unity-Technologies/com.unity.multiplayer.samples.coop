@@ -2,20 +2,25 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
     /// <summary>
     /// Client specialization of the Character Select game state. Mainly controls the UI during character-select.
     /// </summary>
-    [RequireComponent(typeof(CharSelectData))]
+    [RequireComponent(typeof(NetcodeHooks))]
     public class ClientCharSelectState : GameStateBehaviour
     {
         /// <summary>
         /// Reference to the scene's state object so that UI can access state
         /// </summary>
         public static ClientCharSelectState Instance { get; private set; }
+
+        [SerializeField]
+        NetcodeHooks m_NetcodeHooks;
 
         public override GameState ActiveState { get { return GameState.CharSelect; } }
         public CharSelectData CharSelectData { get; private set; }
@@ -100,12 +105,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         Dictionary<LobbyMode, List<GameObject>> m_LobbyUIElementsByMode;
 
+        [Inject]
+        ConnectionManager m_ConnectionManager;
+
         protected override void Awake()
         {
             base.Awake();
-
             Instance = this;
-            CharSelectData = GetComponent<CharSelectData>();
+
+            // TODO inject or find another way to find CharSelectData
+            // TODO CharSelectData should directly be in ServerCharSelectState
+            CharSelectData = FindObjectOfType<CharSelectData>();
+            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
+            m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
+
             m_LobbyUIElementsByMode = new Dictionary<LobbyMode, List<GameObject>>()
             {
                 { LobbyMode.ChooseSeat, m_UIElementsForNoSeatChosen },
@@ -115,12 +128,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             };
         }
 
-        public override void OnDestroy()
+        protected override void OnDestroy()
         {
             if (Instance == this)
             {
                 Instance = null;
             }
+
             base.OnDestroy();
         }
 
@@ -136,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             UpdateCharacterSelection(CharSelectData.SeatState.Inactive);
         }
 
-        public override void OnNetworkDespawn()
+        void OnNetworkDespawn()
         {
             if (CharSelectData)
             {
@@ -145,9 +159,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
         }
 
-        public override void OnNetworkSpawn()
+        void OnNetworkSpawn()
         {
-            if (!IsClient)
+            if (!NetworkManager.Singleton.IsClient)
             {
                 enabled = false;
             }
@@ -398,7 +412,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="seatIdx"></param>
         public void OnPlayerClickedSeat(int seatIdx)
         {
-            if (IsSpawned)
+            if (CharSelectData.IsSpawned)
             {
                 CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, seatIdx, false);
             }
@@ -409,7 +423,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public void OnPlayerClickedReady()
         {
-            if (IsSpawned)
+            if (CharSelectData.IsSpawned)
             {
                 // request to lock in or unlock if already locked in
                 CharSelectData.ChangeSeatServerRpc(NetworkManager.Singleton.LocalClientId, m_LastSeatSelected, !m_HasLocalPlayerLockedIn);
@@ -426,19 +440,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             return characterGraphics;
         }
-
-#if UNITY_EDITOR
-        void OnValidate()
-        {
-            if (gameObject.scene.rootCount > 1) // Hacky way for checking if this is a scene object or a prefab instance and not a prefab definition.
-            {
-                while (m_PlayerSeats.Count < CharSelectData.k_MaxLobbyPlayers)
-                {
-                    m_PlayerSeats.Add(null);
-                }
-            }
-        }
-#endif
 
     }
 }
