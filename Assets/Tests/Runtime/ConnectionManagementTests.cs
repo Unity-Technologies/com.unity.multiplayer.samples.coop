@@ -451,10 +451,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
 
             yield return ConnectClients();
             AssertAllClientsAreConnected();
-
-            // Switching back references for Client0 and Server
-            (m_ServerNetworkManager, m_ClientNetworkManagers[0]) = (m_ClientNetworkManagers[0], m_ServerNetworkManager);
-            (m_ServerConnectionManager, m_ClientConnectionManagers[0]) = (m_ClientConnectionManagers[0], m_ServerConnectionManager);
         }
 
         [UnityTest]
