@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
@@ -15,8 +14,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// </summary>
     class ClientReconnectingState : ClientConnectingState
     {
-        const int k_NbReconnectAttempts = 2;
-
         [Inject]
         IPublisher<ReconnectMessage> m_ReconnectMessagePublisher;
 
@@ -38,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 m_ConnectionManager.StopCoroutine(m_ReconnectCoroutine);
                 m_ReconnectCoroutine = null;
             }
-            m_ReconnectMessagePublisher.Publish(new ReconnectMessage(k_NbReconnectAttempts, k_NbReconnectAttempts));
+            m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_ConnectionManager.NbReconnectAttempts, m_ConnectionManager.NbReconnectAttempts));
         }
 
         public override void OnClientConnected(ulong _)
@@ -48,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void OnClientDisconnect(ulong _)
         {
-            if (m_NbAttempts < k_NbReconnectAttempts)
+            if (m_NbAttempts < m_ConnectionManager.NbReconnectAttempts)
             {
                 m_ReconnectCoroutine = m_ConnectionManager.StartCoroutine(ReconnectCoroutine());
             }
@@ -85,8 +82,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectionManager.NetworkManager.Shutdown();
 
             yield return new WaitWhile(() => m_ConnectionManager.NetworkManager.ShutdownInProgress); // wait until NetworkManager completes shutting down
-            Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{k_NbReconnectAttempts}...");
-            m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, k_NbReconnectAttempts));
+            Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}...");
+            m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
             m_NbAttempts++;
             if (!string.IsNullOrEmpty(m_LobbyCode))
             {

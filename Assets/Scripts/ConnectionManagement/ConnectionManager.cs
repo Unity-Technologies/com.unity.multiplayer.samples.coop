@@ -64,6 +64,11 @@ namespace Unity.Multiplayer.Samples.BossRoom
         List<NetworkObject> m_NetworkObjectsToSpawnWhenServerStarted = new List<NetworkObject>();
         public List<NetworkObject> NetworkObjectsToSpawnWhenServerStarted => m_NetworkObjectsToSpawnWhenServerStarted;
 
+        [SerializeField]
+        int m_NbReconnectAttempts = 2;
+
+        public int NbReconnectAttempts => m_NbReconnectAttempts;
+
         [Inject]
         IObjectResolver m_Resolver;
 

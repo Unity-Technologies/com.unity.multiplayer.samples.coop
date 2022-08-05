@@ -401,9 +401,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
             // Waiting for clients to fail to automatically reconnect
             for (var i = 0; i < NumberOfClients; i++)
             {
-                // expecting that error twice per client since there are two reconnect attempts
-                LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
-                LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+                for (var j = 0; j < m_ClientConnectionManagers[i].NbReconnectAttempts; j++)
+                {
+                    // Expecting this error for each reconnection attempt for each client
+                    LogAssert.Expect(LogType.Error, k_FailedToConnectToServerErrorMessage);
+                }
             }
             yield return WaitForClientsConnectedOrTimeOut();
             for (var i = 0; i < NumberOfClients; i++)
