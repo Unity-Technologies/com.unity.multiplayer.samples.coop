@@ -7,35 +7,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// <summary>
     /// List of all Actions supported in the game.
     /// </summary>
-    public enum ActionType
-    {
-        None,
-        TankBaseAttack,
-        ArcherBaseAttack,
-        MageBaseAttack,
-        RogueBaseAttack,
-        ImpBaseAttack,
-        ImpBossBaseAttack,
-        GeneralChase,
-        GeneralRevive,
-        DriveArrow,
-        Emote1,
-        Emote2,
-        Emote3,
-        Emote4,
-        TankTestability,
-        TankShieldBuff,
-        ImpBossTrampleAttack,
-        Stun,
-        TankShieldRush,
-        GeneralTarget,
-        MageHeal,
-        ArcherChargedShot,
-        RogueStealthMode,
-        ArcherVolley,
-        RogueDashAttack,
-        ImpToss
-    }
+    // public enum ActionType
+    // {
+    //     None,
+    //     TankBaseAttack,
+    //     ArcherBaseAttack,
+    //     MageBaseAttack,
+    //     RogueBaseAttack,
+    //     ImpBaseAttack,
+    //     ImpBossBaseAttack,
+    //     GeneralChase,
+    //     GeneralRevive,
+    //     DriveArrow,
+    //     Emote1,
+    //     Emote2,
+    //     Emote3,
+    //     Emote4,
+    //     TankTestability,
+    //     TankShieldBuff,
+    //     ImpBossTrampleAttack,
+    //     Stun,
+    //     TankShieldRush,
+    //     GeneralTarget,
+    //     MageHeal,
+    //     ArcherChargedShot,
+    //     RogueStealthMode,
+    //     ArcherVolley,
+    //     RogueDashAttack,
+    //     ImpToss
+    // }
 
 
     /// <summary>
@@ -70,7 +70,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public struct ActionRequestData : INetworkSerializable
     {
-        public ActionType ActionTypeEnum;      //the action to play.
+        public ActionID ActionPrototypeID; //index of the action in the list of all actions in the game - a way to recover the reference to the instance at runtime
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill.
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing.
         public ulong[] TargetIds;          //NetworkObjectIds of targets, or null if untargeted.
@@ -95,12 +95,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             //currently serialized with a byte. Change Read/Write if you add more than 8 fields.
         }
 
+        public static ActionRequestData Create(Action action) =>
+            new()
+            {
+                ActionPrototypeID = action.PrototypeActionID
+            };
+
         /// <summary>
         /// Returns true if the ActionRequestDatas are "functionally equivalent" (not including their Queueing or Closing properties).
         /// </summary>
         public bool Compare(ref ActionRequestData rhs)
         {
-            bool scalarParamsEqual = (ActionTypeEnum, Position, Direction, Amount) == (rhs.ActionTypeEnum, rhs.Position, rhs.Direction, rhs.Amount);
+            bool scalarParamsEqual = (ActionPrototypeIndex: ActionPrototypeID, Position, Direction, Amount) == (rhs.ActionPrototypeID, rhs.Position, rhs.Direction, rhs.Amount);
             if (!scalarParamsEqual) { return false; }
 
             if (TargetIds == rhs.TargetIds) { return true; } //covers case of both being null.
@@ -137,7 +143,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 flags = GetPackFlags();
             }
 
-            serializer.SerializeValue(ref ActionTypeEnum);
+            serializer.SerializeValue(ref ActionPrototypeID);
             serializer.SerializeValue(ref flags);
 
             if (serializer.IsReader)

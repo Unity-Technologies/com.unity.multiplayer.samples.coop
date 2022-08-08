@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
-using BlockingMode = Unity.Multiplayer.Samples.BossRoom.ActionDescription.BlockingModeType;
+using UnityEngine.Assertions;
+using BlockingMode = Unity.Multiplayer.Samples.BossRoom.Actions.ActionConfig.BlockingModeType;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -27,12 +30,38 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     ///
     /// Note also that if Start() returns false, no other functions are called on the Action, not even End().
     /// </remarks>
-    public abstract class Action
+    public abstract class Action : ScriptableObject
     {
+        /// <summary>
+        /// A reference to the prototype action that helps us identify actions of the same type
+        /// </summary>
+        [NonSerialized]
+        public Action RuntimePrototypeReference;
+
+        public bool IsPrototypeAction => RuntimePrototypeReference == null;
+
+        /// <summary>
+        /// An index into the GameDataSource array of action prototypes. If action is not itself a prototype - will return the action id of the prototype reference.
+        /// </summary>
+        //[NonSerialized]
+        public ActionID PrototypeActionID {
+            get
+            {
+                if (IsPrototypeAction)
+                {
+                    return GameDataSource.Instance.GetIndexOfActionPrototype(this);
+                }
+
+                return GameDataSource.Instance.GetIndexOfActionPrototype(RuntimePrototypeReference);
+            }
+        }
+
+
         /// <summary>
         /// The default hit react animation; several different ActionFXs make use of this.
         /// </summary>
         public const string k_DefaultHitReact = "HitReact1";
+
 
         protected ActionRequestData m_Data;
 
@@ -54,23 +83,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <summary>
         /// Data Description for this action.
         /// </summary>
-        public ActionDescription Description
-        {
-            get
-            {
-                if (!GameDataSource.Instance.ActionDataByType.TryGetValue(Data.ActionTypeEnum, out var result))
-                {
-                    throw new KeyNotFoundException($"Tried to find ActionType {Data.ActionTypeEnum} but it was missing from GameDataSource!");
-                }
+        public ActionConfig Config;
 
-                return result;
-            }
-        }
+        public bool IsChaseAction => Config.Logic is ActionLogic.Chase;
+        public bool IsStunAction => Config.Logic is ActionLogic.Stunned;
 
         /// <summary>
         /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
         /// </summary>
-        public Action(ref ActionRequestData data)
+        public virtual void Initialize(ref ActionRequestData data)
         {
             m_Data = data;
         }
@@ -94,7 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <returns>true to become a non-blocking Action, false to remain a blocking Action</returns>
         public virtual bool ShouldBecomeNonBlocking()
         {
-            return Description.BlockingMode == BlockingMode.OnlyDuringExecTime ? TimeRunning >= Description.ExecTimeSeconds : false;
+            return Config.BlockingMode == BlockingMode.OnlyDuringExecTime ? TimeRunning >= Config.ExecTimeSeconds : false;
         }
 
         /// <summary>
@@ -184,42 +205,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <param name="actionType"></param>
         public virtual void OnGameplayActivity(ServerCharacter parent, GameplayActivity activityType) { }
 
-        /// <summary>
-        /// Factory method that creates Actions from their request data.
-        /// </summary>
-        /// <param name="data">the data to instantiate this skill from. </param>
-        /// <param name="parent">The component that owns the ActionPlayer this action is running on. </param>
-        /// <param name="clientParent"></param>
-        /// <returns>the newly created action. </returns>
-        public static Action MakeAction(ref ActionRequestData data)
-        {
-            if (!GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out var actionDesc))
-            {
-                throw new System.Exception($"Trying to create Action {data.ActionTypeEnum} but it isn't defined on the GameDataSource!");
-            }
 
-            var logic = actionDesc.Logic;
-
-            switch (logic)
-            {
-                case ActionLogic.Melee: return new MeleeAction(ref data);
-                case ActionLogic.AoE: return new AoeAction(ref data);
-                case ActionLogic.Chase: return new ChaseAction(ref data);
-                case ActionLogic.Revive: return new ReviveAction(ref data);
-                case ActionLogic.RangedFXTargeted: return new FXProjectileTargetedAction(ref data);
-                case ActionLogic.LaunchProjectile: return new LaunchProjectileAction(ref data);
-                case ActionLogic.Emote: return new EmoteAction(ref data);
-                case ActionLogic.Trample: return new TrampleAction(ref data);
-                case ActionLogic.ChargedShield: return new ChargedShieldAction(ref data);
-                case ActionLogic.Stunned: return new StunnedAction(ref data);
-                case ActionLogic.Target: return new TargetAction(ref data);
-                case ActionLogic.ChargedLaunchProjectile: return new ChargedLaunchProjectileAction( ref data);
-                case ActionLogic.StealthMode: return new StealthModeAction( ref data);
-                case ActionLogic.DashAttack: return new DashAttackAction( ref data);
-                case ActionLogic.ImpToss: return new TossAction(ref data);
-                default: throw new System.NotImplementedException();
-            }
-        }
 
         /// <summary>
         /// True if this actionFX began running immediately, prior to getting a confirmation from the server.
@@ -274,7 +260,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!parent.CanPerformActions) { return false; }
 
-            var actionDescription = GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum];
+            var actionDescription = GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeID).Config;
 
             //for actions with ShouldClose set, we check our range locally. If we are out of range, we shouldn't anticipate, as we will
             //need to execute a ChaseAction (synthesized on the server) prior to actually playing the skill.
@@ -314,7 +300,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         protected List<SpecialFXGraphic> InstantiateSpecialFXGraphics(Transform origin, bool parentToOrigin)
         {
             var returnList = new List<SpecialFXGraphic>();
-            foreach (var prefab in Description.Spawns)
+            foreach (var prefab in Config.Spawns)
             {
                 if (!prefab) { continue; } // skip blank entries in our prefab list
                 returnList.Add(InstantiateSpecialFXGraphic(prefab, origin, parentToOrigin));
@@ -331,7 +317,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (prefab.GetComponent<SpecialFXGraphic>() == null)
             {
-                throw new System.Exception($"One of the Spawns on action {Description.ActionTypeEnum} does not have a SpecialFXGraphic component and can't be instantiated!");
+                throw new System.Exception($"One of the Spawns on action {this.name} does not have a SpecialFXGraphic component and can't be instantiated!");
             }
             var graphicsGO = GameObject.Instantiate(prefab, origin.transform.position, origin.transform.rotation, (parentToOrigin ? origin.transform : null));
             return graphicsGO.GetComponent<SpecialFXGraphic>();
@@ -347,9 +333,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             AnticipatedClient = true;
             TimeStarted = UnityEngine.Time.time;
 
-            if (!string.IsNullOrEmpty(Description.AnimAnticipation))
+            if (!string.IsNullOrEmpty(Config.AnimAnticipation))
             {
-                parent.OurAnimator.SetTrigger(Description.AnimAnticipation);
+                parent.OurAnimator.SetTrigger(Config.AnimAnticipation);
             }
         }
 

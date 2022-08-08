@@ -1,7 +1,9 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -11,10 +13,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// target becomes ineligible (dies or disappears). Note that while Actions in general can have multiple targets,
     /// you as a player can only have a single target selected at a time (the character that your target reticule appears under).
     /// </summary>
+    [CreateAssetMenu()]
     public class TargetAction : Action
     {
-        public TargetAction(ref ActionRequestData data) : base(ref data) { }
-
         private GameObject m_TargetReticule;
         private ulong m_CurrentTarget;
         private ulong m_NewTarget;
@@ -111,8 +112,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private void OnActionInput(ActionRequestData data)
         {
+            var actionData = GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeIndex);
+
+
             //this method runs on the owning client, and allows us to anticipate our new target for purposes of FX visualization.
-            if (data.ActionTypeEnum == ActionType.GeneralTarget)
+            if (actionData is GeneralT data.ActionTypeEnum == ActionType.GeneralTarget)
             {
                 m_NewTarget = data.TargetIds[0];
             }

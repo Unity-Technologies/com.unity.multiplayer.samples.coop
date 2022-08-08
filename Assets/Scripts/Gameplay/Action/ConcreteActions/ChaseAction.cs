@@ -1,3 +1,4 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
@@ -5,6 +6,8 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
+
+    [Serializable]
     public class ChaseAction : Action
     {
         private NetworkObject m_Target;

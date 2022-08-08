@@ -1,3 +1,4 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
@@ -20,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// See MeleeAction for relevant discussion about targeting; we use the same concept here: preferring
     /// the chosen target, but using whatever is actually within striking distance at time of attack.
     /// </remarks>
+    [Serializable]
     public class DashAttackAction : Action
     {
         private Vector3 m_TargetSpot;
@@ -28,18 +30,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public DashAttackAction( ref ActionRequestData data) : base(ref data)
         {
-            Assert.IsTrue(Description.Radius > 0, $"ActionDescription for {Description.ActionTypeEnum} needs a Radius assigned!");
+            Assert.IsTrue(Config.Radius > 0, $"ActionDescription for {Config.ActionTypeEnum} needs a Radius assigned!");
         }
 
         public override bool OnStart(ServerCharacter parent)
         {
             // remember the exact spot we'll stop.
-            m_TargetSpot = ActionUtils.GetDashDestination(parent.physicsWrapper.Transform, Data.Position, true, Description.Range, Description.Range);
+            m_TargetSpot = ActionUtils.GetDashDestination(parent.physicsWrapper.Transform, Data.Position, true, Config.Range, Config.Range);
 
             // snap to face our destination. This ensures the client visualization faces the right way while "pretending" to dash
             parent.physicsWrapper.Transform.LookAt(m_TargetSpot);
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             // tell clients to visualize this action
             parent.NetState.RecvDoActionClientRPC(Data);
@@ -55,9 +57,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         public override void End(ServerCharacter parent)
         {
             // Anim2 contains the name of the end-loop-sequence trigger
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
 
             // we're done, time to teleport!
@@ -70,20 +72,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         public override void Cancel(ServerCharacter parent)
         {
             // OtherAnimatorVariable contains the name of the cancellation trigger
-            if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
+            if (!string.IsNullOrEmpty(Config.OtherAnimatorVariable))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.OtherAnimatorVariable);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.OtherAnimatorVariable);
             }
 
             // because the client-side visualization of the action moves the character visualization around,
             // we need to explicitly end the client-side visuals when we abort
-            parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+            parent.NetState.RecvCancelActionsByTypeClientRpc(Config.ActionTypeEnum);
 
         }
 
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && buffType == BuffableValue.PercentDamageReceived)
+            if (TimeRunning >= Config.ExecTimeSeconds && buffType == BuffableValue.PercentDamageReceived)
             {
                 // we suffer no damage during the "dash" (client-side pretend movement)
                 buffedValue = 0;
@@ -93,14 +95,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private void PerformMeleeAttack(ServerCharacter parent)
         {
             // perform a typical melee-hit. But note that we are using the Radius field for range, not the Range field!
-            IDamageable foe = MeleeAction.GetIdealMeleeFoe(Description.IsFriendly ^ parent.IsNpc,
+            IDamageable foe = MeleeAction.GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc,
                 parent.physicsWrapper.DamageCollider,
-                                                            Description.Radius,
+                                                            Config.Radius,
                                                             (Data.TargetIds != null && Data.TargetIds.Length > 0 ? Data.TargetIds[0] : 0));
 
             if (foe != null)
             {
-                foe.ReceiveHP(parent, -Description.Amount);
+                foe.ReceiveHP(parent, -Config.Amount);
             }
         }
 

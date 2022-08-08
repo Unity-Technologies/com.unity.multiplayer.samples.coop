@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
 using UnityEngine;
+using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
@@ -10,17 +11,24 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [SerializeField]
         private CharacterClass[] m_CharacterData;
 
-        [Tooltip("All ActionDescription data should be slotted in here")]
         [SerializeField]
-        private ActionDescription[] m_ActionData;
+        Action m_GeneralChase;
+
+        [Tooltip("All Action prototype scriptable objects should be slotted in here")]
+        [SerializeField]
+        private Action[] m_ActionPrototypes;
 
         private Dictionary<CharacterTypeEnum, CharacterClass> m_CharacterDataMap;
-        private Dictionary<ActionType, ActionDescription> m_ActionDataMap;
 
         /// <summary>
         /// static accessor for all GameData.
         /// </summary>
         public static GameDataSource Instance { get; private set; }
+
+        public Action GetActionPrototypeByID(ActionID index)
+        {
+            return m_ActionPrototypes[index.ID];
+        }
 
         /// <summary>
         /// Contents of the CharacterData list, indexed by CharacterType for convenience.
@@ -45,28 +53,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        /// <summary>
-        /// Contents of the ActionData list, indexed by ActionType for convenience.
-        /// </summary>
-        public Dictionary<ActionType, ActionDescription> ActionDataByType
-        {
-            get
-            {
-                if (m_ActionDataMap == null)
-                {
-                    m_ActionDataMap = new Dictionary<ActionType, ActionDescription>();
-                    foreach (ActionDescription data in m_ActionData)
-                    {
-                        if (m_ActionDataMap.ContainsKey(data.ActionTypeEnum))
-                        {
-                            throw new System.Exception($"Duplicate action definition detected: {data.ActionTypeEnum}");
-                        }
-                        m_ActionDataMap[data.ActionTypeEnum] = data;
-                    }
-                }
-                return m_ActionDataMap;
-            }
-        }
+        public ActionID GeneralChaseActionID { get; set; }
 
         private void Awake()
         {
@@ -75,8 +62,18 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 throw new System.Exception("Multiple GameDataSources defined!");
             }
 
+
+
             DontDestroyOnLoad(gameObject);
             Instance = this;
+        }
+
+        public ActionID GetIndexOfActionPrototype(Action action)
+        {
+            return new ActionID()
+            {
+                ID = Array.IndexOf(m_ActionPrototypes, action)
+            };
         }
     }
 }

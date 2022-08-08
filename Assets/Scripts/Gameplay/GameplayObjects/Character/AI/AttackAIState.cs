@@ -9,9 +9,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         private AIBrain m_Brain;
         private ServerActionPlayer m_ServerActionPlayer;
         private ServerCharacter m_Foe;
-        private ActionType m_CurAttackAction;
+        private Action m_CurAttackAction;
 
-        List<ActionType> m_AttackActions;
+        List<Action> m_AttackActions;
 
         public AttackAIState(AIBrain brain, ServerActionPlayer serverActionPlayer)
         {
@@ -26,16 +26,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void Initialize()
         {
-            m_AttackActions = new List<ActionType>();
-            if (m_Brain.CharacterData.Skill1 != ActionType.None)
+            m_AttackActions = new List<Action>();
+            if (m_Brain.CharacterData.Skill1 != null)
             {
                 m_AttackActions.Add(m_Brain.CharacterData.Skill1);
             }
-            if (m_Brain.CharacterData.Skill2 != ActionType.None)
+            if (m_Brain.CharacterData.Skill2 != null)
             {
                 m_AttackActions.Add(m_Brain.CharacterData.Skill2);
             }
-            if (m_Brain.CharacterData.Skill3 != ActionType.None)
+            if (m_Brain.CharacterData.Skill3 != null)
             {
                 m_AttackActions.Add(m_Brain.CharacterData.Skill3);
             }
@@ -66,7 +66,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // see if we're already chasing or attacking our active foe!
             if (m_ServerActionPlayer.GetActiveActionInfo(out var info))
             {
-                if (info.ActionTypeEnum == ActionType.GeneralChase)
+                if (GameDataSource.Instance.GetActionPrototypeByID(info.ActionPrototypeID).IsChaseAction)
                 {
                     if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkObjectId)
                     {
@@ -74,7 +74,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                         return;
                     }
                 }
-                else if (info.ActionTypeEnum == m_CurAttackAction)
+                else if (info.ActionPrototypeID == m_CurAttackAction.PrototypeActionID)
                 {
                     if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkObjectId)
                     {
@@ -82,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                         return;
                     }
                 }
-                else if (info.ActionTypeEnum == ActionType.Stun)
+                else if (GameDataSource.Instance.GetActionPrototypeByID(info.ActionPrototypeID).IsStunAction)
                 {
                     // we can't do anything right now. We're stunned!
                     return;
@@ -91,7 +91,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             // choose the attack to use
             m_CurAttackAction = ChooseAttack();
-            if (m_CurAttackAction == ActionType.None)
+            if (m_CurAttackAction == null)
             {
                 // no actions are usable right now
                 return;
@@ -100,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // attack!
             var attackData = new ActionRequestData
             {
-                ActionTypeEnum = m_CurAttackAction,
+                ActionPrototypeID = m_CurAttackAction.PrototypeActionID,
                 TargetIds = new ulong[] { m_Foe.NetworkObjectId },
                 ShouldClose = true,
                 Direction = m_Brain.GetMyServerCharacter().physicsWrapper.Transform.forward
@@ -135,7 +135,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Randomly picks a usable attack. If no actions are usable right now, returns ActionType.None.
         /// </summary>
         /// <returns>Action to attack with, or ActionType.None</returns>
-        private ActionType ChooseAttack()
+        private Action ChooseAttack()
         {
             // make a random choice
             int idx = Random.Range(0, m_AttackActions.Count);
@@ -145,14 +145,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             do
             {
                 anyUsable = false;
-                foreach (var actionType in m_AttackActions)
+                foreach (var attack in m_AttackActions)
                 {
-                    if (m_ServerActionPlayer.IsReuseTimeElapsed(actionType))
+                    if (m_ServerActionPlayer.IsReuseTimeElapsed(attack.PrototypeActionID))
                     {
                         anyUsable = true;
                         if (idx == 0)
                         {
-                            return actionType;
+                            return attack;
                         }
                         --idx;
                     }
@@ -160,7 +160,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             } while (anyUsable);
 
             // none of our actions are available now
-            return ActionType.None;
+            return null;
         }
     }
 }

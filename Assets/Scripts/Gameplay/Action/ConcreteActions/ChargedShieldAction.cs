@@ -1,3 +1,4 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
@@ -20,6 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// When the Action is fully charged up, it provides a special additional benefit: if the boss tries to trample this
     /// character, the boss becomes Stunned.
     /// </remarks>
+    [CreateAssetMenu()]
     public class ChargedShieldAction : Action
     {
         /// <summary>
@@ -59,10 +61,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // for several copies of this action to be playing at once. This can lead to situations where several
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+            parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Config.Anim2);
 
             // raise the start trigger to start the animation loop!
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             parent.NetState.RecvDoActionClientRPC(Data);
             return true;
@@ -78,14 +80,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             if (m_StoppedChargingUpTime == 0)
             {
                 // we haven't explicitly stopped charging up... but if we've reached max charge, that implicitly stops us
-                if (TimeRunning >= Description.ExecTimeSeconds)
+                if (TimeRunning >= Config.ExecTimeSeconds)
                 {
                     StopChargingUp(parent);
                 }
             }
 
             // we stop once the charge-up has ended and our effect duration has elapsed
-            return m_StoppedChargingUpTime == 0 || Time.time < (m_StoppedChargingUpTime + Description.EffectDurationSeconds);
+            return m_StoppedChargingUpTime == 0 || Time.time < (m_StoppedChargingUpTime + Config.EffectDurationSeconds);
         }
 
         public override bool ShouldBecomeNonBlocking()
@@ -95,7 +97,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private float GetPercentChargedUp()
         {
-            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Description.ExecTimeSeconds);
+            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Config.ExecTimeSeconds);
         }
 
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
@@ -139,8 +141,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // if stepped into invincibility, decrement invincibility counter
             if (Mathf.Approximately(GetPercentChargedUp(), 1f))
             {
-                parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
-                    parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) - 1);
+                parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Config.OtherAnimatorVariable,
+                    parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Config.OtherAnimatorVariable) - 1);
             }
         }
 
@@ -151,7 +153,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 m_StoppedChargingUpTime = Time.time;
                 parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
 
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
 
                 //tell the animator controller to enter "invincibility mode" (where we don't flinch from damage)
                 if (Mathf.Approximately(GetPercentChargedUp(), 1f))
@@ -160,24 +162,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.
                     // So each active copy of the charge-up increments the invincibility counter, and the animator controller
                     // knows anything greater than zero means we shouldn't show hit-reacts.
-                    parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
-                        parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) + 1);
+                    parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Config.OtherAnimatorVariable,
+                        parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Config.OtherAnimatorVariable) + 1);
                 }
             }
         }
 
         public override bool OnStartClient(ClientCharacterVisualization parent)
         {
-            Assert.IsTrue(Description.Spawns.Length == 2, $"Found {Description.Spawns.Length} spawns for action {Description.ActionTypeEnum}. Should be exactly 2: a charge-up particle and a fully-charged particle");
+            Assert.IsTrue(Config.Spawns.Length == 2, $"Found {Config.Spawns.Length} spawns for action {Config.ActionTypeEnum}. Should be exactly 2: a charge-up particle and a fully-charged particle");
 
             base.OnStartClient(parent);
-            m_ChargeGraphics = InstantiateSpecialFXGraphic(Description.Spawns[0], parent.transform, true);
+            m_ChargeGraphics = InstantiateSpecialFXGraphic(Config.Spawns[0], parent.transform, true);
             return true;
         }
 
         public override bool OnUpdateClient(ClientCharacterVisualization parent)
         {
-            return IsChargingUp() || (Time.time - m_StoppedChargingUpTime) < Description.EffectDurationSeconds;
+            return IsChargingUp() || (Time.time - m_StoppedChargingUpTime) < Config.EffectDurationSeconds;
         }
 
         public override void CancelClient(ClientCharacterVisualization parent)
@@ -210,7 +212,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // if fully charged, we show a special graphic
             if (Mathf.Approximately(finalChargeUpPercentage, 1))
             {
-                m_ShieldGraphics = InstantiateSpecialFXGraphic(Description.Spawns[1], parent.transform, true);
+                m_ShieldGraphics = InstantiateSpecialFXGraphic(Config.Spawns[1], parent.transform, true);
             }
         }
 
@@ -220,7 +222,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // for several copies of this action to be playing at once. This can lead to situations where several
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            parent.OurAnimator.ResetTrigger(Description.Anim2);
+            parent.OurAnimator.ResetTrigger(Config.Anim2);
             base.AnticipateActionClient(parent);
         }
     }

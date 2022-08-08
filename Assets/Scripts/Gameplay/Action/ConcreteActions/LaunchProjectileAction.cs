@@ -1,3 +1,4 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
@@ -9,27 +10,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// <summary>
     /// Action responsible for creating a projectile object.
     /// </summary>
+    [CreateAssetMenu()]
     public class LaunchProjectileAction : Action
     {
         private bool m_Launched = false;
-
-
-        public LaunchProjectileAction(ref ActionRequestData data)
-            : base(ref data) { }
 
         public override bool OnStart(ServerCharacter parent)
         {
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
             parent.physicsWrapper.Transform.forward = Data.Direction;
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
         public override bool OnUpdate(ServerCharacter parent)
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && !m_Launched)
+            if (TimeRunning >= Config.ExecTimeSeconds && !m_Launched)
             {
                 LaunchProjectile(parent);
             }
@@ -42,14 +40,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// For the base class, this is always just the first entry with a valid prefab in it!
         /// </summary>
         /// <exception cref="System.Exception">thrown if no Projectiles are valid</exception>
-        protected virtual ActionDescription.ProjectileInfo GetProjectileInfo()
+        protected virtual ActionConfig.ProjectileInfo GetProjectileInfo()
         {
-            foreach (var projectileInfo in Description.Projectiles)
+            foreach (var projectileInfo in Config.Projectiles)
             {
                 if (projectileInfo.ProjectilePrefab && projectileInfo.ProjectilePrefab.GetComponent<NetworkProjectileState>())
                     return projectileInfo;
             }
-            throw new System.Exception($"Action {Description.ActionTypeEnum} has no usable Projectiles!");
+            throw new System.Exception($"Action {name} has no usable Projectiles!");
         }
 
         /// <summary>
@@ -88,9 +86,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
 

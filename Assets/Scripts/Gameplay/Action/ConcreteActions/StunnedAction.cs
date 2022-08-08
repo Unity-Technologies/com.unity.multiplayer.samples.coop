@@ -1,5 +1,7 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -11,15 +13,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// (Set it to 1 if you don't want to take more damage while stunned... set it to 2 to take double damage,
     /// or 0.5 to take half damage, etc.)
     /// </summary>
+    [CreateAssetMenu()]
     public class StunnedAction : Action
     {
-        public StunnedAction(ref ActionRequestData data) : base(ref data)
-        {
-        }
 
         public override bool OnStart(ServerCharacter parent)
         {
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             return true;
         }
 
@@ -32,15 +32,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (buffType == BuffableValue.PercentDamageReceived)
             {
-                buffedValue *= Description.Amount;
+                buffedValue *= Config.Amount;
             }
         }
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
 

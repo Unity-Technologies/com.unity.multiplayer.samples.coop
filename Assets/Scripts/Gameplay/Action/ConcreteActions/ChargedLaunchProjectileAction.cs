@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
@@ -20,6 +21,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// Projectiles array should contain each tier of projectile, sorted from weakest to strongest.
     ///
     /// </remarks>
+
+    [CreateAssetMenu()]
     public class ChargedLaunchProjectileAction : LaunchProjectileAction
     {
         /// <summary>
@@ -48,8 +51,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private bool m_ChargeEnded;
 
-        public ChargedLaunchProjectileAction(ref ActionRequestData data) : base(ref data) { }
-
         public override bool OnStart(ServerCharacter parent)
         {
             // if we have an explicit target, make sure we're aimed at them.
@@ -64,18 +65,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 }
             }
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             // start the "charging up" ActionFX
             parent.NetState.RecvDoActionClientRPC(Data);
 
             // sanity-check our data a bit
-            Debug.Assert(Description.Projectiles.Length > 1, $"Action {Data.ActionTypeEnum} has {Description.Projectiles.Length} Projectiles. Expected at least 2!");
-            foreach (var projectileInfo in Description.Projectiles)
+            Debug.Assert(Config.Projectiles.Length > 1, $"Action {name} has {Config.Projectiles.Length} Projectiles. Expected at least 2!");
+            foreach (var projectileInfo in Config.Projectiles)
             {
-                Debug.Assert(projectileInfo.ProjectilePrefab, $"Action {Description.ActionTypeEnum}: one of the Projectiles is missing its prefab!");
-                Debug.Assert(projectileInfo.Range > 0, $"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Range!");
-                Debug.Assert(projectileInfo.Speed_m_s > 0, $"Action {Description.ActionTypeEnum}: one of the Projectiles has invalid Speed_m_s!");
+                Debug.Assert(projectileInfo.ProjectilePrefab, $"Action {name}: one of the Projectiles is missing its prefab!");
+                Debug.Assert(projectileInfo.Range > 0, $"Action {name}: one of the Projectiles has invalid Range!");
+                Debug.Assert(projectileInfo.Speed_m_s > 0, $"Action {name}: one of the Projectiles has invalid Speed_m_s!");
             }
             return true;
         }
@@ -122,9 +123,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 m_StoppedChargingUpTime = Time.time;
 
-                if (!string.IsNullOrEmpty(Description.Anim2))
+                if (!string.IsNullOrEmpty(Config.Anim2))
                 {
-                    parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                    parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
                 }
 
                 parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
@@ -137,7 +138,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private float GetPercentChargedUp()
         {
-            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Description.ExecTimeSeconds);
+            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Config.ExecTimeSeconds);
         }
 
         /// <summary>
@@ -149,17 +150,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// charge-up is at 100%. The other tiers of projectile are used for lesser charge-up amounts.
         /// </remarks>
         /// <returns>the projectile that should be used</returns>
-        protected override ActionDescription.ProjectileInfo GetProjectileInfo()
+        protected override ActionConfig.ProjectileInfo GetProjectileInfo()
         {
-            if (Description.Projectiles.Length == 0) // uh oh, this is bad data
-                throw new System.Exception($"Action {Description.ActionTypeEnum} has no Projectiles!");
+            if (Config.Projectiles.Length == 0) // uh oh, this is bad data
+                throw new System.Exception($"Action {name} has no Projectiles!");
 
             // choose which prefab to use based on how charged-up we got.
             // Note how we cast the result to an int, which implicitly rounds down.
             // Thus, only a 100% maxed charge can return the most powerful prefab.
-            int projectileIdx = (int)(GetPercentChargedUp() * (Description.Projectiles.Length - 1));
+            int projectileIdx = (int)(GetPercentChargedUp() * (Config.Projectiles.Length - 1));
 
-            return Description.Projectiles[projectileIdx];
+            return Config.Projectiles[projectileIdx];
         }
 
         public override bool OnStartClient(ClientCharacterVisualization parent)

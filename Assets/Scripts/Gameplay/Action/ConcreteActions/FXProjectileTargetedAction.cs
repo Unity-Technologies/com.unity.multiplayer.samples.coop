@@ -1,8 +1,10 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -13,6 +15,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// (If no target is provided (because the user clicked on an empty spot on the map) or if the caster doesn't have line of
     /// sight to the target (because it's behind a wall), we still perform an action, it just hits nothing.
     /// </summary>
+    [CreateAssetMenu()]
     public class FXProjectileTargetedAction : Action
     {
         private bool m_ImpactedTarget;
@@ -60,9 +63,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             // figure out how long the pretend-projectile will be flying to the target
             float distanceToTargetPos = Vector3.Distance(targetPos, parent.physicsWrapper.Transform.position);
-            m_TimeUntilImpact = Description.ExecTimeSeconds + (distanceToTargetPos / Description.Projectiles[0].Speed_m_s);
+            m_TimeUntilImpact = Config.ExecTimeSeconds + (distanceToTargetPos / Config.Projectiles[0].Speed_m_s);
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             // tell clients to visualize this action
             parent.NetState.RecvDoActionClientRPC(Data);
             return true;
@@ -75,7 +78,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 m_ImpactedTarget = true;
                 if (m_DamageableTarget != null)
                 {
-                    m_DamageableTarget.ReceiveHP(parent, -Description.Projectiles[0].Damage);
+                    m_DamageableTarget.ReceiveHP(parent, -Config.Projectiles[0].Damage);
                 }
             }
             return true;
@@ -85,7 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!m_ImpactedTarget)
             {
-                parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+                parent.NetState.RecvCancelActionsByTypeClientRpc(Config.ActionTypeEnum);
             }
         }
 
@@ -104,7 +107,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var serverChar = obj.GetComponent<ServerCharacter>();
-                if (serverChar && serverChar.IsNpc == (Description.IsFriendly ^ parent.IsNpc))
+                if (serverChar && serverChar.IsNpc == (Config.IsFriendly ^ parent.IsNpc))
                 {
                     // not a valid target
                     return null;
@@ -137,27 +140,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 m_TargetTransform = physicsWrapper.Transform;
             }
 
-            if (Description.Projectiles.Length < 1 || Description.Projectiles[0].ProjectilePrefab == null)
-                throw new System.Exception($"Action {Description.ActionTypeEnum} has no valid ProjectileInfo!");
+            if (Config.Projectiles.Length < 1 || Config.Projectiles[0].ProjectilePrefab == null)
+                throw new System.Exception($"Action {Config.ActionTypeEnum} has no valid ProjectileInfo!");
 
             return true;
         }
 
         public override bool OnUpdateClient(ClientCharacterVisualization parent)
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && m_Projectile == null)
+            if (TimeRunning >= Config.ExecTimeSeconds && m_Projectile == null)
             {
                 // figure out how long the pretend-projectile will be flying to the target
                 var targetPos = m_TargetTransform ? m_TargetTransform.position : Data.Position;
                 var initialDistance = Vector3.Distance(targetPos, parent.transform.position);
-                m_ProjectileDuration = initialDistance / Description.Projectiles[0].Speed_m_s;
+                m_ProjectileDuration = initialDistance / Config.Projectiles[0].Speed_m_s;
 
                 // create the projectile. It will control itself from here on out
                 m_Projectile = SpawnAndInitializeProjectile(parent);
             }
 
             // we keep going until the projectile's duration ends
-            return TimeRunning <= m_ProjectileDuration + Description.ExecTimeSeconds;
+            return TimeRunning <= m_ProjectileDuration + Config.ExecTimeSeconds;
         }
 
         public override void CancelClient(ClientCharacterVisualization parent)
@@ -187,7 +190,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null)
             {
-                var hitReact = !string.IsNullOrEmpty(Description.ReactAnim) ? Description.ReactAnim : k_DefaultHitReact;
+                var hitReact = !string.IsNullOrEmpty(Config.ReactAnim) ? Config.ReactAnim : k_DefaultHitReact;
                 clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
             }
         }
@@ -203,7 +206,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var targetable = targetObject.GetComponent<ITargetable>();
-                if (targetable != null && targetable.IsNpc == (Description.IsFriendly ^ parent.NetState.IsNpc))
+                if (targetable != null && targetable.IsNpc == (Config.IsFriendly ^ parent.NetState.IsNpc))
                 {
                     // not a valid target
                     return null;
@@ -220,7 +223,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private FXProjectile SpawnAndInitializeProjectile(ClientCharacterVisualization parent)
         {
-            var projectileGO = Object.Instantiate(Description.Projectiles[0].ProjectilePrefab, parent.transform.position, parent.transform.rotation, null);
+            var projectileGO = Object.Instantiate(Config.Projectiles[0].ProjectilePrefab, parent.transform.position, parent.transform.rotation, null);
 
             var projectile = projectileGO.GetComponent<FXProjectile>();
             if (!projectile)

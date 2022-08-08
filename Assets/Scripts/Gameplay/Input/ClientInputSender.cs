@@ -73,7 +73,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         struct ActionRequest
         {
             public SkillTriggerStyle TriggerStyle;
-            public ActionType RequestedAction;
+            public ActionID RequestedActionID;
             public ulong TargetId;
         }
 
@@ -154,7 +154,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 }
                 else if (!IsReleaseStyle(m_ActionRequests[i].TriggerStyle))
                 {
-                    var actionData = GameDataSource.Instance.ActionDataByType[m_ActionRequests[i].RequestedAction];
+                    var actionData = GameDataSource.Instance.GetActionPrototypeByID(m_ActionRequests[i].RequestedActionID).Config;
                     if (actionData.ActionInput != null)
                     {
                         var skillPlayer = Instantiate(actionData.ActionInput);
@@ -396,7 +396,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             if (m_ActionRequestCount < m_ActionRequests.Length)
             {
-                m_ActionRequests[m_ActionRequestCount].RequestedAction = action;
+                m_ActionRequests[m_ActionRequestCount].RequestedActionID = action;
                 m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
                 m_ActionRequests[m_ActionRequestCount].TargetId = targetId;
                 m_ActionRequestCount++;

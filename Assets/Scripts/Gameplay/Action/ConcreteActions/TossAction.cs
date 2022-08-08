@@ -1,19 +1,20 @@
+using System;
 using UnityEngine;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
+using Random = UnityEngine.Random;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Action responsible for creating a physics-based thrown object.
     /// </summary>
+    [CreateAssetMenu()]
     public class TossAction : Action
     {
         bool m_Launched;
-
-        public TossAction(ref ActionRequestData data) : base(ref data) { }
 
         public override bool OnStart(ServerCharacter parent)
         {
@@ -39,14 +40,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 }
             }
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
         public override bool OnUpdate(ServerCharacter parent)
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && !m_Launched)
+            if (TimeRunning >= Config.ExecTimeSeconds && !m_Launched)
             {
                 Throw(parent);
             }
@@ -59,16 +60,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// For the base class, this is always just the first entry with a valid prefab in it!
         /// </summary>
         /// <exception cref="System.Exception">thrown if no Projectiles are valid</exception>
-        ActionDescription.ProjectileInfo GetProjectileInfo()
+        ActionConfig.ProjectileInfo GetProjectileInfo()
         {
-            foreach (var projectileInfo in Description.Projectiles)
+            foreach (var projectileInfo in Config.Projectiles)
             {
                 if (projectileInfo.ProjectilePrefab)
                 {
                     return projectileInfo;
                 }
             }
-            throw new System.Exception($"Action {Description.ActionTypeEnum} has no usable Projectiles!");
+            throw new System.Exception($"Action {this.name} has no usable Projectiles!");
         }
 
         /// <summary>

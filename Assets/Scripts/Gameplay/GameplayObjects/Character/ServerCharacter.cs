@@ -36,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
-        private ActionType m_StartingAction = ActionType.None;
+        private Action m_StartingAction;
 
         private ServerActionPlayer m_ServerActionPlayer;
         private AIBrain m_AIBrain;
@@ -81,9 +81,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     m_AIBrain = new AIBrain(this, m_ServerActionPlayer);
                 }
 
-                if (m_StartingAction != ActionType.None)
+                if (m_StartingAction != null)
                 {
-                    var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
+                    var startingAction = new ActionRequestData() { ActionPrototypeID = m_StartingAction.PrototypeActionID };
                     PlayAction(ref startingAction);
                 }
                 InitializeHitPoints();
@@ -149,12 +149,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 // if we're currently playing an interruptible action, interrupt it!
                 if (m_ServerActionPlayer.GetActiveActionInfo(out ActionRequestData data))
                 {
-                    if (GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out ActionDescription description))
+                    if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeID).Config.ActionInterruptible)
                     {
-                        if (description.ActionInterruptible)
-                        {
-                            m_ServerActionPlayer.ClearActions(false);
-                        }
+                        m_ServerActionPlayer.ClearActions(false);
                     }
                 }
 
@@ -174,7 +171,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void OnActionPlayRequest(ActionRequestData data)
         {
-            if (!GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].IsFriendly)
+            if (!GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeID).Config.IsFriendly)
             {
                 // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
                 ActionPlayer.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);

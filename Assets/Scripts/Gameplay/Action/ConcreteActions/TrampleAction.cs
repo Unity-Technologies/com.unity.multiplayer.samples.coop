@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -13,8 +15,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// It's called "Trample" instead of "Charge" because we already use the word "charge"
     /// to describe "charging up" an attack.
     /// </remarks>
+    [CreateAssetMenu()]
     public class TrampleAction : Action
     {
+
+        public StunnedAction StunnedActionPrototype;
+
         /// <summary>
         /// This is an internal indicator of which stage of the Action we're in.
         /// </summary>
@@ -61,8 +67,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private bool m_WasStunned;
 
-        public TrampleAction(ref ActionRequestData data) : base(ref data) { }
-
         public override bool OnStart(ServerCharacter parent)
         {
             m_PreviousStage = ActionStage.Windup;
@@ -88,14 +92,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Config.Anim2);
             }
             // start the animation sequence!
-            if (!string.IsNullOrEmpty(Description.Anim))
+            if (!string.IsNullOrEmpty(Config.Anim))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             }
 
             parent.NetState.RecvDoActionClientRPC(Data);
@@ -105,11 +109,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private ActionStage GetCurrentStage()
         {
             float timeSoFar = Time.time - TimeStarted;
-            if (timeSoFar < Description.ExecTimeSeconds)
+            if (timeSoFar < Config.ExecTimeSeconds)
             {
                 return ActionStage.Windup;
             }
-            if (timeSoFar < Description.DurationSeconds)
+            if (timeSoFar < Config.DurationSeconds)
             {
                 return ActionStage.Charging;
             }
@@ -123,7 +127,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 // we've just started to charge across the screen! Anyone currently touching us gets hit
                 SimulateCollisionWithNearbyFoes(parent);
-                parent.Movement.StartForwardCharge(Description.MoveSpeed, Description.DurationSeconds - Description.ExecTimeSeconds);
+                parent.Movement.StartForwardCharge(Config.MoveSpeed, Config.DurationSeconds - Config.ExecTimeSeconds);
             }
 
             m_PreviousStage = newState;
@@ -167,11 +171,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 int damage;
                 if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0 && m_Data.TargetIds[0] == victim.NetworkObjectId)
                 {
-                    damage = Description.Amount;
+                    damage = Config.Amount;
                 }
                 else
                 {
-                    damage = Description.SplashDamage;
+                    damage = Config.SplashDamage;
                 }
 
                 if (victim.gameObject.TryGetComponent(out IDamageable damageable))
@@ -181,7 +185,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             var victimMovement = victim.Movement;
-            victimMovement.StartKnockback(parent.physicsWrapper.Transform.position, Description.KnockbackSpeed, Description.KnockbackDuration);
+            victimMovement.StartKnockback(parent.physicsWrapper.Transform.position, Config.KnockbackSpeed, Config.KnockbackDuration);
         }
 
         // called by owning class when parent's Collider collides with stuff
@@ -213,7 +217,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 var damageable = collider.gameObject.GetComponent<IDamageable>();
                 if (damageable != null)
                 {
-                    damageable.ReceiveHP(parent, -Description.SplashDamage);
+                    damageable.ReceiveHP(parent, -Config.SplashDamage);
 
                     // lastly, a special case: if the trampler runs into certain breakables, they are stunned!
                     if ((damageable.GetSpecialDamageFlags() & IDamageable.SpecialDamageFlags.StunOnTrample) == IDamageable.SpecialDamageFlags.StunOnTrample)
@@ -251,11 +255,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (m_WasStunned)
             {
-                newAction = new ActionRequestData()
-                {
-                    ActionTypeEnum = ActionType.Stun,
-                    ShouldQueue = false,
-                };
+                newAction = ActionRequestData.Create(StunnedActionPrototype);
+                newAction.ShouldQueue = false;
                 return true;
             }
             return false;
@@ -263,9 +264,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
 

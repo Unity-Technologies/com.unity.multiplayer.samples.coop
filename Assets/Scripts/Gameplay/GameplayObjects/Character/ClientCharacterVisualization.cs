@@ -119,7 +119,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
                 if (m_NetState.IsOwner)
                 {
-                    ActionRequestData data = new ActionRequestData { ActionTypeEnum = ActionType.GeneralTarget };
+                    ActionRequestData data = new ActionRequestData { ActionPrototypeID = ActionType.GeneralTarget };
                     m_ClientActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
@@ -29,6 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     ///
     /// As so often happens in networked games (and games in general), there's no perfect solution--just sets of tradeoffs. For our example, we're showing option "3".
     /// </remarks>
+    [CreateAssetMenu()]
     public class MeleeAction : Action
     {
         private bool m_ExecutionFired;
@@ -47,12 +49,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-
-        //cache Physics Cast hits, to minimize allocs.
-        public MeleeAction(ref ActionRequestData data) : base(ref data)
-        {
-        }
-
         public override bool OnStart(ServerCharacter parent)
         {
             ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : parent.NetState.TargetId.Value;
@@ -69,20 +65,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 parent.physicsWrapper.Transform.forward = Data.Direction;
             }
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
         public override bool OnUpdate(ServerCharacter parent)
         {
-            if (!m_ExecutionFired && (Time.time - TimeStarted) >= Description.ExecTimeSeconds)
+            if (!m_ExecutionFired && (Time.time - TimeStarted) >= Config.ExecTimeSeconds)
             {
                 m_ExecutionFired = true;
                 var foe = DetectFoe(parent, m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.ReceiveHP(parent, -Description.Amount);
+                    foe.ReceiveHP(parent, -Config.Amount);
                 }
             }
 
@@ -95,7 +91,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <returns></returns>
         private IDamageable DetectFoe(ServerCharacter parent, ulong foeHint = 0)
         {
-            return GetIdealMeleeFoe(Description.IsFriendly ^ parent.IsNpc, parent.physicsWrapper.DamageCollider, Description.Range, foeHint);
+            return GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc, parent.physicsWrapper.DamageCollider, Config.Range, foeHint);
         }
 
         /// <summary>
@@ -142,7 +138,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
                 && targetNetworkObj != null)
             {
-                float padRange = Description.Range + k_RangePadding;
+                float padRange = Config.Range + k_RangePadding;
 
                 Vector3 targetPosition;
                 if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var physicsWrapper))
@@ -215,7 +211,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
                 && targetNetworkObj != null)
             {
-                float padRange = Description.Range + k_RangePadding;
+                float padRange = Config.Range + k_RangePadding;
 
                 Vector3 targetPosition;
                 if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var movementContainer))
@@ -231,7 +227,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 {
                     if (targetNetworkObj.NetworkObjectId != parent.NetworkObjectId)
                     {
-                        string hitAnim = Description.ReactAnim;
+                        string hitAnim = Config.ReactAnim;
                         if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
                         var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
                         if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)

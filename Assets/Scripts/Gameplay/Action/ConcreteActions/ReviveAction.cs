@@ -1,3 +1,4 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
@@ -5,14 +6,11 @@ using UnityEngine.Assertions;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
+    [CreateAssetMenu()]
     public class ReviveAction : Action
     {
         private bool m_ExecFired;
         private ServerCharacter m_TargetCharacter;
-
-        public ReviveAction( ref ActionRequestData data) : base(ref data)
-        {
-        }
 
         public override bool OnStart(ServerCharacter parent)
         {
@@ -25,21 +23,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             var targetNetworkObject = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
             m_TargetCharacter = targetNetworkObject.GetComponent<ServerCharacter>();
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             return true;
         }
 
         public override bool OnUpdate(ServerCharacter parent)
         {
-            if (!m_ExecFired && Time.time - TimeStarted >= Description.ExecTimeSeconds)
+            if (!m_ExecFired && Time.time - TimeStarted >= Config.ExecTimeSeconds)
             {
                 m_ExecFired = true;
 
                 if (m_TargetCharacter.NetState.LifeState == LifeState.Fainted)
                 {
-                    Assert.IsTrue(Description.Amount > 0, "Revive amount must be greater than 0.");
-                    m_TargetCharacter.Revive(parent, Description.Amount);
+                    Assert.IsTrue(Config.Amount > 0, "Revive amount must be greater than 0.");
+                    m_TargetCharacter.Revive(parent, Config.Amount);
                 }
                 else
                 {
@@ -54,9 +52,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
     }

@@ -35,7 +35,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         void Start()
         {
-            var radius = GameDataSource.Instance.ActionDataByType[m_ActionType].Radius;
+            var radius = GameDataSource.Instance.GetActionPrototypeByID(m_ActionPrototypeID).Config.Radius;
+
             transform.localScale = new Vector3(radius * 2, radius * 2, radius * 2);
             m_Camera = Camera.main;
         }
@@ -48,7 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 transform.position = m_NavMeshHit.position;
             }
 
-            float range = GameDataSource.Instance.ActionDataByType[m_ActionType].Range;
+            float range = GameDataSource.Instance.GetActionPrototypeByID(m_ActionPrototypeID).Config.Range;
             bool isInRange = (m_Origin - transform.position).sqrMagnitude <= range * range;
             m_InRangeVisualization.SetActive(isInRange);
             m_OutOfRangeVisualization.SetActive(!isInRange);
@@ -66,7 +67,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     var data = new ActionRequestData
                     {
                         Position = transform.position,
-                        ActionTypeEnum = m_ActionType,
+                        ActionPrototypeID = m_ActionPrototypeID,
                         ShouldQueue = false,
                         TargetIds = null
                     };

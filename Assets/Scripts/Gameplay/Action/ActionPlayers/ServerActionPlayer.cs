@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using UnityEngine;
-using BlockingMode = Unity.Multiplayer.Samples.BossRoom.ActionDescription.BlockingModeType;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -18,7 +17,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private List<Action> m_NonBlockingActions;
 
-        private Dictionary<ActionType, float> m_LastUsedTimestamps;
+        private Dictionary<ActionID, float> m_LastUsedTimestamps;
 
         /// <summary>
         /// To prevent the action queue from growing without bound, we cap its play time to this number of seconds. We can only ever estimate
@@ -36,7 +35,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             m_Movement = parent.Movement;
             m_Queue = new List<Action>();
             m_NonBlockingActions = new List<Action>();
-            m_LastUsedTimestamps = new Dictionary<ActionType, float>();
+            m_LastUsedTimestamps = new Dictionary<ActionID, float>();
         }
 
         /// <summary>
@@ -44,7 +43,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         public void PlayAction(ref ActionRequestData action)
         {
-            if (!action.ShouldQueue && m_Queue.Count > 0 && m_Queue[0].Description.ActionInterruptible)
+            if (!action.ShouldQueue && m_Queue.Count > 0 && m_Queue[0].Config.ActionInterruptible)
             {
                 ClearActions(false);
             }
@@ -55,7 +54,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 return;
             }
 
-            var newAction = Action.MakeAction(ref action);
+            var newAction = ActionFactory.CreateActionFromData(ref action);
             m_Queue.Add(newAction);
             if (m_Queue.Count == 1) { StartAction(); }
         }
@@ -66,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 // Since this action was canceled, we don't want the player to have to wait Description.ReuseTimeSeconds
                 // to be able to start it again. It should be restartable immediately!
-                m_LastUsedTimestamps.Remove(m_Queue[0].Description.ActionTypeEnum);
+                m_LastUsedTimestamps.Remove(m_Queue[0].PrototypeActionID);
 
                 m_Queue[0].Cancel(m_Parent);
             }
@@ -105,20 +104,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// Figures out if an action can be played now, or if it would automatically fail because it was
         /// used too recently. (Meaning that its ReuseTimeSeconds hasn't elapsed since the last use.)
         /// </summary>
-        /// <param name="actionType">the action we want to run</param>
+        /// <param name="actionID">the action we want to run</param>
         /// <returns>true if the action can be run now, false if more time must elapse before this action can be run</returns>
-        public bool IsReuseTimeElapsed(ActionType actionType)
+        public bool IsReuseTimeElapsed(ActionID actionID)
         {
-            if (m_LastUsedTimestamps.TryGetValue(actionType, out float lastTimeUsed))
+            if (m_LastUsedTimestamps.TryGetValue(actionID, out float lastTimeUsed))
             {
-                if (GameDataSource.Instance.ActionDataByType.TryGetValue(actionType, out ActionDescription description))
+                var abilityConfig = GameDataSource.Instance.GetActionPrototypeByID(actionID).Config;
+
+                float reuseTime = abilityConfig.ReuseTimeSeconds;
+                if (reuseTime > 0 && Time.time - lastTimeUsed < reuseTime)
                 {
-                    float reuseTime = description.ReuseTimeSeconds;
-                    if (reuseTime > 0 && Time.time - lastTimeUsed < reuseTime)
-                    {
-                        // still needs more time!
-                        return false;
-                    }
+                    // still needs more time!
+                    return false;
                 }
             }
             return true;
@@ -143,9 +141,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (m_Queue.Count > 0)
             {
-                float reuseTime = m_Queue[0].Description.ReuseTimeSeconds;
+                float reuseTime = m_Queue[0].Config.ReuseTimeSeconds;
                 if (reuseTime > 0
-                    && m_LastUsedTimestamps.TryGetValue(m_Queue[0].Description.ActionTypeEnum, out float lastTimeUsed)
+                    && m_LastUsedTimestamps.TryGetValue(m_Queue[0].PrototypeActionID, out float lastTimeUsed)
                     && Time.time - lastTimeUsed < reuseTime)
                 {
                     // we've already started one of these too recently
@@ -167,15 +165,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 // if this Action is interruptible, that means movement should interrupt it... character needs to be stationary for this!
                 // So stop any movement that's already happening before we begin
-                if (m_Queue[0].Description.ActionInterruptible && !m_Movement.IsPerformingForcedMovement())
+                if (m_Queue[0].Config.ActionInterruptible && !m_Movement.IsPerformingForcedMovement())
                 {
                     m_Movement.CancelMove();
                 }
 
                 // remember the moment when we successfully used this Action!
-                m_LastUsedTimestamps[m_Queue[0].Description.ActionTypeEnum] = Time.time;
+                m_LastUsedTimestamps[m_Queue[0].PrototypeActionID] = Time.time;
 
-                if (m_Queue[0].Description.ExecTimeSeconds == 0 && m_Queue[0].Description.BlockingMode == BlockingMode.OnlyDuringExecTime)
+                if (m_Queue[0].Config.ExecTimeSeconds == 0 && m_Queue[0].Config.BlockingMode == ActionConfig.BlockingModeType.OnlyDuringExecTime)
                 {
                     //this is a non-blocking action with no exec time. It should never be hanging out at the front of the queue (not even for a frame),
                     //because it could get cleared if a new Action came in in that interval.
@@ -199,12 +197,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 ActionRequestData data = new ActionRequestData
                 {
-                    ActionTypeEnum = ActionType.GeneralChase,
+                    ActionPrototypeID =  GameDataSource.Instance.GeneralChaseActionID,
                     TargetIds = baseAction.Data.TargetIds,
-                    Amount = baseAction.Description.Range
+                    Amount = baseAction.Config.Range
                 };
                 baseAction.Data.ShouldClose = false; //you only get to do this once!
-                Action chaseAction = Action.MakeAction(ref data);
+                Action chaseAction = ActionFactory.CreateActionFromData(ref data);
                 m_Queue.Insert(baseIndex, chaseAction);
                 return baseIndex + 1;
             }
@@ -314,9 +312,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private bool UpdateAction(Action action)
         {
             bool keepGoing = action.OnUpdate(m_Parent);
-            bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
+            bool expirable = action.Config.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
             var timeElapsed = Time.time - action.TimeStarted;
-            bool timeExpired = expirable && timeElapsed >= action.Description.DurationSeconds;
+            bool timeExpired = expirable && timeElapsed >= action.Config.DurationSeconds;
             return keepGoing && !timeExpired;
         }
 
@@ -332,7 +330,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             float totalTime = 0;
             foreach (var action in m_Queue)
             {
-                var info = action.Description;
+                var info = action.Config;
                 float actionTime = info.BlockingMode == BlockingMode.OnlyDuringExecTime ? info.ExecTimeSeconds :
                                     info.BlockingMode == BlockingMode.EntireDuration ? info.DurationSeconds :
                                     throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
@@ -402,7 +400,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             for (int i = m_NonBlockingActions.Count - 1; i >= 0; --i)
             {
-                if (m_NonBlockingActions[i].Description.Logic == logic && m_NonBlockingActions[i] != exceptThis)
+                if (m_NonBlockingActions[i].Config.Logic == logic && m_NonBlockingActions[i] != exceptThis)
                 {
                     m_NonBlockingActions[i].Cancel(m_Parent);
                     m_NonBlockingActions.RemoveAt(i);
@@ -412,7 +410,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             if (m_Queue.Count > 0)
             {
-                if (m_Queue[0].Description.Logic == logic && m_Queue[0] != exceptThis)
+                if (m_Queue[0].Config.Logic == logic && m_Queue[0] != exceptThis)
                 {
                     m_Queue[0].Cancel(m_Parent);
                     m_Queue.RemoveAt(0);

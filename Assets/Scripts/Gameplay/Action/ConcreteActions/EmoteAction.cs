@@ -1,9 +1,12 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
+
+    [CreateAssetMenu()]
     public class EmoteAction : Action
     {
         public EmoteAction(ref ActionRequestData data)
@@ -11,7 +14,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public override bool OnStart(ServerCharacter parent)
         {
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             return false;
         }
 
@@ -23,9 +26,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
 
