@@ -83,7 +83,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 if (m_StartingAction != null)
                 {
-                    var startingAction = new ActionRequestData() { ActionPrototypeID = m_StartingAction.PrototypeActionID };
+                    var startingAction = new ActionRequestData() { ActionID = m_StartingAction.ActionID };
                     PlayAction(ref startingAction);
                 }
                 InitializeHitPoints();
@@ -149,7 +149,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 // if we're currently playing an interruptible action, interrupt it!
                 if (m_ServerActionPlayer.GetActiveActionInfo(out ActionRequestData data))
                 {
-                    if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeID).Config.ActionInterruptible)
+                    if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.ActionInterruptible)
                     {
                         m_ServerActionPlayer.ClearActions(false);
                     }
@@ -171,7 +171,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void OnActionPlayRequest(ActionRequestData data)
         {
-            if (!GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeID).Config.IsFriendly)
+            if (!GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.IsFriendly)
             {
                 // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
                 ActionPlayer.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);

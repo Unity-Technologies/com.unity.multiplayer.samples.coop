@@ -85,7 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!m_ImpactedTarget)
             {
-                parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(PrototypeActionID);
+                parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
             }
         }
 

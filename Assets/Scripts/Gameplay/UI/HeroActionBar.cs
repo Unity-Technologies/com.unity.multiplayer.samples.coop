@@ -233,7 +233,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // send input to begin the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction.PrototypeActionID, SkillTriggerStyle.UI);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction, SkillTriggerStyle.UI);
         }
 
         void OnButtonClickedUp(ActionButtonType buttonType)
@@ -251,7 +251,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // send input to complete the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction.PrototypeActionID, SkillTriggerStyle.UIRelease);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction, SkillTriggerStyle.UIRelease);
         }
 
         /// <summary>
@@ -276,7 +276,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
 
                 bool isAlive = charState.NetworkLifeState.LifeState.Value == LifeState.Alive;
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.GeneralRevive, !isAlive);
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.ReviveActionPrototype, !isAlive);
 
                 // we'll continue to monitor our selected player every frame to see if their life-state changes.
                 m_SelectedPlayerNetState = charState;

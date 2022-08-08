@@ -66,7 +66,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // see if we're already chasing or attacking our active foe!
             if (m_ServerActionPlayer.GetActiveActionInfo(out var info))
             {
-                if (GameDataSource.Instance.GetActionPrototypeByID(info.ActionPrototypeID).IsChaseAction)
+                if (GameDataSource.Instance.GetActionPrototypeByID(info.ActionID).IsChaseAction)
                 {
                     if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkObjectId)
                     {
@@ -74,7 +74,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                         return;
                     }
                 }
-                else if (info.ActionPrototypeID == m_CurAttackAction.PrototypeActionID)
+                else if (info.ActionID == m_CurAttackAction.ActionID)
                 {
                     if (info.TargetIds != null && info.TargetIds[0] == m_Foe.NetworkObjectId)
                     {
@@ -82,7 +82,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                         return;
                     }
                 }
-                else if (GameDataSource.Instance.GetActionPrototypeByID(info.ActionPrototypeID).IsStunAction)
+                else if (GameDataSource.Instance.GetActionPrototypeByID(info.ActionID).IsStunAction)
                 {
                     // we can't do anything right now. We're stunned!
                     return;
@@ -100,7 +100,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             // attack!
             var attackData = new ActionRequestData
             {
-                ActionPrototypeID = m_CurAttackAction.PrototypeActionID,
+                ActionID = m_CurAttackAction.ActionID,
                 TargetIds = new ulong[] { m_Foe.NetworkObjectId },
                 ShouldClose = true,
                 Direction = m_Brain.GetMyServerCharacter().physicsWrapper.Transform.forward
@@ -147,7 +147,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 anyUsable = false;
                 foreach (var attack in m_AttackActions)
                 {
-                    if (m_ServerActionPlayer.IsReuseTimeElapsed(attack.PrototypeActionID))
+                    if (m_ServerActionPlayer.IsReuseTimeElapsed(attack.ActionID))
                     {
                         anyUsable = true;
                         if (idx == 0)

@@ -5,6 +5,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
+using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -154,16 +155,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 }
                 else if (!IsReleaseStyle(m_ActionRequests[i].TriggerStyle))
                 {
-                    var actionData = GameDataSource.Instance.GetActionPrototypeByID(m_ActionRequests[i].RequestedActionID).Config;
-                    if (actionData.ActionInput != null)
+                    var actionPrototype = GameDataSource.Instance.GetActionPrototypeByID(m_ActionRequests[i].RequestedActionID);
+                    if (actionPrototype.Config.ActionInput != null)
                     {
-                        var skillPlayer = Instantiate(actionData.ActionInput);
-                        skillPlayer.Initiate(m_NetworkCharacter, m_PhysicsWrapper.Transform.position, actionData.ActionTypeEnum, SendInput, FinishSkill);
+                        var skillPlayer = Instantiate(actionPrototype.Config.ActionInput);
+                        skillPlayer.Initiate(m_NetworkCharacter, m_PhysicsWrapper.Transform.position, actionPrototype.ActionID, SendInput, FinishSkill);
                         m_CurrentSkillInput = skillPlayer;
                     }
                     else
                     {
-                        PerformSkill(actionData.ActionTypeEnum, m_ActionRequests[i].TriggerStyle, m_ActionRequests[i].TargetId);
+                        PerformSkill(actionPrototype.ActionID, m_ActionRequests[i].TriggerStyle, m_ActionRequests[i].TargetId);
                     }
                 }
             }
@@ -306,12 +307,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (targetNetState != null)
             {
                 //Skill1 may be contextually overridden if it was generated from a mouse-click.
-                if (actionID == CharacterData.Skill1.PrototypeActionID && triggerStyle == SkillTriggerStyle.MouseClick)
+                if (actionID == CharacterData.Skill1.ActionID && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
                     if (!targetNetState.IsNpc && targetNetState.LifeState == LifeState.Fainted)
                     {
                         //right-clicked on a downed ally--change the skill play to Revive.
-                        actionID = ActionType.GeneralRevive;
+                        actionID = GameDataSource.Instance.ReviveActionPrototype.ActionID;
                     }
                 }
             }
@@ -327,7 +328,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             // record our target in case this action uses that info (non-targeted attacks will ignore this)
-            resultData.ActionPrototypeID = actionID;
+            resultData.ActionID = actionID;
             resultData.TargetIds = new ulong[] { targetNetObj.NetworkObjectId };
             PopulateSkillRequest(targetHitPoint, actionID, ref resultData);
             return true;
@@ -341,7 +342,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="resultData">The ActionRequestData to be filled out with additional information.</param>
         void PopulateSkillRequest(Vector3 hitPoint, ActionID actionID, ref ActionRequestData resultData)
         {
-            resultData.ActionPrototypeID = actionID;
+            resultData.ActionID = actionID;
             var actionConfig = GameDataSource.Instance.GetActionPrototypeByID(actionID).Config;
 
             //most skill types should implicitly close distance. The ones that don't are explicitly set to false in the following switch.
@@ -383,14 +384,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <param name="actionID"> The action you'd like to perform. </param>
         /// <param name="triggerStyle"> What input style triggered this action. </param>
         /// <param name="targetId"> NetworkObjectId of target. </param>
-        public void RequestAction(ActionID actionID, SkillTriggerStyle triggerStyle, ulong targetId = 0)
+        public void RequestAction(Action action, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
-            Assert.IsNotNull(GameDataSource.Instance.GetActionPrototypeByID(actionID),
-                $"Action {actionID} must be contained in the Action prototypes of GameDataSource!");
+            if (action == null)
+            {
+                return;
+            }
+
+            Assert.IsNotNull(GameDataSource.Instance.GetActionPrototypeByID(action.ActionID),
+                $"Action {action.name} must be contained in the Action prototypes of GameDataSource!");
 
             if (m_ActionRequestCount < m_ActionRequests.Length)
             {
-                m_ActionRequests[m_ActionRequestCount].RequestedActionID = actionID;
+                m_ActionRequests[m_ActionRequestCount].RequestedActionID = action.ActionID;
                 m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
                 m_ActionRequests[m_ActionRequestCount].TargetId = targetId;
                 m_ActionRequestCount++;
@@ -426,19 +432,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
             if (Input.GetKeyDown(KeyCode.Alpha5))
             {
-                RequestAction(ActionType.Emote1, SkillTriggerStyle.Keyboard);
+                RequestAction(GameDataSource.Instance.Emote1ActionPrototype, SkillTriggerStyle.Keyboard);
             }
             if (Input.GetKeyDown(KeyCode.Alpha6))
             {
-                RequestAction(ActionType.Emote2, SkillTriggerStyle.Keyboard);
+                RequestAction(GameDataSource.Instance.Emote2ActionPrototype, SkillTriggerStyle.Keyboard);
             }
             if (Input.GetKeyDown(KeyCode.Alpha7))
             {
-                RequestAction(ActionType.Emote3, SkillTriggerStyle.Keyboard);
+                RequestAction(GameDataSource.Instance.Emote3ActionPrototype, SkillTriggerStyle.Keyboard);
             }
             if (Input.GetKeyDown(KeyCode.Alpha8))
             {
-                RequestAction(ActionType.Emote4, SkillTriggerStyle.Keyboard);
+                RequestAction(GameDataSource.Instance.Emote4ActionPrototype, SkillTriggerStyle.Keyboard);
             }
 
             if (!EventSystem.current.IsPointerOverGameObject() && m_CurrentSkillInput == null)
@@ -453,7 +459,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    RequestAction(ActionType.GeneralTarget, SkillTriggerStyle.MouseClick);
+                    RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype, SkillTriggerStyle.MouseClick);
                 }
                 else if (Input.GetMouseButton(0))
                 {

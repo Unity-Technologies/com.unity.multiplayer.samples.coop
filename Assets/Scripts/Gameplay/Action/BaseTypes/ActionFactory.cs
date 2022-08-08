@@ -12,11 +12,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <returns>the newly created action. </returns>
         public static Action CreateActionFromData(ref ActionRequestData data)
         {
-            var actionPrototype = GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeID);
+            var actionPrototype = GameDataSource.Instance.GetActionPrototypeByID(data.ActionID);
 
             var ret = Object.Instantiate(actionPrototype);
             ret.Initialize(ref data);
             ret.RuntimePrototypeReference = actionPrototype;
+            ret.ActionID = actionPrototype.ActionID;
             return ret;
         }
 

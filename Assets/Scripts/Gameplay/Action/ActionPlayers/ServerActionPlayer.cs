@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 // Since this action was canceled, we don't want the player to have to wait Description.ReuseTimeSeconds
                 // to be able to start it again. It should be restartable immediately!
-                m_LastUsedTimestamps.Remove(m_Queue[0].PrototypeActionID);
+                m_LastUsedTimestamps.Remove(m_Queue[0].ActionID);
 
                 m_Queue[0].Cancel(m_Parent);
             }
@@ -143,7 +143,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 float reuseTime = m_Queue[0].Config.ReuseTimeSeconds;
                 if (reuseTime > 0
-                    && m_LastUsedTimestamps.TryGetValue(m_Queue[0].PrototypeActionID, out float lastTimeUsed)
+                    && m_LastUsedTimestamps.TryGetValue(m_Queue[0].ActionID, out float lastTimeUsed)
                     && Time.time - lastTimeUsed < reuseTime)
                 {
                     // we've already started one of these too recently
@@ -171,7 +171,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 }
 
                 // remember the moment when we successfully used this Action!
-                m_LastUsedTimestamps[m_Queue[0].PrototypeActionID] = Time.time;
+                m_LastUsedTimestamps[m_Queue[0].ActionID] = Time.time;
 
                 if (m_Queue[0].Config.ExecTimeSeconds == 0 && m_Queue[0].Config.BlockingMode == ActionConfig.BlockingModeType.OnlyDuringExecTime)
                 {
@@ -197,7 +197,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 ActionRequestData data = new ActionRequestData
                 {
-                    ActionPrototypeID =  GameDataSource.Instance.GeneralChaseActionID,
+                    ActionID =  GameDataSource.Instance.GeneralChaseActionPrototype.ActionID,
                     TargetIds = baseAction.Data.TargetIds,
                     Amount = baseAction.Config.Range
                 };
@@ -226,7 +226,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 ActionRequestData data = new ActionRequestData
                 {
-                    ActionPrototypeID = ActionType.GeneralTarget,
+                    ActionID = GameDataSource.Instance.GeneralTargetActionPrototype.ActionID,
                     TargetIds = baseAction.Data.TargetIds
                 };
 

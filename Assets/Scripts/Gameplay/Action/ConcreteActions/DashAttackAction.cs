@@ -74,7 +74,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             // because the client-side visualization of the action moves the character visualization around,
             // we need to explicitly end the client-side visuals when we abort
-            parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(PrototypeActionID);
+            parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
 
         }
 

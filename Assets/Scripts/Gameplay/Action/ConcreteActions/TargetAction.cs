@@ -113,7 +113,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private void OnActionInput(ActionRequestData data)
         {
             //this method runs on the owning client, and allows us to anticipate our new target for purposes of FX visualization.
-            if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeID).IsGeneralTargetAction)
+            if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).IsGeneralTargetAction)
             {
                 m_NewTarget = data.TargetIds[0];
             }

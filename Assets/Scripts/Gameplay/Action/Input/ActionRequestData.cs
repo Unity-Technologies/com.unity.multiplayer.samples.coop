@@ -44,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// </summary>
     public struct ActionRequestData : INetworkSerializable
     {
-        public ActionID ActionPrototypeID; //index of the action in the list of all actions in the game - a way to recover the reference to the instance at runtime
+        public ActionID ActionID; //index of the action in the list of all actions in the game - a way to recover the reference to the instance at runtime
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill.
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing.
         public ulong[] TargetIds;          //NetworkObjectIds of targets, or null if untargeted.
@@ -72,7 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         public static ActionRequestData Create(Action action) =>
             new()
             {
-                ActionPrototypeID = action.PrototypeActionID
+                ActionID = action.ActionID
             };
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         public bool Compare(ref ActionRequestData rhs)
         {
-            bool scalarParamsEqual = (ActionPrototypeIndex: ActionPrototypeID, Position, Direction, Amount) == (rhs.ActionPrototypeID, rhs.Position, rhs.Direction, rhs.Amount);
+            bool scalarParamsEqual = (ActionPrototypeIndex: ActionID, Position, Direction, Amount) == (rhs.ActionID, rhs.Position, rhs.Direction, rhs.Amount);
             if (!scalarParamsEqual) { return false; }
 
             if (TargetIds == rhs.TargetIds) { return true; } //covers case of both being null.
@@ -117,7 +117,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 flags = GetPackFlags();
             }
 
-            serializer.SerializeValue(ref ActionPrototypeID);
+            serializer.SerializeValue(ref ActionID);
             serializer.SerializeValue(ref flags);
 
             if (serializer.IsReader)

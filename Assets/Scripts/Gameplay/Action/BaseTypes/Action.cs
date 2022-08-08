@@ -38,23 +38,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         [NonSerialized]
         public Action RuntimePrototypeReference;
 
-        public bool IsPrototypeAction => RuntimePrototypeReference == null;
-
         /// <summary>
         /// An index into the GameDataSource array of action prototypes. If action is not itself a prototype - will return the action id of the prototype reference.
         /// </summary>
-        //[NonSerialized]
-        public ActionID PrototypeActionID {
-            get
-            {
-                if (IsPrototypeAction)
-                {
-                    return GameDataSource.Instance.GetIndexOfActionPrototype(this);
-                }
 
-                return GameDataSource.Instance.GetIndexOfActionPrototype(RuntimePrototypeReference);
-            }
-        }
+        [NonSerialized]
+        public ActionID ActionID;
 
 
         /// <summary>
@@ -85,9 +74,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         public ActionConfig Config;
 
-        public bool IsChaseAction => Config.Logic is ActionLogic.Chase;
-        public bool IsStunAction => Config.Logic is ActionLogic.Stunned;
-        public bool IsGeneralTargetAction => Config.Logic is ActionLogic.Target;
+        public bool IsChaseAction => ActionID == GameDataSource.Instance.GeneralChaseActionPrototype.ActionID;
+        public bool IsStunAction => ActionID == GameDataSource.Instance.StunnedActionPrototype.ActionID;
+        public bool IsGeneralTargetAction => ActionID == GameDataSource.Instance.GeneralTargetActionPrototype.ActionID;
 
         /// <summary>
         /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
@@ -260,7 +249,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!parent.CanPerformActions) { return false; }
 
-            var actionDescription = GameDataSource.Instance.GetActionPrototypeByID(data.ActionPrototypeID).Config;
+            var actionDescription = GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config;
 
             //for actions with ShouldClose set, we check our range locally. If we are out of range, we shouldn't anticipate, as we will
             //need to execute a ChaseAction (synthesized on the server) prior to actually playing the skill.

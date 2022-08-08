@@ -47,7 +47,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         //helper wrapper for a FindIndex call on m_PlayingActions.
         private int FindAction(ActionID actionID, bool anticipatedOnly)
         {
-            return m_PlayingActions.FindIndex(a => a.PrototypeActionID == actionID && (!anticipatedOnly || a.AnticipatedClient));
+            return m_PlayingActions.FindIndex(a => a.ActionID == actionID && (!anticipatedOnly || a.AnticipatedClient));
         }
 
         public void OnAnimEvent(string id)
@@ -112,7 +112,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public void PlayAction(ref ActionRequestData data)
         {
-            var anticipatedActionIndex = FindAction(data.ActionPrototypeID, true);
+            var anticipatedActionIndex = FindAction(data.ActionID, true);
 
             var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFactory.CreateActionFromData(ref data);
             if (actionFX.OnStartClient(Parent))
@@ -141,7 +141,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
-                if (m_PlayingActions[i].PrototypeActionID == actionID)
+                if (m_PlayingActions[i].ActionID == actionID)
                 {
                     m_PlayingActions[i].CancelClient(Parent);
                     m_PlayingActions.RemoveAt(i);
