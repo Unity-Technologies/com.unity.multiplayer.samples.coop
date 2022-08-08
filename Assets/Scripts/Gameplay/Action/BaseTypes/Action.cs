@@ -87,6 +87,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public bool IsChaseAction => Config.Logic is ActionLogic.Chase;
         public bool IsStunAction => Config.Logic is ActionLogic.Stunned;
+        public bool IsGeneralTargetAction => Config.Logic is ActionLogic.Target;
 
         /// <summary>
         /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
@@ -211,7 +212,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// True if this actionFX began running immediately, prior to getting a confirmation from the server.
         /// </summary>
         public bool AnticipatedClient { get; protected set; }
-
 
         /// <summary>
         /// Starts the ActionFX. Derived classes may return false if they wish to end immediately without their Update being called.

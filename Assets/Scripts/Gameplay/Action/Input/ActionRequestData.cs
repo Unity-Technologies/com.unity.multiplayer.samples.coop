@@ -37,32 +37,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     //     ImpToss
     // }
 
-
-    /// <summary>
-    /// List of all Types of Actions. There is a many-to-one mapping of Actions to ActionLogics.
-    /// </summary>
-    public enum ActionLogic
-    {
-        Melee,
-        RangedTargeted,
-        Chase,
-        Revive,
-        LaunchProjectile,
-        Emote,
-        RangedFXTargeted,
-        AoE,
-        Trample,
-        ChargedShield,
-        Stunned,
-        Target,
-        ChargedLaunchProjectile,
-        StealthMode,
-        DashAttack,
-        ImpToss
-        //O__O adding a new ActionLogic branch? Update Action.MakeAction!
-    }
-
-
     /// <summary>
     /// Comprehensive class that contains information needed to play back any action on the server. This is what gets sent client->server when
     /// the Action gets played, and also what gets sent server->client to broadcast the action event. Note that the OUTCOMES of the action effect

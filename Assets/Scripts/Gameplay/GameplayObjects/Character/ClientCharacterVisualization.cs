@@ -88,7 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
             m_NetState.DoActionEventClient += PerformActionFX;
             m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
-            m_NetState.CancelActionsByTypeEventClient += CancelActionFXByType;
+            m_NetState.CancelActionsByPrototypeIDEventClient += CancelActionFXByPrototypeID;
             m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
             m_NetState.MovementStatus.OnValueChanged += OnMovementStatusChanged;
@@ -142,7 +142,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 m_NetState.DoActionEventClient -= PerformActionFX;
                 m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
-                m_NetState.CancelActionsByTypeEventClient -= CancelActionFXByType;
+                m_NetState.CancelActionsByPrototypeIDEventClient -= CancelActionFXByPrototypeID;
                 m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
 
@@ -179,9 +179,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_ClientActionViz.CancelAllActions();
         }
 
-        void CancelActionFXByType(ActionType actionType)
+        void CancelActionFXByPrototypeID(ActionID actionPrototypeID)
         {
-            m_ClientActionViz.CancelAllActionsOfType(actionType);
+            m_ClientActionViz.CancelAllActionsWithSamePrototypeID(actionPrototypeID);
         }
 
         void OnStoppedChargingUp(float finalChargeUpPercentage)

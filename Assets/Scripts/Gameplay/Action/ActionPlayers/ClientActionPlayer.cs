@@ -137,7 +137,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             m_PlayingActions.Clear();
         }
 
-        public void CancelAllActionsOfType(ActionID actionID)
+        public void CancelAllActionsWithSamePrototypeID(ActionID actionID)
         {
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {

@@ -16,9 +16,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private ServerCharacterMovement m_Movement;
 
-        public ChaseAction(ref ActionRequestData data)
-            : base(ref data) { }
-
         /// <summary>
         /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
         /// </summary>

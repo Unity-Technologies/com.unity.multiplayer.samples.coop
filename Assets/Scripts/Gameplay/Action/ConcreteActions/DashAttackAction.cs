@@ -28,11 +28,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private bool m_Dashed;
 
-        public DashAttackAction( ref ActionRequestData data) : base(ref data)
-        {
-            Assert.IsTrue(Config.Radius > 0, $"ActionDescription for {Config.ActionTypeEnum} needs a Radius assigned!");
-        }
-
         public override bool OnStart(ServerCharacter parent)
         {
             // remember the exact spot we'll stop.
@@ -79,7 +74,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             // because the client-side visualization of the action moves the character visualization around,
             // we need to explicitly end the client-side visuals when we abort
-            parent.NetState.RecvCancelActionsByTypeClientRpc(Config.ActionTypeEnum);
+            parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(PrototypeActionID);
 
         }
 

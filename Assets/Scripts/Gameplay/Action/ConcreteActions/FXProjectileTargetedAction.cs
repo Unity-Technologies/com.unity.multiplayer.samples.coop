@@ -36,9 +36,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         Transform m_TargetTransform;
 
-
-        public FXProjectileTargetedAction(ref ActionRequestData data) : base(ref data) { }
-
         public override bool OnStart(ServerCharacter parent)
         {
             m_DamageableTarget = GetDamageableTarget(parent);
@@ -88,7 +85,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             if (!m_ImpactedTarget)
             {
-                parent.NetState.RecvCancelActionsByTypeClientRpc(Config.ActionTypeEnum);
+                parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(PrototypeActionID);
             }
         }
 
@@ -141,7 +138,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             if (Config.Projectiles.Length < 1 || Config.Projectiles[0].ProjectilePrefab == null)
-                throw new System.Exception($"Action {Config.ActionTypeEnum} has no valid ProjectileInfo!");
+                throw new System.Exception($"Action {name} has no valid ProjectileInfo!");
 
             return true;
         }
@@ -228,7 +225,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             var projectile = projectileGO.GetComponent<FXProjectile>();
             if (!projectile)
             {
-                throw new System.Exception($"FXProjectileTargetedAction tried to spawn projectile {projectileGO.name}, as dictated for action type {Data.ActionTypeEnum}, but the object doesn't have a FXProjectile component!");
+                throw new System.Exception($"FXProjectileTargetedAction tried to spawn projectile {projectileGO.name}, as dictated for action {name}, but the object doesn't have a FXProjectile component!");
             }
 
             // now that we have our projectile, initialize it so it'll fly at the target appropriately

@@ -141,7 +141,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <summary>
         /// This event is raised on the client when active action FXs of a certain type need to be cancelled (e.g. when the Stealth action ends)
         /// </summary>
-        public event Action<ActionType> CancelActionsByTypeEventClient;
+        public event Action<ActionID> CancelActionsByPrototypeIDEventClient;
 
         /// <summary>
         /// /// Server to Client RPC that broadcasts this action play to all clients.
@@ -160,9 +160,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         [ClientRpc]
-        public void RecvCancelActionsByTypeClientRpc(ActionType action)
+        public void RecvCancelActionsByPrototypeIDClientRpc(ActionID actionPrototypeID)
         {
-            CancelActionsByTypeEventClient?.Invoke(action);
+            CancelActionsByPrototypeIDEventClient?.Invoke(actionPrototypeID);
         }
 
         /// <summary>

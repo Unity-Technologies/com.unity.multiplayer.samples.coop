@@ -9,9 +9,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     [CreateAssetMenu()]
     public class EmoteAction : Action
     {
-        public EmoteAction(ref ActionRequestData data)
-            : base(ref data) { }
-
         public override bool OnStart(ServerCharacter parent)
         {
             parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);

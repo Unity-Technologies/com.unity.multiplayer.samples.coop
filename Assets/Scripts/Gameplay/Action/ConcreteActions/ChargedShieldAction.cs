@@ -42,9 +42,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         SpecialFXGraphic m_ShieldGraphics;
 
-        public ChargedShieldAction( ref ActionRequestData data)
-            : base( ref data) { }
-
         public override bool OnStart(ServerCharacter parent)
         {
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
@@ -170,7 +167,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public override bool OnStartClient(ClientCharacterVisualization parent)
         {
-            Assert.IsTrue(Config.Spawns.Length == 2, $"Found {Config.Spawns.Length} spawns for action {Config.ActionTypeEnum}. Should be exactly 2: a charge-up particle and a fully-charged particle");
+            Assert.IsTrue(Config.Spawns.Length == 2, $"Found {Config.Spawns.Length} spawns for action {name}. Should be exactly 2: a charge-up particle and a fully-charged particle");
 
             base.OnStartClient(parent);
             m_ChargeGraphics = InstantiateSpecialFXGraphic(Config.Spawns[0], parent.transform, true);

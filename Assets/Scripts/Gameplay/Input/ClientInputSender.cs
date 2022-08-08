@@ -215,10 +215,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Perform a skill in response to some input trigger. This is the common method to which all input-driven skill plays funnel.
         /// </summary>
-        /// <param name="actionType">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
+        /// <param name="actionID">The action you want to play. Note that "Skill1" may be overriden contextually depending on the target.</param>
         /// <param name="triggerStyle">What sort of input triggered this skill?</param>
         /// <param name="targetId">(optional) Pass in a specific networkID to target for this action</param>
-        void PerformSkill(ActionType actionType, SkillTriggerStyle triggerStyle, ulong targetId = 0)
+        void PerformSkill(ActionID actionID, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
             Transform hitTransform = null;
 
@@ -254,21 +254,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 hitTransform = networkedHitIndex >= 0 ? k_CachedHit[networkedHitIndex].transform : null;
             }
 
-            if (GetActionRequestForTarget(hitTransform, actionType, triggerStyle, out ActionRequestData playerAction))
+            if (GetActionRequestForTarget(hitTransform, actionID, triggerStyle, out ActionRequestData playerAction))
             {
                 //Don't trigger our move logic for a while. This protects us from moving just because we clicked on them to target them.
                 m_LastSentMove = Time.time + k_TargetMoveTimeout;
 
                 SendInput(playerAction);
             }
-            else if (actionType != ActionType.GeneralTarget)
+            else if ( !GameDataSource.Instance.GetActionPrototypeByID(actionID).IsGeneralTargetAction)
             {
                 // clicked on nothing... perform an "untargeted" attack on the spot they clicked on.
                 // (Different Actions will deal with this differently. For some, like archer arrows, this will fire an arrow
                 // in the desired direction. For others, like mage's bolts, this will fire a "miss" projectile at the spot clicked on.)
 
                 var data = new ActionRequestData();
-                PopulateSkillRequest(k_CachedHit[0].point, actionType, ref data);
+                PopulateSkillRequest(k_CachedHit[0].point, actionID, ref data);
 
                 SendInput(data);
             }
@@ -279,18 +279,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// but revive a friend. You might also decide to do nothing (e.g. right-clicking on a friend who hasn't FAINTED).
         /// </summary>
         /// <param name="hit">The Transform of the entity we clicked on, or null if none.</param>
-        /// <param name="actionType">The Action to build for</param>
+        /// <param name="actionID">The Action to build for</param>
         /// <param name="triggerStyle">How did this skill play get triggered? Mouse, Keyboard, UI etc.</param>
         /// <param name="resultData">Out parameter that will be filled with the resulting action, if any.</param>
         /// <returns>true if we should play an action, false otherwise. </returns>
-        bool GetActionRequestForTarget(Transform hit, ActionType actionType, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
+        bool GetActionRequestForTarget(Transform hit, ActionID actionID, SkillTriggerStyle triggerStyle, out ActionRequestData resultData)
         {
             resultData = new ActionRequestData();
 
             var targetNetObj = hit != null ? hit.GetComponentInParent<NetworkObject>() : null;
 
             //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState.
-            if (!targetNetObj && actionType != ActionType.GeneralTarget)
+            if (!targetNetObj && !GameDataSource.Instance.GetActionPrototypeByID(actionID).IsGeneralTargetAction)
             {
                 ulong targetId = m_NetworkCharacter.TargetId.Value;
                 NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
@@ -306,12 +306,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             if (targetNetState != null)
             {
                 //Skill1 may be contextually overridden if it was generated from a mouse-click.
-                if (actionType == CharacterData.Skill1 && triggerStyle == SkillTriggerStyle.MouseClick)
+                if (actionID == CharacterData.Skill1.PrototypeActionID && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
                     if (!targetNetState.IsNpc && targetNetState.LifeState == LifeState.Fainted)
                     {
                         //right-clicked on a downed ally--change the skill play to Revive.
-                        actionType = ActionType.GeneralRevive;
+                        actionID = ActionType.GeneralRevive;
                     }
                 }
             }
@@ -327,9 +327,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             }
 
             // record our target in case this action uses that info (non-targeted attacks will ignore this)
-            resultData.ActionTypeEnum = actionType;
+            resultData.ActionPrototypeID = actionID;
             resultData.TargetIds = new ulong[] { targetNetObj.NetworkObjectId };
-            PopulateSkillRequest(targetHitPoint, actionType, ref resultData);
+            PopulateSkillRequest(targetHitPoint, actionID, ref resultData);
             return true;
         }
 
@@ -337,12 +337,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// Populates the ActionRequestData with additional information. The TargetIds of the action should already be set before calling this.
         /// </summary>
         /// <param name="hitPoint">The point in world space where the click ray hit the target.</param>
-        /// <param name="action">The action to perform (will be stamped on the resultData)</param>
+        /// <param name="actionID">The action to perform (will be stamped on the resultData)</param>
         /// <param name="resultData">The ActionRequestData to be filled out with additional information.</param>
-        void PopulateSkillRequest(Vector3 hitPoint, ActionType action, ref ActionRequestData resultData)
+        void PopulateSkillRequest(Vector3 hitPoint, ActionID actionID, ref ActionRequestData resultData)
         {
-            resultData.ActionTypeEnum = action;
-            var actionInfo = GameDataSource.Instance.ActionDataByType[action];
+            resultData.ActionPrototypeID = actionID;
+            var actionConfig = GameDataSource.Instance.GetActionPrototypeByID(actionID).Config;
 
             //most skill types should implicitly close distance. The ones that don't are explicitly set to false in the following switch.
             resultData.ShouldClose = true;
@@ -352,7 +352,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             offset.y = 0;
             Vector3 direction = offset.normalized;
 
-            switch (actionInfo.Logic)
+            switch (actionConfig.Logic)
             {
                 //for projectile logic, infer the direction from the click position.
                 case ActionLogic.LaunchProjectile:
@@ -380,23 +380,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// Request an action be performed. This will occur on the next FixedUpdate.
         /// </summary>
-        /// <param name="action"> The action you'd like to perform. </param>
+        /// <param name="actionID"> The action you'd like to perform. </param>
         /// <param name="triggerStyle"> What input style triggered this action. </param>
         /// <param name="targetId"> NetworkObjectId of target. </param>
-        public void RequestAction(ActionType action, SkillTriggerStyle triggerStyle, ulong targetId = 0)
+        public void RequestAction(ActionID actionID, SkillTriggerStyle triggerStyle, ulong targetId = 0)
         {
-            // do not populate an action request unless said action is valid
-            if (action == ActionType.None)
-            {
-                return;
-            }
-
-            Assert.IsTrue(GameDataSource.Instance.ActionDataByType.ContainsKey(action),
-                $"Action {action} must be part of ActionData dictionary!");
+            Assert.IsNotNull(GameDataSource.Instance.GetActionPrototypeByID(actionID),
+                $"Action {actionID} must be contained in the Action prototypes of GameDataSource!");
 
             if (m_ActionRequestCount < m_ActionRequests.Length)
             {
-                m_ActionRequests[m_ActionRequestCount].RequestedActionID = action;
+                m_ActionRequests[m_ActionRequestCount].RequestedActionID = actionID;
                 m_ActionRequests[m_ActionRequestCount].TriggerStyle = triggerStyle;
                 m_ActionRequests[m_ActionRequestCount].TargetId = targetId;
                 m_ActionRequestCount++;

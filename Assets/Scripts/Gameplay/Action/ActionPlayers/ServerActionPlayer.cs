@@ -226,13 +226,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 ActionRequestData data = new ActionRequestData
                 {
-                    ActionTypeEnum = ActionType.GeneralTarget,
+                    ActionPrototypeID = ActionType.GeneralTarget,
                     TargetIds = baseAction.Data.TargetIds
                 };
 
                 //this shouldn't run redundantly, because the next time the base Action comes up to play, its Target
                 //and the active target in our NetState should match.
-                Action targetAction = Action.MakeAction(ref data);
+                Action targetAction = ActionFactory.CreateActionFromData(ref data);
                 m_Queue.Insert(baseIndex, targetAction);
                 return baseIndex + 1;
             }
@@ -331,8 +331,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             foreach (var action in m_Queue)
             {
                 var info = action.Config;
-                float actionTime = info.BlockingMode == BlockingMode.OnlyDuringExecTime ? info.ExecTimeSeconds :
-                                    info.BlockingMode == BlockingMode.EntireDuration ? info.DurationSeconds :
+                float actionTime = info.BlockingMode == ActionConfig.BlockingModeType.OnlyDuringExecTime ? info.ExecTimeSeconds :
+                                    info.BlockingMode == ActionConfig.BlockingModeType.EntireDuration ? info.DurationSeconds :
                                     throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
                 totalTime += actionTime;
             }

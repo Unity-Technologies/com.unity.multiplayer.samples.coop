@@ -79,7 +79,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             /// <summary> T
             /// The current ActionType that is used when this button is pressed.
             /// </summary>
-            public ActionType CurActionType;
+            public Action CurAction;
 
             readonly HeroActionBar m_Owner;
 
@@ -88,7 +88,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 Type = type;
                 Button = button;
                 Tooltip = button.GetComponent<Client.UITooltipDetector>();
-                CurActionType = ActionType.None;
                 m_Owner = owner;
             }
 
@@ -234,7 +233,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // send input to begin the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurActionType, SkillTriggerStyle.UI);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction.PrototypeActionID, SkillTriggerStyle.UI);
         }
 
         void OnButtonClickedUp(ActionButtonType buttonType)
@@ -252,7 +251,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // send input to complete the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurActionType, SkillTriggerStyle.UIRelease);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction.PrototypeActionID, SkillTriggerStyle.UIRelease);
         }
 
         /// <summary>
@@ -290,17 +289,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void UpdateActionButton(ActionButtonInfo buttonInfo, ActionType actionType, bool isClickable = true)
+        void UpdateActionButton(ActionButtonInfo buttonInfo, Action action, bool isClickable = true)
         {
             // first find the info we need (sprite and description)
             Sprite sprite = null;
             string description = "";
 
-            if (actionType != ActionType.None)
+            if (action != null)
             {
-                var desc = GameDataSource.Instance.ActionDataByType[actionType];
-                sprite = desc.Icon;
-                description = desc.Description;
+                sprite = action.Config.Icon;
+                description = action.Config.Description;
             }
 
             // set up UI elements appropriately
@@ -317,7 +315,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // store the action type so that we can retrieve it in click events
-            buttonInfo.CurActionType = actionType;
+            buttonInfo.CurAction = action;
         }
     }
 }
