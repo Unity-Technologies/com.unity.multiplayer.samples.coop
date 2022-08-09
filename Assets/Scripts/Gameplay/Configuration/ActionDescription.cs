@@ -69,7 +69,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     action = CreateInstance<LaunchProjectileAction>();
                     break;
                 case ActionType.MageBaseAttack:
-                    action = CreateInstance<LaunchProjectileAction>();
+                    action = CreateInstance<FXProjectileTargetedAction>();
                     break;
                 case ActionType.RogueBaseAttack:
                     action = CreateInstance<MeleeAction>();
@@ -114,6 +114,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                     action = CreateInstance<TargetAction>();
                     break;
                 case ActionType.MageHeal:
+                    action = CreateInstance<MeleeAction>();
                     break;
                 case ActionType.ArcherChargedShot:
                     action = CreateInstance<ChargedLaunchProjectileAction>();
