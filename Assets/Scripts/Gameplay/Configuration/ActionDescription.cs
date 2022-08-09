@@ -51,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     public class ActionDescription : ScriptableObject
     {
         [MenuItem("Assets/ConvertToNewAction")]
-        private static void DoSomethingWithVariable()
+        private static void ConvertOldActionToNewAction()
         {
             var selectedOldAction = Selection.activeObject as ActionDescription;
 
@@ -139,6 +139,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 return;
             }
 
+            action.Config = new ActionConfig();
+
             action.Config.Amount = selectedOldAction.Amount;
             action.Config.Anim = selectedOldAction.Anim;
             action.Config.Anim2 = selectedOldAction.Anim2;
@@ -181,7 +183,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         // Note that we pass the same path, and also pass "true" to the second argument.
         [MenuItem("Assets/ConvertToNewAction", true)]
-        private static bool NewMenuOptionValidation()
+        private static bool ValidateIfOldActionSelected()
         {
             return Selection.activeObject is ActionDescription;
         }
