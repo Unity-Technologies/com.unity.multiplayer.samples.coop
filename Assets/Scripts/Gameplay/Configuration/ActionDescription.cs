@@ -148,10 +148,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
             action.Config.Description = selectedOldAction.Description;
             action.Config.Icon = selectedOldAction.Icon;
             action.Config.Logic = selectedOldAction.Logic;
-            action.Config.Projectiles = selectedOldAction.Projectiles.ToArray();
+            action.Config.Projectiles = selectedOldAction.Projectiles != null ? selectedOldAction.Projectiles.ToArray() : Array.Empty<ProjectileInfo>();
             action.Config.Radius = selectedOldAction.Radius;
             action.Config.Range = selectedOldAction.Range;
-            action.Config.Spawns = selectedOldAction.Spawns.ToArray();
+            action.Config.Spawns = selectedOldAction.Spawns != null ? selectedOldAction.Spawns.ToArray() : Array.Empty<GameObject>();
             action.Config.ActionInput = selectedOldAction.ActionInput;
             action.Config.ActionInterruptible = selectedOldAction.ActionInterruptible;
             action.Config.AnimAnticipation = selectedOldAction.AnimAnticipation;
