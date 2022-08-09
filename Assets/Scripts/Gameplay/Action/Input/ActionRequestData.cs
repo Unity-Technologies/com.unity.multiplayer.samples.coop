@@ -80,7 +80,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         public bool Compare(ref ActionRequestData rhs)
         {
-            bool scalarParamsEqual = (ActionPrototypeIndex: ActionID, Position, Direction, Amount) == (rhs.ActionID, rhs.Position, rhs.Direction, rhs.Amount);
+            bool scalarParamsEqual = (ActionID, Position, Direction, Amount) == (rhs.ActionID, rhs.Position, rhs.Direction, rhs.Amount);
             if (!scalarParamsEqual) { return false; }
 
             if (TargetIds == rhs.TargetIds) { return true; } //covers case of both being null.

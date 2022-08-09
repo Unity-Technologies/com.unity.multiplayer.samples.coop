@@ -340,11 +340,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return totalTime - m_Queue[0].TimeRunning;
         }
 
-        public void OnCollisionEnter(Collision collision)
+        public void CollisionEntered(Collision collision)
         {
             if (m_Queue.Count > 0)
             {
-                m_Queue[0].OnCollisionEnter(m_Parent, collision);
+                m_Queue[0].CollisionEntered(m_Parent, collision);
             }
         }
 

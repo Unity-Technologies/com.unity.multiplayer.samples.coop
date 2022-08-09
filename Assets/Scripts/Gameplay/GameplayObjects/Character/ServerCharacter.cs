@@ -289,7 +289,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (m_ServerActionPlayer != null)
             {
-                m_ServerActionPlayer.OnCollisionEnter(collision);
+                m_ServerActionPlayer.CollisionEntered(collision);
             }
         }
 

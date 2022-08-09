@@ -189,7 +189,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         }
 
         // called by owning class when parent's Collider collides with stuff
-        public override void OnCollisionEnter(ServerCharacter parent, Collision collision)
+        public override void CollisionEntered(ServerCharacter parent, Collision collision)
         {
             // we only detect other possible victims when we start charging
             if (GetCurrentStage() != ActionStage.Charging)

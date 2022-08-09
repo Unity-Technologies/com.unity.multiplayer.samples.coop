@@ -137,7 +137,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// Called on the active ("blocking") Action when this character collides with another.
         /// </summary>
         /// <param name="collision"></param>
-        public virtual void OnCollisionEnter(ServerCharacter parent, Collision collision) { }
+        public virtual void CollisionEntered(ServerCharacter parent, Collision collision) { }
 
         public enum BuffableValue
         {
