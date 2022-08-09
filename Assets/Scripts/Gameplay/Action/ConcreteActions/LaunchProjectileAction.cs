@@ -40,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// For the base class, this is always just the first entry with a valid prefab in it!
         /// </summary>
         /// <exception cref="System.Exception">thrown if no Projectiles are valid</exception>
-        protected virtual ActionConfig.ProjectileInfo GetProjectileInfo()
+        protected virtual ProjectileInfo GetProjectileInfo()
         {
             foreach (var projectileInfo in Config.Projectiles)
             {

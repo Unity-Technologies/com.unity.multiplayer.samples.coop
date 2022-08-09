@@ -173,7 +173,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 // remember the moment when we successfully used this Action!
                 m_LastUsedTimestamps[m_Queue[0].ActionID] = Time.time;
 
-                if (m_Queue[0].Config.ExecTimeSeconds == 0 && m_Queue[0].Config.BlockingMode == ActionConfig.BlockingModeType.OnlyDuringExecTime)
+                if (m_Queue[0].Config.ExecTimeSeconds == 0 && m_Queue[0].Config.BlockingMode == BlockingModeType.OnlyDuringExecTime)
                 {
                     //this is a non-blocking action with no exec time. It should never be hanging out at the front of the queue (not even for a frame),
                     //because it could get cleared if a new Action came in in that interval.
@@ -331,8 +331,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             foreach (var action in m_Queue)
             {
                 var info = action.Config;
-                float actionTime = info.BlockingMode == ActionConfig.BlockingModeType.OnlyDuringExecTime ? info.ExecTimeSeconds :
-                                    info.BlockingMode == ActionConfig.BlockingModeType.EntireDuration ? info.DurationSeconds :
+                float actionTime = info.BlockingMode == BlockingModeType.OnlyDuringExecTime ? info.ExecTimeSeconds :
+                                    info.BlockingMode == BlockingModeType.EntireDuration ? info.DurationSeconds :
                                     throw new System.Exception($"Unrecognized blocking mode: {info.BlockingMode}");
                 totalTime += actionTime;
             }

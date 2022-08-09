@@ -150,7 +150,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// charge-up is at 100%. The other tiers of projectile are used for lesser charge-up amounts.
         /// </remarks>
         /// <returns>the projectile that should be used</returns>
-        protected override ActionConfig.ProjectileInfo GetProjectileInfo()
+        protected override ProjectileInfo GetProjectileInfo()
         {
             if (Config.Projectiles.Length == 0) // uh oh, this is bad data
                 throw new System.Exception($"Action {name} has no Projectiles!");

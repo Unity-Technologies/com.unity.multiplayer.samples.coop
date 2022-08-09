@@ -6,7 +6,7 @@ using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
-using BlockingMode = Unity.Multiplayer.Samples.BossRoom.Actions.ActionConfig.BlockingModeType;
+using BlockingMode = Unity.Multiplayer.Samples.BossRoom.Actions.BlockingModeType;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -105,7 +105,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <returns>true to become a non-blocking Action, false to remain a blocking Action</returns>
         public virtual bool ShouldBecomeNonBlocking()
         {
-            return Config.BlockingMode == BlockingMode.OnlyDuringExecTime ? TimeRunning >= Config.ExecTimeSeconds : false;
+            return Config.BlockingMode == BlockingModeType.OnlyDuringExecTime ? TimeRunning >= Config.ExecTimeSeconds : false;
         }
 
         /// <summary>

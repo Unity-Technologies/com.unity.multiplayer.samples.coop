@@ -23,7 +23,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <summary>
         /// The data for our projectile. Indicates speed, damage, etc.
         /// </summary>
-        ActionConfig.ProjectileInfo m_ProjectileInfo;
+        ProjectileInfo m_ProjectileInfo;
 
         const int k_MaxCollisions = 4;
         const float k_WallLingerSec = 2f; //time in seconds that arrows linger after hitting a target.
@@ -58,7 +58,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// Set everything up based on provided projectile information.
         /// (Note that this is called before OnNetworkSpawn(), so don't try to do any network stuff here.)
         /// </summary>
-        public void Initialize(ulong creatorsNetworkObjectId, in ActionConfig.ProjectileInfo projectileInfo)
+        public void Initialize(ulong creatorsNetworkObjectId, in ProjectileInfo projectileInfo)
         {
             m_SpawnerId = creatorsNetworkObjectId;
             m_ProjectileInfo = projectileInfo;

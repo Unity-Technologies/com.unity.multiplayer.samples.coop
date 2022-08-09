@@ -66,29 +66,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         [Tooltip("Is this Action interruptible by other action-plays or by movement? (Implicitly stops movement when action starts.) Generally, actions with short exec times should not be interruptible in this way.")]
         public bool ActionInterruptible;
 
-        [System.Serializable]
-        public enum BlockingModeType
-        {
-            EntireDuration,
-            OnlyDuringExecTime,
-        }
+
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;
 
-        [Serializable]
-        public struct ProjectileInfo
-        {
-            [Tooltip("Prefab used for the projectile")]
-            public GameObject ProjectilePrefab;
-            [Tooltip("Projectile's speed in meters/second")]
-            public float Speed_m_s;
-            [Tooltip("Maximum range of the Projectile")]
-            public float Range;
-            [Tooltip("Damage of the Projectile on hit")]
-            public int Damage;
-            [Tooltip("Max number of enemies this projectile can hit before disappearing")]
-            public int MaxVictims;
-        }
 
         [Tooltip("If this Action spawns a projectile, describes it. (\"Charged\" projectiles can list multiple possible shots, ordered from weakest to strongest)")]
         public ProjectileInfo[] Projectiles;
