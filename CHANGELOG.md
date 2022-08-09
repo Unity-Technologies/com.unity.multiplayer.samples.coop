@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-* Added handling the OnTransportFailure callback (#707)
+* Added handling the OnTransportFailure callback (#707). This callback is invoked when a failure happens on the transport's side. Boss Room now handles that callback by returning to the Offline state.
 
 ### Changed
 * Updated tools, authentication and relay packages (#690)
