@@ -220,6 +220,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             m_CanvasGroup.alpha = 0f;
             m_CanvasGroup.blocksRaycasts = false;
+            m_LobbyCreationUI.Hide();
+            m_LobbyJoiningUI.Hide();
         }
 
         public void ToggleJoinLobbyUI()

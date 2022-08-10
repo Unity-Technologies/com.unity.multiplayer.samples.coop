@@ -13,6 +13,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Changed
 * Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
+* NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
 * Refactored connection management into simpler state machine (#666)
 * 
 ### Removed
