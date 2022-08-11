@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-*
+* Unsubscribe API for the ISubscriber<T> along with refactoring of the codebase to use this API instead of IDisposable handle when there is just one subscription.
 ### Changed
 * Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
