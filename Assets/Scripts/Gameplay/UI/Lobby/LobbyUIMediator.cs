@@ -28,7 +28,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         LocalLobby m_LocalLobby;
         NameGenerationData m_NameGenerationData;
         ConnectionManager m_ConnectionManager;
-        IDisposable m_Subscriptions;
+        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
         const string k_DefaultLobbyName = "no-name";
 
@@ -49,10 +49,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_LobbyServiceFacade = lobbyServiceFacade;
             m_LocalLobby = localLobby;
             m_ConnectionManager = connectionManager;
-
+            m_ConnectStatusSubscriber = connectStatusSub;
             RegenerateName();
 
-            m_Subscriptions = connectStatusSub.Subscribe(OnConnectStatus);
+            m_ConnectStatusSubscriber.Subscribe(OnConnectStatus);
         }
 
         void OnConnectStatus(ConnectStatus status)
@@ -65,7 +65,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
+            m_ConnectStatusSubscriber.Unsubscribe(OnConnectStatus);
         }
 
         //Lobby and Relay calls done from UI

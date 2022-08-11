@@ -22,7 +22,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         IObjectResolver m_Container;
         LobbyUIMediator m_LobbyUIMediator;
         UpdateRunner m_UpdateRunner;
-        IDisposable m_Subscriptions;
+        ISubscriber<LobbyListFetchedMessage> m_LocalLobbiesRefreshedSub;
+
         List<LobbyListItemUI> m_LobbyListItems = new List<LobbyListItemUI>();
 
         void Awake()
@@ -40,7 +41,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscriptions?.Dispose();
+            m_LocalLobbiesRefreshedSub.Unsubscribe(UpdateUI);
         }
 
         [Inject]
@@ -53,7 +54,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_Container = container;
             m_LobbyUIMediator = lobbyUIMediator;
             m_UpdateRunner = updateRunner;
-            m_Subscriptions = localLobbiesRefreshedSub.Subscribe(UpdateUI);
+            m_LocalLobbiesRefreshedSub = localLobbiesRefreshedSub;
+            m_LocalLobbiesRefreshedSub.Subscribe(UpdateUI);
         }
 
         /// <summary>

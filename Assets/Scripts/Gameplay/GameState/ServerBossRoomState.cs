@@ -51,8 +51,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         [Inject] ISubscriber<LifeStateChangedEventMessage> m_LifeStateChangedEventMessageSubscriber;
 
-        IDisposable m_Subscription;
-
         [Inject] ConnectionManager m_ConnectionManager;
 
         protected override void Awake()
@@ -71,7 +69,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
-            m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
+            m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
 
             NetworkManager.Singleton.SceneManager.OnLoadComplete += OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
@@ -79,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void OnNetworkDespawn()
         {
-            m_Subscription?.Dispose();
+            m_LifeStateChangedEventMessageSubscriber.Unsubscribe(OnLifeStateChangedEventMessage);
 
             NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
@@ -116,7 +114,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         protected override void OnDestroy()
         {
-            m_Subscription?.Dispose();
+            m_LifeStateChangedEventMessageSubscriber?.Unsubscribe(OnLifeStateChangedEventMessage);
 
             if (m_NetcodeHooks)
             {

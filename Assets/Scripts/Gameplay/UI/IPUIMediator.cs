@@ -39,12 +39,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public IPHostingUI IPHostingUI => m_IPHostingUI;
 
-        IDisposable m_Subscription;
+        ISubscriber<ConnectStatus> m_ConnectStatusSubscriber;
 
         [Inject]
         void InjectDependencies(ISubscriber<ConnectStatus> connectStatusSubscriber)
         {
-            m_Subscription = connectStatusSubscriber.Subscribe(OnConnectStatusMessage);
+            m_ConnectStatusSubscriber = connectStatusSubscriber;
+            m_ConnectStatusSubscriber.Subscribe(OnConnectStatusMessage);
         }
 
         void Awake()
@@ -61,7 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
-            m_Subscription.Dispose();
+            m_ConnectStatusSubscriber.Unsubscribe(OnConnectStatusMessage);
         }
 
         void OnConnectStatusMessage(ConnectStatus connectStatus)
