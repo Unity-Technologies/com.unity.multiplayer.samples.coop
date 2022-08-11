@@ -2,8 +2,6 @@ using System;
 using UnityEngine;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;
 
@@ -35,14 +33,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Color m_LoseLightColor;
 
-
-        ConnectionManager m_ConnectionManager;
         ServerPostGameState m_ServerPostGameState;
 
         [Inject]
-        void Inject(ConnectionManager connectionManager, ServerPostGameState serverPostGameState)
+        void Inject(ServerPostGameState serverPostGameState)
         {
-            m_ConnectionManager = connectionManager;
             m_ServerPostGameState = serverPostGameState;
 
             // only hosts can restart the game, other players see a wait message
