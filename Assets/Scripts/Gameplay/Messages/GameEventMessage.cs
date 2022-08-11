@@ -16,12 +16,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public bool IsDoorOpen;
     }
 
-    public struct ConnectionEventMessage : INetworkSerializeByMemcpy
-    {
-        public ConnectStatus ConnectStatus;
-        public FixedPlayerName PlayerName;
-    }
-
 
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
     public struct CheatUsedMessage : INetworkSerializeByMemcpy

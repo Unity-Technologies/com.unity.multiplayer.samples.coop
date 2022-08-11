@@ -1,6 +1,7 @@
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -12,13 +13,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         CanvasGroup m_CanvasGroup;
 
-        IPUIMediator m_IPUIMediator;
-
-        [Inject]
-        void InjectDependencies(IPUIMediator ipUIMediator)
-        {
-            m_IPUIMediator = ipUIMediator;
-        }
+        [Inject] IPUIMediator m_IPUIMediator;
 
         void Awake()
         {

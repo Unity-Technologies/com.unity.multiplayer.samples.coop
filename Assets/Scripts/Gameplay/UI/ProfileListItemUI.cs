@@ -2,6 +2,7 @@ using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -10,13 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         TextMeshProUGUI m_ProfileNameText;
 
-        ProfileManager m_ProfileManager;
-
-        [Inject]
-        void InjectDependency(ProfileManager profileManager)
-        {
-            m_ProfileManager = profileManager;
-        }
+        [Inject] ProfileManager m_ProfileManager;
 
         public void SetProfileName(string profileName)
         {

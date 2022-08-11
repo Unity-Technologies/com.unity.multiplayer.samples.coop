@@ -2,70 +2,66 @@ using System;
 using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
 {
     /// <summary>
     /// This type of message channel allows the server to publish a message that will be sent to clients as well as
-    /// being published locally. Clients and the server both can subscribe to it. However, that subscription needs to be
-    /// done after the NetworkManager has initialized. On objects whose lifetime is bigger than a networked session,
-    /// subscribing will be required each time a new session starts.
+    /// being published locally. Clients and the server both can subscribe to it.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     public class NetworkedMessageChannel<T> : MessageChannel<T> where T : unmanaged, INetworkSerializeByMemcpy
     {
-        string m_Name;
+        NetworkManager m_NetworkManager;
 
-        bool m_HasRegisteredHandler;
+        string m_Name;
 
         public NetworkedMessageChannel()
         {
             m_Name = $"{typeof(T).FullName}NetworkMessageChannel";
         }
 
+        [Inject]
+        void InjectDependencies(NetworkManager networkManager)
+        {
+            m_NetworkManager = networkManager;
+            m_NetworkManager.OnClientConnectedCallback += OnClientConnected;
+            if (m_NetworkManager.IsListening)
+            {
+                RegisterHandler();
+            }
+        }
+
         public override void Dispose()
         {
             if (!IsDisposed)
             {
-                if (NetworkManager.Singleton != null && NetworkManager.Singleton.CustomMessagingManager != null && m_HasRegisteredHandler)
+                if (m_NetworkManager != null && m_NetworkManager.CustomMessagingManager != null)
                 {
-                    NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
+                    m_NetworkManager.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
                 }
-
-                m_HasRegisteredHandler = false;
             }
             base.Dispose();
         }
 
-        public override IDisposable Subscribe(Action<T> handler)
+        void OnClientConnected(ulong clientId)
         {
-            if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
-            {
-                // Only register message handler on clients
-                if (!m_HasRegisteredHandler && !NetworkManager.Singleton.IsServer)
-                {
-                    NetworkManager.Singleton.CustomMessagingManager.RegisterNamedMessageHandler(m_Name, ReceiveMessageThroughNetwork);
-                    m_HasRegisteredHandler = true;
-                    NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
-                }
-
-                return base.Subscribe(handler);
-            }
-
-            Debug.LogError("Cannot subscribe to NetworkedMessageChannel. NetworkManager is not initialized.");
-            return null;
+            RegisterHandler();
         }
 
-        void OnClientDisconnect(ulong clientId)
+        void RegisterHandler()
         {
-            m_HasRegisteredHandler = false;
-            NetworkManager.Singleton.OnClientConnectedCallback -= OnClientDisconnect;
-            NetworkManager.Singleton.CustomMessagingManager.UnregisterNamedMessageHandler(m_Name);
+            // Only register message handler on clients
+            if (!m_NetworkManager.IsServer)
+            {
+                m_NetworkManager.CustomMessagingManager.RegisterNamedMessageHandler(m_Name, ReceiveMessageThroughNetwork);
+            }
         }
 
         public override void Publish(T message)
         {
-            if (NetworkManager.Singleton.IsServer)
+            if (m_NetworkManager.IsServer)
             {
                 // send message to clients, then publish locally
                 SendMessageThroughNetwork(message);
@@ -81,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
         {
             var writer = new FastBufferWriter(FastBufferWriter.GetWriteSize<T>(), Allocator.Temp);
             writer.WriteValueSafe(message);
-            NetworkManager.Singleton.CustomMessagingManager.SendNamedMessageToAll(m_Name, writer);
+            m_NetworkManager.CustomMessagingManager.SendNamedMessageToAll(m_Name, writer);
         }
 
         void ReceiveMessageThroughNetwork(ulong clientID, FastBufferReader reader)

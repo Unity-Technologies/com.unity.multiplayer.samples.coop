@@ -9,14 +9,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
     public class ClientPostGameState : GameStateBehaviour
     {
         public override GameState ActiveState { get { return GameState.PostGame; } }
-
-        public override void OnNetworkSpawn()
-        {
-            if (!IsClient)
-            {
-                enabled = false;
-            }
-        }
-
     }
 }

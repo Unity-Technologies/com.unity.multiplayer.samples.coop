@@ -41,8 +41,18 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 var sessionPlayerData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(OwnerClientId);
                 if (sessionPlayerData.HasValue)
                 {
-                    m_NetworkNameState.Name.Value = sessionPlayerData.Value.PlayerName;
-                    m_NetworkAvatarGuidState.AvatarGuid.Value = sessionPlayerData.Value.AvatarNetworkGuid;
+                    var playerData = sessionPlayerData.Value;
+                    m_NetworkNameState.Name.Value = playerData.PlayerName;
+                    if (playerData.HasCharacterSpawned)
+                    {
+                        m_NetworkAvatarGuidState.AvatarGuid.Value = playerData.AvatarNetworkGuid;
+                    }
+                    else
+                    {
+                        m_NetworkAvatarGuidState.SetRandomAvatar();
+                        playerData.AvatarNetworkGuid = m_NetworkAvatarGuidState.AvatarGuid.Value;
+                        SessionManager<SessionPlayerData>.Instance.SetPlayerData(OwnerClientId, playerData);
+                    }
                 }
             }
         }
