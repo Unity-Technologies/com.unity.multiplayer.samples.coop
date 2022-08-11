@@ -32,7 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 m_NameState = GetComponent<NetworkNameState>();
                 m_NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
 
-                var gameState = FindObjectOfType<BossRoomState>();
+                var gameState = FindObjectOfType<ServerBossRoomState>();
                 if (gameState != null)
                 {
                     gameState.Container.Inject(this);

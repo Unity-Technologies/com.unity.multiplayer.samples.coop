@@ -7,6 +7,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
@@ -16,10 +17,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// Server specialization of core BossRoom game logic.
     /// </summary>
     [RequireComponent(typeof(NetcodeHooks))]
-    public class BossRoomState : GameStateBehaviour
+    public class ServerBossRoomState : GameStateBehaviour
     {
+        [FormerlySerializedAs("m_NetworkWinState")]
         [SerializeField]
-        NetworkWinState m_NetworkWinState;
+        PersistentGameState persistentGameState;
 
         [SerializeField]
         NetcodeHooks m_NetcodeHooks;
@@ -60,8 +62,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             base.Awake();
 
             //setting the cross-scene reference to NetworkWinState that is cleaned up in PostGameState
-            NetworkWinState.Instance = m_NetworkWinState;
-            DontDestroyOnLoad(m_NetworkWinState);
+            PersistentGameState.Instance = persistentGameState;
+            DontDestroyOnLoad(persistentGameState);
 
             m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
             m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
@@ -95,10 +97,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             {
                 return;
             }
-
-            // reset win state
-
-            //SendWinStateMessage(new WinStateMessage());
 
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
@@ -285,7 +283,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         IEnumerator CoroGameOver(float wait, bool gameWon)
         {
-            m_NetworkWinState.winState.Value = gameWon ? WinState.Win : WinState.Loss;
+            persistentGameState.winState.Value = gameWon ? WinState.Win : WinState.Loss;
 
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
