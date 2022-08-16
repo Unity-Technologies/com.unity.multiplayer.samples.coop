@@ -1245,6 +1245,7 @@ GameObject:
   - component: {fileID: -559815779163765970}
   - component: {fileID: -8995571906845300287}
   - component: {fileID: 6030569013059244219}
+  - component: {fileID: -1890528778572688093}
   m_Layer: 6
   m_Name: VandalImpGraphics
   m_TagString: Untagged
@@ -1322,12 +1323,12 @@ MonoBehaviour:
   - m_AnimatorNodeName: Attack1
     m_AnimatorNodeNameHash: -47317214
     m_Prefab: {fileID: 0}
-    m_PrefabSpawnDelaySeconds: 0.8
+    m_PrefabSpawnDelaySeconds: 0
     m_PrefabCanBeAbortedUntilSecs: 0
     m_PrefabParent: {fileID: 0}
     m_PrefabParentOffset: {x: 0, y: 0, z: 0}
     m_DeParentPrefab: 0
-    m_SoundEffect: {fileID: 8300000, guid: a08cbad8bcaf8c345aa6ae1e7578eee9, type: 3}
+    m_SoundEffect: {fileID: 0}
     m_SoundStartDelaySeconds: 0
     m_VolumeMultiplier: 1
     m_LoopSound: 0
@@ -1357,6 +1358,7 @@ MonoBehaviour:
     m_LoopSound: 0
   m_AudioSources:
   - {fileID: -8069025211240352543}
+  - {fileID: -4965377615854939036}
   - {fileID: -4965377615854939036}
   m_Animator: {fileID: 234724737205816310}
   m_ClientCharacterVisualization: {fileID: 0}
@@ -1765,6 +1767,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Animator: {fileID: 234724737205816310}
+--- !u!114 &-1890528778572688093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6839301660383890230}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  GlobalObjectIdHash: 951099334
+  AlwaysReplicateAsRoot: 0
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
 --- !u!1 &7108127146651356877
 GameObject:
   m_ObjectHideFlags: 0
@@ -2071,7 +2089,7 @@ GameObject:
   - component: {fileID: 8731501901720154717}
   - component: {fileID: 4907214515068745264}
   m_Layer: 6
-  m_Name: Imp_WeaponR
+  m_Name: Imp_TossedObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
