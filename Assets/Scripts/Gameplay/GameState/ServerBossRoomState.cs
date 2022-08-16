@@ -61,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             base.Awake();
 
-            //setting the cross-scene reference to NetworkWinState that is cleaned up in PostGameState
+            //setting the cross-scene reference to PersistentGameState that is cleaned up in PostGameState
             PersistentGameState.Instance = persistentGameState;
             DontDestroyOnLoad(persistentGameState);
 
