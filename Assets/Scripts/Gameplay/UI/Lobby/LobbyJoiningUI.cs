@@ -5,6 +5,7 @@ using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.UI;
+using VContainer;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Visual
 {
@@ -18,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField] CanvasGroup m_CanvasGroup;
         [SerializeField] Graphic m_EmptyLobbyListLabel;
 
-        IInstanceResolver m_Container;
+        IObjectResolver m_Container;
         LobbyUIMediator m_LobbyUIMediator;
         UpdateRunner m_UpdateRunner;
         IDisposable m_Subscriptions;
@@ -44,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         [Inject]
         void InjectDependenciesAndInitialize(
-            IInstanceResolver container,
+            IObjectResolver container,
             LobbyUIMediator lobbyUIMediator,
             UpdateRunner updateRunner,
             ISubscriber<LobbyListFetchedMessage> localLobbiesRefreshedSub)
@@ -52,7 +53,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_Container = container;
             m_LobbyUIMediator = lobbyUIMediator;
             m_UpdateRunner = updateRunner;
-
             m_Subscriptions = localLobbiesRefreshedSub.Subscribe(UpdateUI);
         }
 
@@ -125,7 +125,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             var listItem = Instantiate(m_LobbyListItemPrototype.gameObject, m_LobbyListItemPrototype.transform.parent)
                 .GetComponent<LobbyListItemUI>();
             listItem.gameObject.SetActive(true);
-            m_Container.InjectIn(listItem);
+
+            m_Container.Inject(listItem);
+
             return listItem;
         }
 
@@ -139,7 +141,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_CanvasGroup.alpha = 1f;
             m_CanvasGroup.blocksRaycasts = true;
             m_JoinCodeField.text = "";
-            OnRefresh();
             m_UpdateRunner.Subscribe(PeriodicRefresh, 10f);
         }
 

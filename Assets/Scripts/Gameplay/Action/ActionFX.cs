@@ -81,6 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ActionLogic.Stunned:
                 case ActionLogic.LaunchProjectile:
                 case ActionLogic.Revive:
+                case ActionLogic.ImpToss:
                 case ActionLogic.Emote: return new AnimationOnlyActionFX(ref data, parent);
 
                 default: throw new System.NotImplementedException();
