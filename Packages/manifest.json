@@ -55,6 +55,9 @@
     "com.unity.modules.xr": "1.0.0",
     "jp.hadashikick.vcontainer": "1.11.0"
   },
+  "testables": [
+    "com.unity.netcode.gameobjects"
+  ],
   "scopedRegistries": [
     {
       "name": "package.openupm.com",

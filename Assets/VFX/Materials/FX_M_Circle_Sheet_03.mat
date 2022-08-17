@@ -7,45 +7,34 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: FX_M_ImpExplosionFire
-  m_Shader: {fileID: -6465566751694194690, guid: 42787e4b9b9ce6049827a84217a0075e, type: 3}
+  m_Name: FX_M_Circle_Sheet_03
+  m_Shader: {fileID: 4800000, guid: 0406db5a14f94604a8c57ccfbc9f3b46, type: 3}
   m_ValidKeywords:
+  - _FLIPBOOKBLENDING_ON
   - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
-  m_LightmapFlags: 0
+  m_LightmapFlags: 6
   m_EnableInstancingVariants: 1
   m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
+  m_CustomRenderQueue: 3000
   stringTagMap:
     RenderType: Transparent
   disabledShaderPasses:
-  - SHADOWCASTER
   - DepthOnly
+  - SHADOWCASTER
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - Texture2D_0d51a7f662f34825885706c5f9f5b378:
-        m_Texture: {fileID: 2800000, guid: 5c1bc500c0752bb4f93e891d21ebc8d5, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - Texture2D_a49f118ec4654c468718c10acb0d11fb:
-        m_Texture: {fileID: 2800000, guid: 4de729983701e7b40a88baf0fd819a76, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - Texture2D_ebc59c3a4789414dbc640714ca8cd838:
-        m_Texture: {fileID: 2800000, guid: 27964659a7d4fef44ba88a7b6967fa31, type: 3}
+    - Texture2D_18dd9c2b051049a8a28d6c1aa5822ea7:
+        m_Texture: {fileID: 2800000, guid: 376267674e3d9c940bde9418823ae572, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: dfd0e2f6dd5f55b42a08562aee291e11, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _DissolveTexture:
-        m_Texture: {fileID: 2800000, guid: 09ff3236ed6851c44b22b13107c206f5, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _EmissionMap:
@@ -53,15 +42,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 492f999ed565a8d479affe24f11a657e, type: 3}
+        m_Texture: {fileID: 2800000, guid: dfd0e2f6dd5f55b42a08562aee291e11, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTexture:
-        m_Texture: {fileID: 2800000, guid: 44258c27af4187648ba0a44cb3dbb6f6, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MaskTexture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 376267674e3d9c940bde9418823ae572, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -77,11 +62,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Texture:
-        m_Texture: {fileID: 2800000, guid: 492f999ed565a8d479affe24f11a657e, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _tex4coord2:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 376267674e3d9c940bde9418823ae572, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _texcoord:
@@ -102,71 +83,64 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - Boolean_3d21c72f19314834bd7b68bd1945e5ed: 0
-    - Boolean_3f723681939f4ad0be5abc28767056a0: 1
-    - Boolean_b14a61a83cf04832bfc5e28ac9dc002f: 1
-    - Boolean_b2d3c01bbc4040b69679a702e03700d7: 0
-    - Boolean_e207d7c3c7c54fe9a2fedb5c72933240: 1
-    - Boolean_e207d7c3c7c54fe9a2fedb5c72933240_1: 0
-    - Boolean_ebca1713bc2a4fcea5fa60c01ccce53f: 1
-    - Vector1_1: 0.218
-    - Vector1_49a02738d71c4444862d3f695e709242: 1
-    - Vector1_ffa04a928dac4de2b4be502e4caee4d3: 1
-    - Vector1_ffa04a928dac4de2b4be502e4caee4d3_1: 1
+    - Boolean_f3c76e1f79d04ab0a9f91a5dd13e3822: 1
     - _AlphaClip: 0
     - _AlphaCutoff: 0.5
-    - _Blend: 0
+    - _Blend: 2
+    - _BlendOp: 0
     - _BumpScale: 1
+    - _CameraFadingEnabled: 0
+    - _CameraFarFadeDistance: 2
+    - _CameraNearFadeDistance: 1
     - _CastShadows: 0
+    - _ColorMode: 0
     - _Cull: 2
-    - _CullMode: 0
     - _Cutoff: 0.5
-    - _DstBlend: 10
+    - _Depth_Blend: 0
+    - _DistortionBlend: 0.5
+    - _DistortionEnabled: 0
+    - _DistortionStrength: 1
+    - _DistortionStrengthScaled: 0.1
+    - _DstBlend: 1
     - _EnvironmentReflections: 1
-    - _Flowintencity: 0.15
+    - _FlipbookBlending: 1
+    - _FlipbookMode: 0
     - _GlossMapScale: 0
     - _Glossiness: 0
     - _GlossyReflections: 0
-    - _HasDynamicDissolve: 0
-    - _HasFlowEffect: 0
-    - _HasMask: 0
-    - _HasTextureDissolve: 1
-    - _InvFade: 1
-    - _MaskIntenicty: 1
-    - _MaskPower: 1
     - _Metallic: 0
+    - _Mode: 0
     - _OcclusionStrength: 1
-    - _Opacity: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _Smoothness: 0.5
     - _SmoothnessTextureChannel: 0
+    - _SoftParticlesEnabled: 0
+    - _SoftParticlesFarFadeDistance: 1
+    - _SoftParticlesNearFadeDistance: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 5
-    - _StepSubtract: 0
     - _Surface: 1
-    - _Switch_Alpha: 1
-    - _UseAlphaChannel: 1
+    - _UseAlpha: 1
+    - _UseSoftParticles: 0
     - _Use_alpha: 1
-    - _VertexAOpacity: 1
     - _WorkflowMode: 1
     - _ZTest: 4
     - _ZWrite: 0
     - _ZWriteControl: 0
     - __dirty: 0
     m_Colors:
-    - Color_1808cb51d9804f419fb05b86068c676a: {r: 1.838149, g: 1.838149, b: 1.838149, a: 1}
-    - Vector4_1: {r: 1, g: 1, b: 0, a: 0}
-    - Vector4_1d8f01040b1f48af90ee158d67035434: {r: 0.36, g: 0.27, b: 0.22, a: 0.14}
-    - Vector4_2: {r: 1, g: 1, b: 0, a: 0}
+    - Color_acca830da4044b5fa948c859784be316: {r: 7.999999, g: 7.999999, b: 7.999999, a: 1}
+    - Vector4_1f7562654797436e96becd4b67df1223: {r: 1, g: 1, b: 0, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1.5789101, g: 1.5789101, b: 1.5789101, a: 1}
+    - _BaseColorAddSubDiff: {r: 0, g: 0, b: 0, a: 0}
+    - _CameraFadeParams: {r: 0, g: Infinity, b: 0, a: 0}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _MainTextureTilingOffset: {r: 1, g: 1, b: 0, a: 0}
+    - _SoftParticleFadeParams: {r: 0, g: 0, b: 0, a: 0}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
-    - _TileSpeedDissolveTexture: {r: 0.2, g: 0.2, b: 0.5, a: 0}
-    - _TileSpeedMainTexture: {r: 1, g: 1, b: 0, a: 0}
-    - _TintColor: {r: 1, g: 1, b: 1, a: 0.08235294}
   m_BuildTextureStacks: []
 --- !u!114 &8601509238882469189
 MonoBehaviour:
