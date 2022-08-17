@@ -38,8 +38,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         protected override void OnDestroy()
         {
             //unset the win state, so that when we load into BossRoomState - it gets properly reset
-            Destroy(NetworkWinState.Instance.gameObject);
-            NetworkWinState.Instance = null;
+            Destroy(PersistentGameState.Instance.gameObject);
+            PersistentGameState.Instance = null;
 
             base.OnDestroy();
 
