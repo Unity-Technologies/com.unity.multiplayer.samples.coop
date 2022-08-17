@@ -1,3 +1,68 @@
+
+References:
+ - [Latency and Packet Loss](https://docs-multiplayer.unity3d.com/netcode/current/learn/lagandpacketloss)
+ - 
+```
+TODO: 
+ - add references to our Latency doc
+ 
+ 
+  - add references to LP's Session Management doc
+  - add reference to LP's connection management doc
+  - add reference to LP's performance doc
+  
+Point to:
+ - cleanup existing doc and replace everything that I can with
+ - latency doc
+ - LP's doc for Session Management
+ - -=- Connection Management
+   - ensure there's a bit saying that we can't connect between debug and release versions of the app
+ - LP's performance doc
+ - additive scene loading for subscenes and the reasoning behind it
+   - child scenes can contain NetworkObjects
+   - child scene loading Utility at editor time
+ - Review Startup scene for why it exists
+ - SDK integrations and how they are wrapped and isolated
+ - Shutdown logic (disconnect vs quit)
+
+ - Action system overview:
+   - Actions are implementing both client and server logic of any given thing that the characters can do in the game
+   - Actions are Scriptable Objects that are registered within GameDataSource - these references serve as runtime "prototype" actions from which clones are created to enact a given action. We transmit integer ID's that map to actions in the GameDataSource to decide which ability we need to play in response.
+   - Serven and Client ActionPlayers are companion classes to actions that are used to actually play out the actions on both client and server.
+  
+
+
+
+States:
+ - when we start a server - we do autoswitch to the character selection things
+ - Our lobby and relay servers are synced using the functionality that relay provides (point to it), plus we handle odd cases manually
+ - CharacterSelect is just a fat wrapper around NetworkList 
+ - BossRoom scene with three additive scenes and the loading UI that handles progress bars
+ - Check Infrastructure folder for things that are worth mentioning
+
+
+ - point to Fernando's doc on static vs dynamic spawn - it covers an important sceen architecture tidbit: basically objects that are statically places shouldn't be Destroyed on the server
+ - point to Fernando's parenting doc
+
+ - Talk about a shared netvar with winstate (singleton-esque thing that gets cleaned up and re-created - pure static state at it's verbatim)
+
+
+ - client server separation and lessons learned from that:
+   - it can help with asset stripping
+   - 
+
+
+https://jira.unity3d.com/browse/MTT-4267 :
+ - this needs to be additionally scoped with Morwenna and Sam, seems like a repurpose of the architecture.md content for some other purpose
+
+
+
+https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/697#discussion_r939048339
+Could be a good point to add to your architecture doc
+Could also discuss using Owner driven separation too. I remember I had created some rules of thumb with Luke on this. User single class for trivial classes, use client/server separation or Owner/Ghost separation when it’s more complex for 1:1 relationships. Use Client/State/Server separation when you have multiple client classes listening to the same event (this one is a bit less defined, open to discussion)
+
+```
+
 # Architecture
 This document describes the high-level architecture of Boss Room.
 If you want to familiarize yourself with the code base, you are just in the right place!
@@ -10,17 +75,28 @@ An exception to this guideline is Gameplay assembly, which houses most of our ne
 
 This assembly separation style forces us to have better separation of concerns and serves as one of the ways to keep the code-base organized. It also provides a benefit of more granular recompilation during our iterations, which shaves us some time we would've spent looking at the progress bar.
 
+```
+TODO: 
+ - add an assembly diagram image into the assembly definition section
+```
+
 ## Important architectural patterns
 In Boss Room we made several noteworthy architectural decisions:
 
 1) We use [Dependency Injection](https://en.wikipedia.org/wiki/Dependency_injection) pattern, with our library of choice being [VContainer](https://vcontainer.hadashikick.jp/).
 
-DI allows us to clearly define our dependencies in code, as opposed to using ScriptableObjects, static access and pervasive singletons. Code is easy to version-control and comparatively easy to understand for a programmer, as opposed to Unity YAML-based objects, such as scenes, scriptable object instances and prefabs.
+DI allows us to clearly define our dependencies in code, as opposed to using the so-called ScriptableObject architecture or, static access or pervasive singletons. Code is easy to version-control and comparatively easy to understand for a programmer, as opposed to Unity YAML-based objects, such as scenes, scriptable object instances and prefabs. 
+DI also allows us to circumvent the problem of cross-scene references to common dependencies, even though we still have to manage the lifecycle of MonoBehaviour-based dependencies by marking them with DontDestroyOnLoad and destroying them manually when appropriate.
 
 2) We have implemented the DI-friendly Publisher-Subscriber pattern (see Infrastructure assembly, PubSub folder).
 
-It allows us various modes of message transfer. This mechanism allows us to both avoid circular references and to have a more limited dependency surface between our assemblies - cross-communicating systems rely on common messages, but don't necessarily need to know about each-other, thus allowing us to separate them into separate purposeful assemblies.
+It allows us various modes of message transfer. This mechanism allows us to both avoid circular references and to have a more limited dependency surface between our assemblies - cross-communicating systems rely on common messages, but don't necessarily need to know about each-other, thus allowing us to separate them into purposeful assemblies.
 It allows us to avoid having circular references between assemblies, the code of which needs only to know about the messaging protocol, but doesn't actually need to reference anything else. The other benefit is strong separation of concerns and coupling reduction, which is achieved by using PubSub along with Dependency Injection. DI is used to pass the handles to either `IPublisher` or `ISubscriber` of any given event type, and thus our message publishers and consumers are truly not aware of each-other.
+
+```
+TODO: 
+ - add a piece on NetworkMessageChannel and it's usage of custom messaging
+```
 
 ## Application entrypoint and application state
 The first scene that the application should load to do a normal launch is the `Startup` scene, which contains a game object with an `ApplicationController.cs` component on it.
