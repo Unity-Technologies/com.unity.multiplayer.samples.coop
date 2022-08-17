@@ -2,8 +2,6 @@ using System;
 using UnityEngine;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using VContainer;
 
@@ -35,15 +33,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Color m_LoseLightColor;
 
-
-        ConnectionManager m_ConnectionManager;
-        PostGameState m_PostGameState;
+        ServerPostGameState m_ServerPostGameState;
 
         [Inject]
-        void Inject(ConnectionManager connectionManager, PostGameState postGameState)
+        void Inject(ServerPostGameState serverPostGameState)
         {
-            m_ConnectionManager = connectionManager;
-            m_PostGameState = postGameState;
+            m_ServerPostGameState = serverPostGameState;
 
             // only hosts can restart the game, other players see a wait message
             if (NetworkManager.Singleton.IsHost)
@@ -57,7 +52,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_WaitOnHostMsg.SetActive(true);
             }
 
-            SetPostGameUI(NetworkWinState.Instance.winState.Value);
+            SetPostGameUI(PersistentGameState.Instance.winState.Value);
         }
 
         void SetPostGameUI(WinState winState)
@@ -83,12 +78,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void OnPlayAgainClicked()
         {
-            m_PostGameState.PlayAgain();
+            m_ServerPostGameState.PlayAgain();
         }
 
         public void OnMainMenuClicked()
         {
-            m_PostGameState.GoToMainMenu();
+            m_ServerPostGameState.GoToMainMenu();
         }
     }
 }
