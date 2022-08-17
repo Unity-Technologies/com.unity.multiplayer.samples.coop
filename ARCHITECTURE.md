@@ -17,26 +17,19 @@ move these bits of information to their appropriate places in the document
 
  - It's impossible to establish connection between release and debug builds.
  - We use additive scene loading when it made sense. Specifically our core gameplay scene BossRoom is comprised of four scenes where the primary scene contains the State components and other logic of the game and the navmesh for the level and the trigger areas that let the server know that it needs to load a given subscene. Subscenes contain spawn points (**CURRENTLY IT CONTAINS STATIC NETWORK OBJECTS ACTUALLY**) for the enemies and visual assets for their respective segment of the level. The server unloads subscenes that don't contain any active players and then loads the subscenes that are needed based on the position of the players - if at least one player overlaps with the subscene's trigger area, the subscene is loaded.
+   - point to Fernando's doc on static vs dynamic spawn - it covers an important sceen architecture tidbit: basically objects that are statically places shouldn't be Destroyed on the server
    - at editor time we have a special utility `EditorChildSceneLoader` that automatically loads subscenes when we open the primary scene.
- - 
-
-```
-TODO: 
- - cleanup existing doc and replace everything that I can with
-   - ensure there's a bit saying that we can't connect between debug and release versions of the app
- - additive scene loading for subscenes and the reasoning behind it
-   - child scenes can contain NetworkObjects
-   - child scene loading Utility at editor time
- - Review Startup scene for why it exists
- - SDK integrations and how they are wrapped and isolated
- - Shutdown logic (disconnect vs quit)
-
+ - Startup scene hosts the entrypoint into the game - the ApplicationController, and other dependencies that exist for the duration of the game. We never return to this scene from anywhere else. Startup scene is always loaded first, and we have an editor tool that enforces start from that scene even if we're working in some other scene. This tool can be disabled via an editor Menu: `Boss Room > Don't Load Bootsrap Scene On Play` and vice-versa via `Boss Room > Load Bootsrap Scene On Play`.
  - Action system overview:
    - Actions are implementing both client and server logic of any given thing that the characters can do in the game
    - Actions are Scriptable Objects that are registered within GameDataSource - these references serve as runtime "prototype" actions from which clones are created to enact a given action. We transmit integer ID's that map to actions in the GameDataSource to decide which ability we need to play in response.
-   - Serven and Client ActionPlayers are companion classes to actions that are used to actually play out the actions on both client and server.
-  
+   - Server and Client ActionPlayers are companion classes to actions that are used to actually play out the actions on both client and server.
 
+```
+TODO: 
+ - cleanup existing doc
+ - SDK integrations and how they are wrapped and isolated
+ - Shutdown logic (disconnect vs quit)
 
 
 States:
@@ -46,8 +39,7 @@ States:
  - BossRoom scene with three additive scenes and the loading UI that handles progress bars
  - Check Infrastructure folder for things that are worth mentioning
 
-
- - point to Fernando's doc on static vs dynamic spawn - it covers an important sceen architecture tidbit: basically objects that are statically places shouldn't be Destroyed on the server
+ 
  - point to Fernando's parenting doc
 
  - Talk about a shared netvar with winstate (singleton-esque thing that gets cleaned up and re-created - pure static state at it's verbatim)
