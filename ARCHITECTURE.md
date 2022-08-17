@@ -1,23 +1,29 @@
 
 References:
  - [Latency and Packet Loss](https://docs-multiplayer.unity3d.com/netcode/current/learn/lagandpacketloss)
- - 
 ```
 TODO: 
- - add references to our Latency doc
- 
- 
   - add references to LP's Session Management doc
   - add reference to LP's connection management doc
   - add reference to LP's performance doc
-  
-Point to:
+```
+
+### TEMP Important facts
+
+```
+TODO:
+move these bits of information to their appropriate places in the document
+```
+
+ - It's impossible to establish connection between release and debug builds.
+ - We use additive scene loading when it made sense. Specifically our core gameplay scene BossRoom is comprised of four scenes where the primary scene contains the State components and other logic of the game and the navmesh for the level and the trigger areas that let the server know that it needs to load a given subscene. Subscenes contain spawn points (**CURRENTLY IT CONTAINS STATIC NETWORK OBJECTS ACTUALLY**) for the enemies and visual assets for their respective segment of the level. The server unloads subscenes that don't contain any active players and then loads the subscenes that are needed based on the position of the players - if at least one player overlaps with the subscene's trigger area, the subscene is loaded.
+   - at editor time we have a special utility `EditorChildSceneLoader` that automatically loads subscenes when we open the primary scene.
+ - 
+
+```
+TODO: 
  - cleanup existing doc and replace everything that I can with
- - latency doc
- - LP's doc for Session Management
- - -=- Connection Management
    - ensure there's a bit saying that we can't connect between debug and release versions of the app
- - LP's performance doc
  - additive scene loading for subscenes and the reasoning behind it
    - child scenes can contain NetworkObjects
    - child scene loading Utility at editor time
@@ -60,6 +66,8 @@ https://jira.unity3d.com/browse/MTT-4267 :
 https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/697#discussion_r939048339
 Could be a good point to add to your architecture doc
 Could also discuss using Owner driven separation too. I remember I had created some rules of thumb with Luke on this. User single class for trivial classes, use client/server separation or Owner/Ghost separation when it’s more complex for 1:1 relationships. Use Client/State/Server separation when you have multiple client classes listening to the same event (this one is a bit less defined, open to discussion)
+
+REVIEW https://drive.google.com/drive/folders/1r8oM5Ol4Av4urgfjduMmWrL4IRjkjOKL 
 
 ```
 
