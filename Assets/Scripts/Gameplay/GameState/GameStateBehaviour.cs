@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     }
 
     /// <summary>
-    /// A special kind of NetworkBehaviour that represents a discrete game state. The special feature it offers is
+    /// A special component that represents a discrete game state and its dependencies. The special feature it offers is
     /// that it provides some guarantees that only one such GameState will be running at a time.
     /// </summary>
     /// <remarks>
@@ -32,7 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     ///    with other networked prefabs).
     /// Q: If these are MonoBehaviours, how do you have a single state that persists across multiple scenes?
     /// A: Set your Persists property to true. If you transition to another scene that has the same gamestate, the
-    ///    current GameState object will live on, and the version in the new scene will suicide to make room for it.
+    ///    current GameState object will live on, and the version in the new scene will auto-destruct to make room for it.
     ///
     /// Important Note: We assume that every Scene has a GameState object. If not, then it's possible that a Persisting game state
     /// will outlast its lifetime (as there is no successor state to clean it up).

@@ -11,6 +11,7 @@
     "com.unity.memoryprofiler": "0.5.0-preview.1",
     "com.unity.multiplayer.tools": "1.0.0",
     "com.unity.netcode.gameobjects": "1.0.0",
+    "com.unity.performance.profile-analyzer": "1.1.1",
     "com.unity.postprocessing": "3.2.1",
     "com.unity.render-pipelines.universal": "12.1.6",
     "com.unity.services.authentication": "2.1.1",
@@ -22,6 +23,7 @@
     "com.unity.toolchain.macos-x86_64-linux-x86_64": "1.0.0",
     "com.unity.ugui": "1.0.0",
     "com.veriorpies.parrelsync": "https://github.com/VeriorPies/ParrelSync.git?path=/ParrelSync#bb3d5067e49e403d8b8ba15c036d313b4dd2c696",
+    "jp.hadashikick.vcontainer": "1.11.0",
     "com.unity.modules.ai": "1.0.0",
     "com.unity.modules.androidjni": "1.0.0",
     "com.unity.modules.animation": "1.0.0",
@@ -52,8 +54,7 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0",
-    "jp.hadashikick.vcontainer": "1.11.0"
+    "com.unity.modules.xr": "1.0.0"
   },
   "testables": [
     "com.unity.netcode.gameobjects"
