@@ -15,15 +15,6 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.ai.navigation.components": {
-      "version": "https://github.com/Unity-Technologies/NavMeshComponents.git#package",
-      "depth": 0,
-      "source": "git",
-      "dependencies": {
-        "com.unity.modules.ai": "1.0.0"
-      },
-      "hash": "0fc6f532e4f47d66d173314efcb906bc7cf0d00f"
-    },
     "com.unity.burst": {
       "version": "1.7.3",
       "depth": 1,
@@ -116,7 +107,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.memoryprofiler": {
-      "version": "0.5.0-preview.1",
+      "version": "1.0.0-pre.3",
       "depth": 0,
       "source": "registry",
       "dependencies": {
