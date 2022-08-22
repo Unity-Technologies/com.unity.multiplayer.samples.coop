@@ -25,10 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Enter()
         {
-            var gameState = UnityEngine.Object.Instantiate(m_ConnectionManager.GameState);
-
-            gameState.Spawn();
-
             SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
 
             //The "BossRoom" server always advances to CharSelect immediately on start. Different games
