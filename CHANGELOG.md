@@ -38,6 +38,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Users can change profile in-game in addition to the -AuthProfile command line argument (#636)
 * New Vandal Imp and bomb throwing action: NetworkRigidbody-based toss Action, thrown by new VandalImp class [MTT-2333](#671)
   * Art and sound pass for NetworkRigidbody-based toss action [MTT-2732](#689)
+* LODs setup for some art assets [MTT-4451] (#712)
 
 ### Changed
 * Bump NGO to pre.10 (#678) --> Fix in Boss Room related to the connection approval breaking change. Removing useless ForceNetworkSerializeByMemcpy for player names.
