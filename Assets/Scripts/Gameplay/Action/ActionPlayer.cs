@@ -45,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (!action.ShouldQueue && m_Queue.Count > 0 &&
                 (m_Queue[0].Description.ActionInterruptible ||
-                    m_Queue[0].Description.IsInterruptableBy.Contains(action.ActionTypeEnum)));
+                    m_Queue[0].Description.IsInterruptableBy.Contains(action.ActionTypeEnum)))
             {
                 ClearActions(false);
             }
