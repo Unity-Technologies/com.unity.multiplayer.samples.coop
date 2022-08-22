@@ -28,11 +28,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         Collider[] m_CollisionCache = new Collider[k_MaxCollisions];
 
         [SerializeField]
-        float detonateAfterSeconds = 5f;
+        float m_DetonateAfterSeconds = 5f;
 
-        float m_DetonateAfterSeconds;
+        float m_DetonateTimer;
 
-        float m_DestroyAfterSeconds;
+        [SerializeField]
+        float m_DestroyAfterSeconds = 6f;
+
+        float m_DestroyTimer;
 
         bool m_Detonated;
 
@@ -49,7 +52,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_Started = true;
             m_Detonated = false;
 
-            m_DetonateAfterSeconds = Time.fixedTime + detonateAfterSeconds;
+            m_DetonateTimer = Time.fixedTime + m_DetonateAfterSeconds;
+            m_DestroyTimer = Time.fixedTime + m_DestroyAfterSeconds;
         }
 
         public override void OnNetworkDespawn()
@@ -95,10 +99,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return; //don't do anything before OnNetworkSpawn has run.
             }
 
-            if (!m_Detonated && m_DetonateAfterSeconds < Time.fixedTime)
+            if (!m_Detonated && m_DetonateTimer < Time.fixedTime)
             {
                 Detonate();
+            }
 
+            if (m_Detonated && m_DestroyTimer < Time.fixedTime)
+            {
                 // despawn after sending detonate RPC
                 var networkObject = gameObject.GetComponent<NetworkObject>();
                 networkObject.Despawn();
@@ -106,4 +113,3 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         }
     }
 }
-

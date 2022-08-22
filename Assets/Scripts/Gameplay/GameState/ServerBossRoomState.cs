@@ -7,6 +7,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.SceneManagement;
+using UnityEngine.Serialization;
 using VContainer;
 using Random = UnityEngine.Random;
 
@@ -18,11 +19,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     [RequireComponent(typeof(NetcodeHooks))]
     public class ServerBossRoomState : GameStateBehaviour
     {
+        [FormerlySerializedAs("m_NetworkWinState")]
         [SerializeField]
-        NetcodeHooks m_NetcodeHooks;
+        PersistentGameState persistentGameState;
 
         [SerializeField]
-        TransformVariable m_NetworkGameStateTransform;
+        NetcodeHooks m_NetcodeHooks;
 
         [SerializeField]
         [Tooltip("Make sure this is included in the NetworkManager's list of prefabs!")]
@@ -59,6 +61,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             base.Awake();
 
+            //setting the cross-scene reference to PersistentGameState that is cleaned up in PostGameState
+            PersistentGameState.Instance = persistentGameState;
+            DontDestroyOnLoad(persistentGameState);
+
             m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
             m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
         }
@@ -71,12 +77,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
+            m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
+
             NetworkManager.Singleton.SceneManager.OnLoadComplete += OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
         }
 
         void OnNetworkDespawn()
         {
+            m_Subscription?.Dispose();
+
             NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnServerLoadComplete;
             NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
         }
@@ -88,15 +98,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return;
             }
 
-            // reset win state
-            SetWinState(WinState.Invalid);
-
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
 
             SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
-            m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
         }
 
         void OnServerUnloadComplete(ulong clientId, string sceneName)
@@ -109,7 +115,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete -= OnSynchronizeComplete;
-            m_Subscription?.Dispose();
         }
 
         protected override void OnDestroy()
@@ -276,21 +281,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             StartCoroutine(CoroGameOver(k_WinDelay, true));
         }
 
-        void SetWinState(WinState winState)
-        {
-            if (m_NetworkGameStateTransform && m_NetworkGameStateTransform.Value &&
-                m_NetworkGameStateTransform.Value.TryGetComponent(out NetworkGameState networkGameState))
-            {
-                networkGameState.NetworkWinState.winState.Value = winState;
-            }
-        }
-
         IEnumerator CoroGameOver(float wait, bool gameWon)
         {
+            persistentGameState.winState.Value = gameWon ? WinState.Win : WinState.Loss;
+
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);
-
-            SetWinState(gameWon ? WinState.Win : WinState.Loss);
 
             SceneLoaderWrapper.Instance.LoadScene("PostGame", useNetworkSceneManager: true);
         }

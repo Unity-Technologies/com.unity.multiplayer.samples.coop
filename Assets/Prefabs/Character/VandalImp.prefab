@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 176558388678216186}
     m_Modifications:
+    - target: {fileID: -1890528778572688093, guid: 7c82a6f62673a3b4fb51d5c6d76f7a96, type: 3}
+      propertyPath: GlobalObjectIdHash
+      value: 951099334
+      objectReference: {fileID: 0}
     - target: {fileID: -823941263164167683, guid: 7c82a6f62673a3b4fb51d5c6d76f7a96, type: 3}
       propertyPath: GlobalObjectIdHash
       value: 951099334
@@ -168,6 +172,10 @@ PrefabInstance:
       propertyPath: m_ClientCharacterVisualization
       value: 
       objectReference: {fileID: 3806176119258990995}
+    - target: {fileID: 8398944656959553575, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_KilledDestroyDelaySeconds
+      value: 2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 64cfd098f62285f42918875fef849e88, type: 3}
 --- !u!1 &176558388678216176 stripped
