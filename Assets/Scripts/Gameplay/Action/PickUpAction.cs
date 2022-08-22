@@ -18,66 +18,42 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         const string k_NpcLayer = "NPCs";
 
-        const float k_PickUpWait = 0.6f;
-
         const string k_FailedPickupTrigger = "PickUpFailed";
 
-        float m_AnimationTimer;
+        float m_ActionStartTime;
 
         static RaycastHitComparer s_RaycastHitComparer;
+
+        NetworkLifeState m_NetworkLifeState;
+
+        bool m_AttemptedPickup;
 
         public PickUpAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
         {
             s_RaycastHitComparer ??= new RaycastHitComparer();
+
+            m_NetworkLifeState = m_Parent.NetState.NetworkLifeState;
         }
 
         public override bool Start()
         {
-            // play animation based on if a heavy object is already held and start timer
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_Parent.NetState.heldNetworkObject.Value, out var heldObject))
+            m_ActionStartTime = Time.time;
+
+            // play pickup animation based if a heavy object is not already held
+            if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
+                    m_Parent.NetState.heldNetworkObject.Value, out var heldObject))
             {
-                Data.TargetIds = null;
-
-                if (!string.IsNullOrEmpty(Description.Anim))
-                {
-                    m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim);
-                }
-
-                // drop
-                if (!string.IsNullOrEmpty(Description.Anim2))
-                {
-                    m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
-                }
-            }
-            else
-            {
-                if (!string.IsNullOrEmpty(Description.Anim2))
-                {
-                    m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
-                }
-
-                // pickup
                 if (!string.IsNullOrEmpty(Description.Anim))
                 {
                     m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
                 }
             }
 
-            m_AnimationTimer = k_PickUpWait;
-
             return true;
         }
 
-        void PickUpOrDrop()
+        bool TryPickUp()
         {
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_Parent.NetState.heldNetworkObject.Value, out var heldObject))
-            {
-                // pickup object found inside of hierarchy; drop it
-                m_Parent.NetState.heldNetworkObject.Value = 0;
-                heldObject.transform.SetParent(null);
-                return;
-            }
-
             var numResults = Physics.RaycastNonAlloc(m_Parent.physicsWrapper.Transform.position,
                 m_Parent.physicsWrapper.Transform.forward,
                 m_RaycastHits,
@@ -86,28 +62,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             Array.Sort(m_RaycastHits, 0, numResults, s_RaycastHitComparer);
 
-            // collider must contain "Heavy" tag
+            // collider must contain "Heavy" tag, the heavy object must not be parented to another NetworkObject, and
+            // parenting attempt must be successful
             if (numResults == 0 || !m_RaycastHits[0].collider.TryGetComponent(out NetworkObject heavyNetworkObject) ||
-                !m_RaycastHits[0].collider.gameObject.CompareTag(k_HeavyTag))
+                !m_RaycastHits[0].collider.gameObject.CompareTag(k_HeavyTag) ||
+                (heavyNetworkObject.transform.parent != null &&
+                    heavyNetworkObject.transform.parent.TryGetComponent(out NetworkObject parentNetworkObject)) ||
+                !heavyNetworkObject.TrySetParent(m_Parent.transform))
             {
                 m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(k_FailedPickupTrigger);
-                return;
-            }
-
-            // found a suitable collider; make sure it is not already held by another player
-            if (heavyNetworkObject.transform.parent != null &&
-                heavyNetworkObject.transform.parent.TryGetComponent(out NetworkObject parentNetworkObject))
-            {
-                // pot already parented; return for now
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(k_FailedPickupTrigger);
-                return;
-            }
-
-            // found a suitable collider; try to child this NetworkObject
-            if (!heavyNetworkObject.TrySetParent(m_Parent.transform))
-            {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(k_FailedPickupTrigger);
-                return;
+                return false;
             }
 
             m_Parent.NetState.heldNetworkObject.Value = heavyNetworkObject.NetworkObjectId;
@@ -138,20 +102,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     positionConstraint.constraintActive = true;
                 }
             }
+
+            return true;
         }
 
         public override bool Update()
         {
-            m_AnimationTimer -= Time.deltaTime;
-
-            if (m_AnimationTimer <= 0f)
+            if (!m_AttemptedPickup && Time.time > m_ActionStartTime + Description.ExecTimeSeconds)
             {
-                PickUpOrDrop();
-
-                return ActionConclusion.Stop;
+                m_AttemptedPickup = true;
+                if (!TryPickUp())
+                {
+                    // pickup attempt unsuccessful; action can be terminated
+                    return ActionConclusion.Stop;
+                }
             }
 
             return ActionConclusion.Continue;
+        }
+
+        public override void Cancel()
+        {
+            if (m_NetworkLifeState.LifeState.Value == LifeState.Fainted)
+            {
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_Parent.NetState.heldNetworkObject.Value, out var heavyNetworkObject))
+                {
+                    heavyNetworkObject.transform.SetParent(null);
+                }
+                m_Parent.NetState.heldNetworkObject.Value = 0;
+            }
         }
     }
 }

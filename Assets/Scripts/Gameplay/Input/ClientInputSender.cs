@@ -365,7 +365,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     resultData.ShouldClose = false;
                     return;
                 case ActionLogic.Emote:
-                case ActionLogic.PickUp:
                     resultData.CancelMovement = true;
                     return;
                 case ActionLogic.RangedFXTargeted:
@@ -373,6 +372,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                     return;
                 case ActionLogic.DashAttack:
                     resultData.Position = hitPoint;
+                    return;
+                case ActionLogic.PickUp:
+                    resultData.CancelMovement = true;
+                    resultData.ShouldQueue = false;
                     return;
             }
         }

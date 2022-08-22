@@ -268,12 +268,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_NetState.CharacterClass.Skill2);
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_NetState.CharacterClass.Skill3);
 
-            NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out var selection);
+            var isHoldingNetworkObject =
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.heldNetworkObject.Value,
+                    out var heldNetworkObject);
 
+            NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value,
+                out var selection);
+
+            if (isHoldingNetworkObject)
+            {
+                // show drop!
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.Drop, true);
+            }
             if ((m_NetState.TargetId.Value != 0
                     && selection != null
-                    && selection.TryGetComponent(out PickUpState pickUpState)) ||
-                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.heldNetworkObject.Value, out var heldNetworkObject)
+                    && selection.TryGetComponent(out PickUpState pickUpState))
                )
             {
                 // special case: targeting a pickup-able item or holding a pickup object
