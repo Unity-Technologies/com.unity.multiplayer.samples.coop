@@ -5,7 +5,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// This is a companion class to ClientCharacterVisualization that is specifically responsible for visualizing Actions. Action visualizations have lifetimes
-    /// and ongoing state, making this class closely analogous in spirit to the Unity.Multiplayer.Samples.BossRoom.Server.ActionPlayer class.
+    /// and ongoing state, making this class closely analogous in spirit to the Unity.Multiplayer.Samples.BossRoom.Actions.ServerActionPlayer class.
     /// </summary>
     public sealed class ClientActionPlayer
     {
@@ -17,11 +17,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private const float k_AnticipationTimeoutSeconds = 1;
 
-        public ClientCharacterVisualization Parent { get; private set; }
+        public ClientCharacterVisualization CharacterVisualization { get; private set; }
 
-        public ClientActionPlayer(ClientCharacterVisualization parent)
+        public ClientActionPlayer(ClientCharacterVisualization characterVisualization)
         {
-            Parent = parent;
+            CharacterVisualization = characterVisualization;
         }
 
         public void OnUpdate()
@@ -30,14 +30,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
                 var action = m_PlayingActions[i];
-                bool keepGoing = action.AnticipatedClient || action.OnUpdateClient(Parent); // only call OnUpdate() on actions that are past anticipation
+                bool keepGoing = action.AnticipatedClient || action.OnUpdateClient(CharacterVisualization); // only call OnUpdate() on actions that are past anticipation
                 bool expirable = action.Config.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
                 bool timeExpired = expirable && action.TimeRunning >= action.Config.DurationSeconds;
                 bool timedOut = action.AnticipatedClient && action.TimeRunning >= k_AnticipationTimeoutSeconds;
                 if (!keepGoing || timeExpired || timedOut)
                 {
-                    if (timedOut) { action.CancelClient(Parent); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
-                    else { action.EndClient(Parent); }
+                    if (timedOut) { action.CancelClient(CharacterVisualization); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
+                    else { action.EndClient(CharacterVisualization); }
 
                     m_PlayingActions.RemoveAt(i);
                 }
@@ -54,7 +54,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnAnimEventClient(Parent, id);
+                actionFX.OnAnimEventClient(CharacterVisualization, id);
             }
         }
 
@@ -62,7 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnStoppedChargingUpClient(Parent, finalChargeUpPercentage);
+                actionFX.OnStoppedChargingUpClient(CharacterVisualization, finalChargeUpPercentage);
             }
         }
 
@@ -102,10 +102,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <param name="data">The Action that is being requested.</param>
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!Parent.IsAnimating() && Action.ShouldClientAnticipate(Parent, ref data))
+            if (!CharacterVisualization.IsAnimating() && Action.ShouldClientAnticipate(CharacterVisualization, ref data))
             {
                 var actionFX = ActionFactory.CreateActionFromData(ref data);
-                actionFX.AnticipateActionClient(Parent);
+                actionFX.AnticipateActionClient(CharacterVisualization);
                 m_PlayingActions.Add(actionFX);
             }
         }
@@ -115,7 +115,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             var anticipatedActionIndex = FindAction(data.ActionID, true);
 
             var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFactory.CreateActionFromData(ref data);
-            if (actionFX.OnStartClient(Parent))
+            if (actionFX.OnStartClient(CharacterVisualization))
             {
                 m_PlayingActions.Add(actionFX);
             }
@@ -132,7 +132,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             foreach (var action in m_PlayingActions)
             {
-                action.CancelClient(Parent);
+                action.CancelClient(CharacterVisualization);
             }
             m_PlayingActions.Clear();
         }
@@ -143,7 +143,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 if (m_PlayingActions[i].ActionID == actionID)
                 {
-                    m_PlayingActions[i].CancelClient(Parent);
+                    m_PlayingActions[i].CancelClient(CharacterVisualization);
                     m_PlayingActions.RemoveAt(i);
                 }
             }
