@@ -72,11 +72,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         public bool IsGeneralTargetAction => ActionID == GameDataSource.Instance.GeneralTargetActionPrototype.ActionID;
 
         /// <summary>
-        /// constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
+        /// Constructor. The "data" parameter should not be retained after passing in to this method, because we take ownership of its internal memory.
+        /// Needs to be called by the ActionFactory.
         /// </summary>
-        public virtual void Initialize(ref ActionRequestData data)
+        public void Initialize(ref ActionRequestData data)
         {
             m_Data = data;
+            ActionID = data.ActionID;
         }
 
         /// <summary>
