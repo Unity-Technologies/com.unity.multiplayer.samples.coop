@@ -3,6 +3,10 @@ using Unity.Netcode;
 
 namespace Unity.Multiplayer.Samples.BossRoom
 {
+    /// <summary>
+    /// This struct is used by Action system (and GameDataSource) to refer to a specific action in runtime.
+    /// It wraps a simple integer.
+    /// </summary>
     public struct ActionID : INetworkSerializable, IEquatable<ActionID>
     {
         public int ID;
