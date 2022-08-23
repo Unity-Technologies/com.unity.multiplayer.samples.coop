@@ -6,6 +6,7 @@ TODO:
   - add references to LP's Session Management doc
   - add reference to LP's connection management doc
   - add reference to LP's performance doc
+  - point to Fernando's parenting doc
 ```
 
 ### TEMP Important facts
@@ -16,14 +17,21 @@ move these bits of information to their appropriate places in the document
 ```
 
  - It's impossible to establish connection between release and debug builds.
+
  - We use additive scene loading when it made sense. Specifically our core gameplay scene BossRoom is comprised of four scenes where the primary scene contains the State components and other logic of the game and the navmesh for the level and the trigger areas that let the server know that it needs to load a given subscene. Subscenes contain spawn points (**CURRENTLY IT CONTAINS STATIC NETWORK OBJECTS ACTUALLY**) for the enemies and visual assets for their respective segment of the level. The server unloads subscenes that don't contain any active players and then loads the subscenes that are needed based on the position of the players - if at least one player overlaps with the subscene's trigger area, the subscene is loaded.
    - point to Fernando's doc on static vs dynamic spawn - it covers an important sceen architecture tidbit: basically objects that are statically places shouldn't be Destroyed on the server
    - at editor time we have a special utility `EditorChildSceneLoader` that automatically loads subscenes when we open the primary scene.
+   
  - Startup scene hosts the entrypoint into the game - the ApplicationController, and other dependencies that exist for the duration of the game. We never return to this scene from anywhere else. Startup scene is always loaded first, and we have an editor tool that enforces start from that scene even if we're working in some other scene. This tool can be disabled via an editor Menu: `Boss Room > Don't Load Bootsrap Scene On Play` and vice-versa via `Boss Room > Load Bootsrap Scene On Play`.
  - Action system overview:
    - Actions are implementing both client and server logic of any given thing that the characters can do in the game
    - Actions are Scriptable Objects that are registered within GameDataSource - these references serve as runtime "prototype" actions from which clones are created to enact a given action. We transmit integer ID's that map to actions in the GameDataSource to decide which ability we need to play in response.
    - Server and Client ActionPlayers are companion classes to actions that are used to actually play out the actions on both client and server.
+
+  
+### Lobby and Relay integration
+
+Boss Room has a lobby system that allows players to find and join games, and a relay system behind the scenes that allows all the players to easily connect to the host.
 
 ```
 TODO: 
@@ -40,7 +48,6 @@ States:
  - Check Infrastructure folder for things that are worth mentioning
 
  
- - point to Fernando's parenting doc
 
  - Talk about a shared netvar with winstate (singleton-esque thing that gets cleaned up and re-created - pure static state at it's verbatim)
 
@@ -56,7 +63,7 @@ https://jira.unity3d.com/browse/MTT-4267 :
 
 
 https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/pull/697#discussion_r939048339
-Could be a good point to add to your architecture doc
+Could be a good point to add to the architecture doc
 Could also discuss using Owner driven separation too. I remember I had created some rules of thumb with Luke on this. User single class for trivial classes, use client/server separation or Owner/Ghost separation when it’s more complex for 1:1 relationships. Use Client/State/Server separation when you have multiple client classes listening to the same event (this one is a bit less defined, open to discussion)
 
 REVIEW https://drive.google.com/drive/folders/1r8oM5Ol4Av4urgfjduMmWrL4IRjkjOKL 
@@ -92,11 +99,9 @@ DI also allows us to circumvent the problem of cross-scene references to common 
 
 It allows us various modes of message transfer. This mechanism allows us to both avoid circular references and to have a more limited dependency surface between our assemblies - cross-communicating systems rely on common messages, but don't necessarily need to know about each-other, thus allowing us to separate them into purposeful assemblies.
 It allows us to avoid having circular references between assemblies, the code of which needs only to know about the messaging protocol, but doesn't actually need to reference anything else. The other benefit is strong separation of concerns and coupling reduction, which is achieved by using PubSub along with Dependency Injection. DI is used to pass the handles to either `IPublisher` or `ISubscriber` of any given event type, and thus our message publishers and consumers are truly not aware of each-other.
+`MessageChannel` classes implement these interfaces and provide the actual messaging logic.
 
-```
-TODO: 
- - add a piece on NetworkMessageChannel and it's usage of custom messaging
-```
+Along with in-process messaging, we have implemented the `NetworkMessageChannel`, which uses the same API, but allows us to send data between peers. It is implemented using custom messaging.
 
 ## Application entrypoint and application state
 The first scene that the application should load to do a normal launch is the `Startup` scene, which contains a game object with an `ApplicationController.cs` component on it.
@@ -120,13 +125,17 @@ Each scene has exactly one `GameStateBehaviour` (a specialization of `Netcode.Ne
 
 For MainMenu scene we only have the client state, however for the scenes that contain networked logic we also have the `server` counterparts to the client scenes, and both exist on the same game object.
 
+
+```
+TODO: rewrite this section
+```
 ## Host model
 Boss Room uses a Host model for its server. This means one client acts as a server and hosts the other clients. 
 
 A common pitfall of this pattern is writing the game in such a way that it is virtually impossible to adapt to a dedicated server model. 
 
 We attempted to combat this by using a compositional model for our client and server logic (rather than having it all combined in single modules):
- - On the Host, each GameObject has `{Server, Shared, Client}` components. 
+ - On the Host, each GameObject has `{Server, Client}` components. 
  - If you start up the game as a dedicated server, the client components will disable themselves, leaving you with `{Server, Shared}` components.
  - If you start up as a client, you get the complementary set of `{Shared, Client}` components.
 
@@ -137,12 +146,18 @@ This approach works, but requires some care:
  - Client-server separation also allows not having god-classes where both client and server code are intermingled. This way, when reading server code, you do not have to mentally skip client code and vice versa. This helps making bigger classes more readable and maintainable. Please note that this pattern can be applied on a case by case basis. If your class never grows too big, having a single `NetworkBehaviour` is perfectly fine.
 
 ## Connection flow
+```
+TODO: reference to connection management document
+```
 The Boss Room network connection flow is owned by the `GameNetPortal`:
  - The Host will invoke either `GameNetPortal.StartHost` or `StartUnityRelayHost` if Unity Relay is being used.
  - The client will invoke either `ClientGameNetPortal.StartClient` or `StartClientUnityRelayModeAsync`.
  - Boss Room's own connection validation logic is performed in `ServerGameNetPortal.ApprovalCheck`, which is plugged in to the `NetworkManager`'s connection approval callback. Here, some basic information about the connection is recorded (including a GUID, to facilitate future reconnect logic), and success or failure is returned. In the future, additional game-level failures will be detected and returned (such as a `ServerFull` scenario). 
 
 ## Data model
+```
+TODO: update this section to reflect the current state of Action system
+```
 Game data in Boss Room is defined in `ScriptableObjects`. The `ScriptableObjects` are organized by enum and made available in a singleton class: the `GameDataSource`, in particular `ActionDescription` and `CharacterData`. `Actions` represent discrete verbs (like swinging a weapon, or reviving someone), and are substantially data driven. Characters represent both the different player classes, and also monsters, and represent basic details like health, as well as what "Skill" Actions are available to each Character.
 
 ## Transports
@@ -163,9 +178,6 @@ To add new transports in the project, parts of `GameNetPortal` and `ClientGameNe
 
 
 ## Important classes
-
-
-
 
 ------------------------
 UPDATE THIS BIT:
@@ -215,10 +227,10 @@ The `Player Prefab` field inside of Boss Room's `NetworkManager` is populated wi
 
 * PersistentPlayer: a `NetworkObject` that will not be destroyed between scenes
 
-####CharSelect Scene
+#### CharSelect Scene
 Inside `CharSelect` scene, clients select from 8 possible avatar classes, and that selection is stored inside PersistentPlayer's `NetworkAvatarGuidState`.
 
-####BossRoom Scene
+#### BossRoom Scene
 Inside `BossRoom` scene, `ServerBossRoomState` spawns a `PlayerAvatar` per PersistentPlayer present. This `PlayerAvatar` prefab instance, that is owned by the corresponding connected client, is destroyed by Netcode when a scene load occurs (either to `PostGame` scene, or back to `MainMenu` scene), or through client disconnection.
 
 `ClientAvatarGuidHandler`, a `NetworkBehaviour` component residing on the `PlayerAvatar` prefab instance will fetch the validated avatar GUID from `NetworkAvatarGuidState`, and spawn a local, non-networked graphics GameObject corresponding to the avatar GUID. This GameObject is childed to PlayerAvatar's `PlayerGraphics` child GameObject.
