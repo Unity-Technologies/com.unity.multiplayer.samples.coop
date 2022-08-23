@@ -1,10 +1,33 @@
 using System;
+using System.Collections.Generic;
+using UnityEngine.Pool;
 using Object = UnityEngine.Object;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     public static class ActionFactory
     {
+        private static Dictionary<ActionID, ObjectPool<Action>> s_ActionPools = new Dictionary<ActionID, ObjectPool<Action>>();
+
+        private static ObjectPool<Action> GetActionPool(ActionID actionID)
+        {
+            if (!s_ActionPools.TryGetValue(actionID, out var actionPool))
+            {
+                actionPool = new ObjectPool<Action>(
+                    createFunc:() =>
+                    {
+                        var actionPrototype = GameDataSource.Instance.GetActionPrototypeByID(actionID);
+                        return Object.Instantiate(actionPrototype);
+                    },
+                    actionOnDestroy: Object.Destroy);
+
+                s_ActionPools.Add(actionID, actionPool);
+            }
+
+            return actionPool;
+        }
+
+
         /// <summary>
         /// Factory method that creates Actions from their request data.
         /// </summary>
@@ -12,17 +35,23 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <returns>the newly created action. </returns>
         public static Action CreateActionFromData(ref ActionRequestData data)
         {
-            var actionPrototype = GameDataSource.Instance.GetActionPrototypeByID(data.ActionID);
-
-            var ret = Object.Instantiate(actionPrototype);
+            var ret = GetActionPool(data.ActionID).Get();
             ret.Initialize(ref data);
-            ret.RuntimePrototypeReference = actionPrototype;
-            ret.ActionID = actionPrototype.ActionID;
             return ret;
         }
 
-        //todo pool acitons by type and purge when asked to
+        public static void ReturnAction(Action action)
+        {
+            var pool = GetActionPool(action.ActionID);
+            pool.Release(action);
+        }
 
-        //todo convert this static factory method to a DI-compliant instance-based factory (to be able to inject dependencies into actions?)
+        public static void PurgePooledActions()
+        {
+            foreach (var actionPool in s_ActionPools.Values)
+            {
+                actionPool.Clear();
+            }
+        }
     }
 }

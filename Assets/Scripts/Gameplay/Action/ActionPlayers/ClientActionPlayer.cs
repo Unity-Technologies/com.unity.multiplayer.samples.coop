@@ -40,6 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     else { action.EndClient(CharacterVisualization); }
 
                     m_PlayingActions.RemoveAt(i);
+                    ActionFactory.ReturnAction(action);
                 }
             }
         }
@@ -121,7 +122,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
             else if (anticipatedActionIndex >= 0)
             {
+                var removedAction = m_PlayingActions[anticipatedActionIndex];
                 m_PlayingActions.RemoveAt(anticipatedActionIndex);
+                ActionFactory.ReturnAction(removedAction);
             }
         }
 
@@ -133,6 +136,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             foreach (var action in m_PlayingActions)
             {
                 action.CancelClient(CharacterVisualization);
+                ActionFactory.ReturnAction(action);
             }
             m_PlayingActions.Clear();
         }
@@ -143,8 +147,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 if (m_PlayingActions[i].ActionID == actionID)
                 {
-                    m_PlayingActions[i].CancelClient(CharacterVisualization);
+                    var action = m_PlayingActions[i];
+                    action.CancelClient(CharacterVisualization);
                     m_PlayingActions.RemoveAt(i);
+                    ActionFactory.ReturnAction(action);
                 }
             }
         }

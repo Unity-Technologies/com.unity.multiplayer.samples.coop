@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
@@ -37,6 +38,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         protected override void OnDestroy()
         {
+            //clear actions pool
+            ActionFactory.PurgePooledActions();
+
             //unset the win state, so that when we load into BossRoomState - it gets properly reset
             Destroy(PersistentGameState.Instance.gameObject);
             PersistentGameState.Instance = null;

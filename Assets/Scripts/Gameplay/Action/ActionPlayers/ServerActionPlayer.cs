@@ -66,9 +66,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 // Since this action was canceled, we don't want the player to have to wait Description.ReuseTimeSeconds
                 // to be able to start it again. It should be restartable immediately!
                 m_LastUsedTimestamps.Remove(m_Queue[0].ActionID);
-
                 m_Queue[0].Cancel(m_ServerCharacter);
             }
+
+            foreach (var action in m_Queue)
+            {
+                ActionFactory.ReturnAction(action);
+            }
+
             m_Queue.Clear();
 
             if (cancelNonBlocking)
@@ -76,6 +81,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 foreach (var action in m_NonBlockingActions)
                 {
                     action.Cancel(m_ServerCharacter);
+                    ActionFactory.ReturnAction(action);
                 }
                 m_NonBlockingActions.Clear();
             }
@@ -256,7 +262,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                         m_HasPendingSynthesizedAction = true;
                     }
                 }
+                var action = m_Queue[0];
                 m_Queue.RemoveAt(0);
+                ActionFactory.ReturnAction(action);
             }
 
             // now start the new Action! ... unless we now have a pending Action that will supercede it
@@ -301,6 +309,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     // it's dead!
                     runningAction.End(m_ServerCharacter);
                     m_NonBlockingActions.RemoveAt(i);
+                    ActionFactory.ReturnAction(runningAction);
                 }
             }
         }
@@ -400,20 +409,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             for (int i = m_NonBlockingActions.Count - 1; i >= 0; --i)
             {
-                if (m_NonBlockingActions[i].Config.Logic == logic && m_NonBlockingActions[i] != exceptThis)
+                var action = m_NonBlockingActions[i];
+                if (action.Config.Logic == logic && action != exceptThis)
                 {
-                    m_NonBlockingActions[i].Cancel(m_ServerCharacter);
+                    action.Cancel(m_ServerCharacter);
                     m_NonBlockingActions.RemoveAt(i);
+                    ActionFactory.ReturnAction(action);
                     if (!cancelAll) { return; }
                 }
             }
 
             if (m_Queue.Count > 0)
             {
-                if (m_Queue[0].Config.Logic == logic && m_Queue[0] != exceptThis)
+                var action = m_Queue[0];
+                if (action.Config.Logic == logic && action != exceptThis)
                 {
-                    m_Queue[0].Cancel(m_ServerCharacter);
+                    action.Cancel(m_ServerCharacter);
                     m_Queue.RemoveAt(0);
+                    ActionFactory.ReturnAction(action);
                 }
             }
         }
