@@ -31,6 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// Note also that if Start() returns false, no other functions are called on the Action, not even End().
     ///
     /// This Action system has not been designed to be generic and extractable to be reused in other projects - keep that in mind when reading through this code.
+    /// A better action system would need to be more accessible and customizable by game designers and allow more design emergence. It'd have ways to define smaller atomic action steps and have a generic way to define and access character data. It would also need to be more performant, as actions would scale with your number of characters and concurrent actions.
     /// </remarks>
     public abstract class Action : ScriptableObject
     {
