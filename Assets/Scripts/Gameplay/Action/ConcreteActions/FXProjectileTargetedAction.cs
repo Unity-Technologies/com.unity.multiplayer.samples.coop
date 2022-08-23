@@ -15,7 +15,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// (If no target is provided (because the user clicked on an empty spot on the map) or if the caster doesn't have line of
     /// sight to the target (because it's behind a wall), we still perform an action, it just hits nothing.
     /// </summary>
-    [CreateAssetMenu()]
+
+    [CreateAssetMenu(menuName = "BossRoom/Actions/FX Projectile Targeted Action")]
     public class FXProjectileTargetedAction : Action
     {
         private bool m_ImpactedTarget;

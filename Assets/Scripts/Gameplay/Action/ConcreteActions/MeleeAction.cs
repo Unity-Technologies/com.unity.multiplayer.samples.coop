@@ -30,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     ///
     /// As so often happens in networked games (and games in general), there's no perfect solution--just sets of tradeoffs. For our example, we're showing option "3".
     /// </remarks>
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Melee Action")]
     public class MeleeAction : Action
     {
         private bool m_ExecutionFired;

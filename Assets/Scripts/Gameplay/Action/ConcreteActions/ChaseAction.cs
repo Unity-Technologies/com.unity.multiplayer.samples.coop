@@ -6,8 +6,7 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
-
-    [Serializable]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Chase Action")]
     public class ChaseAction : Action
     {
         private NetworkObject m_Target;

@@ -22,7 +22,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     ///
     /// </remarks>
 
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Charged Launch Projectile Action")]
     public class ChargedLaunchProjectileAction : LaunchProjectileAction
     {
         /// <summary>

@@ -13,7 +13,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// target becomes ineligible (dies or disappears). Note that while Actions in general can have multiple targets,
     /// you as a player can only have a single target selected at a time (the character that your target reticule appears under).
     /// </summary>
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Target Action")]
     public class TargetAction : Action
     {
         private GameObject m_TargetReticule;

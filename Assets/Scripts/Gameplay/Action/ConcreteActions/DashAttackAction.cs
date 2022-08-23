@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// See MeleeAction for relevant discussion about targeting; we use the same concept here: preferring
     /// the chosen target, but using whatever is actually within striking distance at time of attack.
     /// </remarks>
-    [Serializable]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Dash Attack Action")]
     public class DashAttackAction : Action
     {
         private Vector3 m_TargetSpot;

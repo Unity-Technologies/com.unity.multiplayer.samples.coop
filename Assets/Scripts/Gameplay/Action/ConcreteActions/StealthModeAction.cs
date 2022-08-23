@@ -11,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// - Stealth starts after the ExecTimeSeconds has elapsed. If they are attacked during the Exec time, stealth is aborted.
     /// - Stealth ends when the player attacks or is damaged.
     /// </summary>
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Stealth Mode Action")]
     public class StealthModeAction : Action
     {
         private bool m_IsStealthStarted = false;

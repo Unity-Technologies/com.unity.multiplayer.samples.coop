@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// When the Action is fully charged up, it provides a special additional benefit: if the boss tries to trample this
     /// character, the boss becomes Stunned.
     /// </remarks>
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Charged Shield Action")]
     public class ChargedShieldAction : Action
     {
         /// <summary>

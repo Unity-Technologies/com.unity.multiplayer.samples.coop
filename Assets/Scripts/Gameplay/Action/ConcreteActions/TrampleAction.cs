@@ -15,10 +15,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// It's called "Trample" instead of "Charge" because we already use the word "charge"
     /// to describe "charging up" an attack.
     /// </remarks>
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Trample Action")]
     public class TrampleAction : Action
     {
-
         public StunnedAction StunnedActionPrototype;
 
         /// <summary>

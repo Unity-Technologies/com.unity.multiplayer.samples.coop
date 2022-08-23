@@ -5,8 +5,7 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
-
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Emote Action")]
     public class EmoteAction : Action
     {
         public override bool OnStart(ServerCharacter parent)

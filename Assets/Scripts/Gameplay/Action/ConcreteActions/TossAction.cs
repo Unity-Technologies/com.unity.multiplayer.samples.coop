@@ -11,7 +11,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// <summary>
     /// Action responsible for creating a physics-based thrown object.
     /// </summary>
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Toss Action")]
     public class TossAction : Action
     {
         bool m_Launched;

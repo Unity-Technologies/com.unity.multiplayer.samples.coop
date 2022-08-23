@@ -6,7 +6,7 @@ using UnityEngine.Assertions;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Revive Action")]
     public class ReviveAction : Action
     {
         private bool m_ExecFired;

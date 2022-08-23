@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// <summary>
     /// Action responsible for creating a projectile object.
     /// </summary>
-    [CreateAssetMenu()]
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Launch Projectile Action")]
     public class LaunchProjectileAction : Action
     {
         private bool m_Launched = false;
