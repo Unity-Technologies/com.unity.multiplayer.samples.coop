@@ -10,17 +10,19 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Added
 * Added handling the OnTransportFailure callback (#707). This callback is invoked when a failure happens on the transport's side, for example if the host loses connection to the Relay service. This won't get called when the host is just listening with direct IP, this would need to be handled differently (by pinging an external service like google to test for internet connectivity for example). Boss Room now handles that callback by returning to the Offline state.
-
+* 
 ### Changed
 * Updated tools, authentication and relay packages (#690)
 * Replaced our dependency injection solution with VContainer. (#679)
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
 * Refactored connection management into simpler state machine (#666)
+* Merged GameState bridge classes (the ones that contained no or limited functionality) (#697) This cleans up our sometimes too verbose code split.
 * 
 ### Removed
 *
 ### Fixed
 * Subscribing to a message channel while unsubscribing is pending (#675)
+* Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
 
 ## [v1.3.0-pre] - 2022-06-23
 
@@ -35,7 +37,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * First import of all the vandal imp artwork (#637)
 * Updated boss room's root scene to automatically load child scenes at editor time (#653)
 * Users can change profile in-game in addition to the -AuthProfile command line argument (#636)
-* NetworkRigidbody-based toss Action, thrown by new VandalImp class [MTT-2333](#671)
+* New Vandal Imp and bomb throwing action: NetworkRigidbody-based toss Action, thrown by new VandalImp class [MTT-2333](#671)
+  * Art and sound pass for NetworkRigidbody-based toss action [MTT-2732](#689)
 
 ### Changed
 * Bump NGO to pre.10 (#678) --> Fix in Boss Room related to the connection approval breaking change. Removing useless ForceNetworkSerializeByMemcpy for player names.
