@@ -38,7 +38,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 // initialize visuals based on current server state (or else we default to "closed")
                 m_PhysicsObject.SetActive(!m_DoorState.IsOpen.Value);
 
-                var gameState = FindObjectOfType<ServerBossRoomState>();
+                var gameState = FindObjectOfType<BossRoomState>();
                 if (gameState != null)
                 {
                     gameState.Container.Inject(this);
