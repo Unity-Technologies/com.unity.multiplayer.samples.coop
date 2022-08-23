@@ -33,18 +33,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     public abstract class Action : ScriptableObject
     {
         /// <summary>
-        /// A reference to the prototype action that helps us identify actions of the same type
+        /// An index into the GameDataSource array of action prototypes. Set at runtime by GameDataSource class.  If action is not itself a prototype - will contain the action id of the prototype reference.
+        /// This field is used to identify actions in a way that can be sent over the network.
         /// </summary>
-        [NonSerialized]
-        public Action RuntimePrototypeReference;
-
-        /// <summary>
-        /// An index into the GameDataSource array of action prototypes. If action is not itself a prototype - will return the action id of the prototype reference.
-        /// </summary>
-
         [NonSerialized]
         public ActionID ActionID;
-
 
         /// <summary>
         /// The default hit react animation; several different ActionFXs make use of this.
@@ -192,7 +185,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </remarks>
         /// <param name="parent"></param>
         /// <param name="activityType"></param>
-        /// <param name="actionType"></param>
         public virtual void OnGameplayActivity(ServerCharacter parent, GameplayActivity activityType) { }
 
 

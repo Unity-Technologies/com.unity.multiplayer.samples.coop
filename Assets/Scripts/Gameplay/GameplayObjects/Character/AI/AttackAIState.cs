@@ -132,9 +132,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         }
 
         /// <summary>
-        /// Randomly picks a usable attack. If no actions are usable right now, returns ActionType.None.
+        /// Randomly picks a usable attack. If no actions are usable right now, returns null.
         /// </summary>
-        /// <returns>Action to attack with, or ActionType.None</returns>
+        /// <returns>Action to attack with, or null</returns>
         private Action ChooseAttack()
         {
             // make a random choice

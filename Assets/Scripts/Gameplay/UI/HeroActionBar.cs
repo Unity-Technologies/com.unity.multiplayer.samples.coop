@@ -77,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             public readonly Client.UITooltipDetector Tooltip;
 
             /// <summary> T
-            /// The current ActionType that is used when this button is pressed.
+            /// The current Action that is used when this button is pressed.
             /// </summary>
             public Action CurAction;
 
