@@ -25,12 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Enter()
         {
-            foreach (var prefab in m_ConnectionManager.NetworkObjectsToSpawnWhenServerStarted)
-            {
-                var networkObject = UnityEngine.Object.Instantiate(prefab);
-                networkObject.Spawn();
-            }
-
             SceneLoaderWrapper.Instance.AddOnSceneEventCallback();
 
             //The "BossRoom" server always advances to CharSelect immediately on start. Different games

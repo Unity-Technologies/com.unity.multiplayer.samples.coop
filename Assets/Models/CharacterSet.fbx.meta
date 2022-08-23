@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: 2115c4661f55eff45a5a0f91fc0a12f0
 ModelImporter:
-  serializedVersion: 20200
+  serializedVersion: 21202
   internalIDToNameTable:
   - first:
       74: 1827226128182048838
@@ -209,7 +209,7 @@ ModelImporter:
     second: imp hitreact critical
   - first:
       74: -688345126133780578
-    second: imp throw bomb
+    second: imp toss attack
   - first:
       74: -2410330857444400646
     second: imp call for help
@@ -556,6 +556,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -2457,7 +2458,7 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 0
     - serializedVersion: 16
-      name: imp throw bomb
+      name: imp toss attack
       takeName: Take 001
       internalID: 0
       firstFrame: 3296
@@ -4120,6 +4121,7 @@ ModelImporter:
     importBlendShapes: 1
     importCameras: 0
     importLights: 0
+    nodeNameCollisionStrategy: 0
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 0
@@ -4131,6 +4133,7 @@ ModelImporter:
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
+    optimizeBones: 1
     meshOptimizationFlags: -1
     indexFormat: 0
     secondaryUVAngleDistortion: 8
