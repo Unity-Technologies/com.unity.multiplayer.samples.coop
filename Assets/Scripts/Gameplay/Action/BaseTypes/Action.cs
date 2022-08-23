@@ -29,6 +29,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// After shutdown: ChainIntoNewAction()    (only if Action was blocking, and only if End() was called, not Cancel())
     ///
     /// Note also that if Start() returns false, no other functions are called on the Action, not even End().
+    ///
+    /// This Action system has not been designed to be generic and extractable to be reused in other projects - keep that in mind when reading through this code.
     /// </remarks>
     public abstract class Action : ScriptableObject
     {
