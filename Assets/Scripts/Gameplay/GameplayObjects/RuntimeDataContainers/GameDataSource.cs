@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
@@ -122,15 +121,15 @@ namespace Unity.Multiplayer.Samples.BossRoom
             uniqueActions.Add(ReviveActionPrototype);
             uniqueActions.Add(StunnedActionPrototype);
 
-            m_AllActions = uniqueActions.ToList();
+            m_AllActions = new List<Action>(uniqueActions.Count);
 
-            for (int i = 0; i < m_AllActions.Count; i++)
+            int i = 0;
+            foreach (var uniqueAction in uniqueActions)
             {
-                var action = m_AllActions[i];
-                action.ActionID = new ActionID{ID = i};
+                uniqueAction.ActionID = new ActionID{ID = i};
+                m_AllActions.Add(uniqueAction);
+                i++;
             }
-
-            m_AllActions.AddRange(m_ActionPrototypes);
         }
     }
 }
