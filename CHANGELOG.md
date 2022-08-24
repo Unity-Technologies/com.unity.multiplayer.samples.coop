@@ -9,7 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
-* Pickup and Drop action added to the Action system. Actionable once targeting a "Heavy"-tagged NetworkObject. (#372) - This shows NetworkObject parenting with a pattern to follow animation bones (the hands when picking up)
+* Quality levels settings set up for Desktop [MTT-4450] (#713)
 
 ### Changed
 * Updated tools, authentication and relay packages (#690)
@@ -39,7 +39,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Users can change profile in-game in addition to the -AuthProfile command line argument (#636)
 * New Vandal Imp and bomb throwing action: NetworkRigidbody-based toss Action, thrown by new VandalImp class [MTT-2333](#671)
   * Art and sound pass for NetworkRigidbody-based toss action [MTT-2732](#689)
-* Quality levels settings set up for Desktop [MTT-4450] (#713)
 
 ### Changed
 * Bump NGO to pre.10 (#678) --> Fix in Boss Room related to the connection approval breaking change. Removing useless ForceNetworkSerializeByMemcpy for player names.
