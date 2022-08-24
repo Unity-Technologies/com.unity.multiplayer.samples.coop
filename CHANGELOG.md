@@ -18,12 +18,13 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
 * Refactored connection management into simpler state machine (#666)
 * Merged GameState bridge classes (the ones that contained no or limited functionality) (#697) This cleans up our sometimes too verbose code split.
-* Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
+* 
 ### Removed
 *
 ### Fixed
 * Subscribing to a message channel while unsubscribing is pending (#675)
 * Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
+* Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
 
 ## [v1.3.0-pre] - 2022-06-23
 
