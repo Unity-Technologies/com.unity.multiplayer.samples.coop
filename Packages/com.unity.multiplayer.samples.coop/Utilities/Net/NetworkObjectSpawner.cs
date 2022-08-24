@@ -1,10 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using Unity.Netcode;
-using UnityEditor;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.Utilities
@@ -14,36 +11,14 @@ namespace Unity.Multiplayer.Samples.Utilities
     /// marked by a special tag, collects their Transform data, destroys their prefab instance, and performs the dynamic
     /// spawning of said objects during Netcode for GameObject's (Netcode) OnNetworkSpawn() callback.
     /// </summary>
-    [RequireComponent(typeof(NetcodeHooks))]
-    public class NetworkObjectSpawner : MonoBehaviour
+    public class NetworkObjectSpawner : NetworkBehaviour
     {
-        [SerializeField]
-        NetcodeHooks m_NetcodeHooks;
-
-        [SerializeField]
-        SpawnObjectData m_SpawnObjectDataPrefab;
-
         [SerializeField]
         List<SpawnObjectData> m_SpawnObjectData;
 
-        const string k_NetworkObjectSpawnerCollectableTag = "NetworkObjectSpawnerCollectable";
-
-        void Awake()
+        public override void OnNetworkSpawn()
         {
-            m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
-        }
-
-        void OnDestroy()
-        {
-            if (m_NetcodeHooks)
-            {
-                m_NetcodeHooks.OnNetworkSpawnHook -= OnNetworkSpawn;
-            }
-        }
-
-        void OnNetworkSpawn()
-        {
-            if (!NetworkManager.Singleton.IsServer)
+            if (!IsServer)
             {
                 enabled = false;
                 return;
@@ -75,63 +50,5 @@ namespace Unity.Multiplayer.Samples.Utilities
                 Destroy(m_SpawnObjectData[i].gameObject);
             }
         }
-
-#if UNITY_EDITOR
-        public void CollectTaggedPrefabInstances()
-        {
-            var prefabStage = PrefabStageUtility.GetPrefabStage(gameObject);
-
-            var root = prefabStage.prefabContentsRoot;
-
-            var networkObjects = root.GetComponentsInChildren<NetworkObject>();
-            var taggedNetworkObjects = networkObjects.Where(obj => obj.CompareTag(k_NetworkObjectSpawnerCollectableTag));
-
-            foreach (var editorOnlyObject in taggedNetworkObjects)
-            {
-                var pathToPrefab = PrefabUtility.GetPrefabAssetPathOfNearestInstanceRoot(editorOnlyObject);
-                var original =
-                    PrefabUtility.GetCorrespondingObjectFromSourceAtPath(editorOnlyObject, pathToPrefab);
-
-                var instantiated = PrefabUtility.InstantiatePrefab(m_SpawnObjectDataPrefab.gameObject);
-                var instantiatedPrefab = instantiated as GameObject;
-
-                if (instantiatedPrefab)
-                {
-                    instantiatedPrefab.transform.SetPositionAndRotation(editorOnlyObject.transform.position,
-                        editorOnlyObject.transform.rotation);
-
-                    instantiatedPrefab.transform.localScale = editorOnlyObject.transform.lossyScale;
-                    instantiatedPrefab.transform.SetParent(root.gameObject.transform);
-
-                    var spawnedObjectData = instantiatedPrefab.GetComponent<SpawnObjectData>();
-                    spawnedObjectData.prefabReference = original.gameObject;
-                    instantiatedPrefab.name += $"({original.name})";
-
-                    m_SpawnObjectData.Add(spawnedObjectData);
-
-                    // destroy scene prefab instance
-                    DestroyImmediate(editorOnlyObject.gameObject, true);
-
-                    PrefabUtility.SaveAsPrefabAsset(root, prefabStage.assetPath, out var success);
-                }
-            }
-        }
     }
-
-    [CustomEditor(typeof(NetworkObjectSpawner))]
-    public class NetworkObjectSpawnerEditor : Editor
-    {
-        public override void OnInspectorGUI()
-        {
-            DrawDefaultInspector();
-
-            var networkObjectSpawner = (NetworkObjectSpawner)target;
-            if (PrefabStageUtility.GetCurrentPrefabStage() &&
-                GUILayout.Button("Collect tagged prefab instances"))
-            {
-                networkObjectSpawner.CollectTaggedPrefabInstances();
-            }
-        }
-    }
-#endif
 }

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 5747206859721612921}
   - component: {fileID: -5484724568297991178}
-  - component: {fileID: 2681238421323495432}
   - component: {fileID: -6110993549598497440}
   m_Layer: 0
   m_Name: NetworkObjectSpawner
@@ -50,18 +49,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &2681238421323495432
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 721719496969292127}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6aedfcf74b3f4f248897af16490caa9d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &-6110993549598497440
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -74,6 +61,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 40102bedb931e0b4ab8087df94ede8b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetcodeHooks: {fileID: 2681238421323495432}
-  m_SpawnObjectDataPrefab: {fileID: -8472638279017472308, guid: 95f831895b23a9e429f2b9fe75f9747d, type: 3}
   m_SpawnObjectData: []
