@@ -54,7 +54,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void StartHostIP(string playerName, string ipaddress, int port)
         {
-            var utp = (UnityTransport)NetworkManager.Singleton.NetworkConfig.NetworkTransport;
+            var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
             utp.SetConnectionData(ipaddress, (ushort)port);
 
             SetConnectionPayload(GetPlayerId(), playerName);
