@@ -13,7 +13,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
     /// entering. If successful, transitions to the ClientConnected state. If not, transitions to the Offline state. If
     /// given a disconnect reason first, transitions to the DisconnectingWithReason state.
     /// </summary>
-    class ClientConnectingState : ConnectionState
+    class ClientConnectingState : OnlineState
     {
         [Inject]
         protected LobbyServiceFacade m_LobbyServiceFacade;
@@ -36,12 +36,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public override void OnClientDisconnect(ulong _)
         {
             m_ConnectStatusPublisher.Publish(ConnectStatus.StartClientFailed);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-        }
-
-        public override void OnUserRequestedShutdown()
-        {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
         }
 
