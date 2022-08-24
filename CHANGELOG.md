@@ -9,6 +9,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+* Pickup and Drop action added to the Action system. Actionable once targeting a "Heavy"-tagged NetworkObject. (#372) - This shows NetworkObject parenting with a pattern to follow animation bones (the hands when picking up)
 * Quality levels settings set up for Desktop [MTT-4450] (#713)
 
 ### Changed
