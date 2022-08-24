@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
 using UnityEngine;
+using UnityEngine.Pool;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -71,21 +72,43 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 m_Queue[0].Cancel(m_ServerCharacter);
             }
 
-            foreach (var action in m_Queue)
+            //clear the action queue
             {
-                ActionFactory.ReturnAction(action);
+                var removedActions = ListPool<Action>.Get();
+
+                foreach (var action in m_Queue)
+                {
+                    removedActions.Add(action);
+                }
+
+                m_Queue.Clear();
+
+                foreach (var action in removedActions)
+                {
+                    TryReturnAction(action);
+                }
+
+                ListPool<Action>.Release(removedActions);
             }
 
-            m_Queue.Clear();
 
             if (cancelNonBlocking)
             {
+                var removedActions = ListPool<Action>.Get();
+
                 foreach (var action in m_NonBlockingActions)
                 {
                     action.Cancel(m_ServerCharacter);
-                    ActionFactory.ReturnAction(action);
+                    removedActions.Add(action);
                 }
                 m_NonBlockingActions.Clear();
+
+                foreach (var action in removedActions)
+                {
+                    TryReturnAction(action);
+                }
+
+                ListPool<Action>.Release(removedActions);
             }
         }
 
@@ -227,9 +250,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             Action baseAction = m_Queue[baseIndex];
             var targets = baseAction.Data.TargetIds;
 
-            if (targets != null && targets.Length == 1 && targets[0] != m_ServerCharacter.NetState.TargetId.Value)
+            if (targets != null &&
+                targets.Length == 1 &&
+                targets[0] != m_ServerCharacter.NetState.TargetId.Value
+                && baseAction.ActionID != GameDataSource.Instance.GeneralTargetActionPrototype.ActionID)
             {
-                //if this is a targeted skill (with a single requested target), and it is different from our
+                //if this is a targeted skill (but not a Target action itself) (with a single requested target), and it is different from our
                 //active target, then we synthesize a TargetAction to change  our target over.
 
                 ActionRequestData data = new ActionRequestData
@@ -266,7 +292,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 }
                 var action = m_Queue[0];
                 m_Queue.RemoveAt(0);
-                ActionFactory.ReturnAction(action);
+                TryReturnAction(action);
             }
 
             // now start the new Action! ... unless we now have a pending Action that will supercede it
@@ -274,6 +300,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 StartAction();
             }
+        }
+
+        private void TryReturnAction(Action action)
+        {
+            if (m_Queue.Contains(action))
+            {
+                return;
+            }
+
+            if (m_NonBlockingActions.Contains(action))
+            {
+                return;
+            }
+
+            ActionFactory.ReturnAction(action);
         }
 
         public void OnUpdate()
@@ -311,7 +352,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     // it's dead!
                     runningAction.End(m_ServerCharacter);
                     m_NonBlockingActions.RemoveAt(i);
-                    ActionFactory.ReturnAction(runningAction);
+                    TryReturnAction(runningAction);
                 }
             }
         }
@@ -416,7 +457,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 {
                     action.Cancel(m_ServerCharacter);
                     m_NonBlockingActions.RemoveAt(i);
-                    ActionFactory.ReturnAction(action);
+                    TryReturnAction(action);
                     if (!cancelAll) { return; }
                 }
             }
@@ -428,7 +469,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 {
                     action.Cancel(m_ServerCharacter);
                     m_Queue.RemoveAt(0);
-                    ActionFactory.ReturnAction(action);
+                    TryReturnAction(action);
                 }
             }
         }
