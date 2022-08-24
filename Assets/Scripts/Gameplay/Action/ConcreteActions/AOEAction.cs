@@ -10,7 +10,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// Area-of-effect attack Action. The attack is centered on a point provided by the client.
     /// </summary>
     [CreateAssetMenu(menuName = "BossRoom/Actions/AOE Action")]
-    public class AoeAction : Action
+    public class AOEAction : Action
     {
         /// <summary>
         /// Cheat prevention: to ensure that players don't perform AoEs outside of their attack range,
