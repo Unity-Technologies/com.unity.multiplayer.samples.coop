@@ -16,7 +16,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// to describe "charging up" an attack.
     /// </remarks>
     [CreateAssetMenu(menuName = "BossRoom/Actions/Trample Action")]
-    public class TrampleAction : Action
+    public partial class TrampleAction : Action
     {
         public StunnedAction StunnedActionPrototype;
 
@@ -44,22 +44,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// When we begin our charge-attack, anyone within this range is treated as having already been touching us.
         /// </summary>
         private const float k_PhysicalTouchDistance = 1;
-
-        /// <summary>
-        /// We spawn the "visual cue" graphics a moment after we begin our action.
-        /// (A little extra delay helps ensure we have the correct orientation for the
-        /// character, so the graphics are oriented in the right direction!)
-        /// </summary>
-        private const float k_GraphicsSpawnDelay = 0.3f;
-
-        /// <summary>
-        /// Prior to spawning graphics, this is null. Once we spawn the graphics, this is a list of everything we spawned.
-        /// </summary>
-        /// <remarks>
-        /// Mobile performance note: constantly creating new GameObjects like this has bad performance on mobile and should
-        /// be replaced with object-pooling (i.e. reusing the same art GameObjects repeatedly). But that's outside the scope of this demo.
-        /// </remarks>
-        private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
         /// <summary>
         /// Set to true in the special-case scenario where we are stunned by one of the characters we tried to trample
@@ -267,32 +251,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
-        }
-
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
-        {
-            float age = Time.time - TimeStarted;
-            if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
-            {
-                m_SpawnedGraphics = InstantiateSpecialFXGraphics(parent.transform, false);
-            }
-            return true;
-        }
-
-        public override void CancelClient(ClientCharacterVisualization parent)
-        {
-            // we've been aborted -- destroy the "cue graphics"
-            if (m_SpawnedGraphics != null)
-            {
-                foreach (var fx in m_SpawnedGraphics)
-                {
-                    if (fx)
-                    {
-                        fx.Shutdown();
-                    }
-                }
-            }
-            m_SpawnedGraphics = null;
         }
     }
 }
