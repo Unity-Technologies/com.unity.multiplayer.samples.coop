@@ -59,12 +59,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
         }
 
-        public override void OnUserRequestedShutdown()
-        {
-            m_ConnectStatusPublisher.Publish(ConnectStatus.UserRequestedDisconnect);
-            m_ConnectionManager.ChangeState(m_ConnectionManager.m_Offline);
-        }
-
         public override void OnDisconnectReasonReceived(ConnectStatus disconnectReason)
         {
             m_ConnectStatusPublisher.Publish(disconnectReason);
