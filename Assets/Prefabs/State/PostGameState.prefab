@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 7475764267130300179}
   - component: {fileID: -1007214952234040975}
   - component: {fileID: 7475764267130300178}
-  - component: {fileID: 4223400095609434710}
   - component: {fileID: 6576822806953781696}
   m_Layer: 0
   m_Name: PostGameState
@@ -66,24 +65,10 @@ MonoBehaviour:
   parentReference:
     TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
   autoRun: 1
-  autoInjectGameObjects: []
+  autoInjectGameObjects:
+  - {fileID: 0}
+  - {fileID: 0}
   m_NetcodeHooks: {fileID: 6576822806953781696}
---- !u!114 &4223400095609434710
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7475764267130300177}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1cb58d1788f410740b05cace1af646d7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  parentReference:
-    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
-  autoRun: 1
-  autoInjectGameObjects: []
 --- !u!114 &6576822806953781696
 MonoBehaviour:
   m_ObjectHideFlags: 0
