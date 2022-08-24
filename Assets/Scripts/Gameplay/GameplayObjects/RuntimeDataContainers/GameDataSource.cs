@@ -45,6 +45,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         [SerializeField]
         Action m_StunnedActionPrototype;
 
+        [SerializeField]
+        Action m_DropActionPrototype;
+
+        [SerializeField]
+        Action m_PickUpActionPrototype;
+
         [Tooltip("All Action prototype scriptable objects should be slotted in here")]
         [SerializeField]
         private Action[] m_ActionPrototypes;
@@ -65,6 +71,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public Action StunnedActionPrototype => m_StunnedActionPrototype;
 
+        public Action DropActionPrototype => m_DropActionPrototype;
+        public Action PickUpActionPrototype => m_PickUpActionPrototype;
 
         List<Action> m_AllActions;
 

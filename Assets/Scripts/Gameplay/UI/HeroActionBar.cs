@@ -278,7 +278,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (isHoldingNetworkObject)
             {
                 // show drop!
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.Drop, true);
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.DropActionPrototype, true);
             }
             if ((m_NetState.TargetId.Value != 0
                     && selection != null
@@ -286,7 +286,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                )
             {
                 // special case: targeting a pickup-able item or holding a pickup object
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.PickUp, true);
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.PickUpActionPrototype, true);
             }
             else if (m_NetState.TargetId.Value != 0
                 && selection != null

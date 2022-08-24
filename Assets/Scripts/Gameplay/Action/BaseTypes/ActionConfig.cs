@@ -68,18 +68,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         [Tooltip("Is this Action interruptible by other action-plays or by movement? (Implicitly stops movement when action starts.) Generally, actions with short exec times should not be interruptible in this way.")]
         public bool ActionInterruptible;
 
-        [Tooltip("This action is interrupted if an action of any of the following types is requested")]
-        public List<ActionType> IsInterruptableBy;
+        [Tooltip("This action is interrupted if any of the following actions is requested")]
+        public List<Action> IsInterruptableBy;
 
-        [System.Serializable]
-        public enum BlockingModeType
-        {
-            EntireDuration,
-            OnlyDuringExecTime,
-        }
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;
-
 
         [Tooltip("If this Action spawns a projectile, describes it. (\"Charged\" projectiles can list multiple possible shots, ordered from weakest to strongest)")]
         public ProjectileInfo[] Projectiles;
@@ -100,5 +93,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         [Tooltip("If this Action describes a player ability, this is the tooltip description we show for the ability")]
         [Multiline]
         public string Description;
+
+        public bool CanBeInterruptedBy(ActionID actionActionID)
+        {
+            foreach (var action in IsInterruptableBy)
+            {
+                if (action.ActionID == actionActionID)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }

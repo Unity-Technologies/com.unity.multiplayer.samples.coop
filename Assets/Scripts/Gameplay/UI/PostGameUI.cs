@@ -33,10 +33,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         [SerializeField]
         private Color m_LoseLightColor;
 
-        PostGameState m_PostGameState;
+        ServerPostGameState m_PostGameState;
 
         [Inject]
-        void Inject(PostGameState postGameState)
+        void Inject(ServerPostGameState postGameState)
         {
             m_PostGameState = postGameState;
 

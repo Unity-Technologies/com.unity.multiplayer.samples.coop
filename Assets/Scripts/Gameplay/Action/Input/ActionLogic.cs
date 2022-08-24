@@ -22,7 +22,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         ChargedLaunchProjectile,
         StealthMode,
         DashAttack,
-        ImpToss
-        //O__O adding a new ActionLogic branch? Update Action.MakeAction!
+        ImpToss,
+        PickUp,
+        Drop
     }
 }

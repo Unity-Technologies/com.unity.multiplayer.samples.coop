@@ -12,6 +12,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// Action for picking up "Heavy" items. For simplicity, this class will perform both the pickup (reparenting) of a
     /// NetworkObject, as well as the drop (deparenting).
     /// </summary>
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Pick Up Action")]
     public class PickUpAction : Action
     {
         RaycastHit[] m_RaycastHits = new RaycastHit[8];

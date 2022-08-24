@@ -9,6 +9,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     /// <summary>
     /// Action for dropping "Heavy" items.
     /// </summary>
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Drop Action")]
     public class DropAction : Action
     {
         float m_ActionStartTime;
