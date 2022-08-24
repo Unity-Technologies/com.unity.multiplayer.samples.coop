@@ -1,6 +1,8 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Netcode;
 using UnityEngine;
+using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -17,7 +19,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
         }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             m_ActionStartTime = Time.time;
 
@@ -38,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (Time.time > m_ActionStartTime + Description.ExecTimeSeconds)
             {
