@@ -44,7 +44,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         public void PlayAction(ref ActionRequestData action)
         {
-            if (!action.ShouldQueue && m_Queue.Count > 0 && m_Queue[0].Description.ActionInterruptible)
+            if (!action.ShouldQueue && m_Queue.Count > 0 &&
+                (m_Queue[0].Description.ActionInterruptible ||
+                    m_Queue[0].Description.IsInterruptableBy.Contains(action.ActionTypeEnum)))
             {
                 ClearActions(false);
             }

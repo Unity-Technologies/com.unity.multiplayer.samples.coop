@@ -236,8 +236,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             //that's handled by a separate function.
             if (NetState.HitPoints <= 0)
             {
-                m_ActionPlayer.ClearActions(false);
-
                 if (IsNpc)
                 {
                     if (m_KilledDestroyDelaySeconds >= 0.0f && NetState.LifeState != LifeState.Dead)
@@ -251,6 +249,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 {
                     NetState.LifeState = LifeState.Fainted;
                 }
+
+                m_ActionPlayer.ClearActions(false);
             }
         }
 

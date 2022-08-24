@@ -39,6 +39,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         public Material ReticuleFriendlyMat => m_VisualizationConfiguration.ReticuleFriendlyMat;
 
+        public CharacterSwap CharacterSwap => m_CharacterSwapper;
+
         PhysicsWrapper m_PhysicsWrapper;
 
         public bool CanPerformActions => m_NetState.CanPerformActions;
