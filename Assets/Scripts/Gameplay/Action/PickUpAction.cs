@@ -1,8 +1,10 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Animations;
+using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Server
 {
@@ -35,7 +37,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_NetworkLifeState = m_Parent.NetState.NetworkLifeState;
         }
 
-        public override bool Start()
+        public override bool OnStart()
         {
             m_ActionStartTime = Time.time;
 
@@ -106,7 +108,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool Update()
+        public override bool OnUpdate()
         {
             if (!m_AttemptedPickup && Time.time > m_ActionStartTime + Description.ExecTimeSeconds)
             {
