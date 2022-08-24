@@ -1,4 +1,6 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
@@ -66,7 +68,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         [Tooltip("Is this Action interruptible by other action-plays or by movement? (Implicitly stops movement when action starts.) Generally, actions with short exec times should not be interruptible in this way.")]
         public bool ActionInterruptible;
 
+        [Tooltip("This action is interrupted if an action of any of the following types is requested")]
+        public List<ActionType> IsInterruptableBy;
 
+        [System.Serializable]
+        public enum BlockingModeType
+        {
+            EntireDuration,
+            OnlyDuringExecTime,
+        }
         [Tooltip("Indicates how long this action blocks other actions from happening: during the execution stage, or for as long as it runs?")]
         public BlockingModeType BlockingMode;
 

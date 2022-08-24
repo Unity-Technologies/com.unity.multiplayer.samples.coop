@@ -138,6 +138,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             m_InputSender = inputSender;
             m_NetState = m_InputSender.GetComponent<NetworkCharacterState>();
             m_NetState.TargetId.OnValueChanged += OnSelectionChanged;
+            m_NetState.heldNetworkObject.OnValueChanged += OnHeldNetworkObjectChanged;
+            UpdateAllActionButtons();
+        }
+
+        void OnHeldNetworkObjectChanged(ulong previousValue, ulong newValue)
+        {
             UpdateAllActionButtons();
         }
 
@@ -147,6 +153,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (m_NetState)
             {
                 m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;
+                m_NetState.heldNetworkObject.OnValueChanged -= OnHeldNetworkObjectChanged;
             }
             m_NetState = null;
         }
@@ -183,13 +190,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void OnDestroy()
         {
+            DeregisterInputSender();
+
             ClientPlayerAvatar.LocalClientSpawned -= RegisterInputSender;
             ClientPlayerAvatar.LocalClientDespawned -= DeregisterInputSender;
-
-            if (m_NetState)
-            {
-                m_NetState.TargetId.OnValueChanged -= OnSelectionChanged;
-            }
         }
 
         void Update()
@@ -264,14 +268,33 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special1], m_NetState.CharacterClass.Skill2);
             UpdateActionButton(m_ButtonInfo[ActionButtonType.Special2], m_NetState.CharacterClass.Skill3);
 
-            // special case: when we have a player selected, we change the meaning of the basic action
-            if (m_NetState.TargetId.Value != 0
-                && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value, out NetworkObject selection)
+            var isHoldingNetworkObject =
+                NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.heldNetworkObject.Value,
+                    out var heldNetworkObject);
+
+            NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(m_NetState.TargetId.Value,
+                out var selection);
+
+            if (isHoldingNetworkObject)
+            {
+                // show drop!
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.Drop, true);
+            }
+            if ((m_NetState.TargetId.Value != 0
+                    && selection != null
+                    && selection.TryGetComponent(out PickUpState pickUpState))
+               )
+            {
+                // special case: targeting a pickup-able item or holding a pickup object
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.PickUp, true);
+            }
+            else if (m_NetState.TargetId.Value != 0
                 && selection != null
                 && selection.NetworkObjectId != m_NetState.NetworkObjectId
                 && selection.TryGetComponent(out NetworkCharacterState charState)
                 && !charState.IsNpc)
             {
+                // special case: when we have a player selected, we change the meaning of the basic action
                 // we have another player selected! In that case we want to reflect that our basic Action is a Revive, not an attack!
                 // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
 
