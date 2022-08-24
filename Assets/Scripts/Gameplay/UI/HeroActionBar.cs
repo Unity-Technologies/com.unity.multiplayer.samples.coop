@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
@@ -75,7 +76,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             public readonly UIHUDButton Button;
             public readonly Client.UITooltipDetector Tooltip;
 
-            /// <summary>
+            /// <summary> T
             /// The current ActionType that is used when this button is pressed.
             /// </summary>
             public ActionType CurActionType;
