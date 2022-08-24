@@ -36,6 +36,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// Indicates how the character's movement should be depicted.
         public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
 
+        public NetworkVariable<ulong> heldNetworkObject;
+
         /// <summary>
         /// Indicates whether this character is in "stealth mode" (invisible to monsters and other players).
         /// </summary>

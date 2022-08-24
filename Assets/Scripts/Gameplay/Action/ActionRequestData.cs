@@ -34,7 +34,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         RogueStealthMode,
         ArcherVolley,
         RogueDashAttack,
-        ImpToss
+        ImpToss,
+        PickUp,
+        Drop
     }
 
 
@@ -58,7 +60,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         ChargedLaunchProjectile,
         StealthMode,
         DashAttack,
-        ImpToss
+        ImpToss,
+        PickUp,
+        Drop
         //O__O adding a new ActionLogic branch? Update Action.MakeAction!
     }
 

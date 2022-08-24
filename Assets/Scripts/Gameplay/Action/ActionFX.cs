@@ -78,6 +78,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 case ActionLogic.StealthMode: return new StealthModeActionFX(ref data, parent);
                 case ActionLogic.DashAttack: return new DashAttackActionFX(ref data, parent);
 
+                case ActionLogic.PickUp:
+                case ActionLogic.Drop:
                 case ActionLogic.Stunned:
                 case ActionLogic.LaunchProjectile:
                 case ActionLogic.Revive:
