@@ -10,6 +10,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 
 ### Added
 * Added tests for connection management (#692). These are integration tests to validate that the state machine works properly. They use Netcode's NetworkIntegrationTest
+* Pickup and Drop action added to the Action system. Actionable once targeting a "Heavy"-tagged NetworkObject. (#372) - This shows NetworkObject parenting with a pattern to follow animation bones (the hands when picking up)
 * 
 ### Changed
 * Updated tools, authentication and relay packages (#690)
