@@ -373,6 +373,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 case ActionLogic.DashAttack:
                     resultData.Position = hitPoint;
                     return;
+                case ActionLogic.PickUp:
+                    resultData.CancelMovement = true;
+                    resultData.ShouldQueue = false;
+                    return;
             }
         }
 

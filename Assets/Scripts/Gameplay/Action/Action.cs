@@ -175,6 +175,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 case ActionLogic.StealthMode: return new StealthModeAction(parent, ref data);
                 case ActionLogic.DashAttack: return new DashAttackAction(parent, ref data);
                 case ActionLogic.ImpToss: return new TossAction(parent, ref data);
+                case ActionLogic.PickUp: return new PickUpAction(parent, ref data);
+                case ActionLogic.Drop: return new DropAction(parent, ref data);
                 default: throw new System.NotImplementedException();
             }
         }
