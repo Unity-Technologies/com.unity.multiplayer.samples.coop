@@ -22,9 +22,9 @@ namespace Unity.Multiplayer.Samples.Utilities
 
         bool IsNetworkSceneManagementEnabled => NetworkManager != null && NetworkManager.SceneManager != null && NetworkManager.NetworkConfig.EnableSceneManagement;
 
-        public static SceneLoaderWrapper Instance { get; private set; }
+        public static SceneLoaderWrapper Instance { get; protected set; }
 
-        public void Awake()
+        public virtual void Awake()
         {
             if (Instance != null && Instance != this)
             {
@@ -37,7 +37,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             DontDestroyOnLoad(this);
         }
 
-        void Start()
+        public virtual void Start()
         {
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
@@ -60,7 +60,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// Initializes the callback on scene events. This needs to be called right after initializing NetworkManager
         /// (after StartHost, StartClient or StartServer)
         /// </summary>
-        public void AddOnSceneEventCallback()
+        public virtual void AddOnSceneEventCallback()
         {
             if (IsNetworkSceneManagementEnabled)
             {
@@ -76,7 +76,7 @@ namespace Unity.Multiplayer.Samples.Utilities
         /// <param name="sceneName">Name or path of the Scene to load.</param>
         /// <param name="useNetworkSceneManager">If true, uses NetworkSceneManager, else uses SceneManager</param>
         /// <param name="loadSceneMode">If LoadSceneMode.Single then all current Scenes will be unloaded before loading.</param>
-        public void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
+        public virtual void LoadScene(string sceneName, bool useNetworkSceneManager, LoadSceneMode loadSceneMode = LoadSceneMode.Single)
         {
             if (useNetworkSceneManager)
             {
