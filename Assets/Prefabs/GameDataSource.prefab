@@ -60,6 +60,8 @@ MonoBehaviour:
   m_Emote4ActionPrototype: {fileID: 11400000, guid: f6c41fca37cc141a5bb0419f5f78fcd9, type: 2}
   m_ReviveActionPrototype: {fileID: 11400000, guid: 07ecb621d9b47404da00544398b4d539, type: 2}
   m_StunnedActionPrototype: {fileID: 11400000, guid: 9aae78a4aa9714aab9f3e807d7d34ba2, type: 2}
+  m_DropActionPrototype: {fileID: 11400000, guid: cc95394f0ae4c41409329754b3a427e5, type: 2}
+  m_PickUpActionPrototype: {fileID: 11400000, guid: ab4d58da4f287412dbec1afa40a8dbe1, type: 2}
   m_ActionPrototypes:
   - {fileID: 11400000, guid: 6bb7a54035ae54ecdb3659079e2ca02d, type: 2}
   - {fileID: 11400000, guid: e5337a36159e240d4bc6f7d22e0e285c, type: 2}

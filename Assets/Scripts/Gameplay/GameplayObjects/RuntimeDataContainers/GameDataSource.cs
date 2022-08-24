@@ -128,6 +128,8 @@ namespace Unity.Multiplayer.Samples.BossRoom
             uniqueActions.Add(Emote4ActionPrototype);
             uniqueActions.Add(ReviveActionPrototype);
             uniqueActions.Add(StunnedActionPrototype);
+            uniqueActions.Add(DropActionPrototype);
+            uniqueActions.Add(PickUpActionPrototype);
 
             m_AllActions = new List<Action>(uniqueActions.Count);
 
