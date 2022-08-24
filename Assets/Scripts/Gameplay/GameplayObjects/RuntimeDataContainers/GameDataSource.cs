@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using UnityEngine;
 using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
