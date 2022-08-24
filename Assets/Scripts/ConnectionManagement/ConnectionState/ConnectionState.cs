@@ -7,7 +7,7 @@ using VContainer;
 namespace Unity.Multiplayer.Samples.BossRoom
 {
     /// <summary>
-    /// Base class representing a connection state. Contains a static member for each possible state.
+    /// Base class representing a connection state.
     /// </summary>
     abstract class ConnectionState
     {
@@ -39,5 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public virtual void OnDisconnectReasonReceived(ConnectStatus disconnectReason) { }
 
         public virtual void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response) { }
+
+        public virtual void OnTransportFailure() { }
     }
 }
