@@ -33,6 +33,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return true;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            m_IsStealthEnded = false;
+            m_IsStealthStarted = false;
+            m_SpawnedGraphics = null;
+        }
+
         public override bool ShouldBecomeNonBlocking()
         {
             return TimeRunning >= Config.ExecTimeSeconds;

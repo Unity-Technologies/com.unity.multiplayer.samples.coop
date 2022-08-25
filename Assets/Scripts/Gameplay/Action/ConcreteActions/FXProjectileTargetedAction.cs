@@ -55,6 +55,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return true;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+
+            m_ImpactedTarget = false;
+            m_TimeUntilImpact = 0;
+            m_DamageableTarget = null;
+            m_ImpactPlayed = false;
+            m_ProjectileDuration = 0;
+            m_Projectile = null;
+            m_Target = null;
+            m_TargetTransform = null;
+        }
+
         public override bool OnUpdate(ServerCharacter parent)
         {
             if (!m_ImpactedTarget && m_TimeUntilImpact <= TimeRunning)

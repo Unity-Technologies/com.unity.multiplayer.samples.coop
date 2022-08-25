@@ -39,6 +39,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return ActionConclusion.Continue;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            m_DidAoE = false;
+        }
+
         public override bool OnUpdate(ServerCharacter parent)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && !m_DidAoE)

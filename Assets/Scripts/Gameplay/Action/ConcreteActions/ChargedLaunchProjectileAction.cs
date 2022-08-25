@@ -68,6 +68,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return true;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            m_ChargeEnded = false;
+            m_StoppedChargingUpTime = 0;
+            m_HitByAttack = false;
+            m_Graphics.Clear();
+        }
+
         public override bool OnUpdate(ServerCharacter parent)
         {
             if (m_StoppedChargingUpTime == 0 && GetPercentChargedUp() >= 1)

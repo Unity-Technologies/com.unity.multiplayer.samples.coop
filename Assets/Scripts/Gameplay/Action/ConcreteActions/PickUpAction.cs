@@ -15,20 +15,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
     [CreateAssetMenu(menuName = "BossRoom/Actions/Pick Up Action")]
     public class PickUpAction : Action
     {
-        RaycastHit[] m_RaycastHits = new RaycastHit[8];
-
         const string k_HeavyTag = "Heavy";
-
         const string k_NpcLayer = "NPCs";
-
         const string k_FailedPickupTrigger = "PickUpFailed";
-
-        float m_ActionStartTime;
 
         static RaycastHitComparer s_RaycastHitComparer = new RaycastHitComparer();
 
+        RaycastHit[] m_RaycastHits = new RaycastHit[8];
+        float m_ActionStartTime;
         NetworkLifeState m_NetworkLifeState;
-
         bool m_AttemptedPickup;
 
         public override bool OnStart(ServerCharacter parent)
@@ -46,6 +41,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             }
 
             return true;
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            m_ActionStartTime = 0;
+            m_NetworkLifeState = null;
+            m_AttemptedPickup = false;
         }
 
         bool TryPickUp(ServerCharacter parent)

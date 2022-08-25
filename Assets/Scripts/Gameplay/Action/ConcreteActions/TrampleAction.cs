@@ -31,6 +31,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         }
 
         /// <summary>
+        /// When we begin our charge-attack, anyone within this range is treated as having already been touching us.
+        /// </summary>
+        private const float k_PhysicalTouchDistance = 1;
+
+        /// <summary>
         /// Our ActionStage, as of last Update
         /// </summary>
         private ActionStage m_PreviousStage;
@@ -39,11 +44,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// Keeps track of which Colliders we've already hit, so that our attack doesn't hit the same character twice.
         /// </summary>
         private HashSet<Collider> m_CollidedAlready = new HashSet<Collider>();
-
-        /// <summary>
-        /// When we begin our charge-attack, anyone within this range is treated as having already been touching us.
-        /// </summary>
-        private const float k_PhysicalTouchDistance = 1;
 
         /// <summary>
         /// Set to true in the special-case scenario where we are stunned by one of the characters we tried to trample
@@ -87,6 +87,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             parent.NetState.RecvDoActionClientRPC(Data);
             return true;
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            m_PreviousStage = default;
+            m_CollidedAlready.Clear();
+            m_SpawnedGraphics = null;
+            m_WasStunned = false;
         }
 
         private ActionStage GetCurrentStage()

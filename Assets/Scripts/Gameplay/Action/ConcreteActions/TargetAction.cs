@@ -34,6 +34,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return true;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            m_TargetReticule = null;
+            m_CurrentTarget = 0;
+            m_NewTarget = 0;
+        }
+
         public override bool OnUpdate(ServerCharacter parent)
         {
             bool isValid = ActionUtils.IsValidTarget(TargetId);

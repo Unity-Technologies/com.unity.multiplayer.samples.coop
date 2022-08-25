@@ -14,11 +14,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             if (!s_ActionPools.TryGetValue(actionID, out var actionPool))
             {
                 actionPool = new ObjectPool<Action>(
-                    createFunc:() =>
-                    {
-                        var actionPrototype = GameDataSource.Instance.GetActionPrototypeByID(actionID);
-                        return Object.Instantiate(actionPrototype);
-                    },
+                    createFunc: () => Object.Instantiate(GameDataSource.Instance.GetActionPrototypeByID(actionID)),
+                    actionOnRelease: action => action.Reset(),
                     actionOnDestroy: Object.Destroy);
 
                 s_ActionPools.Add(actionID, actionPool);

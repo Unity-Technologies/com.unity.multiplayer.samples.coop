@@ -55,6 +55,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return ActionConclusion.Continue;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            m_Target = null;
+            m_TargetTransform = null;
+            m_Movement = null;
+        }
+
         /// <summary>
         /// Returns true if our ActionRequestData came with a valid target. For the ChaseAction, this is pretty liberal (could be friend or foe, could be
         /// dead or alive--just needs to be present).

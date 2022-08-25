@@ -85,6 +85,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         }
 
         /// <summary>
+        /// This function resets the action before returning it to the pool
+        /// </summary>
+        public virtual void Reset()
+        {
+            m_Data = default;
+            ActionID = default;
+            TimeStarted = 0;
+        }
+
+        /// <summary>
         /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
         /// </summary>
         /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>

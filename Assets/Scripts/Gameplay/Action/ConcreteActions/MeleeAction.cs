@@ -57,6 +57,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return true;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            m_ExecutionFired = false;
+            m_ProvisionalTarget = 0;
+            m_ImpactPlayed = false;
+            m_SpawnedGraphics = null;
+        }
+
         public override bool OnUpdate(ServerCharacter parent)
         {
             if (!m_ExecutionFired && (Time.time - TimeStarted) >= Config.ExecTimeSeconds)

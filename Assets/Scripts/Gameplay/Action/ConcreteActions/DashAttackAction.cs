@@ -44,6 +44,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return ActionConclusion.Continue;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            m_TargetSpot = default;
+            m_Dashed = false;
+        }
+
         public override bool OnUpdate(ServerCharacter parent)
         {
             return ActionConclusion.Continue;

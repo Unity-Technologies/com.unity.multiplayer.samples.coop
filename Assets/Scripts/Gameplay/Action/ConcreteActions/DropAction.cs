@@ -37,6 +37,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
+        public override void Reset()
+        {
+            base.Reset();
+            m_ActionStartTime = 0;
+            m_HeldNetworkObject = null;
+        }
+
         public override bool OnUpdate(ServerCharacter parent)
         {
             if (Time.time > m_ActionStartTime + Config.ExecTimeSeconds)
