@@ -262,7 +262,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
                 SendInput(playerAction);
             }
-            else if ( !GameDataSource.Instance.GetActionPrototypeByID(actionID).IsGeneralTargetAction)
+            else if (!GameDataSource.Instance.GetActionPrototypeByID(actionID).IsGeneralTargetAction)
             {
                 // clicked on nothing... perform an "untargeted" attack on the spot they clicked on.
                 // (Different Actions will deal with this differently. For some, like archer arrows, this will fire an arrow

@@ -137,7 +137,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             int i = 0;
             foreach (var uniqueAction in uniqueActions)
             {
-                uniqueAction.ActionID = new ActionID{ID = i};
+                uniqueAction.ActionID = new ActionID { ID = i };
                 m_AllActions.Add(uniqueAction);
                 i++;
             }

@@ -49,7 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             if (parent.ActionPlayer.RunningActionCount == 1 && !parent.Movement.IsMoving() && isValid)
             {
                 //we're the only action running, and we're not moving, so let's swivel to face our target, just to be cool!
-                FaceTarget(parent,TargetId);
+                FaceTarget(parent, TargetId);
             }
 
             return isValid;

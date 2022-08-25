@@ -228,7 +228,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 ActionRequestData data = new ActionRequestData
                 {
-                    ActionID =  GameDataSource.Instance.GeneralChaseActionPrototype.ActionID,
+                    ActionID = GameDataSource.Instance.GeneralChaseActionPrototype.ActionID,
                     TargetIds = baseAction.Data.TargetIds,
                     Amount = baseAction.Config.Range
                 };

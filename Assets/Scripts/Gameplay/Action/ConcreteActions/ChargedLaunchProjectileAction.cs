@@ -137,7 +137,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Config.ExecTimeSeconds);
         }
 
-             /// <summary>
+        /// <summary>
         /// Overridden from base-class to choose a different projectile depending on how "charged up" we got.
         /// To do this, we assume that the Projectiles list is ordered from weakest to strongest.
         /// </summary>
