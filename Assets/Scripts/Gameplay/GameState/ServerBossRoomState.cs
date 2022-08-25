@@ -79,25 +79,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
             m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
 
-            NetworkManager.Singleton.SceneManager.OnLoadComplete += OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnUnloadComplete += OnServerUnloadComplete;
-        }
-
-        void OnNetworkDespawn()
-        {
-            m_Subscription?.Dispose();
-
-            NetworkManager.Singleton.SceneManager.OnLoadComplete -= OnServerLoadComplete;
-            NetworkManager.Singleton.SceneManager.OnUnloadComplete -= OnServerUnloadComplete;
-        }
-
-        void OnServerLoadComplete(ulong clientId, string sceneName, LoadSceneMode loadSceneMode)
-        {
-            if (clientId != NetworkManager.ServerClientId)
-            {
-                return;
-            }
-
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += OnLoadEventCompleted;
             NetworkManager.Singleton.SceneManager.OnSynchronizeComplete += OnSynchronizeComplete;
@@ -105,12 +86,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             SessionManager<SessionPlayerData>.Instance.OnSessionStarted();
         }
 
-        void OnServerUnloadComplete(ulong clientId, string sceneName)
+        void OnNetworkDespawn()
         {
-            if (clientId != NetworkManager.ServerClientId)
-            {
-                return;
-            }
+            m_Subscription?.Dispose();
 
             NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
             NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= OnLoadEventCompleted;
