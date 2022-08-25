@@ -40,5 +40,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
         {
             return !(x == y);
         }
+
+        public override string ToString()
+        {
+            return $"ActionID({ID})";
+        }
     }
 }

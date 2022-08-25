@@ -118,7 +118,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFactory.CreateActionFromData(ref data);
             if (actionFX.OnStartClient(CharacterVisualization))
             {
-                m_PlayingActions.Add(actionFX);
+                if (anticipatedActionIndex < 0)
+                {
+                    m_PlayingActions.Add(actionFX);
+                }
+                //otherwise just let the action sit in it's existing slot
             }
             else if (anticipatedActionIndex >= 0)
             {
