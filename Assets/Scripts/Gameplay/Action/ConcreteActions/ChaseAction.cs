@@ -13,8 +13,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         Transform m_TargetTransform;
 
-        private ServerCharacterMovement m_Movement;
-
         /// <summary>
         /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
         /// </summary>
@@ -28,8 +26,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             m_Target = NetworkManager.Singleton.SpawnManager.SpawnedObjects[m_Data.TargetIds[0]];
-
-            m_Movement = parent.Movement;
 
             if (PhysicsWrapper.TryGetPhysicsWrapper(m_Data.TargetIds[0], out var physicsWrapper))
             {
@@ -48,9 +44,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 return ActionConclusion.Stop;
             }
 
-            if (!m_Movement.IsPerformingForcedMovement())
+            if (!parent.Movement.IsPerformingForcedMovement())
             {
-                m_Movement.FollowTransform(m_TargetTransform);
+                parent.Movement.FollowTransform(m_TargetTransform);
             }
             return ActionConclusion.Continue;
         }
@@ -60,7 +56,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             base.Reset();
             m_Target = null;
             m_TargetTransform = null;
-            m_Movement = null;
         }
 
         /// <summary>
@@ -107,9 +102,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             // Keep re-assigning our chase target whenever possible.
             // This way, if we get Knocked Back mid-chase, we pick right back up and continue the chase.
-            if (!m_Movement.IsPerformingForcedMovement())
+            if (!parent.Movement.IsPerformingForcedMovement())
             {
-                m_Movement.FollowTransform(m_TargetTransform);
+                parent.Movement.FollowTransform(m_TargetTransform);
             }
 
             return ActionConclusion.Continue;
@@ -117,9 +112,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (m_Movement && !m_Movement.IsPerformingForcedMovement())
+            if (parent.Movement && !parent.Movement.IsPerformingForcedMovement())
             {
-                m_Movement.CancelMove();
+                parent.Movement.CancelMove();
             }
         }
 

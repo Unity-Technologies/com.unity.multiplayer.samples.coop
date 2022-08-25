@@ -9,17 +9,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private GameObject m_TargetReticule;
         private ulong m_CurrentTarget;
         private ulong m_NewTarget;
-        private NetworkCharacterState m_ParentState;
 
         private const float k_ReticuleGroundHeight = 0.2f;
 
         public override bool OnStartClient(ClientCharacterVisualization parent)
         {
             base.OnStartClient(parent);
-            m_ParentState = parent.NetState;
-
-            m_ParentState.TargetId.OnValueChanged += OnTargetChanged;
-            m_ParentState.GetComponent<Client.ClientInputSender>().ActionInputEvent += OnActionInput;
+            parent.NetState.TargetId.OnValueChanged += OnTargetChanged;
+            parent.NetState.GetComponent<Client.ClientInputSender>().ActionInputEvent += OnActionInput;
 
             return true;
         }
@@ -80,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;
-            bool myself_isnpc = m_ParentState.CharacterClass.IsNpc;
+            bool myself_isnpc = parent.NetState.CharacterClass.IsNpc;
             bool hostile = target_isnpc != myself_isnpc;
 
             m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? parent.ReticuleHostileMat : parent.ReticuleFriendlyMat;
@@ -90,8 +87,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             GameObject.Destroy(m_TargetReticule);
 
-            m_ParentState.TargetId.OnValueChanged -= OnTargetChanged;
-            if (m_ParentState.TryGetComponent(out Client.ClientInputSender inputSender))
+            parent.NetState.TargetId.OnValueChanged -= OnTargetChanged;
+            if (parent.TryGetComponent(out Client.ClientInputSender inputSender))
             {
                 inputSender.ActionInputEvent -= OnActionInput;
             }

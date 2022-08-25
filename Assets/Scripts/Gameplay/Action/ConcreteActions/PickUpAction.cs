@@ -23,7 +23,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         RaycastHit[] m_RaycastHits = new RaycastHit[8];
         float m_ActionStartTime;
-        NetworkLifeState m_NetworkLifeState;
         bool m_AttemptedPickup;
 
         public override bool OnStart(ServerCharacter parent)
@@ -47,7 +46,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             base.Reset();
             m_ActionStartTime = 0;
-            m_NetworkLifeState = null;
             m_AttemptedPickup = false;
         }
 
@@ -122,7 +120,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (m_NetworkLifeState.LifeState.Value == LifeState.Fainted)
+            if (parent.NetState.LifeState == LifeState.Fainted)
             {
                 if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(parent.NetState.heldNetworkObject.Value, out var heavyNetworkObject))
                 {
