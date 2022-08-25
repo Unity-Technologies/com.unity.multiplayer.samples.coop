@@ -252,10 +252,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             if (targets != null &&
                 targets.Length == 1 &&
-                targets[0] != m_ServerCharacter.NetState.TargetId.Value
-                && baseAction.ActionID != GameDataSource.Instance.GeneralTargetActionPrototype.ActionID)
+                targets[0] != m_ServerCharacter.NetState.TargetId.Value)
             {
-                //if this is a targeted skill (but not a Target action itself) (with a single requested target), and it is different from our
+                //if this is a targeted skill (with a single requested target), and it is different from our
                 //active target, then we synthesize a TargetAction to change  our target over.
 
                 ActionRequestData data = new ActionRequestData
