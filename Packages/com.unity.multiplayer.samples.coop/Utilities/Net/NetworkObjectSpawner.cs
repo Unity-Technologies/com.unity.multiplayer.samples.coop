@@ -3,52 +3,47 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Unity.Multiplayer.Samples.Utilities
 {
-    /// <summary>
-    /// Custom spawning component to be added to a scene GameObject. This component collects NetworkObjects in a scene
-    /// marked by a special tag, collects their Transform data, destroys their prefab instance, and performs the dynamic
-    /// spawning of said objects during Netcode for GameObject's (Netcode) OnNetworkSpawn() callback.
-    /// </summary>
-    public class NetworkObjectSpawner : NetworkBehaviour
+    public class NetworkObjectSpawner : MonoBehaviour
     {
-        [SerializeField]
-        List<SpawnObjectData> m_SpawnObjectData;
+        public NetworkObject prefabReference;
 
-        public override void OnNetworkSpawn()
+        public void Awake()
         {
-            if (!IsServer)
+            if (NetworkManager.Singleton && NetworkManager.Singleton.IsServer &&
+                NetworkManager.Singleton.SceneManager != null)
             {
-                enabled = false;
-                return;
+                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted += SceneManagerOnOnLoadEventCompleted;
             }
-
-            StartCoroutine(WaitToSpawnNetworkObjects());
+            else
+            {
+                Destroy(gameObject);
+            }
         }
 
-        IEnumerator WaitToSpawnNetworkObjects()
+        void OnDestroy()
         {
-            // must wait for Netcode's OnNetworkSpawn() sweep before dynamically spawning
-            yield return new WaitForEndOfFrame();
-            SpawnNetworkObjects();
+            if (NetworkManager.Singleton && NetworkManager.Singleton.IsServer &&
+                NetworkManager.Singleton.SceneManager != null)
+            {
+                NetworkManager.Singleton.SceneManager.OnLoadEventCompleted -= SceneManagerOnOnLoadEventCompleted;
+            }
         }
 
-        void SpawnNetworkObjects()
+        void SceneManagerOnOnLoadEventCompleted(string sceneName, LoadSceneMode loadSceneMode, List<ulong> clientsCompleted, List<ulong> clientsTimedOut)
         {
-            for (int i = m_SpawnObjectData.Count - 1; i >= 0; i--)
-            {
-                var spawnedGameObject = Instantiate(m_SpawnObjectData[i].prefabReference,
-                    m_SpawnObjectData[i].transform.position,
-                    m_SpawnObjectData[i].transform.rotation,
-                    null);
+            SpawnNetworkObject();
+            Destroy(gameObject);
+        }
 
-                spawnedGameObject.transform.localScale = m_SpawnObjectData[i].transform.lossyScale;
-                var spawnedNetworkObject = spawnedGameObject.GetComponent<NetworkObject>();
-                spawnedNetworkObject.Spawn();
-
-                Destroy(m_SpawnObjectData[i].gameObject);
-            }
+        void SpawnNetworkObject()
+        {
+            var instantiatedNetworkObject = Instantiate(prefabReference, transform.position, transform.rotation, null);
+            instantiatedNetworkObject.transform.localScale = transform.lossyScale;
+            instantiatedNetworkObject.Spawn();
         }
     }
 }
