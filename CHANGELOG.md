@@ -13,6 +13,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Added handling the OnTransportFailure callback (#707). This callback is invoked when a failure happens on the transport's side, for example if the host loses connection to the Relay service. This won't get called when the host is just listening with direct IP, this would need to be handled differently (by pinging an external service like google to test for internet connectivity for example). Boss Room now handles that callback by returning to the Offline state.
 * Pickup and Drop action added to the Action system. Actionable once targeting a "Heavy"-tagged NetworkObject. (#372) - This shows NetworkObject parenting with a pattern to follow animation bones (the hands when picking up)
 * Introduced a mechanism for identifying actions by their runtime-generated ActionID, instead of relying on a fragile ActionType enumeration (#705)
+* NetworkObjectSpawner handles dynamically spawning in-scene placed NetworkObjects (#717) - You can't place a NetworkObject in scene directly and destroy it at runtime. This PR showcases proper handling of NetworkObjects that you'd wish to place inside of scenes, but would still want to destroy at game-time. Examples of these are: Imps, VandalImps, ImpBoss. NetworkObjects such as doors, crystals, door switch, etc. remain the same, statically-placed in scene.
 
 ### Changed
 * Updated tools, authentication and relay packages (#690)
