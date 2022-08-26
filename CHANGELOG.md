@@ -19,6 +19,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
 * Refactored connection management into simpler state machine (#666)
 * Merged GameState bridge classes (the ones that contained no or limited functionality) (#697) This cleans up our sometimes too verbose code split.
+* Configured the NetworkTransform components of every NetworkObject to reduce the bandwidth usage (#716). This prevents the unnecessary synchronization of data that clients do not need, i.e. a character's scale or y position. In the case of a character, it reduced the size of each update from 47B to 23B.
 * 
 ### Removed
 *

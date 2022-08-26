@@ -124,9 +124,9 @@ MonoBehaviour:
   SyncRotAngleX: 1
   SyncRotAngleY: 1
   SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
   PositionThreshold: 0.001
   RotAngleThreshold: 0.01
   ScaleThreshold: 0.01
@@ -163,8 +163,8 @@ MonoBehaviour:
   m_LayerMask:
     serializedVersion: 2
     m_Bits: 72
-  detonateAfterSeconds: 5
-  destroyAfterSeconds: 6
+  m_DetonateAfterSeconds: 5
+  m_DestroyAfterSeconds: 6
   detonatedCallback:
     m_PersistentCalls:
       m_Calls:
