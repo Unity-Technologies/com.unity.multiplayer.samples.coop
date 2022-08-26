@@ -23,6 +23,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
 * Action and ActionFX classes have been merged into a single Scriptable Object-based Action class; all the existing actions have been refactored to follow this new design (#705)
 * Refactored the Action system so that the action objects themselves are pooled Scriptable Objects (#705)
+* Configured the NetworkTransform components of every NetworkObject to reduce the bandwidth usage (#716). This prevents the unnecessary synchronization of data that clients do not need, i.e. a character's scale or y position. In the case of a character, it reduced the size of each update from 47B to 23B.
 * 
 ### Removed
 *

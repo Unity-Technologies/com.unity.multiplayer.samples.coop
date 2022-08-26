@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 7679526581544062779}
   - component: {fileID: 4309865414312164521}
   - component: {fileID: 753347877357705413}
-  - component: {fileID: 7495268952650712827}
+  - component: {fileID: -2014321709067566591}
   m_Layer: 3
   m_Name: Character
   m_TagString: Player
@@ -41,6 +41,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -73,6 +74,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edb78c1621dad5149bb47b96120d3fbf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  heldNetworkObject:
+    m_InternalValue: 0
   m_NetworkHealthState: {fileID: 514105321093282895}
   m_NetworkLifeState: {fileID: -5107732197415868221}
   m_CharacterClassContainer: {fileID: -6618539813679097072}
@@ -260,7 +263,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_NetworkLifeState: {fileID: -5107732197415868221}
---- !u!114 &7495268952650712827
+--- !u!114 &-2014321709067566591
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -275,15 +278,14 @@ MonoBehaviour:
   SyncPositionX: 1
   SyncPositionY: 1
   SyncPositionZ: 1
-  SyncRotAngleX: 1
+  SyncRotAngleX: 0
   SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0
-  RotAngleThreshold: 0
-  ScaleThreshold: 0
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
   InLocalSpace: 0
   Interpolate: 1
-  CanCommitToTransform: 0
