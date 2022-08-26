@@ -1,6 +1,9 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -18,7 +21,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// When the Action is fully charged up, it provides a special additional benefit: if the boss tries to trample this
     /// character, the boss becomes Stunned.
     /// </remarks>
-    public class ChargedShieldAction : Action
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Charged Shield Action")]
+    public partial class ChargedShieldAction : Action
     {
         /// <summary>
         /// Set once we've stopped charging up, for any reason:
@@ -28,10 +32,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private float m_StoppedChargingUpTime = 0;
 
-        public ChargedShieldAction(ServerCharacter parent, ref ActionRequestData data)
-            : base(parent, ref data) { }
-
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
             if (m_Data.TargetIds != null && m_Data.TargetIds.Length > 0)
             {
@@ -39,7 +40,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 if (initialTarget)
                 {
                     // face our target, if we had one
-                    m_Parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
+                    parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
                 }
             }
 
@@ -47,13 +48,21 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // for several copies of this action to be playing at once. This can lead to situations where several
             // dying versions of the action raise the end-trigger, but the animator only lowers it once, leaving the trigger
             // in a raised state. So we'll make sure that our end-trigger isn't raised yet. (Generally a good idea anyway.)
-            m_Parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Description.Anim2);
+            parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Config.Anim2);
 
             // raise the start trigger to start the animation loop!
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
+        }
+
+        public override void Reset()
+        {
+            base.Reset();
+            m_ChargeGraphics = null;
+            m_ShieldGraphics = null;
+            m_StoppedChargingUpTime = 0;
         }
 
         private bool IsChargingUp()
@@ -61,19 +70,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return m_StoppedChargingUpTime == 0;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             if (m_StoppedChargingUpTime == 0)
             {
                 // we haven't explicitly stopped charging up... but if we've reached max charge, that implicitly stops us
-                if (TimeRunning >= Description.ExecTimeSeconds)
+                if (TimeRunning >= Config.ExecTimeSeconds)
                 {
-                    StopChargingUp();
+                    StopChargingUp(parent);
                 }
             }
 
             // we stop once the charge-up has ended and our effect duration has elapsed
-            return m_StoppedChargingUpTime == 0 || Time.time < (m_StoppedChargingUpTime + Description.EffectDurationSeconds);
+            return m_StoppedChargingUpTime == 0 || Time.time < (m_StoppedChargingUpTime + Config.EffectDurationSeconds);
         }
 
         public override bool ShouldBecomeNonBlocking()
@@ -83,7 +92,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private float GetPercentChargedUp()
         {
-            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Description.ExecTimeSeconds);
+            return ActionUtils.GetPercentChargedUp(m_StoppedChargingUpTime, TimeRunning, TimeStarted, Config.ExecTimeSeconds);
         }
 
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
@@ -111,35 +120,35 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void OnGameplayActivity(GameplayActivity activityType)
+        public override void OnGameplayActivity(ServerCharacter parent, GameplayActivity activityType)
         {
             // for this particular type of Action, being attacked immediately causes you to stop charging up
             if (activityType == GameplayActivity.AttackedByEnemy || activityType == GameplayActivity.StoppedChargingUp)
             {
-                StopChargingUp();
+                StopChargingUp(parent);
             }
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
-            StopChargingUp();
+            StopChargingUp(parent);
 
             // if stepped into invincibility, decrement invincibility counter
             if (Mathf.Approximately(GetPercentChargedUp(), 1f))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
-                    m_Parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) - 1);
+                parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Config.OtherAnimatorVariable,
+                    parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Config.OtherAnimatorVariable) - 1);
             }
         }
 
-        private void StopChargingUp()
+        private void StopChargingUp(ServerCharacter parent)
         {
             if (IsChargingUp())
             {
                 m_StoppedChargingUpTime = Time.time;
-                m_Parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
+                parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
 
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
 
                 //tell the animator controller to enter "invincibility mode" (where we don't flinch from damage)
                 if (Mathf.Approximately(GetPercentChargedUp(), 1f))
@@ -148,10 +157,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     // can restart their shield before the first one has ended, thereby getting two stacks of invincibility.
                     // So each active copy of the charge-up increments the invincibility counter, and the animator controller
                     // knows anything greater than zero means we shouldn't show hit-reacts.
-                    m_Parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Description.OtherAnimatorVariable,
-                        m_Parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Description.OtherAnimatorVariable) + 1);
+                    parent.serverAnimationHandler.NetworkAnimator.Animator.SetInteger(Config.OtherAnimatorVariable,
+                        parent.serverAnimationHandler.NetworkAnimator.Animator.GetInteger(Config.OtherAnimatorVariable) + 1);
                 }
             }
+        }
+
+        public override bool OnStartClient(ClientCharacterVisualization parent)
+        {
+            Assert.IsTrue(Config.Spawns.Length == 2, $"Found {Config.Spawns.Length} spawns for action {name}. Should be exactly 2: a charge-up particle and a fully-charged particle");
+
+            base.OnStartClient(parent);
+            m_ChargeGraphics = InstantiateSpecialFXGraphic(Config.Spawns[0], parent.transform, true);
+            return true;
         }
     }
 }

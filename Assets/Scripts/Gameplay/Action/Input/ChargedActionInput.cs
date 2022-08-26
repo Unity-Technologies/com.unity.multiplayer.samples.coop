@@ -17,7 +17,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             var data = new ActionRequestData
             {
                 Position = transform.position,
-                ActionTypeEnum = m_ActionType,
+                ActionID = m_ActionPrototypeID,
                 ShouldQueue = false,
                 TargetIds = null
             };

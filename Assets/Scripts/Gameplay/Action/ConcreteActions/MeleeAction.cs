@@ -1,4 +1,8 @@
+using System;
+using System.Collections.Generic;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
@@ -26,20 +30,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     ///
     /// As so often happens in networked games (and games in general), there's no perfect solution--just sets of tradeoffs. For our example, we're showing option "3".
     /// </remarks>
-    public class MeleeAction : Action
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Melee Action")]
+    public partial class MeleeAction : Action
     {
         private bool m_ExecutionFired;
         private ulong m_ProvisionalTarget;
 
-        //cache Physics Cast hits, to minimize allocs.
-        public MeleeAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
+        public override bool OnStart(ServerCharacter parent)
         {
-        }
-
-        public override bool OnStart()
-        {
-            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : m_Parent.NetState.TargetId.Value;
-            IDamageable foe = DetectFoe(target);
+            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : parent.NetState.TargetId.Value;
+            IDamageable foe = DetectFoe(parent, target);
             if (foe != null)
             {
                 m_ProvisionalTarget = foe.NetworkObjectId;
@@ -49,23 +49,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // snap to face the right direction
             if (Data.Direction != Vector3.zero)
             {
-                m_Parent.physicsWrapper.Transform.forward = Data.Direction;
+                parent.physicsWrapper.Transform.forward = Data.Direction;
             }
 
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
-        public override bool OnUpdate()
+        public override void Reset()
         {
-            if (!m_ExecutionFired && (Time.time - TimeStarted) >= Description.ExecTimeSeconds)
+            base.Reset();
+            m_ExecutionFired = false;
+            m_ProvisionalTarget = 0;
+            m_ImpactPlayed = false;
+            m_SpawnedGraphics = null;
+        }
+
+        public override bool OnUpdate(ServerCharacter parent)
+        {
+            if (!m_ExecutionFired && (Time.time - TimeStarted) >= Config.ExecTimeSeconds)
             {
                 m_ExecutionFired = true;
-                var foe = DetectFoe(m_ProvisionalTarget);
+                var foe = DetectFoe(parent, m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.ReceiveHP(this.m_Parent, -Description.Amount);
+                    foe.ReceiveHP(parent, -Config.Amount);
                 }
             }
 
@@ -76,9 +85,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// Returns the ServerCharacter of the foe we hit, or null if none found.
         /// </summary>
         /// <returns></returns>
-        private IDamageable DetectFoe(ulong foeHint = 0)
+        private IDamageable DetectFoe(ServerCharacter parent, ulong foeHint = 0)
         {
-            return GetIdealMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc, m_Parent.physicsWrapper.DamageCollider, Description.Range, foeHint);
+            return GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc, parent.physicsWrapper.DamageCollider, Config.Range, foeHint);
         }
 
         /// <summary>
@@ -113,6 +122,5 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             return foundFoe;
         }
-
     }
 }

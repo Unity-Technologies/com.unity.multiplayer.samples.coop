@@ -13,13 +13,13 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public CharacterTypeEnum CharacterType;
 
         [Tooltip("skill1 is usually the character's default attack")]
-        public ActionType Skill1;
+        public Action Skill1;
 
         [Tooltip("skill2 is usually the character's secondary attack")]
-        public ActionType Skill2;
+        public Action Skill2;
 
         [Tooltip("skill3 is usually the character's unique or special attack")]
-        public ActionType Skill3;
+        public Action Skill3;
 
         [Tooltip("Starting HP of this character class")]
         public IntVariable BaseHP;

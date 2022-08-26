@@ -1,4 +1,6 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -19,86 +21,98 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// See MeleeAction for relevant discussion about targeting; we use the same concept here: preferring
     /// the chosen target, but using whatever is actually within striking distance at time of attack.
     /// </remarks>
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Dash Attack Action")]
     public class DashAttackAction : Action
     {
         private Vector3 m_TargetSpot;
 
-        public DashAttackAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
-        {
-            Assert.IsTrue(Description.Radius > 0, $"ActionDescription for {Description.ActionTypeEnum} needs a Radius assigned!");
-        }
+        private bool m_Dashed;
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
             // remember the exact spot we'll stop.
-            m_TargetSpot = ActionUtils.GetDashDestination(m_Parent.physicsWrapper.Transform, Data.Position, true, Description.Range, Description.Range);
+            m_TargetSpot = ActionUtils.GetDashDestination(parent.physicsWrapper.Transform, Data.Position, true, Config.Range, Config.Range);
 
             // snap to face our destination. This ensures the client visualization faces the right way while "pretending" to dash
-            m_Parent.physicsWrapper.Transform.LookAt(m_TargetSpot);
+            parent.physicsWrapper.Transform.LookAt(m_TargetSpot);
 
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             // tell clients to visualize this action
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            parent.NetState.RecvDoActionClientRPC(Data);
 
             return ActionConclusion.Continue;
         }
 
-        public override bool OnUpdate()
+        public override void Reset()
+        {
+            base.Reset();
+            m_TargetSpot = default;
+            m_Dashed = false;
+        }
+
+        public override bool OnUpdate(ServerCharacter parent)
         {
             return ActionConclusion.Continue;
         }
 
-        public override void End()
+        public override void End(ServerCharacter parent)
         {
             // Anim2 contains the name of the end-loop-sequence trigger
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
 
             // we're done, time to teleport!
-            m_Parent.Movement.Teleport(m_TargetSpot);
+            parent.Movement.Teleport(m_TargetSpot);
 
             // and then swing!
-            PerformMeleeAttack();
+            PerformMeleeAttack(parent);
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
             // OtherAnimatorVariable contains the name of the cancellation trigger
-            if (!string.IsNullOrEmpty(Description.OtherAnimatorVariable))
+            if (!string.IsNullOrEmpty(Config.OtherAnimatorVariable))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.OtherAnimatorVariable);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.OtherAnimatorVariable);
             }
 
             // because the client-side visualization of the action moves the character visualization around,
             // we need to explicitly end the client-side visuals when we abort
-            m_Parent.NetState.RecvCancelActionsByTypeClientRpc(Description.ActionTypeEnum);
+            parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
 
         }
 
         public override void BuffValue(BuffableValue buffType, ref float buffedValue)
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && buffType == BuffableValue.PercentDamageReceived)
+            if (TimeRunning >= Config.ExecTimeSeconds && buffType == BuffableValue.PercentDamageReceived)
             {
                 // we suffer no damage during the "dash" (client-side pretend movement)
                 buffedValue = 0;
             }
         }
 
-        private void PerformMeleeAttack()
+        private void PerformMeleeAttack(ServerCharacter parent)
         {
             // perform a typical melee-hit. But note that we are using the Radius field for range, not the Range field!
-            IDamageable foe = MeleeAction.GetIdealMeleeFoe(Description.IsFriendly ^ m_Parent.IsNpc,
-                                                            m_Parent.physicsWrapper.DamageCollider,
-                                                            Description.Radius,
+            IDamageable foe = MeleeAction.GetIdealMeleeFoe(Config.IsFriendly ^ parent.IsNpc,
+                parent.physicsWrapper.DamageCollider,
+                                                            Config.Radius,
                                                             (Data.TargetIds != null && Data.TargetIds.Length > 0 ? Data.TargetIds[0] : 0));
 
             if (foe != null)
             {
-                foe.ReceiveHP(m_Parent, -Description.Amount);
+                foe.ReceiveHP(parent, -Config.Amount);
             }
+        }
+
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        {
+            if (m_Dashed) { return ActionConclusion.Stop; } // we're done!
+
+            return ActionConclusion.Continue;
         }
     }
 }

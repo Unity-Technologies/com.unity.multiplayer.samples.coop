@@ -1,5 +1,6 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Netcode;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
@@ -7,7 +8,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// <summary>
     /// Area-of-effect attack Action. The attack is centered on a point provided by the client.
     /// </summary>
-    public class AoeAction : Action
+    [CreateAssetMenu(menuName = "BossRoom/Actions/AOE Action")]
+    public class AOEAction : Action
     {
         /// <summary>
         /// Cheat prevention: to ensure that players don't perform AoEs outside of their attack range,
@@ -18,13 +20,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         bool m_DidAoE;
 
-        public AoeAction(ServerCharacter parent, ref ActionRequestData data)
-            : base(parent, ref data) { }
 
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
-            float distanceAway = Vector3.Distance(m_Parent.physicsWrapper.Transform.position, Data.Position);
-            if (distanceAway > Description.Range + k_MaxDistanceDivergence)
+            float distanceAway = Vector3.Distance(parent.physicsWrapper.Transform.position, Data.Position);
+            if (distanceAway > Config.Range + k_MaxDistanceDivergence)
             {
                 // Due to latency, it's possible for the client side click check to be out of date with the server driven position. Doing a final check server side to make sure.
                 return ActionConclusion.Stop;
@@ -34,38 +34,56 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // We don't know our actual targets for this attack until it triggers, so the client can't use the TargetIds list (and we clear it out for clarity).
             // This means we are responsible for triggering reaction-anims ourselves, which we do in PerformAoe()
             Data.TargetIds = new ulong[0];
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return ActionConclusion.Continue;
         }
 
-        public override bool OnUpdate()
+        public override void Reset()
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && !m_DidAoE)
+            base.Reset();
+            m_DidAoE = false;
+        }
+
+        public override bool OnUpdate(ServerCharacter parent)
+        {
+            if (TimeRunning >= Config.ExecTimeSeconds && !m_DidAoE)
             {
                 // actually perform the AoE attack
                 m_DidAoE = true;
-                PerformAoE();
+                PerformAoE(parent);
             }
 
             return ActionConclusion.Continue;
         }
 
-        private void PerformAoE()
+        private void PerformAoE(ServerCharacter parent)
         {
             // Note: could have a non alloc version of this overlap sphere where we statically store our collider array, but since this is a self
             // destroyed object, the complexity added to have a static pool of colliders that could be called by multiplayer players at the same time
             // doesn't seem worth it for now.
-            var colliders = Physics.OverlapSphere(m_Data.Position, Description.Radius, LayerMask.GetMask("NPCs"));
+            var colliders = Physics.OverlapSphere(m_Data.Position, Config.Radius, LayerMask.GetMask("NPCs"));
             for (var i = 0; i < colliders.Length; i++)
             {
                 var enemy = colliders[i].GetComponent<IDamageable>();
                 if (enemy != null)
                 {
                     // actually deal the damage
-                    enemy.ReceiveHP(m_Parent, -Description.Amount);
+                    enemy.ReceiveHP(parent, -Config.Amount);
                 }
             }
+        }
+
+        public override bool OnStartClient(ClientCharacterVisualization parent)
+        {
+            base.OnStartClient(parent);
+            GameObject.Instantiate(Config.Spawns[0], Data.Position, Quaternion.identity);
+            return ActionConclusion.Stop;
+        }
+
+        public override bool OnUpdateClient(ClientCharacterVisualization clientParent)
+        {
+            throw new Exception("This should not execute");
         }
     }
 }

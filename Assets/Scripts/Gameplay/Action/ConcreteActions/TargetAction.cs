@@ -1,6 +1,9 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
@@ -10,50 +13,53 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     /// target becomes ineligible (dies or disappears). Note that while Actions in general can have multiple targets,
     /// you as a player can only have a single target selected at a time (the character that your target reticule appears under).
     /// </summary>
-    public class TargetAction : Action
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Target Action")]
+    public partial class TargetAction : Action
     {
-        public TargetAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
-
-        private ServerCharacterMovement m_Movement;
-
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
             //we must always clear the existing target, even if we don't run. This is how targets get cleared--running a TargetAction
             //with no target selected.
-            m_Parent.NetState.TargetId.Value = 0;
+            parent.NetState.TargetId.Value = 0;
 
             //there can only be one TargetAction at a time!
-            m_Parent.RunningActions.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
+            parent.ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
 
             if (Data.TargetIds == null || Data.TargetIds.Length == 0) { return false; }
 
-            m_Movement = m_Parent.Movement;
+            parent.NetState.TargetId.Value = TargetId;
 
-            m_Parent.NetState.TargetId.Value = TargetId;
-
-            FaceTarget(TargetId);
+            FaceTarget(parent, TargetId);
 
             return true;
         }
 
-        public override bool OnUpdate()
+        public override void Reset()
+        {
+            base.Reset();
+            m_TargetReticule = null;
+            m_CurrentTarget = 0;
+            m_NewTarget = 0;
+        }
+
+        public override bool OnUpdate(ServerCharacter parent)
         {
             bool isValid = ActionUtils.IsValidTarget(TargetId);
 
-            if (m_Parent.RunningActions.RunningActionCount == 1 && !m_Movement.IsMoving() && isValid)
+            if (parent.ActionPlayer.RunningActionCount == 1 && !parent.Movement.IsMoving() && isValid)
             {
                 //we're the only action running, and we're not moving, so let's swivel to face our target, just to be cool!
-                FaceTarget(TargetId);
+                FaceTarget(parent, TargetId);
             }
 
             return isValid;
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
-            if (m_Parent.NetState.TargetId.Value == TargetId)
+            if (parent.NetState.TargetId.Value == TargetId)
             {
-                m_Parent.NetState.TargetId.Value = 0;
+                parent.NetState.TargetId.Value = 0;
             }
         }
 
@@ -63,7 +69,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// Only call this after validating the target via IsValidTarget.
         /// </summary>
         /// <param name="targetId"></param>
-        private void FaceTarget(ulong targetId)
+        private void FaceTarget(ServerCharacter parent, ulong targetId)
         {
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out var targetObject))
             {
@@ -78,12 +84,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     targetObjectPosition = targetObject.transform.position;
                 }
 
-                Vector3 diff = targetObjectPosition - m_Parent.physicsWrapper.Transform.position;
+                Vector3 diff = targetObjectPosition - parent.physicsWrapper.Transform.position;
 
                 diff.y = 0;
                 if (diff != Vector3.zero)
                 {
-                    m_Parent.physicsWrapper.Transform.forward = diff;
+                    parent.physicsWrapper.Transform.forward = diff;
                 }
             }
         }
