@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     public static class ActionUtils
     {
