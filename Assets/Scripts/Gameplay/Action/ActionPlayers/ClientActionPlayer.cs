@@ -5,11 +5,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// This is a companion class to ClientCharacterVisualization that is specifically responsible for visualizing Actions. Action visualizations have lifetimes
-    /// and ongoing state, making this class closely analogous in spirit to the Unity.Multiplayer.Samples.BossRoom.Server.ActionPlayer class.
+    /// and ongoing state, making this class closely analogous in spirit to the Unity.Multiplayer.Samples.BossRoom.Actions.ServerActionPlayer class.
     /// </summary>
-    public class ActionVisualization
+    public sealed class ClientActionPlayer
     {
-        private List<ActionFX> m_PlayingActions = new List<ActionFX>();
+        private List<Action> m_PlayingActions = new List<Action>();
 
         /// <summary>
         /// Don't let anticipated actionFXs persist longer than this. This is a safeguard against scenarios
@@ -17,11 +17,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private const float k_AnticipationTimeoutSeconds = 1;
 
-        public ClientCharacterVisualization Parent { get; private set; }
+        public ClientCharacterVisualization CharacterVisualization { get; private set; }
 
-        public ActionVisualization(ClientCharacterVisualization parent)
+        public ClientActionPlayer(ClientCharacterVisualization characterVisualization)
         {
-            Parent = parent;
+            CharacterVisualization = characterVisualization;
         }
 
         public void OnUpdate()
@@ -30,31 +30,32 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
                 var action = m_PlayingActions[i];
-                bool keepGoing = action.Anticipated || action.OnUpdate(); // only call OnUpdate() on actions that are past anticipation
-                bool expirable = action.Description.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
-                bool timeExpired = expirable && action.TimeRunning >= action.Description.DurationSeconds;
-                bool timedOut = action.Anticipated && action.TimeRunning >= k_AnticipationTimeoutSeconds;
+                bool keepGoing = action.AnticipatedClient || action.OnUpdateClient(CharacterVisualization); // only call OnUpdate() on actions that are past anticipation
+                bool expirable = action.Config.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
+                bool timeExpired = expirable && action.TimeRunning >= action.Config.DurationSeconds;
+                bool timedOut = action.AnticipatedClient && action.TimeRunning >= k_AnticipationTimeoutSeconds;
                 if (!keepGoing || timeExpired || timedOut)
                 {
-                    if (timedOut) { action.Cancel(); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
-                    else { action.End(); }
+                    if (timedOut) { action.CancelClient(CharacterVisualization); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
+                    else { action.EndClient(CharacterVisualization); }
 
                     m_PlayingActions.RemoveAt(i);
+                    ActionFactory.ReturnAction(action);
                 }
             }
         }
 
         //helper wrapper for a FindIndex call on m_PlayingActions.
-        private int FindAction(ActionType action, bool anticipatedOnly)
+        private int FindAction(ActionID actionID, bool anticipatedOnly)
         {
-            return m_PlayingActions.FindIndex(a => a.Description.ActionTypeEnum == action && (!anticipatedOnly || a.Anticipated));
+            return m_PlayingActions.FindIndex(a => a.ActionID == actionID && (!anticipatedOnly || a.AnticipatedClient));
         }
 
         public void OnAnimEvent(string id)
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnAnimEvent(id);
+                actionFX.OnAnimEventClient(CharacterVisualization, id);
             }
         }
 
@@ -62,7 +63,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnStoppedChargingUp(finalChargeUpPercentage);
+                actionFX.OnStoppedChargingUpClient(CharacterVisualization, finalChargeUpPercentage);
             }
         }
 
@@ -102,60 +103,60 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <param name="data">The Action that is being requested.</param>
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!Parent.IsAnimating() && ActionFX.ShouldAnticipate(this, ref data))
+            if (!CharacterVisualization.IsAnimating() && Action.ShouldClientAnticipate(CharacterVisualization, ref data))
             {
-                var actionFX = ActionFX.MakeActionFX(ref data, Parent);
-                actionFX.AnticipateAction();
+                var actionFX = ActionFactory.CreateActionFromData(ref data);
+                actionFX.AnticipateActionClient(CharacterVisualization);
                 m_PlayingActions.Add(actionFX);
             }
         }
 
         public void PlayAction(ref ActionRequestData data)
         {
-            var anticipatedActionIndex = FindAction(data.ActionTypeEnum, true);
+            var anticipatedActionIndex = FindAction(data.ActionID, true);
 
-            var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFX.MakeActionFX(ref data, Parent);
-            if (actionFX.OnStart())
+            var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFactory.CreateActionFromData(ref data);
+            if (actionFX.OnStartClient(CharacterVisualization))
             {
-                m_PlayingActions.Add(actionFX);
+                if (anticipatedActionIndex < 0)
+                {
+                    m_PlayingActions.Add(actionFX);
+                }
+                //otherwise just let the action sit in it's existing slot
             }
             else if (anticipatedActionIndex >= 0)
             {
+                var removedAction = m_PlayingActions[anticipatedActionIndex];
                 m_PlayingActions.RemoveAt(anticipatedActionIndex);
-            }
-        }
-
-        public void CancelAllActions()
-        {
-            foreach (var actionFx in m_PlayingActions)
-            {
-                actionFx.Cancel();
-            }
-            m_PlayingActions.Clear();
-        }
-
-        public void CancelAllActionsOfType(ActionType actionType)
-        {
-            for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
-            {
-                if (m_PlayingActions[i].Description.ActionTypeEnum == actionType)
-                {
-                    m_PlayingActions[i].Cancel();
-                    m_PlayingActions.RemoveAt(i);
-                }
+                ActionFactory.ReturnAction(removedAction);
             }
         }
 
         /// <summary>
         /// Cancels all playing ActionFX.
         /// </summary>
-        public void CancelAll()
+        public void CancelAllActions()
         {
             foreach (var action in m_PlayingActions)
             {
-                action.Cancel();
+                action.CancelClient(CharacterVisualization);
+                ActionFactory.ReturnAction(action);
             }
             m_PlayingActions.Clear();
+        }
+
+        public void CancelAllActionsWithSamePrototypeID(ActionID actionID)
+        {
+            for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
+            {
+                if (m_PlayingActions[i].ActionID == actionID)
+                {
+                    var action = m_PlayingActions[i];
+                    action.CancelClient(CharacterVisualization);
+                    m_PlayingActions.RemoveAt(i);
+                    ActionFactory.ReturnAction(action);
+                }
+            }
         }
     }
 }

@@ -3,15 +3,8 @@ using Unity.Multiplayer.Samples.BossRoom.Visual;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
-    /// <summary>
-    /// The visual aspect of a ChargedLaunchProjectileAction.
-    /// To show particles, the ActionDescription's Spawns list can provide a prefab that will be instantiated during run.
-    /// The prefab must have a SpecialFXGraphic component on it, which is used to cleanly shut down the graphics.
-    /// </summary>
-    public class ChargedLaunchProjectileActionFX : ActionFX
+    public partial class ChargedLaunchProjectileAction
     {
-        public ChargedLaunchProjectileActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
-
         /// <summary>
         /// A list of the special particle graphics we spawned.
         /// </summary>
@@ -24,20 +17,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private bool m_ChargeEnded;
 
-        public override bool OnStart()
+        public override bool OnStartClient(ClientCharacterVisualization parent)
         {
-            base.OnStart();
+            base.OnStartClient(parent);
 
-            m_Graphics = InstantiateSpecialFXGraphics(m_Parent.transform, true);
+            m_Graphics = InstantiateSpecialFXGraphics(parent.transform, true);
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
         {
             return !m_ChargeEnded;
         }
 
-        public override void Cancel()
+        public override void CancelClient(ClientCharacterVisualization parent)
         {
             if (!m_ChargeEnded)
             {
@@ -51,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void OnStoppedChargingUp(float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(ClientCharacterVisualization parent, float finalChargeUpPercentage)
         {
             m_ChargeEnded = true;
             foreach (var graphic in m_Graphics)
@@ -61,6 +54,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     graphic.Shutdown();
                 }
             }
+
             // the graphics will now take care of themselves and shutdown, so we can forget about 'em
             m_Graphics.Clear();
         }

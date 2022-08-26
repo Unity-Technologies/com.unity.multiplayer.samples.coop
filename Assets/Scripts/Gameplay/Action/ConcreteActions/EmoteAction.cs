@@ -1,32 +1,36 @@
 using System;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
+using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Emote Action")]
     public class EmoteAction : Action
     {
-        public EmoteAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data)
+        public override bool OnStart(ServerCharacter parent)
         {
-        }
-
-        public override bool OnStart()
-        {
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             return false;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdate(ServerCharacter parent)
         {
             // since we return false at Start(), this method should not execute
             throw new InvalidOperationException("No logic defined.");
         }
 
-        public override void Cancel()
+        public override void Cancel(ServerCharacter parent)
         {
-            if (!string.IsNullOrEmpty(Description.Anim2))
+            if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim2);
+                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
+        }
+
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        {
+            return ActionConclusion.Continue;
         }
     }
 }

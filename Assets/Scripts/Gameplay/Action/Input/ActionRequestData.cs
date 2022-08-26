@@ -5,76 +5,13 @@ using UnityEngine;
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
-    /// List of all Actions supported in the game.
-    /// </summary>
-    public enum ActionType
-    {
-        None,
-        TankBaseAttack,
-        ArcherBaseAttack,
-        MageBaseAttack,
-        RogueBaseAttack,
-        ImpBaseAttack,
-        ImpBossBaseAttack,
-        GeneralChase,
-        GeneralRevive,
-        DriveArrow,
-        Emote1,
-        Emote2,
-        Emote3,
-        Emote4,
-        TankTestability,
-        TankShieldBuff,
-        ImpBossTrampleAttack,
-        Stun,
-        TankShieldRush,
-        GeneralTarget,
-        MageHeal,
-        ArcherChargedShot,
-        RogueStealthMode,
-        ArcherVolley,
-        RogueDashAttack,
-        ImpToss,
-        PickUp,
-        Drop
-    }
-
-
-    /// <summary>
-    /// List of all Types of Actions. There is a many-to-one mapping of Actions to ActionLogics.
-    /// </summary>
-    public enum ActionLogic
-    {
-        Melee,
-        RangedTargeted,
-        Chase,
-        Revive,
-        LaunchProjectile,
-        Emote,
-        RangedFXTargeted,
-        AoE,
-        Trample,
-        ChargedShield,
-        Stunned,
-        Target,
-        ChargedLaunchProjectile,
-        StealthMode,
-        DashAttack,
-        ImpToss,
-        PickUp,
-        Drop
-        //O__O adding a new ActionLogic branch? Update Action.MakeAction!
-    }
-
-
-    /// <summary>
     /// Comprehensive class that contains information needed to play back any action on the server. This is what gets sent client->server when
     /// the Action gets played, and also what gets sent server->client to broadcast the action event. Note that the OUTCOMES of the action effect
     /// don't ride along with this object when it is broadcast to clients; that information is sync'd separately, usually by NetworkVariables.
     /// </summary>
     public struct ActionRequestData : INetworkSerializable
     {
-        public ActionType ActionTypeEnum;      //the action to play.
+        public ActionID ActionID; //index of the action in the list of all actions in the game - a way to recover the reference to the instance at runtime
         public Vector3 Position;           //center position of skill, e.g. "ground zero" of a fireball skill.
         public Vector3 Direction;          //direction of skill, if not inferrable from the character's current facing.
         public ulong[] TargetIds;          //NetworkObjectIds of targets, or null if untargeted.
@@ -99,12 +36,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             //currently serialized with a byte. Change Read/Write if you add more than 8 fields.
         }
 
+        public static ActionRequestData Create(Action action) =>
+            new()
+            {
+                ActionID = action.ActionID
+            };
+
         /// <summary>
         /// Returns true if the ActionRequestDatas are "functionally equivalent" (not including their Queueing or Closing properties).
         /// </summary>
         public bool Compare(ref ActionRequestData rhs)
         {
-            bool scalarParamsEqual = (ActionTypeEnum, Position, Direction, Amount) == (rhs.ActionTypeEnum, rhs.Position, rhs.Direction, rhs.Amount);
+            bool scalarParamsEqual = (ActionID, Position, Direction, Amount) == (rhs.ActionID, rhs.Position, rhs.Direction, rhs.Amount);
             if (!scalarParamsEqual) { return false; }
 
             if (TargetIds == rhs.TargetIds) { return true; } //covers case of both being null.
@@ -141,7 +84,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 flags = GetPackFlags();
             }
 
-            serializer.SerializeValue(ref ActionTypeEnum);
+            serializer.SerializeValue(ref ActionID);
             serializer.SerializeValue(ref flags);
 
             if (serializer.IsReader)

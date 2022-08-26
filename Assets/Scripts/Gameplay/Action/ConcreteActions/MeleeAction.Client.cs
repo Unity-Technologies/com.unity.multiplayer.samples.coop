@@ -5,14 +5,8 @@ using UnityEngine;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
-
-    /// <summary>
-    /// The visual part of a MeleeAction. See MeleeAction.cs for more about this action type.
-    /// </summary>
-    public class MeleeActionFX : ActionFX
+    public partial class MeleeAction
     {
-        public MeleeActionFX(ref ActionRequestData data, ClientCharacterVisualization parent) : base(ref data, parent) { }
-
         //have we actually played an impact? This won't necessarily happen for all swings. Sometimes you're just swinging at space.
         private bool m_ImpactPlayed;
 
@@ -26,10 +20,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-
-        public override bool OnStart()
+        public override bool OnStartClient(ClientCharacterVisualization parent)
         {
-            base.OnStart();
+            base.OnStartClient(parent);
 
             // we can optionally have special particles that should play on the target. If so, add them now.
             // (don't wait until impact, because the particles need to start sooner!)
@@ -38,7 +31,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 && NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
                 && targetNetworkObj != null)
             {
-                float padRange = Description.Range + k_RangePadding;
+                float padRange = Config.Range + k_RangePadding;
 
                 Vector3 targetPosition;
                 if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var physicsWrapper))
@@ -50,37 +43,38 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     targetPosition = targetNetworkObj.transform.position;
                 }
 
-                if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                if ((parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
                     // target is in range! Play the graphics
                     m_SpawnedGraphics = InstantiateSpecialFXGraphics(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
                 }
             }
+
             return true;
         }
 
-        public override bool OnUpdate()
+        public override bool OnUpdateClient(ClientCharacterVisualization parent)
         {
             return ActionConclusion.Continue;
         }
 
-        public override void OnAnimEvent(string id)
+        public override void OnAnimEventClient(ClientCharacterVisualization parent, string id)
         {
             if (id == "impact" && !m_ImpactPlayed)
             {
-                PlayHitReact();
+                PlayHitReact(parent);
             }
         }
 
-        public override void End()
+        public override void EndClient(ClientCharacterVisualization parent)
         {
             //if this didn't already happen, make sure it gets a chance to run. This could have failed to run because
             //our animationclip didn't have the "impact" event properly configured (as one possibility).
-            PlayHitReact();
-            base.End();
+            PlayHitReact(parent);
+            base.EndClient(parent);
         }
 
-        public override void Cancel()
+        public override void CancelClient(ClientCharacterVisualization parent)
         {
             // if we had any special target graphics, tell them we're done
             if (m_SpawnedGraphics != null)
@@ -95,9 +89,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        private void PlayHitReact()
+        void PlayHitReact(ClientCharacterVisualization parent)
         {
             if (m_ImpactPlayed) { return; }
+
             m_ImpactPlayed = true;
 
             if (NetworkManager.Singleton.IsServer)
@@ -111,7 +106,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(Data.TargetIds[0], out var targetNetworkObj)
                 && targetNetworkObj != null)
             {
-                float padRange = Description.Range + k_RangePadding;
+                float padRange = Config.Range + k_RangePadding;
 
                 Vector3 targetPosition;
                 if (PhysicsWrapper.TryGetPhysicsWrapper(Data.TargetIds[0], out var movementContainer))
@@ -123,12 +118,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     targetPosition = targetNetworkObj.transform.position;
                 }
 
-                if ((m_Parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                if ((parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
-                    if (targetNetworkObj.NetworkObjectId != m_Parent.NetworkObjectId)
+                    if (targetNetworkObj.NetworkObjectId != parent.NetworkObjectId)
                     {
-                        string hitAnim = Description.ReactAnim;
+                        string hitAnim = Config.ReactAnim;
                         if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
+
                         var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
                         if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
                         {

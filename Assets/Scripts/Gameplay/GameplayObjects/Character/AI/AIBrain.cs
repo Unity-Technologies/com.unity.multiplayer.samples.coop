@@ -21,7 +21,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         static readonly AIStateType[] k_AIStates = (AIStateType[])Enum.GetValues(typeof(AIStateType));
 
         private ServerCharacter m_ServerCharacter;
-        private ActionPlayer m_ActionPlayer;
+        private ServerActionPlayer m_ServerActionPlayer;
         private AIStateType m_CurrentState;
         private Dictionary<AIStateType, AIState> m_Logics;
         private List<ServerCharacter> m_HatedEnemies;
@@ -32,16 +32,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// </summary>
         private float m_DetectRangeOverride = -1;
 
-        public AIBrain(ServerCharacter me, ActionPlayer myActionPlayer)
+        public AIBrain(ServerCharacter me, ServerActionPlayer myServerActionPlayer)
         {
             m_ServerCharacter = me;
-            m_ActionPlayer = myActionPlayer;
+            m_ServerActionPlayer = myServerActionPlayer;
 
             m_Logics = new Dictionary<AIStateType, AIState>
             {
                 [AIStateType.IDLE] = new IdleAIState(this),
                 //[ AIStateType.WANDER ] = new WanderAIState(this), // not written yet
-                [AIStateType.ATTACK] = new AttackAIState(this, m_ActionPlayer),
+                [AIStateType.ATTACK] = new AttackAIState(this, m_ServerActionPlayer),
             };
             m_HatedEnemies = new List<ServerCharacter>();
             m_CurrentState = AIStateType.IDLE;

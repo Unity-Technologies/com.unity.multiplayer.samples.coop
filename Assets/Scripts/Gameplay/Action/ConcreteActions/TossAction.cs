@@ -1,20 +1,22 @@
+using System;
 using UnityEngine;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
+using Random = UnityEngine.Random;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Actions
 {
     /// <summary>
     /// Action responsible for creating a physics-based thrown object.
     /// </summary>
+    [CreateAssetMenu(menuName = "BossRoom/Actions/Toss Action")]
     public class TossAction : Action
     {
         bool m_Launched;
 
-        public TossAction(ServerCharacter parent, ref ActionRequestData data) : base(parent, ref data) { }
-
-        public override bool OnStart()
+        public override bool OnStart(ServerCharacter parent)
         {
             // snap to face the direction we're firing
 
@@ -34,20 +36,26 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     }
 
                     // snap to face our target! This is the direction we'll attack in
-                    m_Parent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                    parent.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
-            m_Parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Description.Anim);
-            m_Parent.NetState.RecvDoActionClientRPC(Data);
+            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            parent.NetState.RecvDoActionClientRPC(Data);
             return true;
         }
 
-        public override bool OnUpdate()
+        public override void Reset()
         {
-            if (TimeRunning >= Description.ExecTimeSeconds && !m_Launched)
+            base.Reset();
+            m_Launched = false;
+        }
+
+        public override bool OnUpdate(ServerCharacter parent)
+        {
+            if (TimeRunning >= Config.ExecTimeSeconds && !m_Launched)
             {
-                Throw();
+                Throw(parent);
             }
 
             return true;
@@ -58,16 +66,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// For the base class, this is always just the first entry with a valid prefab in it!
         /// </summary>
         /// <exception cref="System.Exception">thrown if no Projectiles are valid</exception>
-        ActionDescription.ProjectileInfo GetProjectileInfo()
+        ProjectileInfo GetProjectileInfo()
         {
-            foreach (var projectileInfo in Description.Projectiles)
+            foreach (var projectileInfo in Config.Projectiles)
             {
                 if (projectileInfo.ProjectilePrefab)
                 {
                     return projectileInfo;
                 }
             }
-            throw new System.Exception($"Action {Description.ActionTypeEnum} has no usable Projectiles!");
+            throw new System.Exception($"Action {this.name} has no usable Projectiles!");
         }
 
         /// <summary>
@@ -76,7 +84,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// <remarks>
         /// This calls GetProjectilePrefab() to find the prefab it should instantiate.
         /// </remarks>
-        void Throw()
+        void Throw(ServerCharacter parent)
         {
             if (!m_Launched)
             {
@@ -89,9 +97,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 var networkObjectTransform = no.transform;
 
                 // point the thrown object the same way we're facing
-                networkObjectTransform.forward = m_Parent.physicsWrapper.Transform.forward;
+                networkObjectTransform.forward = parent.physicsWrapper.Transform.forward;
 
-                networkObjectTransform.position = m_Parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
+                networkObjectTransform.position = parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(networkObjectTransform.position) +
                     networkObjectTransform.forward + (Vector3.up * 2f);
 
                 no.Spawn(true);
