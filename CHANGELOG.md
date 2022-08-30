@@ -23,6 +23,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
 * Refactored connection management into simpler state machine (#666)
 * Merged GameState bridge classes (the ones that contained no or limited functionality) (#697) This cleans up our sometimes too verbose code split.
+* Modified the red arrow of the boss charge attack to fade in and out (rather than just being enabled disabled) (#715)
 * Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
 * Action and ActionFX classes have been merged into a single Scriptable Object-based Action class; all the existing actions have been refactored to follow this new design (#705)
 * Refactored the Action system so that the action objects themselves are pooled Scriptable Objects (#705)
