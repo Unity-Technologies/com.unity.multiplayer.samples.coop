@@ -44,7 +44,7 @@ namespace Unity.Multiplayer.Samples.Utilities
             SceneManager.MoveGameObjectToScene(instantiatedNetworkObject.gameObject,
                 SceneManager.GetSceneByName(gameObject.scene.name));
             instantiatedNetworkObject.transform.localScale = transform.lossyScale;
-            instantiatedNetworkObject.Spawn(destroyWithScene:true);
+            instantiatedNetworkObject.Spawn(destroyWithScene: true);
         }
     }
 }
