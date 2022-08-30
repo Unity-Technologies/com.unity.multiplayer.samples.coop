@@ -12,9 +12,9 @@ GameObject:
   - component: {fileID: 1583543423304314435}
   - component: {fileID: 1583543423304314433}
   - component: {fileID: 557076851198928999}
-  - component: {fileID: -6910049848596396308}
   - component: {fileID: 7749064398440206079}
   - component: {fileID: 172480899766740213}
+  - component: {fileID: 3829689126279177341}
   m_Layer: 6
   m_Name: PickUpPot
   m_TagString: Heavy
@@ -79,32 +79,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.9166098, y: 2.0842423, z: 1.91661}
   m_Center: {x: 0.00000017881393, y: 1.0421212, z: 0.00000059604645}
---- !u!114 &-6910049848596396308
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1583543423304314434}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  SyncPositionX: 1
-  SyncPositionY: 1
-  SyncPositionZ: 1
-  SyncRotAngleX: 1
-  SyncRotAngleY: 1
-  SyncRotAngleZ: 1
-  SyncScaleX: 1
-  SyncScaleY: 1
-  SyncScaleZ: 1
-  PositionThreshold: 0
-  RotAngleThreshold: 0
-  ScaleThreshold: 0
-  InLocalSpace: 0
-  Interpolate: 1
 --- !u!114 &7749064398440206079
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -117,7 +91,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19d305a23aab66843ab49f61511c8662, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_NetworkTransform: {fileID: -6910049848596396308}
+  m_NetworkTransform: {fileID: 3829689126279177341}
   m_PositionConstraint: {fileID: 172480899766740213}
 --- !u!1818360608 &172480899766740213
 PositionConstraint:
@@ -136,6 +110,32 @@ PositionConstraint:
   m_IsContraintActive: 0
   m_IsLocked: 0
   m_Sources: []
+--- !u!114 &3829689126279177341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1583543423304314434}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e96cb6065543e43c4a752faaa1468eb1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 0
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 0
+  SyncScaleX: 0
+  SyncScaleY: 0
+  SyncScaleZ: 0
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  InLocalSpace: 0
+  Interpolate: 1
 --- !u!1001 &1583543425366239673
 PrefabInstance:
   m_ObjectHideFlags: 0

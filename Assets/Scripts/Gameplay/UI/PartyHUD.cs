@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine.Assertions;
 
@@ -239,7 +240,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void SelectPartyMember(int slot)
         {
-            m_ClientSender.RequestAction(ActionType.GeneralTarget, Client.ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
+            m_ClientSender.RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype, Client.ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
         }
 
         // helper to initialize the Allies array - safe to call multiple times

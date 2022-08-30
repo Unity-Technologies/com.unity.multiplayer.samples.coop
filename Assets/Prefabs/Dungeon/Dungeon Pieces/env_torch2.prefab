@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0.000000021855694, y: 0.00000011920929, z: -2.6054018e-15, w: 1}
   m_LocalPosition: {x: 0.2620883, y: 0, z: 17.00224}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3790976994824457333}
   - {fileID: 2669503988279524391}
@@ -56,6 +57,7 @@ MeshRenderer:
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -142,6 +144,7 @@ Transform:
   m_LocalRotation: {x: -0.000000021855694, y: -0.00000011920929, z: 0.000000007450582, w: 1}
   m_LocalPosition: {x: -0.06, y: 2.31, z: -0.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3325143161705299546}
   m_RootOrder: 1
@@ -219,6 +222,7 @@ GameObject:
   - component: {fileID: 3790976994824457333}
   - component: {fileID: 6986497425504466037}
   - component: {fileID: 2386560678635874104}
+  - component: {fileID: 1508223135126410601}
   m_Layer: 0
   m_Name: Point Light_Realtime
   m_TagString: LightingRealtime
@@ -236,6 +240,7 @@ Transform:
   m_LocalRotation: {x: -0.000000021855694, y: -0.00000011920929, z: 0.000000007450582, w: 1}
   m_LocalPosition: {x: -0.06, y: 3.86, z: -0.02}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 3325143161705299546}
   m_RootOrder: 0
@@ -289,7 +294,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 34048
   m_RenderingLayerMask: 1
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
@@ -318,6 +323,26 @@ MonoBehaviour:
   m_MinIntensity: 1
   m_MaxIntensity: 30
   m_Smoothing: 36
+--- !u!114 &1508223135126410601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6439644344178914268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 474bcb49853aa07438625e644c072ee6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Version: 1
+  m_UsePipelineSettings: 1
+  m_AdditionalLightsShadowResolutionTier: 2
+  m_LightLayerMask: 1
+  m_CustomShadowLayers: 0
+  m_ShadowLayerMask: 1
+  m_LightCookieSize: {x: 1, y: 1}
+  m_LightCookieOffset: {x: 0, y: 0}
 --- !u!1001 &5931713884133125109
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using SkillTriggerStyle = Unity.Multiplayer.Samples.BossRoom.Client.ClientInputSender.SkillTriggerStyle;
@@ -52,10 +53,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 switch (buttonIndex)
                 {
-                    case 0: m_InputSender.RequestAction(ActionType.Emote1, SkillTriggerStyle.UI); break;
-                    case 1: m_InputSender.RequestAction(ActionType.Emote2, SkillTriggerStyle.UI); break;
-                    case 2: m_InputSender.RequestAction(ActionType.Emote3, SkillTriggerStyle.UI); break;
-                    case 3: m_InputSender.RequestAction(ActionType.Emote4, SkillTriggerStyle.UI); break;
+                    case 0: m_InputSender.RequestAction(GameDataSource.Instance.Emote1ActionPrototype, SkillTriggerStyle.UI); break;
+                    case 1: m_InputSender.RequestAction(GameDataSource.Instance.Emote2ActionPrototype, SkillTriggerStyle.UI); break;
+                    case 2: m_InputSender.RequestAction(GameDataSource.Instance.Emote3ActionPrototype, SkillTriggerStyle.UI); break;
+                    case 3: m_InputSender.RequestAction(GameDataSource.Instance.Emote4ActionPrototype, SkillTriggerStyle.UI); break;
                 }
             }
 

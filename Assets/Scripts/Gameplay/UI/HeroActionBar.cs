@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
@@ -75,10 +76,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             public readonly UIHUDButton Button;
             public readonly Client.UITooltipDetector Tooltip;
 
-            /// <summary>
-            /// The current ActionType that is used when this button is pressed.
+            /// <summary> T
+            /// The current Action that is used when this button is pressed.
             /// </summary>
-            public ActionType CurActionType;
+            public Action CurAction;
 
             readonly HeroActionBar m_Owner;
 
@@ -87,7 +88,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 Type = type;
                 Button = button;
                 Tooltip = button.GetComponent<Client.UITooltipDetector>();
-                CurActionType = ActionType.None;
                 m_Owner = owner;
             }
 
@@ -237,7 +237,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // send input to begin the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurActionType, SkillTriggerStyle.UI);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction, SkillTriggerStyle.UI);
         }
 
         void OnButtonClickedUp(ActionButtonType buttonType)
@@ -255,7 +255,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // send input to complete the action associated with this button
-            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurActionType, SkillTriggerStyle.UIRelease);
+            m_InputSender.RequestAction(m_ButtonInfo[buttonType].CurAction, SkillTriggerStyle.UIRelease);
         }
 
         /// <summary>
@@ -278,7 +278,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (isHoldingNetworkObject)
             {
                 // show drop!
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.Drop, true);
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.DropActionPrototype, true);
             }
             if ((m_NetState.TargetId.Value != 0
                     && selection != null
@@ -286,7 +286,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                )
             {
                 // special case: targeting a pickup-able item or holding a pickup object
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.PickUp, true);
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.PickUpActionPrototype, true);
             }
             else if (m_NetState.TargetId.Value != 0
                 && selection != null
@@ -299,7 +299,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 // But we need to know if the player is alive... if so, the button should be disabled (for better player communication)
 
                 bool isAlive = charState.NetworkLifeState.LifeState.Value == LifeState.Alive;
-                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], ActionType.GeneralRevive, !isAlive);
+                UpdateActionButton(m_ButtonInfo[ActionButtonType.BasicAction], GameDataSource.Instance.ReviveActionPrototype, !isAlive);
 
                 // we'll continue to monitor our selected player every frame to see if their life-state changes.
                 m_SelectedPlayerNetState = charState;
@@ -312,17 +312,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void UpdateActionButton(ActionButtonInfo buttonInfo, ActionType actionType, bool isClickable = true)
+        void UpdateActionButton(ActionButtonInfo buttonInfo, Action action, bool isClickable = true)
         {
             // first find the info we need (sprite and description)
             Sprite sprite = null;
             string description = "";
 
-            if (actionType != ActionType.None)
+            if (action != null)
             {
-                var desc = GameDataSource.Instance.ActionDataByType[actionType];
-                sprite = desc.Icon;
-                description = desc.Description;
+                sprite = action.Config.Icon;
+                description = action.Config.Description;
             }
 
             // set up UI elements appropriately
@@ -339,7 +338,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
 
             // store the action type so that we can retrieve it in click events
-            buttonInfo.CurActionType = actionType;
+            buttonInfo.CurAction = action;
         }
     }
 }
