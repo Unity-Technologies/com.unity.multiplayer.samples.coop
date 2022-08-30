@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 
 namespace Unity.Multiplayer.Samples.BossRoom.Client
 {
@@ -76,21 +76,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             ConfigureSkillIcon(m_Skill3, characterClass.Skill3);
         }
 
-        private void ConfigureSkillIcon(Image iconSlot, ActionType type)
+        private void ConfigureSkillIcon(Image iconSlot, Action action)
         {
-            if (type == ActionType.None)
+            if (action == null)
             {
                 iconSlot.gameObject.SetActive(false);
             }
             else
             {
                 iconSlot.gameObject.SetActive(true);
-                var data = GameDataSource.Instance.ActionDataByType[type];
-                iconSlot.sprite = data.Icon;
+                iconSlot.sprite = action.Config.Icon;
                 UITooltipDetector tooltipDetector = iconSlot.GetComponent<UITooltipDetector>();
                 if (tooltipDetector)
                 {
-                    tooltipDetector.SetText(string.Format(m_TooltipFormat, data.DisplayedName, data.Description));
+                    tooltipDetector.SetText(string.Format(m_TooltipFormat, action.Config.DisplayedName, action.Config.Description));
                 }
             }
         }

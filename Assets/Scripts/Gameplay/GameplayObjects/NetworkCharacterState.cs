@@ -1,4 +1,5 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -137,12 +138,12 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <summary>
         /// This event is raised on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
         /// </summary>
-        public event Action CancelAllActionsEventClient;
+        public event System.Action CancelAllActionsEventClient;
 
         /// <summary>
         /// This event is raised on the client when active action FXs of a certain type need to be cancelled (e.g. when the Stealth action ends)
         /// </summary>
-        public event Action<ActionType> CancelActionsByTypeEventClient;
+        public event Action<ActionID> CancelActionsByPrototypeIDEventClient;
 
         /// <summary>
         /// /// Server to Client RPC that broadcasts this action play to all clients.
@@ -161,9 +162,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         [ClientRpc]
-        public void RecvCancelActionsByTypeClientRpc(ActionType action)
+        public void RecvCancelActionsByPrototypeIDClientRpc(ActionID actionPrototypeID)
         {
-            CancelActionsByTypeEventClient?.Invoke(action);
+            CancelActionsByPrototypeIDEventClient?.Invoke(actionPrototypeID);
         }
 
         /// <summary>
@@ -181,7 +182,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         /// <summary>
         /// Called on server when the character's client decides they have stopped "charging up" an attack.
         /// </summary>
-        public event Action OnStopChargingUpServer;
+        public event System.Action OnStopChargingUpServer;
 
         /// <summary>
         /// Called on all clients when this character has stopped "charging up" an attack.

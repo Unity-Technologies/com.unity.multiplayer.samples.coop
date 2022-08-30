@@ -23,7 +23,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         {
             if (NetworkManager.Singleton.LocalClientId != OwnerClientId)
             {
-                Destroy(this);
+                enabled = false;
                 return;
             }
 

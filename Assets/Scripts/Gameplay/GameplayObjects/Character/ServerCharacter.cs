@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -23,7 +24,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// The Character's ActionPlayer. This is mainly exposed for use by other Actions. In particular, users are discouraged from
         /// calling 'PlayAction' directly on this, as the ServerCharacter has certain game-level checks it performs in its own wrapper.
         /// </summary>
-        public ActionPlayer RunningActions { get { return m_ActionPlayer; } }
+        public ServerActionPlayer ActionPlayer { get { return m_ServerActionPlayer; } }
 
         [SerializeField]
         [Tooltip("If set to false, an NPC character will be denied its brain (won't attack or chase players)")]
@@ -35,9 +36,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         [SerializeField]
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
-        private ActionType m_StartingAction = ActionType.None;
+        private Action m_StartingAction;
 
-        private ActionPlayer m_ActionPlayer;
+        private ServerActionPlayer m_ServerActionPlayer;
         private AIBrain m_AIBrain;
 
         [SerializeField]
@@ -60,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void Awake()
         {
-            m_ActionPlayer = new ActionPlayer(this);
+            m_ServerActionPlayer = new ServerActionPlayer(this);
         }
 
         public override void OnNetworkSpawn()
@@ -77,12 +78,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 if (NetState.IsNpc)
                 {
-                    m_AIBrain = new AIBrain(this, m_ActionPlayer);
+                    m_AIBrain = new AIBrain(this, m_ServerActionPlayer);
                 }
 
-                if (m_StartingAction != ActionType.None)
+                if (m_StartingAction != null)
                 {
-                    var startingAction = new ActionRequestData() { ActionTypeEnum = m_StartingAction };
+                    var startingAction = new ActionRequestData() { ActionID = m_StartingAction.ActionID };
                     PlayAction(ref startingAction);
                 }
                 InitializeHitPoints();
@@ -137,7 +138,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     m_Movement.CancelMove();
                 }
 
-                m_ActionPlayer.PlayAction(ref action);
+                m_ServerActionPlayer.PlayAction(ref action);
             }
         }
 
@@ -146,18 +147,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (NetState.LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
             {
                 // if we're currently playing an interruptible action, interrupt it!
-                if (m_ActionPlayer.GetActiveActionInfo(out ActionRequestData data))
+                if (m_ServerActionPlayer.GetActiveActionInfo(out ActionRequestData data))
                 {
-                    if (GameDataSource.Instance.ActionDataByType.TryGetValue(data.ActionTypeEnum, out ActionDescription description))
+                    if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.ActionInterruptible)
                     {
-                        if (description.ActionInterruptible)
-                        {
-                            m_ActionPlayer.ClearActions(false);
-                        }
+                        m_ServerActionPlayer.ClearActions(false);
                     }
                 }
 
-                m_ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
+                m_ServerActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
                 m_Movement.SetMovementTarget(targetPosition);
             }
         }
@@ -166,17 +164,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (lifeState != LifeState.Alive)
             {
-                m_ActionPlayer.ClearActions(true);
+                m_ServerActionPlayer.ClearActions(true);
                 m_Movement.CancelMove();
             }
         }
 
         private void OnActionPlayRequest(ActionRequestData data)
         {
-            if (!GameDataSource.Instance.ActionDataByType[data.ActionTypeEnum].IsFriendly)
+            if (!GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.IsFriendly)
             {
                 // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
-                RunningActions.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);
+                ActionPlayer.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);
             }
 
             PlayAction(ref data);
@@ -202,8 +200,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             //to our own effects, and modify the damage or healing as appropriate. But in this game, we just take it straight.
             if (HP > 0)
             {
-                m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.Healed);
-                float healingMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentHealingReceived);
+                m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.Healed);
+                float healingMod = m_ServerActionPlayer.GetBuffedValue(Action.BuffableValue.PercentHealingReceived);
                 HP = (int)(HP * healingMod);
             }
             else
@@ -216,8 +214,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 }
 #endif
 
-                m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
-                float damageMod = m_ActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
+                m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.AttackedByEnemy);
+                float damageMod = m_ServerActionPlayer.GetBuffedValue(Action.BuffableValue.PercentDamageReceived);
                 HP = (int)(HP * damageMod);
 
                 serverAnimationHandler.NetworkAnimator.SetTrigger("HitReact1");
@@ -249,7 +247,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                     NetState.LifeState = LifeState.Fainted;
                 }
 
-                m_ActionPlayer.ClearActions(false);
+                m_ServerActionPlayer.ClearActions(false);
             }
         }
 
@@ -261,7 +259,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         /// <returns></returns>
         public float GetBuffedValue(Action.BuffableValue buffType)
         {
-            return m_ActionPlayer.GetBuffedValue(buffType);
+            return m_ServerActionPlayer.GetBuffedValue(buffType);
         }
 
         /// <summary>
@@ -280,7 +278,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         void Update()
         {
-            m_ActionPlayer.Update();
+            m_ServerActionPlayer.OnUpdate();
             if (m_AIBrain != null && NetState.LifeState == LifeState.Alive && m_BrainEnabled)
             {
                 m_AIBrain.Update();
@@ -289,15 +287,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         private void CollisionEntered(Collision collision)
         {
-            if (m_ActionPlayer != null)
+            if (m_ServerActionPlayer != null)
             {
-                m_ActionPlayer.OnCollisionEnter(collision);
+                m_ServerActionPlayer.CollisionEntered(collision);
             }
         }
 
         private void OnStoppedChargingUp()
         {
-            m_ActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
+            m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }
 
         /// <summary>
