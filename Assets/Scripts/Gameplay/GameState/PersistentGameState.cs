@@ -12,12 +12,20 @@ namespace Unity.Multiplayer.Samples.BossRoom
     }
 
     /// <summary>
-    /// MonoBehaviour containing only one NetworkVariable<WinState> to represent the game session's win state.
+    /// Class containing some data that needs to be passed between ServerBossRoomState and PostGameState to represent the game session's win state.
     /// </summary>
-    public class PersistentGameState : NetworkBehaviour
+    public class PersistentGameState
     {
-        public NetworkVariable<WinState> winState = new NetworkVariable<WinState>(WinState.Invalid);
+        public WinState WinState { get; private set; }
 
-        public static PersistentGameState Instance;
+        public void SetWinState(WinState winState)
+        {
+            WinState = winState;
+        }
+
+        public void Reset()
+        {
+            WinState = WinState.Invalid;
+        }
     }
 }
