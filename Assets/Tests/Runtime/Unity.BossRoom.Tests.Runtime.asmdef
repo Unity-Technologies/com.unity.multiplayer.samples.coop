@@ -4,13 +4,18 @@
     "references": [
         "UnityEngine.TestRunner",
         "UnityEditor.TestRunner",
+        "Unity.Multiplayer.Samples.Utilities",
         "Unity.Multiplayer.Samples.Utilities.Testing",
+        "Unity.BossRoom.ConnectionManagement",
         "Unity.BossRoom.Gameplay",
         "Unity.BossRoom.Infrastructure",
+        "Unity.BossRoom.UnityServices",
+        "Unity.BossRoom.Utils",
         "Unity.Netcode.Runtime",
         "Unity.Netcode.TestHelpers.Runtime",
         "VContainer",
-        "VContainer.EnableCodeGen"
+        "VContainer.EnableCodeGen",
+        "Unity.Collections"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

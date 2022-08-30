@@ -1,7 +1,7 @@
 fileFormatVersion: 2
 guid: db0a9d52f0048274e8dc5e5e35234608
 ModelImporter:
-  serializedVersion: 20200
+  serializedVersion: 21202
   internalIDToNameTable: []
   externalObjects: {}
   materials:
@@ -14,6 +14,7 @@ ModelImporter:
     bakeSimulation: 0
     resampleCurves: 1
     optimizeGameObjects: 0
+    removeConstantScaleCurves: 1
     motionNodeName: 
     rigImportErrors: 
     rigImportWarnings: 
@@ -43,6 +44,7 @@ ModelImporter:
     importBlendShapes: 0
     importCameras: 0
     importLights: 0
+    nodeNameCollisionStrategy: 1
     fileIdsGeneration: 2
     swapUVChannels: 0
     generateSecondaryUV: 1
@@ -54,15 +56,16 @@ ModelImporter:
     skinWeightsMode: 0
     maxBonesPerVertex: 4
     minBoneWeight: 0.001
+    optimizeBones: 1
     meshOptimizationFlags: -1
     indexFormat: 0
-    secondaryUVAngleDistortion: 75
-    secondaryUVAreaDistortion: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15
     secondaryUVHardAngle: 88
     secondaryUVMarginMethod: 0
-    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinLightmapResolution: 2
     secondaryUVMinObjectScale: 1
-    secondaryUVPackMargin: 48
+    secondaryUVPackMargin: 64
     useFileScale: 1
   tangentSpace:
     normalSmoothAngle: 60

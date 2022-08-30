@@ -9,7 +9,12 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ## [Unreleased] - yyyy-mm-dd
 
 ### Added
+* Added tests for connection management (#692). These are integration tests to validate that the state machine works properly. They use Netcode's NetworkIntegrationTest
+* Added handling the OnTransportFailure callback (#707). This callback is invoked when a failure happens on the transport's side, for example if the host loses connection to the Relay service. This won't get called when the host is just listening with direct IP, this would need to be handled differently (by pinging an external service like google to test for internet connectivity for example). Boss Room now handles that callback by returning to the Offline state.
 * Pickup and Drop action added to the Action system. Actionable once targeting a "Heavy"-tagged NetworkObject. (#372) - This shows NetworkObject parenting with a pattern to follow animation bones (the hands when picking up)
+* LODs setup for some art assets [MTT-4451] (#712)
+* Introduced a mechanism for identifying actions by their runtime-generated ActionID, instead of relying on a fragile ActionType enumeration (#705)
+* NetworkObjectSpawner handles dynamically spawning in-scene placed NetworkObjects (#717) - You can't place a NetworkObject in scene directly and destroy it at runtime. This PR showcases proper handling of NetworkObjects that you'd wish to place inside of scenes, but would still want to destroy at game-time. Examples of these are: Imps, VandalImps, ImpBoss. NetworkObjects such as doors, crystals, door switch, etc. remain the same, statically-placed in scene.
 * Quality levels settings set up for Desktop [MTT-4450] (#713)
 
 ### Changed
@@ -18,12 +23,18 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
 * Refactored connection management into simpler state machine (#666)
 * Merged GameState bridge classes (the ones that contained no or limited functionality) (#697) This cleans up our sometimes too verbose code split.
+* Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
+* Action and ActionFX classes have been merged into a single Scriptable Object-based Action class; all the existing actions have been refactored to follow this new design (#705)
+* Refactored the Action system so that the action objects themselves are pooled Scriptable Objects (#705)
+* Configured the NetworkTransform components of every NetworkObject to reduce the bandwidth usage (#716). This prevents the unnecessary synchronization of data that clients do not need, i.e. a character's scale or y position. In the case of a character, it reduced the size of each update from 47B to 23B.
+* Bump to NGO 1.0.1 (#720)
 * 
 ### Removed
 *
 ### Fixed
 * Subscribing to a message channel while unsubscribing is pending (#675)
 * Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
+* Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
 
 ## [v1.3.0-pre] - 2022-06-23
 
