@@ -41,8 +41,10 @@ namespace Unity.Multiplayer.Samples.Utilities
         void SpawnNetworkObject()
         {
             var instantiatedNetworkObject = Instantiate(prefabReference, transform.position, transform.rotation, null);
+            SceneManager.MoveGameObjectToScene(instantiatedNetworkObject.gameObject,
+                SceneManager.GetSceneByName(gameObject.scene.name));
             instantiatedNetworkObject.transform.localScale = transform.lossyScale;
-            instantiatedNetworkObject.Spawn();
+            instantiatedNetworkObject.Spawn(destroyWithScene: true);
         }
     }
 }
