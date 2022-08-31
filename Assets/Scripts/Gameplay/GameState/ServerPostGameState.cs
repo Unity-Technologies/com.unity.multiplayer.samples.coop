@@ -1,3 +1,4 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
@@ -12,10 +13,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         NetcodeHooks m_NetcodeHooks;
 
+        [SerializeField]
+        PostGameStateData synchronizedStateData;
+        public PostGameStateData SynchronizedStateData => synchronizedStateData;
+
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
         [Inject]
         ConnectionManager m_ConnectionManager;
+
+        [Inject]
+        PersistentGameState m_PersistentGameState;
 
         protected override void Awake()
         {
@@ -33,6 +41,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             else
             {
                 SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
+                synchronizedStateData.WinState.Value = m_PersistentGameState.WinState;
             }
         }
 
@@ -40,10 +49,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             //clear actions pool
             ActionFactory.PurgePooledActions();
-
-            //unset the win state, so that when we load into BossRoomState - it gets properly reset
-            Destroy(PersistentGameState.Instance.gameObject);
-            PersistentGameState.Instance = null;
+            m_PersistentGameState.Reset();
 
             base.OnDestroy();
 

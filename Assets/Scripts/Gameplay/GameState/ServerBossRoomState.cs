@@ -56,15 +56,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         IDisposable m_Subscription;
 
         [Inject] ConnectionManager m_ConnectionManager;
+        [Inject] PersistentGameState m_PersistentGameState;
 
         protected override void Awake()
         {
             base.Awake();
-
-            //setting the cross-scene reference to PersistentGameState that is cleaned up in PostGameState
-            PersistentGameState.Instance = persistentGameState;
-            DontDestroyOnLoad(persistentGameState);
-
             m_NetcodeHooks.OnNetworkSpawnHook += OnNetworkSpawn;
             m_NetcodeHooks.OnNetworkDespawnHook += OnNetworkDespawn;
         }
@@ -76,7 +72,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 enabled = false;
                 return;
             }
-
+            m_PersistentGameState.Reset();
             m_Subscription = m_LifeStateChangedEventMessageSubscriber.Subscribe(OnLifeStateChangedEventMessage);
 
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
@@ -261,7 +257,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         IEnumerator CoroGameOver(float wait, bool gameWon)
         {
-            persistentGameState.winState.Value = gameWon ? WinState.Win : WinState.Loss;
+            m_PersistentGameState.SetWinState(gameWon ? WinState.Win : WinState.Loss);
 
             // wait 5 seconds for game animations to finish
             yield return new WaitForSeconds(wait);

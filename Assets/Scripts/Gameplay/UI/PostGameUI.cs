@@ -51,8 +51,25 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
                 m_ReplayButton.SetActive(false);
                 m_WaitOnHostMsg.SetActive(true);
             }
+        }
 
-            SetPostGameUI(PersistentGameState.Instance.winState.Value);
+        void Start()
+        {
+            m_PostGameState.SynchronizedStateData.WinState.OnValueChanged += OnWinStateChanged;
+            SetPostGameUI(m_PostGameState.SynchronizedStateData.WinState.Value);
+        }
+
+        void OnDestroy()
+        {
+            if (m_PostGameState != null)
+            {
+                m_PostGameState.SynchronizedStateData.WinState.OnValueChanged -= OnWinStateChanged;
+            }
+        }
+
+        void OnWinStateChanged(WinState previousValue, WinState newValue)
+        {
+            SetPostGameUI(newValue);
         }
 
         void SetPostGameUI(WinState winState)
