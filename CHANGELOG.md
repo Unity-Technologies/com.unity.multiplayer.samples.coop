@@ -35,7 +35,6 @@ Additional documentation and release notes are available at [Multiplayer Documen
 ### Fixed
 * Subscribing to a message channel while unsubscribing is pending (#675)
 * Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
-* Fixed a bug caused by DontDestroyOnLoad of a networkbehaviour that carried a WinState netvar - now this state is passed by server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
 * Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
 
 ## [v1.3.0-pre] - 2022-06-23
