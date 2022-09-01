@@ -9,7 +9,7 @@
   "dependencies": {
     "com.unity.learn.iet-framework": "1.2.1",
     "com.unity.multiplayer.tools": "1.0.0-pre.7",
-    "com.unity.netcode.gameobjects": "1.0.0-pre.10",
+    "com.unity.netcode.gameobjects": "1.0.1",
     "com.unity.services.authentication": "1.0.0-pre.4",
     "com.unity.services.lobby": "1.0.0-pre.6",
     "com.unity.services.relay": "1.0.2"
