@@ -4823,7 +4823,6 @@ GameObject:
   - component: {fileID: 8685160403954219721}
   - component: {fileID: 8685160403954219718}
   - component: {fileID: 8685160403954219719}
-  - component: {fileID: 8685160403954219720}
   m_Layer: 0
   m_Name: FX_IMP_TossAttack_Sparks
   m_TagString: Untagged
@@ -9628,26 +9627,6 @@ ParticleSystemRenderer:
   m_MeshWeighting2: 1
   m_MeshWeighting3: 1
   m_MaskInteraction: 0
---- !u!95 &8685160403954219720
-Animator:
-  serializedVersion: 4
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8685160403954219716}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &8685160405081816987
 GameObject:
   m_ObjectHideFlags: 0
