@@ -1,5 +1,10 @@
 # Multiplayer Samples Co-op Changelog
 
+## [1.3.1-pre] - 2022-09-xx
+
+### Fixed
+* Updating ClientNetworkTransform for latest NGO 1.0.1
+
 ## [1.3.0-pre] - 2022-06-23
 
 ### Added
