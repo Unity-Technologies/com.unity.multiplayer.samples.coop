@@ -1,6 +1,7 @@
+using System;
 using Unity.Netcode;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     public class NetworkDoorState : NetworkBehaviour
     {

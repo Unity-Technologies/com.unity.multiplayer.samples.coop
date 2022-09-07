@@ -1,12 +1,11 @@
 using System;
-using UnityEngine;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
+using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action responsible for creating a physics-based thrown object.

@@ -1,12 +1,15 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Gameplay.Messages;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Game.Cheats
+namespace Unity.BossRoom.DebugCheats
 {
     /// <summary>
     /// Handles debug cheat events, applies them on the server and logs them on all clients. This class is only

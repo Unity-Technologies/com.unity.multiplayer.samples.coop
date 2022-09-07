@@ -1,13 +1,17 @@
 using System;
+using Unity.BossRoom.Gameplay.Actions;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 using UnityEngine.EventSystems;
-using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
+using Action = Unity.BossRoom.Gameplay.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.UserInput
 {
     /// <summary>
     /// Captures inputs for a character on a client and sends them to the server.
@@ -42,7 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// <summary>
         /// This event fires at the time when an action request is sent to the server.
         /// </summary>
-        public Action<ActionRequestData> ActionInputEvent;
+        public event Action<ActionRequestData> ActionInputEvent;
 
         /// <summary>
         /// This describes how a skill was requested. Skills requested via mouse click will do raycasts to determine their target; skills requested
@@ -182,7 +186,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 if ((Time.time - m_LastSentMove) > k_MoveSendRateSeconds)
                 {
                     m_LastSentMove = Time.time;
-                    var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+                    var ray = m_MainCamera.ScreenPointToRay(UnityEngine.Input.mousePosition);
 
                     var groundHits = Physics.RaycastNonAlloc(ray,
                         k_CachedHit,
@@ -238,7 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 int numHits = 0;
                 if (triggerStyle == SkillTriggerStyle.MouseClick)
                 {
-                    var ray = m_MainCamera.ScreenPointToRay(Input.mousePosition);
+                    var ray = m_MainCamera.ScreenPointToRay(UnityEngine.Input.mousePosition);
                     numHits = Physics.RaycastNonAlloc(ray, k_CachedHit, k_MouseInputRaycastDistance, m_ActionLayerMask);
                 }
 
@@ -409,44 +413,44 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void Update()
         {
-            if (Input.GetKeyDown(KeyCode.Alpha1))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha1))
             {
                 RequestAction(CharacterData.Skill1, SkillTriggerStyle.Keyboard);
             }
-            else if (Input.GetKeyUp(KeyCode.Alpha1))
+            else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha1))
             {
                 RequestAction(CharacterData.Skill1, SkillTriggerStyle.KeyboardRelease);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha2))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha2))
             {
                 RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
             }
-            else if (Input.GetKeyUp(KeyCode.Alpha2))
+            else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha2))
             {
                 RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha3))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha3))
             {
                 RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
             }
-            else if (Input.GetKeyUp(KeyCode.Alpha3))
+            else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha3))
             {
                 RequestAction(CharacterData.Skill3, SkillTriggerStyle.KeyboardRelease);
             }
 
-            if (Input.GetKeyDown(KeyCode.Alpha5))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha5))
             {
                 RequestAction(GameDataSource.Instance.Emote1ActionPrototype, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha6))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha6))
             {
                 RequestAction(GameDataSource.Instance.Emote2ActionPrototype, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha7))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha7))
             {
                 RequestAction(GameDataSource.Instance.Emote3ActionPrototype, SkillTriggerStyle.Keyboard);
             }
-            if (Input.GetKeyDown(KeyCode.Alpha8))
+            if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha8))
             {
                 RequestAction(GameDataSource.Instance.Emote4ActionPrototype, SkillTriggerStyle.Keyboard);
             }
@@ -456,16 +460,16 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
                 //IsPointerOverGameObject() is a simple way to determine if the mouse is over a UI element. If it is, we don't perform mouse input logic,
                 //to model the button "blocking" mouse clicks from falling through and interacting with the world.
 
-                if (Input.GetMouseButtonDown(1))
+                if (UnityEngine.Input.GetMouseButtonDown(1))
                 {
                     RequestAction(CharacterData.Skill1, SkillTriggerStyle.MouseClick);
                 }
 
-                if (Input.GetMouseButtonDown(0))
+                if (UnityEngine.Input.GetMouseButtonDown(0))
                 {
                     RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype, SkillTriggerStyle.MouseClick);
                 }
-                else if (Input.GetMouseButton(0))
+                else if (UnityEngine.Input.GetMouseButton(0))
                 {
                     m_MoveRequest = true;
                 }

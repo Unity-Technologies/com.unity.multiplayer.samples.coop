@@ -1,6 +1,9 @@
+using System;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// The source of truth for a PC/NPCs CharacterClass.

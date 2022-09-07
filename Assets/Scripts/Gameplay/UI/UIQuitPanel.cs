@@ -1,10 +1,11 @@
 using System;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class UIQuitPanel : MonoBehaviour
     {

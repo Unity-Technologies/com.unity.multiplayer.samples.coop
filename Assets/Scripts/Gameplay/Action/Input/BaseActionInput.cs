@@ -1,7 +1,8 @@
 using System;
+using Unity.BossRoom.Gameplay.GameplayObjects;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public abstract class BaseActionInput : MonoBehaviour
     {

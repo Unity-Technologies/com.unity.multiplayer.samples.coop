@@ -1,9 +1,12 @@
+using System;
 using System.Collections.Generic;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class MeleeAction
     {
@@ -125,7 +128,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                         string hitAnim = Config.ReactAnim;
                         if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
 
-                        var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
+                        var clientChar = targetNetworkObj.GetComponent<ClientCharacter>();
                         if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
                         {
                             clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);

@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.Messages;
 using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;

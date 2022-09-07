@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Causes the character to become hidden to enemies and other players. Notes:

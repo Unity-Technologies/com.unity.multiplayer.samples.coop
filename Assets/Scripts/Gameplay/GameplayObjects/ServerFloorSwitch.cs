@@ -1,8 +1,9 @@
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Server-side logic for a floor switch (a/k/a "pressure plate").

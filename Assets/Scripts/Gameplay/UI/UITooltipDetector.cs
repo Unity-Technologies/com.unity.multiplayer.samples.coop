@@ -1,7 +1,8 @@
+using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Attach to any UI element that should have a tooltip popup. If the mouse hovers over this element

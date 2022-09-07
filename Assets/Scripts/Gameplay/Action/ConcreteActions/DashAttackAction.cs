@@ -1,10 +1,10 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.Multiplayer.Samples.BossRoom.Actions;
 using UnityEngine;
-using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Causes the attacker to teleport near a target spot, then perform a melee attack. The client

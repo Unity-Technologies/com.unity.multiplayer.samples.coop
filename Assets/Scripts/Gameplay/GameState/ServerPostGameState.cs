@@ -1,11 +1,13 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using Unity.BossRoom.Gameplay.Actions;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameState
 {
     [RequireComponent(typeof(NetcodeHooks))]
     public class ServerPostGameState : GameStateBehaviour
@@ -13,9 +15,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         NetcodeHooks m_NetcodeHooks;
 
+        [FormerlySerializedAs("synchronizedStateData")]
         [SerializeField]
-        PostGameStateData synchronizedStateData;
-        public PostGameStateData SynchronizedStateData => synchronizedStateData;
+        NetworkPostGame networkPostGame;
+        public NetworkPostGame NetworkPostGame => networkPostGame;
 
         public override GameState ActiveState { get { return GameState.PostGame; } }
 
@@ -41,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             else
             {
                 SessionManager<SessionPlayerData>.Instance.OnSessionEnded();
-                synchronizedStateData.WinState.Value = m_PersistentGameState.WinState;
+                networkPostGame.WinState.Value = m_PersistentGameState.WinState;
             }
         }
 

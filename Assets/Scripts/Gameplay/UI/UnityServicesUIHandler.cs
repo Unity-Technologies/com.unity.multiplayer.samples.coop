@@ -6,7 +6,7 @@ using Unity.Services.Lobbies;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class UnityServicesUIHandler : MonoBehaviour
     {

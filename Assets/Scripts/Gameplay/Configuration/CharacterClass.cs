@@ -1,7 +1,10 @@
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using System;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.Multiplayer.Samples.BossRoom;
 using UnityEngine;
+using Action = Unity.BossRoom.Gameplay.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.Configuration
 {
     /// <summary>
     /// Data representation of a Character, containing such things as its starting HP and Mana, and what attacks it can do.

@@ -1,9 +1,11 @@
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using System;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class FXProjectileTargetedAction
     {
@@ -75,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 return;
             }
 
-            if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null)
+            if (m_Target && m_Target.TryGetComponent(out ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null)
             {
                 var hitReact = !string.IsNullOrEmpty(Config.ReactAnim) ? Config.ReactAnim : k_DefaultHitReact;
                 clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);

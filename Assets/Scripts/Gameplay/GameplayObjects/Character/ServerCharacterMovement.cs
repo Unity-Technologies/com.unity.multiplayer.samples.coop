@@ -1,9 +1,12 @@
+using System;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     public enum MovementState
     {

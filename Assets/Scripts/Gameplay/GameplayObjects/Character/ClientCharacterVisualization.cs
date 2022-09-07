@@ -1,10 +1,12 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using Unity.BossRoom.Gameplay.UserInput;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.Actions;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     /// <summary>
     /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.

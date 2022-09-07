@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.Actions;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
 {
     /// <summary>
     /// Handles enemy AI. Contains AIStateLogics that handle some of the details,

@@ -1,10 +1,12 @@
-using Unity.Multiplayer.Samples.BossRoom.Server;
+using System;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.Messages;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Represents a door in the client. The visuals of the door animate as

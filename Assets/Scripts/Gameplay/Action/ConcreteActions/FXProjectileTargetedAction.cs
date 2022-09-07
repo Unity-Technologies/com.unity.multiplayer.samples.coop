@@ -1,12 +1,10 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action that represents an always-hit raybeam-style ranged attack. A particle is shown from caster to target, and then the

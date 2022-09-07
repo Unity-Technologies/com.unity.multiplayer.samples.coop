@@ -1,7 +1,9 @@
+using System;
+using Unity.BossRoom.Gameplay.UserInput;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Responsible for managing and creating a feedback icon where the player clicked to move

@@ -1,8 +1,9 @@
 using System;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     public class DamageReceiver : NetworkBehaviour, IDamageable
     {

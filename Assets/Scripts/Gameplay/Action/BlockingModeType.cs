@@ -1,6 +1,6 @@
 using System;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     [System.Serializable]
     public enum BlockingModeType

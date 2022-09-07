@@ -1,8 +1,10 @@
+using System;
 using System.Collections.Generic;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     /// <summary>
     /// Attached to the player-characters' prefab, this maintains a list of active ServerCharacter objects for players.

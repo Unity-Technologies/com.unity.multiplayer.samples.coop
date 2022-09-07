@@ -1,7 +1,8 @@
+using System;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class ClickFeedbackLerper : MonoBehaviour
     {

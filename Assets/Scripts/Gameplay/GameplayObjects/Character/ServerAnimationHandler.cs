@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
+using Unity.BossRoom.Gameplay.Configuration;
 using Unity.Netcode;
 using Unity.Netcode.Components;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     public class ServerAnimationHandler : NetworkBehaviour
     {

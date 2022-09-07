@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.UI;
+using Unity.BossRoom.Gameplay.UserInput;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.Multiplayer.Samples.BossRoom;
+using UnityEngine;
 using UnityEngine.Assertions;
+using UnityEngine.UI;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Provides logic for the Party HUD with information on the player and allies
@@ -49,7 +51,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         private Dictionary<ulong, NetworkCharacterState> m_TrackedAllies = new Dictionary<ulong, NetworkCharacterState>();
 
-        private Client.ClientInputSender m_ClientSender;
+        private ClientInputSender m_ClientSender;
 
         void Awake()
         {
@@ -240,7 +242,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public void SelectPartyMember(int slot)
         {
-            m_ClientSender.RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype, Client.ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
+            m_ClientSender.RequestAction(GameDataSource.Instance.GeneralTargetActionPrototype, ClientInputSender.SkillTriggerStyle.UI, m_PartyIds[slot]);
         }
 
         // helper to initialize the Allies array - safe to call multiple times

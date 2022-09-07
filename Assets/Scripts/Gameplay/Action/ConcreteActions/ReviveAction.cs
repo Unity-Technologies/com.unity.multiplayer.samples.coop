@@ -1,10 +1,11 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     [CreateAssetMenu(menuName = "BossRoom/Actions/Revive Action")]
     public class ReviveAction : Action

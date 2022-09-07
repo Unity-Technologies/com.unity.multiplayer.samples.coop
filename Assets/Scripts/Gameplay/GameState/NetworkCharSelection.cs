@@ -1,12 +1,14 @@
 using System;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameState
 {
     /// <summary>
     /// Common data and RPCs for the CharSelect stage.
     /// </summary>
-    public class CharSelectData : NetworkBehaviour
+    public class NetworkCharSelection : NetworkBehaviour
     {
         public enum SeatState : byte
         {

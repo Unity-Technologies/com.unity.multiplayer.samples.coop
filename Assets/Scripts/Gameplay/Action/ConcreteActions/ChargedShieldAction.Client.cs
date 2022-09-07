@@ -1,7 +1,9 @@
+using System;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class ChargedShieldAction
     {

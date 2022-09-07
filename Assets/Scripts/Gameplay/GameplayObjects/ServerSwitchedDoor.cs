@@ -1,7 +1,8 @@
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Server-side logic for a door. This particular type of door

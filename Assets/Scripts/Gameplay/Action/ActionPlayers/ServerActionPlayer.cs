@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Class responsible for playing back action inputs from user.

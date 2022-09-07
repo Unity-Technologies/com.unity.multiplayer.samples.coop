@@ -1,5 +1,7 @@
 using System;
 using System.Collections;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.UI;
 using NUnit.Framework;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Multiplayer.Samples.BossRoom.Visual;

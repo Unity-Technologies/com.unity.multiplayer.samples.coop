@@ -1,7 +1,9 @@
+using System;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.UI
 {
 
     public class UISettingsPanel : MonoBehaviour

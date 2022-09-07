@@ -1,9 +1,13 @@
+using System;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.Messages;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Server-only component which publishes a message once the LifeState changes.

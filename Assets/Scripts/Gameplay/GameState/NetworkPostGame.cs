@@ -2,9 +2,9 @@ using System;
 using Unity.Netcode;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameState
 {
-    public class PostGameStateData : NetworkBehaviour
+    public class NetworkPostGame : NetworkBehaviour
     {
         public NetworkVariable<WinState> WinState = new NetworkVariable<WinState>();
 

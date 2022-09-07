@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.BossRoom.Gameplay.UserInput;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
-using SkillTriggerStyle = Unity.Multiplayer.Samples.BossRoom.Client.ClientInputSender.SkillTriggerStyle;
+using Action = Unity.BossRoom.Gameplay.Actions.Action;
+using SkillTriggerStyle = Unity.BossRoom.Gameplay.UserInput.ClientInputSender.SkillTriggerStyle;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Provides logic for a Hero Action Bar with attack, skill buttons and a button to open emotes panel
@@ -36,7 +39,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// <summary>
         /// Our input-sender. Initialized in RegisterInputSender()
         /// </summary>
-        Client.ClientInputSender m_InputSender;
+        ClientInputSender m_InputSender;
 
         /// <summary>
         /// Cached reference to local player's net state.
@@ -74,7 +77,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         {
             public readonly ActionButtonType Type;
             public readonly UIHUDButton Button;
-            public readonly Client.UITooltipDetector Tooltip;
+            public readonly UITooltipDetector Tooltip;
 
             /// <summary> T
             /// The current Action that is used when this button is pressed.
@@ -87,7 +90,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             {
                 Type = type;
                 Button = button;
-                Tooltip = button.GetComponent<Client.UITooltipDetector>();
+                Tooltip = button.GetComponent<UITooltipDetector>();
                 m_Owner = owner;
             }
 
@@ -201,7 +204,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             // If we have another player selected, see if their aliveness state has changed,
             // and if so, update the interactiveness of the basic-action button
 
-            if (Input.GetKeyUp(KeyCode.Alpha4))
+            if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha4))
             {
                 m_ButtonInfo[ActionButtonType.EmoteBar].Button.OnPointerUpEvent.Invoke();
             }

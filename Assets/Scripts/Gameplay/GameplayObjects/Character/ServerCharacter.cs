@@ -1,9 +1,13 @@
+using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using Unity.BossRoom.Gameplay.Actions;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character.AI;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
+using Action = Unity.BossRoom.Gameplay.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     public class ServerCharacter : NetworkBehaviour
     {

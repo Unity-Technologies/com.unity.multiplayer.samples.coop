@@ -1,7 +1,9 @@
+using System;
+using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Audio
 {
     /// <summary>
     /// Simple class to restart game theme on main menu load

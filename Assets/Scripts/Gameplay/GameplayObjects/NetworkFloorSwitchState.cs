@@ -1,6 +1,7 @@
+using System;
 using Unity.Netcode;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Describes the state of a floor-switch (a/k/a "pressure plate")

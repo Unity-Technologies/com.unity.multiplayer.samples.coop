@@ -1,12 +1,12 @@
 using System;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Multiplayer.Samples.BossRoom.Actions;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Animations;
-using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action for picking up "Heavy" items. For simplicity, this class will perform both the pickup (reparenting) of a

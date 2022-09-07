@@ -1,14 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
-
-#if UNITY_EDITOR
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using UnityEditor;
 using UnityEditor.Animations;
-#endif
+using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 {
     /// <summary>
     /// Instantiates and maintains graphics prefabs and sound effects. They're triggered by entering

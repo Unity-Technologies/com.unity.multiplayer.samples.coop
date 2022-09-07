@@ -1,9 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEngine;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
+using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Component responsible for spawning prefab clones in waves on the server.

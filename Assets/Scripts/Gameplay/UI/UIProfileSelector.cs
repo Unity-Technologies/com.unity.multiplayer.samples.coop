@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class UIProfileSelector : MonoBehaviour
     {

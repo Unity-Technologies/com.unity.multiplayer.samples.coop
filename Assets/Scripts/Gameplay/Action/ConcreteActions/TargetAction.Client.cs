@@ -1,8 +1,12 @@
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using System;
+using Unity.BossRoom.Gameplay.UserInput;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class TargetAction
     {
@@ -16,7 +20,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             base.OnStartClient(parent);
             parent.NetState.TargetId.OnValueChanged += OnTargetChanged;
-            parent.NetState.GetComponent<Client.ClientInputSender>().ActionInputEvent += OnActionInput;
+            parent.NetState.GetComponent<ClientInputSender>().ActionInputEvent += OnActionInput;
 
             return true;
         }
@@ -41,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                         m_TargetReticule.SetActive(true);
 
                         var parentTransform = targetObject.transform;
-                        if (targetObject.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject)
+                        if (targetObject.TryGetComponent(out ClientCharacter clientCharacter) && clientCharacter.ChildVizObject)
                         {
                             //for characters, attach the reticule to the child graphics object.
                             parentTransform = clientCharacter.ChildVizObject.transform;
@@ -88,7 +92,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             GameObject.Destroy(m_TargetReticule);
 
             parent.NetState.TargetId.OnValueChanged -= OnTargetChanged;
-            if (parent.TryGetComponent(out Client.ClientInputSender inputSender))
+            if (parent.TryGetComponent(out ClientInputSender inputSender))
             {
                 inputSender.ActionInputEvent -= OnActionInput;
             }

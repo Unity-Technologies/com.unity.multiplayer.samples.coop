@@ -1,8 +1,10 @@
+using System;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     public class ServerTossedItem : NetworkBehaviour
     {

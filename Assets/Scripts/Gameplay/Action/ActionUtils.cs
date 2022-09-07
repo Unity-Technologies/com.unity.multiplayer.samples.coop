@@ -1,8 +1,9 @@
 using System.Collections.Generic;
+using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public static class ActionUtils
     {
@@ -212,7 +213,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
 
     }
+}
 
+namespace Unity.Multiplayer.Samples.BossRoom.Actions
+{
     /// <summary>
     /// Small utility to better understand action start and stop conclusion
     /// </summary>

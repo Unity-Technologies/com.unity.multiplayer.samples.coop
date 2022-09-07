@@ -1,23 +1,12 @@
 using System;
 using Unity.Collections;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.Messages
 {
-    public struct LifeStateChangedEventMessage : INetworkSerializeByMemcpy
-    {
-        public LifeState NewLifeState;
-        public CharacterTypeEnum CharacterType;
-        public FixedPlayerName CharacterName;
-    }
-
-    public struct DoorStateChangedEventMessage : INetworkSerializeByMemcpy
-    {
-        public bool IsDoorOpen;
-    }
-
-
 #if UNITY_EDITOR || DEVELOPMENT_BUILD
+
     public struct CheatUsedMessage : INetworkSerializeByMemcpy
     {
         FixedString32Bytes m_CheatUsed;
@@ -32,5 +21,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_CheaterName = cheaterName;
         }
     }
+
 #endif
 }

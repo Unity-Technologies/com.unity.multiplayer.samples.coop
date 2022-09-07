@@ -8,6 +8,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         public int PlayerNumber;
         public Vector3 PlayerPosition;
         public Quaternion PlayerRotation;
+        /// Instead of using a NetworkGuid (two ulongs) we could just use an int or even a byte-sized index into an array of possible avatars defined in our game data source
         public NetworkGuid AvatarNetworkGuid;
         public int CurrentHitPoints;
         public bool HasCharacterSpawned;

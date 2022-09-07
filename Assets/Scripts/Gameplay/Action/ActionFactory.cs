@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
+using Unity.BossRoom.Gameplay.GameplayObjects;
 using UnityEngine.Pool;
 using Object = UnityEngine.Object;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public static class ActionFactory
     {

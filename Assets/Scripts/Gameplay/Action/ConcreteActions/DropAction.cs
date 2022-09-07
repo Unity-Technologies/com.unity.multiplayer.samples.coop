@@ -1,10 +1,10 @@
 using System;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Netcode;
 using UnityEngine;
-using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action for dropping "Heavy" items.

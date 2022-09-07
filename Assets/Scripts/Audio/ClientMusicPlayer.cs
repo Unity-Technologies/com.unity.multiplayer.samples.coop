@@ -25,11 +25,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         public static ClientMusicPlayer Instance { get; private set; }
 
-        void Start()
-        {
-
-        }
-
         public void PlayThemeMusic(bool restart)
         {
             PlayTrack(m_ThemeMusic, true, restart);

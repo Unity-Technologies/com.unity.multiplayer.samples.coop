@@ -1,10 +1,10 @@
+using System;
 using TMPro;
 using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class ProfileListItemUI : MonoBehaviour
     {

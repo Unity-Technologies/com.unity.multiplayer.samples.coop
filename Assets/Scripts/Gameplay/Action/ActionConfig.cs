@@ -1,9 +1,8 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     [Serializable]
     public class ActionConfig

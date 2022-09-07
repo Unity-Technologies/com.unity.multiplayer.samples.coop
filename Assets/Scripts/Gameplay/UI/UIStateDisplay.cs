@@ -1,8 +1,9 @@
-using Unity.Collections;
+using System;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Class containing references to UI children that we can display. Both are disabled by default on prefab.
