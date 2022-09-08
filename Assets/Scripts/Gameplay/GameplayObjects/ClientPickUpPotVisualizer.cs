@@ -12,11 +12,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         [SerializeField]
         ParticleSystem m_PutDownParticleSystem;
 
-        /*[SerializeField]
+        [SerializeField]
         AudioSource m_PickUpSound;
         
         [SerializeField]
-        AudioSource m_PutDownSound;*/
+        AudioSource m_PutDownSound;
         void Awake()
         {
             enabled = false;
@@ -37,10 +37,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             if (parentNetworkObject == null)
             {
                 m_PutDownParticleSystem.Play();
+                m_PutDownSound.Play();
             }
             else
             {
-                
+                m_PickUpSound.Play();
             }
         }
     }
