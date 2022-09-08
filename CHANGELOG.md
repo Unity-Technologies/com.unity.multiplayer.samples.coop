@@ -30,7 +30,8 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Configured the NetworkTransform components of every NetworkObject to reduce the bandwidth usage (#716). This prevents the unnecessary synchronization of data that clients do not need, i.e. a character's scale or y position. In the case of a character, it reduced the size of each update from 47B to 23B.
 * Instead of a NetworkBehaviour that carries a WinState netvar we now pass the win state on the server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
 * Bump to NGO 1.0.1 (#720)
-* 
+* Reduced the MaxPacketQueueSize UTP parameter value from 512 to 256 (#728). This reduces the amount of memory used by UTP by around 1 MB. Boss Room does not need a bigger queue size than this because there can only be 7 clients connected to a host and UTP already limits the maximum number of in-flight packets to 32 per connection.
+*
 ### Removed
 *
 ### Fixed
