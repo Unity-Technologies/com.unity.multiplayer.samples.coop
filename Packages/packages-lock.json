@@ -128,9 +128,9 @@
       }
     },
     "com.unity.multiplayer.tools": {
-      "version": "1.0.0",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#chore/verify-jrobot-utp2",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {
         "com.unity.profiling.core": "1.0.0-pre.1",
         "com.unity.nuget.newtonsoft-json": "2.0.0",
@@ -138,17 +138,17 @@
         "com.unity.collections": "1.1.0",
         "com.unity.modules.uielements": "1.0.0"
       },
-      "url": "https://packages.unity.com"
+      "hash": "31f7c3f72122414b40e4934d7fe3a6c5a326f38f"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#feature/tools-netsim-support",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.transport": "1.2.0"
       },
-      "hash": "20ad052623b76dfaafa1b0ef50f15def4317c50b"
+      "hash": "7c1ebbccf46628c65bd5e80d52281074a6d84a08"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.4",
@@ -229,7 +229,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.core": {
-      "version": "1.4.2",
+      "version": "1.4.3",
       "depth": 1,
       "source": "registry",
       "dependencies": {
