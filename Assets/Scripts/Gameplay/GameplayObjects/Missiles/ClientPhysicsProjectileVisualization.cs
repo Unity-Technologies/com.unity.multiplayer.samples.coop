@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
-    public class ClientProjectileVisualization : NetworkBehaviour
+    public class ClientPhysicsProjectileVisualization : NetworkBehaviour
     {
         [SerializeField]
         [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
@@ -14,13 +14,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [SerializeField]
         TrailRenderer m_TrailRenderer;
 
-        NetworkProjectileState m_NetState;
-
         Transform m_Parent;
 
         const float k_LerpTime = 0.1f;
 
         PositionLerper m_PositionLerper;
+        ServerPhysicsProjectileLogic m_ServerLogic;
 
         public override void OnNetworkSpawn()
         {
@@ -34,8 +33,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
             m_Parent = transform.parent;
             transform.parent = null;
-            m_NetState = m_Parent.GetComponent<NetworkProjectileState>();
-            m_NetState.HitEnemyEvent += OnEnemyHit;
+            m_ServerLogic = m_Parent.GetComponent<ServerPhysicsProjectileLogic>();
+            m_ServerLogic.HitEnemyEvent += OnEnemyHit;
 
             m_PositionLerper = new PositionLerper(m_Parent.position, k_LerpTime);
             transform.rotation = m_Parent.transform.rotation;
@@ -45,10 +44,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         {
             m_TrailRenderer.Clear();
 
-            if (m_NetState != null)
+            if (m_ServerLogic != null)
             {
                 transform.parent = m_Parent;
-                m_NetState.HitEnemyEvent -= OnEnemyHit;
+                m_ServerLogic.HitEnemyEvent -= OnEnemyHit;
             }
         }
 
