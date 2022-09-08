@@ -41,12 +41,13 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.collections": {
-      "version": "1.2.4",
+      "version": "2.1.0-exp.4",
       "depth": 1,
       "source": "registry",
       "dependencies": {
-        "com.unity.burst": "1.6.6",
-        "com.unity.test-framework": "1.1.31"
+        "com.unity.burst": "1.7.3",
+        "com.unity.nuget.mono-cecil": "1.11.4",
+        "com.unity.test-framework": "1.1.33"
       },
       "url": "https://packages.unity.com"
     },
@@ -140,14 +141,14 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.0.1",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#develop",
       "depth": 0,
-      "source": "registry",
+      "source": "git",
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.transport": "1.2.0"
       },
-      "url": "https://packages.unity.com"
+      "hash": "20ad052623b76dfaafa1b0ef50f15def4317c50b"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.4",
@@ -318,8 +319,8 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.test-framework": {
-      "version": "1.1.31",
-      "depth": 0,
+      "version": "1.1.33",
+      "depth": 2,
       "source": "registry",
       "dependencies": {
         "com.unity.ext.nunit": "1.0.6",
@@ -360,12 +361,12 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.transport": {
-      "version": "1.2.0",
-      "depth": 1,
+      "version": "2.0.0-exp.6",
+      "depth": 0,
       "source": "registry",
       "dependencies": {
-        "com.unity.collections": "1.2.4",
-        "com.unity.burst": "1.6.6",
+        "com.unity.collections": "2.1.0-exp.4",
+        "com.unity.burst": "1.7.3",
         "com.unity.mathematics": "1.2.6"
       },
       "url": "https://packages.unity.com"
