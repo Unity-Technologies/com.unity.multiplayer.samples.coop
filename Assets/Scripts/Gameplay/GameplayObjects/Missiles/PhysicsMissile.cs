@@ -2,19 +2,18 @@ using System;
 using System.Collections.Generic;
 using Unity.BossRoom.Gameplay.Actions;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.Multiplayer.Samples.BossRoom.Visual;
 using Unity.Netcode;
 using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
-    public class ServerPhysicsProjectileLogic : NetworkBehaviour
+    /// <summary>
+    /// Logic that handles a physics-based projectile with a collider
+    /// </summary>
+    public class PhysicsMissile : NetworkBehaviour
     {
         bool m_Started;
-
-        /// <summary>
-        /// This event is raised when the arrow hit an enemy. The argument is the NetworkObjectId of the enemy.
-        /// </summary>
-        public System.Action<ulong> HitEnemyEvent;
 
         [SerializeField]
         SphereCollider m_OurCollider;
@@ -58,6 +57,37 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         /// </summary>
         bool m_IsDead;
 
+        [SerializeField]
+        [Tooltip("Explosion prefab used when projectile hits enemy. This should have a fixed duration.")]
+        SpecialFXGraphic m_OnHitParticlePrefab;
+
+        [SerializeField]
+        TrailRenderer m_TrailRenderer;
+
+        [SerializeField]
+        Transform m_Visualization;
+
+        const float k_LerpTime = 0.1f;
+
+        PositionLerper m_PositionLerper;
+
+
+        void OnEnemyHit(ulong enemyId)
+        {
+            //in the future we could do quite fancy things, like deparenting the Graphics Arrow and parenting it to the target.
+            //For the moment we play some particles (optionally), and cause the target to animate a hit-react.
+
+            NetworkObject targetNetObject;
+            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
+            {
+                if (m_OnHitParticlePrefab)
+                {
+                    // show an impact graphic
+                    Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
+                }
+            }
+        }
+
         /// <summary>
         /// Set everything up based on provided projectile information.
         /// (Note that this is called before OnNetworkSpawn(), so don't try to do any network stuff here.)
@@ -70,31 +100,52 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
             {
-                enabled = false;
-                return;
+                m_Started = true;
+
+                m_HitTargets = new List<GameObject>();
+                m_IsDead = false;
+
+                m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
+
+                m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Environment" });
+                m_BlockerMask = LayerMask.GetMask(new[] { "Default", "Environment" });
+                m_NpcLayer = LayerMask.NameToLayer("NPCs");
             }
-            m_Started = true;
 
-            m_HitTargets = new List<GameObject>();
-            m_IsDead = false;
+            if (IsClient)
+            {
+                m_TrailRenderer.Clear();
 
-            m_DestroyAtSec = Time.fixedTime + (m_ProjectileInfo.Range / m_ProjectileInfo.Speed_m_s);
+                m_Visualization.parent = null;
 
-            m_CollisionMask = LayerMask.GetMask(new[] { "NPCs", "Default", "Environment" });
-            m_BlockerMask = LayerMask.GetMask(new[] { "Default", "Environment" });
-            m_NpcLayer = LayerMask.NameToLayer("NPCs");
+                m_PositionLerper = new PositionLerper(transform.position, k_LerpTime);
+                m_Visualization.transform.rotation = transform.rotation;
+            }
+
         }
 
         public override void OnNetworkDespawn()
         {
-            m_Started = false;
+            if (IsServer)
+            {
+                m_Started = false;
+            }
+
+
+            if (IsClient)
+            {
+                m_TrailRenderer.Clear();
+                m_Visualization.parent = transform;
+
+                Destroy(m_Visualization.gameObject);
+            }
         }
 
         void FixedUpdate()
         {
-            if (!m_Started)
+            if (!m_Started || !IsServer)
             {
                 return; //don't do anything before OnNetworkSpawn has run.
             }
@@ -114,6 +165,30 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 DetectCollisions();
             }
+        }
+
+        void Update()
+        {
+            if (IsClient)
+            {
+                // One thing to note: this graphics GameObject is detached from its parent on OnNetworkSpawn. On the host,
+                // the m_Parent Transform is translated via ServerProjectileLogic's FixedUpdate method. On all other
+                // clients, m_Parent's NetworkTransform handles syncing and interpolating the m_Parent Transform. Thus, to
+                // eliminate any visual jitter on the host, this GameObject is positionally smoothed over time. On all other
+                // clients, no positional smoothing is required, since m_Parent's NetworkTransform will perform
+                // positional interpolation on its Update method, and so this position is simply matched 1:1 with m_Parent.
+
+                if (IsHost)
+                {
+                    m_Visualization.position = m_PositionLerper.LerpPosition(m_Visualization.position,
+                        transform.position);
+                }
+                else
+                {
+                   m_Visualization.position = transform.position;
+                }
+            }
+
         }
 
         void DetectCollisions()
@@ -170,7 +245,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [ClientRpc]
         private void RecvHitEnemyClientRPC(ulong enemyId)
         {
-            HitEnemyEvent?.Invoke(enemyId);
+            OnEnemyHit(enemyId);
         }
     }
 }

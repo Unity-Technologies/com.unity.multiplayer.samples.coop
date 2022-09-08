@@ -9,7 +9,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Component responsible for spawning prefab clones in waves on the server.
-    /// <see cref="ServerEnemyPortal"/> calls our SetSpawnerEnabled() to turn on/off spawning.
+    /// <see cref="EnemyPortal"/> calls our SetSpawnerEnabled() to turn on/off spawning.
     /// </summary>
     public class ServerWaveSpawner : NetworkBehaviour
     {

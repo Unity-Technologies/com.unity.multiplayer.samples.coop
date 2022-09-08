@@ -14,7 +14,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         // the time the FX projectile spends in the air
         private float m_ProjectileDuration;
         // the currently-live projectile. (Note that the projectile will normally destroy itself! We only care in case someone calls Cancel() on us)
-        private FXProjectile m_Projectile;
+        private FXMissile m_Missile;
         // the enemy we're aiming at
         private NetworkObject m_Target;
         Transform m_TargetTransform;
@@ -37,7 +37,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override bool OnUpdateClient(ClientCharacterVisualization parent)
         {
-            if (TimeRunning >= Config.ExecTimeSeconds && m_Projectile == null)
+            if (TimeRunning >= Config.ExecTimeSeconds && m_Missile == null)
             {
                 // figure out how long the pretend-projectile will be flying to the target
                 var targetPos = m_TargetTransform ? m_TargetTransform.position : Data.Position;
@@ -45,7 +45,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 m_ProjectileDuration = initialDistance / Config.Projectiles[0].Speed_m_s;
 
                 // create the projectile. It will control itself from here on out
-                m_Projectile = SpawnAndInitializeProjectile(parent);
+                m_Missile = SpawnAndInitializeProjectile(parent);
             }
 
             // we keep going until the projectile's duration ends
@@ -54,10 +54,10 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override void CancelClient(ClientCharacterVisualization parent)
         {
-            if (m_Projectile)
+            if (m_Missile)
             {
                 // we aborted post-projectile-launch (somehow)! Tell the graphics! (It will destroy itself, possibly after playing some more FX)
-                m_Projectile.Cancel();
+                m_Missile.Cancel();
             }
         }
 
@@ -111,11 +111,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        FXProjectile SpawnAndInitializeProjectile(ClientCharacterVisualization parent)
+        FXMissile SpawnAndInitializeProjectile(ClientCharacterVisualization parent)
         {
             var projectileGO = Object.Instantiate(Config.Projectiles[0].ProjectilePrefab, parent.transform.position, parent.transform.rotation, null);
 
-            var projectile = projectileGO.GetComponent<FXProjectile>();
+            var projectile = projectileGO.GetComponent<FXMissile>();
             if (!projectile)
             {
                 throw new System.Exception($"FXProjectileTargetedAction tried to spawn projectile {projectileGO.name}, as dictated for action {name}, but the object doesn't have a FXProjectile component!");

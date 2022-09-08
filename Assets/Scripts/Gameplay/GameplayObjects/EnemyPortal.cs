@@ -20,20 +20,28 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     /// the portal itself (a glowy visual effect stops when Broken, turns back on when unbroken)
     /// </remarks>
     [RequireComponent(typeof(ServerWaveSpawner))]
-    [RequireComponent(typeof(NetworkBreakableState))]
-    public class ServerEnemyPortal : NetworkBehaviour
+    public class EnemyPortal : NetworkBehaviour, ITargetable
     {
         [SerializeField]
         [Tooltip("Portal becomes dormant when ALL of these breakables are broken")]
-        public List<NetworkBreakableState> m_BreakableElements;
+        public List<Breakable> m_BreakableElements;
 
         [SerializeField]
         [Tooltip("When all breakable elements are broken, wait this long before respawning them (and reactivating)")]
         float m_DormantCooldown;
 
+
+        /// <summary>
+        /// Is the item broken or not?
+        /// </summary>
+        public NetworkVariable<bool> IsBroken;
+
+        public bool IsNpc { get { return true; } }
+
+        public bool IsValidTarget { get { return !IsBroken.Value; } }
+
         // cached reference to our components
         ServerWaveSpawner m_WaveSpawner;
-        NetworkBreakableState m_State;
 
         // currently active "wait X seconds and then restart" coroutine
         Coroutine m_CoroDormant;
@@ -41,7 +49,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         private void Awake()
         {
             m_WaveSpawner = GetComponent<ServerWaveSpawner>();
-            m_State = GetComponent<NetworkBreakableState>();
         }
 
         public override void OnNetworkSpawn()
@@ -90,7 +97,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 }
             }
 
-            m_State.IsBroken.Value = !hasUnbrokenBreakables;
+            IsBroken.Value = !hasUnbrokenBreakables;
             m_WaveSpawner.SetSpawnerEnabled(hasUnbrokenBreakables);
             if (!hasUnbrokenBreakables && m_CoroDormant == null)
             {
@@ -111,13 +118,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 if (state)
                 {
-                    var serverComponent = state.GetComponent<ServerBreakableLogic>();
+                    var serverComponent = state.GetComponent<Breakable>();
                     Assert.IsNotNull(serverComponent);
                     serverComponent.Unbreak();
                 }
             }
 
-            m_State.IsBroken.Value = false;
+            IsBroken.Value = false;
             m_WaveSpawner.SetSpawnerEnabled(true);
             m_CoroDormant = null;
         }
@@ -138,7 +145,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 if (state)
                 {
-                    var serverComponent = state.GetComponent<ServerBreakableLogic>();
+                    var serverComponent = state.GetComponent<Breakable>();
                     Assert.IsNotNull(serverComponent);
                     serverComponent.ReceiveHP(null, Int32.MinValue);
                 }

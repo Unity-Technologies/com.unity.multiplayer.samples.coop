@@ -268,7 +268,7 @@ namespace Unity.BossRoom.DebugCheats
         [ServerRpc(RequireOwnership = false)]
         void TogglePortalsServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            foreach (var portal in FindObjectsOfType<ServerEnemyPortal>())
+            foreach (var portal in FindObjectsOfType<EnemyPortal>())
             {
                 if (m_DestroyPortalsOnNextToggle)
                 {
