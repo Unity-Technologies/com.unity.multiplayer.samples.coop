@@ -32,17 +32,17 @@ namespace Unity.BossRoom.DebugCheats
         [SerializeField]
         KeyCode m_OpenWindowKeyCode = KeyCode.Slash;
 
-        ServerSwitchedDoor m_ServerSwitchedDoor;
+        SwitchedDoor m_SwitchedDoor;
 
-        ServerSwitchedDoor ServerSwitchedDoor
+        SwitchedDoor SwitchedDoor
         {
             get
             {
-                if (m_ServerSwitchedDoor == null)
+                if (m_SwitchedDoor == null)
                 {
-                    m_ServerSwitchedDoor = FindObjectOfType<ServerSwitchedDoor>();
+                    m_SwitchedDoor = FindObjectOfType<SwitchedDoor>();
                 }
-                return m_ServerSwitchedDoor;
+                return m_SwitchedDoor;
             }
         }
 
@@ -254,9 +254,9 @@ namespace Unity.BossRoom.DebugCheats
         [ServerRpc(RequireOwnership = false)]
         void ToggleDoorServerRpc(ServerRpcParams serverRpcParams = default)
         {
-            if (ServerSwitchedDoor != null)
+            if (SwitchedDoor != null)
             {
-                ServerSwitchedDoor.ForceOpen = !ServerSwitchedDoor.ForceOpen;
+                SwitchedDoor.ForceOpen = !SwitchedDoor.ForceOpen;
                 PublishCheatUsedMessage(serverRpcParams.Receive.SenderClientId, "ToggleDoor");
             }
             else
