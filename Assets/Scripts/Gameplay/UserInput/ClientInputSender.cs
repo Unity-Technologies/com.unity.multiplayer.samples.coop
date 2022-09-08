@@ -41,7 +41,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         RaycastHitComparer m_RaycastHitComparer;
 
-        NetworkCharacterState m_NetworkCharacter;
+        ServerCharacter m_ServerCharacter;
 
         /// <summary>
         /// This event fires at the time when an action request is sent to the server.
@@ -129,7 +129,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         void Awake()
         {
-            m_NetworkCharacter = GetComponent<NetworkCharacterState>();
+            m_ServerCharacter = GetComponent<ServerCharacter>();
             m_MainCamera = Camera.main;
         }
 
@@ -141,7 +141,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
         void SendInput(ActionRequestData action)
         {
             ActionInputEvent?.Invoke(action);
-            m_NetworkCharacter.RecvDoActionServerRPC(action);
+            m_ServerCharacter.RecvDoActionServerRPC(action);
         }
 
         void FixedUpdate()
@@ -163,7 +163,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
                     if (actionPrototype.Config.ActionInput != null)
                     {
                         var skillPlayer = Instantiate(actionPrototype.Config.ActionInput);
-                        skillPlayer.Initiate(m_NetworkCharacter, m_PhysicsWrapper.Transform.position, actionPrototype.ActionID, SendInput, FinishSkill);
+                        skillPlayer.Initiate(m_ServerCharacter, m_PhysicsWrapper.Transform.position, actionPrototype.ActionID, SendInput, FinishSkill);
                         m_CurrentSkillInput = skillPlayer;
                     }
                     else
@@ -207,7 +207,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
                                 k_MaxNavMeshDistance,
                                 NavMesh.AllAreas))
                         {
-                            m_NetworkCharacter.SendCharacterInputServerRpc(hit.position);
+                            m_ServerCharacter.SendCharacterInputServerRpc(hit.position);
 
                             //Send our client only click request
                             ClientMoveEvent?.Invoke(hit.position);
@@ -297,7 +297,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
             //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState.
             if (!targetNetObj && !GameDataSource.Instance.GetActionPrototypeByID(actionID).IsGeneralTargetAction)
             {
-                ulong targetId = m_NetworkCharacter.TargetId.Value;
+                ulong targetId = m_ServerCharacter.TargetId.Value;
                 NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out targetNetObj);
             }
 

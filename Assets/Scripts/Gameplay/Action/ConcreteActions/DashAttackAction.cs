@@ -39,7 +39,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             // tell clients to visualize this action
-            parent.NetState.RecvDoActionClientRPC(Data);
+            parent.ClientVisualization.RecvDoActionClientRPC(Data);
 
             return ActionConclusion.Continue;
         }
@@ -81,7 +81,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             // because the client-side visualization of the action moves the character visualization around,
             // we need to explicitly end the client-side visuals when we abort
-            parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
+            parent.ClientVisualization.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
 
         }
 

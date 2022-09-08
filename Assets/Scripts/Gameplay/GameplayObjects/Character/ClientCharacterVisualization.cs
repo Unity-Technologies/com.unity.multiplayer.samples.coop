@@ -68,6 +68,45 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         float m_CurrentSpeed;
 
+        /// <summary>
+        /// /// Server to Client RPC that broadcasts this action play to all clients.
+        /// </summary>
+        /// <param name="data"> Data about which action to play and its associated details. </param>
+        [ClientRpc]
+        public void RecvDoActionClientRPC(ActionRequestData data)
+        {
+            ActionRequestData data1 = data;
+            m_ClientActionViz.PlayAction(ref data1);
+        }
+
+        /// <summary>
+        /// This RPC is invoked on the client when the active action FXs need to be cancelled (e.g. when the character has been stunned)
+        /// </summary>
+        [ClientRpc]
+        public void RecvCancelAllActionsClientRpc()
+        {
+            m_ClientActionViz.CancelAllActions();
+        }
+
+        /// <summary>
+        /// This RPC is invoked on the client when active action FXs of a certain type need to be cancelled (e.g. when the Stealth action ends)
+        /// </summary>
+        [ClientRpc]
+        public void RecvCancelActionsByPrototypeIDClientRpc(ActionID actionPrototypeID)
+        {
+            m_ClientActionViz.CancelAllActionsWithSamePrototypeID(actionPrototypeID);
+        }
+
+        /// <summary>
+        /// Called on all clients when this character has stopped "charging up" an attack.
+        /// Provides a value between 0 and 1 inclusive which indicates how "charged up" the attack ended up being.
+        /// </summary>
+        [ClientRpc]
+        public void RecvStopChargingUpClientRpc(float percentCharged)
+        {
+            m_ClientActionViz.OnStoppedChargingUp(percentCharged);
+        }
+
         void Awake()
         {
             enabled = false;
@@ -90,10 +129,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
             m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
 
-            m_NetState.DoActionEventClient += PerformActionFX;
-            m_NetState.CancelAllActionsEventClient += CancelAllActionFXs;
-            m_NetState.CancelActionsByPrototypeIDEventClient += CancelActionFXByPrototypeID;
-            m_NetState.OnStopChargingUpClient += OnStoppedChargingUp;
             m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
             m_NetState.MovementStatus.OnValueChanged += OnMovementStatusChanged;
             OnMovementStatusChanged(MovementStatus.Normal, m_NetState.MovementStatus.Value);
@@ -144,10 +179,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         {
             if (m_NetState)
             {
-                m_NetState.DoActionEventClient -= PerformActionFX;
-                m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
-                m_NetState.CancelActionsByPrototypeIDEventClient -= CancelActionFXByPrototypeID;
-                m_NetState.OnStopChargingUpClient -= OnStoppedChargingUp;
+                //m_NetState.DoActionEventClient -= PerformActionFX;
+                //m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
+                //m_NetState.CancelActionsByPrototypeIDEventClient -= CancelActionFXByPrototypeID;
+                //m_NetState.OnStopChargingUpClient -= OnStoppedChargingUpClient;
                 m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
 
                 if (m_NetState.TryGetComponent(out ClientInputSender sender))
@@ -171,26 +206,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             {
                 OurAnimator.SetTrigger(m_VisualizationConfiguration.AnticipateMoveTriggerID);
             }
-        }
-
-        void PerformActionFX(ActionRequestData data)
-        {
-            m_ClientActionViz.PlayAction(ref data);
-        }
-
-        void CancelAllActionFXs()
-        {
-            m_ClientActionViz.CancelAllActions();
-        }
-
-        void CancelActionFXByPrototypeID(ActionID actionPrototypeID)
-        {
-            m_ClientActionViz.CancelAllActionsWithSamePrototypeID(actionPrototypeID);
-        }
-
-        void OnStoppedChargingUp(float finalChargeUpPercentage)
-        {
-            m_ClientActionViz.OnStoppedChargingUp(finalChargeUpPercentage);
         }
 
         void OnStealthyChanged(bool oldValue, bool newValue)

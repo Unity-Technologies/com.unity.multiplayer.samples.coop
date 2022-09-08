@@ -52,7 +52,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             // raise the start trigger to start the animation loop!
             parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
-            parent.NetState.RecvDoActionClientRPC(Data);
+            parent.ClientVisualization.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -145,7 +145,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             if (IsChargingUp())
             {
                 m_StoppedChargingUpTime = Time.time;
-                parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
+                parent.ClientVisualization.RecvStopChargingUpClientRpc(GetPercentChargedUp());
 
                 parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
 

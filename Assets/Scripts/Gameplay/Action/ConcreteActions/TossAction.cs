@@ -40,7 +40,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
 
             parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            parent.NetState.RecvDoActionClientRPC(Data);
+            parent.ClientVisualization.RecvDoActionClientRPC(Data);
             return true;
         }
 

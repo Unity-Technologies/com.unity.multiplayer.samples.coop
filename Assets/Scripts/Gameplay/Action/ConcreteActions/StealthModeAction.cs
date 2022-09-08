@@ -29,7 +29,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
-            parent.NetState.RecvDoActionClientRPC(Data);
+            parent.ClientVisualization.RecvDoActionClientRPC(Data);
 
             return true;
         }
@@ -91,7 +91,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 // presses the Stealth button twice in a row: "end this Stealth action and start a new one". If we cancelled
                 // all actions of this type in Cancel(), we'd end up cancelling both the old AND the new one, because
                 // the new one would already be in the clients' actionFX queue.
-                parent.NetState.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
+                parent.ClientVisualization.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
             }
         }
 

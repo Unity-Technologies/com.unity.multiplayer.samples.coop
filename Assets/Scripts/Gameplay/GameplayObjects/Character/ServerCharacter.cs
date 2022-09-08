@@ -12,6 +12,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     public class ServerCharacter : NetworkBehaviour
     {
         [SerializeField]
+        ClientCharacterVisualization m_ClientVisualization;
+
+        public ClientCharacterVisualization ClientVisualization => m_ClientVisualization;
+        
+        [SerializeField]
         NetworkCharacterState m_NetworkCharacterState;
 
         public NetworkCharacterState NetState => m_NetworkCharacterState;
@@ -73,9 +78,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             if (!IsServer) { enabled = false; }
             else
             {
-                NetState.DoActionEventServer += OnActionPlayRequest;
-                NetState.ReceivedClientInput += OnClientMoveRequest;
-                NetState.OnStopChargingUpServer += OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged += OnLifeStateChanged;
                 m_DamageReceiver.damageReceived += ReceiveHP;
                 m_DamageReceiver.collisionEntered += CollisionEntered;
@@ -98,9 +100,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         {
             if (NetState)
             {
-                NetState.DoActionEventServer -= OnActionPlayRequest;
-                NetState.ReceivedClientInput -= OnClientMoveRequest;
-                NetState.OnStopChargingUpServer -= OnStoppedChargingUp;
                 NetState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
             }
 
@@ -109,6 +108,40 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 m_DamageReceiver.damageReceived -= ReceiveHP;
                 m_DamageReceiver.collisionEntered -= CollisionEntered;
             }
+        }
+
+
+        /// <summary>
+        /// RPC to send inputs for this character from a client to a server.
+        /// </summary>
+        /// <param name="movementTarget">The position which this character should move towards.</param>
+        [ServerRpc]
+        public void SendCharacterInputServerRpc(Vector3 movementTarget)
+        {
+            OnClientMoveRequest(movementTarget);
+        }
+
+        // ACTION SYSTEM
+
+        /// <summary>
+        /// Client->Server RPC that sends a request to play an action.
+        /// </summary>
+        /// <param name="data">Data about which action to play and its associated details. </param>
+        [ServerRpc]
+        public void RecvDoActionServerRPC(ActionRequestData data)
+        {
+            OnActionPlayRequest(data);
+        }
+
+        // UTILITY AND SPECIAL-PURPOSE RPCs
+
+        /// <summary>
+        /// Called on server when the character's client decides they have stopped "charging up" an attack.
+        /// </summary>
+        [ServerRpc]
+        public void RecvStopChargingUpServerRpc()
+        {
+            OnStoppedChargingUp();
         }
 
         void InitializeHitPoints()
@@ -306,5 +339,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// This character's AIBrain. Will be null if this is not an NPC.
         /// </summary>
         public AIBrain AIBrain { get { return m_AIBrain; } }
+
     }
 }
