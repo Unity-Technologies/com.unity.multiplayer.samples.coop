@@ -9,8 +9,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     /// Server-side logic for a floor switch (a/k/a "pressure plate").
     /// This script should be attached to a physics trigger.
     /// </summary>
-    [RequireComponent(typeof(Collider)), RequireComponent(typeof(NetworkFloorSwitchState))]
-    public class ServerFloorSwitch : NetworkBehaviour
+    [RequireComponent(typeof(Collider))]
+    public class FloorSwitch : NetworkBehaviour
     {
         [SerializeField]
         Animator m_Animator;
@@ -18,8 +18,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [SerializeField]
         Collider m_Collider;
 
-        [SerializeField]
-        NetworkFloorSwitchState m_FloorSwitchState;
+        public NetworkVariable<bool> IsSwitchedOn { get; } = new NetworkVariable<bool>();
 
         List<Collider> m_RelevantCollidersInTrigger = new List<Collider>();
 
@@ -35,14 +34,14 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
             {
                 enabled = false;
             }
 
-            FloorSwitchStateChanged(false, m_FloorSwitchState.IsSwitchedOn.Value);
+            FloorSwitchStateChanged(false, IsSwitchedOn.Value);
 
-            m_FloorSwitchState.IsSwitchedOn.OnValueChanged += FloorSwitchStateChanged;
+            IsSwitchedOn.OnValueChanged += FloorSwitchStateChanged;
         }
 
         void OnTriggerEnter(Collider other)
@@ -62,7 +61,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             // In this case, OnTriggerExit() won't get called for them! We can tell if a Collider was destroyed
             // because its reference will become null. So here we remove any nulls and see if we're still active.
             m_RelevantCollidersInTrigger.RemoveAll(col => col == null);
-            m_FloorSwitchState.IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
+            IsSwitchedOn.Value = m_RelevantCollidersInTrigger.Count > 0;
         }
 
         void FloorSwitchStateChanged(bool previousValue, bool newValue)

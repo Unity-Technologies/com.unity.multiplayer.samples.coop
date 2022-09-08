@@ -18,7 +18,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     public class SwitchedDoor : NetworkBehaviour
     {
         [SerializeField]
-        NetworkFloorSwitchState[] m_SwitchesThatOpenThisDoor;
+        FloorSwitch[] m_SwitchesThatOpenThisDoor;
 
         [SerializeField]
         Animator m_Animator;
