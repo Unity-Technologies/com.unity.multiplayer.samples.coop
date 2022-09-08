@@ -16,7 +16,7 @@
     "com.unity.postprocessing": "3.2.2",
     "com.unity.render-pipelines.universal": "14.0.3",
     "com.unity.services.authentication": "2.1.1",
-    "com.unity.services.lobby": "1.0.1",
+    "com.unity.services.lobby": "1.0.0-pre.6",
     "com.unity.services.relay": "1.0.3",
     "com.unity.test-framework": "1.1.31",
     "com.unity.textmeshpro": "3.0.6",
