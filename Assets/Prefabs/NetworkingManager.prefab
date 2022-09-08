@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ProtocolType: 0
-  m_MaxPacketQueueSize: 512
+  m_MaxPacketQueueSize: 256
   m_MaxPayloadSize: 32000
   m_MaxSendQueueSize: 50000000
   m_HeartbeatTimeoutMS: 500
