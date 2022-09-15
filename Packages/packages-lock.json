@@ -122,7 +122,7 @@
       "dependencies": {
         "com.unity.learn.iet-framework": "1.2.1",
         "com.unity.multiplayer.tools": "1.0.0",
-        "com.unity.netcode.gameobjects": "1.0.1",
+        "com.unity.netcode.gameobjects": "1.0.2",
         "com.unity.services.relay": "1.0.3"
       }
     },
@@ -140,7 +140,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "1.0.1",
+      "version": "1.0.2",
       "depth": 0,
       "source": "registry",
       "dependencies": {
