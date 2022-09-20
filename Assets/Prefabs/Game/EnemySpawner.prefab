@@ -361,6 +361,7 @@ GameObject:
   - component: {fileID: -1287160331463954971}
   - component: {fileID: 4844841199312666291}
   - component: {fileID: 4501025776099328933}
+  - component: {fileID: 5343699662503375493}
   m_Layer: 6
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -463,6 +464,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9a7ed35fc071575449a96ece1cc1ae16, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_BreakableElements: []
+  m_DormantCooldown: 180
+  IsBroken:
+    m_InternalValue: 0
+--- !u!114 &5343699662503375493
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6205854018081152875}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: eb44a31731a459546bdf01f1af48173c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
   m_MaxHealth: {fileID: 0}
   m_NetworkHealthState: {fileID: 0}
   m_Collider: {fileID: 0}
@@ -476,8 +493,6 @@ MonoBehaviour:
   - {fileID: 5320772107039249662}
   IsBroken:
     m_InternalValue: 0
-  m_BreakableElements: []
-  m_DormantCooldown: 180
 --- !u!1 &6584753279329625147
 GameObject:
   m_ObjectHideFlags: 0
