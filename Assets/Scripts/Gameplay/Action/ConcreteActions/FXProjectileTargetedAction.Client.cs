@@ -7,14 +7,14 @@ using Object = UnityEngine.Object;
 
 namespace Unity.BossRoom.Gameplay.Actions
 {
-    public partial class FXMissileTargetedAction
+    public partial class FXProjectileTargetedAction
     {
         // have we actually played an impact?
         private bool m_ImpactPlayed;
         // the time the FX projectile spends in the air
         private float m_ProjectileDuration;
         // the currently-live projectile. (Note that the projectile will normally destroy itself! We only care in case someone calls Cancel() on us)
-        private FXMissile m_Missile;
+        private FXProjectile m_Projectile;
         // the enemy we're aiming at
         private NetworkObject m_Target;
         Transform m_TargetTransform;
@@ -37,7 +37,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override bool OnUpdateClient(ClientCharacterVisualization parent)
         {
-            if (TimeRunning >= Config.ExecTimeSeconds && m_Missile == null)
+            if (TimeRunning >= Config.ExecTimeSeconds && m_Projectile == null)
             {
                 // figure out how long the pretend-projectile will be flying to the target
                 var targetPos = m_TargetTransform ? m_TargetTransform.position : Data.Position;
@@ -45,7 +45,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 m_ProjectileDuration = initialDistance / Config.Projectiles[0].Speed_m_s;
 
                 // create the projectile. It will control itself from here on out
-                m_Missile = SpawnAndInitializeProjectile(parent);
+                m_Projectile = SpawnAndInitializeProjectile(parent);
             }
 
             // we keep going until the projectile's duration ends
@@ -54,10 +54,10 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override void CancelClient(ClientCharacterVisualization parent)
         {
-            if (m_Missile)
+            if (m_Projectile)
             {
                 // we aborted post-projectile-launch (somehow)! Tell the graphics! (It will destroy itself, possibly after playing some more FX)
-                m_Missile.Cancel();
+                m_Projectile.Cancel();
             }
         }
 
@@ -111,11 +111,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        FXMissile SpawnAndInitializeProjectile(ClientCharacterVisualization parent)
+        FXProjectile SpawnAndInitializeProjectile(ClientCharacterVisualization parent)
         {
             var projectileGO = Object.Instantiate(Config.Projectiles[0].ProjectilePrefab, parent.transform.position, parent.transform.rotation, null);
 
-            var projectile = projectileGO.GetComponent<FXMissile>();
+            var projectile = projectileGO.GetComponent<FXProjectile>();
             if (!projectile)
             {
                 throw new System.Exception($"FXProjectileTargetedAction tried to spawn projectile {projectileGO.name}, as dictated for action {name}, but the object doesn't have a FXProjectile component!");

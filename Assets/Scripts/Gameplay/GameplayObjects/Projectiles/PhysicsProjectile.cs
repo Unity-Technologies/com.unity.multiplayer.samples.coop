@@ -11,7 +11,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     /// <summary>
     /// Logic that handles a physics-based projectile with a collider
     /// </summary>
-    public class PhysicsMissile : NetworkBehaviour
+    public class PhysicsProjectile : NetworkBehaviour
     {
         bool m_Started;
 

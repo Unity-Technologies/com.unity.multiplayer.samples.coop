@@ -51,7 +51,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             foreach (var projectileInfo in Config.Projectiles)
             {
-                if (projectileInfo.ProjectilePrefab && projectileInfo.ProjectilePrefab.GetComponent<PhysicsMissile>())
+                if (projectileInfo.ProjectilePrefab && projectileInfo.ProjectilePrefab.GetComponent<PhysicsProjectile>())
                     return projectileInfo;
             }
             throw new System.Exception($"Action {name} has no usable Projectiles!");
@@ -79,7 +79,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 //where it appears next to the player.
                 no.transform.position = parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
 
-                no.GetComponent<PhysicsMissile>().Initialize(parent.NetworkObjectId, projectileInfo);
+                no.GetComponent<PhysicsProjectile>().Initialize(parent.NetworkObjectId, projectileInfo);
 
                 no.Spawn(true);
             }

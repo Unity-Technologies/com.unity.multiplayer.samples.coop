@@ -7,7 +7,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     /// <summary>
     /// Logic that handles an FX-based pretend-missile.
     /// </summary>
-    public class FXMissile : MonoBehaviour
+    public class FXProjectile : MonoBehaviour
     {
         [SerializeField]
         private List<GameObject> m_ProjectileGraphics;
