@@ -259,7 +259,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             int numPlayers = 0;
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (serverCharacter.NetState.NetworkLifeState.LifeState.Value == LifeState.Alive)
+                if (serverCharacter.NetLifeState.LifeState.Value == LifeState.Alive)
                 {
                     ++numPlayers;
                 }
@@ -285,7 +285,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             // and is not occluded by a blocking collider.
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
-                if (!m_DetectStealthyPlayers && serverCharacter.NetState.IsStealthy.Value)
+                if (!m_DetectStealthyPlayers && serverCharacter.IsStealthy.Value)
                 {
                     // we don't detect stealthy players
                     continue;

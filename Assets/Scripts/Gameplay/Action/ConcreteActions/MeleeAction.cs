@@ -36,7 +36,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override bool OnStart(ServerCharacter parent)
         {
-            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : parent.NetState.TargetId.Value;
+            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : parent.TargetId.Value;
             IDamageable foe = DetectFoe(parent, target);
             if (foe != null)
             {

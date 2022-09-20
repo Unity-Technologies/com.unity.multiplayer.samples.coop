@@ -7,9 +7,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     public class DamageReceiver : NetworkBehaviour, IDamageable
     {
-        public event Action<ServerCharacter, int> damageReceived;
+        public event Action<ServerCharacter, int> DamageReceived;
 
-        public event Action<Collision> collisionEntered;
+        public event Action<Collision> CollisionEntered;
 
         [SerializeField]
         NetworkLifeState m_NetworkLifeState;
@@ -18,7 +18,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         {
             if (IsDamageable())
             {
-                damageReceived?.Invoke(inflicter, HP);
+                DamageReceived?.Invoke(inflicter, HP);
             }
         }
 
@@ -34,7 +34,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         void OnCollisionEnter(Collision other)
         {
-            collisionEntered?.Invoke(other);
+            CollisionEntered?.Invoke(other);
         }
     }
 }

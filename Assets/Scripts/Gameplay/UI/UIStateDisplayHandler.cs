@@ -17,6 +17,7 @@ namespace Unity.BossRoom.Gameplay.UI
     /// LateUpdate calls, which may alter the final position of the game camera.
     /// </remarks>
     [DefaultExecutionOrder(300)]
+    [RequireComponent(typeof(ServerCharacter))]
     public class UIStateDisplayHandler : NetworkBehaviour
     {
         [SerializeField]
@@ -38,11 +39,7 @@ namespace Unity.BossRoom.Gameplay.UI
         [SerializeField]
         NetworkNameState m_NetworkNameState;
 
-        [SerializeField]
-        NetworkHealthState m_NetworkHealthState;
-
-        [SerializeField]
-        ClientCharacter m_ClientCharacter;
+        ServerCharacter m_ServerCharacter;
 
         ClientAvatarGuidHandler m_ClientAvatarGuidHandler;
 
@@ -75,6 +72,11 @@ namespace Unity.BossRoom.Gameplay.UI
         // used to compute world position based on target and offsets
         Vector3 m_WorldPos;
 
+        void Awake()
+        {
+            m_ServerCharacter = GetComponent<ServerCharacter>();
+        }
+
         public override void OnNetworkSpawn()
         {
             if (!NetworkManager.Singleton.IsClient)
@@ -100,7 +102,7 @@ namespace Unity.BossRoom.Gameplay.UI
             Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
             if (m_DisplayHealth)
             {
-                Assert.IsNotNull(m_NetworkHealthState, "A NetworkHealthState component needs to be attached!");
+                Assert.IsNotNull(m_ServerCharacter.NetHealthState, "A NetworkHealthState component needs to be attached!");
             }
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
@@ -110,9 +112,9 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 m_BaseHP = m_NetworkAvatarGuidState.RegisteredAvatar.CharacterClass.BaseHP;
 
-                if (m_ClientCharacter.ChildVizObject)
+                if (m_ServerCharacter.ClientVisualization)
                 {
-                    TrackGraphicsTransform(m_ClientCharacter.ChildVizObject.gameObject);
+                    TrackGraphicsTransform(m_ServerCharacter.ClientVisualization.gameObject);
                 }
                 else
                 {
@@ -121,8 +123,8 @@ namespace Unity.BossRoom.Gameplay.UI
 
                 if (m_DisplayHealth)
                 {
-                    m_NetworkHealthState.hitPointsReplenished += DisplayUIHealth;
-                    m_NetworkHealthState.hitPointsDepleted += RemoveUIHealth;
+                    m_ServerCharacter.NetHealthState.HitPointsReplenished += DisplayUIHealth;
+                    m_ServerCharacter.NetHealthState.HitPointsDepleted += RemoveUIHealth;
                 }
             }
 
@@ -144,10 +146,10 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            if (m_NetworkHealthState != null)
+            if (m_ServerCharacter.NetHealthState != null)
             {
-                m_NetworkHealthState.hitPointsReplenished -= DisplayUIHealth;
-                m_NetworkHealthState.hitPointsDepleted -= RemoveUIHealth;
+                m_ServerCharacter.NetHealthState.HitPointsReplenished -= DisplayUIHealth;
+                m_ServerCharacter.NetHealthState.HitPointsDepleted -= RemoveUIHealth;
             }
 
             if (m_ClientAvatarGuidHandler)
@@ -174,7 +176,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void DisplayUIHealth()
         {
-            if (m_NetworkHealthState == null)
+            if (m_ServerCharacter.NetHealthState == null)
             {
                 return;
             }
@@ -184,7 +186,7 @@ namespace Unity.BossRoom.Gameplay.UI
                 SpawnUIState();
             }
 
-            m_UIState.DisplayHealth(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
+            m_UIState.DisplayHealth(m_ServerCharacter.NetHealthState.HitPoints, m_BaseHP.Value);
             m_UIStateActive = true;
         }
 

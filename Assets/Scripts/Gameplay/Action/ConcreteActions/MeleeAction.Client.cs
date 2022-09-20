@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Codice.Client.BaseCommands.Import;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
@@ -128,10 +129,11 @@ namespace Unity.BossRoom.Gameplay.Actions
                         string hitAnim = Config.ReactAnim;
                         if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
 
-                        var clientChar = targetNetworkObj.GetComponent<ClientCharacter>();
-                        if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
+                        if (targetNetworkObj.TryGetComponent<ServerCharacter>(out var serverCharacter)
+                            && serverCharacter.ClientVisualization != null
+                            && serverCharacter.ClientVisualization.OurAnimator)
                         {
-                            clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);
+                            serverCharacter.ClientVisualization.OurAnimator.SetTrigger(hitAnim);
                         }
                     }
                 }

@@ -22,7 +22,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             // play animation of dropping a heavy object, if one is already held
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    parent.NetState.heldNetworkObject.Value, out var heldObject))
+                    parent.HeldNetworkObject.Value, out var heldObject))
             {
                 m_HeldNetworkObject = heldObject;
 
@@ -50,7 +50,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             {
                 // drop the pot in space
                 m_HeldNetworkObject.transform.SetParent(null);
-                parent.NetState.heldNetworkObject.Value = 0;
+                parent.HeldNetworkObject.Value = 0;
 
                 return ActionConclusion.Stop;
             }

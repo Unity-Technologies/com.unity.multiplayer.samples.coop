@@ -31,7 +31,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             // play pickup animation based if a heavy object is not already held
             if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    parent.NetState.heldNetworkObject.Value, out var heldObject))
+                    parent.HeldNetworkObject.Value, out var heldObject))
             {
                 if (!string.IsNullOrEmpty(Config.Anim))
                 {
@@ -71,12 +71,12 @@ namespace Unity.BossRoom.Gameplay.Actions
                 return false;
             }
 
-            parent.NetState.heldNetworkObject.Value = heavyNetworkObject.NetworkObjectId;
+            parent.HeldNetworkObject.Value = heavyNetworkObject.NetworkObjectId;
 
             Data.TargetIds = new ulong[] { heavyNetworkObject.NetworkObjectId };
 
             // clear current target on successful parenting attempt
-            parent.NetState.TargetId.Value = 0;
+            parent.TargetId.Value = 0;
 
             // snap to face the right direction
             if (Data.Direction != Vector3.zero)
@@ -88,11 +88,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             var positionConstraint = heavyNetworkObject.GetComponent<PositionConstraint>();
             if (positionConstraint)
             {
-                if (parent.TryGetComponent(out ClientCharacter clientCharacter))
+                if (parent.TryGetComponent(out ServerCharacter serverCharacter))
                 {
                     var constraintSource = new ConstraintSource()
                     {
-                        sourceTransform = clientCharacter.ChildVizObject.CharacterSwap.CharacterModel.handSocket.transform,
+                        sourceTransform = serverCharacter.ClientVisualization.CharacterSwap.CharacterModel.handSocket.transform,
                         weight = 1
                     };
                     positionConstraint.AddSource(constraintSource);
@@ -120,13 +120,13 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (parent.NetState.LifeState == LifeState.Fainted)
+            if (parent.LifeState == LifeState.Fainted)
             {
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(parent.NetState.heldNetworkObject.Value, out var heavyNetworkObject))
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(parent.HeldNetworkObject.Value, out var heavyNetworkObject))
                 {
                     heavyNetworkObject.transform.SetParent(null);
                 }
-                parent.NetState.heldNetworkObject.Value = 0;
+                parent.HeldNetworkObject.Value = 0;
             }
         }
     }

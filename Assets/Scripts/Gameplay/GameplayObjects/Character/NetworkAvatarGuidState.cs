@@ -17,8 +17,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [HideInInspector]
         public NetworkVariable<NetworkGuid> AvatarGuid = new NetworkVariable<NetworkGuid>();
 
-        CharacterClassContainer m_CharacterClassContainer;
-
         [SerializeField]
         AvatarRegistry m_AvatarRegistry;
 
@@ -40,11 +38,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         public void SetRandomAvatar()
         {
             AvatarGuid.Value = m_AvatarRegistry.GetRandomAvatar().Guid.ToNetworkGuid();
-        }
-
-        void Awake()
-        {
-            m_CharacterClassContainer = GetComponent<CharacterClassContainer>();
         }
 
         void RegisterAvatar(Guid guid)
@@ -70,7 +63,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
             m_Avatar = avatar;
 
-            m_CharacterClassContainer.SetCharacterClass(avatar.CharacterClass);
+            if (TryGetComponent<ServerCharacter>(out var serverCharacter))
+            {
+                serverCharacter.CharacterClass = avatar.CharacterClass;
+            }
         }
     }
 }

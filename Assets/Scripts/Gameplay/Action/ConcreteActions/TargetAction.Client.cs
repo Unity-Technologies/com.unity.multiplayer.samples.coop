@@ -19,8 +19,8 @@ namespace Unity.BossRoom.Gameplay.Actions
         public override bool OnStartClient(ClientCharacterVisualization parent)
         {
             base.OnStartClient(parent);
-            parent.NetState.TargetId.OnValueChanged += OnTargetChanged;
-            parent.NetState.GetComponent<ClientInputSender>().ActionInputEvent += OnActionInput;
+            parent.serverCharacter.TargetId.OnValueChanged += OnTargetChanged;
+            parent.serverCharacter.GetComponent<ClientInputSender>().ActionInputEvent += OnActionInput;
 
             return true;
         }
@@ -45,10 +45,10 @@ namespace Unity.BossRoom.Gameplay.Actions
                         m_TargetReticule.SetActive(true);
 
                         var parentTransform = targetObject.transform;
-                        if (targetObject.TryGetComponent(out ClientCharacter clientCharacter) && clientCharacter.ChildVizObject)
+                        if (targetObject.TryGetComponent(out ServerCharacter serverCharacter) && serverCharacter.ClientVisualization)
                         {
                             //for characters, attach the reticule to the child graphics object.
-                            parentTransform = clientCharacter.ChildVizObject.transform;
+                            parentTransform = serverCharacter.ClientVisualization.transform;
                         }
 
                         m_TargetReticule.transform.parent = parentTransform;
@@ -81,7 +81,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
 
             bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;
-            bool myself_isnpc = parent.NetState.CharacterClass.IsNpc;
+            bool myself_isnpc = parent.serverCharacter.CharacterClass.IsNpc;
             bool hostile = target_isnpc != myself_isnpc;
 
             m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? parent.ReticuleHostileMat : parent.ReticuleFriendlyMat;
@@ -91,7 +91,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             GameObject.Destroy(m_TargetReticule);
 
-            parent.NetState.TargetId.OnValueChanged -= OnTargetChanged;
+            parent.serverCharacter.TargetId.OnValueChanged -= OnTargetChanged;
             if (parent.TryGetComponent(out ClientInputSender inputSender))
             {
                 inputSender.ActionInputEvent -= OnActionInput;

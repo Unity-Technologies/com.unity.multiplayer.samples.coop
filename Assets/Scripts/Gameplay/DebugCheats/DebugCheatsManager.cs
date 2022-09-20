@@ -152,7 +152,7 @@ namespace Unity.BossRoom.DebugCheats
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
-                var targetId = playerServerCharacter.NetState.TargetId.Value;
+                var targetId = playerServerCharacter.TargetId.Value;
                 if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject obj))
                 {
                     var damageable = obj.GetComponent<IDamageable>();
@@ -175,11 +175,11 @@ namespace Unity.BossRoom.DebugCheats
         {
             foreach (var serverCharacter in FindObjectsOfType<ServerCharacter>())
             {
-                if (serverCharacter.IsNpc && serverCharacter.NetState.LifeState == LifeState.Alive)
+                if (serverCharacter.IsNpc && serverCharacter.LifeState == LifeState.Alive)
                 {
                     if (serverCharacter.gameObject.TryGetComponent(out IDamageable damageable))
                     {
-                        damageable.ReceiveHP(null, -serverCharacter.NetState.HitPoints);
+                        damageable.ReceiveHP(null, -serverCharacter.HitPoints);
                     }
                 }
             }
@@ -193,7 +193,7 @@ namespace Unity.BossRoom.DebugCheats
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
-                playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value = !playerServerCharacter.NetState.NetworkLifeState.IsGodMode.Value;
+                playerServerCharacter.NetLifeState.IsGodMode.Value = !playerServerCharacter.NetLifeState.IsGodMode.Value;
                 PublishCheatUsedMessage(clientId, "ToggleGodMode");
             }
         }
@@ -205,8 +205,8 @@ namespace Unity.BossRoom.DebugCheats
             var playerServerCharacter = PlayerServerCharacter.GetPlayerServerCharacter(clientId);
             if (playerServerCharacter != null)
             {
-                var baseHp = playerServerCharacter.NetState.CharacterClass.BaseHP.Value;
-                if (playerServerCharacter.NetState.LifeState == LifeState.Fainted)
+                var baseHp = playerServerCharacter.CharacterClass.BaseHP.Value;
+                if (playerServerCharacter.LifeState == LifeState.Fainted)
                 {
                     playerServerCharacter.Revive(null, baseHp);
                 }

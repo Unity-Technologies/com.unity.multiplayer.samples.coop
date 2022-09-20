@@ -53,7 +53,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             {
                 // start actual stealth-mode... NOW!
                 m_IsStealthStarted = true;
-                parent.NetState.IsStealthy.Value = true;
+                parent.IsStealthy.Value = true;
             }
             return !m_IsStealthEnded;
         }
@@ -84,7 +84,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 m_IsStealthEnded = true;
                 if (m_IsStealthStarted)
                 {
-                    parent.NetState.IsStealthy.Value = false;
+                    parent.IsStealthy.Value = false;
                 }
 
                 // note that we cancel the ActionFX here, and NOT in Cancel(). That's to handle the case where someone

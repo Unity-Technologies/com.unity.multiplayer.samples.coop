@@ -28,9 +28,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [SerializeField]
         Rigidbody m_Rigidbody;
 
-        [SerializeField]
-        NetworkCharacterState m_NetworkCharacterState;
-
         private NavigationSystem m_NavigationSystem;
 
         private DynamicNavPath m_NavPath;
@@ -177,7 +174,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             var currentState = GetMovementStatus(m_MovementState);
             if (m_PreviousState != currentState)
             {
-                m_NetworkCharacterState.MovementStatus.Value = currentState;
+                m_CharLogic.MovementStatus.Value = currentState;
                 m_PreviousState = currentState;
             }
         }
@@ -260,8 +257,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 return k_CheatSpeed;
             }
 #endif
-            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.NetState.CharacterType];
-            Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.NetState.CharacterType}");
+            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.CharacterType];
+            Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.CharacterType}");
             return characterClass.Speed;
         }
 

@@ -45,11 +45,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         PhysicsWrapper m_PhysicsWrapper;
 
-        public bool CanPerformActions => m_NetState.CanPerformActions;
+        public bool CanPerformActions => m_ServerCharacter.CanPerformActions;
 
-        NetworkCharacterState m_NetState;
+        ServerCharacter m_ServerCharacter;
 
-        public NetworkCharacterState NetState => m_NetState;
+        public ServerCharacter serverCharacter => m_ServerCharacter;
+
+
 
         ClientActionPlayer m_ClientActionViz;
 
@@ -125,13 +127,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
             m_ClientActionViz = new ClientActionPlayer(this);
 
-            m_NetState = GetComponentInParent<NetworkCharacterState>();
+            m_ServerCharacter = GetComponentInParent<ServerCharacter>();
 
-            m_PhysicsWrapper = m_NetState.GetComponent<PhysicsWrapper>();
+            m_PhysicsWrapper = m_ServerCharacter.GetComponent<PhysicsWrapper>();
 
-            m_NetState.IsStealthy.OnValueChanged += OnStealthyChanged;
-            m_NetState.MovementStatus.OnValueChanged += OnMovementStatusChanged;
-            OnMovementStatusChanged(MovementStatus.Normal, m_NetState.MovementStatus.Value);
+            m_ServerCharacter.IsStealthy.OnValueChanged += OnStealthyChanged;
+            m_ServerCharacter.MovementStatus.OnValueChanged += OnMovementStatusChanged;
+            OnMovementStatusChanged(MovementStatus.Normal, m_ServerCharacter.MovementStatus.Value);
 
             // sync our visualization position & rotation to the most up to date version received from server
             transform.SetPositionAndRotation(m_PhysicsWrapper.Transform.position, m_PhysicsWrapper.Transform.rotation);
@@ -142,11 +144,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             m_PositionLerper = new PositionLerper(m_PhysicsWrapper.Transform.position, k_LerpTime);
             m_RotationLerper = new RotationLerper(m_PhysicsWrapper.Transform.rotation, k_LerpTime);
 
-            if (!m_NetState.IsNpc)
+            if (!m_ServerCharacter.IsNpc)
             {
-                name = "AvatarGraphics" + m_NetState.OwnerClientId;
+                name = "AvatarGraphics" + m_ServerCharacter.OwnerClientId;
 
-                if (m_NetState.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
+                if (m_ServerCharacter.TryGetComponent(out ClientAvatarGuidHandler clientAvatarGuidHandler))
                 {
                     m_ClientVisualsAnimator = clientAvatarGuidHandler.graphicsAnimator;
                 }
@@ -156,13 +158,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
                 // ...and visualize the current char-select value that we know about
                 SetAppearanceSwap();
 
-                if (m_NetState.IsOwner)
+                if (m_ServerCharacter.IsOwner)
                 {
                     ActionRequestData data = new ActionRequestData { ActionID = GameDataSource.Instance.GeneralTargetActionPrototype.ActionID };
                     m_ClientActionViz.PlayAction(ref data);
                     gameObject.AddComponent<CameraController>();
 
-                    if (m_NetState.TryGetComponent(out ClientInputSender inputSender))
+                    if (m_ServerCharacter.TryGetComponent(out ClientInputSender inputSender))
                     {
                         // TODO: revisit; anticipated actions would play twice on the host
                         if (!IsServer)
@@ -177,15 +179,15 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public override void OnNetworkDespawn()
         {
-            if (m_NetState)
+            if (m_ServerCharacter)
             {
                 //m_NetState.DoActionEventClient -= PerformActionFX;
                 //m_NetState.CancelAllActionsEventClient -= CancelAllActionFXs;
                 //m_NetState.CancelActionsByPrototypeIDEventClient -= CancelActionFXByPrototypeID;
                 //m_NetState.OnStopChargingUpClient -= OnStoppedChargingUpClient;
-                m_NetState.IsStealthy.OnValueChanged -= OnStealthyChanged;
+                m_ServerCharacter.IsStealthy.OnValueChanged -= OnStealthyChanged;
 
-                if (m_NetState.TryGetComponent(out ClientInputSender sender))
+                if (m_ServerCharacter.TryGetComponent(out ClientInputSender sender))
                 {
                     sender.ActionInputEvent -= OnActionInput;
                     sender.ClientMoveEvent -= OnMoveInput;
@@ -218,9 +220,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             if (m_CharacterSwapper)
             {
                 var specialMaterialMode = CharacterSwap.SpecialMaterialMode.None;
-                if (m_NetState.IsStealthy.Value)
+                if (m_ServerCharacter.IsStealthy.Value)
                 {
-                    if (m_NetState.IsOwner)
+                    if (m_ServerCharacter.IsOwner)
                     {
                         specialMaterialMode = CharacterSwap.SpecialMaterialMode.StealthySelf;
                     }
@@ -239,7 +241,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         float GetVisualMovementSpeed(MovementStatus movementStatus)
         {
-            if (m_NetState.NetworkLifeState.LifeState.Value != LifeState.Alive)
+            if (m_ServerCharacter.NetLifeState.LifeState.Value != LifeState.Alive)
             {
                 return m_VisualizationConfiguration.SpeedDead;
             }

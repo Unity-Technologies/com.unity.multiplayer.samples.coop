@@ -98,8 +98,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
         {
             if (potentialFoe == null ||
                 potentialFoe.IsNpc ||
-                potentialFoe.NetState.LifeState != LifeState.Alive ||
-                potentialFoe.NetState.IsStealthy.Value)
+                potentialFoe.LifeState != LifeState.Alive ||
+                potentialFoe.IsStealthy.Value)
             {
                 return false;
             }
@@ -152,7 +152,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType];
+                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.CharacterType];
             }
         }
 

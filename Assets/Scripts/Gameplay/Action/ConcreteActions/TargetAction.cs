@@ -18,14 +18,14 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             //we must always clear the existing target, even if we don't run. This is how targets get cleared--running a TargetAction
             //with no target selected.
-            parent.NetState.TargetId.Value = 0;
+            parent.TargetId.Value = 0;
 
             //there can only be one TargetAction at a time!
             parent.ActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true, this);
 
             if (Data.TargetIds == null || Data.TargetIds.Length == 0) { return false; }
 
-            parent.NetState.TargetId.Value = TargetId;
+            parent.TargetId.Value = TargetId;
 
             FaceTarget(parent, TargetId);
 
@@ -55,9 +55,9 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         public override void Cancel(ServerCharacter parent)
         {
-            if (parent.NetState.TargetId.Value == TargetId)
+            if (parent.TargetId.Value == TargetId)
             {
-                parent.NetState.TargetId.Value = 0;
+                parent.TargetId.Value = 0;
             }
         }
 

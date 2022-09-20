@@ -1,4 +1,5 @@
 using System;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
@@ -30,13 +31,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Audio
 
         void OnDestroy()
         {
-            var netState = GetComponent<NetworkCharacterState>();
-            if (netState != null)
+            var serverCharacter = GetComponent<ServerCharacter>();
+            if (serverCharacter != null)
             {
-                netState.NetworkLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
-                if (netState.HealthState != null)
+                serverCharacter.NetLifeState.LifeState.OnValueChanged -= OnLifeStateChanged;
+                if (serverCharacter.NetHealthState != null)
                 {
-                    netState.HealthState.HitPoints.OnValueChanged -= OnHealthChanged;
+                    serverCharacter.NetHealthState.HitPoints.OnValueChanged -= OnHealthChanged;
                 }
             }
         }

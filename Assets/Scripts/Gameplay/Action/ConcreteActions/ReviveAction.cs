@@ -42,7 +42,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             {
                 m_ExecFired = true;
 
-                if (m_TargetCharacter.NetState.LifeState == LifeState.Fainted)
+                if (m_TargetCharacter.LifeState == LifeState.Fainted)
                 {
                     Assert.IsTrue(Config.Amount > 0, "Revive amount must be greater than 0.");
                     m_TargetCharacter.Revive(parent, Config.Amount);

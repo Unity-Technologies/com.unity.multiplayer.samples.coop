@@ -16,7 +16,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
     /// <summary>
     /// Captures inputs for a character on a client and sends them to the server.
     /// </summary>
-    [RequireComponent(typeof(NetworkCharacterState))]
+    [RequireComponent(typeof(ServerCharacter))]
     public class ClientInputSender : NetworkBehaviour
     {
         const float k_MouseInputRaycastDistance = 100f;
@@ -101,13 +101,10 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
         public event Action<Vector3> ClientMoveEvent;
 
-        [SerializeField]
-        CharacterClassContainer m_CharacterClassContainer;
-
         /// <summary>
         /// Convenience getter that returns our CharacterData
         /// </summary>
-        CharacterClass CharacterData => m_CharacterClassContainer.CharacterClass;
+        CharacterClass CharacterClass => m_ServerCharacter.CharacterClass;
 
         [SerializeField]
         PhysicsWrapper m_PhysicsWrapper;
@@ -294,7 +291,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
             var targetNetObj = hit != null ? hit.GetComponentInParent<NetworkObject>() : null;
 
-            //if we can't get our target from the submitted hit transform, get it from our stateful target in our NetworkCharacterState.
+            //if we can't get our target from the submitted hit transform, get it from our stateful target in our ServerCharacter.
             if (!targetNetObj && !GameDataSource.Instance.GetActionPrototypeByID(actionID).IsGeneralTargetAction)
             {
                 ulong targetId = m_ServerCharacter.TargetId.Value;
@@ -307,13 +304,12 @@ namespace Unity.BossRoom.Gameplay.UserInput
                 return false;
             }
 
-            var targetNetState = targetNetObj.GetComponent<NetworkCharacterState>();
-            if (targetNetState != null)
+            if (targetNetObj.TryGetComponent<ServerCharacter>(out var serverCharacter))
             {
                 //Skill1 may be contextually overridden if it was generated from a mouse-click.
-                if (actionID == CharacterData.Skill1.ActionID && triggerStyle == SkillTriggerStyle.MouseClick)
+                if (actionID == CharacterClass.Skill1.ActionID && triggerStyle == SkillTriggerStyle.MouseClick)
                 {
-                    if (!targetNetState.IsNpc && targetNetState.LifeState == LifeState.Fainted)
+                    if (!serverCharacter.IsNpc && serverCharacter.LifeState == LifeState.Fainted)
                     {
                         //right-clicked on a downed ally--change the skill play to Revive.
                         actionID = GameDataSource.Instance.ReviveActionPrototype.ActionID;
@@ -415,27 +411,27 @@ namespace Unity.BossRoom.Gameplay.UserInput
         {
             if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha1))
             {
-                RequestAction(CharacterData.Skill1, SkillTriggerStyle.Keyboard);
+                RequestAction(CharacterClass.Skill1, SkillTriggerStyle.Keyboard);
             }
             else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha1))
             {
-                RequestAction(CharacterData.Skill1, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(CharacterClass.Skill1, SkillTriggerStyle.KeyboardRelease);
             }
             if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha2))
             {
-                RequestAction(CharacterData.Skill2, SkillTriggerStyle.Keyboard);
+                RequestAction(CharacterClass.Skill2, SkillTriggerStyle.Keyboard);
             }
             else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha2))
             {
-                RequestAction(CharacterData.Skill2, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(CharacterClass.Skill2, SkillTriggerStyle.KeyboardRelease);
             }
             if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha3))
             {
-                RequestAction(CharacterData.Skill3, SkillTriggerStyle.Keyboard);
+                RequestAction(CharacterClass.Skill3, SkillTriggerStyle.Keyboard);
             }
             else if (UnityEngine.Input.GetKeyUp(KeyCode.Alpha3))
             {
-                RequestAction(CharacterData.Skill3, SkillTriggerStyle.KeyboardRelease);
+                RequestAction(CharacterClass.Skill3, SkillTriggerStyle.KeyboardRelease);
             }
 
             if (UnityEngine.Input.GetKeyDown(KeyCode.Alpha5))
@@ -462,7 +458,7 @@ namespace Unity.BossRoom.Gameplay.UserInput
 
                 if (UnityEngine.Input.GetMouseButtonDown(1))
                 {
-                    RequestAction(CharacterData.Skill1, SkillTriggerStyle.MouseClick);
+                    RequestAction(CharacterClass.Skill1, SkillTriggerStyle.MouseClick);
                 }
 
                 if (UnityEngine.Input.GetMouseButtonDown(0))

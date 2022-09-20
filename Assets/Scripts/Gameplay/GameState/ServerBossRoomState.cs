@@ -243,7 +243,7 @@ namespace Unity.BossRoom.Gameplay.GameState
             foreach (var serverCharacter in PlayerServerCharacter.GetPlayerServerCharacters())
             {
                 // if any player is alive just return
-                if (serverCharacter.NetState && serverCharacter.NetState.LifeState == LifeState.Alive)
+                if (serverCharacter && serverCharacter.LifeState == LifeState.Alive)
                 {
                     return;
                 }

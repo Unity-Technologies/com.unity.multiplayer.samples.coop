@@ -77,10 +77,10 @@ namespace Unity.BossRoom.Gameplay.Actions
                 return;
             }
 
-            if (m_Target && m_Target.TryGetComponent(out ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null)
+            if (m_Target && m_Target.TryGetComponent(out ServerCharacter clientCharacter) && clientCharacter.ClientVisualization != null)
             {
                 var hitReact = !string.IsNullOrEmpty(Config.ReactAnim) ? Config.ReactAnim : k_DefaultHitReact;
-                clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
+                clientCharacter.ClientVisualization.OurAnimator.SetTrigger(hitReact);
             }
         }
 
@@ -95,7 +95,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var targetable = targetObject.GetComponent<ITargetable>();
-                if (targetable != null && targetable.IsNpc == (Config.IsFriendly ^ parent.NetState.IsNpc))
+                if (targetable != null && targetable.IsNpc == (Config.IsFriendly ^ parent.serverCharacter.IsNpc))
                 {
                     // not a valid target
                     return null;
