@@ -11,6 +11,11 @@
 ### Fixed
 *
 
+## [1.3.1-pre] - 2022-09-13
+
+### Fixed
+* Updating ClientNetworkTransform for latest NGO 1.0.1+ (#726) This fixes the new behaviour where both RPCs and netvars were sending the same data. Now CNT is netvar based only, making it send on tick just like NetworkTransform and other network variables would.
+
 ## [1.3.0-pre] - 2022-06-23
 
 ### Added
