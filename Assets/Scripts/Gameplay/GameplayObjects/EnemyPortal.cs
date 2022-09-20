@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -20,7 +19,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
     /// the portal itself (a glowy visual effect stops when Broken, turns back on when unbroken)
     /// </remarks>
     [RequireComponent(typeof(ServerWaveSpawner))]
-    public class EnemyPortal : NetworkBehaviour, ITargetable
+    public class EnemyPortal : Breakable
     {
         [SerializeField]
         [Tooltip("Portal becomes dormant when ALL of these breakables are broken")]
@@ -29,16 +28,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [SerializeField]
         [Tooltip("When all breakable elements are broken, wait this long before respawning them (and reactivating)")]
         float m_DormantCooldown;
-
-
-        /// <summary>
-        /// Is the item broken or not?
-        /// </summary>
-        public NetworkVariable<bool> IsBroken;
-
-        public bool IsNpc { get { return true; } }
-
-        public bool IsValidTarget { get { return !IsBroken.Value; } }
 
         // cached reference to our components
         ServerWaveSpawner m_WaveSpawner;
@@ -53,6 +42,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public override void OnNetworkSpawn()
         {
+            base.OnNetworkSpawn();
+
             if (!IsServer)
             {
                 enabled = false;
@@ -77,6 +68,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 if (breakable)
                     breakable.IsBroken.OnValueChanged -= OnBreakableBroken;
             }
+
+            base.OnNetworkDespawn();
         }
 
         private void OnBreakableBroken(bool wasBroken, bool isBroken)
