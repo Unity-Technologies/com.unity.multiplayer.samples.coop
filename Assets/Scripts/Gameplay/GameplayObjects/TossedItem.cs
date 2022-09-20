@@ -8,6 +8,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     public class ServerTossedItem : NetworkBehaviour
     {
+        [Header("Server")]
+
         [SerializeField]
         int m_DamagePoints;
 
@@ -43,25 +45,53 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public UnityEvent detonatedCallback;
 
+        [Header("Visualization")]
+
+        [SerializeField]
+        Transform m_TossedItemVisualTransform;
+
+        const float k_DisplayHeight = 0.1f;
+
+        readonly Quaternion k_TossAttackRadiusDisplayRotation = Quaternion.Euler(90f, 0f, 0f);
+
+        [SerializeField]
+        GameObject m_TossedObjectGraphics;
+
+        [SerializeField]
+        AudioSource m_FallingSound;
+
         public override void OnNetworkSpawn()
         {
-            if (!IsServer)
+            if (IsServer)
             {
-                enabled = false;
-                return;
+                m_Started = true;
+                m_Detonated = false;
+
+                m_DetonateTimer = Time.fixedTime + m_DetonateAfterSeconds;
+                m_DestroyTimer = Time.fixedTime + m_DestroyAfterSeconds;
             }
 
-            m_Started = true;
-            m_Detonated = false;
-
-            m_DetonateTimer = Time.fixedTime + m_DetonateAfterSeconds;
-            m_DestroyTimer = Time.fixedTime + m_DestroyAfterSeconds;
+            if (IsClient)
+            {
+                m_TossedItemVisualTransform.gameObject.SetActive(true);
+                m_TossedObjectGraphics.SetActive(true);
+                m_FallingSound.Play();
+            }
         }
 
         public override void OnNetworkDespawn()
         {
-            m_Started = false;
-            m_Detonated = false;
+            if (IsServer)
+            {
+                m_Started = false;
+                m_Detonated = false;
+            }
+
+            if (IsClient)
+            {
+                m_TossedItemVisualTransform.gameObject.SetActive(false);
+            }
+
         }
 
         void Detonate()
@@ -96,21 +126,35 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         void FixedUpdate()
         {
-            if (!m_Started)
+            if (IsServer)
             {
-                return; //don't do anything before OnNetworkSpawn has run.
-            }
+                if (!m_Started)
+                {
+                    return; //don't do anything before OnNetworkSpawn has run.
+                }
 
-            if (!m_Detonated && m_DetonateTimer < Time.fixedTime)
-            {
-                Detonate();
-            }
+                if (!m_Detonated && m_DetonateTimer < Time.fixedTime)
+                {
+                    Detonate();
+                }
 
-            if (m_Detonated && m_DestroyTimer < Time.fixedTime)
+                if (m_Detonated && m_DestroyTimer < Time.fixedTime)
+                {
+                    // despawn after sending detonate RPC
+                    var networkObject = gameObject.GetComponent<NetworkObject>();
+                    networkObject.Despawn();
+                }
+            }
+        }
+
+        void LateUpdate()
+        {
+            if (IsClient)
             {
-                // despawn after sending detonate RPC
-                var networkObject = gameObject.GetComponent<NetworkObject>();
-                networkObject.Despawn();
+                var tossedItemPosition = transform.position;
+                m_TossedItemVisualTransform.SetPositionAndRotation(
+                    new Vector3(tossedItemPosition.x, k_DisplayHeight, tossedItemPosition.z),
+                    k_TossAttackRadiusDisplayRotation);
             }
         }
     }

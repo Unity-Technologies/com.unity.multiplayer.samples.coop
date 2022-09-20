@@ -17,7 +17,6 @@ namespace Unity.BossRoom.Gameplay.UI
     /// LateUpdate calls, which may alter the final position of the game camera.
     /// </remarks>
     [DefaultExecutionOrder(300)]
-    [RequireComponent(typeof(ServerCharacter))]
     public class UIStateDisplayHandler : NetworkBehaviour
     {
         [SerializeField]
@@ -35,6 +34,9 @@ namespace Unity.BossRoom.Gameplay.UI
         RectTransform m_UIStateRectTransform;
 
         bool m_UIStateActive;
+
+        [SerializeField]
+        NetworkHealthState m_NetworkHealthState;
 
         [SerializeField]
         NetworkNameState m_NetworkNameState;
@@ -102,7 +104,7 @@ namespace Unity.BossRoom.Gameplay.UI
             Assert.IsTrue(m_DisplayHealth || m_DisplayName, "Neither display fields are toggled on!");
             if (m_DisplayHealth)
             {
-                Assert.IsNotNull(m_ServerCharacter.NetHealthState, "A NetworkHealthState component needs to be attached!");
+                Assert.IsNotNull(m_NetworkHealthState, "A NetworkHealthState component needs to be attached!");
             }
 
             m_VerticalOffset = new Vector3(0f, m_VerticalScreenOffset, 0f);
@@ -123,8 +125,8 @@ namespace Unity.BossRoom.Gameplay.UI
 
                 if (m_DisplayHealth)
                 {
-                    m_ServerCharacter.NetHealthState.HitPointsReplenished += DisplayUIHealth;
-                    m_ServerCharacter.NetHealthState.HitPointsDepleted += RemoveUIHealth;
+                    m_NetworkHealthState.HitPointsReplenished += DisplayUIHealth;
+                    m_NetworkHealthState.HitPointsDepleted += RemoveUIHealth;
                 }
             }
 
@@ -146,10 +148,10 @@ namespace Unity.BossRoom.Gameplay.UI
                 return;
             }
 
-            if (m_ServerCharacter.NetHealthState != null)
+            if (m_NetworkHealthState != null)
             {
-                m_ServerCharacter.NetHealthState.HitPointsReplenished -= DisplayUIHealth;
-                m_ServerCharacter.NetHealthState.HitPointsDepleted -= RemoveUIHealth;
+                m_NetworkHealthState.HitPointsReplenished -= DisplayUIHealth;
+                m_NetworkHealthState.HitPointsDepleted -= RemoveUIHealth;
             }
 
             if (m_ClientAvatarGuidHandler)
@@ -176,7 +178,7 @@ namespace Unity.BossRoom.Gameplay.UI
 
         void DisplayUIHealth()
         {
-            if (m_ServerCharacter.NetHealthState == null)
+            if (m_NetworkHealthState == null)
             {
                 return;
             }
@@ -186,7 +188,7 @@ namespace Unity.BossRoom.Gameplay.UI
                 SpawnUIState();
             }
 
-            m_UIState.DisplayHealth(m_ServerCharacter.NetHealthState.HitPoints, m_BaseHP.Value);
+            m_UIState.DisplayHealth(m_NetworkHealthState.HitPoints, m_BaseHP.Value);
             m_UIStateActive = true;
         }
 

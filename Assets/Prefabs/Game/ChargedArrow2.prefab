@@ -104,6 +104,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_OurCollider: {fileID: 8403335067046434128}
+  m_OnHitParticlePrefab: {fileID: -6745866273066112404, guid: ae64395b058ab5e4db24271fb6fadb93, type: 3}
+  m_TrailRenderer: {fileID: 4685086537884760797}
+  m_Visualization: {fileID: 6052162863261286440}
 --- !u!1001 &9068228851964018290
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -159,8 +162,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: ChargedArrow2Graphics
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 153916515354694390, guid: 113758aacd326b5478e4d68c739b6cb8, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 113758aacd326b5478e4d68c739b6cb8, type: 3}
+--- !u!96 &4685086537884760797 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 4385405951379145903, guid: 113758aacd326b5478e4d68c739b6cb8, type: 3}
+  m_PrefabInstance: {fileID: 9068228851964018290}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6052162863261286440 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3325143161705299546, guid: 113758aacd326b5478e4d68c739b6cb8, type: 3}
