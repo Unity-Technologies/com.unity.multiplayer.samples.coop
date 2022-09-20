@@ -6,7 +6,7 @@ using UnityEngine.Events;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
-    public class ServerTossedItem : NetworkBehaviour
+    public class TossedItem : NetworkBehaviour
     {
         [Header("Server")]
 
