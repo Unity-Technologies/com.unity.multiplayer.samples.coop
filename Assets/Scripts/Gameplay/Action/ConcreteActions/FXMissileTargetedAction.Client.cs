@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace Unity.BossRoom.Gameplay.Actions
 {
-    public partial class FXProjectileTargetedAction
+    public partial class FXMissileTargetedAction
     {
         // have we actually played an impact?
         private bool m_ImpactPlayed;

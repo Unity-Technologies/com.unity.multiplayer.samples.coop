@@ -15,7 +15,7 @@ namespace Unity.BossRoom.Gameplay.Actions
     /// </summary>
 
     [CreateAssetMenu(menuName = "BossRoom/Actions/FX Projectile Targeted Action")]
-    public partial class FXProjectileTargetedAction : Action
+    public partial class FXMissileTargetedAction : Action
     {
         private bool m_ImpactedTarget;
         private float m_TimeUntilImpact;
