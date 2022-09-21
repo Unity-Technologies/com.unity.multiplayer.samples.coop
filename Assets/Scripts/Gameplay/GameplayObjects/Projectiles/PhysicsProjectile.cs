@@ -185,7 +185,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
                 }
                 else
                 {
-                   m_Visualization.position = transform.position;
+                    m_Visualization.position = transform.position;
                 }
             }
 
