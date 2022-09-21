@@ -23,8 +23,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
-            InstantiateAvatar();
+            if (IsClient)
+            {
+                InstantiateAvatar();
+            }
         }
 
         void InstantiateAvatar()

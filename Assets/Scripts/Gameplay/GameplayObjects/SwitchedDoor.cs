@@ -43,9 +43,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         void Awake()
         {
-            // don't let Update() run until after OnNetworkSpawn()
-            enabled = false;
-
             if (m_SwitchesThatOpenThisDoor.Length == 0)
                 Debug.LogError("Door has no switches and can never be opened!", gameObject);
         }
@@ -74,7 +71,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         void Update()
         {
-            if (IsServer)
+            if (IsServer && IsSpawned)
             {
                 var isAnySwitchOn = false;
                 foreach (var floorSwitch in m_SwitchesThatOpenThisDoor)
