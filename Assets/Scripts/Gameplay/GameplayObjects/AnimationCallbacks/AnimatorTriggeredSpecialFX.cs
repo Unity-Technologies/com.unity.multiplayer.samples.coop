@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Multiplayer.Samples.BossRoom.Visual;
+using UnityEngine;
+
+#if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Animations;
-using UnityEngine;
+#endif
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 {
