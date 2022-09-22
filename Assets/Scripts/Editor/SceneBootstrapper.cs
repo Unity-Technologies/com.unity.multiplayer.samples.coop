@@ -27,7 +27,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
     [InitializeOnLoad]
     public class SceneBootstrapper
     {
-        const string k_BootstrapSceneKey = "BootstrapScene";
         const string k_PreviousSceneKey = "PreviousScene";
         const string k_ShouldLoadBootstrapSceneKey = "LoadBootstrapScene";
 
