@@ -138,8 +138,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             {
                 m_TrailRenderer.Clear();
                 m_Visualization.parent = transform;
-
-                Destroy(m_Visualization.gameObject);
             }
         }
 
@@ -172,7 +170,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             if (IsClient)
             {
                 // One thing to note: this graphics GameObject is detached from its parent on OnNetworkSpawn. On the host,
-                // the m_Parent Transform is translated via ServerProjectileLogic's FixedUpdate method. On all other
+                // the m_Parent Transform is translated via PhysicsProjectile's FixedUpdate method. On all other
                 // clients, m_Parent's NetworkTransform handles syncing and interpolating the m_Parent Transform. Thus, to
                 // eliminate any visual jitter on the host, this GameObject is positionally smoothed over time. On all other
                 // clients, no positional smoothing is required, since m_Parent's NetworkTransform will perform

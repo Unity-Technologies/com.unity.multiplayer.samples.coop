@@ -104,6 +104,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_OurCollider: {fileID: 8403335067046434128}
+  m_OnHitParticlePrefab: {fileID: 0}
+  m_TrailRenderer: {fileID: 1980287036615436777}
+  m_Visualization: {fileID: 4059957049433480825}
 --- !u!1001 &1617519574143475747
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -191,8 +194,14 @@ PrefabInstance:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 153916515354694390, guid: 7efe25e27bd78fe43a07ecddd75be717, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 7efe25e27bd78fe43a07ecddd75be717, type: 3}
+--- !u!96 &1980287036615436777 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 939547987977570762, guid: 7efe25e27bd78fe43a07ecddd75be717, type: 3}
+  m_PrefabInstance: {fileID: 1617519574143475747}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &4059957049433480825 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3325143161705299546, guid: 7efe25e27bd78fe43a07ecddd75be717, type: 3}

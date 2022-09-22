@@ -51,8 +51,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public ServerCharacter serverCharacter => m_ServerCharacter;
 
-
-
         ClientActionPlayer m_ClientActionViz;
 
         PositionLerper m_PositionLerper;
