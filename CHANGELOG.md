@@ -39,6 +39,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Subscribing to a message channel while unsubscribing is pending (#675)
 * Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
 * Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
+* Scene Bootstrapper: future proofing bootstrap scene so we don't rely on Startup's path. MTT-3707. (#TODO)
 
 ## [v1.3.0-pre] - 2022-06-23
 
