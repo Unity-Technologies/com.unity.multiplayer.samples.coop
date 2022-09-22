@@ -36,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
 
         const string k_TestRunnerSceneName = "InitTestScene";
 
-        static bool s_StoppingAndStarting;
+        static bool s_RestartingToSwitchScene;
 
         static string BootstrapScene => EditorBuildSettings.scenes[0].path;
 
@@ -102,14 +102,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                 return;
             }
 
-            if (s_StoppingAndStarting)
+            if (s_RestartingToSwitchScene)
             {
                 if (playModeStateChange == PlayModeStateChange.EnteredPlayMode)
                 {
                     // for some reason there's multiple start and stops events happening while restarting the editor playmode. We're making sure to
                     // set stoppingAndStarting only when we're done and we've entered playmode. This way we won't corrupt "activeScene" with the multiple
                     // start and stop and will be able to return to the scene we were editing at first
-                    s_StoppingAndStarting = false;
+                    s_RestartingToSwitchScene = false;
                 }
                 return;
             }
@@ -128,11 +128,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Editor
                     {
                         var activeScene = EditorSceneManager.GetActiveScene();
 
-                        s_StoppingAndStarting = activeScene.path == string.Empty || !BootstrapScene.Contains(activeScene.path);
+                        s_RestartingToSwitchScene = activeScene.path == string.Empty || !BootstrapScene.Contains(activeScene.path);
 
                         // we only manually inject Bootstrap scene if we are in a blank empty scene,
                         // or if the active scene is not already BootstrapScene
-                        if (s_StoppingAndStarting)
+                        if (s_RestartingToSwitchScene)
                         {
                             EditorApplication.isPlaying = false;
 
