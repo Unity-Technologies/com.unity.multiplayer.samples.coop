@@ -112,6 +112,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             return await ExceptionHandling(LobbyService.Instance.QuickJoinLobbyAsync(joinRequest));
         }
 
+        public async Task<Lobby> ReconnectToLobby(string lobbyId)
+        {
+            return await ExceptionHandling(LobbyService.Instance.ReconnectToLobbyAsync(lobbyId));
+        }
+
         public async Task RemovePlayerFromLobby(string requesterUasId, string lobbyId)
         {
             try

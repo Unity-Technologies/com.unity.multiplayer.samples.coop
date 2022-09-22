@@ -265,6 +265,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
             }
         }
 
+        public async Task<Lobby> ReconnectToLobbyAsync(string lobbyId)
+        {
+            return await m_LobbyApiInterface.ReconnectToLobby(lobbyId);
+        }
+
         /// <summary>
         /// Attempt to leave a lobby
         /// </summary>
