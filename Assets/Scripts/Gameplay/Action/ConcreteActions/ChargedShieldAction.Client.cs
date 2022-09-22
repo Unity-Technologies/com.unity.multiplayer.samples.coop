@@ -17,12 +17,12 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         SpecialFXGraphic m_ShieldGraphics;
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter parent)
         {
             return IsChargingUp() || (Time.time - m_StoppedChargingUpTime) < Config.EffectDurationSeconds;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter parent)
         {
             if (IsChargingUp())
             {
@@ -39,7 +39,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void OnStoppedChargingUpClient(ClientCharacterVisualization parent, float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(ClientCharacter parent, float finalChargeUpPercentage)
         {
             if (!IsChargingUp()) { return; }
 
@@ -57,7 +57,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void AnticipateActionClient(ClientCharacterVisualization parent)
+        public override void AnticipateActionClient(ClientCharacter parent)
         {
             // because this action can be visually started and stopped as often and as quickly as the player wants, it's possible
             // for several copies of this action to be playing at once. This can lead to situations where several

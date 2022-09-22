@@ -19,7 +19,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         private NetworkObject m_Target;
         Transform m_TargetTransform;
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter parent)
         {
             base.OnStartClient(parent);
             m_Target = GetTarget(parent);
@@ -35,7 +35,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             return true;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter parent)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && m_Projectile == null)
             {
@@ -52,7 +52,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             return TimeRunning <= m_ProjectileDuration + Config.ExecTimeSeconds;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter parent)
         {
             if (m_Projectile)
             {
@@ -61,7 +61,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void EndClient(ClientCharacterVisualization parent)
+        public override void EndClient(ClientCharacter parent)
         {
             PlayHitReact();
         }
@@ -84,7 +84,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        NetworkObject GetTarget(ClientCharacterVisualization parent)
+        NetworkObject GetTarget(ClientCharacter parent)
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
@@ -111,7 +111,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        FXProjectile SpawnAndInitializeProjectile(ClientCharacterVisualization parent)
+        FXProjectile SpawnAndInitializeProjectile(ClientCharacter parent)
         {
             var projectileGO = Object.Instantiate(Config.Projectiles[0].ProjectilePrefab, parent.transform.position, parent.transform.rotation, null);
 
@@ -126,7 +126,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             return projectile;
         }
 
-        public override void AnticipateActionClient(ClientCharacterVisualization parent)
+        public override void AnticipateActionClient(ClientCharacter parent)
         {
             base.AnticipateActionClient(parent);
 

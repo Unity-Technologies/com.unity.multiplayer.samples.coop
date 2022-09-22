@@ -95,7 +95,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter parent)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && m_SpawnedGraphics == null && parent.IsOwner)
             {
@@ -105,7 +105,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             return ActionConclusion.Continue;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter parent)
         {
             if (m_SpawnedGraphics != null)
             {

@@ -17,9 +17,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         private const float k_AnticipationTimeoutSeconds = 1;
 
-        public ClientCharacterVisualization CharacterVisualization { get; private set; }
+        public ClientCharacter CharacterVisualization { get; private set; }
 
-        public ClientActionPlayer(ClientCharacterVisualization characterVisualization)
+        public ClientActionPlayer(ClientCharacter characterVisualization)
         {
             CharacterVisualization = characterVisualization;
         }

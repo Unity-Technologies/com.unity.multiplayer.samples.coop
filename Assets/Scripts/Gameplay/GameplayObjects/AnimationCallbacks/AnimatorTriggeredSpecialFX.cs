@@ -80,7 +80,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
         private HashSet<int> m_ActiveNodes = new HashSet<int>();
 
         [SerializeField]
-        ClientCharacterVisualization m_ClientCharacterVisualization;
+        ClientCharacter m_ClientCharacterVisualization;
 
         private void Awake()
         {
@@ -88,7 +88,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 
             if (!m_ClientCharacterVisualization)
             {
-                m_ClientCharacterVisualization = GetComponentInParent<ClientCharacterVisualization>();
+                m_ClientCharacterVisualization = GetComponentInParent<ClientCharacter>();
 
                 m_Animator = m_ClientCharacterVisualization.OurAnimator;
             }

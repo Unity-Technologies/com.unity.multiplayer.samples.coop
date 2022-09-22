@@ -19,7 +19,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         private bool m_ChargeEnded;
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter parent)
         {
             base.OnStartClient(parent);
 
@@ -27,12 +27,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             return true;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter parent)
         {
             return !m_ChargeEnded;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter parent)
         {
             if (!m_ChargeEnded)
             {
@@ -46,7 +46,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void OnStoppedChargingUpClient(ClientCharacterVisualization parent, float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(ClientCharacter parent, float finalChargeUpPercentage)
         {
             m_ChargeEnded = true;
             foreach (var graphic in m_Graphics)

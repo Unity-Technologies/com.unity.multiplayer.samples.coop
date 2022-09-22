@@ -162,7 +162,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter parent)
         {
             Assert.IsTrue(Config.Spawns.Length == 2, $"Found {Config.Spawns.Length} spawns for action {name}. Should be exactly 2: a charge-up particle and a fully-charged particle");
 

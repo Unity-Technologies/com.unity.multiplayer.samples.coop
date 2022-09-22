@@ -23,7 +23,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter parent)
         {
             base.OnStartClient(parent);
 
@@ -56,12 +56,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             return true;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter parent)
         {
             return ActionConclusion.Continue;
         }
 
-        public override void OnAnimEventClient(ClientCharacterVisualization parent, string id)
+        public override void OnAnimEventClient(ClientCharacter parent, string id)
         {
             if (id == "impact" && !m_ImpactPlayed)
             {
@@ -69,7 +69,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void EndClient(ClientCharacterVisualization parent)
+        public override void EndClient(ClientCharacter parent)
         {
             //if this didn't already happen, make sure it gets a chance to run. This could have failed to run because
             //our animationclip didn't have the "impact" event properly configured (as one possibility).
@@ -77,7 +77,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             base.EndClient(parent);
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter parent)
         {
             // if we had any special target graphics, tell them we're done
             if (m_SpawnedGraphics != null)
@@ -92,7 +92,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        void PlayHitReact(ClientCharacterVisualization parent)
+        void PlayHitReact(ClientCharacter parent)
         {
             if (m_ImpactPlayed) { return; }
 

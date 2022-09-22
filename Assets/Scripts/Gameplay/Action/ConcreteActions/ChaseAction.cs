@@ -118,7 +118,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization clientParent)
+        public override bool OnUpdateClient(ClientCharacter clientParent)
         {
             return ActionConclusion.Continue;
         }

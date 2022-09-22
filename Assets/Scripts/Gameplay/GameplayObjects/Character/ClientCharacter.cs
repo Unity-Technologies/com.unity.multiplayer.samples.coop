@@ -9,9 +9,9 @@ using UnityEngine;
 namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     /// <summary>
-    /// <see cref="ClientCharacterVisualization"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
+    /// <see cref="ClientCharacter"/> is responsible for displaying a character on the client's screen based on state information sent by the server.
     /// </summary>
-    public class ClientCharacterVisualization : NetworkBehaviour
+    public class ClientCharacter : NetworkBehaviour
     {
         [SerializeField]
         Animator m_ClientVisualsAnimator;

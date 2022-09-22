@@ -75,14 +75,14 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter parent)
         {
             base.OnStartClient(parent);
             GameObject.Instantiate(Config.Spawns[0], Data.Position, Quaternion.identity);
             return ActionConclusion.Stop;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization clientParent)
+        public override bool OnUpdateClient(ClientCharacter clientParent)
         {
             throw new Exception("This should not execute");
         }

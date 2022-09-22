@@ -115,11 +115,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         private Dictionary<Renderer, Material> m_OriginalMaterials = new Dictionary<Renderer, Material>();
 
-        ClientCharacterVisualization m_ClientCharacterVisualization;
+        ClientCharacter m_ClientCharacterVisualization;
 
         void Awake()
         {
-            m_ClientCharacterVisualization = GetComponentInParent<ClientCharacterVisualization>();
+            m_ClientCharacterVisualization = GetComponentInParent<ClientCharacter>();
             m_Animator = m_ClientCharacterVisualization.OurAnimator;
             m_OriginalController = m_Animator.runtimeAnimatorController;
         }

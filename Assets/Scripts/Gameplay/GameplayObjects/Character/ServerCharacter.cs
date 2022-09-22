@@ -20,9 +20,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
     public class ServerCharacter : NetworkBehaviour, ITargetable
     {
         [SerializeField]
-        ClientCharacterVisualization m_ClientVisualization;
+        ClientCharacter m_ClientVisualization;
 
-        public ClientCharacterVisualization ClientVisualization => m_ClientVisualization;
+        public ClientCharacter ClientVisualization => m_ClientVisualization;
 
         [SerializeField]
         CharacterClass m_CharacterClass;

@@ -16,7 +16,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         private const float k_ReticuleGroundHeight = 0.2f;
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter parent)
         {
             base.OnStartClient(parent);
             parent.serverCharacter.TargetId.OnValueChanged += OnTargetChanged;
@@ -30,7 +30,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_NewTarget = newTarget;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter parent)
         {
             if (m_CurrentTarget != m_NewTarget)
             {
@@ -73,7 +73,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// Ensures that the TargetReticule GameObject exists. This must be done prior to enabling it because it can be destroyed
         /// "accidentally" if its parent is destroyed while it is detached.
         /// </summary>
-        void ValidateReticule(ClientCharacterVisualization parent, NetworkObject targetObject)
+        void ValidateReticule(ClientCharacter parent, NetworkObject targetObject)
         {
             if (m_TargetReticule == null)
             {
@@ -87,7 +87,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? parent.ReticuleHostileMat : parent.ReticuleFriendlyMat;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter parent)
         {
             GameObject.Destroy(m_TargetReticule);
 

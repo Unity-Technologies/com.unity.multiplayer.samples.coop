@@ -24,7 +24,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </remarks>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter parent)
         {
             float age = Time.time - TimeStarted;
             if (age > k_GraphicsSpawnDelay && m_SpawnedGraphics == null)
@@ -35,7 +35,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             return true;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter parent)
         {
             // we've been aborted -- destroy the "cue graphics"
             if (m_SpawnedGraphics != null)
