@@ -21,6 +21,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
         string m_LobbyCode = "";
         int m_NbAttempts;
 
+        const float k_TimeBetweenLobbyReconnectAttempts = 1;
+        const float k_NbLobbyReconnectAttempts = 5;
+
         public override void Enter()
         {
             m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
@@ -81,16 +84,33 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_NbAttempts++;
             if (!string.IsNullOrEmpty(m_LobbyCode))
             {
-                var joiningLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby?.LobbyID);
-                yield return new WaitUntil(() => joiningLobby.IsCompleted);
-                if (joiningLobby.Result != null)
+                // Attempting to reconnect to lobby
+                var reconnectedToLobby = false;
+                var nbLobbyReconnectAttempts = 0;
+                while (!reconnectedToLobby && nbLobbyReconnectAttempts < k_NbLobbyReconnectAttempts)
                 {
+                    nbLobbyReconnectAttempts++;
+                    var reconnectingToLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby?.LobbyID);
+                    yield return new WaitUntil(() => reconnectingToLobby.IsCompleted);
+                    if (!reconnectingToLobby.IsFaulted && reconnectingToLobby.Result != null)
+                    {
+                        reconnectedToLobby = true;
+                    }
+                    else
+                    {
+                        yield return new WaitForSeconds(k_TimeBetweenLobbyReconnectAttempts);
+                    }
+                }
+
+                if (reconnectedToLobby)
+                {
+                    // If succeeded, attempt to connect to Relay
                     var connectingToRelay = ConnectClient();
                     yield return new WaitUntil(() => connectingToRelay.IsCompleted);
                 }
                 else
                 {
-                    Debug.Log("Failed joining lobby.");
+                    Debug.Log("Failed reconnecting to lobby.");
                     OnClientDisconnect(0);
                 }
             }
