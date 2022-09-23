@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.BossRoom.Gameplay.UI;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.BossRoom.ConnectionManagement;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;

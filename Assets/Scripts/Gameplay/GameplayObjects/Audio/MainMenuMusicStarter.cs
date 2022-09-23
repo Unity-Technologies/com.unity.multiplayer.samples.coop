@@ -1,5 +1,5 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.BossRoom.Audio;
 using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects.Audio

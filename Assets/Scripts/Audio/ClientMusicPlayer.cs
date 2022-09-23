@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Audio
 {
     /// <summary>
     /// Music player that handles start of boss battle, victory and restart

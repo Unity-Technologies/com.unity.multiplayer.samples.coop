@@ -2,8 +2,8 @@ using System;
 using System.Text.RegularExpressions;
 using Unity.BossRoom.Gameplay.Configuration;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
 using VContainer;
 

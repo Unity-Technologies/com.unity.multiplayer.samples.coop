@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
+using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Infrastructure;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;

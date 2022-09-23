@@ -1,24 +1,27 @@
 using UnityEngine;
 
-/// <summary>
-/// Will Disable this game object once active after the delay duration has passed.
-/// </summary>
-public class SelfDisable : MonoBehaviour
+namespace Unity.BossRoom.Utils
 {
-    [SerializeField]
-    float m_DisabledDelay;
-    float m_DisableTimestamp;
-
-    void Update()
+    /// <summary>
+    /// Will Disable this game object once active after the delay duration has passed.
+    /// </summary>
+    public class SelfDisable : MonoBehaviour
     {
-        if (Time.time >= m_DisableTimestamp)
+        [SerializeField]
+        float m_DisabledDelay;
+        float m_DisableTimestamp;
+
+        void Update()
         {
-            gameObject.SetActive(false);
+            if (Time.time >= m_DisableTimestamp)
+            {
+                gameObject.SetActive(false);
+            }
         }
-    }
 
-    void OnEnable()
-    {
-        m_DisableTimestamp = Time.time + m_DisabledDelay;
+        void OnEnable()
+        {
+            m_DisableTimestamp = Time.time + m_DisabledDelay;
+        }
     }
 }

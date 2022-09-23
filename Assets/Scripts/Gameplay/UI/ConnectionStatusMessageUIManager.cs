@@ -1,6 +1,6 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
 using VContainer;
 

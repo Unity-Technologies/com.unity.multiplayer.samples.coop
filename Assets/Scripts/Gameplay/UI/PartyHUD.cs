@@ -4,7 +4,7 @@ using Unity.BossRoom.Gameplay.UserInput;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.BossRoom.Utils;
 using UnityEngine;
 using UnityEngine.Assertions;
 using UnityEngine.UI;

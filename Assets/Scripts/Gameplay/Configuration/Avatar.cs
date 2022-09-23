@@ -1,5 +1,5 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.Configuration

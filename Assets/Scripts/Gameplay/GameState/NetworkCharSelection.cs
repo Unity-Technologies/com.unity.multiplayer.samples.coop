@@ -1,6 +1,6 @@
 using System;
 using Unity.BossRoom.Gameplay.Configuration;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.BossRoom.Utils;
 using Unity.Netcode;
 
 namespace Unity.BossRoom.Gameplay.GameState

@@ -1,5 +1,6 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.BossRoom.Audio;
+using Unity.BossRoom.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 

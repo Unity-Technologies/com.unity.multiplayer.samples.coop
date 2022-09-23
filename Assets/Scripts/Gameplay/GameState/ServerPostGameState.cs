@@ -1,4 +1,5 @@
 using System;
+using Unity.BossRoom.ConnectionManagement;
 using Unity.BossRoom.Gameplay.Actions;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;

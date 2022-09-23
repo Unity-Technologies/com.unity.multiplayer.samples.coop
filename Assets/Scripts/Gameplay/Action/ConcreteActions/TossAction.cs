@@ -1,6 +1,6 @@
 using System;
-using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using Random = UnityEngine.Random;

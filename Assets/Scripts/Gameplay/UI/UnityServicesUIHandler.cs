@@ -1,7 +1,7 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices;
+using Unity.BossRoom.Utils;
 using Unity.Services.Lobbies;
 using UnityEngine;
 using VContainer;

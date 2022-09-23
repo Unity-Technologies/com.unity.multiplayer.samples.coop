@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using NUnit.Framework;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using Unity.Netcode.TestHelpers.Runtime;
@@ -9,7 +9,7 @@ using UnityEngine.TestTools;
 using VContainer;
 using Assert = UnityEngine.Assertions.Assert;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+namespace Unity.BossRoom.Tests.Runtime
 {
     public class NetworkedMessageChannelTests : NetcodeIntegrationTest
     {

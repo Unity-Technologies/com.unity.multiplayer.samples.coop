@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using NUnit.Framework;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.Utils;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using Unity.Netcode.TestHelpers.Runtime;
@@ -14,7 +15,7 @@ using UnityEngine.TestTools;
 using VContainer;
 using VContainer.Unity;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+namespace Unity.BossRoom.Tests.Runtime
 {
     public class ConnectionManagementTests : NetcodeIntegrationTest
     {

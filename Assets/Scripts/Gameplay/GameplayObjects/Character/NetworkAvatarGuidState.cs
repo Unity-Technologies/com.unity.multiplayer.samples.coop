@@ -1,6 +1,6 @@
 using System;
 using Unity.BossRoom.Gameplay.Configuration;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Serialization;

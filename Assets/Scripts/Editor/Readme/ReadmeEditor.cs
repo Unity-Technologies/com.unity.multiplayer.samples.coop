@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Reflection;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Editor
+namespace Unity.BossRoom.Editor
 {
     /// <remarks>
     /// Custom readme editor window based on the readme created for URP. For more context, see:

@@ -1,6 +1,8 @@
+using Unity.BossRoom.Infrastructure;
+using Unity.Multiplayer.Samples.BossRoom;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     public struct SessionPlayerData : ISessionPlayerData
     {

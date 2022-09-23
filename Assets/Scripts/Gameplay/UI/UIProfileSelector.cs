@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
+using Unity.BossRoom.Utils;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;

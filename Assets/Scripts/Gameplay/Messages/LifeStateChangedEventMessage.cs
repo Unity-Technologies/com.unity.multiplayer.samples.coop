@@ -1,7 +1,7 @@
 using System;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.BossRoom.Utils;
 using Unity.Netcode;
 
 namespace Unity.BossRoom.Gameplay.Messages

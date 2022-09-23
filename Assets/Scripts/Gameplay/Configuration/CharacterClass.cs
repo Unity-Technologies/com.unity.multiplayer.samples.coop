@@ -1,6 +1,6 @@
 using System;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
-using Unity.Multiplayer.Samples.BossRoom;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
 using Action = Unity.BossRoom.Gameplay.Actions.Action;
 

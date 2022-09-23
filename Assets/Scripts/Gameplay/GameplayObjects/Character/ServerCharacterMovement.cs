@@ -1,6 +1,6 @@
 using System;
 using Unity.BossRoom.Gameplay.Configuration;
-using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.BossRoom.Navigation;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;

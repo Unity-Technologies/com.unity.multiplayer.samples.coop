@@ -1,9 +1,9 @@
 using System;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
 using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Gameplay.UI;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Auth;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.Utils;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;

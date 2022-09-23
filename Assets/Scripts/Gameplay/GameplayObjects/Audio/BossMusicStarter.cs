@@ -1,6 +1,6 @@
 using System;
+using Unity.BossRoom.Audio;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
-using Unity.Multiplayer.Samples.BossRoom.Client;
 using UnityEngine;
 using UnityEngine.Assertions;
 
