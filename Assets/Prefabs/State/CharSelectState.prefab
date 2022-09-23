@@ -65,7 +65,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
+    TypeName: Unity.BossRoom.ApplicationLifecycle.ApplicationController
   autoRun: 1
   autoInjectGameObjects: []
   m_NetcodeHooks: {fileID: 8494646029522094751}
@@ -82,7 +82,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: Unity.Multiplayer.Samples.BossRoom.Shared.ApplicationController
+    TypeName: 
   autoRun: 1
   autoInjectGameObjects: []
   m_NetcodeHooks: {fileID: 8494646029522094751}
