@@ -150,6 +150,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
                 parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
 
+                parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Config.Anim);
+
                 //tell the animator controller to enter "invincibility mode" (where we don't flinch from damage)
                 if (Mathf.Approximately(GetPercentChargedUp(), 1f))
                 {
