@@ -34,7 +34,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public override void OnNetworkSpawn()
         {
-            if (IsServer)
+            if (!IsServer)
             {
                 enabled = false;
             }
