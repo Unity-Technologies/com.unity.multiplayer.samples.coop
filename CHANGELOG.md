@@ -40,6 +40,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Using ```Visible``` instead of ```Enabled``` to make sure RNSM continues updating when off (#702)
 * Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
 * Scene Bootstrapper: future proofing bootstrap scene so we don't rely on Startup's path. MTT-3707. (#735)
+* Better instructions for host listen IP. (#738) Most useful cases are usually 127.0.0.1 and 0.0.0.0.
 
 ## [v1.3.0-pre] - 2022-06-23
 
