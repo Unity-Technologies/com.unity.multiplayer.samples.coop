@@ -32,7 +32,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Instead of a NetworkBehaviour that carries a WinState netvar we now pass the win state on the server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
 * Bump to NGO 1.0.1 (#720)
 * Reduced the MaxPacketQueueSize UTP parameter value from 512 to 256 (#728). This reduces the amount of memory used by UTP by around 1 MB. Boss Room does not need a bigger queue size than this because there can only be 7 clients connected to a host and UTP already limits the maximum number of in-flight packets to 32 per connection.
-*
+* Engine version bump to 2021.3.10f1 (#740)
 ### Removed
 *
 ### Fixed
