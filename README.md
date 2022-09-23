@@ -1,8 +1,32 @@
 ![Banner](Documentation/Images/Banner.png)
-# Boss Room - Co-op multiplayer RPG and utilities built with Unity Netcode for GameObjects
+## Co-op multiplayer RPG and utilities built with Unity Netcode for GameObjects
 
-| Solutions architects are available on [Discord](https://discord.gg/mNgM2XRDpb) and [forums](https://forum.unity.com/forums/multiplayer.26/) to help you work through issues you may encounter when using Boss Room. |
+| Support is available on [Discord](https://discord.gg/mNgM2XRDpb) and [forums](https://forum.unity.com/forums/multiplayer.26/) to help you work through issues you may encounter when using Boss Room. |
 | -- |
+
+## Table of content
+
+<!-- TOC generated from https://luciopaiva.com/markdown-toc/ -->
+
+- [Boss Room](#boss-room)
+- [Index of ressources in this project](#index-of-ressources-in-this-project)
+  - [Gameplay](#gameplay)
+  - [Connectivity](#connectivity)
+  - [Services (Lobby, Relay, etc)](#services-lobby-relay-etc)
+  - [Boss Room specific utils](#boss-room-specific-utils)
+  - [Reusable utils](#reusable-utils)
+- [Getting the project](#getting-the-project)
+  - [Direct download](#direct-download)
+  - [Installing Git LFS to clone locally](#installing-git-lfs-to-clone-locally)
+- [Registering the project with Unity Gaming Services (UGS)](#registering-the-project-with-unity-gaming-services-ugs)
+- [Opening the project for the first time](#opening-the-project-for-the-first-time)
+- [Testing multiplayer](#testing-multiplayer)
+- [Exploring the project](#exploring-the-project)
+- [Other samples](#other-samples)
+  - [Bite-size Samples](#bite-size-samples)
+- [Contributing](#contributing)
+
+## Boss Room
 
 Boss Room is a fully functional co-op multiplayer RPG made with Unity Netcode. It is built to serve as an educational sample that showcases certain typical gameplay [patterns](https://docs-multiplayer.unity3d.com/netcode/current/learn/bossroom-examples/bossroom-actions) that are frequently featured in similar networked games.
 
@@ -25,14 +49,58 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 
 ![](Documentation/Images/Players.png)
 
+## Index of ressources in this project
+
+### Gameplay
+* All Actions
+  * Action anticipation
+  * Object spawning for long actions (archer arrow)
+  * Quick actions with RPCs (mage bolt)
+  * Teleport
+  * Client side input tracking before an action (archer AOE)
+  * Time based action (charged shot)
+  * object parenting
+  * physics object throwing
+* Characters and objects
+  * Imp spawning
+  * In scene placed imps
+  * State tracking with breakables, switch, doors
+  * Player/avatar structure
+  * Character logic
+* Interpolation
+* Game flow
+  * Application Controller
+  * Scene state machine
+* Gameplay messaging between classes
+* In game lobby (character selection)
+### Connectivity
+* connection state machine
+* session manager
+### Services (Lobby, Relay, etc)
+* Lobby calls - LobbyServiceFacade
+* Relay setup
+* Auth
+### Boss Room specific utils
+* Pooling
+* NetworkGuid
+### Reusable utils
+* Tools
+  * RNSM
+* Netcode hooks
+* Spawner
+* Session manager
+* Relay utils
+* Client authority
+* Scene utils
 
 ## Getting the project
+### Direct download
  - The pre-release version can be downloaded from the [Releases](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.coop/releases) page. 
  - Alternatively: click the green `Code` button and then choose to download the zip archive. Remember, that you would download the branch that you are currently viewing in Github.
  - For Windows users: Using Windows' built-in extracting tool may generate a "Error 0x80010135: Path too long" error window which can invalidate the extraction process. A workaround for this is to shorten the zip file to a single character (eg. "c.zip") and move it to the shortest path on your computer (most often right at C:\\) and retry. If that solution fails, another workaround is to extract the downloaded zip file using 7zip.
 
 
-## Installing Git LFS to clone locally
+### Installing Git LFS to clone locally
 
 This project uses Git Large Files Support (LFS), which ensures all large assets required locally are handled for the project. See [Git LFS installation options](https://github.com/git-lfs/git-lfs/wiki/Installation) for Windows and Mac instructions. 
 
@@ -98,7 +166,8 @@ For an overview of the project's architecture please check out our [ARCHITECTURE
 
 For a deep dive in Unity Netcode and Boss Room, visit our [docs site](https://docs-multiplayer.unity3d.com/).
 
-## Bite-size Samples
+## Other samples
+### Bite-size Samples
 This repository contains a collection of bitesize sample projects and games that showcase different sub-features of NGO. You can review these samples with documentation to understand APIs and features better.
 - [Our various bitesize samples](https://github.com/Unity-Technologies/com.unity.multiplayer.samples.bitesize)
 
