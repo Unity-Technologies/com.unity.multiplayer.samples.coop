@@ -53,45 +53,45 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 
 ### Gameplay
 * All Actions
-  * Action anticipation
-  * Object spawning for long actions (archer arrow)
-  * Quick actions with RPCs (mage bolt)
-  * Teleport
-  * Client side input tracking before an action (archer AOE)
-  * Time based action (charged shot)
-  * object parenting
-  * physics object throwing
+  * [Action anticipation]()
+  * [Object spawning for long actions (archer arrow)]()
+  * [Quick actions with RPCs (mage bolt)]()
+  * [Teleport]()
+  * [Client side input tracking before an action (archer AOE)]()
+  * [Time based action (charged shot)]()
+  * [object parenting]()
+  * [physics object throwing]()
 * Characters and objects
-  * Imp spawning
-  * In scene placed imps
-  * State tracking with breakables, switch, doors
-  * Player/avatar structure
-  * Character logic
-* Interpolation
+  * [Imp spawning]()
+  * [In scene placed imps]()
+  * [State tracking with breakables, switch, doors]()
+  * [Player/avatar structure]()
+  * [Character logic]()
+* [Interpolation]()
 * Game flow
-  * Application Controller
-  * Scene state machine
-* Gameplay messaging between classes
-* In game lobby (character selection)
+  * [Application Controller]()
+  * [Scene state machine]()
+* [Gameplay messaging between classes]()
+* [In game lobby (character selection)]()
 ### Connectivity
-* connection state machine
-* session manager
+* [connection state machine]()
+* [session manager]()
 ### Services (Lobby, Relay, etc)
-* Lobby calls - LobbyServiceFacade
-* Relay setup
-* Auth
+* [Lobby calls - LobbyServiceFacade]()
+* [Relay setup]()
+* [Auth]()
 ### Boss Room specific utils
-* Pooling
-* NetworkGuid
+* [Pooling]()
+* [NetworkGuid]()
 ### Reusable utils
 * Tools
-  * RNSM
-* Netcode hooks
-* Spawner
-* Session manager
-* Relay utils
-* Client authority
-* Scene utils
+  * [RNSM]()
+* [Netcode hooks]()
+* [Spawner]()
+* [Session manager]()
+* [Relay utils]()
+* [Client authority]()
+* [Scene utils]()
 
 ## Getting the project
 ### Direct download
