@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:editor="UnityEditor.UIElements" xmlns:MemoryProfiler="Unity.MemoryProfiler.Editor" xmlns:engine="UnityEngine.UIElements" xmlns="UnityEditor.Overlays" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="UnityEngine.UIElements.xsd" namespace="UnityEngine.UIElements" />
+  <xs:import schemaLocation="UnityEditor.UIElements.xsd" namespace="UnityEditor.UIElements" />
+  <xs:import schemaLocation="UnityEditor.Rendering.LookDev.xsd" namespace="UnityEditor.Rendering.LookDev" />
+  <xs:import schemaLocation="Unity.MemoryProfiler.Editor.xsd" namespace="Unity.MemoryProfiler.Editor" />
+  <xs:import schemaLocation="Unity.MemoryProfiler.Editor.UI.xsd" namespace="Unity.MemoryProfiler.Editor.UI" />
+  <xs:import schemaLocation="Unity.Multiplayer.Tools.NetworkProfiler.Editor.xsd" namespace="Unity.Multiplayer.Tools.NetworkProfiler.Editor" />
+  <xs:import schemaLocation="Unity.Cloud.Collaborate.Views.xsd" namespace="Unity.Cloud.Collaborate.Views" />
+  <xs:import schemaLocation="Unity.Cloud.Collaborate.Components.xsd" namespace="Unity.Cloud.Collaborate.Components" />
+  <xs:import schemaLocation="Unity.Cloud.Collaborate.Components.ChangeListEntries.xsd" namespace="Unity.Cloud.Collaborate.Components.ChangeListEntries" />
+  <xs:import schemaLocation="UnityEditor.ShaderGraph.Drawing.xsd" namespace="UnityEditor.ShaderGraph.Drawing" />
+  <xs:include schemaLocation="GlobalNamespace.xsd" />
+  <xs:import schemaLocation="Unity.VirtualProjects.Workflow.UI.Views.Logs.xsd" namespace="Unity.VirtualProjects.Workflow.UI.Views.Logs" />
+  <xs:import schemaLocation="Unity.VirtualProjects.Workflow.UI.Views.Details.xsd" namespace="Unity.VirtualProjects.Workflow.UI.Views.Details" />
+  <xs:import schemaLocation="Unity.VirtualProjects.Workflow.UI.Views.Collection.xsd" namespace="Unity.VirtualProjects.Workflow.UI.Views.Collection" />
+  <xs:import schemaLocation="UnityEditor.ShortcutManagement.xsd" namespace="UnityEditor.ShortcutManagement" />
+  <xs:import schemaLocation="UnityEditor.UIElements.Debugger.xsd" namespace="UnityEditor.UIElements.Debugger" />
+  <xs:import schemaLocation="Unity.UI.Builder.xsd" namespace="Unity.UI.Builder" />
+  <xs:import schemaLocation="UnityEditor.Search.xsd" namespace="UnityEditor.Search" />
+  <xs:import schemaLocation="UnityEditor.PackageManager.UI.Internal.xsd" namespace="UnityEditor.PackageManager.UI.Internal" />
+  <xs:import schemaLocation="UnityEditor.Experimental.GraphView.xsd" namespace="UnityEditor.Experimental.GraphView" />
+  <xs:import schemaLocation="Unity.Profiling.Editor.xsd" namespace="Unity.Profiling.Editor" />
+  <xs:import schemaLocation="UnityEditor.Overlays.xsd" namespace="UnityEditor.Overlays" />
+</xs:schema>

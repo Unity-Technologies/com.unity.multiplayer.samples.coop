@@ -8,10 +8,6 @@
     "com.unity.ide.visualstudio": "2.0.16",
     "com.unity.ide.vscode": "1.2.5",
     "com.unity.learn.iet-framework": "2.2.1",
-    "com.unity.memoryprofiler": "1.0.0-pre.3",
-    "com.unity.multiplayer.tools": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#chore/verify-jrobot-utp2",
-    "com.unity.netcode.gameobjects": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#feature/tools-netsim-support",
-    "com.unity.transport": "2.0.0-exp.6",
     "com.unity.performance.profile-analyzer": "1.1.1",
     "com.unity.postprocessing": "3.2.2",
     "com.unity.render-pipelines.universal": "14.0.3",
@@ -55,7 +51,10 @@
     "com.unity.modules.video": "1.0.0",
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
-    "com.unity.modules.xr": "1.0.0"
+    "com.unity.modules.xr": "1.0.0",
+    "com.unity.multiplayer.tools": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#chore/MTT-4389_ngo+netsim",
+    "com.unity.netcode.gameobjects": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#test/netsim-bossroom",
+    "com.unity.transport": "2.0.0-exp.6"
   },
   "testables": [
     "com.unity.netcode.gameobjects"

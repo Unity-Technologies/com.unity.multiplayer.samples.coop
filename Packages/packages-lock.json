@@ -107,15 +107,6 @@
       "dependencies": {},
       "url": "https://packages.unity.com"
     },
-    "com.unity.memoryprofiler": {
-      "version": "1.0.0-pre.3",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.editorcoroutines": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
-    },
     "com.unity.multiplayer.samples.coop": {
       "version": "file:com.unity.multiplayer.samples.coop",
       "depth": 0,
@@ -128,7 +119,7 @@
       }
     },
     "com.unity.multiplayer.tools": {
-      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#chore/verify-jrobot-utp2",
+      "version": "https://github.com/Unity-Technologies/com.unity.multiplayer.tools.git#chore/MTT-4389_ngo+netsim",
       "depth": 0,
       "source": "git",
       "dependencies": {
@@ -138,17 +129,17 @@
         "com.unity.collections": "1.1.0",
         "com.unity.modules.uielements": "1.0.0"
       },
-      "hash": "31f7c3f72122414b40e4934d7fe3a6c5a326f38f"
+      "hash": "e15a42e7601a9ee44df20861d1c4d00ff58df5b3"
     },
     "com.unity.netcode.gameobjects": {
-      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#feature/tools-netsim-support",
+      "version": "https://github.com/Unity-Technologies/com.unity.netcode.gameobjects.git?path=/com.unity.netcode.gameobjects#test/netsim-bossroom",
       "depth": 0,
       "source": "git",
       "dependencies": {
         "com.unity.nuget.mono-cecil": "1.10.1",
         "com.unity.transport": "1.2.0"
       },
-      "hash": "7c1ebbccf46628c65bd5e80d52281074a6d84a08"
+      "hash": "c375eafe52819dd24fc282603c1b2772a2ca200a"
     },
     "com.unity.nuget.mono-cecil": {
       "version": "1.11.4",
@@ -229,7 +220,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.services.core": {
-      "version": "1.4.3",
+      "version": "1.4.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {

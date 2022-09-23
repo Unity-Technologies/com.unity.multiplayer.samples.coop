@@ -12,7 +12,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         void Awake()
         {
-            m_Collider.enabled = m_EnableStateOnAwake;
+            if (m_Collider == null)
+            {
+                m_Collider = GetComponent<Collider>();
+            }
+
+            if (m_Collider != null)
+            {
+                m_Collider.enabled = m_EnableStateOnAwake;
+            }
         }
     }
 }

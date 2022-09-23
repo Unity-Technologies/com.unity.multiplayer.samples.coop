@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns:editor="UnityEditor.UIElements" xmlns:MemoryProfiler="Unity.MemoryProfiler.Editor" xmlns:engine="UnityEngine.UIElements" xmlns="UnityEditor.Overlays" elementFormDefault="qualified" targetNamespace="Unity.Multiplayer.Tools.NetworkProfiler.Editor" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import schemaLocation="UnityEngine.UIElements.xsd" namespace="UnityEngine.UIElements" />
+  <xs:simpleType name="TreeView_selection-type_Type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="Single" />
+      <xs:enumeration value="Multiple" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="TreeView_show-alternating-row-backgrounds_Type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="None" />
+      <xs:enumeration value="ContentOnly" />
+      <xs:enumeration value="All" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="TreeViewType">
+    <xs:complexContent mixed="false">
+      <xs:restriction base="engine:VisualElementType">
+        <xs:attribute default="" name="name" type="xs:string" use="optional" />
+        <xs:attribute default="" name="view-data-key" type="xs:string" use="optional" />
+        <xs:attribute default="Position" name="picking-mode" type="engine:VisualElement_picking-mode_Type" use="optional" />
+        <xs:attribute default="" name="tooltip" type="xs:string" use="optional" />
+        <xs:attribute default="None" name="usage-hints" type="engine:VisualElement_usage-hints_Type" use="optional" />
+        <xs:attribute default="0" name="tabindex" type="xs:int" use="optional" />
+        <xs:attribute default="false" name="focusable" type="xs:boolean" use="optional" />
+        <xs:attribute default="" name="class" type="xs:string" use="optional" />
+        <xs:attribute default="" name="content-container" type="xs:string" use="optional" />
+        <xs:attribute default="" name="style" type="xs:string" use="optional" />
+        <xs:attribute default="30" name="item-height" type="xs:int" use="optional" />
+        <xs:attribute default="false" name="show-border" type="xs:boolean" use="optional" />
+        <xs:attribute default="Single" name="selection-type" xmlns:q1="Unity.Multiplayer.Tools.NetworkProfiler.Editor" type="q1:TreeView_selection-type_Type" use="optional" />
+        <xs:attribute default="None" name="show-alternating-row-backgrounds" xmlns:q2="Unity.Multiplayer.Tools.NetworkProfiler.Editor" type="q2:TreeView_show-alternating-row-backgrounds_Type" use="optional" />
+        <xs:anyAttribute processContents="lax" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TreeView" substitutionGroup="engine:VisualElement" xmlns:q3="Unity.Multiplayer.Tools.NetworkProfiler.Editor" type="q3:TreeViewType" />
+</xs:schema>
