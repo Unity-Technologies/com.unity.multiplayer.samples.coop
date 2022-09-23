@@ -2,7 +2,6 @@ using System;
 using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
 using Unity.BossRoom.Gameplay.GameplayObjects;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
 using Unity.Netcode;
 using UnityEngine;
 

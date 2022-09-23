@@ -213,10 +213,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
 
     }
-}
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
-{
     /// <summary>
     /// Small utility to better understand action start and stop conclusion
     /// </summary>

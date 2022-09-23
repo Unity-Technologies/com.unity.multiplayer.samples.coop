@@ -1,8 +1,9 @@
 using System;
+using Unity.BossRoom.CameraUtils;
 using Unity.BossRoom.Gameplay.UserInput;
 using Unity.BossRoom.Gameplay.Configuration;
 using Unity.BossRoom.Gameplay.Actions;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Utils;
 using Unity.Netcode;
 using UnityEngine;
 

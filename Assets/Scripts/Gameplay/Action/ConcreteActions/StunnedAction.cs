@@ -1,6 +1,5 @@
 using System;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
 using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.Actions

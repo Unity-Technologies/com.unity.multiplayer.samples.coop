@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.VisualEffects
 {
     /// <summary>
     /// Utility script attached to special-effects prefabs. These prefabs are

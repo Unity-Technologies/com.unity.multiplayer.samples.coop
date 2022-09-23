@@ -1,5 +1,5 @@
 {
-    "name": "Unity.BossRoom.CameraController",
+    "name": "Unity.BossRoom.CameraUtils",
     "rootNamespace": "",
     "references": [
         "Cinemachine"

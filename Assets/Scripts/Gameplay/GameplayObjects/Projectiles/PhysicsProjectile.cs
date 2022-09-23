@@ -2,7 +2,8 @@ using System;
 using System.Collections.Generic;
 using Unity.BossRoom.Gameplay.Actions;
 using Unity.BossRoom.Gameplay.GameplayObjects.Character;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Utils;
+using Unity.BossRoom.VisualEffects;
 using Unity.Netcode;
 using UnityEngine;
 

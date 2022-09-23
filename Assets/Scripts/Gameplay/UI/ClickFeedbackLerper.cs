@@ -1,5 +1,5 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Utils;
 using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.UI
