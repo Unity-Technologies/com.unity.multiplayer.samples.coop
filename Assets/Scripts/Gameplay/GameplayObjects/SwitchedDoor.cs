@@ -60,7 +60,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
             if (IsServer)
             {
                 OnDoorStateChanged(false, IsOpen.Value);
-                IsOpen.OnValueChanged += OnDoorStateChanged;
             }
         }
 
