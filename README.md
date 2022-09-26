@@ -76,32 +76,29 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 | Persistent player (over multiple scenes) | [ Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs ](Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs)  |
 | Character logic (including player's avatar) | [ Assets/Scripts/Gameplay/GameplayObjects/Character/ ](Assets/Scripts/Gameplay/GameplayObjects/Character/) <br> [ Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs ](Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs)  |
 
-| Custom serialization and custom messaging ||
+| Custom messaging ||
 | :-- | --: |
-| Connection approval return <br> value with custom messaging | [ TODO ](TODO) |
-| Character select synced state <br> custom serialization | [ TODO ](TODO)|
+| Connection approval return <br> value with custom messaging | [ Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs ](Assets/Scripts/ConnectionManagement/ConnectionState/HostingState.cs) - WaitToDenyApproval() |
+| Networked message channel (inter-class and networked messaging) | [Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs](Assets/Scripts/Infrastructure/PubSub/NetworkedMessageChannel.cs) |
 
-| Interpolation | [ TODO ](TODO) |
+| Simple interpolation | [ Assets/Scripts/Utils/PositionLerper.cs ](Assets/Scripts/Utils/PositionLerper.cs) |
 | :-- | --: |
 
 | Game flow ||
 | :-- | --: |
-| Application Controller | [ TODO ](TODO) |
-| Scene state machine | [ TODO ](TODO) |
+| Application Controller | [ Assets/Scripts/ApplicationLifecycle/ApplicationController.cs ](Assets/Scripts/ApplicationLifecycle/ApplicationController.cs) |
+| Scene state machine | [ Assets/Scripts/Gameplay/GameState/GameStateBehaviour.cs ](Assets/Scripts/Gameplay/GameState/GameStateBehaviour.cs) - And all child classes |
 | Scene loading and progress sharing | [Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/](Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/)|
-| Synced UI with character select | [ TODO ](TODO) |
+| Synced UI with character select | [ Assets/Scripts/Gameplay/GameState/ClientCharSelectState.cs ](Assets/Scripts/Gameplay/GameState/ClientCharSelectState.cs) |
 
-| Gameplay messaging between classes | [ TODO ](TODO) |
-| :-- | --: |
-
-| In game lobby (character selection) | [ TODO ](TODO) |
+| In game lobby (character selection) | [ Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs ](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)<br>[Assets/Scripts/Gameplay/GameState/ServerCharSelectState.cs](Assets/Scripts/Gameplay/GameState/ServerCharSelectState.cs) |
 | :-- | --: |
 
 ### Connectivity
 | Connectivity ||
 | :-- | --: |
 | Connection state machine | [ Assets/Scripts/ConnectionManagement/ConnectionManager.cs ](Assets/Scripts/ConnectionManagement/ConnectionManager.cs) <br> [Assets/Scripts/ConnectionManagement/ConnectionState/](Assets/Scripts/ConnectionManagement/ConnectionState/) |
-| session manager | [ TODO ](TODO) |
+| Session manager | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/SessionManager.cs) |
 
 ### Services (Lobby, Relay, etc)
 |Services||
