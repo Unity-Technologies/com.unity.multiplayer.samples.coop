@@ -141,17 +141,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 
         public ServerAnimationHandler serverAnimationHandler => m_ServerAnimationHandler;
 
-        private void Awake()
+        void Awake()
         {
             m_ServerActionPlayer = new ServerActionPlayer(this);
             NetLifeState = GetComponent<NetworkLifeState>();
             NetHealthState = GetComponent<NetworkHealthState>();
             m_State = GetComponent<NetworkAvatarGuidState>();
-        }
-
-        public void SetCharacterClass(CharacterClass characterClass)
-        {
-            m_CharacterClass = characterClass;
         }
 
         public override void OnNetworkSpawn()
@@ -277,42 +272,13 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             }
         }
 
-        private void OnClientMoveRequest(Vector3 targetPosition)
-        {
-            if (LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
-            {
-                // if we're currently playing an interruptible action, interrupt it!
-                if (m_ServerActionPlayer.GetActiveActionInfo(out ActionRequestData data))
-                {
-                    if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.ActionInterruptible)
-                    {
-                        m_ServerActionPlayer.ClearActions(false);
-                    }
-                }
-
-                m_ServerActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
-                m_Movement.SetMovementTarget(targetPosition);
-            }
-        }
-
-        private void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
+        void OnLifeStateChanged(LifeState prevLifeState, LifeState lifeState)
         {
             if (lifeState != LifeState.Alive)
             {
                 m_ServerActionPlayer.ClearActions(true);
                 m_Movement.CancelMove();
             }
-        }
-
-        private void OnActionPlayRequest(ActionRequestData data)
-        {
-            if (!GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.IsFriendly)
-            {
-                // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
-                ActionPlayer.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);
-            }
-
-            PlayAction(ref data);
         }
 
         IEnumerator KilledDestroyProcess()
@@ -420,17 +386,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             }
         }
 
-        private void CollisionEntered(Collision collision)
+        void CollisionEntered(Collision collision)
         {
             if (m_ServerActionPlayer != null)
             {
                 m_ServerActionPlayer.CollisionEntered(collision);
             }
-        }
-
-        private void OnStoppedChargingUp()
-        {
-            m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }
 
         /// <summary>
