@@ -54,47 +54,57 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 ### Gameplay
 * All Actions
 
- | Action anticipation |[Assets/Scripts/Gameplay/Action/Action.cs](Assets/Scripts/Gameplay/Action/Action.cs) - AnticipateActionClient() |
- | -- | -- |
- 
-  * [Object spawning for long actions (archer arrow)]()
-  * [Quick actions with RPCs (mage bolt)]()
-  * [Teleport]()
-  * [Client side input tracking before an action (archer AOE)]()
-  * [Time based action (charged shot)]()
-  * [object parenting]()
-  * [physics object throwing]()
+| Action anticipation | [Assets/Scripts/Gameplay/Action/Action.cs](Assets/Scripts/Gameplay/Action/Action.cs) - AnticipateActionClient() |
+| Object spawning for long actions (archer arrow) | [ TODO ]() |
+| Quick actions with RPCs (mage bolt) | [ TODO ]() |
+| Teleport | [ TODO ]() |
+| Client side input tracking before an action (archer AOE) | [ TODO ]() |
+| Time based action (charged shot) | [ TODO ]() |
+| Object parenting | [ TODO ]() |
+| Physics object throwing | [ TODO ]() |
+| -- | -- |
+
 * Characters and objects
-  * [Imp spawning]()
-  * [In scene placed imps]()
-  * [State tracking with breakables, switch, doors]()
-  * [Player/avatar structure]()
-  * [Character logic]()
-* [Interpolation]()
+| Imp spawning | [ TODO ]() |
+| In scene placed imps | [ TODO ]() |
+| State tracking with breakables, switch, doors | [ TODO ]() |
+| Player/avatar structure | [ TODO ]() |
+| Character logic | [ TODO ]() |
+| -- | -- |
+
+| Interpolation | [ TODO ]() |
+| -- | -- |
 * Game flow
-  * [Application Controller]()
-  * [Scene state machine]()
-* [Gameplay messaging between classes]()
-* [In game lobby (character selection)]()
+| Application Controller | [ TODO ]() |
+| Scene state machine | [ TODO ]() |
+| -- | -- |
+| Gameplay messaging between classes | [ TODO ]() |
+| In game lobby (character selection) | [ TODO ]() |
+| -- | -- |
 ### Connectivity
-* [connection state machine]()
-* [session manager]()
+| connection state machine | [ TODO ]() |
+| session manager | [ TODO ]() |
+| -- | -- |
 ### Services (Lobby, Relay, etc)
-* [Lobby calls - LobbyServiceFacade]()
-* [Relay setup]()
-* [Auth]()
+| Lobby calls - LobbyServiceFacade | [ TODO ]() |
+| Relay setup | [ TODO ]() |
+| Auth | [ TODO ]() |
+| -- | -- |
 ### Boss Room specific utils
-* [Pooling]()
-* [NetworkGuid]()
+| Pooling | [ TODO ]() |
+| NetworkGuid | [ TODO ]() |
+| -- | -- |
 ### Reusable utils
 * Tools
-  * [RNSM]()
-* [Netcode hooks]()
-* [Spawner]()
-* [Session manager]()
-* [Relay utils]()
-* [Client authority]()
-* [Scene utils]()
+| RNSM | [ TODO ]() |
+| -- | -- |
+| Netcode hooks | [ TODO ]() |
+| Spawner | [ TODO ]() |
+| Session manager | [ TODO ]() |
+| Relay utils | [ TODO ]() |
+| Client authority | [ TODO ]() |
+| Scene utils | [ TODO ]() |
+| -- | -- |
 
 ## Getting the project
 ### Direct download
