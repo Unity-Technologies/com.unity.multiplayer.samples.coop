@@ -21,6 +21,8 @@ namespace Unity.BossRoom.ConnectionManagement
         string m_LobbyCode = "";
         int m_NbAttempts;
 
+        const float k_TimeBetweenAttempts = 5;
+
         public override void Enter()
         {
             m_LobbyCode = m_LobbyServiceFacade.CurrentUnityLobby != null ? m_LobbyServiceFacade.CurrentUnityLobby.LobbyCode : "";
@@ -71,6 +73,15 @@ namespace Unity.BossRoom.ConnectionManagement
 
         IEnumerator ReconnectCoroutine()
         {
+            // If not on first attempt, wait some time before trying again, so that if the issue causing the disconnect
+            // is temporary, it has time to fix itself before we try again. Here we are using a simple fixed cooldown
+            // but we could want to use exponential backoff instead, to wait a longer time between each failed attempt.
+            // See https://en.wikipedia.org/wiki/Exponential_backoff
+            if (m_NbAttempts > 0)
+            {
+                yield return new WaitForSeconds(k_TimeBetweenAttempts);
+            }
+
             Debug.Log("Lost connection to host, trying to reconnect...");
 
             m_ConnectionManager.NetworkManager.Shutdown();
@@ -79,26 +90,34 @@ namespace Unity.BossRoom.ConnectionManagement
             Debug.Log($"Reconnecting attempt {m_NbAttempts + 1}/{m_ConnectionManager.NbReconnectAttempts}...");
             m_ReconnectMessagePublisher.Publish(new ReconnectMessage(m_NbAttempts, m_ConnectionManager.NbReconnectAttempts));
             m_NbAttempts++;
-            if (!string.IsNullOrEmpty(m_LobbyCode))
+            if (!string.IsNullOrEmpty(m_LobbyCode)) // Attempting to reconnect to lobby.
             {
-                var leavingLobby = m_LobbyServiceFacade.EndTracking();
-                yield return new WaitUntil(() => leavingLobby.IsCompleted);
-                var joiningLobby = m_LobbyServiceFacade.TryJoinLobbyAsync("", m_LobbyCode);
-                yield return new WaitUntil(() => joiningLobby.IsCompleted);
-                if (joiningLobby.Result.Success)
+                // When using Lobby with Relay, if a user is disconnected from the Relay server, the server will notify
+                // the Lobby service and mark the user as disconnected, but will not remove them from the lobby. They
+                // then have some time to attempt to reconnect (defined by the "Disconnect removal time" parameter on
+                // the dashboard), after which they will be removed from the lobby completely.
+                // See https://docs.unity.com/lobby/reconnect-to-lobby.html
+                var reconnectingToLobby = m_LobbyServiceFacade.ReconnectToLobbyAsync(m_LocalLobby?.LobbyID);
+                yield return new WaitUntil(() => reconnectingToLobby.IsCompleted);
+
+                // If succeeded, attempt to connect to Relay
+                if (!reconnectingToLobby.IsFaulted && reconnectingToLobby.Result != null)
                 {
-                    m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
+                    // If this fails, the OnClientDisconnect callback will be invoked by Netcode
                     var connectingToRelay = ConnectClientAsync();
                     yield return new WaitUntil(() => connectingToRelay.IsCompleted);
                 }
                 else
                 {
-                    Debug.Log("Failed joining lobby.");
+                    Debug.Log("Failed reconnecting to lobby.");
+                    // Calling OnClientDisconnect to mark this attempt as failed and either start a new one or give up
+                    // and return to the Offline state
                     OnClientDisconnect(0);
                 }
             }
-            else
+            else // If not using Lobby, simply try to reconnect to the server directly
             {
+                // If this fails, the OnClientDisconnect callback will be invoked by Netcode
                 var connectingClient = ConnectClientAsync();
                 yield return new WaitUntil(() => connectingClient.IsCompleted);
             }

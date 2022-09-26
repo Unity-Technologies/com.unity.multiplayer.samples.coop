@@ -32,6 +32,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Instead of a NetworkBehaviour that carries a WinState netvar we now pass the win state on the server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
 * Bump to NGO 1.0.1 (#720)
 * Reduced the MaxPacketQueueSize UTP parameter value from 512 to 256 (#728). This reduces the amount of memory used by UTP by around 1 MB. Boss Room does not need a bigger queue size than this because there can only be 7 clients connected to a host and UTP already limits the maximum number of in-flight packets to 32 per connection.
+* Updated Lobby package to 1.0.3 and reworked our auto-reconnect flow to use the Reconnect feature from the Lobby API (#737). Now, clients do not leave the lobby when they are disconnected, and the host does not remove them from it. They are marked as disconnected by the Relay server and can attempt to reconnect to the lobby directly, until a certain timeout (specified by the Disconnect removal time parameer, set in the dashboard configuration).
 * Cleanup
   * Namespaces in the project have been changed to map to their assembly definitions (#732)
   * Numerous name changes for fields and variables to match their new type names (#732)
@@ -46,6 +47,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Some NetworkBehaviours are disabled instead of being destroyed (#718) - This preserves the index order for NetworkBehaviours between server and clients, resulting in no indexing issue for sending/receiving RPCs.
 * Scene Bootstrapper: future proofing bootstrap scene so we don't rely on Startup's path. MTT-3707. (#735)
 * Better instructions for host listen IP. (#738) Most useful cases are usually 127.0.0.1 and 0.0.0.0.
+* Tank's shield charge animation not getting stuck due to multiple invocations. (#742)
 
 ## [v1.3.0-pre] - 2022-06-23
 
