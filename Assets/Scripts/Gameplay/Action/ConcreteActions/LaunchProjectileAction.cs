@@ -15,13 +15,13 @@ namespace Unity.BossRoom.Gameplay.Actions
     {
         private bool m_Launched = false;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
-            parent.physicsWrapper.Transform.forward = Data.Direction;
+            serverCharacter.physicsWrapper.Transform.forward = Data.Direction;
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            parent.ClientVisualization.RecvDoActionClientRPC(Data);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -31,11 +31,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             base.Reset();
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && !m_Launched)
             {
-                LaunchProjectile(parent);
+                LaunchProjectile(clientCharacter);
             }
 
             return true;
@@ -84,21 +84,21 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void End(ServerCharacter parent)
+        public override void End(ServerCharacter serverCharacter)
         {
             //make sure this happens.
-            LaunchProjectile(parent);
+            LaunchProjectile(serverCharacter);
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
             if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
 
-        public override bool OnUpdateClient(ClientCharacter parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return ActionConclusion.Continue;
         }

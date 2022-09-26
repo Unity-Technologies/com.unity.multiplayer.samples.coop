@@ -7,6 +7,7 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character.AI;
 using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Action = Unity.BossRoom.Gameplay.Actions.Action;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
@@ -20,10 +21,11 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         typeof(NetworkAvatarGuidState))]
     public class ServerCharacter : NetworkBehaviour, ITargetable
     {
+        [FormerlySerializedAs("m_ClientVisualization")]
         [SerializeField]
-        ClientCharacter m_ClientVisualization;
+        ClientCharacter m_ClientCharacter;
 
-        public ClientCharacter ClientVisualization => m_ClientVisualization;
+        public ClientCharacter clientCharacter => m_ClientCharacter;
 
         [SerializeField]
         CharacterClass m_CharacterClass;
@@ -194,7 +196,20 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [ServerRpc]
         public void SendCharacterInputServerRpc(Vector3 movementTarget)
         {
-            OnClientMoveRequest(movementTarget);
+            if (LifeState == LifeState.Alive && !m_Movement.IsPerformingForcedMovement())
+            {
+                // if we're currently playing an interruptible action, interrupt it!
+                if (m_ServerActionPlayer.GetActiveActionInfo(out ActionRequestData data))
+                {
+                    if (GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config.ActionInterruptible)
+                    {
+                        m_ServerActionPlayer.ClearActions(false);
+                    }
+                }
+
+                m_ServerActionPlayer.CancelRunningActionsByLogic(ActionLogic.Target, true); //clear target on move.
+                m_Movement.SetMovementTarget(movementTarget);
+            }
         }
 
         // ACTION SYSTEM
@@ -206,7 +221,14 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [ServerRpc]
         public void RecvDoActionServerRPC(ActionRequestData data)
         {
-            OnActionPlayRequest(data);
+            ActionRequestData data1 = data;
+            if (!GameDataSource.Instance.GetActionPrototypeByID(data1.ActionID).Config.IsFriendly)
+            {
+                // notify running actions that we're using a new attack. (e.g. so Stealth can cancel itself)
+                ActionPlayer.OnGameplayActivity(Action.GameplayActivity.UsingAttackAction);
+            }
+
+            PlayAction(ref data1);
         }
 
         // UTILITY AND SPECIAL-PURPOSE RPCs
@@ -217,7 +239,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [ServerRpc]
         public void RecvStopChargingUpServerRpc()
         {
-            OnStoppedChargingUp();
+            m_ServerActionPlayer.OnGameplayActivity(Action.GameplayActivity.StoppedChargingUp);
         }
 
         void InitializeHitPoints()

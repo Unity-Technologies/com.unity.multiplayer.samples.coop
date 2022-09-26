@@ -22,9 +22,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public override bool OnStartClient(ClientCharacter parent)
+        public override bool OnStartClient(ClientCharacter clientCharacter)
         {
-            base.OnStartClient(parent);
+            base.OnStartClient(clientCharacter);
 
             // we can optionally have special particles that should play on the target. If so, add them now.
             // (don't wait until impact, because the particles need to start sooner!)
@@ -45,7 +45,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                     targetPosition = targetNetworkObj.transform.position;
                 }
 
-                if ((parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                if ((clientCharacter.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
                     // target is in range! Play the graphics
                     m_SpawnedGraphics = InstantiateSpecialFXGraphics(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
@@ -55,28 +55,28 @@ namespace Unity.BossRoom.Gameplay.Actions
             return true;
         }
 
-        public override bool OnUpdateClient(ClientCharacter parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return ActionConclusion.Continue;
         }
 
-        public override void OnAnimEventClient(ClientCharacter parent, string id)
+        public override void OnAnimEventClient(ClientCharacter clientCharacter, string id)
         {
             if (id == "impact" && !m_ImpactPlayed)
             {
-                PlayHitReact(parent);
+                PlayHitReact(clientCharacter);
             }
         }
 
-        public override void EndClient(ClientCharacter parent)
+        public override void EndClient(ClientCharacter clientCharacter)
         {
             //if this didn't already happen, make sure it gets a chance to run. This could have failed to run because
             //our animationclip didn't have the "impact" event properly configured (as one possibility).
-            PlayHitReact(parent);
-            base.EndClient(parent);
+            PlayHitReact(clientCharacter);
+            base.EndClient(clientCharacter);
         }
 
-        public override void CancelClient(ClientCharacter parent)
+        public override void CancelClient(ClientCharacter clientCharacter)
         {
             // if we had any special target graphics, tell them we're done
             if (m_SpawnedGraphics != null)
@@ -128,10 +128,10 @@ namespace Unity.BossRoom.Gameplay.Actions
                         if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
 
                         if (targetNetworkObj.TryGetComponent<ServerCharacter>(out var serverCharacter)
-                            && serverCharacter.ClientVisualization != null
-                            && serverCharacter.ClientVisualization.OurAnimator)
+                            && serverCharacter.clientCharacter != null
+                            && serverCharacter.clientCharacter.OurAnimator)
                         {
-                            serverCharacter.ClientVisualization.OurAnimator.SetTrigger(hitAnim);
+                            serverCharacter.clientCharacter.OurAnimator.SetTrigger(hitAnim);
                         }
                     }
                 }

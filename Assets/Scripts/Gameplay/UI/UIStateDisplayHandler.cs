@@ -115,9 +115,9 @@ namespace Unity.BossRoom.Gameplay.UI
             {
                 m_BaseHP = m_NetworkAvatarGuidState.RegisteredAvatar.CharacterClass.BaseHP;
 
-                if (m_ServerCharacter.ClientVisualization)
+                if (m_ServerCharacter.clientCharacter)
                 {
-                    TrackGraphicsTransform(m_ServerCharacter.ClientVisualization.gameObject);
+                    TrackGraphicsTransform(m_ServerCharacter.clientCharacter.gameObject);
                 }
                 else
                 {

@@ -45,7 +45,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public UnityEvent detonatedCallback;
 
-        [Header("Visualization")]
+        [Header("Client")]
 
         [SerializeField]
         Transform m_TossedItemVisualTransform;

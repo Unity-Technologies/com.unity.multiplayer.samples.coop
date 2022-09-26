@@ -24,17 +24,17 @@ namespace Unity.BossRoom.Gameplay.Actions
         float m_ActionStartTime;
         bool m_AttemptedPickup;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             m_ActionStartTime = Time.time;
 
             // play pickup animation based if a heavy object is not already held
             if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    parent.HeldNetworkObject.Value, out var heldObject))
+                    serverCharacter.HeldNetworkObject.Value, out var heldObject))
             {
                 if (!string.IsNullOrEmpty(Config.Anim))
                 {
-                    parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+                    serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
                 }
             }
 
@@ -91,7 +91,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 {
                     var constraintSource = new ConstraintSource()
                     {
-                        sourceTransform = serverCharacter.ClientVisualization.CharacterSwap.CharacterModel.handSocket.transform,
+                        sourceTransform = serverCharacter.clientCharacter.CharacterSwap.CharacterModel.handSocket.transform,
                         weight = 1
                     };
                     positionConstraint.AddSource(constraintSource);
@@ -102,12 +102,12 @@ namespace Unity.BossRoom.Gameplay.Actions
             return true;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (!m_AttemptedPickup && Time.time > m_ActionStartTime + Config.ExecTimeSeconds)
             {
                 m_AttemptedPickup = true;
-                if (!TryPickUp(parent))
+                if (!TryPickUp(clientCharacter))
                 {
                     // pickup attempt unsuccessful; action can be terminated
                     return ActionConclusion.Stop;
@@ -117,15 +117,15 @@ namespace Unity.BossRoom.Gameplay.Actions
             return ActionConclusion.Continue;
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
-            if (parent.LifeState == LifeState.Fainted)
+            if (serverCharacter.LifeState == LifeState.Fainted)
             {
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(parent.HeldNetworkObject.Value, out var heavyNetworkObject))
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(serverCharacter.HeldNetworkObject.Value, out var heavyNetworkObject))
                 {
                     heavyNetworkObject.transform.SetParent(null);
                 }
-                parent.HeldNetworkObject.Value = 0;
+                serverCharacter.HeldNetworkObject.Value = 0;
             }
         }
     }

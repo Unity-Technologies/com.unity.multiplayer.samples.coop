@@ -17,11 +17,11 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         private const float k_AnticipationTimeoutSeconds = 1;
 
-        public ClientCharacter CharacterVisualization { get; private set; }
+        public ClientCharacter ClientCharacter { get; private set; }
 
-        public ClientActionPlayer(ClientCharacter characterVisualization)
+        public ClientActionPlayer(ClientCharacter clientCharacter)
         {
-            CharacterVisualization = characterVisualization;
+            ClientCharacter = clientCharacter;
         }
 
         public void OnUpdate()
@@ -30,14 +30,14 @@ namespace Unity.BossRoom.Gameplay.Actions
             for (int i = m_PlayingActions.Count - 1; i >= 0; --i)
             {
                 var action = m_PlayingActions[i];
-                bool keepGoing = action.AnticipatedClient || action.OnUpdateClient(CharacterVisualization); // only call OnUpdate() on actions that are past anticipation
+                bool keepGoing = action.AnticipatedClient || action.OnUpdateClient(ClientCharacter); // only call OnUpdate() on actions that are past anticipation
                 bool expirable = action.Config.DurationSeconds > 0f; //non-positive value is a sentinel indicating the duration is indefinite.
                 bool timeExpired = expirable && action.TimeRunning >= action.Config.DurationSeconds;
                 bool timedOut = action.AnticipatedClient && action.TimeRunning >= k_AnticipationTimeoutSeconds;
                 if (!keepGoing || timeExpired || timedOut)
                 {
-                    if (timedOut) { action.CancelClient(CharacterVisualization); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
-                    else { action.EndClient(CharacterVisualization); }
+                    if (timedOut) { action.CancelClient(ClientCharacter); } //an anticipated action that timed out shouldn't get its End called. It is canceled instead.
+                    else { action.EndClient(ClientCharacter); }
 
                     m_PlayingActions.RemoveAt(i);
                     ActionFactory.ReturnAction(action);
@@ -55,7 +55,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnAnimEventClient(CharacterVisualization, id);
+                actionFX.OnAnimEventClient(ClientCharacter, id);
             }
         }
 
@@ -63,7 +63,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             foreach (var actionFX in m_PlayingActions)
             {
-                actionFX.OnStoppedChargingUpClient(CharacterVisualization, finalChargeUpPercentage);
+                actionFX.OnStoppedChargingUpClient(ClientCharacter, finalChargeUpPercentage);
             }
         }
 
@@ -103,10 +103,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <param name="data">The Action that is being requested.</param>
         public void AnticipateAction(ref ActionRequestData data)
         {
-            if (!CharacterVisualization.IsAnimating() && Action.ShouldClientAnticipate(CharacterVisualization, ref data))
+            if (!ClientCharacter.IsAnimating() && Action.ShouldClientAnticipate(ClientCharacter, ref data))
             {
                 var actionFX = ActionFactory.CreateActionFromData(ref data);
-                actionFX.AnticipateActionClient(CharacterVisualization);
+                actionFX.AnticipateActionClient(ClientCharacter);
                 m_PlayingActions.Add(actionFX);
             }
         }
@@ -116,7 +116,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             var anticipatedActionIndex = FindAction(data.ActionID, true);
 
             var actionFX = anticipatedActionIndex >= 0 ? m_PlayingActions[anticipatedActionIndex] : ActionFactory.CreateActionFromData(ref data);
-            if (actionFX.OnStartClient(CharacterVisualization))
+            if (actionFX.OnStartClient(ClientCharacter))
             {
                 if (anticipatedActionIndex < 0)
                 {
@@ -139,7 +139,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         {
             foreach (var action in m_PlayingActions)
             {
-                action.CancelClient(CharacterVisualization);
+                action.CancelClient(ClientCharacter);
                 ActionFactory.ReturnAction(action);
             }
             m_PlayingActions.Clear();
@@ -152,7 +152,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 if (m_PlayingActions[i].ActionID == actionID)
                 {
                     var action = m_PlayingActions[i];
-                    action.CancelClient(CharacterVisualization);
+                    action.CancelClient(ClientCharacter);
                     m_PlayingActions.RemoveAt(i);
                     ActionFactory.ReturnAction(action);
                 }

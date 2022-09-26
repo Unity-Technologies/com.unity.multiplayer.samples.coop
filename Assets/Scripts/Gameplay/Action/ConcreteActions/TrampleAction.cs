@@ -50,7 +50,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         private bool m_WasStunned;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             m_PreviousStage = ActionStage.Windup;
 
@@ -70,22 +70,22 @@ namespace Unity.BossRoom.Gameplay.Actions
                     }
 
                     // snap to face our target! This is the direction we'll attack in
-                    parent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                    serverCharacter.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
             // reset our "stop" trigger (in case the previous run of the trample action was aborted due to e.g. being stunned)
             if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.ResetTrigger(Config.Anim2);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.ResetTrigger(Config.Anim2);
             }
             // start the animation sequence!
             if (!string.IsNullOrEmpty(Config.Anim))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             }
 
-            parent.ClientVisualization.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -112,14 +112,14 @@ namespace Unity.BossRoom.Gameplay.Actions
             return ActionStage.Complete;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             ActionStage newState = GetCurrentStage();
             if (newState != m_PreviousStage && newState == ActionStage.Charging)
             {
                 // we've just started to charge across the screen! Anyone currently touching us gets hit
-                SimulateCollisionWithNearbyFoes(parent);
-                parent.Movement.StartForwardCharge(Config.MoveSpeed, Config.DurationSeconds - Config.ExecTimeSeconds);
+                SimulateCollisionWithNearbyFoes(clientCharacter);
+                clientCharacter.Movement.StartForwardCharge(Config.MoveSpeed, Config.DurationSeconds - Config.ExecTimeSeconds);
             }
 
             m_PreviousStage = newState;
@@ -181,13 +181,13 @@ namespace Unity.BossRoom.Gameplay.Actions
         }
 
         // called by owning class when parent's Collider collides with stuff
-        public override void CollisionEntered(ServerCharacter parent, Collision collision)
+        public override void CollisionEntered(ServerCharacter serverCharacter, Collision collision)
         {
             // we only detect other possible victims when we start charging
             if (GetCurrentStage() != ActionStage.Charging)
                 return;
 
-            Collide(parent, collision.collider);
+            Collide(serverCharacter, collision.collider);
         }
 
         // here we handle colliding with anything (whether a victim or not)
@@ -238,7 +238,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             if (!m_WasStunned)
             {
                 parent.Movement.CancelMove();
-                parent.ClientVisualization.RecvCancelAllActionsClientRpc();
+                parent.clientCharacter.RecvCancelAllActionsClientRpc();
             }
             m_WasStunned = true;
         }
@@ -254,11 +254,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             return false;
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
             if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
     }

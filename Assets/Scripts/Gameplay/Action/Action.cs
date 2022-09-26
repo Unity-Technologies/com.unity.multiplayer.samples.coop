@@ -97,14 +97,14 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
         /// </summary>
         /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>
-        public abstract bool OnStart(ServerCharacter parent);
+        public abstract bool OnStart(ServerCharacter serverCharacter);
 
 
         /// <summary>
         /// Called each frame while the action is running.
         /// </summary>
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
-        public abstract bool OnUpdate(ServerCharacter parent);
+        public abstract bool OnUpdate(ServerCharacter clientCharacter);
 
         /// <summary>
         /// Called each frame (before OnUpdate()) for the active ("blocking") Action, asking if it should become a background Action.
@@ -118,16 +118,16 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <summary>
         /// Called when the Action ends naturally. By default just calls Cancel()
         /// </summary>
-        public virtual void End(ServerCharacter parent)
+        public virtual void End(ServerCharacter serverCharacter)
         {
-            Cancel(parent);
+            Cancel(serverCharacter);
         }
 
         /// <summary>
         /// This will get called when the Action gets canceled. The Action should clean up any ongoing effects at this point.
         /// (e.g. an Action that involves moving should cancel the current active move).
         /// </summary>
-        public virtual void Cancel(ServerCharacter parent) { }
+        public virtual void Cancel(ServerCharacter serverCharacter) { }
 
         /// <summary>
         /// Called *AFTER* End(). At this point, the Action has ended, meaning its Update() etc. functions will never be
@@ -143,8 +143,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <summary>
         /// Called on the active ("blocking") Action when this character collides with another.
         /// </summary>
+        /// <param name="serverCharacter"></param>
         /// <param name="collision"></param>
-        public virtual void CollisionEntered(ServerCharacter parent, Collision collision) { }
+        public virtual void CollisionEntered(ServerCharacter serverCharacter, Collision collision) { }
 
         public enum BuffableValue
         {
@@ -197,9 +198,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <remarks>
         /// When a GameplayActivity of AttackedByEnemy or Healed happens, OnGameplayAction() is called BEFORE BuffValue() is called.
         /// </remarks>
-        /// <param name="parent"></param>
+        /// <param name="serverCharacter"></param>
         /// <param name="activityType"></param>
-        public virtual void OnGameplayActivity(ServerCharacter parent, GameplayActivity activityType) { }
+        public virtual void OnGameplayActivity(ServerCharacter serverCharacter, GameplayActivity activityType) { }
 
 
 
@@ -215,14 +216,14 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// Derived class should be sure to call base.OnStart() in their implementation, but note that this resets "Anticipated" to false.
         /// </remarks>
         /// <returns>true to play, false to be immediately cleaned up.</returns>
-        public virtual bool OnStartClient(ClientCharacter parent)
+        public virtual bool OnStartClient(ClientCharacter clientCharacter)
         {
             AnticipatedClient = false; //once you start for real you are no longer an anticipated action.
             TimeStarted = UnityEngine.Time.time;
             return true;
         }
 
-        public virtual bool OnUpdateClient(ClientCharacter parent)
+        public virtual bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return ActionConclusion.Continue;
         }
@@ -232,9 +233,9 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// classes should aren't required to call base.End(); by default, the method just calls 'Cancel', to handle the
         /// common case where Cancel and End do the same thing.
         /// </summary>
-        public virtual void EndClient(ClientCharacter parent)
+        public virtual void EndClient(ClientCharacter clientCharacter)
         {
-            CancelClient(parent);
+            CancelClient(clientCharacter);
         }
 
         /// <summary>
@@ -243,17 +244,17 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// completing. For example, a "ChargeShot" action might want to emit a projectile object in its End method, but
         /// instead play a "Stagger" animation in its Cancel method.
         /// </summary>
-        public virtual void CancelClient(ClientCharacter parent) { }
+        public virtual void CancelClient(ClientCharacter clientCharacter) { }
 
         /// <summary>
         /// Should this ActionFX be created anticipatively on the owning client?
         /// </summary>
-        /// <param name="parent">The ActionVisualization that would be playing this ActionFX.</param>
+        /// <param name="clientCharacter">The ActionVisualization that would be playing this ActionFX.</param>
         /// <param name="data">The request being sent to the server</param>
         /// <returns>If true ActionVisualization should pre-emptively create the ActionFX on the owning client, before hearing back from the server.</returns>
-        public static bool ShouldClientAnticipate(ClientCharacter parent, ref ActionRequestData data)
+        public static bool ShouldClientAnticipate(ClientCharacter clientCharacter, ref ActionRequestData data)
         {
-            if (!parent.CanPerformActions) { return false; }
+            if (!clientCharacter.CanPerformActions) { return false; }
 
             var actionDescription = GameDataSource.Instance.GetActionPrototypeByID(data.ActionID).Config;
 
@@ -266,7 +267,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(targetId, out NetworkObject networkObject))
                 {
                     float rangeSquared = actionDescription.Range * actionDescription.Range;
-                    isTargetEligible = (networkObject.transform.position - parent.transform.position).sqrMagnitude < rangeSquared;
+                    isTargetEligible = (networkObject.transform.position - clientCharacter.transform.position).sqrMagnitude < rangeSquared;
                 }
             }
 
@@ -278,14 +279,14 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// <summary>
         /// Called when the visualization receives an animation event.
         /// </summary>
-        public virtual void OnAnimEventClient(ClientCharacter parent, string id) { }
+        public virtual void OnAnimEventClient(ClientCharacter clientCharacter, string id) { }
 
         /// <summary>
         /// Called when this action has finished "charging up". (Which is only meaningful for a
         /// few types of actions -- it is not called for other actions.)
         /// </summary>
         /// <param name="finalChargeUpPercentage"></param>
-        public virtual void OnStoppedChargingUpClient(ClientCharacter parent, float finalChargeUpPercentage) { }
+        public virtual void OnStoppedChargingUpClient(ClientCharacter clientCharacter, float finalChargeUpPercentage) { }
 
         /// <summary>
         /// Utility function that instantiates all the graphics in the Spawns list.
@@ -323,14 +324,14 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// you get this call immediately on the client, before the server round-trip.
         /// Overriders should always call the base class in their implementation!
         /// </summary>
-        public virtual void AnticipateActionClient(ClientCharacter parent)
+        public virtual void AnticipateActionClient(ClientCharacter clientCharacter)
         {
             AnticipatedClient = true;
             TimeStarted = UnityEngine.Time.time;
 
             if (!string.IsNullOrEmpty(Config.AnimAnticipation))
             {
-                parent.OurAnimator.SetTrigger(Config.AnimAnticipation);
+                clientCharacter.OurAnimator.SetTrigger(Config.AnimAnticipation);
             }
         }
 

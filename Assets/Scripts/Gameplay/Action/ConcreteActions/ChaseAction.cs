@@ -16,7 +16,7 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// Called when the Action starts actually playing (which may be after it is created, because of queueing).
         /// </summary>
         /// <returns>false if the action decided it doesn't want to run after all, true otherwise. </returns>
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             if (!HasValidTarget())
             {
@@ -37,15 +37,15 @@ namespace Unity.BossRoom.Gameplay.Actions
 
             Vector3 currentTargetPos = m_TargetTransform.position;
 
-            if (StopIfDone(parent))
+            if (StopIfDone(serverCharacter))
             {
-                parent.physicsWrapper.Transform.LookAt(currentTargetPos); //even if we didn't move, snap to face the target!
+                serverCharacter.physicsWrapper.Transform.LookAt(currentTargetPos); //even if we didn't move, snap to face the target!
                 return ActionConclusion.Stop;
             }
 
-            if (!parent.Movement.IsPerformingForcedMovement())
+            if (!serverCharacter.Movement.IsPerformingForcedMovement())
             {
-                parent.Movement.FollowTransform(m_TargetTransform);
+                serverCharacter.Movement.FollowTransform(m_TargetTransform);
             }
             return ActionConclusion.Continue;
         }
@@ -95,29 +95,29 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// Called each frame while the action is running.
         /// </summary>
         /// <returns>true to keep running, false to stop. The Action will stop by default when its duration expires, if it has a duration set. </returns>
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
-            if (StopIfDone(parent)) { return ActionConclusion.Stop; }
+            if (StopIfDone(clientCharacter)) { return ActionConclusion.Stop; }
 
             // Keep re-assigning our chase target whenever possible.
             // This way, if we get Knocked Back mid-chase, we pick right back up and continue the chase.
-            if (!parent.Movement.IsPerformingForcedMovement())
+            if (!clientCharacter.Movement.IsPerformingForcedMovement())
             {
-                parent.Movement.FollowTransform(m_TargetTransform);
+                clientCharacter.Movement.FollowTransform(m_TargetTransform);
             }
 
             return ActionConclusion.Continue;
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
-            if (parent.Movement && !parent.Movement.IsPerformingForcedMovement())
+            if (serverCharacter.Movement && !serverCharacter.Movement.IsPerformingForcedMovement())
             {
-                parent.Movement.CancelMove();
+                serverCharacter.Movement.CancelMove();
             }
         }
 
-        public override bool OnUpdateClient(ClientCharacter clientParent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return ActionConclusion.Continue;
         }

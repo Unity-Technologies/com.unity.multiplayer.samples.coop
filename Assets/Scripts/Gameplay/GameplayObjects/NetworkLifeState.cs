@@ -4,6 +4,13 @@ using UnityEngine;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
+    public enum LifeState
+    {
+        Alive,
+        Fainted,
+        Dead,
+    }
+
     /// <summary>
     /// MonoBehaviour containing only one NetworkVariable of type LifeState which represents this object's life state.
     /// </summary>

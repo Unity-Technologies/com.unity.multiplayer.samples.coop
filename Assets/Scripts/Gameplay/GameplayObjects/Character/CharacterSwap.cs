@@ -26,7 +26,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             public GameObject shoulderRight;
             public GameObject shoulderLeft;
             public GameObject handSocket;
-            public AnimatorTriggeredSpecialFX specialFx; // should be a component on the same GameObject as the Animator!
+            public AnimatorTriggeredSpecialFX specialFx;
             public AnimatorOverrideController animatorOverrides; // references a separate stand-alone object in the project
             private List<Renderer> m_CachedRenderers;
 
@@ -115,12 +115,12 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         private Dictionary<Renderer, Material> m_OriginalMaterials = new Dictionary<Renderer, Material>();
 
-        ClientCharacter m_ClientCharacterVisualization;
+        ClientCharacter m_ClientCharacter;
 
         void Awake()
         {
-            m_ClientCharacterVisualization = GetComponentInParent<ClientCharacter>();
-            m_Animator = m_ClientCharacterVisualization.OurAnimator;
+            m_ClientCharacter = GetComponentInParent<ClientCharacter>();
+            m_Animator = m_ClientCharacter.OurAnimator;
             m_OriginalController = m_Animator.runtimeAnimatorController;
         }
 

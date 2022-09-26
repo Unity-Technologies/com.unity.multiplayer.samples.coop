@@ -34,10 +34,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         private bool m_ExecutionFired;
         private ulong m_ProvisionalTarget;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
-            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : parent.TargetId.Value;
-            IDamageable foe = DetectFoe(parent, target);
+            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : serverCharacter.TargetId.Value;
+            IDamageable foe = DetectFoe(serverCharacter, target);
             if (foe != null)
             {
                 m_ProvisionalTarget = foe.NetworkObjectId;
@@ -47,11 +47,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             // snap to face the right direction
             if (Data.Direction != Vector3.zero)
             {
-                parent.physicsWrapper.Transform.forward = Data.Direction;
+                serverCharacter.physicsWrapper.Transform.forward = Data.Direction;
             }
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            parent.ClientVisualization.RecvDoActionClientRPC(Data);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -64,15 +64,15 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_SpawnedGraphics = null;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (!m_ExecutionFired && (Time.time - TimeStarted) >= Config.ExecTimeSeconds)
             {
                 m_ExecutionFired = true;
-                var foe = DetectFoe(parent, m_ProvisionalTarget);
+                var foe = DetectFoe(clientCharacter, m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.ReceiveHP(parent, -Config.Amount);
+                    foe.ReceiveHP(clientCharacter, -Config.Amount);
                 }
             }
 

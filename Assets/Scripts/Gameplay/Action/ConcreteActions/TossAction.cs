@@ -15,7 +15,7 @@ namespace Unity.BossRoom.Gameplay.Actions
     {
         bool m_Launched;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             // snap to face the direction we're firing
 
@@ -35,12 +35,12 @@ namespace Unity.BossRoom.Gameplay.Actions
                     }
 
                     // snap to face our target! This is the direction we'll attack in
-                    parent.physicsWrapper.Transform.LookAt(lookAtPosition);
+                    serverCharacter.physicsWrapper.Transform.LookAt(lookAtPosition);
                 }
             }
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            parent.ClientVisualization.RecvDoActionClientRPC(Data);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -50,11 +50,11 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_Launched = false;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && !m_Launched)
             {
-                Throw(parent);
+                Throw(clientCharacter);
             }
 
             return true;

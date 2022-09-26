@@ -24,11 +24,11 @@ namespace Unity.BossRoom.Gameplay.Actions
         /// </summary>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
-            parent.ClientVisualization.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
 
             return true;
         }
@@ -46,33 +46,33 @@ namespace Unity.BossRoom.Gameplay.Actions
             return TimeRunning >= Config.ExecTimeSeconds;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && !m_IsStealthStarted && !m_IsStealthEnded)
             {
                 // start actual stealth-mode... NOW!
                 m_IsStealthStarted = true;
-                parent.IsStealthy.Value = true;
+                clientCharacter.IsStealthy.Value = true;
             }
             return !m_IsStealthEnded;
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
             if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
 
-            EndStealth(parent);
+            EndStealth(serverCharacter);
         }
 
-        public override void OnGameplayActivity(ServerCharacter parent, GameplayActivity activityType)
+        public override void OnGameplayActivity(ServerCharacter serverCharacter, GameplayActivity activityType)
         {
             // we break stealth after using an attack. (Or after being hit, which could happen during exec time before we're stealthed, or even afterwards, such as from an AoE attack)
             if (activityType == GameplayActivity.UsingAttackAction || activityType == GameplayActivity.AttackedByEnemy)
             {
-                EndStealth(parent);
+                EndStealth(serverCharacter);
             }
         }
 
@@ -90,21 +90,21 @@ namespace Unity.BossRoom.Gameplay.Actions
                 // presses the Stealth button twice in a row: "end this Stealth action and start a new one". If we cancelled
                 // all actions of this type in Cancel(), we'd end up cancelling both the old AND the new one, because
                 // the new one would already be in the clients' actionFX queue.
-                parent.ClientVisualization.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
+                parent.clientCharacter.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
             }
         }
 
-        public override bool OnUpdateClient(ClientCharacter parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
-            if (TimeRunning >= Config.ExecTimeSeconds && m_SpawnedGraphics == null && parent.IsOwner)
+            if (TimeRunning >= Config.ExecTimeSeconds && m_SpawnedGraphics == null && clientCharacter.IsOwner)
             {
-                m_SpawnedGraphics = InstantiateSpecialFXGraphics(parent.transform, true);
+                m_SpawnedGraphics = InstantiateSpecialFXGraphics(clientCharacter.transform, true);
             }
 
             return ActionConclusion.Continue;
         }
 
-        public override void CancelClient(ClientCharacter parent)
+        public override void CancelClient(ClientCharacter clientCharacter)
         {
             if (m_SpawnedGraphics != null)
             {

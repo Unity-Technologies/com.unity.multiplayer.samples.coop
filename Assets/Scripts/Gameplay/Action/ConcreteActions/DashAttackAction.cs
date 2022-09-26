@@ -27,18 +27,18 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         private bool m_Dashed;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             // remember the exact spot we'll stop.
-            m_TargetSpot = ActionUtils.GetDashDestination(parent.physicsWrapper.Transform, Data.Position, true, Config.Range, Config.Range);
+            m_TargetSpot = ActionUtils.GetDashDestination(serverCharacter.physicsWrapper.Transform, Data.Position, true, Config.Range, Config.Range);
 
             // snap to face our destination. This ensures the client visualization faces the right way while "pretending" to dash
-            parent.physicsWrapper.Transform.LookAt(m_TargetSpot);
+            serverCharacter.physicsWrapper.Transform.LookAt(m_TargetSpot);
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             // tell clients to visualize this action
-            parent.ClientVisualization.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
 
             return ActionConclusion.Continue;
         }
@@ -50,37 +50,37 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_Dashed = false;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             return ActionConclusion.Continue;
         }
 
-        public override void End(ServerCharacter parent)
+        public override void End(ServerCharacter serverCharacter)
         {
             // Anim2 contains the name of the end-loop-sequence trigger
             if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
 
             // we're done, time to teleport!
-            parent.Movement.Teleport(m_TargetSpot);
+            serverCharacter.Movement.Teleport(m_TargetSpot);
 
             // and then swing!
-            PerformMeleeAttack(parent);
+            PerformMeleeAttack(serverCharacter);
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
             // OtherAnimatorVariable contains the name of the cancellation trigger
             if (!string.IsNullOrEmpty(Config.OtherAnimatorVariable))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.OtherAnimatorVariable);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.OtherAnimatorVariable);
             }
 
             // because the client-side visualization of the action moves the character visualization around,
             // we need to explicitly end the client-side visuals when we abort
-            parent.ClientVisualization.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
+            serverCharacter.clientCharacter.RecvCancelActionsByPrototypeIDClientRpc(ActionID);
 
         }
 
@@ -107,7 +107,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override bool OnUpdateClient(ClientCharacter parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             if (m_Dashed) { return ActionConclusion.Stop; } // we're done!
 

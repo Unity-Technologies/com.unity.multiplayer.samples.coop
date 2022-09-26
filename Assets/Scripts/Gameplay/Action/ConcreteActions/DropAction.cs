@@ -15,13 +15,13 @@ namespace Unity.BossRoom.Gameplay.Actions
 
         NetworkObject m_HeldNetworkObject;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             m_ActionStartTime = Time.time;
 
             // play animation of dropping a heavy object, if one is already held
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    parent.HeldNetworkObject.Value, out var heldObject))
+                    serverCharacter.HeldNetworkObject.Value, out var heldObject))
             {
                 m_HeldNetworkObject = heldObject;
 
@@ -29,7 +29,7 @@ namespace Unity.BossRoom.Gameplay.Actions
 
                 if (!string.IsNullOrEmpty(Config.Anim))
                 {
-                    parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+                    serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
                 }
             }
 
@@ -43,13 +43,13 @@ namespace Unity.BossRoom.Gameplay.Actions
             m_HeldNetworkObject = null;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (Time.time > m_ActionStartTime + Config.ExecTimeSeconds)
             {
                 // drop the pot in space
                 m_HeldNetworkObject.transform.SetParent(null);
-                parent.HeldNetworkObject.Value = 0;
+                clientCharacter.HeldNetworkObject.Value = 0;
 
                 return ActionConclusion.Stop;
             }

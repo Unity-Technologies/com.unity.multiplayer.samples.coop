@@ -19,10 +19,10 @@ namespace Unity.BossRoom.Gameplay.Actions
         private NetworkObject m_Target;
         Transform m_TargetTransform;
 
-        public override bool OnStartClient(ClientCharacter parent)
+        public override bool OnStartClient(ClientCharacter clientCharacter)
         {
-            base.OnStartClient(parent);
-            m_Target = GetTarget(parent);
+            base.OnStartClient(clientCharacter);
+            m_Target = GetTarget(clientCharacter);
 
             if (m_Target && PhysicsWrapper.TryGetPhysicsWrapper(m_Target.NetworkObjectId, out var physicsWrapper))
             {
@@ -35,24 +35,24 @@ namespace Unity.BossRoom.Gameplay.Actions
             return true;
         }
 
-        public override bool OnUpdateClient(ClientCharacter parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && m_Projectile == null)
             {
                 // figure out how long the pretend-projectile will be flying to the target
                 var targetPos = m_TargetTransform ? m_TargetTransform.position : Data.Position;
-                var initialDistance = Vector3.Distance(targetPos, parent.transform.position);
+                var initialDistance = Vector3.Distance(targetPos, clientCharacter.transform.position);
                 m_ProjectileDuration = initialDistance / Config.Projectiles[0].Speed_m_s;
 
                 // create the projectile. It will control itself from here on out
-                m_Projectile = SpawnAndInitializeProjectile(parent);
+                m_Projectile = SpawnAndInitializeProjectile(clientCharacter);
             }
 
             // we keep going until the projectile's duration ends
             return TimeRunning <= m_ProjectileDuration + Config.ExecTimeSeconds;
         }
 
-        public override void CancelClient(ClientCharacter parent)
+        public override void CancelClient(ClientCharacter clientCharacter)
         {
             if (m_Projectile)
             {
@@ -61,7 +61,7 @@ namespace Unity.BossRoom.Gameplay.Actions
             }
         }
 
-        public override void EndClient(ClientCharacter parent)
+        public override void EndClient(ClientCharacter clientCharacter)
         {
             PlayHitReact();
         }
@@ -77,10 +77,10 @@ namespace Unity.BossRoom.Gameplay.Actions
                 return;
             }
 
-            if (m_Target && m_Target.TryGetComponent(out ServerCharacter clientCharacter) && clientCharacter.ClientVisualization != null)
+            if (m_Target && m_Target.TryGetComponent(out ServerCharacter clientCharacter) && clientCharacter.clientCharacter != null)
             {
                 var hitReact = !string.IsNullOrEmpty(Config.ReactAnim) ? Config.ReactAnim : k_DefaultHitReact;
-                clientCharacter.ClientVisualization.OurAnimator.SetTrigger(hitReact);
+                clientCharacter.clientCharacter.OurAnimator.SetTrigger(hitReact);
             }
         }
 
@@ -126,9 +126,9 @@ namespace Unity.BossRoom.Gameplay.Actions
             return projectile;
         }
 
-        public override void AnticipateActionClient(ClientCharacter parent)
+        public override void AnticipateActionClient(ClientCharacter clientCharacter)
         {
-            base.AnticipateActionClient(parent);
+            base.AnticipateActionClient(clientCharacter);
 
             // see if this is going to be a "miss" because the player tried to click through a wall. If so,
             // we change our data in the same way that the server will (changing our target point to the spot on the wall)
@@ -142,7 +142,7 @@ namespace Unity.BossRoom.Gameplay.Actions
                 }
             }
 
-            if (!ActionUtils.HasLineOfSight(parent.transform.position, targetSpot, out Vector3 collidePos))
+            if (!ActionUtils.HasLineOfSight(clientCharacter.transform.position, targetSpot, out Vector3 collidePos))
             {
                 // we do not have line of sight to the target point. So our target instead becomes the obstruction point
                 Data.TargetIds = null;
