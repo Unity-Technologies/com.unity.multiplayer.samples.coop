@@ -88,7 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (joiningLobby.Result.Success)
                 {
                     m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
-                    var connectingToRelay = ConnectClient();
+                    var connectingToRelay = ConnectClientAsync();
                     yield return new WaitUntil(() => connectingToRelay.IsCompleted);
                 }
                 else
@@ -99,7 +99,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             else
             {
-                var connectingClient = ConnectClient();
+                var connectingClient = ConnectClientAsync();
                 yield return new WaitUntil(() => connectingClient.IsCompleted);
             }
         }
