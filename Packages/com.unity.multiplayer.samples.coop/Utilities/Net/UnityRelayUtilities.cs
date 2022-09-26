@@ -44,7 +44,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
         }
 
         public static async
-            Task<(string ipv4address, ushort port, byte[] allocationIdBytes, byte[] connectionData, byte[]
+            Task<(string ipv4address, ushort port, byte[] allocationIdBytes, Guid allocationId, byte[] connectionData, byte[]
                 hostConnectionData, byte[] key)> JoinRelayServerFromJoinCode(string joinCode)
         {
             JoinAllocation allocation;
@@ -62,7 +62,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             Debug.Log($"client: {allocation.AllocationId}");
 
             var dtlsEndpoint = allocation.ServerEndpoints.First(e => e.ConnectionType == k_KDtlsConnType);
-            return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes,
+            return (dtlsEndpoint.Host, (ushort)dtlsEndpoint.Port, allocation.AllocationIdBytes, allocation.AllocationId,
                 allocation.ConnectionData, allocation.HostConnectionData, allocation.Key);
         }
     }

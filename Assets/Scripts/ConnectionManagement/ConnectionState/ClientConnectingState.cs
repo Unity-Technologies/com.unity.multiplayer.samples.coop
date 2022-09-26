@@ -77,10 +77,10 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
             try
             {
-                var (ipv4Address, port, allocationIdBytes, connectionData, hostConnectionData, key) =
+                var (ipv4Address, port, allocationIdBytes, allocationId, connectionData, hostConnectionData, key) =
                     await UnityRelayUtilities.JoinRelayServerFromJoinCode(m_LocalLobby.RelayJoinCode);
 
-                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationIdBytes.ToString(), m_LocalLobby.RelayJoinCode);
+                await m_LobbyServiceFacade.UpdatePlayerRelayInfoAsync(allocationId.ToString(), m_LocalLobby.RelayJoinCode);
                 var utp = (UnityTransport)m_ConnectionManager.NetworkManager.NetworkConfig.NetworkTransport;
                 utp.SetClientRelayData(ipv4Address, port, allocationIdBytes, key, connectionData, hostConnectionData, isSecure: true);
             }
