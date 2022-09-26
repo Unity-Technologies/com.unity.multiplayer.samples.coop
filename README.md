@@ -65,9 +65,14 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 
 | Characters and objects | |
 | :-- | --: |
-| Dynamic imp spawning | [ Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs ](Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs) |
-| In scene placed imps | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs) |
+| Dynamic imp spawning with portals | [ Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs ](Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs) |
+| In scene placed dynamic objects (imps) | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs) |
+| Static objects (non-destroyables like doors, switches, etc) | [Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs](Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs) |
 | State tracking with breakables, switch, doors | [ Assets/Scripts/Gameplay/GameplayObjects/Breakable.cs ](Assets/Scripts/Gameplay/GameplayObjects/Breakable.cs) <br> [Assets/Scripts/Gameplay/GameplayObjects/FloorSwitch.cs](Assets/Scripts/Gameplay/GameplayObjects/FloorSwitch.cs) <br> [Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs](Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs) |
+| NetworkVariable with Enum | [Assets/Scripts/Gameplay/GameState/NetworkPostGame.cs](Assets/Scripts/Gameplay/GameState/NetworkPostGame.cs) |
+| NetworkVariable with custom serialization (GUID) | [Assets/Scripts/Infrastructure/NetworkGuid.cs](Assets/Scripts/Infrastructure/NetworkGuid.cs) |
+| NetworkVariable with fixed string |[Assets/Scripts/Utils/NetworkNameState.cs](Assets/Scripts/Utils/NetworkNameState.cs)|
+| NetworkList with custom serialization (LobbyPlayerState) |[Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)<br>[Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs](Assets/Scripts/Gameplay/GameState/NetworkCharSelection.cs)|
 | Persistent player (over multiple scenes) | [ Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs ](Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs)  |
 | Character logic (including player's avatar) | [ Assets/Scripts/Gameplay/GameplayObjects/Character/ ](Assets/Scripts/Gameplay/GameplayObjects/Character/) <br> [ Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs ](Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs)  |
 
@@ -83,6 +88,7 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 | :-- | --: |
 | Application Controller | [ TODO ](TODO) |
 | Scene state machine | [ TODO ](TODO) |
+| Scene loading and progress sharing | [Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/](Packages/com.unity.multiplayer.samples.coop/Utilities/SceneManagement/)|
 | Synced UI with character select | [ TODO ](TODO) |
 
 | Gameplay messaging between classes | [ TODO ](TODO) |
@@ -97,7 +103,6 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 | Connection state machine | [ Assets/Scripts/ConnectionManagement/ConnectionManager.cs ](Assets/Scripts/ConnectionManagement/ConnectionManager.cs) <br> [Assets/Scripts/ConnectionManagement/ConnectionState/](Assets/Scripts/ConnectionManagement/ConnectionState/) |
 | session manager | [ TODO ](TODO) |
 
-
 ### Services (Lobby, Relay, etc)
 |Services||
 | :-- | --: |
@@ -108,18 +113,23 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 ### Utils
 | Boss Room specific utils ||
 | :-- | --: |
-| Pooling | [ TODO ](TODO) |
+| Network Object Pooling | [ TODO ](TODO) |
 | NetworkGuid | [ TODO ](TODO) |
 
 | Reusable utils ||
 | :-- | --: |
-| RNSM | [ TODO ](TODO) |
 | Netcode hooks | [ TODO ](TODO) |
 | Spawner | [ TODO ](TODO) |
 | Session manager | [ TODO ](TODO) |
 | Relay utils | [ TODO ](TODO) |
 | Client authority | [ TODO ](TODO) |
 | Scene utils | [ TODO ](TODO) |
+
+| Dev tools ||
+| :-- | --: |
+| RNSM | [ TODO ](TODO) |
+| ParrelSync |[ TODO ](TODO) |
+| Artificial network conditions |[ TODO ](TODO) |
 
 ## Getting the project
 ### Direct download
