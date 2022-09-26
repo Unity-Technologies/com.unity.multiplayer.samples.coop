@@ -104,7 +104,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (!reconnectingToLobby.IsFaulted && reconnectingToLobby.Result != null)
                 {
                     // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                    var connectingToRelay = ConnectClient();
+                    var connectingToRelay = ConnectClientAsync();
                     yield return new WaitUntil(() => connectingToRelay.IsCompleted);
                 }
                 else
@@ -118,7 +118,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             else // If not using Lobby, simply try to reconnect to the server directly
             {
                 // If this fails, the OnClientDisconnect callback will be invoked by Netcode
-                var connectingClient = ConnectClient();
+                var connectingClient = ConnectClientAsync();
                 yield return new WaitUntil(() => connectingClient.IsCompleted);
             }
         }
