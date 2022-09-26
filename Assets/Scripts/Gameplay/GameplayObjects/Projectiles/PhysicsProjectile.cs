@@ -72,23 +72,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         PositionLerper m_PositionLerper;
 
-
-        void OnEnemyHit(ulong enemyId)
-        {
-            //in the future we could do quite fancy things, like deparenting the Graphics Arrow and parenting it to the target.
-            //For the moment we play some particles (optionally), and cause the target to animate a hit-react.
-
-            NetworkObject targetNetObject;
-            if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(enemyId, out targetNetObject))
-            {
-                if (m_OnHitParticlePrefab)
-                {
-                    // show an impact graphic
-                    Instantiate(m_OnHitParticlePrefab.gameObject, transform.position, transform.rotation);
-                }
-            }
-        }
-
         /// <summary>
         /// Set everything up based on provided projectile information.
         /// (Note that this is called before OnNetworkSpawn(), so don't try to do any network stuff here.)
@@ -259,4 +242,3 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         }
     }
 }
-
