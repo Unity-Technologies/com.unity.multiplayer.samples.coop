@@ -1,13 +1,12 @@
 using System;
 using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
+using Unity.BossRoom.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
 using VContainer;
 
-namespace BossRoom.Scripts.Shared.Net.UnityServices.Auth
+namespace Unity.BossRoom.UnityServices.Auth
 {
     public class AuthenticationServiceFacade
     {

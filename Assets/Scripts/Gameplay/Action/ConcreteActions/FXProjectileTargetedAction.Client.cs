@@ -1,9 +1,11 @@
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using System;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class FXProjectileTargetedAction
     {
@@ -17,10 +19,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private NetworkObject m_Target;
         Transform m_TargetTransform;
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter clientCharacter)
         {
-            base.OnStartClient(parent);
-            m_Target = GetTarget(parent);
+            base.OnStartClient(clientCharacter);
+            m_Target = GetTarget(clientCharacter);
 
             if (m_Target && PhysicsWrapper.TryGetPhysicsWrapper(m_Target.NetworkObjectId, out var physicsWrapper))
             {
@@ -33,24 +35,24 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return true;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && m_Projectile == null)
             {
                 // figure out how long the pretend-projectile will be flying to the target
                 var targetPos = m_TargetTransform ? m_TargetTransform.position : Data.Position;
-                var initialDistance = Vector3.Distance(targetPos, parent.transform.position);
+                var initialDistance = Vector3.Distance(targetPos, clientCharacter.transform.position);
                 m_ProjectileDuration = initialDistance / Config.Projectiles[0].Speed_m_s;
 
                 // create the projectile. It will control itself from here on out
-                m_Projectile = SpawnAndInitializeProjectile(parent);
+                m_Projectile = SpawnAndInitializeProjectile(clientCharacter);
             }
 
             // we keep going until the projectile's duration ends
             return TimeRunning <= m_ProjectileDuration + Config.ExecTimeSeconds;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter clientCharacter)
         {
             if (m_Projectile)
             {
@@ -59,7 +61,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void EndClient(ClientCharacterVisualization parent)
+        public override void EndClient(ClientCharacter clientCharacter)
         {
             PlayHitReact();
         }
@@ -75,14 +77,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 return;
             }
 
-            if (m_Target && m_Target.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject != null)
+            if (m_Target && m_Target.TryGetComponent(out ServerCharacter clientCharacter) && clientCharacter.clientCharacter != null)
             {
                 var hitReact = !string.IsNullOrEmpty(Config.ReactAnim) ? Config.ReactAnim : k_DefaultHitReact;
-                clientCharacter.ChildVizObject.OurAnimator.SetTrigger(hitReact);
+                clientCharacter.clientCharacter.OurAnimator.SetTrigger(hitReact);
             }
         }
 
-        NetworkObject GetTarget(ClientCharacterVisualization parent)
+        NetworkObject GetTarget(ClientCharacter parent)
         {
             if (Data.TargetIds == null || Data.TargetIds.Length == 0)
             {
@@ -93,7 +95,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             {
                 // make sure this isn't a friend (or if it is, make sure this is a friendly-fire action)
                 var targetable = targetObject.GetComponent<ITargetable>();
-                if (targetable != null && targetable.IsNpc == (Config.IsFriendly ^ parent.NetState.IsNpc))
+                if (targetable != null && targetable.IsNpc == (Config.IsFriendly ^ parent.serverCharacter.IsNpc))
                 {
                     // not a valid target
                     return null;
@@ -109,7 +111,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        FXProjectile SpawnAndInitializeProjectile(ClientCharacterVisualization parent)
+        FXProjectile SpawnAndInitializeProjectile(ClientCharacter parent)
         {
             var projectileGO = Object.Instantiate(Config.Projectiles[0].ProjectilePrefab, parent.transform.position, parent.transform.rotation, null);
 
@@ -124,9 +126,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return projectile;
         }
 
-        public override void AnticipateActionClient(ClientCharacterVisualization parent)
+        public override void AnticipateActionClient(ClientCharacter clientCharacter)
         {
-            base.AnticipateActionClient(parent);
+            base.AnticipateActionClient(clientCharacter);
 
             // see if this is going to be a "miss" because the player tried to click through a wall. If so,
             // we change our data in the same way that the server will (changing our target point to the spot on the wall)
@@ -140,7 +142,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 }
             }
 
-            if (!ActionUtils.HasLineOfSight(parent.transform.position, targetSpot, out Vector3 collidePos))
+            if (!ActionUtils.HasLineOfSight(clientCharacter.transform.position, targetSpot, out Vector3 collidePos))
             {
                 // we do not have line of sight to the target point. So our target instead becomes the obstruction point
                 Data.TargetIds = null;

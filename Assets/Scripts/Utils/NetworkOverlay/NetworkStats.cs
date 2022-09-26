@@ -4,7 +4,7 @@ using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Utils
 {
     /// This utility help showing Network statistics at runtime.
     ///
