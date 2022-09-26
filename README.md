@@ -59,17 +59,22 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 | Quick actions with RPCs (ex: mage bolt) | [ Assets/Scripts/Gameplay/Action/ConcreteActions/FXProjectileTargetedAction.cs ](Assets/Scripts/Gameplay/Action/ConcreteActions/FXProjectileTargetedAction.cs) |
 | Teleport | [ Assets/Scripts/Gameplay/Action/ConcreteActions/DashAttackAction.cs ](Assets/Scripts/Gameplay/Action/ConcreteActions/DashAttackAction.cs) |
 | Client side input tracking before an action (archer AOE) | [ Assets/Scripts/Gameplay/Action/ConcreteActions/AOEAction.cs ](Assets/Scripts/Gameplay/Action/ConcreteActions/AOEAction.cs) - OnStartClient() |
-| Time based action (charged shot) | [ TODO ](TODO) |
-| Object parenting | [ TODO ](TODO) |
-| Physics object throwing | [ TODO ](TODO) |
+| Time based action (charged shot) | [ Assets/Scripts/Gameplay/Action/ConcreteActions/ChargedLaunchProjectileAction.cs ](Assets/Scripts/Gameplay/Action/ConcreteActions/ChargedLaunchProjectileAction.cs) |
+| Object parenting to animation | [ Assets/Scripts/Gameplay/Action/ConcreteActions/PickUpAction.cs ](Assets/Scripts/Gameplay/Action/ConcreteActions/PickUpAction.cs) |
+| Physics object throwing | [ Assets/Scripts/Gameplay/Action/ConcreteActions/TossAction.cs ](Assets/Scripts/Gameplay/Action/ConcreteActions/TossAction.cs) |
 
 | Characters and objects | |
 | :-- | --: |
-| Imp spawning | [ TODO ](TODO) |
-| In scene placed imps | [ TODO ](TODO) |
-| State tracking with breakables, switch, doors | [ TODO ](TODO) |
-| Player/avatar structure | [ TODO ](TODO) |
-| Character logic | [ TODO ](TODO) |
+| Dynamic imp spawning | [ Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs ](Assets/Scripts/Gameplay/GameplayObjects/ServerWaveSpawner.cs) |
+| In scene placed imps | [ Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs ](Packages/com.unity.multiplayer.samples.coop/Utilities/Net/NetworkObjectSpawner.cs) |
+| State tracking with breakables, switch, doors | [ Assets/Scripts/Gameplay/GameplayObjects/Breakable.cs ](Assets/Scripts/Gameplay/GameplayObjects/Breakable.cs) <br> [Assets/Scripts/Gameplay/GameplayObjects/FloorSwitch.cs](Assets/Scripts/Gameplay/GameplayObjects/FloorSwitch.cs) <br> [Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs](Assets/Scripts/Gameplay/GameplayObjects/SwitchedDoor.cs) |
+| Persistent player (over multiple scenes) | [ Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs ](Assets/Scripts/Gameplay/GameplayObjects/PersistentPlayer.cs)  |
+| Character logic (including player's avatar) | [ Assets/Scripts/Gameplay/GameplayObjects/Character/ ](Assets/Scripts/Gameplay/GameplayObjects/Character/) <br> [ Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs ](Assets/Scripts/Gameplay/GameplayObjects/Character/ServerCharacter.cs)  |
+
+| Custom serialization and custom messaging ||
+| :-- | --: |
+| Connection approval return <br> value with custom messaging | [ TODO ](TODO) |
+| Character select synced state <br> custom serialization | [ TODO ](TODO)|
 
 | Interpolation | [ TODO ](TODO) |
 | :-- | --: |
@@ -78,7 +83,7 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 | :-- | --: |
 | Application Controller | [ TODO ](TODO) |
 | Scene state machine | [ TODO ](TODO) |
-
+| Synced UI with character select | [ TODO ](TODO) |
 
 | Gameplay messaging between classes | [ TODO ](TODO) |
 | :-- | --: |
@@ -89,7 +94,7 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 ### Connectivity
 | Connectivity ||
 | :-- | --: |
-| connection state machine | [ TODO ](TODO) |
+| Connection state machine | [ Assets/Scripts/ConnectionManagement/ConnectionManager.cs ](Assets/Scripts/ConnectionManagement/ConnectionManager.cs) <br> [Assets/Scripts/ConnectionManagement/ConnectionState/](Assets/Scripts/ConnectionManagement/ConnectionState/) |
 | session manager | [ TODO ](TODO) |
 
 
