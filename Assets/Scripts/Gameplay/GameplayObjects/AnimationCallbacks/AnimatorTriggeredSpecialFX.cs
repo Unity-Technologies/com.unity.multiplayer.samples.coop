@@ -1,14 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.VisualEffects;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.Animations;
 #endif
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 {
     /// <summary>
     /// Instantiates and maintains graphics prefabs and sound effects. They're triggered by entering
@@ -77,18 +80,19 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
         /// </summary>
         private HashSet<int> m_ActiveNodes = new HashSet<int>();
 
+        [FormerlySerializedAs("m_ClientCharacterVisualization")]
         [SerializeField]
-        ClientCharacterVisualization m_ClientCharacterVisualization;
+        ClientCharacter m_ClientCharacter;
 
         private void Awake()
         {
             Debug.Assert(m_AudioSources != null && m_AudioSources.Length > 0, "No AudioSource plugged into AnimatorTriggeredSpecialFX!", gameObject);
 
-            if (!m_ClientCharacterVisualization)
+            if (!m_ClientCharacter)
             {
-                m_ClientCharacterVisualization = GetComponentInParent<ClientCharacterVisualization>();
+                m_ClientCharacter = GetComponentInParent<ClientCharacter>();
 
-                m_Animator = m_ClientCharacterVisualization.OurAnimator;
+                m_Animator = m_ClientCharacter.OurAnimator;
             }
         }
 
@@ -124,7 +128,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             if (!m_ActiveNodes.Contains(eventInfo.m_AnimatorNodeNameHash))
                 yield break;
 
-            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_ClientCharacterVisualization.transform;
+            Transform parent = eventInfo.m_PrefabParent != null ? eventInfo.m_PrefabParent : m_ClientCharacter.transform;
             var instantiatedFX = Instantiate(eventInfo.m_Prefab, parent);
             instantiatedFX.transform.localPosition += eventInfo.m_PrefabParentOffset;
 

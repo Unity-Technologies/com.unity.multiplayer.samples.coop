@@ -1,8 +1,9 @@
 using System;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.UI;
+using Unity.BossRoom.UnityServices.Auth;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.Utils;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
 using UnityEngine;
@@ -10,7 +11,7 @@ using UnityEngine.UI;
 using VContainer;
 using VContainer.Unity;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.GameState
 {
     /// <summary>
     /// Game Logic that runs when sitting at the MainMenu. This is likely to be "nothing", as no game has been started. But it is

@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using TMPro;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Simple popup panel to display information to players.

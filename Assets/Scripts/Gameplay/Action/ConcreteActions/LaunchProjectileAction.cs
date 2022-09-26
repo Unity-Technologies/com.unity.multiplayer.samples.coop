@@ -1,11 +1,11 @@
 using System;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
-using BossRoom.Scripts.Shared.Net.NetworkObjectPool;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action responsible for creating a projectile object.
@@ -15,13 +15,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     {
         private bool m_Launched = false;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             //snap to face the direction we're firing, and then broadcast the animation, which we do immediately.
-            parent.physicsWrapper.Transform.forward = Data.Direction;
+            serverCharacter.physicsWrapper.Transform.forward = Data.Direction;
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            parent.NetState.RecvDoActionClientRPC(Data);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -31,11 +31,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             base.Reset();
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (TimeRunning >= Config.ExecTimeSeconds && !m_Launched)
             {
-                LaunchProjectile(parent);
+                LaunchProjectile(clientCharacter);
             }
 
             return true;
@@ -50,7 +50,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         {
             foreach (var projectileInfo in Config.Projectiles)
             {
-                if (projectileInfo.ProjectilePrefab && projectileInfo.ProjectilePrefab.GetComponent<NetworkProjectileState>())
+                if (projectileInfo.ProjectilePrefab && projectileInfo.ProjectilePrefab.GetComponent<PhysicsProjectile>())
                     return projectileInfo;
             }
             throw new System.Exception($"Action {name} has no usable Projectiles!");
@@ -78,27 +78,27 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 //where it appears next to the player.
                 no.transform.position = parent.physicsWrapper.Transform.localToWorldMatrix.MultiplyPoint(no.transform.position);
 
-                no.GetComponent<ServerProjectileLogic>().Initialize(parent.NetworkObjectId, projectileInfo);
+                no.GetComponent<PhysicsProjectile>().Initialize(parent.NetworkObjectId, projectileInfo);
 
                 no.Spawn(true);
             }
         }
 
-        public override void End(ServerCharacter parent)
+        public override void End(ServerCharacter serverCharacter)
         {
             //make sure this happens.
-            LaunchProjectile(parent);
+            LaunchProjectile(serverCharacter);
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
             if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return ActionConclusion.Continue;
         }

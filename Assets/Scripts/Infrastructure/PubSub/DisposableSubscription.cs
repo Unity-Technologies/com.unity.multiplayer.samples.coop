@@ -1,6 +1,6 @@
 using System;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
+namespace Unity.BossRoom.Infrastructure
 {
     /// <summary>
     /// This class is a handle to an active Message Channel subscription and when disposed it unsubscribes from said channel.

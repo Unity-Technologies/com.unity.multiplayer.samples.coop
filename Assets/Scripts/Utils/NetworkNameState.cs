@@ -3,7 +3,7 @@ using Unity.Collections;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Utils
 {
     /// <summary>
     /// NetworkBehaviour containing only one NetworkVariableString which represents this object's name.

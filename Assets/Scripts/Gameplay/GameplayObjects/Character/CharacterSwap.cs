@@ -1,9 +1,9 @@
 using System;
-using UnityEngine;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks;
+using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     /// <summary>
     /// Responsible for storing of all of the pieces of a character, and swapping the pieces out en masse when asked to.
@@ -26,7 +26,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
             public GameObject shoulderRight;
             public GameObject shoulderLeft;
             public GameObject handSocket;
-            public Visual.AnimatorTriggeredSpecialFX specialFx; // should be a component on the same GameObject as the Animator!
+            public AnimatorTriggeredSpecialFX specialFx;
             public AnimatorOverrideController animatorOverrides; // references a separate stand-alone object in the project
             private List<Renderer> m_CachedRenderers;
 
@@ -115,12 +115,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
         /// </summary>
         private Dictionary<Renderer, Material> m_OriginalMaterials = new Dictionary<Renderer, Material>();
 
-        ClientCharacterVisualization m_ClientCharacterVisualization;
+        ClientCharacter m_ClientCharacter;
 
         void Awake()
         {
-            m_ClientCharacterVisualization = GetComponentInParent<ClientCharacterVisualization>();
-            m_Animator = m_ClientCharacterVisualization.OurAnimator;
+            m_ClientCharacter = GetComponentInParent<ClientCharacter>();
+            m_Animator = m_ClientCharacter.OurAnimator;
             m_OriginalController = m_Animator.runtimeAnimatorController;
         }
 

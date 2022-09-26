@@ -1,6 +1,6 @@
 using System;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// List of all Types of Actions. There is a many-to-one mapping of Actions to ActionLogics.

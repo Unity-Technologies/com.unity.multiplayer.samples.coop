@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.Actions;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character.AI
 {
     /// <summary>
     /// Handles enemy AI. Contains AIStateLogics that handle some of the details,
@@ -97,8 +98,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             if (potentialFoe == null ||
                 potentialFoe.IsNpc ||
-                potentialFoe.NetState.LifeState != LifeState.Alive ||
-                potentialFoe.NetState.IsStealthy.Value)
+                potentialFoe.LifeState != LifeState.Alive ||
+                potentialFoe.IsStealthy.Value)
             {
                 return false;
             }
@@ -151,7 +152,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         {
             get
             {
-                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.NetState.CharacterType];
+                return GameDataSource.Instance.CharacterDataByType[m_ServerCharacter.CharacterType];
             }
         }
 

@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a client attempting to reconnect to a server. It will try to reconnect a

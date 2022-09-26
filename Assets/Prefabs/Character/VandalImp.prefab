@@ -173,6 +173,14 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 3806176119258990995}
     - target: {fileID: 8398944656959553575, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_CharacterClass
+      value: 
+      objectReference: {fileID: 11400000, guid: 686e97a1c3abaf243a72ce1c5a9d7a9f, type: 2}
+    - target: {fileID: 8398944656959553575, guid: 64cfd098f62285f42918875fef849e88, type: 3}
+      propertyPath: m_ClientVisualization
+      value: 
+      objectReference: {fileID: 3806176119258990995}
+    - target: {fileID: 8398944656959553575, guid: 64cfd098f62285f42918875fef849e88, type: 3}
       propertyPath: m_KilledDestroyDelaySeconds
       value: 2
       objectReference: {fileID: 0}
@@ -198,9 +206,8 @@ MonoBehaviour:
   m_DisplayHealth: 1
   m_DisplayName: 0
   m_UIStatePrefab: {fileID: -1943162842029199943, guid: 2b07482491a17964380023240087ce16, type: 3}
-  m_NetworkNameState: {fileID: 0}
   m_NetworkHealthState: {fileID: 4217591550483468666}
-  m_ClientCharacter: {fileID: 5676175182600834934}
+  m_NetworkNameState: {fileID: 0}
   m_BaseHP: {fileID: 11400000, guid: f41e9bb72a80c694d81c8038aaa732a6, type: 2}
   m_TransformToTrack: {fileID: 5009206627901439409}
   m_VerticalWorldOffset: 2.2
@@ -219,16 +226,5 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6733907396f36c44891916e5c62f25a0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &5676175182600834934 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 6995351927119310807, guid: 64cfd098f62285f42918875fef849e88, type: 3}
-  m_PrefabInstance: {fileID: 3445720743357571233}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 176558388678216176}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae9a06a3585027044ababe9f9cb7b8e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 

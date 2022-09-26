@@ -1,10 +1,9 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
-using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action for dropping "Heavy" items.
@@ -16,13 +15,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         NetworkObject m_HeldNetworkObject;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             m_ActionStartTime = Time.time;
 
             // play animation of dropping a heavy object, if one is already held
             if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    parent.NetState.heldNetworkObject.Value, out var heldObject))
+                    serverCharacter.HeldNetworkObject.Value, out var heldObject))
             {
                 m_HeldNetworkObject = heldObject;
 
@@ -30,7 +29,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
                 if (!string.IsNullOrEmpty(Config.Anim))
                 {
-                    parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+                    serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
                 }
             }
 
@@ -44,13 +43,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             m_HeldNetworkObject = null;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (Time.time > m_ActionStartTime + Config.ExecTimeSeconds)
             {
                 // drop the pot in space
                 m_HeldNetworkObject.transform.SetParent(null);
-                parent.NetState.heldNetworkObject.Value = 0;
+                clientCharacter.HeldNetworkObject.Value = 0;
 
                 return ActionConclusion.Stop;
             }

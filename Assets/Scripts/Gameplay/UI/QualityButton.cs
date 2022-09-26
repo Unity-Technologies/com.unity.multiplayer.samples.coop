@@ -1,7 +1,8 @@
+using System;
 using TMPro;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class QualityButton : MonoBehaviour
     {

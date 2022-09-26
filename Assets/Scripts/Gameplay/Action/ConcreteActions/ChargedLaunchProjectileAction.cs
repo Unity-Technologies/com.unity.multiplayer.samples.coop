@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// A version of LaunchProjectileAction that can be "powered up" by holding down the attack key.
@@ -38,7 +36,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private bool m_HitByAttack = false;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             // if we have an explicit target, make sure we're aimed at them.
             // (But if the player just clicked on an attack button, there won't be an explicit target, so we should stay facing however we're facing.)
@@ -48,14 +46,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                 if (initialTarget)
                 {
                     // face our target
-                    parent.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
+                    serverCharacter.physicsWrapper.Transform.LookAt(initialTarget.transform.position);
                 }
             }
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
 
             // start the "charging up" ActionFX
-            parent.NetState.RecvDoActionClientRPC(Data);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
 
             // sanity-check our data a bit
             Debug.Assert(Config.Projectiles.Length > 1, $"Action {name} has {Config.Projectiles.Length} Projectiles. Expected at least 2!");
@@ -77,40 +75,40 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             m_Graphics.Clear();
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (m_StoppedChargingUpTime == 0 && GetPercentChargedUp() >= 1)
             {
                 // we haven't explicitly stopped charging up... but we've reached max charge, so that implicitly stops us
-                StopChargingUp(parent);
+                StopChargingUp(clientCharacter);
             }
 
             // we end as soon as we've stopped charging up (and have fired the projectile)
             return m_StoppedChargingUpTime == 0;
         }
 
-        public override void OnGameplayActivity(ServerCharacter parent, GameplayActivity activityType)
+        public override void OnGameplayActivity(ServerCharacter serverCharacter, GameplayActivity activityType)
         {
             if (activityType == GameplayActivity.AttackedByEnemy)
             {
                 // if we get attacked while charging up, we don't actually get to shoot!
                 m_HitByAttack = true;
-                StopChargingUp(parent);
+                StopChargingUp(serverCharacter);
             }
             else if (activityType == GameplayActivity.StoppedChargingUp)
             {
-                StopChargingUp(parent);
+                StopChargingUp(serverCharacter);
             }
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
-            StopChargingUp(parent);
+            StopChargingUp(serverCharacter);
         }
 
-        public override void End(ServerCharacter parent)
+        public override void End(ServerCharacter serverCharacter)
         {
-            StopChargingUp(parent);
+            StopChargingUp(serverCharacter);
         }
 
         private void StopChargingUp(ServerCharacter parent)
@@ -124,7 +122,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
                 }
 
-                parent.NetState.RecvStopChargingUpClientRpc(GetPercentChargedUp());
+                parent.clientCharacter.RecvStopChargingUpClientRpc(GetPercentChargedUp());
                 if (!m_HitByAttack)
                 {
                     LaunchProjectile(parent);

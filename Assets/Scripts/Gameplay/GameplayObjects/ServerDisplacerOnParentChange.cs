@@ -5,7 +5,7 @@ using Unity.Netcode.Components;
 using UnityEngine;
 using UnityEngine.Animations;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Component to simply play a descending animation when this NetworkObject's parent NetworkObject changes.

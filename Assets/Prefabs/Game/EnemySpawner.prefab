@@ -360,9 +360,8 @@ GameObject:
   - component: {fileID: 8727022540156222958}
   - component: {fileID: -1287160331463954971}
   - component: {fileID: 4844841199312666291}
-  - component: {fileID: 2847004539442057774}
   - component: {fileID: 4501025776099328933}
-  - component: {fileID: 3157323278774936386}
+  - component: {fileID: 5343699662503375493}
   m_Layer: 6
   m_Name: EnemySpawner
   m_TagString: Untagged
@@ -453,20 +452,6 @@ MonoBehaviour:
   m_MinSpawnCap: 2
   m_MaxSpawnCap: 10
   m_SpawnCapIncreasePerPlayer: 1
---- !u!114 &2847004539442057774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6205854018081152875}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07cb03f8b4d75ed4abb9801aa531be91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsBroken:
-    m_InternalValue: 0
 --- !u!114 &4501025776099328933
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -481,7 +466,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_BreakableElements: []
   m_DormantCooldown: 180
---- !u!114 &3157323278774936386
+  IsBroken:
+    m_InternalValue: 0
+--- !u!114 &5343699662503375493
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -490,9 +477,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 6205854018081152875}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53ee998b78e989840b42284bf1b455ad, type: 3}
+  m_Script: {fileID: 11500000, guid: eb44a31731a459546bdf01f1af48173c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_MaxHealth: {fileID: 0}
+  m_NetworkHealthState: {fileID: 0}
+  m_Collider: {fileID: 0}
+  m_SpecialDamageFlags: 0
   m_BrokenPrefab: {fileID: 0}
   m_PrebrokenPrefab: {fileID: 0}
   m_BrokenPrefabPos: {fileID: 8727022540156222958}
@@ -500,7 +491,8 @@ MonoBehaviour:
   - {fileID: 6584753279329625147}
   - {fileID: 3587901247331972367}
   - {fileID: 5320772107039249662}
-  m_NetState: {fileID: 2847004539442057774}
+  IsBroken:
+    m_InternalValue: 0
 --- !u!1 &6584753279329625147
 GameObject:
   m_ObjectHideFlags: 0

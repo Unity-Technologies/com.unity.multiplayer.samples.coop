@@ -1,9 +1,12 @@
+using System;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Navigation;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Assertions;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     public enum MovementState
     {
@@ -24,9 +27,6 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
 
         [SerializeField]
         Rigidbody m_Rigidbody;
-
-        [SerializeField]
-        NetworkCharacterState m_NetworkCharacterState;
 
         private NavigationSystem m_NavigationSystem;
 
@@ -174,7 +174,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var currentState = GetMovementStatus(m_MovementState);
             if (m_PreviousState != currentState)
             {
-                m_NetworkCharacterState.MovementStatus.Value = currentState;
+                m_CharLogic.MovementStatus.Value = currentState;
                 m_PreviousState = currentState;
             }
         }
@@ -257,8 +257,8 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return k_CheatSpeed;
             }
 #endif
-            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.NetState.CharacterType];
-            Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.NetState.CharacterType}");
+            CharacterClass characterClass = GameDataSource.Instance.CharacterDataByType[m_CharLogic.CharacterType];
+            Assert.IsNotNull(characterClass, $"No CharacterClass data for character type {m_CharLogic.CharacterType}");
             return characterClass.Speed;
         }
 

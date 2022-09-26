@@ -1,9 +1,8 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Client;
-using Unity.Multiplayer.Samples.BossRoom.Shared;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.Utils;
 using Unity.Multiplayer.Samples.Utilities;
-using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using Unity.Services.Authentication;
 using Unity.Services.Core;
@@ -11,7 +10,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace UUnity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to when the NetworkManager is shut down. From this state we can transition to the
