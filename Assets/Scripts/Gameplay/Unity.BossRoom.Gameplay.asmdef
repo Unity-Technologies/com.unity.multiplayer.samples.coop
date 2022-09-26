@@ -14,13 +14,14 @@
         "Unity.BossRoom.Infrastructure",
         "Unity.BossRoom.UnityServices",
         "Unity.BossRoom.Navigation",
-        "Unity.BossRoom.CameraController",
         "Unity.BossRoom.ApplicationLifecycle.Messages",
         "Unity.BossRoom.Audio",
         "Unity.Multiplayer.Samples.Utilities",
         "Unity.BossRoom.Utils",
         "Unity.BossRoom.ConnectionManagement",
-        "VContainer"
+        "VContainer",
+        "Unity.BossRoom.VisualEffects",
+        "Unity.BossRoom.CameraUtils"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

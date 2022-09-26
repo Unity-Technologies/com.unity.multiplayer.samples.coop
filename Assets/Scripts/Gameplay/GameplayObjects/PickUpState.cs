@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Shared Network logic for targetable, NPC, pickup objects.

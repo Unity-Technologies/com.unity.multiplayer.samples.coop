@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
+using Unity.BossRoom.Infrastructure;
 using Unity.Services.Authentication;
 using Unity.Services.Lobbies;
 using Unity.Services.Lobbies.Models;
@@ -10,7 +9,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies
+namespace Unity.BossRoom.UnityServices.Lobbies
 {
     /// <summary>
     /// An abstraction layer between the direct calls into the Lobby API and the outcomes you actually want.

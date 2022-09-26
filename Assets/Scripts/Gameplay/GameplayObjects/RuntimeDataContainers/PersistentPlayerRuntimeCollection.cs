@@ -1,6 +1,8 @@
+using System;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// A runtime list of <see cref="PersistentPlayer"/> objects that is populated both on clients and server.

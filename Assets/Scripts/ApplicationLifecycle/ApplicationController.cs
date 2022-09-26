@@ -1,17 +1,21 @@
 using System;
 using System.Collections;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
-using Unity.Multiplayer.Samples.BossRoom.ApplicationLifecycle.Messages;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.ApplicationLifecycle.Messages;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.GameState;
+using Unity.BossRoom.Gameplay.Messages;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices;
+using Unity.BossRoom.UnityServices.Auth;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.BossRoom.Utils;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using VContainer;
 using VContainer.Unity;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared
+namespace Unity.BossRoom.ApplicationLifecycle
 {
 
     /// <summary>

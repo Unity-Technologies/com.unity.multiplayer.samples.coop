@@ -17,7 +17,7 @@ Build_Player_With_Tests_iOS_{{ project.name }}_{{ editor }}:
         - unity-downloader-cli -c Editor -c iOS -u {{ editor }} --fast --wait
         - curl -s https://artifactory.prd.it.unity3d.com/artifactory/unity-tools-local/utr-standalone/utr --output utr
         - chmod +x ./utr
-        - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+        - ./utr --suite=playmode --platform=iOS --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --build-only --testfilter=Unity.BossRoom.Tests.Runtime
 
     artifacts:
         players:
@@ -48,7 +48,7 @@ Build_Player_With_Tests_Android_{{ project.name }}_{{ editor }}:
         - unity-downloader-cli -c Editor -c Android -u {{ editor }} --fast --wait
         # Build player(s)
         - set UTR_VERSION=0.12.0
-        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+        - ./utr.bat --suite=playmode --platform=Android --editor-location=.Editor --testproject={{ project.path }} --player-save-path=build/players --artifacts_path=build/logs --scripting-backend=mono --build-only --testfilter=Unity.BossRoom.Tests.Runtime
     artifacts:
         players:
             paths:
@@ -86,7 +86,7 @@ mobile_test_ios_{{ project.name }}_{{ editor }}:
         # Give UTR execution permissions
         - chmod +x ./utr
         # Run the test build on the device
-        - ./utr --suite=playmode --platform=iOS --player-load-path=build/players --artifacts_path=build/test-results --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+        - ./utr --suite=playmode --platform=iOS --player-load-path=build/players --artifacts_path=build/test-results --testfilter=Unity.BossRoom.Tests.Runtime
 
     artifacts:
         logs:
@@ -119,7 +119,7 @@ mobile_test_android_{{ project.name }}_{{ editor }}:
           start %ANDROID_SDK_ROOT%\platform-tools\adb.exe connect %BOKKEN_DEVICE_IP%
           start %ANDROID_SDK_ROOT%\platform-tools\adb.exe devices
           set UTR_VERSION=0.12.0
-          ./utr --artifacts_path=build/test-results --testproject={{ project.path }} --editor-location=.Editor --reruncount=2 --suite=playmode --platform=android --player-connection-ip=%BOKKEN_HOST_IP% --player-load-path=build/players --testfilter=Unity.Multiplayer.Samples.BossRoom.Tests.Runtime
+          ./utr --artifacts_path=build/test-results --testproject={{ project.path }} --editor-location=.Editor --reruncount=2 --suite=playmode --platform=android --player-connection-ip=%BOKKEN_HOST_IP% --player-load-path=build/players --testfilter=Unity.BossRoom.Tests.Runtime
     # Set uploadable artifact paths
     artifacts:
         logs:

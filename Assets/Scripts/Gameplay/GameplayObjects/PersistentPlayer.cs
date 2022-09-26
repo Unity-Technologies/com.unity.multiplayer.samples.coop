@@ -1,7 +1,12 @@
+using System;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.Utils;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// NetworkBehaviour that represents a player connection and is the "Default Player Prefab" inside Netcode for

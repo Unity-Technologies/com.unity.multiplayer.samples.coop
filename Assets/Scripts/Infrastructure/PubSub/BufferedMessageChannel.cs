@@ -1,6 +1,6 @@
 using System;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure
+namespace Unity.BossRoom.Infrastructure
 {
     public class BufferedMessageChannel<T> : MessageChannel<T>, IBufferedMessageChannel<T>
     {

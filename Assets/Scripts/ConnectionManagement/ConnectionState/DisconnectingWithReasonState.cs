@@ -1,4 +1,4 @@
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a client who received a message from the server with a disconnect reason.

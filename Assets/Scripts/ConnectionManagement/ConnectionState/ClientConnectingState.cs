@@ -1,12 +1,13 @@
 using System;
 using System.Threading.Tasks;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to when a client is attempting to connect to a server. Starts the client when
@@ -22,7 +23,9 @@ namespace Unity.Multiplayer.Samples.BossRoom
 
         public override void Enter()
         {
-            ConnectClient();
+#pragma warning disable 4014
+            ConnectClientAsync();
+#pragma warning restore 4014
         }
 
         public override void Exit() { }
@@ -45,7 +48,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             m_ConnectionManager.ChangeState(m_ConnectionManager.m_DisconnectingWithReason);
         }
 
-        protected async Task ConnectClient()
+        protected async Task ConnectClientAsync()
         {
             bool success = true;
             if (m_LobbyServiceFacade.CurrentUnityLobby != null)

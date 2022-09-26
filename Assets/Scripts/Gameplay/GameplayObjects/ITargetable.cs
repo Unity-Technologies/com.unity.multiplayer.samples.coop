@@ -1,4 +1,6 @@
-namespace Unity.Multiplayer.Samples.BossRoom
+using System;
+
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     /// <summary>
     /// Entities that are Targetable by Skills should have their shared NetworkState component implement this interface.

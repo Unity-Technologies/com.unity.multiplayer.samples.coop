@@ -23,7 +23,7 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Replaced our dependency injection solution with VContainer. (#679)
 * NetworkedMessageChannels can now be subscribed to before initiating a connection (#670)
 * Refactored connection management into simpler state machine (#666)
-* Merged GameState bridge classes (the ones that contained no or limited functionality) (#697) This cleans up our sometimes too verbose code split.
+* Merged GameState bridge classes (the ones that contained no or limited functionality) (#697 #732) This cleans up our sometimes too verbose code split.
 * Modified the red arrow of the boss charge attack to fade in and out (rather than just being enabled disabled) (#715)
 * Rearranged the Action system by adding more folders that separate different pieces more clearly (#701)
 * Action and ActionFX classes have been merged into a single Scriptable Object-based Action class; all the existing actions have been refactored to follow this new design (#705)
@@ -32,7 +32,11 @@ Additional documentation and release notes are available at [Multiplayer Documen
 * Instead of a NetworkBehaviour that carries a WinState netvar we now pass the win state on the server to the PostGame scene and it then stores that state in the netvar, eliminating the need to preserve a NetworkBehaviour-bearing gameObject across scenes. (#724)
 * Bump to NGO 1.0.1 (#720)
 * Reduced the MaxPacketQueueSize UTP parameter value from 512 to 256 (#728). This reduces the amount of memory used by UTP by around 1 MB. Boss Room does not need a bigger queue size than this because there can only be 7 clients connected to a host and UTP already limits the maximum number of in-flight packets to 32 per connection.
-*
+* Cleanup
+  * Namespaces in the project have been changed to map to their assembly definitions (#732)
+  * Numerous name changes for fields and variables to match their new type names (#732)
+  * Removed DynamicNavObstacle - an unused class (#732)
+  * Merged networked data classes into their Server counterparts. An example of that change is the contents of NetworkCharacterState getting moved into ServerCharacter, contents of NetworkDoorState getting moved into SwitchedDoor etc. (#732)
 ### Removed
 *
 ### Fixed

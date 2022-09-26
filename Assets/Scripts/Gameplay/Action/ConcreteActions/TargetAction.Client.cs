@@ -1,8 +1,12 @@
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using System;
+using Unity.BossRoom.Gameplay.UserInput;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class TargetAction
     {
@@ -12,11 +16,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private const float k_ReticuleGroundHeight = 0.2f;
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter clientCharacter)
         {
-            base.OnStartClient(parent);
-            parent.NetState.TargetId.OnValueChanged += OnTargetChanged;
-            parent.NetState.GetComponent<Client.ClientInputSender>().ActionInputEvent += OnActionInput;
+            base.OnStartClient(clientCharacter);
+            clientCharacter.serverCharacter.TargetId.OnValueChanged += OnTargetChanged;
+            clientCharacter.serverCharacter.GetComponent<ClientInputSender>().ActionInputEvent += OnActionInput;
 
             return true;
         }
@@ -26,7 +30,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             m_NewTarget = newTarget;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             if (m_CurrentTarget != m_NewTarget)
             {
@@ -37,14 +41,14 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     var targetEntity = targetObject != null ? targetObject.GetComponent<ITargetable>() : null;
                     if (targetEntity != null)
                     {
-                        ValidateReticule(parent, targetObject);
+                        ValidateReticule(clientCharacter, targetObject);
                         m_TargetReticule.SetActive(true);
 
                         var parentTransform = targetObject.transform;
-                        if (targetObject.TryGetComponent(out Client.ClientCharacter clientCharacter) && clientCharacter.ChildVizObject)
+                        if (targetObject.TryGetComponent(out ServerCharacter serverCharacter) && serverCharacter.clientCharacter)
                         {
                             //for characters, attach the reticule to the child graphics object.
-                            parentTransform = clientCharacter.ChildVizObject.transform;
+                            parentTransform = serverCharacter.clientCharacter.transform;
                         }
 
                         m_TargetReticule.transform.parent = parentTransform;
@@ -69,7 +73,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// Ensures that the TargetReticule GameObject exists. This must be done prior to enabling it because it can be destroyed
         /// "accidentally" if its parent is destroyed while it is detached.
         /// </summary>
-        void ValidateReticule(ClientCharacterVisualization parent, NetworkObject targetObject)
+        void ValidateReticule(ClientCharacter parent, NetworkObject targetObject)
         {
             if (m_TargetReticule == null)
             {
@@ -77,18 +81,18 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
 
             bool target_isnpc = targetObject.GetComponent<ITargetable>().IsNpc;
-            bool myself_isnpc = parent.NetState.CharacterClass.IsNpc;
+            bool myself_isnpc = parent.serverCharacter.CharacterClass.IsNpc;
             bool hostile = target_isnpc != myself_isnpc;
 
             m_TargetReticule.GetComponent<MeshRenderer>().material = hostile ? parent.ReticuleHostileMat : parent.ReticuleFriendlyMat;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter clientCharacter)
         {
             GameObject.Destroy(m_TargetReticule);
 
-            parent.NetState.TargetId.OnValueChanged -= OnTargetChanged;
-            if (parent.TryGetComponent(out Client.ClientInputSender inputSender))
+            clientCharacter.serverCharacter.TargetId.OnValueChanged -= OnTargetChanged;
+            if (clientCharacter.TryGetComponent(out ClientInputSender inputSender))
             {
                 inputSender.ActionInputEvent -= OnActionInput;
             }
