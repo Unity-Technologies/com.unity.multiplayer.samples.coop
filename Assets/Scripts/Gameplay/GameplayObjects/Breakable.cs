@@ -3,6 +3,7 @@ using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.BossRoom.Infrastructure;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Assertions;
 
 namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
@@ -45,8 +46,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
         [SerializeField]
         private GameObject[] m_UnbrokenGameObjects;
 
-        private GameObject m_CurrentBrokenVisualization;
-
 
         /// <summary>
         /// Is the item broken or not?
@@ -57,6 +56,7 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects
 
         public bool IsValidTarget { get { return !IsBroken.Value; } }
 
+        private GameObject m_CurrentBrokenVisualization;
 
         public override void OnNetworkSpawn()
         {

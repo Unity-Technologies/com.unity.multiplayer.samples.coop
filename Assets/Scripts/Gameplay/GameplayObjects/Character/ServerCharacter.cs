@@ -45,8 +45,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
             set => m_CharacterClass = value;
         }
 
-        NetworkAvatarGuidState m_State;
-
         /// Indicates how the character's movement should be depicted.
         public NetworkVariable<MovementStatus> MovementStatus { get; } = new NetworkVariable<MovementStatus>();
 
@@ -121,7 +119,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [Tooltip("If set, the ServerCharacter will automatically play the StartingAction when it is created. ")]
         private Action m_StartingAction;
 
-        private AIBrain m_AIBrain;
 
         [SerializeField]
         DamageReceiver m_DamageReceiver;
@@ -140,6 +137,9 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         ServerAnimationHandler m_ServerAnimationHandler;
 
         public ServerAnimationHandler serverAnimationHandler => m_ServerAnimationHandler;
+
+        private AIBrain m_AIBrain;
+        NetworkAvatarGuidState m_State;
 
         void Awake()
         {

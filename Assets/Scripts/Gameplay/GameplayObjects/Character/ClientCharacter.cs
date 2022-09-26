@@ -17,8 +17,6 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         [SerializeField]
         Animator m_ClientVisualsAnimator;
 
-        CharacterSwap m_CharacterSwapper;
-
         [SerializeField]
         VisualizationConfiguration m_VisualizationConfiguration;
 
@@ -42,9 +40,10 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         /// </summary>
         public Material ReticuleFriendlyMat => m_VisualizationConfiguration.ReticuleFriendlyMat;
 
-        public CharacterSwap CharacterSwap => m_CharacterSwapper;
 
-        PhysicsWrapper m_PhysicsWrapper;
+        CharacterSwap m_CharacterSwapper;
+
+        public CharacterSwap CharacterSwap => m_CharacterSwapper;
 
         public bool CanPerformActions => m_ServerCharacter.CanPerformActions;
 
@@ -57,6 +56,8 @@ namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
         PositionLerper m_PositionLerper;
 
         RotationLerper m_RotationLerper;
+
+        PhysicsWrapper m_PhysicsWrapper;
 
         // this value suffices for both positional and rotational interpolations; one may have a constant value for each
         const float k_LerpTime = 0.08f;
