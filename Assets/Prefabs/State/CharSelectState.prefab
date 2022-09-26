@@ -82,7 +82,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   parentReference:
-    TypeName: 
+    TypeName: Unity.BossRoom.ApplicationLifecycle.ApplicationController
   autoRun: 1
   autoInjectGameObjects: []
   m_NetcodeHooks: {fileID: 8494646029522094751}
