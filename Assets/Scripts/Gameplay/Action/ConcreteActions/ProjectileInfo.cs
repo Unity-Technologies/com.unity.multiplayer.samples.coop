@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.Actions
 {
     [Serializable]
     public struct ProjectileInfo

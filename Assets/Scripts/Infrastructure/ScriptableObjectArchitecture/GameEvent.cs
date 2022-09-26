@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Infrastructure
 {
     /// <summary>
     /// Class for encapsulating game-related events within ScriptableObject instances. This class defines a List of

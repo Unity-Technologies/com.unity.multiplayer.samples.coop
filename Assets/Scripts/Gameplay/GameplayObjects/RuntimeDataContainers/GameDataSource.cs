@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
+using Unity.BossRoom.Gameplay.Actions;
+using Unity.BossRoom.Gameplay.Configuration;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using UnityEngine;
-using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
+using Action = Unity.BossRoom.Gameplay.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects
 {
     public class GameDataSource : MonoBehaviour
     {

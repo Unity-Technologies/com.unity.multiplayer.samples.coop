@@ -1,10 +1,10 @@
 using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
+using Unity.BossRoom.Infrastructure;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a client attempting to reconnect to a server. It will try to reconnect a
@@ -88,7 +88,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 if (joiningLobby.Result.Success)
                 {
                     m_LobbyServiceFacade.SetRemoteLobby(joiningLobby.Result.Lobby);
-                    var connectingToRelay = ConnectClient();
+                    var connectingToRelay = ConnectClientAsync();
                     yield return new WaitUntil(() => connectingToRelay.IsCompleted);
                 }
                 else
@@ -99,7 +99,7 @@ namespace Unity.Multiplayer.Samples.BossRoom
             }
             else
             {
-                var connectingClient = ConnectClient();
+                var connectingClient = ConnectClientAsync();
                 yield return new WaitUntil(() => connectingClient.IsCompleted);
             }
         }

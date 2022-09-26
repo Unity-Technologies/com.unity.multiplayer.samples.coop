@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Editor
+namespace Unity.BossRoom.Utils.Editor
 {
     public class NetworkOverlay : MonoBehaviour
     {

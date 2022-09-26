@@ -1,13 +1,12 @@
 using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine.Assertions;
 
 
-namespace Unity.Multiplayer.Samples.BossRoom.Editor
+namespace Unity.BossRoom.Utils.Editor
 {
     public class NetworkLatencyWarning : MonoBehaviour
     {

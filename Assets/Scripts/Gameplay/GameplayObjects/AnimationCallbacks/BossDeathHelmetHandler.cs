@@ -1,6 +1,7 @@
+using System;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.GameplayObjects.AnimationCallbacks
 {
     /// <summary>
     /// De-parents the boss's helmet when he is defeated. This prevents the helmet from jittering during the

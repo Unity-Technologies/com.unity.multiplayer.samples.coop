@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Infrastructure
 {
     /// <summary>
     /// ScriptableObject class that contains a list of a given type. The instance of this ScriptableObject can be

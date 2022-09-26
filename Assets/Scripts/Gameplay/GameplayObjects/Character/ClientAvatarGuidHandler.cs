@@ -2,7 +2,7 @@ using System;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     /// <summary>
     /// Client-side component that awaits a state change on an avatar's Guid, and fetches matching Avatar from the
@@ -23,8 +23,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Client
 
         public override void OnNetworkSpawn()
         {
-            base.OnNetworkSpawn();
-            InstantiateAvatar();
+            if (IsClient)
+            {
+                InstantiateAvatar();
+            }
         }
 
         void InstantiateAvatar()

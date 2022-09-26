@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Utils
 {
     /// <summary>
     /// Singleton class which saves/loads local-client settings.

@@ -1,4 +1,4 @@
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Base class representing an online connection state.

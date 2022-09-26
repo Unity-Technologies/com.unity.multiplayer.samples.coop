@@ -1,11 +1,11 @@
 using System;
-using UnityEngine;
+using Unity.BossRoom.Gameplay.GameState;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Server;
 using Unity.Netcode;
+using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Provides backing logic for all of the UI that runs in the PostGame stage.
@@ -55,15 +55,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         void Start()
         {
-            m_PostGameState.SynchronizedStateData.WinState.OnValueChanged += OnWinStateChanged;
-            SetPostGameUI(m_PostGameState.SynchronizedStateData.WinState.Value);
+            m_PostGameState.NetworkPostGame.WinState.OnValueChanged += OnWinStateChanged;
+            SetPostGameUI(m_PostGameState.NetworkPostGame.WinState.Value);
         }
 
         void OnDestroy()
         {
             if (m_PostGameState != null)
             {
-                m_PostGameState.SynchronizedStateData.WinState.OnValueChanged -= OnWinStateChanged;
+                m_PostGameState.NetworkPostGame.WinState.OnValueChanged -= OnWinStateChanged;
             }
         }
 

@@ -1,11 +1,13 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Netcode;
 using Unity.Netcode.Transports.UTP;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a host starting up. Starts the host when entering the state. If successful,

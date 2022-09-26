@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.Gameplay.GameplayObjects.Character
 {
     /// <summary>
     /// Wrapper class for direct references to components relevant to physics.

@@ -1,9 +1,10 @@
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Server;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using UnityEngine;
 using UnityEngine.Pool;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Class responsible for playing back action inputs from user.
@@ -252,7 +253,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
             if (targets != null &&
                 targets.Length == 1 &&
-                targets[0] != m_ServerCharacter.NetState.TargetId.Value)
+                targets[0] != m_ServerCharacter.TargetId.Value)
             {
                 //if this is a targeted skill (with a single requested target), and it is different from our
                 //active target, then we synthesize a TargetAction to change  our target over.

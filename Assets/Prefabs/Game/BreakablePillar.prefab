@@ -10,10 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 4505851899529102149}
   - component: {fileID: -8668463530818694599}
-  - component: {fileID: 7561466626167410996}
   - component: {fileID: -8903857516321632127}
   - component: {fileID: 1460791283510277443}
-  - component: {fileID: 7670444733571025649}
   - component: {fileID: 6825752226794478105}
   m_Layer: 6
   m_Name: BreakablePillar
@@ -32,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5054035021295717131}
   m_Father: {fileID: 0}
@@ -53,20 +52,6 @@ MonoBehaviour:
   AlwaysReplicateAsRoot: 0
   DontDestroyWithOwner: 0
   AutoObjectParentSync: 1
---- !u!114 &7561466626167410996
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 884761565141663561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 07cb03f8b4d75ed4abb9801aa531be91, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  IsBroken:
-    m_InternalValue: 0
 --- !u!114 &-8903857516321632127
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -83,6 +68,13 @@ MonoBehaviour:
   m_NetworkHealthState: {fileID: 0}
   m_Collider: {fileID: 1460791283510277443}
   m_SpecialDamageFlags: 6
+  m_BrokenPrefab: {fileID: 6418514439632820891, guid: 78436b90c00aaab49b4d522550dd9250, type: 3}
+  m_PrebrokenPrefab: {fileID: 0}
+  m_BrokenPrefabPos: {fileID: 4505851899529102149}
+  m_UnbrokenGameObjects:
+  - {fileID: 3658718798844854089}
+  IsBroken:
+    m_InternalValue: 0
 --- !u!65 &1460791283510277443
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -96,24 +88,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 3.54, y: 8.287147, z: 3.8}
   m_Center: {x: 1.18, y: 4.1465364, z: 2}
---- !u!114 &7670444733571025649
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 884761565141663561}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 53ee998b78e989840b42284bf1b455ad, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_BrokenPrefab: {fileID: 6418514439632820891, guid: 78436b90c00aaab49b4d522550dd9250, type: 3}
-  m_PrebrokenPrefab: {fileID: 0}
-  m_BrokenPrefabPos: {fileID: 4505851899529102149}
-  m_UnbrokenGameObjects:
-  - {fileID: 3658718798844854089}
-  m_NetState: {fileID: 7561466626167410996}
 --- !u!54 &6825752226794478105
 Rigidbody:
   m_ObjectHideFlags: 0
