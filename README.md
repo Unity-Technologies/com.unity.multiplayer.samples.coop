@@ -53,7 +53,10 @@ See [ART_NOTES.md](Documentation/ART_NOTES.md) for more information on the art o
 
 ### Gameplay
 * All Actions
-  * [Action anticipation]()
+
+ | Action anticipation |[Assets/Scripts/Gameplay/Action/Action.cs](Assets/Scripts/Gameplay/Action/Action.cs) - AnticipateActionClient() |
+ | -- | -- |
+ 
   * [Object spawning for long actions (archer arrow)]()
   * [Quick actions with RPCs (mage bolt)]()
   * [Teleport]()
