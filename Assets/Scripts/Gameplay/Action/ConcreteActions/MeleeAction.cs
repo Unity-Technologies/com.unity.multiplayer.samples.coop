@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
-using Unity.Netcode;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action that represents a swing of a melee weapon. It is not explicitly targeted, but rather detects the foe that was hit with a physics check.
@@ -36,10 +34,10 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         private bool m_ExecutionFired;
         private ulong m_ProvisionalTarget;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
-            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : parent.NetState.TargetId.Value;
-            IDamageable foe = DetectFoe(parent, target);
+            ulong target = (Data.TargetIds != null && Data.TargetIds.Length > 0) ? Data.TargetIds[0] : serverCharacter.TargetId.Value;
+            IDamageable foe = DetectFoe(serverCharacter, target);
             if (foe != null)
             {
                 m_ProvisionalTarget = foe.NetworkObjectId;
@@ -49,11 +47,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             // snap to face the right direction
             if (Data.Direction != Vector3.zero)
             {
-                parent.physicsWrapper.Transform.forward = Data.Direction;
+                serverCharacter.physicsWrapper.Transform.forward = Data.Direction;
             }
 
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
-            parent.NetState.RecvDoActionClientRPC(Data);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.clientCharacter.RecvDoActionClientRPC(Data);
             return true;
         }
 
@@ -66,15 +64,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             m_SpawnedGraphics = null;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (!m_ExecutionFired && (Time.time - TimeStarted) >= Config.ExecTimeSeconds)
             {
                 m_ExecutionFired = true;
-                var foe = DetectFoe(parent, m_ProvisionalTarget);
+                var foe = DetectFoe(clientCharacter, m_ProvisionalTarget);
                 if (foe != null)
                 {
-                    foe.ReceiveHP(parent, -Config.Amount);
+                    foe.ReceiveHP(clientCharacter, -Config.Amount);
                 }
             }
 

@@ -1,14 +1,15 @@
 using System;
-using BossRoom.Scripts.Shared.Net.UnityServices.Auth;
+using Unity.BossRoom.Gameplay.Configuration;
 using TMPro;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.ConnectionManagement;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Auth;
+using Unity.BossRoom.UnityServices.Lobbies;
 using Unity.Services.Core;
-using Unity.Services.Lobbies.Models;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class LobbyUIMediator : MonoBehaviour
     {
@@ -106,7 +107,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
 
         public async void QueryLobbiesRequest(bool blockUI)
         {
-            if (UnityServices.State != ServicesInitializationState.Initialized)
+            if (Unity.Services.Core.UnityServices.State != ServicesInitializationState.Initialized)
             {
                 return;
             }
@@ -200,7 +201,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Visual
             }
         }
 
-        void OnJoinedLobby(Lobby remoteLobby)
+        void OnJoinedLobby(Unity.Services.Lobbies.Models.Lobby remoteLobby)
         {
             m_LobbyServiceFacade.SetRemoteLobby(remoteLobby);
 

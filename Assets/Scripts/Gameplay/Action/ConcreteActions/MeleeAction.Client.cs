@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.VisualEffects;
 using Unity.Netcode;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class MeleeAction
     {
@@ -20,9 +22,9 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
         /// </summary>
         private List<SpecialFXGraphic> m_SpawnedGraphics = null;
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter clientCharacter)
         {
-            base.OnStartClient(parent);
+            base.OnStartClient(clientCharacter);
 
             // we can optionally have special particles that should play on the target. If so, add them now.
             // (don't wait until impact, because the particles need to start sooner!)
@@ -43,7 +45,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                     targetPosition = targetNetworkObj.transform.position;
                 }
 
-                if ((parent.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
+                if ((clientCharacter.transform.position - targetPosition).sqrMagnitude < (padRange * padRange))
                 {
                     // target is in range! Play the graphics
                     m_SpawnedGraphics = InstantiateSpecialFXGraphics(physicsWrapper ? physicsWrapper.Transform : targetNetworkObj.transform, true);
@@ -53,28 +55,28 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             return true;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return ActionConclusion.Continue;
         }
 
-        public override void OnAnimEventClient(ClientCharacterVisualization parent, string id)
+        public override void OnAnimEventClient(ClientCharacter clientCharacter, string id)
         {
             if (id == "impact" && !m_ImpactPlayed)
             {
-                PlayHitReact(parent);
+                PlayHitReact(clientCharacter);
             }
         }
 
-        public override void EndClient(ClientCharacterVisualization parent)
+        public override void EndClient(ClientCharacter clientCharacter)
         {
             //if this didn't already happen, make sure it gets a chance to run. This could have failed to run because
             //our animationclip didn't have the "impact" event properly configured (as one possibility).
-            PlayHitReact(parent);
-            base.EndClient(parent);
+            PlayHitReact(clientCharacter);
+            base.EndClient(clientCharacter);
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter clientCharacter)
         {
             // if we had any special target graphics, tell them we're done
             if (m_SpawnedGraphics != null)
@@ -89,7 +91,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        void PlayHitReact(ClientCharacterVisualization parent)
+        void PlayHitReact(ClientCharacter parent)
         {
             if (m_ImpactPlayed) { return; }
 
@@ -125,10 +127,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
                         string hitAnim = Config.ReactAnim;
                         if (string.IsNullOrEmpty(hitAnim)) { hitAnim = k_DefaultHitReact; }
 
-                        var clientChar = targetNetworkObj.GetComponent<Client.ClientCharacter>();
-                        if (clientChar && clientChar.ChildVizObject && clientChar.ChildVizObject.OurAnimator)
+                        if (targetNetworkObj.TryGetComponent<ServerCharacter>(out var serverCharacter)
+                            && serverCharacter.clientCharacter != null
+                            && serverCharacter.clientCharacter.OurAnimator)
                         {
-                            clientChar.ChildVizObject.OurAnimator.SetTrigger(hitAnim);
+                            serverCharacter.clientCharacter.OurAnimator.SetTrigger(hitAnim);
                         }
                     }
                 }

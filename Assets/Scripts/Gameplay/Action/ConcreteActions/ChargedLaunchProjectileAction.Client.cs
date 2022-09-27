@@ -1,7 +1,9 @@
+using System;
 using System.Collections.Generic;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
+using Unity.BossRoom.VisualEffects;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     public partial class ChargedLaunchProjectileAction
     {
@@ -17,20 +19,20 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
 
         private bool m_ChargeEnded;
 
-        public override bool OnStartClient(ClientCharacterVisualization parent)
+        public override bool OnStartClient(ClientCharacter clientCharacter)
         {
-            base.OnStartClient(parent);
+            base.OnStartClient(clientCharacter);
 
-            m_Graphics = InstantiateSpecialFXGraphics(parent.transform, true);
+            m_Graphics = InstantiateSpecialFXGraphics(clientCharacter.transform, true);
             return true;
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return !m_ChargeEnded;
         }
 
-        public override void CancelClient(ClientCharacterVisualization parent)
+        public override void CancelClient(ClientCharacter clientCharacter)
         {
             if (!m_ChargeEnded)
             {
@@ -44,7 +46,7 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void OnStoppedChargingUpClient(ClientCharacterVisualization parent, float finalChargeUpPercentage)
+        public override void OnStoppedChargingUpClient(ClientCharacter clientCharacter, float finalChargeUpPercentage)
         {
             m_ChargeEnded = true;
             foreach (var graphic in m_Graphics)

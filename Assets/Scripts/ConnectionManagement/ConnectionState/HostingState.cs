@@ -1,13 +1,14 @@
 using System;
 using System.Collections;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Lobbies;
+using Unity.Multiplayer.Samples.BossRoom;
 using Unity.Multiplayer.Samples.Utilities;
 using Unity.Netcode;
 using UnityEngine;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom
+namespace Unity.BossRoom.ConnectionManagement
 {
     /// <summary>
     /// Connection state corresponding to a listening host. Handles incoming client connections. When shutting down or
@@ -58,11 +59,6 @@ namespace Unity.Multiplayer.Samples.BossRoom
                 var playerId = SessionManager<SessionPlayerData>.Instance.GetPlayerId(clientId);
                 if (playerId != null)
                 {
-                    if (m_LobbyServiceFacade.CurrentUnityLobby != null)
-                    {
-                        m_LobbyServiceFacade.RemovePlayerFromLobbyAsync(playerId, m_LobbyServiceFacade.CurrentUnityLobby.Id);
-                    }
-
                     var sessionData = SessionManager<SessionPlayerData>.Instance.GetPlayerData(playerId);
                     if (sessionData.HasValue)
                     {

@@ -1,12 +1,11 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Actions;
-using Unity.Multiplayer.Samples.BossRoom.Client;
+using Unity.BossRoom.Gameplay.GameplayObjects;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Animations;
-using Action = Unity.Multiplayer.Samples.BossRoom.Actions.Action;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Server
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action for picking up "Heavy" items. For simplicity, this class will perform both the pickup (reparenting) of a
@@ -25,17 +24,17 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
         float m_ActionStartTime;
         bool m_AttemptedPickup;
 
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
             m_ActionStartTime = Time.time;
 
             // play pickup animation based if a heavy object is not already held
             if (!NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(
-                    parent.NetState.heldNetworkObject.Value, out var heldObject))
+                    serverCharacter.HeldNetworkObject.Value, out var heldObject))
             {
                 if (!string.IsNullOrEmpty(Config.Anim))
                 {
-                    parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+                    serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
                 }
             }
 
@@ -71,12 +70,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
                 return false;
             }
 
-            parent.NetState.heldNetworkObject.Value = heavyNetworkObject.NetworkObjectId;
+            parent.HeldNetworkObject.Value = heavyNetworkObject.NetworkObjectId;
 
             Data.TargetIds = new ulong[] { heavyNetworkObject.NetworkObjectId };
 
             // clear current target on successful parenting attempt
-            parent.NetState.TargetId.Value = 0;
+            parent.TargetId.Value = 0;
 
             // snap to face the right direction
             if (Data.Direction != Vector3.zero)
@@ -88,11 +87,11 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             var positionConstraint = heavyNetworkObject.GetComponent<PositionConstraint>();
             if (positionConstraint)
             {
-                if (parent.TryGetComponent(out ClientCharacter clientCharacter))
+                if (parent.TryGetComponent(out ServerCharacter serverCharacter))
                 {
                     var constraintSource = new ConstraintSource()
                     {
-                        sourceTransform = clientCharacter.ChildVizObject.CharacterSwap.CharacterModel.handSocket.transform,
+                        sourceTransform = serverCharacter.clientCharacter.CharacterSwap.CharacterModel.handSocket.transform,
                         weight = 1
                     };
                     positionConstraint.AddSource(constraintSource);
@@ -103,12 +102,12 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return true;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             if (!m_AttemptedPickup && Time.time > m_ActionStartTime + Config.ExecTimeSeconds)
             {
                 m_AttemptedPickup = true;
-                if (!TryPickUp(parent))
+                if (!TryPickUp(clientCharacter))
                 {
                     // pickup attempt unsuccessful; action can be terminated
                     return ActionConclusion.Stop;
@@ -118,15 +117,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Server
             return ActionConclusion.Continue;
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
-            if (parent.NetState.LifeState == LifeState.Fainted)
+            if (serverCharacter.LifeState == LifeState.Fainted)
             {
-                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(parent.NetState.heldNetworkObject.Value, out var heavyNetworkObject))
+                if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(serverCharacter.HeldNetworkObject.Value, out var heavyNetworkObject))
                 {
                     heavyNetworkObject.transform.SetParent(null);
                 }
-                parent.NetState.heldNetworkObject.Value = 0;
+                serverCharacter.HeldNetworkObject.Value = 0;
             }
         }
     }

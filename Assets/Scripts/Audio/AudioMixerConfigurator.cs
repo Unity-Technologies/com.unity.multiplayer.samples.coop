@@ -1,7 +1,8 @@
+using Unity.BossRoom.Utils;
 using UnityEngine;
 using UnityEngine.Audio;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Client
+namespace Unity.BossRoom.Audio
 {
     /// <summary>
     /// Initializes the game's AudioMixer to use volumes stored in preferences. Provides

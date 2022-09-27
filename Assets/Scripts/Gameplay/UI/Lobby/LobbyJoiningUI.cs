@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Infrastructure;
-using Unity.Multiplayer.Samples.BossRoom.Shared.Net.UnityServices.Lobbies;
+using Unity.BossRoom.Infrastructure;
+using Unity.BossRoom.UnityServices.Lobbies;
 using UnityEngine;
 using UnityEngine.UI;
 using VContainer;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     /// <summary>
     /// Handles the list of LobbyListItemUIs and ensures it stays synchronized with the lobby list from the service.

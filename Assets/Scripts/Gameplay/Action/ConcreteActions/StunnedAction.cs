@@ -1,9 +1,8 @@
 using System;
-using Unity.Multiplayer.Samples.BossRoom.Server;
-using Unity.Multiplayer.Samples.BossRoom.Visual;
+using Unity.BossRoom.Gameplay.GameplayObjects.Character;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Actions
+namespace Unity.BossRoom.Gameplay.Actions
 {
     /// <summary>
     /// Action that plays while a character is Stunned. The character does nothing... just sits there.
@@ -16,13 +15,13 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
     [CreateAssetMenu(menuName = "BossRoom/Actions/Stunned Action")]
     public class StunnedAction : Action
     {
-        public override bool OnStart(ServerCharacter parent)
+        public override bool OnStart(ServerCharacter serverCharacter)
         {
-            parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
+            serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim);
             return true;
         }
 
-        public override bool OnUpdate(ServerCharacter parent)
+        public override bool OnUpdate(ServerCharacter clientCharacter)
         {
             return true;
         }
@@ -35,15 +34,15 @@ namespace Unity.Multiplayer.Samples.BossRoom.Actions
             }
         }
 
-        public override void Cancel(ServerCharacter parent)
+        public override void Cancel(ServerCharacter serverCharacter)
         {
             if (!string.IsNullOrEmpty(Config.Anim2))
             {
-                parent.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
+                serverCharacter.serverAnimationHandler.NetworkAnimator.SetTrigger(Config.Anim2);
             }
         }
 
-        public override bool OnUpdateClient(ClientCharacterVisualization parent)
+        public override bool OnUpdateClient(ClientCharacter clientCharacter)
         {
             return ActionConclusion.Continue;
         }

@@ -1,7 +1,8 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
-namespace Unity.Multiplayer.Samples.BossRoom.Visual
+namespace Unity.BossRoom.Gameplay.UI
 {
     public class UIMessageSlot : MonoBehaviour
     {
