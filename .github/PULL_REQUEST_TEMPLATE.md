@@ -18,4 +18,5 @@
  - [ ] All commits are accompanied by meaningful commit messages
  - [ ] JIRA ticket ID is in the PR title or at least one commit message
  - [ ] Include the ticket ID number within the body message of the PR to create a hyperlink
+ - [ ] An Index entry has been added in readme.md if applicable
 
